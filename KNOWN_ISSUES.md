@@ -1,4 +1,4 @@
-# Known issues v4405
+# Known issues v4408
 
 1. Browsercache of oude tabs kunnen nog oude configbestanden opvragen. De no-cache server en querystrings beperken dit.
 2. Lokale HTML-bestanden kunnen meestal niet direct door de browser worden overschreven. Editors downloaden nieuwe versies; de gebruiker vervangt het bestand handmatig.
@@ -14,4 +14,9 @@ Als de debug meldt dat `index.html` ongeveer 3540 bytes is of niet `viewer-index
 
 
 ## Root-index versus docs-index
-Vanaf v4405 is `docs/index.html` verwijderd en heet de documentatie-startpagina `docs/docs-home.html`. Daardoor kan een unzip/publicatieproces de root `index.html` niet meer met de docs-index verwarren. `viewer.html` is een fallback-entry voor de viewer.
+Vanaf v4408 is `docs/index.html` verwijderd en heet de documentatie-startpagina `docs/docs-home.html`. Daardoor kan een unzip/publicatieproces de root `index.html` niet meer met de docs-index verwarren. `viewer.html` is een fallback-entry voor de viewer.
+
+
+## Opgelost in v4408
+
+- v4407-probleem: `Groei` actief → naar `LEX` → terug naar `Assen`/`Bron` gaf geen boom. Oorzaak: de niet-ondersteunde LEX-projectie clamped de globale groeistap naar 0. Oplossing: projectiewissel bewaart de laatst geldige groeistap en clamped alleen binnen ondersteunde groei-projecties.

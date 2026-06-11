@@ -1,4 +1,4 @@
-# OpenGraph Lite Viewer — app-context v4405
+# OpenGraph Lite Viewer — app-context v4408
 
 ## Doel
 
@@ -33,7 +33,7 @@ Projecties zijn horizontaal: bronknoop naar LEX-as op dezelfde hoogte. Dit geldt
 
 De layout is bottom-up en vrij: child-subtrees worden eerst als box berekend en daarna op vrije HOR/VER-posities geplaatst.
 
-v4405 voegt per-vertakking flipconfig toe met twee doelen:
+v4402 voegde per-vertakking flipconfig toe met twee doelen:
 
 ```text
 1. compactste boom zoeken
@@ -41,3 +41,14 @@ v4405 voegt per-vertakking flipconfig toe met twee doelen:
 ```
 
 De docs-map blijft vanaf v4401 de canonieke projectcontext en moet bij iedere nieuwe ZIP worden onderhouden.
+
+
+## Groei-presentatie vanaf v4408
+
+De viewer kan de vooraf berekende centrale boom stapsgewijs tonen. Dit is een presentatielaag, geen nieuwe layoutmethode:
+
+```text
+layout volledig berekenen → growthStep per element → gedeeltelijk renderen
+```
+
+Daarmee kan JAN/Open Notation didactisch worden getoond als een groeiende vrije boom, zonder dat knopen tijdens het afspelen verspringen.

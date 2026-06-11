@@ -1,4 +1,4 @@
-# Gebruikershandleiding — concept v4405
+# Gebruikershandleiding — concept v4408
 
 ## Starten
 
@@ -26,6 +26,32 @@ Open `Voorbeeldeditor`. Voeg voorbeelden toe, wijzig tokens, kies source/rol en 
 ## Lexicon bewerken
 
 Open `lexicon-config.html` om het huidige lexicon te bekijken. Nieuwe lexiconeditor is nog een mogelijke vervolgstap.
+
+
+
+## Groei-presentatie
+
+In het projectiepaneel staat `Groei`.
+
+Gebruik:
+
+```text
+Groei aanzetten
+0       = terug naar leeg raster/titels
+← / →   = vorige/volgende stap
+Play    = automatisch afspelen
+slider  = direct naar een stap
+```
+
+Sneltoetsen:
+
+```text
+g = groei aan/uit
+n = volgende stap
+p = vorige stap
+```
+
+De viewer berekent eerst de volledige layout. Tijdens de groei verschijnen alleen meer onderdelen; bestaande knopen verschuiven niet.
 
 ## Documentatie openen
 

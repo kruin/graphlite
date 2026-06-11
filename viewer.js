@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'v4405';
+  const VERSION = 'v4408';
   const CELL = 74;
   const ROOT_SIDE_GAP = 1;
   const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -56,7 +56,14 @@
     lexLeftButton: document.getElementById('lexLeftButton'),
     lexRightButton: document.getElementById('lexRightButton'),
     applyLexRuleButton: document.getElementById('applyLexRuleButton'),
-    swapRolesButton: document.getElementById('swapRolesButton')
+    swapRolesButton: document.getElementById('swapRolesButton'),
+    growthEnabledInput: document.getElementById('growthEnabledInput'),
+    growthStepInput: document.getElementById('growthStepInput'),
+    growthStepLabel: document.getElementById('growthStepLabel'),
+    growthPrevButton: document.getElementById('growthPrevButton'),
+    growthNextButton: document.getElementById('growthNextButton'),
+    growthPlayButton: document.getElementById('growthPlayButton'),
+    growthResetButton: document.getElementById('growthResetButton')
   };
 
   let EXAMPLES = [
@@ -173,7 +180,11 @@
     showGrid: true,
     showRelations: true,
     showLabels: true,
-    roleSwap: false
+    roleSwap: false,
+    growthEnabled: false,
+    growthStep: 0,
+    lastSupportedGrowthStep: 1,
+    growthTimer: null
   };
 
   function svgEl(name, attrs = {}, text = '') {
@@ -227,7 +238,7 @@
   }
 
   function activeSentenceHtml() {
-    // v4405: preview follows the editable examples-input.html token list.
+    // v4408: preview follows the editable examples-input.html token list.
     // <strong> marks subject; <em> marks object. This also supports new examples
     // made in examples-editor.html instead of only the two hardcoded patterns.
     return activeLexItems().map(tokenHtml).join(' ');
@@ -580,7 +591,7 @@
     const first = placeLayoutFree(cloneLayout(firstLayout), firstSide, [], node, 1);
     const extraGap = isLabel(node, 'S') && isLabel(firstLayout.node, 'NP') && isLabel(secondLayout.node, 'VP') ? 1 : 0;
 
-    // v4405: left-first/right-first is part of the placement strategy.
+    // v4408: left-first/right-first is part of the placement strategy.
     // It changes the candidate-search direction before placement; it does
     // not mirror an already drawn tree and does not swap grammatical roles.
     // The second complete child box starts below the real bottom of the first
@@ -679,18 +690,18 @@
     const normalChildren = childLayouts;
     const flippedChildren = [...childLayouts].reverse();
 
-    function renderWith(childrenForOrder) {
+    function layoutWithChildOrder(childrenForOrder) {
       if (childrenForOrder.length === 2) {
         return layoutBinary(node, cloneLayout(childrenForOrder[0]), cloneLayout(childrenForOrder[1]), options, sidePreference);
       }
       return layoutNAry(node, childrenForOrder.map(cloneLayout), options, sidePreference);
     }
 
-    if (order === 'normal') return renderWith(normalChildren);
-    if (order === 'flip') return renderWith(flippedChildren);
+    if (order === 'normal') return layoutWithChildOrder(normalChildren);
+    if (order === 'flip') return layoutWithChildOrder(flippedChildren);
 
-    const normalLayout = renderWith(normalChildren);
-    const flippedLayout = renderWith(flippedChildren);
+    const normalLayout = layoutWithChildOrder(normalChildren);
+    const flippedLayout = layoutWithChildOrder(flippedChildren);
     const normalScore = branchScore(normalLayout, options);
     const flippedScore = branchScore(flippedLayout, options);
     return flippedScore < normalScore ? flippedLayout : normalLayout;
@@ -706,7 +717,7 @@
       return layoutUnary(node, child, localFirstSide, options);
     }
 
-    // v4405: flip is no longer only global.  Every branching node can be
+    // v4408: flip is no longer only global.  Every branching node can be
     // decided independently.  Global normal/flip remain available, but the
     // default is auto-compact; auto-align selects flips that reduce vertical
     // distance between syntactic/functionele equivalents such as subject/AGENS
@@ -721,7 +732,7 @@
   }
 
   function addOpnTopicalizationSlot(layout, rootId = null) {
-    // v4405: OPN source trees reserve an explicit local fronting/topicalization
+    // v4408: OPN source trees reserve an explicit local fronting/topicalization
     // slot between the start node (S/CLAUSE) and the upper tree material.
     // This is a structural OPN slot, not a transformation of the tree.  All
     // non-root tree material is shifted down one grid row so the slot occupies
@@ -773,7 +784,7 @@
   }
 
   function layoutFunctionalRoleTree(order = 'left-first') {
-    // v4405: dedicated non-binary functional OPN layout with topicalization slot.
+    // v4408: dedicated non-binary functional OPN layout with topicalization slot.
     // The root is CLAUSE. It is not a predicate-root tree and not a binary tree.
     // Bottom-up idea: role leaf-box -> role-box -> CLAUSE n-ary box.
     // Placement uses free HOR/VER corridors: every role/root node and every leaf
@@ -869,21 +880,176 @@
     g.appendChild(grid);
   }
 
-  function drawSubtreeBoxes(g, layout, origin) {
-    const ordered = [...layout.boxes].sort((a, b) => ((b.maxX - b.minX) * (b.maxY - b.minY)) - ((a.maxX - a.minX) * (a.maxY - a.minY)));
-    for (const box of ordered) {
-      if (box.leaf) continue;
+  function subtreeBoxArea(box) {
+    return (box.maxX - box.minX + 1) * (box.maxY - box.minY + 1);
+  }
+
+  function growthSupportedProjection(projection = state.projection) {
+    return ['axes', 'source', 'log'].includes(projection);
+  }
+
+  function growthActive() {
+    return !!state.growthEnabled && growthSupportedProjection(state.projection);
+  }
+
+  function setProjection(projection) {
+    const next = projection || 'axes';
+    if (growthSupportedProjection(state.projection) && state.growthStep > 0) {
+      state.lastSupportedGrowthStep = state.growthStep;
+    }
+    state.projection = next;
+    if (!growthSupportedProjection(next)) {
+      stopGrowthPlayback();
+      return;
+    }
+    if (state.growthEnabled && state.growthStep === 0 && state.lastSupportedGrowthStep > 0) {
+      state.growthStep = Math.min(state.lastSupportedGrowthStep, growthStepMax());
+    }
+  }
+
+  function activeCentralSpec() {
+    if (state.centerMode === 'functional' || state.projection === 'log') return functionalSpec();
+    return treeSpec();
+  }
+
+  function collectGrowthMetrics(root) {
+    const byId = new Map();
+    function visit(node, depth = 0) {
+      let height = 0;
+      for (const child of node.children || []) {
+        const childInfo = visit(child, depth + 1);
+        height = Math.max(height, childInfo.height + 1);
+      }
+      const info = { id: node.id, depth, height, node };
+      byId.set(node.id, info);
+      return info;
+    }
+    const rootInfo = visit(root, 0);
+    return { byId, maxHeight: rootInfo.height, rootId: root.id };
+  }
+
+  function growthStepMax() {
+    if (!growthSupportedProjection()) return 0;
+    const metrics = collectGrowthMetrics(activeCentralSpec());
+    const structureSteps = metrics.maxHeight + 1;
+    return state.projection === 'axes' ? structureSteps + 2 : structureSteps + 1;
+  }
+
+  function clampGrowthStep(value) {
+    const max = growthStepMax();
+    const n = Math.max(0, Math.min(max, Number(value) || 0));
+    return n;
+  }
+
+  function stopGrowthPlayback() {
+    if (state.growthTimer) {
+      clearInterval(state.growthTimer);
+      state.growthTimer = null;
+    }
+  }
+
+  function setGrowthStep(value, rerender = true) {
+    if (!growthSupportedProjection()) {
+      stopGrowthPlayback();
+      if (rerender) render();
+      return;
+    }
+    state.growthStep = clampGrowthStep(value);
+    if (state.growthStep > 0) state.lastSupportedGrowthStep = state.growthStep;
+    if (state.growthStep >= growthStepMax()) stopGrowthPlayback();
+    if (rerender) render();
+  }
+
+  function growthPlanForLayout(layout) {
+    if (!growthActive()) return { active: false, current: Infinity, max: 0, nodeStep: new Map(), structureStep: 0, slotStep: 0, projectionStep: 0 };
+    const metrics = collectGrowthMetrics(activeCentralSpec());
+    const structureStep = metrics.maxHeight + 1;
+    const slotStep = structureStep + 1;
+    const projectionStep = structureStep + 2;
+    const max = state.projection === 'axes' ? projectionStep : slotStep;
+    if (state.growthStep > max) state.growthStep = max;
+    const nodeStep = new Map();
+    for (const node of layout.nodes) {
+      const info = metrics.byId.get(node.id);
+      nodeStep.set(node.id, info ? (info.height + 1) : 1);
+    }
+    return { active: true, current: state.growthStep, max, nodeStep, structureStep, slotStep, projectionStep };
+  }
+
+  function visibleAt(plan, step) {
+    return !plan || !plan.active || step <= plan.current;
+  }
+
+  function nodeGrowthStep(plan, nodeId) {
+    return plan?.nodeStep?.get(nodeId) || 1;
+  }
+
+  function boxGrowthStep(plan, box) {
+    return nodeGrowthStep(plan, box.nodeId);
+  }
+
+  function edgeGrowthStep(plan, edge) {
+    return Math.max(nodeGrowthStep(plan, edge.from), nodeGrowthStep(plan, edge.to));
+  }
+
+  function growthLabel() {
+    if (!growthSupportedProjection()) return 'Groei: niet actief in deze projectie';
+    const max = growthStepMax();
+    const step = clampGrowthStep(state.growthStep);
+    if (!state.growthEnabled) return `Groei uit · max ${max}`;
+    if (step === 0) return `stap 0/${max}: raster/titels`;
+    const metrics = collectGrowthMetrics(activeCentralSpec());
+    const structureStep = metrics.maxHeight + 1;
+    if (step <= structureStep) return `stap ${step}/${max}: boom groeit bottom-up`;
+    if (step === structureStep + 1) return `stap ${step}/${max}: OPN-slot 1`;
+    return `stap ${step}/${max}: LEX-projectie en projectiepanelen`;
+  }
+
+  function orderedSubtreeBoxes(layout) {
+    // v4408: render-order is explicit, not an accidental side effect of the
+    // layout recursion or of JavaScript sort stability.  Large background boxes
+    // are drawn first.  Equal-sized boxes use a deterministic spatial tie-break:
+    // top-to-bottom, then left-to-right, then original layout order.
+    return [...layout.boxes]
+      .map((box, index) => ({ box, index }))
+      .filter(item => !item.box.leaf)
+      .sort((a, b) => {
+        const areaDiff = subtreeBoxArea(b.box) - subtreeBoxArea(a.box);
+        if (areaDiff) return areaDiff;
+        const yDiff = a.box.minY - b.box.minY;
+        if (yDiff) return yDiff;
+        const xDiff = a.box.minX - b.box.minX;
+        if (xDiff) return xDiff;
+        return a.index - b.index;
+      });
+  }
+
+  function drawSubtreeBoxes(g, layout, origin, growthPlan = null) {
+    const ordered = orderedSubtreeBoxes(layout).filter(({ box }) => visibleAt(growthPlan, boxGrowthStep(growthPlan, box)));
+    const rectLayer = svgEl('g', { class: 'subtree-box-rect-layer' });
+    const captionLayer = svgEl('g', { class: 'subtree-box-caption-layer' });
+
+    for (const { box } of ordered) {
       const x = px(box.minX - 0.75, origin);
       const y = py(box.minY - 0.55, origin);
       const w = (box.maxX - box.minX + 1.5) * CELL;
       const h = (box.maxY - box.minY + 1.1) * CELL;
-      g.appendChild(svgEl('rect', { x, y, width: w, height: h, rx: 18, class: 'jan-subtree-box' }));
-      g.appendChild(svgEl('text', { x: x + 14, y: y + 24, class: 'jan-box-caption' }, `BOX ${box.label.replace(/^BOX\s+/i, '')}`));
+      rectLayer.appendChild(svgEl('rect', { x, y, width: w, height: h, rx: 18, class: 'jan-subtree-box' }));
     }
+
+    for (const { box } of ordered) {
+      const x = px(box.minX - 0.75, origin);
+      const y = py(box.minY - 0.55, origin);
+      captionLayer.appendChild(svgEl('text', { x: x + 14, y: y + 24, class: 'jan-box-caption' }, `BOX ${box.label.replace(/^BOX\s+/i, '')}`));
+    }
+
+    g.appendChild(rectLayer);
+    g.appendChild(captionLayer);
   }
 
-  function drawOpnTopicalizationSlot(g, layout, origin) {
+  function drawOpnTopicalizationSlot(g, layout, origin, growthPlan = null) {
     if (!layout.topicalizationSlot) return;
+    if (growthPlan?.active && !visibleAt(growthPlan, growthPlan.slotStep)) return;
     const slot = layout.topicalizationSlot;
     const x = px(slot.x, origin);
     const y = py(slot.y, origin);
@@ -892,9 +1058,10 @@
     g.appendChild(svgEl('text', { x, y: y + 5, class: 'opn-slot-label' }, 'vooropplaatsing / topicalisatie'));
   }
 
-  function drawTreeEdges(g, layout, origin) {
+  function drawTreeEdges(g, layout, origin, growthPlan = null) {
     if (!state.showRelations) return;
     for (const edge of layout.edges) {
+      if (!visibleAt(growthPlan, edgeGrowthStep(growthPlan, edge))) continue;
       g.appendChild(svgEl('line', {
         x1: px(edge.fromX, origin), y1: py(edge.fromY, origin) + 18,
         x2: px(edge.toX, origin), y2: py(edge.toY, origin) - 18,
@@ -903,31 +1070,73 @@
     }
   }
 
-  function drawTreeNodes(g, layout, origin, selectable = true) {
-    for (const node of layout.nodes) {
+  function orderedTreeNodes(layout) {
+    // v4408: actual node rendering is also explicit.  Shapes are drawn before
+    // labels.  Within each layer, ties follow spatial order: top-to-bottom,
+    // left-to-right, then original layout order.
+    return [...layout.nodes]
+      .map((node, index) => ({ node, index }))
+      .sort((a, b) => {
+        const yDiff = a.node.y - b.node.y;
+        if (yDiff) return yDiff;
+        const xDiff = a.node.x - b.node.x;
+        if (xDiff) return xDiff;
+        return a.index - b.index;
+      });
+  }
+
+  function nodeRenderClass(node) {
+    return `tree-node ${node.kind === 'leaf' ? 'leaf-node' : (node.kind === 'role' ? 'role-node' : 'cat-node')} ${state.selectedNodeId === node.id ? 'selected' : ''}`;
+  }
+
+  function makeSelectable(group, node, selectable) {
+    if (selectable) group.addEventListener('click', () => selectNode(node.id));
+    return group;
+  }
+
+  function drawTreeNodes(g, layout, origin, selectable = true, growthPlan = null) {
+    const ordered = orderedTreeNodes(layout).filter(({ node }) => visibleAt(growthPlan, nodeGrowthStep(growthPlan, node.id)));
+    const shapeLayer = svgEl('g', { class: 'node-shape-layer' });
+    const labelLayer = svgEl('g', { class: 'node-label-layer' });
+
+    for (const { node } of ordered) {
       const cx = px(node.x, origin);
       const cy = py(node.y, origin);
-      const group = svgEl('g', { class: `tree-node ${node.kind === 'leaf' ? 'leaf-node' : (node.kind === 'role' ? 'role-node' : 'cat-node')} ${state.selectedNodeId === node.id ? 'selected' : ''}`, 'data-node-id': node.id });
+      const group = makeSelectable(svgEl('g', { class: `${nodeRenderClass(node)} node-shape`, 'data-node-id': node.id }), node, selectable);
       if (node.kind === 'leaf') {
         group.appendChild(svgEl('circle', { cx, cy, r: 27, class: 'node-circle' }));
-        group.appendChild(svgEl('text', { x: cx, y: cy - 2, class: 'node-main-label' }, node.label));
-        group.appendChild(svgEl('text', { x: cx, y: cy + 18, class: 'node-sub-label' }, node.cat));
       } else {
         const boxClass = node.kind === 'role-root' ? 'synt-box role-root-box' : (node.kind === 'role' ? 'synt-box role-box' : 'synt-box category-box');
         group.appendChild(svgEl('rect', { x: cx - 52, y: cy - 23, width: 104, height: 46, rx: 13, class: boxClass }));
+      }
+      shapeLayer.appendChild(group);
+    }
+
+    for (const { node } of ordered) {
+      const cx = px(node.x, origin);
+      const cy = py(node.y, origin);
+      const group = makeSelectable(svgEl('g', { class: `${nodeRenderClass(node)} node-label`, 'data-node-id': node.id }), node, selectable);
+      if (node.kind === 'leaf') {
+        group.appendChild(svgEl('text', { x: cx, y: cy - 2, class: 'node-main-label' }, node.label));
+        group.appendChild(svgEl('text', { x: cx, y: cy + 18, class: 'node-sub-label' }, node.cat));
+      } else {
         group.appendChild(svgEl('text', { x: cx, y: cy + 5, class: 'box-label' }, node.label));
       }
-      if (selectable) group.addEventListener('click', () => selectNode(node.id));
-      g.appendChild(group);
+      labelLayer.appendChild(group);
     }
+
+    g.appendChild(shapeLayer);
+    g.appendChild(labelLayer);
   }
 
   function drawSyntaxTree(g, origin, options = {}) {
     const layout = getSyntaxLayout();
-    drawSubtreeBoxes(g, layout, origin);
-    drawTreeEdges(g, layout, origin);
-    drawOpnTopicalizationSlot(g, layout, origin);
-    drawTreeNodes(g, layout, origin, options.selectable !== false);
+    const growthPlan = growthPlanForLayout(layout);
+    layout.__growthPlan = growthPlan;
+    drawSubtreeBoxes(g, layout, origin, growthPlan);
+    drawTreeEdges(g, layout, origin, growthPlan);
+    drawOpnTopicalizationSlot(g, layout, origin, growthPlan);
+    drawTreeNodes(g, layout, origin, options.selectable !== false, growthPlan);
     return layout;
   }
 
@@ -1053,11 +1262,13 @@
       .map(id => functionalNodes.find(n => n.id === id)?.label || id)
       .join(' + ') || 'role-boxen';
     if (options.showTitle !== false) drawAxisTitle(g, origin.x - 180, origin.y - 70, `OPN · functionele structuur · ${rootLabel} → ${roleNames} · ${state.functionalOrder}`);
-    drawAxisTitle(g, origin.x - 176, origin.y - 48, `v4405 · ${branchModeLabel()} · left/right stuurt vrije plaatsing`);
-    drawSubtreeBoxes(g, layout, origin);
-    drawTreeEdges(g, layout, origin);
-    drawOpnTopicalizationSlot(g, layout, origin);
-    drawTreeNodes(g, layout, origin, options.selectable !== false);
+    drawAxisTitle(g, origin.x - 176, origin.y - 48, `v4408 · ${branchModeLabel()} · left/right stuurt vrije plaatsing`);
+    const growthPlan = growthPlanForLayout(layout);
+    layout.__growthPlan = growthPlan;
+    drawSubtreeBoxes(g, layout, origin, growthPlan);
+    drawTreeEdges(g, layout, origin, growthPlan);
+    drawOpnTopicalizationSlot(g, layout, origin, growthPlan);
+    drawTreeNodes(g, layout, origin, options.selectable !== false, growthPlan);
     return layout;
   }
 
@@ -1067,16 +1278,24 @@
     drawAxisTitle(g, origin.x - 170, origin.y - 76, state.centerMode === 'functional' ? `CENTRAAL · OPN-functioneel · structure-config · ${state.functionalOrder}` : `CENTRAAL · OPN-syntaxboom · structure-config · ${state.functionalOrder}`);
 
     let sourceMap = null;
+    let centralLayout = null;
     if (state.centerMode === 'functional') {
-      const layout = drawFunctional(g, origin, { showTitle: false });
-      sourceMap = layoutNodeMap(layout, origin);
+      centralLayout = drawFunctional(g, origin, { showTitle: false });
+      sourceMap = layoutNodeMap(centralLayout, origin);
     } else {
-      const layout = drawSyntaxTree(g, origin);
-      sourceMap = layoutNodeMap(layout, origin);
+      centralLayout = drawSyntaxTree(g, origin);
+      sourceMap = layoutNodeMap(centralLayout, origin);
     }
 
-    drawLexAxis(g, 210, 185, activeLexItems(), sourceMap);
-    drawSyntaxRules(g, 1240, 180);
+    const growthPlan = centralLayout?.__growthPlan;
+    const showProjectionPanels = !growthPlan?.active || visibleAt(growthPlan, growthPlan.projectionStep);
+    if (showProjectionPanels) {
+      drawLexAxis(g, 210, 185, activeLexItems(), sourceMap);
+      drawSyntaxRules(g, 1240, 180);
+    } else {
+      drawAxisTitle(g, 165, 116, `Groei-presentatie · ${growthLabel()}`);
+      drawAxisTitle(g, 1210, 116, 'SYNTAX-projectie verschijnt in de laatste stap');
+    }
     els.svg.appendChild(g);
   }
 
@@ -1137,9 +1356,10 @@
     els.titleLine.textContent = `${activeSentenceText()} · ${state.projectionLabel || projectionLabel()} · ${state.centerMode === 'syntax' ? 'OPN-syntaxboom' : 'OPN-functioneel'}`;
     els.metaLine.textContent = `${state.example.phase} · centrale boom invariant · LEX=${activeSentenceText()} · HTML-input=examples-input.html · lexicon=lexicon-config.html · editor=examples-editor.html`;
     if (els.sentencePreview) els.sentencePreview.innerHTML = activeSentenceHtml();
-    els.actionFeedback.textContent = state.projection === 'source'
+    const baseFeedback = state.projection === 'source'
       ? 'Bron toont de gekozen OPN-bron uit structure-config.html. Syntax en functioneel gebruiken bottom-up recursieve box-layout; left/right stuurt beide layouts; takvolgorde kan globaal, compact-auto of align-auto zijn.'
       : 'Faseversie: eerst structure-config, dan voorbeeldzinnen die naar die sources projecteren, dan lokale LEX-regel.';
+    els.actionFeedback.textContent = state.growthEnabled ? `${baseFeedback} · ${growthLabel()}` : baseFeedback;
     els.projectionHelp.textContent = helpText();
     els.explainHeading.textContent = `Uitleg · ${activeSentenceText()}`;
     els.explainText.textContent = state.example.id === 'hond-bijt-man'
@@ -1208,6 +1428,30 @@
     if (els.showGridInput) els.showGridInput.checked = state.showGrid;
     if (els.showRelationsInput) els.showRelationsInput.checked = state.showRelations;
     if (els.showLabelsInput) els.showLabelsInput.checked = state.showLabels;
+    const growthSupported = growthSupportedProjection();
+    const growthMax = growthSupported ? growthStepMax() : 0;
+    if (growthSupported) {
+      state.growthStep = clampGrowthStep(state.growthStep);
+      if (state.growthStep > 0) state.lastSupportedGrowthStep = state.growthStep;
+    }
+    if (els.growthEnabledInput) {
+      els.growthEnabledInput.checked = state.growthEnabled;
+      els.growthEnabledInput.disabled = !growthSupported;
+    }
+    if (els.growthStepInput) {
+      els.growthStepInput.min = 0;
+      els.growthStepInput.max = growthMax;
+      els.growthStepInput.value = growthSupported ? state.growthStep : state.lastSupportedGrowthStep;
+      els.growthStepInput.disabled = !state.growthEnabled || !growthSupported;
+    }
+    if (els.growthStepLabel) els.growthStepLabel.textContent = growthLabel();
+    if (els.growthPrevButton) els.growthPrevButton.disabled = !state.growthEnabled || !growthSupported || state.growthStep <= 0;
+    if (els.growthNextButton) els.growthNextButton.disabled = !state.growthEnabled || !growthSupported || state.growthStep >= growthMax;
+    if (els.growthResetButton) els.growthResetButton.disabled = !state.growthEnabled || !growthSupported;
+    if (els.growthPlayButton) {
+      els.growthPlayButton.disabled = !growthSupported;
+      els.growthPlayButton.textContent = state.growthTimer ? 'Pauze' : 'Play';
+    }
     document.querySelectorAll('.projection-tab').forEach(tab => {
       const active = tab.dataset.projection === state.projection;
       tab.classList.toggle('active', active);
@@ -1284,7 +1528,7 @@
   function registerEvents() {
     document.querySelectorAll('.projection-tab').forEach(tab => {
       tab.addEventListener('click', () => {
-        state.projection = tab.dataset.projection || 'axes';
+        setProjection(tab.dataset.projection || 'axes');
         render();
       });
     });
@@ -1323,6 +1567,24 @@
     els.showGridInput?.addEventListener('change', event => { state.showGrid = event.target.checked; render(); });
     els.showRelationsInput?.addEventListener('change', event => { state.showRelations = event.target.checked; render(); });
     els.showLabelsInput?.addEventListener('change', event => { state.showLabels = event.target.checked; render(); });
+    els.growthEnabledInput?.addEventListener('change', event => {
+      state.growthEnabled = event.target.checked;
+      if (state.growthEnabled && state.growthStep === 0) state.growthStep = 1;
+      if (!state.growthEnabled) stopGrowthPlayback();
+      render();
+    });
+    els.growthStepInput?.addEventListener('input', event => setGrowthStep(event.target.value));
+    els.growthPrevButton?.addEventListener('click', () => { state.growthEnabled = true; setGrowthStep(state.growthStep - 1); });
+    els.growthNextButton?.addEventListener('click', () => { state.growthEnabled = true; setGrowthStep(state.growthStep + 1); });
+    els.growthResetButton?.addEventListener('click', () => { state.growthEnabled = true; stopGrowthPlayback(); setGrowthStep(0); });
+    els.growthPlayButton?.addEventListener('click', () => {
+      if (state.growthTimer) { stopGrowthPlayback(); render(); return; }
+      if (!growthSupportedProjection()) return;
+      state.growthEnabled = true;
+      if (state.growthStep >= growthStepMax()) state.growthStep = 0;
+      state.growthTimer = setInterval(() => setGrowthStep(state.growthStep + 1), 850);
+      render();
+    });
     els.resetExampleButton?.addEventListener('click', () => { state.selectedNodeId = null; render(); });
     els.fitButton?.addEventListener('click', () => { els.svg.setAttribute('viewBox', '0 0 1500 900'); });
     els.downloadJsonButton?.addEventListener('click', downloadJson);
@@ -1341,9 +1603,12 @@
       });
     }
     window.addEventListener('keydown', event => {
-      if (event.key === '1') state.projection = 'axes';
-      else if (event.key === '2') state.projection = 'source';
-      else if (event.key === '3') state.projection = 'lex';
+      if (event.key === '1') setProjection('axes');
+      else if (event.key === '2') setProjection('source');
+      else if (event.key === '3') setProjection('lex');
+      else if (event.key.toLowerCase() === 'g') { state.growthEnabled = !state.growthEnabled; if (state.growthEnabled && state.growthStep === 0) state.growthStep = 1; }
+      else if (event.key.toLowerCase() === 'n') { state.growthEnabled = true; setGrowthStep(state.growthStep + 1, false); }
+      else if (event.key.toLowerCase() === 'p') { state.growthEnabled = true; setGrowthStep(state.growthStep - 1, false); }
       else if (event.key.toLowerCase() === 'f') els.svg.setAttribute('viewBox', '0 0 1500 900');
       else return;
       render();
@@ -1356,7 +1621,7 @@
     await loadExamplesFromHtml();
     render();
     window.__opengraphBoot = { version: VERSION, loaded: true };
-    // v4405: lokale ontwikkelviewer gebruikt geen PWA-cache meer.
+    // v4408: lokale ontwikkelviewer gebruikt geen PWA-cache meer.
     // Oude service workers worden actief verwijderd, zodat structure-config/examples-input
     // niet per ongeluk uit een oudere versie blijven komen.
     if ('serviceWorker' in navigator) {

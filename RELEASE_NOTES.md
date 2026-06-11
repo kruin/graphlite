@@ -1,20 +1,58 @@
 # Release notes
 
+## v4408
+
+- Correctie groei/projectiewissel: LEX is geen groei-projectie en mag de opgeslagen groeistap niet naar 0 clampen.
+- Terugwisselen van LEX naar Assen/Bron/LOG herstelt nu de laatst geldige groeistap; de boom blijft zichtbaar.
+- `setProjection(...)` bewaart groeistatus expliciet en stopt alleen playback bij niet-ondersteunde projecties.
+
+## v4407
+
+- Groei-presentatie toegevoegd aan de viewer.
+- Nieuwe controls in het projectiepaneel: `Groei`, stap-slider, `0`, vorige, `Play`, volgende.
+- Groei werkt vanuit de vooraf berekende layout: de boom verschuift niet tijdens het afspelen.
+- Bottom-up groeivolgorde: leaves → categorie/role-nodes en subtree-boxen → OPN-slot 1 → LEX-projectie en projectiepanelen.
+- Stap-3/render blijft gescheiden van groei-presentatie: renderlaag bepaalt z-order; groei bepaalt alleen welke reeds berekende elementen zichtbaar zijn.
+- Sneltoetsen: `g` toggelt groei, `n` volgende stap, `p` vorige stap.
+- Docs bijgewerkt met groei/render-onderscheid.
+
+## v4406
+
+- Render-volgorde expliciet gemaakt.
+- Subtree-boxen: eerst alle rects, daarna alle captions.
+- Equal-size subtree-box tie-break vastgelegd: boven→beneden, links→rechts, daarna oorspronkelijke layoutvolgorde.
+- Node-rendering in twee lagen: eerst shapes, daarna labels.
+- Interne helper `renderWith` hernoemd naar `layoutWithChildOrder`, omdat die layoutvarianten berekent en niet rendert.
+- Docs bijgewerkt met stap-3/render-volgorde.
+
 ## v4405
 
-- `Flipdoel` uitgebreid naar per-vertakking beslissen.
-- Default gewijzigd naar `auto-compact`.
-- Tweede doel toegevoegd: `auto-align` voor verticale alignment van rollen zoals `subject/AGENS` en `object/PATIENS`.
-- Menu-overrides toegevoegd voor `Top S/CLAUSE`, `VP / ARG-STRUCT` en `Overig`.
-- JSON/.OPN-export neemt branch-overrides mee.
-- Docs bijgewerkt.
+- Root/startdiagnose aangescherpt.
+- `reset-cache.html` toegevoegd voor oude service workers/caches.
+- `debug.html` controleert nu of `index.html` echt de viewer is.
+- `docs/index.html` vervangen door `docs/docs-home.html`, zodat `/docs` niet per ongeluk de viewer-root overschrijft.
+- `viewer.html` toegevoegd als fallback-entry.
 
-## v4405
+## v4404/v4403
+
+- Herstelbuilds voor startproblemen na v4402.
+- `.nojekyll` toegevoegd voor GitHub Pages: statische deploy zonder Jekyll-build.
+- `__pycache__` en `.pyc` uit de ZIP verwijderd.
+- `.gitignore` toegevoegd voor lokale cachebestanden.
+- `server_nocache.py` accepteert optioneel een poortargument en stuurt extra no-cache/nosniff headers.
+- `start-local-viewer.bat` zet `PYTHONDONTWRITEBYTECODE=1`.
+- Inline startdiagnose toegevoegd.
+
+## v4402
+
+- Flipdoel per vertakking toegevoegd: compact, align, normal, flip-all.
+- Per-vertakking-config: top, VP/ARG-STRUCT, overig.
+
+## v4401
 
 - `docs/`-map toegevoegd als canonieke projectcontext.
 - Docs-knop toegevoegd aan viewer.
 - Documenten toegevoegd voor app-context, design decisions, layout, structure-config, lexicon/examples, current state, known issues, next steps en developer notes.
-- Functionele app-logica gelijk aan v4400.
 
 ## v4400
 
@@ -87,20 +125,3 @@
 ## v4383
 
 - Cache-issue rond functionele structuur opgelost via geversioneerde JS/CSS.
-
-## v4405
-- Herstelbuild voor startproblemen na v4402.
-- `.nojekyll` toegevoegd voor GitHub Pages: statische deploy zonder Jekyll-build.
-- `__pycache__` en `.pyc` uit de ZIP verwijderd.
-- `.gitignore` toegevoegd voor lokale cachebestanden.
-- `server_nocache.py` accepteert nu optioneel een poortargument en stuurt extra no-cache/nosniff headers.
-- `start-local-viewer.bat` zet `PYTHONDONTWRITEBYTECODE=1`, zodat Python geen `__pycache__` aanmaakt.
-- `debug.html` toegevoegd om lokaal/GitHub Pages te testen of alle assets laden.
-- Inline startdiagnose toegevoegd: JavaScript-startfouten verschijnen in de statusregel.
-
-
-## v4405
-- Root/startdiagnose aangescherpt.
-- `reset-cache.html` toegevoegd voor oude service workers/caches.
-- `debug.html` controleert nu of `index.html` echt de viewer is.
-- `docs/.nojekyll` toegevoegd voor GitHub Pages wanneer per ongeluk `/docs` als bron wordt gebruikt.

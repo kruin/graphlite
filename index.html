@@ -1,6 +1,6 @@
 <!doctype html>
-<!-- OPENGRAPH_ROOT_VIEWER_INDEX_v4405: this root index is the app, not docs. -->
-<html lang="nl" data-opengraph-app="viewer" data-version="v4405">
+<!-- OPENGRAPH_ROOT_VIEWER_INDEX_v4408: this root index is the app, not docs. -->
+<html lang="nl" data-opengraph-app="viewer" data-version="v4408">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
@@ -9,18 +9,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#0f172a">
   <meta name="description" content="OpenGraph Lite Viewer: vrije JAN-bronknopen, edits, LEX-plaatsingsregels en projecties.">
-  <title>OpenGraph Lite Viewer v4405</title>
+  <title>OpenGraph Lite Viewer v4408</title>
   <link rel="icon" href="favicon.ico" sizes="any">
   <link rel="icon" href="icons/icon-192.svg" type="image/svg+xml">
-  <!-- v4405: manifest disabled in local/dev build to avoid PWA/service-worker confusion. -->
+  <!-- v4408: manifest disabled in local/dev build to avoid PWA/service-worker confusion. -->
   <!-- <link rel="manifest" href="manifest.webmanifest"> -->
-  <link rel="stylesheet" href="styles.css?v4405">
+  <link rel="stylesheet" href="styles.css?v4408">
 </head>
 <body>
   <header class="app-header">
     <div>
       <div class="eyebrow">OpenGraph · JAN · Open Notation</div>
-      <h1>OpenGraph Lite Viewer <span class="version-tag">v4405</span></h1>
+      <h1>OpenGraph Lite Viewer <span class="version-tag">v4408</span></h1>
       <p class="header-subtitle">Redesign: eerst syntax-tree, daarna LEX-projectie, daarna lokale LEX-regel.</p>
     </div>
     <button id="installButton" class="ghost hidden" type="button">Installeer</button>
@@ -33,12 +33,12 @@
         <select id="exampleSelect" aria-label="Voorbeeld kiezen"></select>
       </label>
       <div class="input-sentence-tools" aria-label="Zin-input">
-        <a class="button-link" href="examples-input.html?v4405" title="Open de HTML-inputfile met voorbeeldzinnen, subject vet en object cursief">HTML-input</a>
-        <a class="button-link" href="examples-editor.html?v4405" title="Gebruiksvriendelijke editor voor voorbeeldzinnen: toevoegen, verwijderen, subject/object wijzigen en HTML downloaden">Voorbeeldeditor</a>
-        <a class="button-link" href="lexicon-config.html?v4405" title="Bescheiden lexicon voor voorbeeldzinnen">Lexicon</a>
-        <a class="button-link" href="structure-editor.html?v4405" title="Bewerk eerst syntax-config en functional-config">Structure-editor</a>
-        <a class="button-link" href="docs/docs-home.html?v4405" title="Projectcontext, layoutspec en release notes">Docs</a>
-        <a class="button-link" href="reset-cache.html?v4405" title="Verwijder browsercache/service worker en open de viewer opnieuw">Reset cache</a>
+        <a class="button-link" href="examples-input.html?v4408" title="Open de HTML-inputfile met voorbeeldzinnen, subject vet en object cursief">HTML-input</a>
+        <a class="button-link" href="examples-editor.html?v4408" title="Gebruiksvriendelijke editor voor voorbeeldzinnen: toevoegen, verwijderen, subject/object wijzigen en HTML downloaden">Voorbeeldeditor</a>
+        <a class="button-link" href="lexicon-config.html?v4408" title="Bescheiden lexicon voor voorbeeldzinnen">Lexicon</a>
+        <a class="button-link" href="structure-editor.html?v4408" title="Bewerk eerst syntax-config en functional-config">Structure-editor</a>
+        <a class="button-link" href="docs/docs-home.html?v4408" title="Projectcontext, layoutspec en release notes">Docs</a>
+        <a class="button-link" href="reset-cache.html?v4408" title="Verwijder browsercache/service worker en open de viewer opnieuw">Reset cache</a>
         <button id="swapRolesButton" type="button" title="Wissel de gekozen subject- en objectvulling. Vet blijft subject; cursief blijft object.">Wissel S/O</button>
       </div>
       <div class="button-row compact-actions">
@@ -95,6 +95,18 @@
             <label><input id="showRelationsInput" type="checkbox" checked> Relaties</label>
             <label><input id="showLabelsInput" type="checkbox" checked> Labels</label>
             <label><input id="snapInput" type="checkbox" checked> Snap</label>
+          </div>
+          <div class="growth-controls" aria-label="Groei-presentatie">
+            <label class="growth-toggle"><input id="growthEnabledInput" type="checkbox"> Groei</label>
+            <input id="growthStepInput" class="growth-range" type="range" min="0" max="1" value="0" step="1" aria-label="Groei-stap">
+            <div id="growthStepLabel" class="growth-step-label">Groei uit</div>
+            <div class="button-row growth-buttons">
+              <button id="growthResetButton" type="button" title="Terug naar stap 0">0</button>
+              <button id="growthPrevButton" type="button" title="Vorige groei-stap">←</button>
+              <button id="growthPlayButton" type="button" title="Speel groei-presentatie af">Play</button>
+              <button id="growthNextButton" type="button" title="Volgende groei-stap">→</button>
+            </div>
+            <p class="inline-help">Groei berekent eerst de volledige layout en toont daarna bottom-up steeds meer nodes, boxen en projecties. Posities blijven dus stabiel.</p>
           </div>
         </section>
 
@@ -160,14 +172,14 @@
       </details>
       <details>
         <summary>Bediening</summary>
-        <p><strong>OPN/Assen</strong>: kies centraal tussen OPN-syntaxboom en OPN-functionele structuur. De syntaxboom wordt uit <code>structure-config.html</code> gelezen en bottom-up berekend: eerst leaf/subtree-boxen, daarna plaatsing, daarna renderen. Projecties worden horizontaal naar hun as getekend. De functionele structuur gebruikt dezelfde recursieve werkwijze, is n-ary, heeft ook een eigen LEX-projectie, reserveert slot 1 voor vooropplaatsing/topicalisatie en heeft configkeuzes <strong>left-first</strong>/<strong>right-first</strong> en <strong>flipdoel compact/align en flip-config per vertakking</strong>. <strong>Voorbeeld-input</strong>: <code>examples-input.html</code> bevat de zinnen met <strong>subject vet</strong> en <em>object cursief</em>. <strong>LEX</strong>: gebruik de orderlijst of plaatsingsregel.</p>
+        <p><strong>OPN/Assen</strong>: kies centraal tussen OPN-syntaxboom en OPN-functionele structuur. De syntaxboom wordt uit <code>structure-config.html</code> gelezen en bottom-up berekend: eerst leaf/subtree-boxen, daarna plaatsing, daarna renderen. Projecties worden horizontaal naar hun as getekend. <strong>Groei</strong> presenteert dezelfde berekende layout stapsgewijs: eerst leaves, dan hogere categorieën/boxen, daarna OPN-slot en LEX-projectie. De functionele structuur gebruikt dezelfde recursieve werkwijze, is n-ary, heeft ook een eigen LEX-projectie, reserveert slot 1 voor vooropplaatsing/topicalisatie en heeft configkeuzes <strong>left-first</strong>/<strong>right-first</strong> en <strong>flipdoel compact/align en flip-config per vertakking</strong>. <strong>Voorbeeld-input</strong>: <code>examples-input.html</code> bevat de zinnen met <strong>subject vet</strong> en <em>object cursief</em>. <strong>LEX</strong>: gebruik de orderlijst of plaatsingsregel.</p>
       </details>
     </section>
   </main>
 
 
   <script>
-    window.__opengraphBoot = { version: 'v4405', loaded: false, marker: 'viewer-index' };
+    window.__opengraphBoot = { version: 'v4408', loaded: false, marker: 'viewer-index' };
     function ogStatus(message) {
       var target = document.getElementById('actionFeedback') || document.body;
       if (target) target.textContent = message;
@@ -180,10 +192,10 @@
     });
     setTimeout(function() {
       if (!window.__opengraphBoot || !window.__opengraphBoot.loaded) {
-        ogStatus('Viewer start niet volledig. Gebruik Reset cache of open http://127.0.0.1:8088/reset-cache.html?v4405.');
+        ogStatus('Viewer start niet volledig. Gebruik Reset cache of open http://127.0.0.1:8088/reset-cache.html?v4408.');
       }
     }, 2500);
   </script>
-  <script src="viewer.js?v4405" defer></script>
+  <script src="viewer.js?v4408" defer></script>
 </body>
 </html>

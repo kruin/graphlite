@@ -1,4 +1,4 @@
-# Design decisions v4405
+# Design decisions v4408
 
 1. De boom wordt niet handmatig top-down getekend.
 2. De boom wordt bottom-up recursief opgebouwd.
@@ -14,10 +14,15 @@
 12. `Wissel S/O` wisselt lexicale vulling, niet de structurele rollen.
 13. `Layout order` bepaalt de zoekrichting van vrije plaatsing: `left-first` of `right-first`.
 14. Flip is layout, geen grammaticale transformatie.
-15. Vanaf v4405 is flip configureerbaar per vertakking.
+15. Vanaf v4402 is flip configureerbaar per vertakking.
 16. Default is `auto-compact`: kies per branch de kleinste bruikbare layout.
 17. Tweede doel is `auto-align`: probeer verticale rolcorridors beter te alignen, bijvoorbeeld `object/PATIENS` en `subject/AGENS`.
 18. Handmatige branch-overrides bestaan voor `Top S/CLAUSE`, `VP / ARG-STRUCT` en `Overig`.
 19. Topicalisatie wordt voorbereid via een slot tussen beginknoop en bovenste boomknoop.
 20. `slot 0` is Comp/(om)dat op LEX, boven de S/CLAUSE-box.
 21. `slot 1` is vooropplaatsing/topicalisatie tussen startknoop en bovenste boomlaag.
+
+22. Vanaf v4408 is groei-presentatie een aparte presentatielaag bovenop de berekende layout.
+23. Groei mag de layout niet herberekenen en geen x/y-posities wijzigen.
+24. Groei gebruikt bottom-up node-hoogte: leaves eerst, root laatst; daarna verschijnen OPN-slot en projecties.
+25. Render-volgorde blijft z-order; groei-volgorde blijft didactische presentatievolgorde.

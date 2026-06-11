@@ -658,7 +658,7 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
   color: #7c2d12;
 }
 
-/* v4405: compact menu for per-branch flip configuration. */
+/* v4408: compact menu for per-branch flip configuration. */
 .branch-config-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -671,3 +671,39 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
 }
 .mini-field span { font-size: 11px; }
 .mini-field select { min-height: 34px; font-size: 12px; }
+
+
+.growth-controls {
+  display: grid;
+  gap: 0.45rem;
+  margin-top: 0.7rem;
+  padding: 0.62rem;
+  border: 1px solid var(--line);
+  border-radius: 0.85rem;
+  background: color-mix(in srgb, var(--panel), var(--panel-2) 48%);
+}
+.growth-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-weight: 850;
+  color: var(--text);
+}
+.growth-range {
+  width: 100%;
+  accent-color: var(--accent);
+}
+.growth-step-label {
+  min-height: 1.3rem;
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+.growth-buttons {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+.growth-buttons button {
+  min-height: 2.05rem;
+  padding: 0.2rem 0.35rem;
+}
