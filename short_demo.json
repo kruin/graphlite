@@ -1,0 +1,413 @@
+{
+  "format": "opengraph-greedy-grow-demo",
+  "format_version": 5,
+  "title": "OpenGraph Greedy Grow — korte HOR/VER-vrije demo",
+  "project": {
+    "name": "opengraph-greedy-grow",
+    "language": "nl",
+    "stem": "short_hor_ver_free_nodes"
+  },
+  "grid": {
+    "rows": 17,
+    "columns": 17,
+    "cell_width": 28,
+    "cell_height": 28,
+    "origin": {
+      "x": 0,
+      "y": 0
+    },
+    "fit_content": true,
+    "grow_with_step": true,
+    "show_grid": true,
+    "show_axes_through_origin": true,
+    "major_every": 5,
+    "margin": 2
+  },
+  "freedom": {
+    "hor_ver_free": true,
+    "x_line_unique": true,
+    "y_line_unique": true,
+    "diagonal_free": "none"
+  },
+  "greedy": {
+    "count": 12,
+    "config_count": 12,
+    "max": 30,
+    "generation_max": 12,
+    "no_limit": true,
+    "style": "free-hor-ver-demo",
+    "rule": "hor-ver-free",
+    "diagonal_free": "none"
+  },
+  "grow": {
+    "interval_ms": 700,
+    "start_step": 0,
+    "auto_start": false,
+    "reveal_edges": "when_both_nodes_visible",
+    "stop_at_end": true,
+    "loop": false,
+    "undo_redo_per_step": true,
+    "last_step_equals_static": true
+  },
+  "style": {
+    "node_radius": 6,
+    "show_labels": true,
+    "auto_size": true,
+    "show_edges": true,
+    "free_nodes": true,
+    "hor_ver_free": true
+  },
+  "nodes": [
+    {
+      "id": "n000",
+      "label": "0",
+      "order": 0,
+      "step": 0,
+      "kind": "origin-free-node",
+      "model": {
+        "x": 0,
+        "y": 0
+      },
+      "grid": {
+        "x": 0,
+        "y": 0
+      },
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "freedom": {
+        "x_line": 0,
+        "y_line": 0
+      }
+    },
+    {
+      "id": "n001",
+      "label": "1",
+      "order": 1,
+      "step": 1,
+      "kind": "generated-free-node",
+      "model": {
+        "x": 1,
+        "y": -1
+      },
+      "grid": {
+        "x": 1,
+        "y": -1
+      },
+      "position": {
+        "x": 28,
+        "y": -28
+      },
+      "freedom": {
+        "x_line": 1,
+        "y_line": -1
+      }
+    },
+    {
+      "id": "n002",
+      "label": "2",
+      "order": 2,
+      "step": 2,
+      "kind": "generated-free-node",
+      "model": {
+        "x": -1,
+        "y": -2
+      },
+      "grid": {
+        "x": -1,
+        "y": -2
+      },
+      "position": {
+        "x": -28,
+        "y": -56
+      },
+      "freedom": {
+        "x_line": -1,
+        "y_line": -2
+      }
+    },
+    {
+      "id": "n003",
+      "label": "3",
+      "order": 3,
+      "step": 3,
+      "kind": "generated-free-node",
+      "model": {
+        "x": -2,
+        "y": 1
+      },
+      "grid": {
+        "x": -2,
+        "y": 1
+      },
+      "position": {
+        "x": -56,
+        "y": 28
+      },
+      "freedom": {
+        "x_line": -2,
+        "y_line": 1
+      }
+    },
+    {
+      "id": "n004",
+      "label": "4",
+      "order": 4,
+      "step": 4,
+      "kind": "generated-free-node",
+      "model": {
+        "x": 2,
+        "y": 2
+      },
+      "grid": {
+        "x": 2,
+        "y": 2
+      },
+      "position": {
+        "x": 56,
+        "y": 56
+      },
+      "freedom": {
+        "x_line": 2,
+        "y_line": 2
+      }
+    },
+    {
+      "id": "n005",
+      "label": "5",
+      "order": 5,
+      "step": 5,
+      "kind": "generated-free-node",
+      "model": {
+        "x": 3,
+        "y": -3
+      },
+      "grid": {
+        "x": 3,
+        "y": -3
+      },
+      "position": {
+        "x": 84,
+        "y": -84
+      },
+      "freedom": {
+        "x_line": 3,
+        "y_line": -3
+      }
+    },
+    {
+      "id": "n006",
+      "label": "6",
+      "order": 6,
+      "step": 6,
+      "kind": "generated-free-node",
+      "model": {
+        "x": -3,
+        "y": -4
+      },
+      "grid": {
+        "x": -3,
+        "y": -4
+      },
+      "position": {
+        "x": -84,
+        "y": -112
+      },
+      "freedom": {
+        "x_line": -3,
+        "y_line": -4
+      }
+    },
+    {
+      "id": "n007",
+      "label": "7",
+      "order": 7,
+      "step": 7,
+      "kind": "generated-free-node",
+      "model": {
+        "x": -4,
+        "y": 3
+      },
+      "grid": {
+        "x": -4,
+        "y": 3
+      },
+      "position": {
+        "x": -112,
+        "y": 84
+      },
+      "freedom": {
+        "x_line": -4,
+        "y_line": 3
+      }
+    },
+    {
+      "id": "n008",
+      "label": "8",
+      "order": 8,
+      "step": 8,
+      "kind": "generated-free-node",
+      "model": {
+        "x": 4,
+        "y": 4
+      },
+      "grid": {
+        "x": 4,
+        "y": 4
+      },
+      "position": {
+        "x": 112,
+        "y": 112
+      },
+      "freedom": {
+        "x_line": 4,
+        "y_line": 4
+      }
+    },
+    {
+      "id": "n009",
+      "label": "9",
+      "order": 9,
+      "step": 9,
+      "kind": "generated-free-node",
+      "model": {
+        "x": 5,
+        "y": -5
+      },
+      "grid": {
+        "x": 5,
+        "y": -5
+      },
+      "position": {
+        "x": 140,
+        "y": -140
+      },
+      "freedom": {
+        "x_line": 5,
+        "y_line": -5
+      }
+    },
+    {
+      "id": "n010",
+      "label": "10",
+      "order": 10,
+      "step": 10,
+      "kind": "generated-free-node",
+      "model": {
+        "x": -5,
+        "y": -6
+      },
+      "grid": {
+        "x": -5,
+        "y": -6
+      },
+      "position": {
+        "x": -140,
+        "y": -168
+      },
+      "freedom": {
+        "x_line": -5,
+        "y_line": -6
+      }
+    },
+    {
+      "id": "n011",
+      "label": "11",
+      "order": 11,
+      "step": 11,
+      "kind": "generated-free-node",
+      "model": {
+        "x": -6,
+        "y": 5
+      },
+      "grid": {
+        "x": -6,
+        "y": 5
+      },
+      "position": {
+        "x": -168,
+        "y": 140
+      },
+      "freedom": {
+        "x_line": -6,
+        "y_line": 5
+      }
+    }
+  ],
+  "edges": [],
+  "steps": [
+    {
+      "step": 0,
+      "node": "n000",
+      "edge": null,
+      "text": "Start: toon de eerste HOR/VER-vrije knoop."
+    },
+    {
+      "step": 1,
+      "node": "n001",
+      "edge": null,
+      "text": "Grow: voeg HOR/VER-vrije knoop 1 toe."
+    },
+    {
+      "step": 2,
+      "node": "n002",
+      "edge": null,
+      "text": "Grow: voeg HOR/VER-vrije knoop 2 toe."
+    },
+    {
+      "step": 3,
+      "node": "n003",
+      "edge": null,
+      "text": "Grow: voeg HOR/VER-vrije knoop 3 toe."
+    },
+    {
+      "step": 4,
+      "node": "n004",
+      "edge": null,
+      "text": "Grow: voeg HOR/VER-vrije knoop 4 toe."
+    },
+    {
+      "step": 5,
+      "node": "n005",
+      "edge": null,
+      "text": "Grow: voeg HOR/VER-vrije knoop 5 toe."
+    },
+    {
+      "step": 6,
+      "node": "n006",
+      "edge": null,
+      "text": "Grow: voeg HOR/VER-vrije knoop 6 toe."
+    },
+    {
+      "step": 7,
+      "node": "n007",
+      "edge": null,
+      "text": "Grow: voeg HOR/VER-vrije knoop 7 toe."
+    },
+    {
+      "step": 8,
+      "node": "n008",
+      "edge": null,
+      "text": "Grow: voeg HOR/VER-vrije knoop 8 toe."
+    },
+    {
+      "step": 9,
+      "node": "n009",
+      "edge": null,
+      "text": "Grow: voeg HOR/VER-vrije knoop 9 toe."
+    },
+    {
+      "step": 10,
+      "node": "n010",
+      "edge": null,
+      "text": "Grow: voeg HOR/VER-vrije knoop 10 toe."
+    },
+    {
+      "step": 11,
+      "node": "n011",
+      "edge": null,
+      "text": "Grow: voeg HOR/VER-vrije knoop 11 toe."
+    }
+  ]
+}

@@ -1,0 +1,1 @@
+Variant van het kleine projectieveld. Dit ondersteunt de uitleg dat projecties op een rand of as kunnen landen, zonder de bronboom zelf te veranderen.

@@ -1,0 +1,345 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>OpenGraph structure-editor v4405</title>
+  <style>
+    :root { color-scheme: light; --bg:#f8fafc; --panel:#fff; --text:#0f172a; --muted:#64748b; --line:#cbd5e1; --accent:#1d4ed8; --danger:#b91c1c; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--bg); color:var(--text); }
+    header { padding:22px 28px; background:#0f172a; color:white; }
+    header h1 { margin:0 0 6px; font-size:clamp(1.35rem,2.4vw,2rem); }
+    header p { margin:0; color:#cbd5e1; line-height:1.45; max-width:1100px; }
+    main { padding:18px; max-width:1280px; margin:0 auto; display:grid; gap:16px; }
+    .panel { background:var(--panel); border:1px solid var(--line); border-radius:18px; box-shadow:0 12px 26px rgba(15,23,42,.08); }
+    .panel-header { padding:14px 16px; border-bottom:1px solid var(--line); display:flex; gap:10px; align-items:center; justify-content:space-between; flex-wrap:wrap; }
+    .panel-header h2 { margin:0; font-size:1.05rem; }
+    .panel-body { padding:16px; }
+    .grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+    @media (max-width:900px) { .grid { grid-template-columns:1fr; } }
+    label.field { display:grid; gap:6px; color:var(--muted); font-size:.9rem; font-weight:750; }
+    textarea, input { width:100%; border:1px solid var(--line); border-radius:12px; padding:10px; font:inherit; background:white; color:var(--text); }
+    textarea { min-height:320px; font-family:ui-monospace, SFMono-Regular, Consolas, monospace; font-size:.9rem; resize:vertical; }
+    .button-row { display:flex; flex-wrap:wrap; gap:8px; }
+    button, .button-link, label.file-button { appearance:none; border:1px solid #94a3b8; background:white; color:#0f172a; border-radius:10px; padding:8px 11px; font-weight:800; cursor:pointer; font-size:.92rem; text-decoration:none; display:inline-flex; align-items:center; gap:6px; }
+    button.primary { background:var(--accent); border-color:var(--accent); color:white; }
+    button.danger { color:var(--danger); border-color:#fecaca; background:#fff7f7; }
+    label.file-button input { display:none; }
+    .help { color:var(--muted); font-size:.92rem; line-height:1.5; margin:.5rem 0 0; }
+    .notice { border:1px solid #bfdbfe; background:#eff6ff; color:#1e3a8a; border-radius:12px; padding:10px 12px; line-height:1.45; }
+    .warn { border-color:#fed7aa; background:#fff7ed; color:#9a3412; }
+    code { background:#e2e8f0; border-radius:6px; padding:2px 5px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>OpenGraph structure-editor <span>v4405</span></h1>
+    <p>Bewerk eerst de structure-config. De viewer én de voorbeeldzinnen-editor lezen daarna dezelfde syntax- en functional-config. Regels worden bottom-up gebruikt: eerst subtree/box, daarna vrije plaatsing. Functioneel gebruikt nu CLAUSE → PRED ARG-STRUCT, zodat het predicaat en de argumentstructuur apart vrij kunnen staan.</p>
+  </header>
+
+  <main>
+    <section class="panel">
+      <div class="panel-header">
+        <h2>Config-bron</h2>
+        <div class="button-row">
+          <a class="button-link" href="index.html?v4405">Viewer</a>
+          <a class="button-link" href="examples-editor.html?v4405">Voorbeeldeditor</a>
+          <a class="button-link" href="structure-config.html?v4405">structure-config.html</a>
+          <a class="button-link" href="lexicon-config.html?v4405">lexicon-config.html</a>
+        </div>
+      </div>
+      <div class="panel-body">
+        <div class="notice">Regelformaat: <code>id:LABEL [cat=X] -> child1 child2</code>. Structurele leaf: <code>subj:{subject} [leaf role=subject source=subject cat=N]</code>. De structure-config bevat géén woorden zoals hond/man/bijt, maar alleen boomregels en projectiebronnen. Zichtbare woorden komen uit lexicon-config.html.</div>
+        <div class="button-row" style="margin-top:12px">
+          <button id="loadButton" type="button">Laad actuele structure-config</button>
+          <button id="defaultButton" type="button">Reset basisconfig</button>
+          <button id="vpClusterButton" type="button">Regelset perfectum: VP → NP VP; VP → pv VDW</button>
+          <label class="file-button">Importeer HTML<input id="fileInput" type="file" accept="text/html,.html"></label>
+          <button id="downloadButton" class="primary" type="button">Download structure-config.html</button>
+          <button id="saveAsButton" type="button">Opslaan als...</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid">
+      <div class="panel">
+        <div class="panel-header"><h2>Syntax-config</h2></div>
+        <div class="panel-body">
+          <label class="field"><span>Syntaxregels</span><textarea id="syntaxText" spellcheck="false"></textarea></label>
+          <p class="help">Perfectum-regelset: <code>vp:VP -> np-obj vp-perfectum</code> en <code>vp-perfectum:VP -> pv vdw</code>. <code>pv</code> projecteert op het hulpwerkwoord, <code>vdw</code> op het voltooid deelwoord. Lexicale vulling zoals <code>heeft</code> en <code>gebeten</code> staat in lexicon-config.html.</p>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header"><h2>Functional-config</h2></div>
+        <div class="panel-body">
+          <label class="field"><span>Functionele regels</span><textarea id="functionalText" spellcheck="false"></textarea></label>
+          <p class="help">Functioneel: <code>CLAUSE -> PRED ARG-STRUCT</code>. Het predicaat staat dus in een eigen PRED-subtree; de argumenten staan samen in een eigen ARG-STRUCT-subtree. Daardoor kunnen PRED en argumentstructuur afzonderlijk vrij geplaatst worden. Functionele leaves leveren dezelfde abstracte LEX-sources: <code>subject</code>, <code>predicate</code>, <code>object</code>.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-header"><h2>LEX-slots en validatie</h2><input id="status" value="—" disabled></div>
+      <div class="panel-body grid">
+        <label class="field"><span>LEX-slots</span><textarea id="slotsText" spellcheck="false"></textarea></label>
+        <label class="field"><span>Structurele sources uit syntax/functional-config</span><textarea id="lexiconText" spellcheck="false" readonly></textarea></label>
+        <label class="field"><span>HTML-preview</span><textarea id="htmlOutput" spellcheck="false"></textarea></label>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const VERSION = 'v4405';
+    const els = {
+      syntax: document.getElementById('syntaxText'),
+      functional: document.getElementById('functionalText'),
+      slots: document.getElementById('slotsText'),
+      lexicon: document.getElementById('lexiconText'),
+      output: document.getElementById('htmlOutput'),
+      status: document.getElementById('status'),
+      fileInput: document.getElementById('fileInput')
+    };
+
+    const defaultSyntax = `s:S [cat=S] -> np-subj vp
+np-subj:NP [cat=NP] -> subj
+subj:{subject} [leaf role=subject source=subject cat=N]
+vp:VP [cat=VP] -> np-obj v
+np-obj:NP [cat=NP] -> obj
+obj:{object} [leaf role=object source=object cat=N]
+v:V [cat=V] -> pred
+pred:{predicate} [leaf role=predicate source=predicate cat=V]`;
+
+    const clusterSyntax = `s:S [cat=S] -> np-subj vp
+np-subj:NP [cat=NP] -> subj
+subj:{subject} [leaf role=subject source=subject cat=N]
+vp:VP [cat=VP] -> np-obj vp-perfectum
+np-obj:NP [cat=NP] -> obj
+obj:{object} [leaf role=object source=object cat=N]
+vp-perfectum:VP [cat=VP] -> pv vdw
+pv:{pv} [leaf role=aux source=pv cat=AUX]
+vdw:{vdw} [leaf role=participle source=vdw cat=V]`;
+
+    const defaultFunctional = `ft-clause:CLAUSE [cat=CLAUSE role=top kind=role-root] -> ft-pred ft-argstruct
+ft-pred:PRED [cat=PRED role=pred kind=role] -> f-root
+f-root:{predicate} [leaf role=predicate source=predicate cat=V]
+ft-argstruct:ARG-STRUCT [cat=ARG-STRUCT role=arguments kind=role] -> ft-arg1 ft-arg2
+ft-arg1:ARG1 [cat=ARG role=arg1 kind=role] -> f-subj-np
+f-subj-np:NP [cat=NP role=np-subj kind=role] -> f-subj
+f-subj:{subject} [leaf role=subject source=subject cat=N]
+ft-arg2:ARG2 [cat=ARG role=arg2 kind=role] -> f-obj-np
+f-obj-np:NP [cat=NP role=np-obj kind=role] -> f-obj
+f-obj:{object} [leaf role=object source=object cat=N]`;
+
+    const defaultSlots = `comp:slot 0 · Comp/(om)dat
+topic:slot 1 · vooropplaatsing/topicalisatie
+aux:AUX / pv`;
+
+    function escapeHtml(value) {
+      return String(value ?? '').replace(/[&<>"']/g, ch => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[ch]));
+    }
+
+    function parseLine(line) {
+      const raw = line.trim();
+      if (!raw || raw.startsWith('#')) return null;
+      const m = raw.match(/^([^:\s]+)\s*:\s*([^\[\-]+?)\s*(\[[^\]]*\])?\s*(?:->\s*(.*))?$/);
+      if (!m) throw new Error(`Kan regel niet lezen: ${raw}`);
+      const attrs = {};
+      const attrText = (m[3] || '').replace(/^\[|\]$/g, '').trim();
+      if (attrText) attrText.split(/\s+/).forEach(pair => {
+        const [k, v = ''] = pair.split('=');
+        if (k) attrs[k] = v;
+      });
+      const children = (m[4] || '').trim().split(/\s+/).filter(Boolean);
+      return { id: m[1].trim(), label: m[2].trim(), attrs, children };
+    }
+
+    function parseConfigText(text, fallbackKind = 'cat') {
+      return text.split(/\r?\n/).map(parseLine).filter(Boolean).map(node => ({
+        ...node,
+        kind: node.attrs.leaf === '' || node.attrs.leaf === 'true' || node.attrs.kind === 'leaf' || !node.children.length && node.attrs.source ? 'leaf' : (node.attrs.kind || fallbackKind)
+      }));
+    }
+
+    function lexicalEntries(...nodeLists) {
+      const map = new Map();
+      for (const node of nodeLists.flat()) {
+        const source = node.attrs.source || (node.kind === 'leaf' ? node.id : '');
+        if (!source) continue;
+        const current = map.get(source) || {
+          source,
+          label: node.label || source,
+          role: node.attrs.role || '',
+          cat: node.attrs.cat || node.label || source,
+          from: []
+        };
+        if (node.attrs.role && !current.role) current.role = node.attrs.role;
+        if (node.attrs.cat && !current.cat) current.cat = node.attrs.cat;
+        const origin = nodeLists[0].includes(node) ? 'syntax' : 'functional';
+        if (!current.from.includes(origin)) current.from.push(origin);
+        map.set(source, current);
+      }
+      return [...map.values()];
+    }
+
+    function nodeDiv(node, functional = false) {
+      const kind = node.kind === 'leaf' ? 'leaf' : (node.attrs.kind || (functional && node.id === 'ft-clause' ? 'role-root' : (functional ? 'role' : 'cat')));
+      const cat = node.attrs.cat || node.label.replace(/[{}]/g, '').toUpperCase();
+      const attrs = [
+        `class="node-config"`,
+        `data-id="${escapeHtml(node.id)}"`,
+        `data-label="${escapeHtml(node.label)}"`,
+        `data-cat="${escapeHtml(cat)}"`,
+        `data-kind="${escapeHtml(kind)}"`
+      ];
+      if (node.attrs.role) attrs.push(`data-role="${escapeHtml(node.attrs.role)}"`);
+      if (node.attrs.source) attrs.push(`data-source="${escapeHtml(node.attrs.source)}"`);
+      if (node.children.length) attrs.push(`data-children="${escapeHtml(node.children.join(' '))}"`);
+      return `      <div ${attrs.join(' ')}>${escapeHtml(node.id)}:${escapeHtml(node.label)}${node.children.length ? ' → ' + escapeHtml(node.children.join(' ')) : ''}</div>`;
+    }
+
+    function buildHtml() {
+      const syntaxNodes = parseConfigText(els.syntax.value, 'cat');
+      const functionalNodes = parseConfigText(els.functional.value, 'role');
+      const slots = els.slots.value.split(/\r?\n/).map(line => line.trim()).filter(Boolean).map(line => {
+        const [id, ...rest] = line.split(':');
+        return { id: id.trim(), label: rest.join(':').trim() || id.trim() };
+      });
+      const syntaxRoot = syntaxNodes[0]?.id || 's';
+      const functionalRoot = functionalNodes[0]?.id || 'ft-clause';
+      const lexEntries = lexicalEntries(syntaxNodes, functionalNodes);
+      els.lexicon.value = lexEntries.map(entry => `${entry.source}:${entry.label} [role=${entry.role || '-'} cat=${entry.cat || '-'} from=${entry.from.join('+')}]`).join('\n');
+      const html = `<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>OpenGraph structure-config ${VERSION}</title>
+  <style>
+    :root { font-family: system-ui, -apple-system, Segoe UI, sans-serif; color: #0f172a; background: #f8fafc; }
+    body { margin: 0; padding: 24px; }
+    main { max-width: 1100px; margin: 0 auto; }
+    h1 { margin: 0 0 8px; }
+    h2 { margin-top: 28px; }
+    .note { color: #475569; line-height: 1.5; }
+    .node-config, .lexical-config, .lex-slot-config { background: white; border: 1px solid #cbd5e1; border-radius: 14px; padding: 10px 12px; margin: 8px 0; }
+    code { background: #e2e8f0; border-radius: 6px; padding: 2px 5px; }
+    .button-link { border: 1px solid #94a3b8; background: white; border-radius: 10px; padding: 8px 12px; color: #0f172a; text-decoration: none; display: inline-flex; font-weight: 800; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>OpenGraph structure-config ${VERSION}</h1>
+    <p class="note">Deze HTML-file is de structurele bron voor viewer en voorbeeldeditor. De structure-config bevat alleen structurele posities; lexicale vulling staat in lexicon-config.html. Lidwoorden/determinatorposities zijn verwijderd. Bewerk bij voorkeur via <a class="button-link" href="structure-editor.html?v4405">structure-editor.html</a>.</p>
+
+    <section id="opengraph-syntax-config" data-root="${escapeHtml(syntaxRoot)}" aria-label="Syntax-config">
+      <h2>Syntax-config</h2>
+${syntaxNodes.map(n => nodeDiv(n, false)).join('\n')}
+    </section>
+
+    <section id="opengraph-functional-config" data-root="${escapeHtml(functionalRoot)}" data-order="left-first" aria-label="Functional-config">
+      <h2>Functional-config</h2>
+${functionalNodes.map(n => nodeDiv(n, true)).join('\n')}
+    </section>
+
+    <section id="opengraph-lexical-config" aria-label="Structurele sources">
+      <h2>Structurele sources</h2>
+${lexEntries.map(entry => `      <div class="lexical-config" data-source="${escapeHtml(entry.source)}" data-label="${escapeHtml(entry.label)}" data-role="${escapeHtml(entry.role || '')}" data-cat="${escapeHtml(entry.cat || '')}" data-from="${escapeHtml(entry.from.join(' '))}">${escapeHtml(entry.source)}:${escapeHtml(entry.label)} [role=${escapeHtml(entry.role || '-')} cat=${escapeHtml(entry.cat || '-')} from=${escapeHtml(entry.from.join('+'))}]</div>`).join('\n')}
+    </section>
+
+    <section id="opengraph-lex-config" aria-label="LEX-config">
+      <h2>LEX-slots</h2>
+${slots.map(s => `      <div class="lex-slot-config" data-id="${escapeHtml(s.id)}" data-label="${escapeHtml(s.label)}">${escapeHtml(s.label)}</div>`).join('\n')}
+    </section>
+  </main>
+</body>
+</html>
+`;
+      els.output.value = html;
+      els.status.value = `OK · syntax=${syntaxNodes.length} · functional=${functionalNodes.length} · lex=${lexEntries.length} · slots=${slots.length}`;
+      return html;
+    }
+
+    function parseHtmlConfig(html) {
+      const doc = new DOMParser().parseFromString(html, 'text/html');
+      function nodesToLines(sectionId) {
+        const section = doc.getElementById(sectionId);
+        return [...(section?.querySelectorAll('.node-config') || [])].map(node => {
+          const id = node.dataset.id;
+          const label = node.dataset.label;
+          const attrs = [];
+          if (node.dataset.kind === 'leaf') attrs.push('leaf');
+          if (node.dataset.role) attrs.push(`role=${node.dataset.role}`);
+          if (node.dataset.source) attrs.push(`source=${node.dataset.source}`);
+          if (node.dataset.cat) attrs.push(`cat=${node.dataset.cat}`);
+          const attrPart = attrs.length ? ` [${attrs.join(' ')}]` : '';
+          const children = (node.dataset.children || '').trim();
+          return `${id}:${label}${attrPart}${children ? ' -> ' + children : ''}`;
+        }).join('\n');
+      }
+      els.syntax.value = nodesToLines('opengraph-syntax-config') || defaultSyntax;
+      els.functional.value = nodesToLines('opengraph-functional-config') || defaultFunctional;
+      els.slots.value = [...doc.querySelectorAll('#opengraph-lex-config .lex-slot-config')].map(s => `${s.dataset.id}:${s.dataset.label || s.textContent.trim()}`).join('\n') || defaultSlots;
+      buildHtml();
+    }
+
+    function download(name, text, type = 'text/html') {
+      const blob = new Blob([text], { type });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = name;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    async function loadCurrent() {
+      try {
+        const res = await fetch(`structure-config.html?${Date.now()}`, { cache: 'no-store' });
+        if (!res.ok) throw new Error('fetch failed');
+        parseHtmlConfig(await res.text());
+        els.status.value = 'Actuele structure-config geladen';
+      } catch (err) {
+        els.syntax.value = defaultSyntax;
+        els.functional.value = defaultFunctional;
+        els.slots.value = defaultSlots;
+        buildHtml();
+        els.status.value = 'Fallback basisconfig geladen';
+      }
+    }
+
+    document.getElementById('loadButton').addEventListener('click', loadCurrent);
+    document.getElementById('defaultButton').addEventListener('click', () => { els.syntax.value = defaultSyntax; els.functional.value = defaultFunctional; els.slots.value = defaultSlots; buildHtml(); });
+    document.getElementById('vpClusterButton').addEventListener('click', () => { els.syntax.value = clusterSyntax; buildHtml(); els.status.value = 'Perfectum-regelset actief: VP -> NP VP; VP -> pv VDW'; });
+    document.getElementById('downloadButton').addEventListener('click', () => download('structure-config.html', buildHtml()));
+    document.getElementById('saveAsButton').addEventListener('click', async () => {
+      const text = buildHtml();
+      if (!window.showSaveFilePicker) { download('structure-config.html', text); return; }
+      try {
+        const handle = await showSaveFilePicker({ suggestedName: 'structure-config.html', types: [{ description: 'HTML', accept: { 'text/html': ['.html'] } }] });
+        const writable = await handle.createWritable();
+        await writable.write(text);
+        await writable.close();
+        els.status.value = 'structure-config.html opgeslagen';
+      } catch (err) {}
+    });
+    els.fileInput.addEventListener('change', async event => {
+      const file = event.target.files?.[0];
+      if (!file) return;
+      parseHtmlConfig(await file.text());
+      event.target.value = '';
+    });
+    [els.syntax, els.functional, els.slots].forEach(el => el.addEventListener('input', () => { try { buildHtml(); } catch (err) { els.status.value = err.message; } }));
+
+    loadCurrent();
+  </script>
+</body>
+</html>

@@ -1,0 +1,1105 @@
+{
+  "format": "opengraph-greedy-grow-demo",
+  "format_version": 1,
+  "engine": "OpenGraphEd java-internal greedy",
+  "title": "Space3 Greedy Graph",
+  "project": {
+    "name": "space3",
+    "language": "nl",
+    "stem": "space3_gridH20W20"
+  },
+  "grid": {
+    "rows": 35,
+    "columns": 35,
+    "cell_width": 20,
+    "cell_height": 20,
+    "origin": {
+      "x": 17,
+      "y": 18
+    },
+    "fit_content": true,
+    "grow_with_step": true,
+    "show_grid": true,
+    "show_axes_through_origin": true,
+    "major_every": 5,
+    "margin": 2
+  },
+  "greedy": {
+    "count": 31,
+    "config_count": 31,
+    "max": 20,
+    "generation_max": 20,
+    "no_limit": false,
+    "style": "near0",
+    "rule": "collinear",
+    "diagonal_free": "none"
+  },
+  "grow": {
+    "interval_ms": 700,
+    "start_step": 0,
+    "auto_start": false,
+    "reveal_edges": "when_both_nodes_visible",
+    "stop_at_end": true,
+    "loop": false,
+    "undo_redo_per_step": true,
+    "tap_action": "next",
+    "last_step_equals_static": true
+  },
+  "nodes": [
+    {
+      "id": "n000",
+      "label": "0",
+      "order": 0,
+      "step": 0,
+      "kind": "origin-free-node",
+      "model": {
+        "x": 0,
+        "y": 0
+      },
+      "grid": {
+        "x": 17,
+        "y": 18
+      },
+      "position": {
+        "x": 340,
+        "y": 360
+      }
+    },
+    {
+      "id": "n001",
+      "label": "1",
+      "order": 1,
+      "step": 1,
+      "kind": "generated-free-node",
+      "model": {
+        "x": 1,
+        "y": -1
+      },
+      "grid": {
+        "x": 18,
+        "y": 17
+      },
+      "position": {
+        "x": 360,
+        "y": 340
+      }
+    },
+    {
+      "id": "n002",
+      "label": "2",
+      "order": 2,
+      "step": 2,
+      "kind": "generated-free-node",
+      "model": {
+        "x": -1,
+        "y": -2
+      },
+      "grid": {
+        "x": 16,
+        "y": 16
+      },
+      "position": {
+        "x": 320,
+        "y": 320
+      }
+    },
+    {
+      "id": "n003",
+      "label": "3",
+      "order": 3,
+      "step": 3,
+      "kind": "generated-free-node",
+      "model": {
+        "x": -2,
+        "y": 1
+      },
+      "grid": {
+        "x": 15,
+        "y": 19
+      },
+      "position": {
+        "x": 300,
+        "y": 380
+      }
+    },
+    {
+      "id": "n004",
+      "label": "4",
+      "order": 4,
+      "step": 4,
+      "kind": "generated-free-node",
+      "model": {
+        "x": 2,
+        "y": 2
+      },
+      "grid": {
+        "x": 19,
+        "y": 20
+      },
+      "position": {
+        "x": 380,
+        "y": 400
+      }
+    },
+    {
+      "id": "n005",
+      "label": "5",
+      "order": 5,
+      "step": 5,
+      "kind": "generated-free-node",
+      "model": {
+        "x": 3,
+        "y": -3
+      },
+      "grid": {
+        "x": 20,
+        "y": 15
+      },
+      "position": {
+        "x": 400,
+        "y": 300
+      }
+    },
+    {
+      "id": "n006",
+      "label": "6",
+      "order": 6,
+      "step": 6,
+      "kind": "generated-free-node",
+      "model": {
+        "x": -3,
+        "y": -4
+      },
+      "grid": {
+        "x": 14,
+        "y": 14
+      },
+      "position": {
+        "x": 280,
+        "y": 280
+      }
+    },
+    {
+      "id": "n007",
+      "label": "7",
+      "order": 7,
+      "step": 7,
+      "kind": "generated-free-node",
+      "model": {
+        "x": -4,
+        "y": 3
+      },
+      "grid": {
+        "x": 13,
+        "y": 21
+      },
+      "position": {
+        "x": 260,
+        "y": 420
+      }
+    },
+    {
+      "id": "n008",
+      "label": "8",
+      "order": 8,
+      "step": 8,
+      "kind": "generated-free-node",
+      "model": {
+        "x": 4,
+        "y": 4
+      },
+      "grid": {
+        "x": 21,
+        "y": 22
+      },
+      "position": {
+        "x": 420,
+        "y": 440
+      }
+    },
+    {
+      "id": "n009",
+      "label": "9",
+      "order": 9,
+      "step": 9,
+      "kind": "generated-free-node",
+      "model": {
+        "x": 5,
+        "y": -5
+      },
+      "grid": {
+        "x": 22,
+        "y": 13
+      },
+      "position": {
+        "x": 440,
+        "y": 260
+      }
+    },
+    {
+      "id": "n010",
+      "label": "10",
+      "order": 10,
+      "step": 10,
+      "kind": "generated-free-node",
+      "model": {
+        "x": -5,
+        "y": -6
+      },
+      "grid": {
+        "x": 12,
+        "y": 12
+      },
+      "position": {
+        "x": 240,
+        "y": 240
+      }
+    },
+    {
+      "id": "n011",
+      "label": "11",
+      "order": 11,
+      "step": 11,
+      "kind": "generated-free-node",
+      "model": {
+        "x": -6,
+        "y": 5
+      },
+      "grid": {
+        "x": 11,
+        "y": 23
+      },
+      "position": {
+        "x": 220,
+        "y": 460
+      }
+    },
+    {
+      "id": "n012",
+      "label": "12",
+      "order": 12,
+      "step": 12,
+      "kind": "generated-free-node",
+      "model": {
+        "x": 6,
+        "y": 6
+      },
+      "grid": {
+        "x": 23,
+        "y": 24
+      },
+      "position": {
+        "x": 460,
+        "y": 480
+      }
+    },
+    {
+      "id": "n013",
+      "label": "13",
+      "order": 13,
+      "step": 13,
+      "kind": "generated-free-node",
+      "model": {
+        "x": 7,
+        "y": -7
+      },
+      "grid": {
+        "x": 24,
+        "y": 11
+      },
+      "position": {
+        "x": 480,
+        "y": 220
+      }
+    },
+    {
+      "id": "n014",
+      "label": "14",
+      "order": 14,
+      "step": 14,
+      "kind": "generated-free-node",
+      "model": {
+        "x": -7,
+        "y": -8
+      },
+      "grid": {
+        "x": 10,
+        "y": 10
+      },
+      "position": {
+        "x": 200,
+        "y": 200
+      }
+    },
+    {
+      "id": "n015",
+      "label": "15",
+      "order": 15,
+      "step": 15,
+      "kind": "generated-free-node",
+      "model": {
+        "x": -8,
+        "y": 7
+      },
+      "grid": {
+        "x": 9,
+        "y": 25
+      },
+      "position": {
+        "x": 180,
+        "y": 500
+      }
+    },
+    {
+      "id": "n016",
+      "label": "16",
+      "order": 16,
+      "step": 16,
+      "kind": "generated-free-node",
+      "model": {
+        "x": 8,
+        "y": 8
+      },
+      "grid": {
+        "x": 25,
+        "y": 26
+      },
+      "position": {
+        "x": 500,
+        "y": 520
+      }
+    },
+    {
+      "id": "n017",
+      "label": "17",
+      "order": 17,
+      "step": 17,
+      "kind": "generated-free-node",
+      "model": {
+        "x": 9,
+        "y": -9
+      },
+      "grid": {
+        "x": 26,
+        "y": 9
+      },
+      "position": {
+        "x": 520,
+        "y": 180
+      }
+    },
+    {
+      "id": "n018",
+      "label": "18",
+      "order": 18,
+      "step": 18,
+      "kind": "generated-free-node",
+      "model": {
+        "x": -9,
+        "y": -10
+      },
+      "grid": {
+        "x": 8,
+        "y": 8
+      },
+      "position": {
+        "x": 160,
+        "y": 160
+      }
+    },
+    {
+      "id": "n019",
+      "label": "19",
+      "order": 19,
+      "step": 19,
+      "kind": "generated-free-node",
+      "model": {
+        "x": -10,
+        "y": 9
+      },
+      "grid": {
+        "x": 7,
+        "y": 27
+      },
+      "position": {
+        "x": 140,
+        "y": 540
+      }
+    },
+    {
+      "id": "n020",
+      "label": "20",
+      "order": 20,
+      "step": 20,
+      "kind": "generated-free-node",
+      "model": {
+        "x": 10,
+        "y": 10
+      },
+      "grid": {
+        "x": 27,
+        "y": 28
+      },
+      "position": {
+        "x": 540,
+        "y": 560
+      }
+    },
+    {
+      "id": "n021",
+      "label": "21",
+      "order": 21,
+      "step": 21,
+      "kind": "generated-free-node",
+      "model": {
+        "x": 11,
+        "y": -11
+      },
+      "grid": {
+        "x": 28,
+        "y": 7
+      },
+      "position": {
+        "x": 560,
+        "y": 140
+      }
+    },
+    {
+      "id": "n022",
+      "label": "22",
+      "order": 22,
+      "step": 22,
+      "kind": "generated-free-node",
+      "model": {
+        "x": -11,
+        "y": -12
+      },
+      "grid": {
+        "x": 6,
+        "y": 6
+      },
+      "position": {
+        "x": 120,
+        "y": 120
+      }
+    },
+    {
+      "id": "n023",
+      "label": "23",
+      "order": 23,
+      "step": 23,
+      "kind": "generated-free-node",
+      "model": {
+        "x": -12,
+        "y": 11
+      },
+      "grid": {
+        "x": 5,
+        "y": 29
+      },
+      "position": {
+        "x": 100,
+        "y": 580
+      }
+    },
+    {
+      "id": "n024",
+      "label": "24",
+      "order": 24,
+      "step": 24,
+      "kind": "generated-free-node",
+      "model": {
+        "x": 12,
+        "y": 12
+      },
+      "grid": {
+        "x": 29,
+        "y": 30
+      },
+      "position": {
+        "x": 580,
+        "y": 600
+      }
+    },
+    {
+      "id": "n025",
+      "label": "25",
+      "order": 25,
+      "step": 25,
+      "kind": "generated-free-node",
+      "model": {
+        "x": 13,
+        "y": -13
+      },
+      "grid": {
+        "x": 30,
+        "y": 5
+      },
+      "position": {
+        "x": 600,
+        "y": 100
+      }
+    },
+    {
+      "id": "n026",
+      "label": "26",
+      "order": 26,
+      "step": 26,
+      "kind": "generated-free-node",
+      "model": {
+        "x": -13,
+        "y": -14
+      },
+      "grid": {
+        "x": 4,
+        "y": 4
+      },
+      "position": {
+        "x": 80,
+        "y": 80
+      }
+    },
+    {
+      "id": "n027",
+      "label": "27",
+      "order": 27,
+      "step": 27,
+      "kind": "generated-free-node",
+      "model": {
+        "x": -14,
+        "y": 13
+      },
+      "grid": {
+        "x": 3,
+        "y": 31
+      },
+      "position": {
+        "x": 60,
+        "y": 620
+      }
+    },
+    {
+      "id": "n028",
+      "label": "28",
+      "order": 28,
+      "step": 28,
+      "kind": "generated-free-node",
+      "model": {
+        "x": 14,
+        "y": 14
+      },
+      "grid": {
+        "x": 31,
+        "y": 32
+      },
+      "position": {
+        "x": 620,
+        "y": 640
+      }
+    },
+    {
+      "id": "n029",
+      "label": "29",
+      "order": 29,
+      "step": 29,
+      "kind": "generated-free-node",
+      "model": {
+        "x": 15,
+        "y": -15
+      },
+      "grid": {
+        "x": 32,
+        "y": 3
+      },
+      "position": {
+        "x": 640,
+        "y": 60
+      }
+    },
+    {
+      "id": "n030",
+      "label": "30",
+      "order": 30,
+      "step": 30,
+      "kind": "generated-free-node",
+      "model": {
+        "x": -15,
+        "y": -16
+      },
+      "grid": {
+        "x": 2,
+        "y": 2
+      },
+      "position": {
+        "x": 40,
+        "y": 40
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "e000",
+      "from": "n000",
+      "to": "n001",
+      "order": 0,
+      "step": 1,
+      "kind": "growth-edge"
+    },
+    {
+      "id": "e001",
+      "from": "n001",
+      "to": "n002",
+      "order": 1,
+      "step": 2,
+      "kind": "growth-edge"
+    },
+    {
+      "id": "e002",
+      "from": "n002",
+      "to": "n003",
+      "order": 2,
+      "step": 3,
+      "kind": "growth-edge"
+    },
+    {
+      "id": "e003",
+      "from": "n003",
+      "to": "n004",
+      "order": 3,
+      "step": 4,
+      "kind": "growth-edge"
+    },
+    {
+      "id": "e004",
+      "from": "n004",
+      "to": "n005",
+      "order": 4,
+      "step": 5,
+      "kind": "growth-edge"
+    },
+    {
+      "id": "e005",
+      "from": "n005",
+      "to": "n006",
+      "order": 5,
+      "step": 6,
+      "kind": "growth-edge"
+    },
+    {
+      "id": "e006",
+      "from": "n006",
+      "to": "n007",
+      "order": 6,
+      "step": 7,
+      "kind": "growth-edge"
+    },
+    {
+      "id": "e007",
+      "from": "n007",
+      "to": "n008",
+      "order": 7,
+      "step": 8,
+      "kind": "growth-edge"
+    },
+    {
+      "id": "e008",
+      "from": "n008",
+      "to": "n009",
+      "order": 8,
+      "step": 9,
+      "kind": "growth-edge"
+    },
+    {
+      "id": "e009",
+      "from": "n009",
+      "to": "n010",
+      "order": 9,
+      "step": 10,
+      "kind": "growth-edge"
+    },
+    {
+      "id": "e010",
+      "from": "n010",
+      "to": "n011",
+      "order": 10,
+      "step": 11,
+      "kind": "growth-edge"
+    },
+    {
+      "id": "e011",
+      "from": "n011",
+      "to": "n012",
+      "order": 11,
+      "step": 12,
+      "kind": "growth-edge"
+    },
+    {
+      "id": "e012",
+      "from": "n012",
+      "to": "n013",
+      "order": 12,
+      "step": 13,
+      "kind": "growth-edge"
+    },
+    {
+      "id": "e013",
+      "from": "n013",
+      "to": "n014",
+      "order": 13,
+      "step": 14,
+      "kind": "growth-edge"
+    },
+    {
+      "id": "e014",
+      "from": "n014",
+      "to": "n015",
+      "order": 14,
+      "step": 15,
+      "kind": "growth-edge"
+    },
+    {
+      "id": "e015",
+      "from": "n015",
+      "to": "n016",
+      "order": 15,
+      "step": 16,
+      "kind": "growth-edge"
+    },
+    {
+      "id": "e016",
+      "from": "n016",
+      "to": "n017",
+      "order": 16,
+      "step": 17,
+      "kind": "growth-edge"
+    },
+    {
+      "id": "e017",
+      "from": "n017",
+      "to": "n018",
+      "order": 17,
+      "step": 18,
+      "kind": "growth-edge"
+    },
+    {
+      "id": "e018",
+      "from": "n018",
+      "to": "n019",
+      "order": 18,
+      "step": 19,
+      "kind": "growth-edge"
+    },
+    {
+      "id": "e019",
+      "from": "n019",
+      "to": "n020",
+      "order": 19,
+      "step": 20,
+      "kind": "growth-edge"
+    },
+    {
+      "id": "e020",
+      "from": "n020",
+      "to": "n021",
+      "order": 20,
+      "step": 21,
+      "kind": "growth-edge"
+    },
+    {
+      "id": "e021",
+      "from": "n021",
+      "to": "n022",
+      "order": 21,
+      "step": 22,
+      "kind": "growth-edge"
+    },
+    {
+      "id": "e022",
+      "from": "n022",
+      "to": "n023",
+      "order": 22,
+      "step": 23,
+      "kind": "growth-edge"
+    },
+    {
+      "id": "e023",
+      "from": "n023",
+      "to": "n024",
+      "order": 23,
+      "step": 24,
+      "kind": "growth-edge"
+    },
+    {
+      "id": "e024",
+      "from": "n024",
+      "to": "n025",
+      "order": 24,
+      "step": 25,
+      "kind": "growth-edge"
+    },
+    {
+      "id": "e025",
+      "from": "n025",
+      "to": "n026",
+      "order": 25,
+      "step": 26,
+      "kind": "growth-edge"
+    },
+    {
+      "id": "e026",
+      "from": "n026",
+      "to": "n027",
+      "order": 26,
+      "step": 27,
+      "kind": "growth-edge"
+    },
+    {
+      "id": "e027",
+      "from": "n027",
+      "to": "n028",
+      "order": 27,
+      "step": 28,
+      "kind": "growth-edge"
+    },
+    {
+      "id": "e028",
+      "from": "n028",
+      "to": "n029",
+      "order": 28,
+      "step": 29,
+      "kind": "growth-edge"
+    },
+    {
+      "id": "e029",
+      "from": "n029",
+      "to": "n030",
+      "order": 29,
+      "step": 30,
+      "kind": "growth-edge"
+    }
+  ],
+  "steps": [
+    {
+      "step": 0,
+      "visible_nodes": 1,
+      "node": "n000",
+      "edge": null,
+      "text": "Start: toon knoop 0."
+    },
+    {
+      "step": 1,
+      "visible_nodes": 2,
+      "node": "n001",
+      "edge": "e000",
+      "text": "Stap 1: voeg knoop 1 toe vanaf knoop 0; vector 1,-1."
+    },
+    {
+      "step": 2,
+      "visible_nodes": 3,
+      "node": "n002",
+      "edge": "e001",
+      "text": "Stap 2: voeg knoop 2 toe vanaf knoop 1; vector -2,-1."
+    },
+    {
+      "step": 3,
+      "visible_nodes": 4,
+      "node": "n003",
+      "edge": "e002",
+      "text": "Stap 3: voeg knoop 3 toe vanaf knoop 2; vector -1,3."
+    },
+    {
+      "step": 4,
+      "visible_nodes": 5,
+      "node": "n004",
+      "edge": "e003",
+      "text": "Stap 4: voeg knoop 4 toe vanaf knoop 3; vector 4,1."
+    },
+    {
+      "step": 5,
+      "visible_nodes": 6,
+      "node": "n005",
+      "edge": "e004",
+      "text": "Stap 5: voeg knoop 5 toe vanaf knoop 4; vector 1,-5."
+    },
+    {
+      "step": 6,
+      "visible_nodes": 7,
+      "node": "n006",
+      "edge": "e005",
+      "text": "Stap 6: voeg knoop 6 toe vanaf knoop 5; vector -6,-1."
+    },
+    {
+      "step": 7,
+      "visible_nodes": 8,
+      "node": "n007",
+      "edge": "e006",
+      "text": "Stap 7: voeg knoop 7 toe vanaf knoop 6; vector -1,7."
+    },
+    {
+      "step": 8,
+      "visible_nodes": 9,
+      "node": "n008",
+      "edge": "e007",
+      "text": "Stap 8: voeg knoop 8 toe vanaf knoop 7; vector 8,1."
+    },
+    {
+      "step": 9,
+      "visible_nodes": 10,
+      "node": "n009",
+      "edge": "e008",
+      "text": "Stap 9: voeg knoop 9 toe vanaf knoop 8; vector 1,-9."
+    },
+    {
+      "step": 10,
+      "visible_nodes": 11,
+      "node": "n010",
+      "edge": "e009",
+      "text": "Stap 10: voeg knoop 10 toe vanaf knoop 9; vector -10,-1."
+    },
+    {
+      "step": 11,
+      "visible_nodes": 12,
+      "node": "n011",
+      "edge": "e010",
+      "text": "Stap 11: voeg knoop 11 toe vanaf knoop 10; vector -1,11."
+    },
+    {
+      "step": 12,
+      "visible_nodes": 13,
+      "node": "n012",
+      "edge": "e011",
+      "text": "Stap 12: voeg knoop 12 toe vanaf knoop 11; vector 12,1."
+    },
+    {
+      "step": 13,
+      "visible_nodes": 14,
+      "node": "n013",
+      "edge": "e012",
+      "text": "Stap 13: voeg knoop 13 toe vanaf knoop 12; vector 1,-13."
+    },
+    {
+      "step": 14,
+      "visible_nodes": 15,
+      "node": "n014",
+      "edge": "e013",
+      "text": "Stap 14: voeg knoop 14 toe vanaf knoop 13; vector -14,-1."
+    },
+    {
+      "step": 15,
+      "visible_nodes": 16,
+      "node": "n015",
+      "edge": "e014",
+      "text": "Stap 15: voeg knoop 15 toe vanaf knoop 14; vector -1,15."
+    },
+    {
+      "step": 16,
+      "visible_nodes": 17,
+      "node": "n016",
+      "edge": "e015",
+      "text": "Stap 16: voeg knoop 16 toe vanaf knoop 15; vector 16,1."
+    },
+    {
+      "step": 17,
+      "visible_nodes": 18,
+      "node": "n017",
+      "edge": "e016",
+      "text": "Stap 17: voeg knoop 17 toe vanaf knoop 16; vector 1,-17."
+    },
+    {
+      "step": 18,
+      "visible_nodes": 19,
+      "node": "n018",
+      "edge": "e017",
+      "text": "Stap 18: voeg knoop 18 toe vanaf knoop 17; vector -18,-1."
+    },
+    {
+      "step": 19,
+      "visible_nodes": 20,
+      "node": "n019",
+      "edge": "e018",
+      "text": "Stap 19: voeg knoop 19 toe vanaf knoop 18; vector -1,19."
+    },
+    {
+      "step": 20,
+      "visible_nodes": 21,
+      "node": "n020",
+      "edge": "e019",
+      "text": "Stap 20: voeg knoop 20 toe vanaf knoop 19; vector 20,1."
+    },
+    {
+      "step": 21,
+      "visible_nodes": 22,
+      "node": "n021",
+      "edge": "e020",
+      "text": "Stap 21: voeg knoop 21 toe vanaf knoop 20; vector 1,-21."
+    },
+    {
+      "step": 22,
+      "visible_nodes": 23,
+      "node": "n022",
+      "edge": "e021",
+      "text": "Stap 22: voeg knoop 22 toe vanaf knoop 21; vector -22,-1."
+    },
+    {
+      "step": 23,
+      "visible_nodes": 24,
+      "node": "n023",
+      "edge": "e022",
+      "text": "Stap 23: voeg knoop 23 toe vanaf knoop 22; vector -1,23."
+    },
+    {
+      "step": 24,
+      "visible_nodes": 25,
+      "node": "n024",
+      "edge": "e023",
+      "text": "Stap 24: voeg knoop 24 toe vanaf knoop 23; vector 24,1."
+    },
+    {
+      "step": 25,
+      "visible_nodes": 26,
+      "node": "n025",
+      "edge": "e024",
+      "text": "Stap 25: voeg knoop 25 toe vanaf knoop 24; vector 1,-25."
+    },
+    {
+      "step": 26,
+      "visible_nodes": 27,
+      "node": "n026",
+      "edge": "e025",
+      "text": "Stap 26: voeg knoop 26 toe vanaf knoop 25; vector -26,-1."
+    },
+    {
+      "step": 27,
+      "visible_nodes": 28,
+      "node": "n027",
+      "edge": "e026",
+      "text": "Stap 27: voeg knoop 27 toe vanaf knoop 26; vector -1,27."
+    },
+    {
+      "step": 28,
+      "visible_nodes": 29,
+      "node": "n028",
+      "edge": "e027",
+      "text": "Stap 28: voeg knoop 28 toe vanaf knoop 27; vector 28,1."
+    },
+    {
+      "step": 29,
+      "visible_nodes": 30,
+      "node": "n029",
+      "edge": "e028",
+      "text": "Stap 29: voeg knoop 29 toe vanaf knoop 28; vector 1,-29."
+    },
+    {
+      "step": 30,
+      "visible_nodes": 31,
+      "node": "n030",
+      "edge": "e029",
+      "text": "Stap 30: voeg knoop 30 toe vanaf knoop 29; vector -30,-1."
+    }
+  ],
+  "source_spec": "# Effective spec written by OpenGraphEd internal Java Greedy engine\nproject:\n  name: space3\n  title: Space3 Greedy Graph\n  description: Groeiende graph van 0 t/m 30 op zichtbaar grid\n\ngrid:\n  step_x: 20\n  step_y: 20\n  # Standaard: fit-content. Hoogte/breedte 0 = automatisch.\n  # Als fit_content false is, worden height/width of max+margin gebruikt.\n  height: 0\n  width: 0\n  fit_content: true\n  show_grid_in_editor: true\n  show_grid_in_svg_png: true\n  show_axes_through_origin: true\n  show_major_grid_every: 5\n  margin: 2\n\ngraph:\n  count: 31\n  max: 20\n  # true = geen kunstmatige 0..30-lesgrens; COUNT/MAX komen uit config.\n  # De generator mag de zoekruimte vergroten als de constraints dat vereisen.\n  no_limit: false\n  start: [0, 0]\n\nconstraints:\n  # none | slash | backslash | both\n  # slash     = /-diagonalen vrij houden: x + y uniek\n  # backslash = \\-diagonalen vrij houden: x - y uniek\n  # both      = beide diagonale richtingen vrij houden\n  diagonal_free: none\n\ngreedy:\n  style: near0\n  rule: collinear\n  angle_min: 30\n\n# Greedy Grow static: geen eigen tekenscherm.\n# Generate Greedy Grow toont dezelfde statische Greedy-graph, maar zet knopen één voor één zichtbaar.\n# ENTER/klik = next; G/Start grow = één knoop per interval.\ngrow:\n  interval_ms: 700\n  start_step: 0\n  auto_start: false\n  reveal_edges: when_both_nodes_visible\n  stop_at_end: true\n  loop: false\n\noutput:\n  dir: output\n  base_name: space3\n  formats: [graph, svg, png, opn]\n  naming: short\n  language: nl\n  write_report: true\n  write_effective_spec: true\n\n",
+  "style": {
+    "show_edges": true,
+    "free_nodes": true
+  }
+}

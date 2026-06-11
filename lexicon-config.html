@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>OpenGraph lexicon-config v4405</title>
+  <style>
+    :root { font-family: system-ui, -apple-system, Segoe UI, sans-serif; color:#0f172a; background:#f8fafc; }
+    body { margin:0; padding:24px; }
+    main { max-width:1100px; margin:0 auto; }
+    h1 { margin:0 0 8px; }
+    h2 { margin-top:28px; }
+    .note { color:#475569; line-height:1.5; }
+    .button-link { border:1px solid #94a3b8; background:white; border-radius:10px; padding:8px 12px; color:#0f172a; text-decoration:none; display:inline-flex; font-weight:800; }
+    .lexicon-entry { background:white; border:1px solid #cbd5e1; border-radius:14px; padding:10px 12px; margin:8px 0; display:grid; gap:4px; }
+    .entry-line { font-weight:900; }
+    .meta { color:#64748b; font-size:.94rem; }
+    code { background:#e2e8f0; border-radius:6px; padding:2px 5px; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>OpenGraph lexicon-config v4405</h1>
+    <p class="note">Bescheiden lexicon voor de voorbeeldzinnen-editor. De structure-config blijft de boom- en projectiebron met abstracte sources zoals subject/predicate/object; dit lexicon levert alleen lexicale vulling voor subject, object, predicaat, complementizers en hulpwerkwoorden. Lidwoorden zijn verwijderd: de man → man; de hond → hond. Open: <a class="button-link" href="examples-editor.html">examples-editor.html</a>.</p>
+
+    <section id="opengraph-lexicon-config" aria-label="Lexicon">
+      <h2>NP / N</h2>
+      <div class="lexicon-entry" data-id="man" data-label="MAN" data-lemma="man" data-cat="N" data-phrase="NP" data-kind="noun" data-roles="subject object"><div class="entry-line">man → MAN</div><div class="meta">NP/N · subject/object</div></div>
+      <div class="lexicon-entry" data-id="hond" data-label="HOND" data-lemma="hond" data-cat="N" data-phrase="NP" data-kind="noun" data-roles="subject object"><div class="entry-line">hond → HOND</div><div class="meta">NP/N · subject/object</div></div>
+      <div class="lexicon-entry" data-id="kat" data-label="KAT" data-lemma="kat" data-cat="N" data-phrase="NP" data-kind="noun" data-roles="subject object"><div class="entry-line">kat → KAT</div><div class="meta">NP/N · subject/object</div></div>
+      <div class="lexicon-entry" data-id="vrouw" data-label="VROUW" data-lemma="vrouw" data-cat="N" data-phrase="NP" data-kind="noun" data-roles="subject object"><div class="entry-line">vrouw → VROUW</div><div class="meta">NP/N · subject/object</div></div>
+      <div class="lexicon-entry" data-id="trui" data-label="TRUI" data-lemma="trui" data-cat="N" data-phrase="NP" data-kind="noun" data-roles="object"><div class="entry-line">trui → TRUI</div><div class="meta">NP/N · vooral object</div></div>
+
+      <h2>V</h2>
+      <div class="lexicon-entry" data-id="bijt" data-label="BIJT" data-lemma="bijten" data-cat="V" data-kind="verb" data-roles="predicate" data-default-role="predicate" data-source-default="predicate" data-infinitive="BIJTEN" data-participle="GEBETEN"><div class="entry-line">bijt(en) → BIJT / BIJTEN / GEBETEN</div><div class="meta">V · predicaat</div></div>
+      <div class="lexicon-entry" data-id="breit" data-label="BREIT" data-lemma="breien" data-cat="V" data-kind="verb" data-roles="predicate" data-default-role="predicate" data-source-default="predicate" data-infinitive="BREIEN" data-participle="GEBREID"><div class="entry-line">brei(en) → BREIT / BREIEN / GEBREID</div><div class="meta">V · predicaat</div></div>
+
+      <h2>AUX</h2>
+      <div class="lexicon-entry" data-id="heeft" data-label="HEEFT" data-lemma="hebben" data-cat="AUX" data-kind="aux" data-slot-default="aux" data-roles="aux"><div class="entry-line">heeft</div><div class="meta">AUX · lokaal LEX-token</div></div>
+      <div class="lexicon-entry" data-id="hebben" data-label="HEBBEN" data-lemma="hebben" data-cat="AUX" data-kind="aux" data-slot-default="aux" data-roles="aux"><div class="entry-line">hebben</div><div class="meta">AUX · lokaal LEX-token</div></div>
+      <div class="lexicon-entry" data-id="is" data-label="IS" data-lemma="zijn" data-cat="AUX" data-kind="aux" data-slot-default="aux" data-roles="aux"><div class="entry-line">is</div><div class="meta">AUX · lokaal LEX-token</div></div>
+
+      <h2>COMP</h2>
+      <div class="lexicon-entry" data-id="omdat" data-label="OMDAT" data-lemma="omdat" data-cat="COMP" data-kind="comp" data-slot-default="comp"><div class="entry-line">omdat</div><div class="meta">COMP · slot 0</div></div>
+      <div class="lexicon-entry" data-id="dat" data-label="DAT" data-lemma="dat" data-cat="COMP" data-kind="comp" data-slot-default="comp"><div class="entry-line">dat</div><div class="meta">COMP · slot 0</div></div>
+    </section>
+  </main>
+</body>
+</html>

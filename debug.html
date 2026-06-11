@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
+  <title>OpenGraph Lite Viewer v4405 · debug</title>
+  <style>
+    body{font-family:system-ui,sans-serif;margin:24px;line-height:1.5;color:#0f172a;background:#f8fafc}
+    code{background:#e2e8f0;padding:2px 5px;border-radius:4px}
+    pre{white-space:pre-wrap;background:#fff;border:1px solid #cbd5e1;padding:12px;border-radius:8px}
+    .button{display:inline-block;margin:6px 8px 0 0;padding:9px 12px;border:1px solid #94a3b8;border-radius:10px;background:#fff;color:#0f172a;text-decoration:none;font-weight:800}
+  </style>
+</head>
+<body>
+  <h1>OpenGraph Lite Viewer v4405 · debug</h1>
+  <p>Deze pagina test of statische bestanden bereikbaar zijn en of <code>index.html</code> echt de viewer-root is. <code>viewer.html</code> is toegevoegd als fallback-entry.</p>
+  <pre id="out">Start...</pre>
+  <p>
+    <a class="button" href="reset-cache.html?v4405">Reset cache</a>
+    <a class="button" href="index.html?v4405&fresh=1">Open / index.html</a>
+    <a class="button" href="viewer.html?v4405&fresh=1">Open viewer.html</a>
+    <a class="button" href="docs/docs-home.html?v4405">Docs</a>
+  </p>
+  <script>
+    const version = 'v4405';
+    const tests = [
+      {file:'index.html?v4405', kind:'viewer-index'},
+      {file:'viewer.html?v4405', kind:'viewer-index'},
+      {file:'styles.css?v4405'},
+      {file:'viewer.js?v4405'},
+      {file:'structure-config.html?v4405'},
+      {file:'examples-input.html?v4405'},
+      {file:'lexicon-config.html?v4405'},
+      {file:'docs/docs-home.html?v4405', kind:'docs-home'},
+      {file:'docs/index.html?v4405', kind:'should-404'},
+      {file:'.nojekyll'},
+      {file:'reset-cache.html?v4405'}
+    ];
+    const out = document.getElementById('out');
+    function judge(test, r, text) {
+      if (test.kind === 'viewer-index') {
+        const isViewer = text.includes('data-opengraph-app="viewer"') && text.includes('graphSvg') && text.includes('viewer.js?v4405');
+        return {ok: r.ok && isViewer, extra: isViewer ? ' · viewer-index OK' : ' · FOUT: dit lijkt docs/oud index.html, niet de viewer'};
+      }
+      if (test.kind === 'docs-home') {
+        const ok = r.ok && text.includes('OpenGraph Lite Viewer · docs v4405');
+        return {ok, extra: ok ? ' · docs-home OK' : ' · FOUT: docs-home ontbreekt of oud'};
+      }
+      if (test.kind === 'should-404') {
+        return {ok: r.status === 404, extra: r.status === 404 ? ' · correct verwijderd' : ' · WAARSCHUWING: docs/index.html bestaat nog'};
+      }
+      return {ok: r.ok, extra:''};
+    }
+    async function test() {
+      const lines = [];
+      for (const t of tests) {
+        try {
+          const sep = t.file.includes('?') ? '&' : '?';
+          const r = await fetch(t.file + sep + 't=' + Date.now(), {cache:'no-store'});
+          const text = await r.text();
+          const j = judge(t, r, text);
+          lines.push(`${j.ok ? 'OK ' : 'BAD'} ${t.file} · ${r.status} · ${text.length} bytes${j.extra}`);
+        } catch (err) {
+          lines.push(`ERR ${t.file} · ${err.message}`);
+        }
+      }
+      out.textContent = lines.join('\n');
+    }
+    test();
+  </script>
+</body>
+</html>

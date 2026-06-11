@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>OpenGraph voorbeeldzinnen-editor v4405</title>
+  <style>
+    :root { color-scheme: light; --bg:#f8fafc; --panel:#fff; --text:#0f172a; --muted:#64748b; --line:#cbd5e1; --soft:#eef2f7; --accent:#1d4ed8; --danger:#b91c1c; --subject:#166534; --object:#7c2d12; font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--bg); color:var(--text); }
+    header { padding:22px 28px; background:#0f172a; color:white; }
+    header h1 { margin:0 0 6px; font-size:clamp(1.35rem,2.5vw,2rem); }
+    header p { margin:0; color:#cbd5e1; line-height:1.45; max-width:1180px; }
+    main { padding:20px; display:grid; grid-template-columns:minmax(280px,360px) minmax(560px,1fr); gap:18px; }
+    @media (max-width:920px){ main{grid-template-columns:1fr; padding:12px;} }
+    .panel { background:var(--panel); border:1px solid var(--line); border-radius:18px; box-shadow:0 12px 26px rgba(15,23,42,.08); }
+    .panel h2 { margin:0; font-size:1.05rem; }
+    .panel-header { padding:14px 16px; border-bottom:1px solid var(--line); display:flex; gap:10px; align-items:center; justify-content:space-between; flex-wrap:wrap; }
+    .panel-body { padding:16px; }
+    .example-list { display:grid; gap:8px; max-height:62vh; overflow:auto; padding:10px; }
+    .example-button { text-align:left; padding:10px 12px; border:1px solid var(--line); background:white; border-radius:12px; cursor:pointer; }
+    .example-button.active { border-color:var(--accent); box-shadow:inset 3px 0 0 var(--accent); }
+    .example-button strong,.preview strong { color:var(--subject); font-weight:950; }
+    .example-button em,.preview em { color:var(--object); font-style:italic; }
+    .button-row { display:flex; flex-wrap:wrap; gap:8px; }
+    button,.button-link,label.file-button { appearance:none; border:1px solid #94a3b8; background:#fff; color:#0f172a; border-radius:10px; padding:8px 11px; font-weight:800; cursor:pointer; font-size:.92rem; text-decoration:none; display:inline-flex; align-items:center; gap:6px; }
+    button.primary { background:var(--accent); border-color:var(--accent); color:white; }
+    button.danger { color:var(--danger); border-color:#fecaca; background:#fff7f7; }
+    button.soft { background:var(--soft); }
+    label.file-button input { display:none; }
+    .form-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+    .lex-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; align-items:end; }
+    @media (max-width:1000px){ .form-grid,.lex-grid { grid-template-columns:1fr; } }
+    label.field { display:grid; gap:5px; color:var(--muted); font-size:.88rem; font-weight:700; }
+    input,select,textarea { width:100%; border:1px solid var(--line); border-radius:10px; padding:9px 10px; font:inherit; color:var(--text); background:white; }
+    textarea { min-height:220px; resize:vertical; font-family:ui-monospace,SFMono-Regular,Consolas,monospace; font-size:.86rem; }
+    .help { color:var(--muted); font-size:.92rem; line-height:1.45; margin:10px 0 0; }
+    .preview { border:1px solid var(--line); border-radius:16px; padding:14px 16px; background:#f8fafc; font-size:1.35rem; letter-spacing:.03em; margin:12px 0; }
+    .tokens { display:grid; gap:9px; margin-top:10px; }
+    .token-row { display:grid; grid-template-columns:1fr 1.1fr .8fr .95fr .85fr auto; gap:8px; align-items:end; padding:10px; border:1px solid var(--line); border-radius:14px; background:#fff; }
+    @media (max-width:1180px){ .token-row { grid-template-columns:1fr 1fr; } .token-actions { grid-column:1/-1; } }
+    .token-row[data-role="subject"] { box-shadow:inset 4px 0 0 var(--subject); }
+    .token-row[data-role="object"] { box-shadow:inset 4px 0 0 var(--object); }
+    .token-actions { display:flex; gap:5px; justify-content:flex-end; }
+    .token-actions button { padding:7px 9px; }
+    .notice { border:1px solid #bfdbfe; background:#eff6ff; color:#1e3a8a; border-radius:12px; padding:10px 12px; margin-top:12px; line-height:1.45; }
+    .warn { border-color:#fed7aa; background:#fff7ed; color:#9a3412; }
+    code { background:#e2e8f0; border-radius:6px; padding:2px 5px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>OpenGraph voorbeeldzinnen-editor <span>v4405</span></h1>
+    <p>Voorbeelden worden gevoed door <code>lexicon-config.html</code>. <strong>Bold/vet</strong> = subject; <em>italic/cursief</em> = object. Structure-config levert de projectiebronnen; het lexicon levert de woorden. Lidwoorden zijn verwijderd.</p>
+  </header>
+  <main>
+    <aside class="panel">
+      <div class="panel-header"><h2>Voorbeelden</h2><span id="countLabel" class="help">0</span></div>
+      <div class="panel-body">
+        <div class="button-row">
+          <button id="newHeadButton" type="button">+ Hoofdzin</button>
+          <button id="newSubButton" type="button">+ Bijzin</button>
+          <button id="duplicateButton" type="button">Kopie</button>
+          <button id="deleteButton" class="danger" type="button">Verwijder</button>
+        </div>
+        <div id="exampleList" class="example-list" aria-label="Voorbeeldenlijst"></div>
+      </div>
+    </aside>
+
+    <section class="panel">
+      <div class="panel-header">
+        <h2>Bewerk geselecteerd voorbeeld</h2>
+        <div class="button-row">
+          <a class="button-link" href="index.html?v4405">Viewer</a>
+          <a class="button-link" href="examples-input.html?v4405">HTML-input</a>
+          <a class="button-link" href="lexicon-config.html?v4405">Lexicon</a>
+          <a class="button-link" href="structure-editor.html?v4405">Structure-editor</a>
+          <button id="reloadConfigButton" type="button">Herlaad configs</button>
+        </div>
+      </div>
+      <div class="panel-body">
+        <div class="form-grid">
+          <label class="field"><span>ID</span><input id="idInput" type="text" spellcheck="false"></label>
+          <label class="field"><span>Fase / beschrijving</span><input id="phaseInput" type="text"></label>
+          <label class="field"><span>LEX-regel</span><select id="lexRuleInput"><option value="hoofdzininvariant">hoofdzininvariant</option><option value="bijzin-omdat">bijzin-omdat</option><option value="perfectum-heeft-vdw">perfectum-heeft-vdw</option></select></label>
+          <label class="field"><span>Predicaat voor centrale boom</span><input id="predicateInput" type="text" value="BIJT"></label>
+          <label class="field"><span>Meta-tekst</span><input id="metaInput" type="text"></label>
+          <label class="field"><span>Validatie</span><input id="validationOutput" type="text" disabled></label>
+          <label class="field"><span>Structure-config</span><input id="configStatus" type="text" disabled></label>
+          <label class="field"><span>Lexicon-config</span><input id="lexiconStatus" type="text" disabled></label>
+        </div>
+
+        <div class="notice">
+          Kies eerst lexicale vulling. De editor maakt daarna tokens met vaste grammaticale rollen: <code>subject</code> projecteert naar de subjectbron, <code>object</code> naar de objectbron en <code>predicate</code> naar de predicaatbron.
+        </div>
+        <div class="lex-grid" style="margin-top:12px">
+          <label class="field"><span>Subject NP</span><select id="subjectLexeme"></select></label>
+          <label class="field"><span>Predicaat V</span><select id="verbLexeme"></select></label>
+          <label class="field"><span>Object NP</span><select id="objectLexeme"></select></label>
+          <label class="field"><span>Patroon</span><select id="patternSelect"><option value="head-bare">hoofdzin: S V O</option><option value="sub-bare">bijzin: OMDAT S O V</option><option value="perf-bare">perfectum: S HEEFT O VDW</option></select></label>
+        </div>
+        <div class="button-row" style="margin-top:10px">
+          <button id="applyLexiconPattern" class="soft" type="button">Vul voorbeeld uit lexicon</button>
+          <button id="swapRolesButton" type="button" title="Wissel subject- en objectvulling. De markering blijft gelijk.">Wissel S/O</button>
+          <button id="addTokenButton" type="button">+ Token</button>
+        </div>
+
+        <div class="preview" id="preview" title="Vet = subject; cursief = object">—</div>
+        <p class="help">Per token kun je handmatig een lexeme kiezen. <code>Lexeme</code> wijzigt de zichtbare token. <code>Source</code> blijft de structurele projectiebron uit <code>structure-config.html</code>.</p>
+        <div id="tokenRows" class="tokens"></div>
+
+        <div class="notice warn">Browserbeveiliging staat meestal niet toe dat een webpagina direct een lokaal bestand overschrijft. Gebruik <strong>Download examples-input.html</strong> en vervang daarna het bestand in de viewer-map. In Chrome/Edge kan <strong>Opslaan als...</strong> eventueel direct naar de juiste map schrijven.</div>
+
+        <div class="button-row" style="margin-top:12px">
+          <button id="saveDraftButton" class="soft" type="button">Bewaar concept</button>
+          <button id="loadDraftButton" class="soft" type="button">Laad concept</button>
+          <label class="file-button">Importeer HTML<input id="fileInput" type="file" accept="text/html,.html"></label>
+          <button id="downloadButton" class="primary" type="button">Download examples-input.html</button>
+          <button id="saveAsButton" type="button">Opslaan als...</button>
+          <button id="resetButton" class="danger" type="button">Reset naar basis</button>
+        </div>
+        <label class="field" style="margin-top:14px"><span>Gegenereerde HTML-preview</span><textarea id="htmlOutput" spellcheck="false"></textarea></label>
+      </div>
+    </section>
+  </main>
+<script>
+const VERSION = 'v4405';
+const STORAGE_KEY = 'opengraph.examples.editor.v4405';
+const els = {
+  list: document.getElementById('exampleList'), count: document.getElementById('countLabel'), id: document.getElementById('idInput'), phase: document.getElementById('phaseInput'), lexRule: document.getElementById('lexRuleInput'), predicate: document.getElementById('predicateInput'), meta: document.getElementById('metaInput'), validation: document.getElementById('validationOutput'), configStatus: document.getElementById('configStatus'), lexiconStatus: document.getElementById('lexiconStatus'), preview: document.getElementById('preview'), tokenRows: document.getElementById('tokenRows'), htmlOutput: document.getElementById('htmlOutput'), fileInput: document.getElementById('fileInput'), subjectLexeme: document.getElementById('subjectLexeme'), verbLexeme: document.getElementById('verbLexeme'), objectLexeme: document.getElementById('objectLexeme'), pattern: document.getElementById('patternSelect')
+};
+let examples = []; let selected = 0;
+let STRUCTURE_INFO = { sources:[{id:'subject',label:'subject · subject-bron'},{id:'object',label:'object · object-bron'},{id:'predicate',label:'predicate · predicaat-bron'},{id:'pv',label:'pv · hulpwerkwoord'},{id:'vdw',label:'vdw · voltooid deelwoord'}], slots:[{id:'comp',label:'slot 0 · Comp/(om)dat'},{id:'topic',label:'slot 1 · vooropplaatsing/topicalisatie'},{id:'aux',label:'AUX / pv'}], loaded:false };
+let LEXICON = { entries:[
+  {id:'hond',label:'HOND',kind:'noun',cat:'N',phrase:'NP',roles:['subject','object']}, {id:'man',label:'MAN',kind:'noun',cat:'N',phrase:'NP',roles:['subject','object']}, {id:'kat',label:'KAT',kind:'noun',cat:'N',phrase:'NP',roles:['subject','object']}, {id:'vrouw',label:'VROUW',kind:'noun',cat:'N',phrase:'NP',roles:['subject','object']}, {id:'trui',label:'TRUI',kind:'noun',cat:'N',phrase:'NP',roles:['object']},
+  {id:'bijt',label:'BIJT',kind:'verb',cat:'V',defaultRole:'predicate',sourceDefault:'predicate',participle:'GEBETEN'}, {id:'breit',label:'BREIT',kind:'verb',cat:'V',defaultRole:'predicate',sourceDefault:'predicate',participle:'GEBREID'},
+{id:'omdat',label:'OMDAT',kind:'comp',cat:'COMP',slotDefault:'comp'}, {id:'dat',label:'DAT',kind:'comp',cat:'COMP',slotDefault:'comp'}, {id:'heeft',label:'HEEFT',kind:'aux',cat:'AUX',slotDefault:'aux'}
+], loaded:false };
+function slugify(value){ return String(value||'voorbeeld').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'') || 'voorbeeld'; }
+function escapeHtml(value){ return String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])); }
+function byId(id){ return LEXICON.entries.find(e => e.id === id) || null; }
+function entriesByKind(kind){ return LEXICON.entries.filter(e => e.kind === kind); }
+function optionsHtml(options, selected, emptyLabel){ const out=[`<option value="">${escapeHtml(emptyLabel)}</option>`]; if(selected && !options.some(o=>o.id===selected)) out.push(`<option value="${escapeHtml(selected)}" selected>${escapeHtml(selected)} · onbekend</option>`); for(const opt of options) out.push(`<option value="${escapeHtml(opt.id)}" ${opt.id===selected?'selected':''}>${escapeHtml(opt.label || opt.id)}</option>`); return out.join(''); }
+function lexemeOptions(selected){ return optionsHtml(LEXICON.entries.map(e => ({id:e.id,label:`${e.label} · ${e.kind}${e.cat?' · '+e.cat:''}`})), selected, 'geen lexeme'); }
+function sourceForRole(role){ const preferred = role === 'subject' ? ['subject','subj','np-subj'] : role === 'object' ? ['object','obj','np-obj'] : role === 'predicate' ? ['predicate','pred','v'] : role === 'aux' ? ['pv','aux'] : role === 'participle' ? ['vdw','participle'] : []; return preferred.find(id => STRUCTURE_INFO.sources.some(s => s.id === id)) || ''; }
+function lexToken(lexemeId, role){ const lex = byId(lexemeId) || {id:lexemeId,label:lexemeId.toUpperCase(),kind:'noun'}; return { id:slugify(`${role}-${lex.id}`), label:lex.label, role, source:sourceForRole(role), slot:'', lexeme:lex.id }; }
+function predToken(lexemeId){ const lex = byId(lexemeId) || {id:lexemeId,label:lexemeId.toUpperCase(),kind:'verb'}; return { id:slugify(`pred-${lex.id}`), label:lex.label, role:'predicate', source:sourceForRole('predicate') || lex.sourceDefault || 'predicate', slot:'', lexeme:lex.id }; }
+function auxToken(id='heeft'){ const lex = byId(id) || {id,label:id.toUpperCase(),kind:'aux',slotDefault:'aux'}; return { id:slugify(`pv-${lex.id}`), label:lex.label, role:'aux', source:sourceForRole('aux') || 'pv', slot:'', lexeme:lex.id }; }
+function partToken(verbId){ const lex = byId(verbId) || {id:verbId,label:verbId.toUpperCase(),kind:'verb',participle:verbId.toUpperCase()}; return { id:slugify(`vdw-${lex.id}`), label:(lex.participle || lex.label || lex.id).toUpperCase(), role:'participle', source:sourceForRole('participle') || 'vdw', slot:'', lexeme:lex.id }; }
+function compToken(id='omdat'){ const lex = byId(id) || {id,label:id.toUpperCase(),kind:'comp',slotDefault:'comp'}; return { id:lex.id, label:lex.label, role:'', source:'', slot:lex.slotDefault || 'comp', lexeme:lex.id }; }
+function defaultHead(subject='hond', object='man', verb='bijt'){ const tokens = [lexToken(subject,'subject'), predToken(verb), lexToken(object,'object')]; return normalizeExample({ id: slugify(tokens.map(t=>t.label).join('-')), phase:'Fase 1+2', lexRule:'hoofdzininvariant', predicate: (byId(verb)?.label || 'BIJT'), meta:'hoofdzin · centrale boom invariant · zonder lidwoorden', tokens }); }
+function defaultSub(subject='hond', object='man', verb='bijt'){ const tokens = [compToken('omdat'), lexToken(subject,'subject'), lexToken(object,'object'), predToken(verb)]; return normalizeExample({ id: slugify(tokens.map(t=>t.label).join('-')), phase:'Fase 3', lexRule:'bijzin-omdat', predicate: (byId(verb)?.label || 'BIJT'), meta:'bijzin · Comp/(om)dat in LEX-slot 0 · zonder lidwoorden', tokens }); }
+function defaultPerf(subject='hond', object='man', verb='bijt'){ const tokens = [lexToken(subject,'subject'), auxToken('heeft'), lexToken(object,'object'), partToken(verb)]; return normalizeExample({ id: slugify(tokens.map(t=>t.label).join('-')), phase:'Perfectum', lexRule:'perfectum-heeft-vdw', predicate: (byId(verb)?.participle || 'GEBETEN'), meta:'perfectum · structure-regel VP → NP VP; VP → pv VDW · zonder lidwoorden', tokens }); }
+function baseExamples(){ const a=defaultHead('hond','man','bijt'); a.id='hond-bijt-man'; const b=defaultSub('hond','man','bijt'); b.id='omdat-hond-man-bijt'; const c=defaultHead('vrouw','trui','breit'); c.id='vrouw-breit-trui'; const d=defaultSub('vrouw','trui','breit'); d.id='omdat-vrouw-trui-breit'; const e=defaultPerf('hond','man','bijt'); e.id='hond-heeft-man-gebeten'; return [a,b,c,d,e]; }
+function current(){ return examples[selected] || examples[0]; }
+function tokenHtml(t){ const label=escapeHtml(t.label||''); if(t.role==='subject') return `<strong data-role="subject">${label}</strong>`; if(t.role==='object') return `<em data-role="object">${label}</em>`; return label; }
+function sentenceHtml(ex){ return (ex.tokens||[]).map(tokenHtml).join(' '); }
+function sentenceText(ex){ return (ex.tokens||[]).map(t=>t.label).join(' ').replace(/\s+/g,' ').trim(); }
+function normalizeExample(ex){ const tokens=(ex.tokens||[]).map((t,i)=>({ id:slugify(t.id || t.label || `token-${i+1}`), label:String(t.label||'').toUpperCase(), role:t.role||'', source:t.source||'', slot:t.slot||'', lexeme:t.lexeme||'' })).filter(t=>t.label); const pred=tokens.find(t=>t.role==='predicate')?.label || ex.predicate || 'BIJT'; return { id:slugify(ex.id || sentenceText({tokens})), phase:ex.phase||'Fase', lexRule:ex.lexRule||'hoofdzininvariant', predicate:String(pred).toUpperCase(), meta:ex.meta||'', tokens: tokens.length ? tokens : [lexToken('hond','subject'), predToken('bijt'), lexToken('man','object')] }; }
+function applyFormToCurrent(){ const ex=current(); if(!ex)return; ex.id=slugify(els.id.value); ex.phase=els.phase.value||'Fase'; ex.lexRule=els.lexRule.value; ex.predicate=(els.predicate.value||'BIJT').toUpperCase(); ex.meta=els.meta.value||''; }
+function loadForm(){ const ex=current(); if(!ex)return; els.id.value=ex.id||''; els.phase.value=ex.phase||''; els.lexRule.value=ex.lexRule||'hoofdzininvariant'; els.predicate.value=ex.predicate||'BIJT'; els.meta.value=ex.meta||''; renderTokens(); renderPreview(); }
+function validate(ex){ const subjects=ex.tokens.filter(t=>t.role==='subject'), objects=ex.tokens.filter(t=>t.role==='object'), preds=ex.tokens.filter(t=>t.role==='predicate'), auxes=ex.tokens.filter(t=>t.source==='pv'||t.role==='aux'), vdws=ex.tokens.filter(t=>t.source==='vdw'||t.role==='participle'); const notes=[]; if(subjects.length!==1) notes.push(`subject=${subjects.length}`); if(objects.length!==1) notes.push(`object=${objects.length}`); if(preds.length<1 && !(auxes.length>=1 && vdws.length>=1)) notes.push('geen predicaat-token of perfectum pv/vdw'); const knownSources=new Set(STRUCTURE_INFO.sources.map(s=>s.id)); const unknownSources=[...new Set(ex.tokens.map(t=>t.source).filter(Boolean).filter(src=>!knownSources.has(src)))]; if(unknownSources.length) notes.push(`source niet in structure-config: ${unknownSources.join('/')}`); const knownLex=new Set(LEXICON.entries.map(e=>e.id)); const unknownLex=[...new Set(ex.tokens.map(t=>t.lexeme).filter(Boolean).filter(id=>!knownLex.has(id)))]; if(unknownLex.length) notes.push(`lexeme niet in lexicon-config: ${unknownLex.join('/')}`); return notes.length ? `Controleer: ${notes.join(', ')}` : 'OK: subject/object + predicaat of perfectum'; }
+function renderList(){ els.list.replaceChildren(); examples.forEach((ex,i)=>{ const btn=document.createElement('button'); btn.type='button'; btn.className=`example-button ${i===selected?'active':''}`; btn.innerHTML=`<div>${sentenceHtml(ex)||escapeHtml(ex.id)}</div><small>${escapeHtml(ex.lexRule)} · ${escapeHtml(ex.phase)}</small>`; btn.addEventListener('click',()=>{ applyFormToCurrent(); selected=i; loadForm(); renderAll(); }); els.list.appendChild(btn); }); els.count.textContent=`${examples.length} voorbeeld(en)`; }
+function applyLexemeToToken(t, lexemeId){ const lex=byId(lexemeId); if(!lex) { t.lexeme=''; return; } const oldRole=t.role; t.lexeme=lex.id; t.label=lex.label.toUpperCase(); if(lex.defaultRole && !t.role) t.role=lex.defaultRole; if(lex.kind==='comp') { t.slot=lex.slotDefault || 'comp'; t.source=''; t.role=''; } if(lex.kind==='aux') { t.slot=''; t.source=sourceForRole('aux') || 'pv'; t.role='aux'; } if(t.role && (!t.source || t.source===sourceForRole(oldRole))) t.source = sourceForRole(t.role) || t.source; if(t.role==='participle' && lex.kind==='verb') { t.label=(lex.participle || lex.label).toUpperCase(); t.source=sourceForRole('participle') || 'vdw'; } if(t.role==='predicate') current().predicate=t.label; }
+function renderTokens(){ const ex=current(); els.tokenRows.replaceChildren(); (ex.tokens||[]).forEach((t,i)=>{ const row=document.createElement('div'); row.className='token-row'; row.dataset.role=t.role||''; row.innerHTML=`
+  <label class="field"><span>Token</span><input data-field="label" value="${escapeHtml(t.label)}"></label>
+  <label class="field"><span>Lexeme</span><select data-field="lexeme">${lexemeOptions(t.lexeme || '')}</select></label>
+  <label class="field"><span>Rol</span><select data-field="role"><option value="">lokaal/geen</option><option value="subject">subject · vet</option><option value="object">object · cursief</option><option value="predicate">predicate</option><option value="aux">aux / pv</option><option value="participle">participle / vdw</option></select></label>
+  <label class="field"><span>Source</span><select data-field="source">${optionsHtml(STRUCTURE_INFO.sources,t.source||'','geen')}</select></label>
+  <label class="field"><span>Slot</span><select data-field="slot">${optionsHtml(STRUCTURE_INFO.slots,t.slot||'','geen')}</select></label>
+  <div class="token-actions"><button type="button" data-action="up">↑</button><button type="button" data-action="down">↓</button><button type="button" data-action="remove" class="danger">×</button></div>`;
+    row.querySelector('[data-field="role"]').value=t.role||''; row.querySelector('[data-field="source"]').value=t.source||''; row.querySelector('[data-field="slot"]').value=t.slot||''; row.querySelector('[data-field="lexeme"]').value=t.lexeme||'';
+    row.querySelectorAll('[data-field]').forEach(input=>{ input.addEventListener('input',()=>{ const field=input.dataset.field; if(field==='lexeme') applyLexemeToToken(t,input.value); else { t[field]=input.value; if(field==='label'){ t.label=input.value.toUpperCase(); input.value=t.label; } if(field==='role' && t.role && !t.source) t.source=sourceForRole(t.role); if(field==='role' && t.role==='predicate') ex.predicate=t.label; } row.dataset.role=t.role||''; renderTokens(); renderPreview(); renderList(); }); });
+    row.querySelector('[data-action="up"]').addEventListener('click',()=>moveToken(i,-1)); row.querySelector('[data-action="down"]').addEventListener('click',()=>moveToken(i,1)); row.querySelector('[data-action="remove"]').addEventListener('click',()=>{ ex.tokens.splice(i,1); renderAll(); }); els.tokenRows.appendChild(row); }); }
+function moveToken(i,delta){ const ex=current(); const j=i+delta; if(!ex||j<0||j>=ex.tokens.length)return; [ex.tokens[i],ex.tokens[j]]=[ex.tokens[j],ex.tokens[i]]; renderAll(); }
+function renderPreview(){ const ex=current(); if(!ex)return; els.preview.innerHTML=sentenceHtml(ex)||'—'; els.validation.value=validate(ex); els.htmlOutput.value=buildHtmlDocument(examples); }
+function renderAll(){ renderLexiconSelectors(); renderList(); loadForm(); renderPreview(); }
+function makeArticle(ex){ const lexItems=ex.tokens.map(t=>{ const classes=['lex-token']; if(!t.source) classes.push('local'); const attrs=[`class="${classes.join(' ')}"`,`data-id="${escapeHtml(t.id || slugify(t.label))}"`]; if(t.source)attrs.push(`data-source="${escapeHtml(t.source)}"`); if(t.role)attrs.push(`data-role="${escapeHtml(t.role)}"`); if(t.slot)attrs.push(`data-slot="${escapeHtml(t.slot)}"`); if(t.lexeme)attrs.push(`data-lexeme="${escapeHtml(t.lexeme)}"`); return `          <li ${attrs.join(' ')}>${tokenHtml(t)}</li>`; }).join('\n'); const title='Vet = subject; cursief = object. Gebruik de knop ‘Wissel S/O’ om de vulling te wisselen.'; return `      <article class="example-input" data-id="${escapeHtml(ex.id)}" data-phase="${escapeHtml(ex.phase)}" data-lex-rule="${escapeHtml(ex.lexRule)}" data-predicate="${escapeHtml(ex.predicate || 'BIJT')}">\n        <p class="sentence" title="${escapeHtml(title)}">${sentenceHtml(ex)}</p>\n        <p class="meta">${escapeHtml(ex.meta || '')}</p>\n        <ol class="lex-sequence" aria-label="LEX-volgorde">\n${lexItems}\n        </ol>\n        <button type="button" class="swap-demo" title="${escapeHtml(title)}">Wissel S/O</button>\n      </article>`; }
+function buildHtmlDocument(list){ const articles=list.map(ex=>makeArticle(normalizeExample(ex))).join('\n\n'); return `<!doctype html>\n<html lang="nl">\n<head>\n  <meta charset="utf-8">
+  <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">\n  <meta name="viewport" content="width=device-width, initial-scale=1">\n  <title>OpenGraph voorbeeldzinnen input ${VERSION}</title>\n  <style>\n    :root { font-family: system-ui, -apple-system, Segoe UI, sans-serif; color: #0f172a; background: #f8fafc; }\n    body { margin: 0; padding: 24px; }\n    main { max-width: 980px; margin: 0 auto; }\n    h1 { margin: 0 0 8px; font-size: 1.8rem; }\n    .note { color: #475569; margin: 0 0 20px; line-height: 1.5; }\n    .example-input { background: white; border: 1px solid #cbd5e1; border-radius: 18px; padding: 18px; margin: 16px 0; box-shadow: 0 12px 24px rgba(15,23,42,.08); }\n    .sentence { font-size: 1.5rem; letter-spacing: .03em; margin: 0 0 12px; }\n    .sentence strong { font-weight: 950; color: #166534; }\n    .sentence em { font-style: italic; color: #7c2d12; }\n    .meta { color: #64748b; font-size: .95rem; margin: 0 0 10px; }\n    .lex-sequence { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; padding: 0; margin: 10px 0; }\n    .lex-token { border: 1px solid #cbd5e1; background: #f8fafc; border-radius: 999px; padding: 6px 10px; font-weight: 700; }\n    .lex-token.local { border-style: dashed; color: #9a3412; }\n    button, .button-link { border: 1px solid #94a3b8; background: #fff; border-radius: 10px; padding: 8px 12px; font-weight: 800; cursor: pointer; color: #0f172a; text-decoration: none; display: inline-flex; }\n    code { background: #e2e8f0; border-radius: 6px; padding: 2px 5px; }\n  </style>\n</head>\n<body>\n  <main>\n    <h1>OpenGraph voorbeeldzinnen · HTML-input</h1>\n    <p class="note">Deze file is de leesbare inputbron voor voorbeeldzinnen. <strong>Vet</strong> markeert subject; <em>cursief</em> markeert object. De lexicale vulling komt uit <a class="button-link" href="lexicon-config.html?v4405">lexicon-config.html</a>; de abstracte projectiebronnen uit <a class="button-link" href="structure-config.html?v4405">structure-config.html</a>. Bewerk via <a class="button-link" href="examples-editor.html?v4405">examples-editor.html</a>.</p>\n\n    <section id="opengraph-example-input" aria-label="Voorbeeldzinnen">\n${articles}\n    </section>\n  </main>\n  <script>\n    document.querySelectorAll('.example-input').forEach(card => {\n      const subject = card.querySelector('[data-role="subject"]');\n      const object = card.querySelector('[data-role="object"]');\n      const subjectToken = card.querySelector('.lex-token[data-role="subject"]');\n      const objectToken = card.querySelector('.lex-token[data-role="object"]');\n      card.querySelector('.swap-demo')?.addEventListener('click', () => {\n        const s = subject?.textContent || '';\n        const o = object?.textContent || '';\n        if (!subject || !object) return;\n        subject.textContent = o; object.textContent = s;\n        if (subjectToken) subjectToken.innerHTML = '<strong data-role="subject">' + o + '</strong>';\n        if (objectToken) objectToken.innerHTML = '<em data-role="object">' + s + '</em>';\n      });\n    });\n  <\/script>\n</body>\n</html>\n`; }
+function parseHtmlInput(html){ const doc=new DOMParser().parseFromString(html,'text/html'); return [...doc.querySelectorAll('.example-input')].map((card,idx)=>{ const meta=card.querySelector('.meta')?.textContent.trim()||''; const tokens=[...card.querySelectorAll('.lex-token')].map((token,i)=>({ id:token.dataset.id||`token-${i+1}`, label:token.textContent.trim().toUpperCase(), role:token.dataset.role||'', source:token.dataset.source||'', slot:token.dataset.slot||'', lexeme:token.dataset.lexeme||'' })); return normalizeExample({ id:card.dataset.id||`example-${idx+1}`, phase:card.dataset.phase||'Fase', lexRule:card.dataset.lexRule||'hoofdzininvariant', predicate:card.dataset.predicate||'BIJT', meta, tokens }); }).filter(ex=>ex.tokens.length); }
+async function loadStructureConfig(){ try{ const res=await fetch(`structure-config.html?${Date.now()}`,{cache:'no-store'}); if(!res.ok) throw new Error('fetch failed'); const doc=new DOMParser().parseFromString(await res.text(),'text/html'); const map=new Map(); doc.querySelectorAll('#opengraph-lexical-config .lexical-config').forEach(entry=>{ const id=entry.dataset.source||''; if(id) map.set(id,{id,label:`${id}${entry.dataset.role?' · '+entry.dataset.role:''}${entry.dataset.cat?' · '+entry.dataset.cat:''}`}); }); doc.querySelectorAll('#opengraph-syntax-config .node-config,#opengraph-functional-config .node-config').forEach(n=>{ const id=n.dataset.source || (n.dataset.kind==='leaf'?n.dataset.id:''); if(id && !map.has(id)) map.set(id,{id,label:`${id}${n.dataset.role?' · '+n.dataset.role:''}${n.dataset.cat?' · '+n.dataset.cat:''}`}); }); const slots=[...doc.querySelectorAll('#opengraph-lex-config .lex-slot-config')].map(s=>({id:s.dataset.id||'',label:s.dataset.label||s.textContent.trim()})).filter(s=>s.id); STRUCTURE_INFO.sources=[...map.values()]; if(slots.length) STRUCTURE_INFO.slots=slots; STRUCTURE_INFO.loaded=true; els.configStatus.value=`geladen · sources=${STRUCTURE_INFO.sources.length} · slots=${STRUCTURE_INFO.slots.length}`; }catch(err){ els.configStatus.value='fallback · structure-config niet geladen'; } }
+async function loadLexiconConfig(){ try{ const res=await fetch(`lexicon-config.html?${Date.now()}`,{cache:'no-store'}); if(!res.ok) throw new Error('fetch failed'); const doc=new DOMParser().parseFromString(await res.text(),'text/html'); const entries=[...doc.querySelectorAll('#opengraph-lexicon-config .lexicon-entry')].map(el=>({ id:el.dataset.id||'', label:(el.dataset.label||el.textContent.trim()).toUpperCase(), lemma:el.dataset.lemma||'', cat:el.dataset.cat||'', phrase:el.dataset.phrase||'', kind:el.dataset.kind||'', roles:(el.dataset.roles||'').split(/\s+/).filter(Boolean), defaultRole:el.dataset.defaultRole||'', sourceDefault:el.dataset.sourceDefault||'', slotDefault:el.dataset.slotDefault||'', slots:(el.dataset.slots||'').split(/\s+/).filter(Boolean), infinitive:el.dataset.infinitive||'', participle:el.dataset.participle||'' })).filter(e=>e.id); if(entries.length) LEXICON.entries=entries; LEXICON.loaded=true; els.lexiconStatus.value=`geladen · lexemes=${LEXICON.entries.length}`; }catch(err){ els.lexiconStatus.value='fallback · lexicon-config niet geladen'; } }
+function renderLexiconSelectors(){ const nps=LEXICON.entries.filter(e=>e.kind==='noun').map(e=>({id:e.id,label:e.label})); const verbs=LEXICON.entries.filter(e=>e.kind==='verb').map(e=>({id:e.id,label:e.label})); const ex=current(); const subj=ex?.tokens.find(t=>t.role==='subject')?.lexeme || 'hond'; const obj=ex?.tokens.find(t=>t.role==='object')?.lexeme || 'man'; const pred=(ex?.tokens.find(t=>t.role==='predicate') || ex?.tokens.find(t=>t.role==='participle'))?.lexeme || 'bijt'; els.subjectLexeme.innerHTML=optionsHtml(nps,subj,'kies subject'); els.objectLexeme.innerHTML=optionsHtml(nps,obj,'kies object'); els.verbLexeme.innerHTML=optionsHtml(verbs,pred,'kies V'); }
+function applyPattern(){ applyFormToCurrent(); const subj=els.subjectLexeme.value || 'hond', obj=els.objectLexeme.value || 'man', verb=els.verbLexeme.value || 'bijt'; const pattern=els.pattern.value; const fresh = pattern==='perf-bare' ? defaultPerf(subj,obj,verb) : (pattern==='sub-bare' ? defaultSub(subj,obj,verb) : defaultHead(subj,obj,verb)); Object.assign(current(), fresh, { id: current().id || fresh.id, phase: els.phase.value || fresh.phase, meta: els.meta.value || fresh.meta }); renderAll(); }
+function selectedSubjectObject(){ const ex=current(); return { subj:ex.tokens.find(t=>t.role==='subject'), obj:ex.tokens.find(t=>t.role==='object') }; }
+function download(name,text,type='text/html'){ const blob=new Blob([text],{type}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=name; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url); }
+async function fetchInitial(){ try{ const res=await fetch(`examples-input.html?${Date.now()}`,{cache:'no-store'}); if(!res.ok) throw new Error('fetch failed'); const parsed=parseHtmlInput(await res.text()); if(parsed.length) return parsed; }catch(err){} return baseExamples(); }
+function saveDraft(){ applyFormToCurrent(); localStorage.setItem(STORAGE_KEY,JSON.stringify(examples)); els.validation.value='Concept bewaard in browser'; }
+function loadDraft(){ try{ const parsed=JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]').map(normalizeExample); if(parsed.length){ examples=parsed; selected=0; renderAll(); } }catch(err){ els.validation.value='Kon concept niet laden'; } }
+document.getElementById('newHeadButton').addEventListener('click',()=>{ applyFormToCurrent(); examples.push(defaultHead()); selected=examples.length-1; renderAll(); });
+document.getElementById('newSubButton').addEventListener('click',()=>{ applyFormToCurrent(); examples.push(defaultSub()); selected=examples.length-1; renderAll(); });
+document.getElementById('duplicateButton').addEventListener('click',()=>{ applyFormToCurrent(); const copy=JSON.parse(JSON.stringify(current())); copy.id=slugify(copy.id+'-kopie'); examples.splice(selected+1,0,copy); selected++; renderAll(); });
+document.getElementById('deleteButton').addEventListener('click',()=>{ if(examples.length<=1)return; examples.splice(selected,1); selected=Math.max(0,selected-1); renderAll(); });
+document.getElementById('addTokenButton').addEventListener('click',()=>{ current().tokens.push({id:`token-${current().tokens.length+1}`,label:'NIEUW',role:'',source:'',slot:'',lexeme:''}); renderAll(); });
+document.getElementById('swapRolesButton').addEventListener('click',()=>{ const {subj,obj}=selectedSubjectObject(); if(subj&&obj){ [subj.label,obj.label]=[obj.label,subj.label]; [subj.lexeme,obj.lexeme]=[obj.lexeme,subj.lexeme]; } renderAll(); });
+document.getElementById('applyLexiconPattern').addEventListener('click',applyPattern);
+document.getElementById('saveDraftButton').addEventListener('click',saveDraft); document.getElementById('loadDraftButton').addEventListener('click',loadDraft);
+document.getElementById('downloadButton').addEventListener('click',()=>{ applyFormToCurrent(); download('examples-input.html',buildHtmlDocument(examples)); });
+document.getElementById('resetButton').addEventListener('click',()=>{ examples=baseExamples(); selected=0; renderAll(); });
+document.getElementById('reloadConfigButton').addEventListener('click',async()=>{ await loadStructureConfig(); await loadLexiconConfig(); renderAll(); });
+document.getElementById('saveAsButton').addEventListener('click',async()=>{ applyFormToCurrent(); const text=buildHtmlDocument(examples); if(!window.showSaveFilePicker){ download('examples-input.html',text); return; } try{ const handle=await showSaveFilePicker({suggestedName:'examples-input.html',types:[{description:'HTML',accept:{'text/html':['.html']}}]}); const writable=await handle.createWritable(); await writable.write(text); await writable.close(); els.validation.value='HTML opgeslagen'; }catch(err){} });
+els.fileInput.addEventListener('change',async event=>{ const file=event.target.files?.[0]; if(!file)return; const parsed=parseHtmlInput(await file.text()); if(parsed.length){ examples=parsed; selected=0; renderAll(); } event.target.value=''; });
+[els.id,els.phase,els.lexRule,els.predicate,els.meta].forEach(input=>input.addEventListener('input',()=>{ applyFormToCurrent(); renderPreview(); renderList(); }));
+(async function init(){ await loadStructureConfig(); await loadLexiconConfig(); examples=await fetchInitial(); renderAll(); })();
+</script>
+</body>
+</html>
