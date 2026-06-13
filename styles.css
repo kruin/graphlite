@@ -660,7 +660,7 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
   color: #7c2d12;
 }
 
-/* v4417: compact menu for layout density/fit and per-branch flip configuration. */
+/* v4420: compact menu for layout density/fit and per-branch flip configuration. */
 .view-config-grid,
 .branch-config-grid {
   display: grid;

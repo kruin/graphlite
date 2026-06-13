@@ -1,4 +1,4 @@
-# Gebruikershandleiding — concept v4417
+# Gebruikershandleiding — concept v4420
 
 ## Horizontale LEX-projectie lezen
 
@@ -7,7 +7,7 @@ In `Assen` loopt elke projectielijn van een bronknoop horizontaal naar de LEX-as
 
 ---
 
-# Gebruikershandleiding — concept v4417
+# Gebruikershandleiding — concept v4420
 
 ## V2 en Wissel bekijken
 
@@ -43,7 +43,7 @@ Vooralsnog ondersteunt de editor korte zinnen: hoofdzin, omdat-bijzin en perfect
 
 ---
 
-# Gebruikershandleiding — concept v4417
+# Gebruikershandleiding — concept v4420
 
 ## Starten
 

@@ -1,6 +1,6 @@
 # Release notes
 
-## v4417 · dynamische boomruimte + auto-fit
+## v4420 · dynamische boomruimte + auto-fit
 
 - Bomen in Assen, Bron en LOG/FT krijgen een configureerbare weergave: `Boomruimte`.
 - `auto` en `breed/lager` maken de HOR-afstand groter en de VER-afstand kleiner; daardoor past de boom beter in het venster zonder de onderliggende gridcoördinaten te wijzigen.
@@ -9,7 +9,7 @@
 - `FIT` voert dezelfde passende viewBox direct uit.
 
 
-## v4417 · horizontale LEX-projecties
+## v4420 · horizontale LEX-projecties
 
 - Projectielijnen van centrale boom naar LEX blijven nu horizontaal: bronknoop → bronpositie op de LEX-as.
 - Tokens worden niet meer eerst naar de oppervlaktevolgorde omhoog/omlaag geschoven.
@@ -20,7 +20,7 @@
 ---
 
 # Release notes
-## v4417 · lokale Wissel op de LEX-as
+## v4420 · lokale Wissel op de LEX-as
 
 - Wissel wordt niet meer als verplaatsing vanuit de centrale boom naar de LEX-as getekend.
 - De projectielijn uit de boom wijst naar het gevulde LEX-slot in de voorbeeldzinvolgorde.
@@ -29,14 +29,14 @@
 
 
 
-## v4417 · LEX-as woordvolgorde + Wissel-correctie
+## v4420 · LEX-as woordvolgorde + Wissel-correctie
 
 - De gevulde LEX-posities volgen nu expliciet de tokenvolgorde uit `examples-input.html`.
 - V2/Wissel verandert de zichtbare woordvolgorde niet meer op basis van bron-/layoutposities.
 - `slot 1` en `slot 2` worden op de LEX-as gekoppeld aan de oppervlakteslots: eerste zinsdeel en V2/PV.
 - Oude bronposities blijven zichtbaar als trace; in de assenweergave komen die trace-posities uit de centrale OPN-bron.
 
-## v4417 · V2/Wissel
+## v4420 · V2/Wissel
 
 - Nederlandse V2 geïntegreerd als lokale LEX-plaatsingsregel.
 - Extra vrij `slot 2 · V2/PV` toegevoegd naast `slot 1 · topicalisatie`.
@@ -48,7 +48,7 @@
 - `structure-config.html` bevat nu `v2` en `trace` als LEX-slots.
 
 
-## v4417
+## v4420
 
 - Lexicon uitgebreid met thematische rollen (`agens`, `patiens`, enz.).
 - Nouns krijgen naast syntactische rollen ook thematische mogelijkheden.
@@ -59,7 +59,7 @@
 - `examples-input.html` markeert tokens met `data-thematic-role`.
 - De oude swap-knop is uit de hoofdviewer en gegenereerde uitingen verwijderd.
 
-## v4417
+## v4420
 
 - `lexicon-editor.html` toegevoegd.
 - Lexemen kunnen worden toegevoegd, gekopieerd, verwijderd, gezocht/gefilterd en gevalideerd.
@@ -68,7 +68,7 @@
 - Viewer, voorbeeldeditor, lexicon-config, debug en docs linken naar de nieuwe lexicon-editor.
 - `debug.html` controleert nu ook `lexicon-editor.html`.
 
-## v4417
+## v4420
 
 - Correctie groei/projectiewissel: LEX is geen groei-projectie en mag de opgeslagen groeistap niet naar 0 clampen.
 - Terugwisselen van LEX naar Assen/Bron/LOG herstelt nu de laatst geldige groeistap; de boom blijft zichtbaar.
@@ -193,3 +193,15 @@
 ## v4383
 
 - Cache-issue rond functionele structuur opgelost via geversioneerde JS/CSS.
+
+## v4420
+
+- LEX-as gecorrigeerd voor horizontale projectie: niet-gewisselde bronwoorden blijven op hun bronhoogte.
+- Traces van gewisselde woorden staan op de oude/basispositie: de horizontale bronhoogte, niet op een te hoge lokale rij.
+- De groeistap met lokale LEX-as gebruikt nu wel de centrale bronkaart, maar tekent nog steeds geen projectielijnen.
+
+## v4420
+
+- LEX-as gecorrigeerd voor horizontale projectie: niet-gewisselde bronwoorden blijven op hun bronhoogte.
+- Traces van gewisselde woorden staan op de oude/basispositie: de horizontale bronhoogte, niet op een te hoge lokale rij.
+- De groeistap met lokale LEX-as gebruikt de centrale bronkaart, maar tekent nog steeds geen projectielijnen.

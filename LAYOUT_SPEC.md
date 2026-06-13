@@ -1,6 +1,6 @@
-# Layout-specificatie v4417
+# Layout-specificatie v4420
 
-## v4417 · LEX-projectie blijft horizontaal
+## v4420 · LEX-projectie blijft horizontaal
 
 Voor elke bronknoop met een lexicaal item geldt nu:
 
@@ -22,9 +22,9 @@ Renderlagen:
 
 ---
 
-# Layout-specificatie v4417
+# Layout-specificatie v4420
 
-## v4417 · vrije LEX-slots en V2
+## v4420 · vrije LEX-slots en V2
 
 De layout reserveert nu niet één maar twee vrije OPN-posities tussen root en boommateriaal:
 
@@ -72,7 +72,7 @@ Groei mag geen layout herberekenen. Render mag geen layout wijzigen.
 
 ## Groei-presentatie
 
-v4417 voegt een presentatie-laag toe bovenop de bestaande layout.
+v4420 voegt een presentatie-laag toe bovenop de bestaande layout.
 
 Principe:
 
@@ -111,7 +111,7 @@ De exacte volgorde tussen even diepe nodes wordt alleen voor render-zichtbaarhei
 
 Render is alleen de tekenlaag. De x/y-posities zijn dan al berekend.
 
-De render-volgorde is vanaf v4406 expliciet en blijft in v4417 gelden:
+De render-volgorde is vanaf v4406 expliciet en blijft in v4420 gelden:
 
 ```text
 1. grid
@@ -214,16 +214,16 @@ VP / ARG-STRUCT   = middenvertakking
 Overig            = alle andere vertakkingen
 ```
 
-## v4417 · Render van de LEX-as
+## v4420 · Render van de LEX-as
 
 De LEX-as heeft nu een expliciete oppervlaktestap: alle lexicale tokens worden eerst op basis van voorbeeldzinvolgorde geplaatst. Daarna tekent de renderlaag vrije slots, Wissel-pijlen en traces. Bronlayout of recursieve boomlayout mag de zichtbare LEX-tokenvolgorde niet veranderen.
 
-## v4417 · lokale Wissel-laag
+## v4420 · lokale Wissel-laag
 
 In de assenweergave zijn projectie en Wissel gescheiden. Projectielijnen lopen van de centrale bronknoop naar het gevulde LEX-slot. De Wissel zelf is een lokale laag op de LEX-as: van trace-slot naar vrij/gevuld slot. Traces worden dus niet in de boom geplaatst.
 
 
-## v4417 · dynamische pixelprojectie
+## v4420 · dynamische pixelprojectie
 
 De vrije boomlayout berekent nog steeds discrete HOR/VER-gridposities. Daarna wordt pas naar SVG-pixels geprojecteerd. Die projectie is nu instelbaar:
 

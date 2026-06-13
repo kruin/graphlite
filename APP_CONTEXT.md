@@ -1,15 +1,15 @@
-# OpenGraph Lite Viewer — app-context v4417
+# OpenGraph Lite Viewer — app-context v4420
 
-## v4417 · bronpositie blijft zichtbaar op de LEX-as
+## v4420 · bronpositie blijft zichtbaar op de LEX-as
 
 OpenGraph/JAN behandelt de LEX-as als projectieruimte met lokale plaatsingsregels. De boom levert bronposities; de LEX-as voert Wissels uit met vrije slots. Daarom blijven projecties horizontaal en verschuift een bronitem niet door de projectie zelf.
 
 
 ---
 
-# OpenGraph Lite Viewer — app-context v4417
+# OpenGraph Lite Viewer — app-context v4420
 
-## v4417 · V2-theorie in de demo
+## v4420 · V2-theorie in de demo
 
 De viewer noteert Nederlandse V2 niet als wijziging van de centrale boom, maar als lokale LEX-plaatsing. De LEX-as heeft vrije slots en **Wissel**-regels. Daardoor blijft de OPN-bron stabiel terwijl verschillende lineaire uitingen zichtbaar worden.
 
@@ -59,7 +59,7 @@ v4402 voegde per-vertakking flipconfig toe met twee doelen:
 De docs-map blijft vanaf v4401 de canonieke projectcontext en moet bij iedere nieuwe ZIP worden onderhouden.
 
 
-## Groei-presentatie vanaf v4417
+## Groei-presentatie vanaf v4420
 
 De viewer kan de vooraf berekende centrale boom stapsgewijs tonen. Dit is een presentatielaag, geen nieuwe layoutmethode:
 
@@ -70,10 +70,10 @@ layout volledig berekenen → growthStep per element → gedeeltelijk renderen
 Daarmee kan JAN/Open Notation didactisch worden getoond als een groeiende vrije boom, zonder dat knopen tijdens het afspelen verspringen.
 
 
-## Lexicon-editor vanaf v4417
+## Lexicon-editor vanaf v4420
 
 `lexicon-editor.html` is de beheerlaag voor lexemen. De editor leest de structurele sources en slots uit `structure-config.html`, zodat lexemen niet losraken van de actuele omgeving.
 
-## Lexicon- en uitingeneditor vanaf v4417
+## Lexicon- en uitingeneditor vanaf v4420
 
 `lexicon-editor.html` is nu de centrale beheerlaag voor lexemen én korte voorbeelduitingen. Daarmee ontstaat één lokale workflow voor de lexicale voorraad en de concrete testzinnen.
