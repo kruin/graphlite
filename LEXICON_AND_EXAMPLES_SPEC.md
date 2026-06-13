@@ -1,6 +1,10 @@
-# Lexicon en voorbeeldzinnen v4414
+## v4430 · Voorbeeldzin als resultaat
 
-## v4414 · plaatsingsregels op de LEX-as
+Voorbeeldzinnen bepalen de eindvolgorde. De plaatsingsregels verklaren de route vanaf de basisprojectie naar die eindvolgorde.
+
+# Lexicon en voorbeeldzinnen v4430
+
+## v4430 · plaatsingsregels op de LEX-as
 
 Voorlopig worden plaatsingsregels alleen op de LEX-as genoteerd. De regel heet **Wissel**:
 
@@ -21,7 +25,7 @@ Bijzinnen met `OMDAT` gebruiken slot 0 voor Comp en hebben in deze demo geen V2-
 
 ---
 
-Vanaf v4414 is `lexicon-editor.html` de gecombineerde editor voor lexemen en voorbeelduitingen. De verzameling uitingen wordt dus niet meer primair in een losse voorbeelden-editor beheerd.
+Vanaf v4430 is `lexicon-editor.html` de gecombineerde editor voor lexemen en voorbeelduitingen. De verzameling uitingen wordt dus niet meer primair in een losse voorbeelden-editor beheerd.
 
 ## Beheermodel
 
@@ -51,7 +55,7 @@ data-frame-objects="trui"
 
 Voor `breit` betekent dit: de uitingenbouwer laat `vrouw` als agens toe en `trui` als patiens. `trui` wordt niet als agens aangeboden.
 
-## Ondersteunde korte uitingen in v4414
+## Ondersteunde korte uitingen in v4430
 
 | type | LEX-volgorde | voorbeeld |
 |---|---|---|
@@ -63,7 +67,7 @@ De editor gebruikt bij export dezelfde HTML-structuur als de viewer al leest: `a
 
 ---
 
-# Lexicon en voorbeeldzinnen v4414
+# Lexicon en voorbeeldzinnen v4430
 
 ## Bestanden
 
@@ -138,11 +142,11 @@ de hond → hond
 de trui → trui
 ```
 
-## v4414 · LEX-volgorde
+## v4430 · LEX-volgorde
 
 De volgorde van `<li class="lex-token">` in `examples-input.html` is de gezaghebbende woordvolgorde op de LEX-as. V2, topicalisatie en andere plaatsingsregels mogen die lijst niet herordenen; zij tekenen alleen gevulde vrije slots, Wissel-pijlen en traces.
 
-## v4414 · trace als lokaal LEX-object
+## v4430 · trace als lokaal LEX-object
 
 Voor V2 en topicalisatie wordt de trace als lokaal LEX-object behandeld. De voorbeeldzin bepaalt de gevulde slots; de Wisselregel tekent daarnaast een trace-slot op de LEX-as. Daardoor worden `HOND BIJT MAN` en `TRUI BREIT VROUW` als oppervlaktestring behouden, terwijl de oude basispositie als lokale trace zichtbaar blijft.
 

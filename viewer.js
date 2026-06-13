@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'v4420';
+  const VERSION = 'v4432';
   const BASE_CELL = 74;
   const ROOT_SIDE_GAP = 1;
   const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -11,6 +11,7 @@
     canvasWrap: document.getElementById('canvasWrap'),
     exampleSelect: document.getElementById('exampleSelect'),
     centralModeSelect: document.getElementById('centralModeSelect'),
+    treeChoiceSelect: document.getElementById('treeChoiceSelect'),
     functionalOrderSelect: document.getElementById('functionalOrderSelect'),
     branchOrderSelect: document.getElementById('branchOrderSelect'),
     branchTopSelect: document.getElementById('branchTopSelect'),
@@ -115,15 +116,20 @@
     { id: 'functional', label: 'OPN · functionele structuur' }
   ];
 
+  const TREE_CHOICES = [
+    { id: 'auto-min', label: 'boomkeuze: auto per voorbeeldtype' },
+    { id: 'structure-config', label: 'boomkeuze: structure-config basisboom' }
+  ];
+
   const FUNCTIONAL_ORDERS = [
     { id: 'left-first', label: 'layout: left-first' },
     { id: 'right-first', label: 'layout: right-first' }
   ];
 
   const BRANCH_ORDERS = [
+    { id: 'normal', label: 'standaard: grammaticale volgorde' },
     { id: 'auto-compact', label: 'doel: compact · auto per vertakking' },
     { id: 'auto-align', label: 'doel: align subj/agens + obj/patiens' },
-    { id: 'normal', label: 'globaal: normaal' },
     { id: 'flip-all', label: 'globaal: flip alle vertakkingen' }
   ];
 
@@ -190,8 +196,9 @@
     example: EXAMPLES[0],
     projection: 'axes',
     centerMode: 'syntax',
+    treeChoice: 'auto-min',
     functionalOrder: 'left-first',
-    branchOrder: 'auto-compact',
+    branchOrder: 'normal',
     branchOverrides: { top: 'auto', middle: 'auto', other: 'auto' },
     layoutDensity: 'auto',
     viewFitMode: 'auto',
@@ -257,7 +264,7 @@
   }
 
   function activeSentenceHtml() {
-    // v4420: preview follows the editable examples-input.html token list.
+    // v4427: preview follows the editable examples-input.html token list.
     // <strong> marks subject; <em> marks object. This also supports new examples
     // made in examples-editor.html instead of only the two hardcoded patterns.
     return activeLexItems().map(tokenHtml).join(' ');
@@ -380,7 +387,98 @@
     }
   }
 
+  function itemSurfaceCategory(item) {
+    const source = String(item?.source || '').toLowerCase();
+    const role = String(item?.role || '').toLowerCase();
+    if (source === 'subject' || source === 'object' || role === 'subject' || role === 'object') return 'NP';
+    if (source === 'pv' || role === 'aux') return 'AUX';
+    if (source === 'vdw' || role === 'participle') return 'VDW';
+    if (source === 'predicate' || role === 'predicate') return 'V';
+    return String(item?.cat || 'XP').toUpperCase();
+  }
+
+  function sourceLabelFallback(source) {
+    if (source === 'subject') return '{subject}';
+    if (source === 'object') return '{object}';
+    if (source === 'predicate') return '{predicate}';
+    if (source === 'pv') return '{pv}';
+    if (source === 'vdw') return '{vdw}';
+    return `{${source}}`;
+  }
+
+  function activeSurfaceSourceItems() {
+    const seen = new Set();
+    return activeLexItems().filter(item => {
+      if (!item.source) return false;
+      const source = String(item.source);
+      if (seen.has(source)) return false;
+      seen.add(source);
+      return true;
+    });
+  }
+
+  function surfaceSyntaxSpec() {
+    // v4427: auto per voorbeeldtype kiest geen surface-boom. De syntax blijft
+    // de basisstructuur die de LEX-as daarna moet realiseren. Wissels zijn dus
+    // juist nodig wanneer de voorbeeldzin een andere volgorde heeft dan de
+    // basisboom. Voor Nederlandse hoofdzinnen gebruikt de demo een SOV-basis
+    // met V2-Wissel: S → NP VP; VP → NP V. Bijzinnen met omdat gebruiken
+    // dezelfde SOV-basis zonder V2-Wissel. Perfectum gebruikt een eindcluster
+    // waarin PV/AUX lokaal uit de cluster naar slot 2 kan wisselen.
+    const items = activeSurfaceSourceItems();
+    const bySource = new Map(items.map(item => [String(item.source || ''), item]));
+    const makeLeaf = (source, fallbackCat, fallbackRole) => {
+      const item = bySource.get(source);
+      return {
+        id: source,
+        label: item?.label || sourceLabelFallback(source),
+        cat: fallbackCat,
+        role: item?.role || fallbackRole || source,
+        source,
+        kind: 'leaf',
+        children: []
+      };
+    };
+    const phrase = (id, label, cat, child) => ({ id, label, cat, kind: 'cat', children: [child] });
+    const subject = phrase('np-subj', 'NP', 'NP', makeLeaf('subject', 'N', 'subject'));
+    const object = phrase('np-obj', 'NP', 'NP', makeLeaf('object', 'N', 'object'));
+    const predicate = phrase('v', 'V', 'V', makeLeaf('predicate', 'V', 'predicate'));
+    const aux = phrase('aux', 'AUX', 'AUX', makeLeaf('pv', 'AUX', 'aux'));
+    const participle = phrase('vdw', 'VDW', 'V', makeLeaf('vdw', 'V', 'participle'));
+    const hasSubject = bySource.has('subject');
+    const hasObject = bySource.has('object');
+    const hasPredicate = bySource.has('predicate');
+    const hasPv = bySource.has('pv');
+    const hasVdw = bySource.has('vdw');
+    if (!hasSubject && !hasObject && !hasPredicate && !hasPv && !hasVdw) {
+      return nodeConfigToTree(STRUCTURE_CONFIG.syntaxNodes, STRUCTURE_CONFIG.syntaxRoot);
+    }
+
+    let vpChildren = [];
+    if (hasPv || hasVdw) {
+      const clusterChildren = [];
+      if (hasVdw) clusterChildren.push(participle);
+      if (hasPv) clusterChildren.push(aux);
+      const cluster = { id: 'vp-perfectum', label: 'V-CLUSTER', cat: 'VP', kind: 'cat', children: clusterChildren.length ? clusterChildren : [aux] };
+      if (hasObject) vpChildren.push(object);
+      vpChildren.push(cluster);
+    } else {
+      if (hasObject) vpChildren.push(object);
+      if (hasPredicate) vpChildren.push(predicate);
+    }
+    const vp = { id: 'vp', label: 'VP', cat: 'VP', kind: 'cat', children: vpChildren };
+    const sChildren = [];
+    if (hasSubject) sChildren.push(subject);
+    if (vp.children.length) sChildren.push(vp);
+    return { id: 's', label: 'S', cat: 'S', kind: 'cat', children: sChildren.length ? sChildren : [vp] };
+  }
+
+  function activeTreeChoice() {
+    return state.treeChoice === 'structure-config' ? 'structure-config' : 'auto-min';
+  }
+
   function treeSpec() {
+    if (activeTreeChoice() === 'auto-min') return surfaceSyntaxSpec();
     return nodeConfigToTree(STRUCTURE_CONFIG.syntaxNodes, STRUCTURE_CONFIG.syntaxRoot);
   }
 
@@ -615,7 +713,7 @@
     const first = placeLayoutFree(cloneLayout(firstLayout), firstSide, [], node, 1);
     const extraGap = isLabel(node, 'S') && isLabel(firstLayout.node, 'NP') && isLabel(secondLayout.node, 'VP') ? 1 : 0;
 
-    // v4420: left-first/right-first is part of the placement strategy.
+    // v4427: left-first/right-first is part of the placement strategy.
     // It changes the candidate-search direction before placement; it does
     // not mirror an already drawn tree and does not swap grammatical roles.
     // The second complete child box starts below the real bottom of the first
@@ -741,9 +839,9 @@
       return layoutUnary(node, child, localFirstSide, options);
     }
 
-    // v4420: flip is no longer only global.  Every branching node can be
+    // v4427: flip is no longer only global.  Every branching node can be
     // decided independently.  Global normal/flip remain available, but the
-    // default is auto-compact; auto-align selects flips that reduce vertical
+    // Default is normal/grammatical order. Auto modes can still flip branches
     // distance between syntactic/functionele equivalents such as subject/AGENS
     // and object/PATIENS.
     const childLayouts = children.map(child => layoutTree(child, 0, options));
@@ -756,7 +854,7 @@
   }
 
   function addOpnTopicalizationSlot(layout, rootId = null) {
-    // v4420: OPN source trees reserve two explicit local placement slots before
+    // v4427: OPN source trees reserve two explicit local placement slots before
     // the ordinary tree material. Slot 1 is for topicalisatie/vooropplaatsing;
     // slot 2 is the V2/persoonsvorm-slot. They are free HOR/VER positions in
     // the central field. A LEX-Wissel may fill such a slot; the old/base
@@ -816,7 +914,7 @@
   }
 
   function layoutFunctionalRoleTree(order = 'left-first') {
-    // v4420: dedicated non-binary functional OPN layout with topicalization slot.
+    // v4427: dedicated non-binary functional OPN layout with topicalization slot.
     // The root is CLAUSE. It is not a predicate-root tree and not a binary tree.
     // Bottom-up idea: role leaf-box -> role-box -> CLAUSE n-ary box.
     // Placement uses free HOR/VER corridors: every role/root node and every leaf
@@ -1057,7 +1155,7 @@
   }
 
   function orderedSubtreeBoxes(layout) {
-    // v4420: render-order is explicit, not an accidental side effect of the
+    // v4427: render-order is explicit, not an accidental side effect of the
     // layout recursion or of JavaScript sort stability.  Large background boxes
     // are drawn first.  Equal-sized boxes use a deterministic spatial tie-break:
     // top-to-bottom, then left-to-right, then original layout order.
@@ -1126,7 +1224,7 @@
   }
 
   function orderedTreeNodes(layout) {
-    // v4420: actual node rendering is also explicit.  Shapes are drawn before
+    // v4427: actual node rendering is also explicit.  Shapes are drawn before
     // labels.  Within each layer, ties follow spatial order: top-to-bottom,
     // left-to-right, then original layout order.
     return [...layout.nodes]
@@ -1217,16 +1315,21 @@
     g.appendChild(svgEl('text', { x, y, class: 'axis-title' }, text));
   }
 
-  function lexTopicSlotY(sourceMap = null, y0 = 0) {
-    // v4420: de zichtbare LEX-as volgt altijd de voorbeeldzin.
-    // Vrije slots worden dus op de oppervlaktepositie van die zin getoond;
-    // horizontale bron/projectieposities blijven afzonderlijk trace/basisposities.
-    return lexWordOrderY(0, y0);
+  function surfaceItemAtPosition(surfacePosition) {
+    const items = activeLexItems().filter(item => item.source);
+    return items[surfacePosition] || null;
   }
 
-  function lexV2SlotY(sourceMap = null, y0 = 0) {
-    // Slot 2 is de tweede oppervlaktepositie in de voorbeeldzin.
-    return lexWordOrderY(1, y0);
+  function surfaceSlotY(surfacePosition, sourceMap = null, y0 = 0) {
+    return lexWordOrderY(surfacePosition, y0);
+  }
+
+  function lexTopicSlotY(sourceMap = null, y0 = 0, items = state.example?.lexItems || []) {
+    return topicSlotY(y0, items);
+  }
+
+  function lexV2SlotY(sourceMap = null, y0 = 0, items = state.example?.lexItems || []) {
+    return v2SlotY(y0, items);
   }
 
   function drawLexTopicSlot(g, x, y) {
@@ -1254,70 +1357,122 @@
   }
 
   function topicMovementForItem(item, index) {
-    // Voorlopige topicalisatie: als de eerste zichtbare bronknoop niet het subject
-    // is, interpreteert de LEX-as die positie als Wissel naar slot 1. Dit maakt
-    // object-topicalisatie mogelijk zonder de thematische rollen te veranderen.
+    // v4432: in Nederlandse V2-hoofdzinnen bezet het eerste zinsdeel slot 1.
+    // Dat geldt ook wanneer dat eerste zinsdeel het subject is. Het eerste
+    // lexicale zinsdeel laat dus altijd een trace achter op de oude basispositie.
     if (!isMainV2Rule()) return null;
     if (index !== 0 || !item?.source) return null;
-    if (String(item.role || '').toLowerCase() === 'subject') return null;
     return { kind: 'topic', slot: 'topic', caption: 'Wissel TOPIC', trace: `t[${item.role || item.source}]` };
   }
 
+  function configuredSourceOrder() {
+    const order = [];
+    function visit(node) {
+      if (!node) return;
+      if (node.source && !order.includes(node.source)) order.push(node.source);
+      for (const child of node.children || []) visit(child);
+    }
+    visit(nodeConfigToTree(STRUCTURE_CONFIG.syntaxNodes, STRUCTURE_CONFIG.syntaxRoot));
+    return order;
+  }
+
+  function activeBasisSourceOrder() {
+    const order = [];
+    function visit(node) {
+      if (!node) return;
+      if (node.source && !order.includes(node.source)) order.push(node.source);
+      for (const child of node.children || []) visit(child);
+    }
+    visit(treeSpec());
+    return order.length ? order : configuredSourceOrder();
+  }
+
+  function surfaceSourceIndex(item, fallbackIndex = 0) {
+    if (!item?.source) return fallbackIndex;
+    return activeSurfaceSourceItems().findIndex(src => String(src.source) === String(item.source));
+  }
+
+  function basisSourceIndex(item, fallbackIndex = 0) {
+    if (!item?.source) return fallbackIndex;
+    const order = activeBasisSourceOrder();
+    const idx = order.findIndex(source => String(source) === String(item.source));
+    return idx >= 0 ? idx : fallbackIndex;
+  }
+  function hasCompItem(items = state.example?.lexItems || []) {
+    return !!items.find(item => !item.source && item.slot === 'comp');
+  }
+
+  function showTopicSlot(items = state.example?.lexItems || []) {
+    return items.findIndex((item, i) => movementForItem(item, i)?.slot === 'topic') >= 0;
+  }
+
+  function showV2Slot(items = state.example?.lexItems || []) {
+    return items.findIndex((item, i) => movementForItem(item, i)?.slot === 'v2') >= 0;
+  }
+
+  function lexSlotBaseOffset(items = state.example?.lexItems || []) {
+    let offset = 0;
+    if (hasCompItem(items)) offset += 1;
+    if (showTopicSlot(items)) offset += 1;
+    if (showV2Slot(items)) offset += 1;
+    return offset;
+  }
+
+  function compSlotY(y0) {
+    return y0;
+  }
+
+  function topicSlotY(y0, items = state.example?.lexItems || []) {
+    return y0 + (hasCompItem(items) ? 64 : 0);
+  }
+
+  function v2SlotY(y0, items = state.example?.lexItems || []) {
+    return y0 + (hasCompItem(items) ? 64 : 0) + (showTopicSlot(items) ? 64 : 0);
+  }
+
   function movementForItem(item, index) {
+    if (!item?.source) return null;
+    // v4427: de voorbeeldzin bepaalt de gevulde LEX-slots. De boom wordt niet
+    // omgebouwd naar die surface-volgorde; waar de voorbeeldzin een vrij slot
+    // vult, noteert de LEX-as een lokale Wissel. Voor nu zijn de expliciete
+    // plaatsingsregels: topic/vooropplaatsing en V2. Niet-verplaatste woorden
+    // blijven op hun horizontale bronpositie.
+    const topic = topicMovementForItem(item, index);
+    if (topic) return topic;
     if (isMainV2Rule() && isFiniteVerbForV2(item)) {
       return { kind: 'v2', slot: 'v2', caption: 'Wissel V2', trace: item.source === 'pv' ? 't[pv]' : 't[V]' };
     }
-    return topicMovementForItem(item, index);
+    return null;
   }
 
-  function sourceAlignedLexY(item, index, y0, sourceMap = null) {
-    // v4420: de LEX-projectie naar een bronitem blijft horizontaal.
-    // Een bronitem wordt dus niet eerst naar de oppervlaktevolgorde
-    // opgeschoven. Wissels gebeuren daarna lokaal op de LEX-as.
-    if (item?.source && sourceMap) {
-      const p = sourceMap.get(item.source);
-      if (p) return p.py;
-    }
-    if (!item?.source && item?.slot === 'comp') return y0 - cellY();
-    return lexWordOrderY(index, y0);
+  function sourceAlignedLexY(item, index, y0, sourceMap = null, items = state.example?.lexItems || []) {
+    return baseLexY(item, index, y0, sourceMap, items);
   }
 
   function localTraceY(item, index, y0, items = state.example?.lexItems || []) {
-    // v4420: traces zijn lokale LEX-asposities, niet boom-y-posities.
-    // Daardoor blijven de oppervlaktewoorden exact in de voorbeeldzinvolgorde;
-    // de oude plek van een gewisseld item komt daaronder als trace-rij.
-    const moved = items
-      .map((it, i) => ({ item: it, index: i, movement: movementForItem(it, i) }))
-      .filter(e => e.item?.source && e.movement)
-      .sort((a, b) => {
-        const d = sourceOrderIndex(a.item, a.index) - sourceOrderIndex(b.item, b.index);
-        return d || a.index - b.index;
-      });
-    const pos = moved.findIndex(e => e.item === item && e.index === index);
-    const row = items.length + Math.max(0, pos);
-    return y0 + row * 64;
+    // v4432: een trace blijft exact op de oude basispositie van het verplaatste item.
+    return baseLexY(item, index, y0, null, items);
   }
 
   function baseLexY(item, index, y0, sourceMap = null, items = state.example?.lexItems || []) {
-    // v4420: de oude/basispositie van een gewisseld woord is de horizontale
-    // projectiehoogte van zijn bronknoop. Alleen zonder centrale bronkaart
-    // vallen traces terug op lokale rijen onder de voorbeeldzin.
-    if (movementForItem(item, index)) {
-      return sourceMap ? projectionAnchorY(item, index, y0, sourceMap, items) : localTraceY(item, index, y0, items);
+    // v4432: de basisprojectie wordt niet gecomprimeerd. In Assen blijft de
+    // LEX-basisplek exact horizontaal gelijk aan de bronknoop in de boom.
+    // Alleen zonder centrale boom/sourceMap valt de LEX-only view terug op
+    // een eenvoudige, leesbare rijafstand.
+    if (item?.source && sourceMap) {
+      const p = sourceMap.get(item.source);
+      if (p && Number.isFinite(p.py)) return p.py;
     }
-    return lexTargetY(item, index, y0, sourceMap, items);
+    const baseOffset = lexSlotBaseOffset(items);
+    const baseIndex = basisSourceIndex(item, index);
+    return y0 + (baseOffset + baseIndex) * 64;
   }
 
   function projectionAnchorY(item, index, y0, sourceMap = null, items = state.example?.lexItems || []) {
-    // Projectielijnen mogen horizontaal blijven: ze landen op de bronhoogte.
-    // Dat anker is niet hetzelfde als de surface-woordrij op de LEX-as.
-    return sourceAlignedLexY(item, index, y0, sourceMap);
+    return baseLexY(item, index, y0, sourceMap, items);
   }
 
   function lexWordOrderY(index, y0) {
-    // Standalone fallback: zonder centrale boom blijft de gewone
-    // voorbeeldzinvolgorde zichtbaar. In Assen overschrijft
-    // sourceAlignedLexY dit met de horizontale bronpositie.
     return y0 + index * 64;
   }
 
@@ -1333,14 +1488,11 @@
   }
 
   function lexTargetY(item, index, y0, sourceMap = null, items = state.example?.lexItems || []) {
-    // v4420: de LEX-as bewaart horizontale projectie voor alle bronwoorden
-    // die niet wisselen. Alleen een gewisseld woord staat in zijn vrije
-    // surface-slot; de oude basispositie wordt trace op de bronhoogte.
+    if (!item?.source) return item.slot === 'comp' ? compSlotY(y0) : lexWordOrderY(index, y0);
     const movement = movementForItem(item, index);
-    if (movement?.slot === 'topic') return lexTopicSlotY(sourceMap, y0);
-    if (movement?.slot === 'v2') return lexV2SlotY(sourceMap, y0);
-    if (item?.source && sourceMap) return projectionAnchorY(item, index, y0, sourceMap, items);
-    return lexWordOrderY(index, y0);
+    if (movement?.slot === 'topic') return topicSlotY(y0, items);
+    if (movement?.slot === 'v2') return v2SlotY(y0, items);
+    return baseLexY(item, index, y0, sourceMap, items);
   }
 
   function lexItemY(item, index, y0, sourceMap = null, items = state.example?.lexItems || []) {
@@ -1352,8 +1504,17 @@
     if (item.slot === 'comp') return '0';
     if (movement?.slot === 'topic') return '1';
     if (movement?.slot === 'v2') return '2';
+    if (movement?.slot === 'local') return String(index + 1);
     const hasComp = items[0]?.slot === 'comp';
     return String(hasComp ? index : index + 1);
+  }
+
+  function localAxisMovement(item, index, fromY, toY) {
+    // v4427: verplaatsingen zijn alleen toegestaan door expliciete regels die
+    // naar een vrij slot gaan. Een gewone afwijking tussen basishoogte en
+    // voorbeeldzinrij mag geen automatische Wissel veroorzaken. Daardoor laten
+    // subject/object geen trace achter; alleen het verplaatste element doet dat.
+    return movementForItem(item, index);
   }
 
   function drawLexTrace(g, x, y, label, caption = 'trace') {
@@ -1369,6 +1530,19 @@
     g.appendChild(svgEl('text', { x: sideX + 58, y: (fromY + toY) / 2, class: 'wissel-label' }, label));
   }
 
+
+  function movementSummary() {
+    const moved = activeLexItems().map((item, index) => movementForItem(item, index)).filter(Boolean);
+    const type = state.example?.lexRule || 'voorbeeldzin';
+    const choice = activeTreeChoice() === 'auto-min' ? 'auto-type' : 'structure-config';
+    return { count: moved.length, type, choice };
+  }
+
+  function movementSummaryLabel() {
+    const m = movementSummary();
+    return `boomkeuze=${m.choice} · type=${m.type} · LEX-wissels=${m.count}`;
+  }
+
   function drawLexAxis(g, x, y0, items, sourceMap = null, options = {}) {
     const horizontalProjectionMode = !!sourceMap && !options.localOnly;
     drawAxisTitle(g, x - 98, y0 - 70, horizontalProjectionMode ? 'LEX-projectie · Wisselregels' : 'LEX-as · lokale plaatsingsregels');
@@ -1378,9 +1552,8 @@
     const projectionYs = items.map((item, i) => projectionAnchorY(item, i, y0, sourceMap, items));
     const topicIndex = isMainV2Rule() ? items.findIndex((item, i) => movementForItem(item, i)?.slot === 'topic') : -1;
     const v2Index = isMainV2Rule() ? items.findIndex((item, i) => movementForItem(item, i)?.slot === 'v2') : -1;
-    const firstFieldY = isMainV2Rule() && items.length ? lexWordOrderY(0, y0) : null;
-    const topicSlotY = topicIndex >= 0 ? lexTopicSlotY(sourceMap, y0) : firstFieldY;
-    const v2SlotY = v2Index >= 0 ? lexV2SlotY(sourceMap, y0) : null;
+    const topicSlotY = topicIndex >= 0 ? lexTopicSlotY(sourceMap, y0, items) : null;
+    const v2SlotY = v2Index >= 0 ? lexV2SlotY(sourceMap, y0, items) : null;
     const axisYs = [...itemYs, ...baseYs, ...projectionYs, ...(topicSlotY === null ? [] : [topicSlotY]), ...(v2SlotY === null ? [] : [v2SlotY]), y0 - 48, y0 + Math.max(4, items.length + 1) * 64 + 40];
     const axisMinY = Math.min(...axisYs) - 36;
     const axisMaxY = Math.max(...axisYs) + 44;
@@ -1391,19 +1564,24 @@
     if (v2SlotY !== null) drawLexV2Slot(g, x, v2SlotY);
 
     const ruleText = isMainV2Rule()
-      ? 'Plaatsingsregel: LEX-as toont de voorbeeldzin; Wissel vult vrij slot; oude basispositie = trace.'
-      : 'Plaatsingsregel: LEX-as toont de voorbeeldzin; Comp/(om)dat staat in slot 0.';
+      ? 'Plaatsingsregel: eerst horizontale basisprojectie; daarna alleen expliciete Wissels naar vrije slots 0/1/2; traces blijven op de oude basisplek.'
+      : 'Plaatsingsregel: resultaat = voorbeeldzin; Comp gebruikt slot 0; geen automatische subject/object-Wissel.';
     g.appendChild(svgEl('text', { x: x + 150, y: axisMinY + 18, class: 'wissel-label' }, ruleText));
+
+    // v4432: geen stippel- of verplaatsingslijnen vanuit de boom naar de LEX-as.
+    // De boom levert alleen de basisstructuur; alle zichtbare Wissels en traces
+    // worden lokaal op de LEX-as getekend.  Dit voorkomt dat projectielijnen
+    // opnieuw als verplaatsingen vanuit de boom gelezen worden.
 
     items.forEach((item, i) => {
       const p = item.source && sourceMap ? sourceMap.get(item.source) : null;
-      const movement = movementForItem(item, i);
       const y = lexItemY(item, i, y0, sourceMap, items);
       const oldY = baseLexY(item, i, y0, sourceMap, items);
-      positions.set(item.id, { x, y, item, sourcePoint: p || null });
+      const movement = localAxisMovement(item, i, oldY, y);
+      positions.set(item.id, { x, y, baseY: oldY, item, sourcePoint: p || null });
 
       if (movement && item.source) {
-        drawLexTrace(g, x, oldY, movement.trace, 'trace op LEX-as');
+        drawLexTrace(g, x, oldY, movement.trace, 'trace · basisprojectie');
         drawLexWissel(g, x, oldY, y, movement.caption);
       }
 
@@ -1420,28 +1598,24 @@
       g.appendChild(svgEl('text', { x, y: y + 5, class: item.source ? 'lex-label' : 'lex-local-label' }, item.label));
     });
 
-    if (sourceMap && !options.localOnly) {
-      for (let i = 0; i < items.length; i++) {
-        const item = items[i];
-        if (!item.source) continue;
-        const p = sourceMap.get(item.source);
-        if (!p) continue;
-        // v4420: projectielijnen blijven horizontaal naar een bronanker.
-        // Surface-woorden en traces blijven lokale LEX-asposities.
-        const targetY = projectionAnchorY(item, i, y0, sourceMap, items);
-        g.appendChild(pathEl(`M ${p.px} ${p.py} L ${x} ${targetY}`, { class: 'projection-line lex horizontal' }));
-      }
-    }
     return positions;
   }
 
   function syntaxRules() {
-    return (STRUCTURE_CONFIG.syntaxNodes || [])
-      .filter(n => (n.children || []).length)
-      .map(n => `${n.label.replace(/\{subject\}/gi, 'SUBJ').replace(/\{object\}/gi, 'OBJ').replace(/\{predicate\}/gi, roleLabels().predicate).replace(/\{pv\}/gi, 'PV').replace(/\{vdw\}/gi, 'VDW')} → ${n.children.map(id => {
-        const child = (STRUCTURE_CONFIG.syntaxNodes || []).find(c => c.id === id);
-        return child ? child.label.replace(/\{subject\}/gi, 'SUBJ').replace(/\{object\}/gi, 'OBJ').replace(/\{predicate\}/gi, roleLabels().predicate).replace(/\{pv\}/gi, 'PV').replace(/\{vdw\}/gi, 'VDW') : id;
-      }).join(' ')}`);
+    const rules = [];
+    const label = node => String(node?.label || node?.id || '')
+      .replace(/\{subject\}/gi, 'SUBJ')
+      .replace(/\{object\}/gi, 'OBJ')
+      .replace(/\{predicate\}/gi, roleLabels().predicate)
+      .replace(/\{pv\}/gi, 'PV')
+      .replace(/\{vdw\}/gi, 'VDW');
+    function visit(node) {
+      if (!node || !(node.children || []).length) return;
+      rules.push(`${label(node)} → ${(node.children || []).map(label).join(' ')}`);
+      for (const child of node.children || []) visit(child);
+    }
+    visit(treeSpec());
+    return rules;
   }
 
   function drawSyntaxRules(g, x, y) {
@@ -1463,7 +1637,7 @@
       .map(id => functionalNodes.find(n => n.id === id)?.label || id)
       .join(' + ') || 'role-boxen';
     if (options.showTitle !== false) drawAxisTitle(g, origin.x - 180, origin.y - 70, `OPN · functionele structuur · ${rootLabel} → ${roleNames} · ${state.functionalOrder}`);
-    drawAxisTitle(g, origin.x - 176, origin.y - 48, `v4420 · ${branchModeLabel()} · vrije plaatsing + V2-slot`);
+    drawAxisTitle(g, origin.x - 176, origin.y - 48, `v4427 · ${branchModeLabel()} · vrije plaatsing + V2-slot`);
     const growthPlan = growthPlanForLayout(layout);
     layout.__growthPlan = growthPlan;
     drawSubtreeBoxes(g, layout, origin, growthPlan);
@@ -1476,7 +1650,7 @@
   function drawAxes() {
     const g = baseSvg('axes-view');
     const origin = { x: 760, y: 115 };
-    drawAxisTitle(g, origin.x - 170, origin.y - 76, state.centerMode === 'functional' ? `CENTRAAL · OPN-functioneel · structure-config · ${state.functionalOrder}` : `CENTRAAL · OPN-syntaxboom · structure-config · ${state.functionalOrder}`);
+    drawAxisTitle(g, origin.x - 170, origin.y - 76, state.centerMode === 'functional' ? `CENTRAAL · OPN-functioneel · structure-config · ${state.functionalOrder}` : `CENTRAAL · OPN-syntaxboom · ${movementSummaryLabel()}`);
 
     let sourceMap = null;
     let centralLayout = null;
@@ -1596,7 +1770,7 @@
 
   function renderStatus() {
     els.titleLine.textContent = `${activeSentenceText()} · ${state.projectionLabel || projectionLabel()} · ${state.centerMode === 'syntax' ? 'OPN-syntaxboom' : 'OPN-functioneel'}`;
-    els.metaLine.textContent = `${state.example.phase} · centrale boom invariant · LEX=${activeSentenceText()} · V2/Wissel op LEX-as · HTML-input=examples-input.html · lexicon=lexicon-config.html`;
+    els.metaLine.textContent = `${state.example.phase} · ${movementSummaryLabel()} · LEX=${activeSentenceText()} · HTML-input=examples-input.html · lexicon=lexicon-config.html`;
     if (els.sentencePreview) els.sentencePreview.innerHTML = activeSentenceHtml();
     const baseFeedback = state.projection === 'source'
       ? 'Bron toont de gekozen OPN-bron uit structure-config.html. Syntax en functioneel gebruiken bottom-up recursieve box-layout; left/right stuurt beide layouts; takvolgorde kan globaal, compact-auto of align-auto zijn.'
@@ -1605,8 +1779,8 @@
     els.projectionHelp.textContent = helpText();
     els.explainHeading.textContent = `Uitleg · ${activeSentenceText()}`;
     els.explainText.textContent = state.example.id === 'hond-bijt-man'
-      ? 'Eerst wordt de centrale syntax-tree opgebouwd. Daarna projecteert LEX de bronposities naar de LEX-as. In Nederlandse hoofdzinnen vult de persoonsvorm via Wissel het vrije V2-slot 2; op de oude basispositie verschijnt een trace t[V]. Slot 1 blijft beschikbaar voor topicalisatie/vooropplaatsing.'
-      : 'De centrale syntax-tree blijft invariant. De bijzin wordt lokaal op de LEX-as gevormd: OMDAT staat in LEX-slot 0; bijzinvolgorde heeft hier geen V2-Wissel. Hoofdzinnen gebruiken slot 2 voor V2/PV en laten een trace op de oude basispositie achter.';
+      ? 'Auto per voorbeeldtype kiest een hiërarchische basisboom, niet de surface-volgorde. Voor hoofdzin/V2 blijft de basis S → NP VP; VP → NP V. De voorbeeldzin wordt daarna op de LEX-as gerealiseerd via lokale Wissels zoals V2 en topic.'
+      : 'De LEX-as projecteert eerst elke bronknoop horizontaal op zijn basispositie. Daarna maken lokale Wissels de voorbeeldzinvolgorde; verplaatste knopen laten op de basispositie een trace achter.';
   }
 
   function projectionLabel() {
@@ -1618,7 +1792,7 @@
     if (state.projection === 'lex') return 'LEX: lokale plaatsingsregels. Nederlands hoofdzin = V2: persoonsvorm naar vrij slot 2; trace blijft lokaal op de LEX-as. Bijzin met OMDAT heeft geen V2.';
     if (state.projection === 'synt') return 'SYNTAX-projectie: regels uit structure-config.html. Nieuwe VP-regelsets worden hier zichtbaar.';
     if (state.projection === 'log') return 'LOG/FT: functioneel = CLAUSE met aparte PRED-knoop en ARG-STRUCT-subtree; bottom-up vrij geplaatst.';
-    return 'Assen: centrale OPN-boom; links LEX met vrije slots 0/1/2. Wissels en traces worden lokaal op de LEX-as genoteerd.';
+    return 'Assen: centrale OPN-boom; links LEX. De voorbeeldzin bepaalt de LEX-volgorde; Wissels en traces blijven lokaal op de LEX-as.';
   }
 
   function renderSideLists() {
@@ -1659,6 +1833,7 @@
   function syncControls() {
     fillSelect(els.exampleSelect, EXAMPLES, state.example.id);
     fillSelect(els.centralModeSelect, CENTER_MODES, state.centerMode);
+    fillSelect(els.treeChoiceSelect, TREE_CHOICES, activeTreeChoice());
     fillSelect(els.functionalOrderSelect, FUNCTIONAL_ORDERS, state.functionalOrder);
     fillSelect(els.branchOrderSelect, BRANCH_ORDERS, state.branchOrder);
     fillSelect(els.branchTopSelect, BRANCH_CHOICES, state.branchOverrides.top);
@@ -1744,6 +1919,7 @@
       version: VERSION,
       example: state.example.id,
       central_opn: state.centerMode,
+      tree_choice: activeTreeChoice(),
       functional_order: state.functionalOrder,
       branch_order: state.branchOrder,
       branch_overrides: state.branchOverrides,
@@ -1762,8 +1938,10 @@
       ...syntaxRules().map(rule => `  ${rule}`),
       `lex: ${activeSentenceText()}`,
       `lex_rule: ${state.example.lexRule}`,
-      `placement_rule: ${isMainV2Rule() ? 'lokale Wissel V2 op LEX-as: persoonsvorm/predicaat naar vrij slot 2; oude LEX-positie = trace' : 'geen V2-Wissel; Comp-slot 0 indien aanwezig'}`,
+      `placement_rule: ${isMainV2Rule() ? 'LEX-as: eerst horizontale basisprojectie; daarna lokale Wissel naar voorbeeldzinvolgorde; oude basispositie = trace' : 'geen V2-Wissel; Comp-slot 0 indien aanwezig'}`,
       `free_slots: slot1=TOPIC, slot2=V2/PV`,
+      `tree_choice: ${activeTreeChoice()}`,
+      `movement_summary: ${movementSummaryLabel()}`,
       `functional_order: ${state.functionalOrder}`,
       `branch_order: ${state.branchOrder}`,
       `branch_overrides: top=${state.branchOverrides.top}, middle=${state.branchOverrides.middle}, other=${state.branchOverrides.other}`
@@ -1794,7 +1972,7 @@
     });
     els.branchOrderSelect?.addEventListener('change', event => {
       const allowed = new Set(BRANCH_ORDERS.map(opt => opt.id));
-      state.branchOrder = allowed.has(event.target.value) ? event.target.value : 'auto-compact';
+      state.branchOrder = allowed.has(event.target.value) ? event.target.value : 'normal';
       render();
     });
     const updateBranchOverride = (key, value) => {
@@ -1869,7 +2047,7 @@
     await loadExamplesFromHtml();
     render();
     window.__opengraphBoot = { version: VERSION, loaded: true };
-    // v4420: lokale ontwikkelviewer gebruikt geen PWA-cache meer.
+    // v4427: lokale ontwikkelviewer gebruikt geen PWA-cache meer.
     // Oude service workers worden actief verwijderd, zodat structure-config/examples-input
     // niet per ongeluk uit een oudere versie blijven komen.
     if ('serviceWorker' in navigator) {

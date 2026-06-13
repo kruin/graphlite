@@ -1,6 +1,42 @@
 # Release notes
 
-## v4420 · dynamische boomruimte + auto-fit
+## v4430
+
+- Standaardtakvolgorde is nu grammaticaal/normaal, niet auto-compact.
+- Openingsboom `HOND BIJT MAN` begint met de standaardvertakking `S → NP VP`; de eerste child `NP` wordt links en boven geplaatst, daarna volgt `VP` rechts en lager.
+- Binnen `VP` blijft de basis `VP → NP V`: object-positie boven/voor de V-basispositie; alleen de V/PV wisselt lokaal naar slot 2.
+- `auto-compact`, `auto-align` en `flip` blijven beschikbaar als vergelijkingsopties, maar zijn niet meer de default.
+
+## v4430 · basisprojectie vóór Wissel
+
+- LEX-as toont eerst de horizontale basisprojectie vanaf de boom.
+- Projectielijnen landen op de basispositie, niet op het surface-slot.
+- Daarna worden lokale Wissels op de LEX-as toegepast.
+- Een verplaatste knoop laat op de oude basispositie een trace achter.
+- Het eindresultaat blijft de woordvolgorde van de voorbeeldzin.
+
+# Release notes
+
+## v4430 · LEX-resultaat is altijd de voorbeeldzin
+
+- De gevulde LEX-slots worden nu uitsluitend gerenderd in de tokenvolgorde uit `examples-input.html`.
+- Boomhoogtes of horizontale bronankers mogen de zichtbare woordvolgorde op de LEX-as niet meer veranderen.
+- Wissels zijn verklarende lokale regels: ze vullen een oppervlakteslot en zetten de oude positie als trace in een aparte trace-zone.
+- Projectielijnen landen op het gevulde LEX-slot; de LEX-as leest daardoor altijd exact als de voorbeeldzin.
+
+# Release notes
+
+## v4430 · basisboom blijft; voorbeeldzin wordt op de LEX-as gerealiseerd
+
+- Auto per voorbeeldtype maakt geen surface-boom meer.
+- De syntax blijft hiërarchisch: `S → NP VP`; in de basis `VP → NP V`.
+- De LEX-as volgt de voorbeeldzin.
+- Afwijkingen tussen basisboom en voorbeeldzin worden als lokale `Wissel` + trace op de LEX-as getekend.
+- Hoofdzinnen tonen dus V2 als Wissel; bijzinnen met `omdat` kunnen zonder V2-Wissel blijven.
+
+# Release notes
+
+## v4430 · dynamische boomruimte + auto-fit
 
 - Bomen in Assen, Bron en LOG/FT krijgen een configureerbare weergave: `Boomruimte`.
 - `auto` en `breed/lager` maken de HOR-afstand groter en de VER-afstand kleiner; daardoor past de boom beter in het venster zonder de onderliggende gridcoördinaten te wijzigen.
@@ -9,7 +45,7 @@
 - `FIT` voert dezelfde passende viewBox direct uit.
 
 
-## v4420 · horizontale LEX-projecties
+## v4430 · horizontale LEX-projecties
 
 - Projectielijnen van centrale boom naar LEX blijven nu horizontaal: bronknoop → bronpositie op de LEX-as.
 - Tokens worden niet meer eerst naar de oppervlaktevolgorde omhoog/omlaag geschoven.
@@ -20,7 +56,7 @@
 ---
 
 # Release notes
-## v4420 · lokale Wissel op de LEX-as
+## v4430 · lokale Wissel op de LEX-as
 
 - Wissel wordt niet meer als verplaatsing vanuit de centrale boom naar de LEX-as getekend.
 - De projectielijn uit de boom wijst naar het gevulde LEX-slot in de voorbeeldzinvolgorde.
@@ -29,14 +65,14 @@
 
 
 
-## v4420 · LEX-as woordvolgorde + Wissel-correctie
+## v4430 · LEX-as woordvolgorde + Wissel-correctie
 
 - De gevulde LEX-posities volgen nu expliciet de tokenvolgorde uit `examples-input.html`.
 - V2/Wissel verandert de zichtbare woordvolgorde niet meer op basis van bron-/layoutposities.
 - `slot 1` en `slot 2` worden op de LEX-as gekoppeld aan de oppervlakteslots: eerste zinsdeel en V2/PV.
 - Oude bronposities blijven zichtbaar als trace; in de assenweergave komen die trace-posities uit de centrale OPN-bron.
 
-## v4420 · V2/Wissel
+## v4430 · V2/Wissel
 
 - Nederlandse V2 geïntegreerd als lokale LEX-plaatsingsregel.
 - Extra vrij `slot 2 · V2/PV` toegevoegd naast `slot 1 · topicalisatie`.
@@ -48,7 +84,7 @@
 - `structure-config.html` bevat nu `v2` en `trace` als LEX-slots.
 
 
-## v4420
+## v4430
 
 - Lexicon uitgebreid met thematische rollen (`agens`, `patiens`, enz.).
 - Nouns krijgen naast syntactische rollen ook thematische mogelijkheden.
@@ -59,7 +95,7 @@
 - `examples-input.html` markeert tokens met `data-thematic-role`.
 - De oude swap-knop is uit de hoofdviewer en gegenereerde uitingen verwijderd.
 
-## v4420
+## v4430
 
 - `lexicon-editor.html` toegevoegd.
 - Lexemen kunnen worden toegevoegd, gekopieerd, verwijderd, gezocht/gefilterd en gevalideerd.
@@ -68,7 +104,7 @@
 - Viewer, voorbeeldeditor, lexicon-config, debug en docs linken naar de nieuwe lexicon-editor.
 - `debug.html` controleert nu ook `lexicon-editor.html`.
 
-## v4420
+## v4430
 
 - Correctie groei/projectiewissel: LEX is geen groei-projectie en mag de opgeslagen groeistap niet naar 0 clampen.
 - Terugwisselen van LEX naar Assen/Bron/LOG herstelt nu de laatst geldige groeistap; de boom blijft zichtbaar.
@@ -194,14 +230,47 @@
 
 - Cache-issue rond functionele structuur opgelost via geversioneerde JS/CSS.
 
-## v4420
+## v4430
 
 - LEX-as gecorrigeerd voor horizontale projectie: niet-gewisselde bronwoorden blijven op hun bronhoogte.
 - Traces van gewisselde woorden staan op de oude/basispositie: de horizontale bronhoogte, niet op een te hoge lokale rij.
 - De groeistap met lokale LEX-as gebruikt nu wel de centrale bronkaart, maar tekent nog steeds geen projectielijnen.
 
-## v4420
+## v4430
 
 - LEX-as gecorrigeerd voor horizontale projectie: niet-gewisselde bronwoorden blijven op hun bronhoogte.
 - Traces van gewisselde woorden staan op de oude/basispositie: de horizontale bronhoogte, niet op een te hoge lokale rij.
 - De groeistap met lokale LEX-as gebruikt de centrale bronkaart, maar tekent nog steeds geen projectielijnen.
+
+
+## v4430
+
+- Boomkeuze `auto-min`: per voorbeeldzin wordt de centrale syntaxboom in voorbeeldzinvolgorde opgebouwd, zodat de LEX-as zo weinig mogelijk lokale Wissels hoeft te tekenen.
+- `structure-config` blijft beschikbaar als vergelijkingsstand voor de oudere basisboom.
+- LEX-as behoudt strikt de volgorde uit `examples-input.html`.
+
+
+## v4430
+
+- LEX-verplaatsingen beperkt tot expliciete vrije slots: Comp-slot 0, topic-slot 1, V2/PV-slot 2.
+- Geen automatische LEX-Wissels meer voor subject/object om een surface-rij te forceren.
+- Niet-verplaatste knopen blijven op hun horizontale basisprojectie; alleen verplaatste knopen laten een trace achter.
+
+
+## v4430
+
+- LEX-regel verduidelijkt: een subject-initiale hoofdzin verplaatst het subject niet.
+- Slot 1/topicalisatie wordt alleen getekend bij een expliciete TOPIC-Wissel.
+- HOND in `HOND BIJT MAN` krijgt geen TOPIC-box, geen Wissel-pijl en geen trace; alleen BIJT wisselt naar V2.
+
+
+## v4430
+- LEX-asresultaat is weer strikt de voorbeeldzin.
+- Subject-initial HOND is geen verplaatsing; alleen BIJT/V2 krijgt Wissel en trace.
+- Traces staan in een aparte lokale trace-zone onder de voorbeeldzin.
+
+
+## v4432
+
+- LEX-basisprojectie in Assen wordt niet meer gecomprimeerd: basisposities en traces blijven horizontaal gelijk aan de boomknopen.
+- Alleen de vrije slots 0/1/2 staan bovenaan als lokale LEX-slots.

@@ -1,4 +1,4 @@
-# Gebruikershandleiding — concept v4420
+# Gebruikershandleiding — concept v4430
 
 ## Horizontale LEX-projectie lezen
 
@@ -7,7 +7,7 @@ In `Assen` loopt elke projectielijn van een bronknoop horizontaal naar de LEX-as
 
 ---
 
-# Gebruikershandleiding — concept v4420
+# Gebruikershandleiding — concept v4430
 
 ## V2 en Wissel bekijken
 
@@ -43,7 +43,7 @@ Vooralsnog ondersteunt de editor korte zinnen: hoofdzin, omdat-bijzin en perfect
 
 ---
 
-# Gebruikershandleiding — concept v4420
+# Gebruikershandleiding — concept v4430
 
 ## Starten
 
@@ -134,3 +134,8 @@ FIT: pas de viewBox onmiddellijk aan de getekende inhoud aan
 
 `Boomruimte` verandert de visuele afstand tussen gridposities. De onderliggende boom- en LEX-regels blijven gelijk.
 
+
+
+## v4430 takvolgorde
+
+De standaardtakvolgorde is grammaticaal/normaal: `S → NP VP` en `VP → NP V`. De eerste child wordt links en hoger geplaatst; de tweede child rechts en lager. Hierdoor ligt de basisprojectie op de LEX-as in de verwachte volgorde: subject hoog, object daaronder, V/PV onderaan. Alleen expliciete vrije-slotregels zoals V2 of topicalisatie veroorzaken een Wissel en een trace.

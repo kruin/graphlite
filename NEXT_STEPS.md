@@ -1,6 +1,6 @@
-# Next steps v4420
+# Next steps v4430
 
-## Na v4420
+## Na v4430
 
 - Controleer visueel per voorbeeldzin of alle projectielijnen naar LEX exact horizontaal zijn.
 - Maak een compacte legenda: projectie = horizontaal, Wissel = lokaal op de as.
@@ -9,9 +9,9 @@
 
 ---
 
-# Next steps v4420
+# Next steps v4430
 
-## Na v4420 · V2/Wissel
+## Na v4430 · V2/Wissel
 
 - V1 als aparte LEX-regel modelleren.
 - Topicalisatie-editor expliciet maken: topic kiezen zonder thematische rollen te wijzigen.
@@ -31,7 +31,7 @@
 9. Configschema documenteren met foutmeldingen per regel.
 10. Carousel/documentatie koppelen aan de nieuwe docs-map en eventueel groei-presentatie als carousel-bron gebruiken.
 
-## Na v4420
+## Na v4430
 
 - Uitingeneditor uitbreiden van korte zinnen naar meerdere zinstypen en grotere sets.
 - Groepering/tags toevoegen aan voorbeeldzinnen en selectieframes verder verfijnen.

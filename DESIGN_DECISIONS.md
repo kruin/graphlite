@@ -1,6 +1,6 @@
-# Design decisions v4420
+# Design decisions v4430
 
-## v4420 · projectie ≠ Wissel
+## v4430 · projectie ≠ Wissel
 
 33. LEX-projectie is horizontaal: bronknoop naar eigen bronpositie op de LEX-as.
 34. Wissel is een lokale as-regel: vrije slotvulling en trace ontstaan op de LEX-as, niet in de centrale boom.
@@ -9,9 +9,9 @@
 
 ---
 
-# Design decisions v4420
+# Design decisions v4430
 
-## v4420 · V2 als LEX-Wissel
+## v4430 · V2 als LEX-Wissel
 
 19. V2 wordt niet in de centrale boom opgelost.
 20. V2 is voorlopig een lokale LEX-plaatsingsregel.
@@ -44,25 +44,25 @@
 20. `slot 0` is Comp/(om)dat op LEX, boven de S/CLAUSE-box.
 21. `slot 1` is vooropplaatsing/topicalisatie tussen startknoop en bovenste boomlaag.
 
-22. Vanaf v4420 is groei-presentatie een aparte presentatielaag bovenop de berekende layout.
+22. Vanaf v4430 is groei-presentatie een aparte presentatielaag bovenop de berekende layout.
 23. Groei mag de layout niet herberekenen en geen x/y-posities wijzigen.
 24. Groei gebruikt bottom-up node-hoogte: leaves eerst, root laatst; daarna verschijnen OPN-slot en projecties.
 25. Render-volgorde blijft z-order; groei-volgorde blijft didactische presentatievolgorde.
 
-26. Vanaf v4420 wordt het lexicon via `lexicon-editor.html` beheerbaar en uitbreidbaar.
+26. Vanaf v4430 wordt het lexicon via `lexicon-editor.html` beheerbaar en uitbreidbaar.
 27. De lexicon-editor mag geen structurele sources aanmaken; die blijven exclusief in `structure-config.html`.
 28. De lexicon-editor exporteert alleen `lexicon-config.html`; concrete zinnen blijven in `examples-input.html`.
 
-29. Vanaf v4420 beheert de lexicon-editor ook de verzameling korte voorbeelduitingen.
+29. Vanaf v4430 beheert de lexicon-editor ook de verzameling korte voorbeelduitingen.
 30. De aparte voorbeelden-editor blijft voorlopig compatibel, maar is niet langer de hoofdroute.
 31. Voorbeelden blijven concrete HTML-input; de lexicon-editor genereert alleen de concrete korte uitingen, niet de structurele sources zelf.
 
-32. Vanaf v4420 bevat het lexicon thematische rollen naast syntactische rollen.
+32. Vanaf v4430 bevat het lexicon thematische rollen naast syntactische rollen.
 33. Voor korte actieve zinnen geldt voorlopig: subject = agens, object = patiens.
 34. Predicaten kunnen eenvoudige selectieframes hebben (`frameSubjects`, `frameObjects`).
 35. De voorbeeldzin-bouwer mag geen uitingen voorstellen waarin een patiens-only lexeme, zoals `trui`, als agens optreedt.
 
 
-36. Vanaf v4420 is er onderscheid tussen discrete layoutcoördinaten en pixelprojectie.
+36. Vanaf v4430 is er onderscheid tussen discrete layoutcoördinaten en pixelprojectie.
 37. `Boomruimte` mag cellX/cellY/fontScale wijzigen, maar niet de grammaticale of LEX-volgorde.
 38. Auto-fit wijzigt alleen de SVG-viewBox; het is geen layoutstrategie.

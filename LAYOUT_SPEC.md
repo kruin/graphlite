@@ -1,6 +1,10 @@
-# Layout-specificatie v4420
+## v4430 · LEX-renderlaag
 
-## v4420 · LEX-projectie blijft horizontaal
+Projectielijnen uit de boom eindigen op basisposities op dezelfde horizontale hoogte als de bronknoop. Lokale LEX-Wissels verplaatsen daarna naar de surface-slots.
+
+# Layout-specificatie v4430
+
+## v4430 · LEX-projectie blijft horizontaal
 
 Voor elke bronknoop met een lexicaal item geldt nu:
 
@@ -22,9 +26,9 @@ Renderlagen:
 
 ---
 
-# Layout-specificatie v4420
+# Layout-specificatie v4430
 
-## v4420 · vrije LEX-slots en V2
+## v4430 · vrije LEX-slots en V2
 
 De layout reserveert nu niet één maar twee vrije OPN-posities tussen root en boommateriaal:
 
@@ -72,7 +76,7 @@ Groei mag geen layout herberekenen. Render mag geen layout wijzigen.
 
 ## Groei-presentatie
 
-v4420 voegt een presentatie-laag toe bovenop de bestaande layout.
+v4430 voegt een presentatie-laag toe bovenop de bestaande layout.
 
 Principe:
 
@@ -111,7 +115,7 @@ De exacte volgorde tussen even diepe nodes wordt alleen voor render-zichtbaarhei
 
 Render is alleen de tekenlaag. De x/y-posities zijn dan al berekend.
 
-De render-volgorde is vanaf v4406 expliciet en blijft in v4420 gelden:
+De render-volgorde is vanaf v4406 expliciet en blijft in v4430 gelden:
 
 ```text
 1. grid
@@ -214,16 +218,16 @@ VP / ARG-STRUCT   = middenvertakking
 Overig            = alle andere vertakkingen
 ```
 
-## v4420 · Render van de LEX-as
+## v4430 · Render van de LEX-as
 
 De LEX-as heeft nu een expliciete oppervlaktestap: alle lexicale tokens worden eerst op basis van voorbeeldzinvolgorde geplaatst. Daarna tekent de renderlaag vrije slots, Wissel-pijlen en traces. Bronlayout of recursieve boomlayout mag de zichtbare LEX-tokenvolgorde niet veranderen.
 
-## v4420 · lokale Wissel-laag
+## v4430 · lokale Wissel-laag
 
 In de assenweergave zijn projectie en Wissel gescheiden. Projectielijnen lopen van de centrale bronknoop naar het gevulde LEX-slot. De Wissel zelf is een lokale laag op de LEX-as: van trace-slot naar vrij/gevuld slot. Traces worden dus niet in de boom geplaatst.
 
 
-## v4420 · dynamische pixelprojectie
+## v4430 · dynamische pixelprojectie
 
 De vrije boomlayout berekent nog steeds discrete HOR/VER-gridposities. Daarna wordt pas naar SVG-pixels geprojecteerd. Die projectie is nu instelbaar:
 
@@ -235,3 +239,16 @@ fontScale     → grotere labels zonder layoutcoördinaten te wijzigen
 
 De optie `Venster: automatisch passend` verandert alleen de SVG-viewBox. Zij herberekent de boom niet.
 
+
+
+### v4430 LEX-verplaatsingsregels
+
+1. Projecteer elke bronknoop eerst horizontaal naar de LEX-as.
+2. Verplaats alleen wanneer een expliciete regel een vrij slot vult: 0=Comp, 1=topic/vooropplaatsing, 2=V2/PV.
+3. Niet-verplaatste knopen blijven op hun basisprojectie en krijgen geen trace.
+4. Alleen de verplaatste knoop laat op de oude basispositie een trace achter.
+
+
+## v4430 takvolgorde
+
+De standaardtakvolgorde is grammaticaal/normaal: `S → NP VP` en `VP → NP V`. De eerste child wordt links en hoger geplaatst; de tweede child rechts en lager. Hierdoor ligt de basisprojectie op de LEX-as in de verwachte volgorde: subject hoog, object daaronder, V/PV onderaan. Alleen expliciete vrije-slotregels zoals V2 of topicalisatie veroorzaken een Wissel en een trace.
