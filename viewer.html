@@ -1,6 +1,6 @@
 <!doctype html>
-<!-- OPENGRAPH_VIEWER_HTML_v4408: fallback app entry. -->
-<html lang="nl" data-opengraph-app="viewer" data-version="v4408">
+<!-- OPENGRAPH_VIEWER_HTML_v4417: fallback app entry. -->
+<html lang="nl" data-opengraph-app="viewer" data-version="v4417">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
@@ -9,19 +9,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#0f172a">
   <meta name="description" content="OpenGraph Lite Viewer: vrije JAN-bronknopen, edits, LEX-plaatsingsregels en projecties.">
-  <title>OpenGraph Lite Viewer v4408</title>
+  <title>OpenGraph Lite Viewer v4417</title>
   <link rel="icon" href="favicon.ico" sizes="any">
   <link rel="icon" href="icons/icon-192.svg" type="image/svg+xml">
-  <!-- v4408: manifest disabled in local/dev build to avoid PWA/service-worker confusion. -->
+  <!-- v4417: manifest disabled in local/dev build to avoid PWA/service-worker confusion. -->
   <!-- <link rel="manifest" href="manifest.webmanifest"> -->
-  <link rel="stylesheet" href="styles.css?v4408">
+  <link rel="stylesheet" href="styles.css?v4417">
 </head>
 <body>
   <header class="app-header">
     <div>
       <div class="eyebrow">OpenGraph · JAN · Open Notation</div>
-      <h1>OpenGraph Lite Viewer <span class="version-tag">v4408</span></h1>
-      <p class="header-subtitle">Redesign: eerst syntax-tree, daarna LEX-projectie, daarna lokale LEX-regel.</p>
+      <h1>OpenGraph Lite Viewer <span class="version-tag">v4417</span></h1>
+      <p class="header-subtitle">Redesign: eerst syntax-tree, daarna LEX-projectie, daarna lokale LEX-regel/Wissel (V2).</p>
     </div>
     <button id="installButton" class="ghost hidden" type="button">Installeer</button>
   </header>
@@ -33,13 +33,13 @@
         <select id="exampleSelect" aria-label="Voorbeeld kiezen"></select>
       </label>
       <div class="input-sentence-tools" aria-label="Zin-input">
-        <a class="button-link" href="examples-input.html?v4408" title="Open de HTML-inputfile met voorbeeldzinnen, subject vet en object cursief">HTML-input</a>
-        <a class="button-link" href="examples-editor.html?v4408" title="Gebruiksvriendelijke editor voor voorbeeldzinnen: toevoegen, verwijderen, subject/object wijzigen en HTML downloaden">Voorbeeldeditor</a>
-        <a class="button-link" href="lexicon-config.html?v4408" title="Bescheiden lexicon voor voorbeeldzinnen">Lexicon</a>
-        <a class="button-link" href="structure-editor.html?v4408" title="Bewerk eerst syntax-config en functional-config">Structure-editor</a>
-        <a class="button-link" href="docs/docs-home.html?v4408" title="Projectcontext, layoutspec en release notes">Docs</a>
-        <a class="button-link" href="reset-cache.html?v4408" title="Verwijder browsercache/service worker en open de viewer opnieuw">Reset cache</a>
-        <button id="swapRolesButton" type="button" title="Wissel de gekozen subject- en objectvulling. Vet blijft subject; cursief blijft object.">Wissel S/O</button>
+        <a class="button-link" href="examples-input.html?v4417" title="Open de HTML-inputfile met voorbeeldzinnen, subject vet en object cursief">HTML-input</a>
+        <a class="button-link" href="examples-editor.html?v4417" title="Oude aparte voorbeeldeditor; hoofdbeheer zit nu in de Lexicon-editor">Voorbeeldeditor (oud)</a>
+        <a class="button-link" href="lexicon-config.html?v4417" title="Leesbare lexicon-config voor voorbeeldzinnen">Lexicon</a>
+        <a class="button-link" href="lexicon-editor.html?v4417" title="Lexicon én korte voorbeelduitingen beheren; exporteert lexicon-config.html en examples-input.html">Lexicon+uitingen-editor</a>
+        <a class="button-link" href="structure-editor.html?v4417" title="Bewerk eerst syntax-config en functional-config">Structure-editor</a>
+        <a class="button-link" href="docs/docs-home.html?v4417" title="Projectcontext, layoutspec en release notes">Docs</a>
+        <a class="button-link" href="reset-cache.html?v4417" title="Verwijder browsercache/service worker en open de viewer opnieuw">Reset cache</a>
       </div>
       <div class="button-row compact-actions">
         <button id="undoButton" type="button" title="Undo edit">↶ Undo</button>
@@ -60,13 +60,13 @@
 
     <section class="intro-panel" aria-label="Introductie">
       <div class="intro-kicker">Redesign · boom eerst</div>
-      <p><strong>Fase 1</strong>: maak eerst de centrale boom voor <strong>HOND BIJT MAN</strong>. <strong>Fase 2</strong>: teken de LEX-projectie horizontaal vanaf de centrale boom naar de LEX-as. Beide OPN-bronnen reserveren daarbij <strong>slot 1</strong> voor vooropplaatsing/topicalisatie tussen beginknoop en boom. <strong>Fase 3</strong>: regel lokaal op de LEX-as het uitingtype <strong>OMDAT HOND MAN BIJT</strong>. De centrale boom blijft daarbij onveranderd. Lidwoorden zijn verwijderd: de man → man; de hond → hond. Structuren staan in <code>structure-config.html</code>: eerst syntax-config en functional-config. Functioneel gebruikt <code>CLAUSE → PRED ARG-STRUCT</code>, zodat predicaat en argumentstructuur apart vrij kunnen worden geplaatst. De layout-switch <code>left-first/right-first</code> geldt voor syntax én functioneel. Flipdoel kiest per vertakking automatisch <code>compact</code> of <code>align</code>; daarnaast kan top/VP-overig handmatig normaal/flip worden gezet. Daarna volgen de voorbeeldzinnen. Voorbeeldzinnen staan in <code>examples-input.html</code>: <strong>vet</strong> markeert subject, <em>cursief</em> markeert object. Lexicale vulling komt uit <code>lexicon-config.html</code>. Bewerk structuren via <code>structure-editor.html</code> en zinnen via <code>examples-editor.html</code>.</p>
+      <p><strong>Fase 1</strong>: maak eerst de centrale boom voor <strong>HOND BIJT MAN</strong>. <strong>Fase 2</strong>: teken de LEX-projectie horizontaal vanaf de centrale boom naar de LEX-as. Beide OPN-bronnen reserveren daarbij <strong>slot 1</strong> voor vooropplaatsing/topicalisatie tussen beginknoop en boom. <strong>Fase 3</strong>: regel lokaal op de LEX-as het uitingtype <strong>OMDAT HOND MAN BIJT</strong>. De centrale boom blijft daarbij onveranderd. Lidwoorden zijn verwijderd: de man → man; de hond → hond. Structuren staan in <code>structure-config.html</code>: eerst syntax-config en functional-config. Functioneel gebruikt <code>CLAUSE → PRED ARG-STRUCT</code>, zodat predicaat en argumentstructuur apart vrij kunnen worden geplaatst. De layout-switch <code>left-first/right-first</code> geldt voor syntax én functioneel. Flipdoel kiest per vertakking automatisch <code>compact</code> of <code>align</code>; daarnaast kan top/VP-overig handmatig normaal/flip worden gezet. Daarna volgen de voorbeeldzinnen. Voorbeeldzinnen staan in <code>examples-input.html</code>: <strong>vet</strong> markeert subject/agens, <em>cursief</em> markeert object/patiens. Lexicale vulling en thematische rollen komen uit <code>lexicon-config.html</code>. Beheer lexicon én korte voorbeeldzinnen via <code>lexicon-editor.html</code>; die editor exporteert zowel <code>lexicon-config.html</code> als <code>examples-input.html</code>. Bewerk structuren via <code>structure-editor.html</code>. <code>examples-editor.html</code> blijft voorlopig beschikbaar als aparte/oude zinneneditor.</p>
     </section>
 
     <section class="status-panel" aria-live="polite">
       <div id="titleLine" class="title-line">—</div>
       <div id="metaLine" class="meta-line">Kies een voorbeeld of laad JSON.</div>
-      <div id="sentencePreview" class="sentence-preview" title="Vet = subject; cursief = object. Gebruik ‘Wissel S/O’ om de vulling te wisselen.">—</div>
+      <div id="sentencePreview" class="sentence-preview" title="Vet = subject/agens; cursief = object/patiens.">—</div>
       <div id="actionFeedback" class="action-feedback neutral">Bronmodus: sleep knopen vrij over het raster. Selecteer een knoop om label, categorie en rol te wijzigen.</div>
     </section>
 
@@ -89,7 +89,11 @@
             <label class="field mini-field"><span>VP / ARG-STRUCT</span><select id="branchMiddleSelect"></select></label>
             <label class="field mini-field"><span>Overig</span><select id="branchOtherSelect"></select></label>
           </div>
-          <p id="projectionHelp" class="inline-help">OPN/Assen: centrale OPN-weergave; LEX links, SYNTAX rechts, LOGICAL onder.</p>
+          <div class="view-config-grid" aria-label="Dynamische boomweergave">
+            <label class="field mini-field"><span>Boomruimte</span><select id="layoutDensitySelect"></select></label>
+            <label class="field mini-field"><span>Venster</span><select id="viewFitSelect"></select></label>
+          </div>
+          <p id="projectionHelp" class="inline-help">OPN/Assen: centrale OPN-weergave; LEX links, SYNTAX rechts, LOGICAL onder. Boomruimte kan breed/lager worden gezet; FIT past de viewBox aan de echte tekening aan.</p>
           <div class="check-grid">
             <label><input id="showGridInput" type="checkbox" checked> Raster</label>
             <label><input id="showRelationsInput" type="checkbox" checked> Relaties</label>
@@ -142,7 +146,7 @@
             <button id="lexRightButton" type="button">→</button>
             <button id="applyLexRuleButton" type="button">Pas regel toe</button>
           </div>
-          <p class="inline-help">Eerst projecteren bronknopen horizontaal op LEX; daarna verandert de lokale LEX-regel woordvolgorde en uitingtype-slots. De centrale boom blijft ongewijzigd.</p>
+          <p class="inline-help">Eerst projecteren bronknopen naar LEX; daarna vullen Wisselregels vrije slots: V2/PV naar slot 2, eventuele topicalisatie naar slot 1. Oude plekken worden traces. De centrale boom blijft ongewijzigd.</p>
         </section>
 
         <section class="panel-card relation-card">
@@ -172,14 +176,14 @@
       </details>
       <details>
         <summary>Bediening</summary>
-        <p><strong>OPN/Assen</strong>: kies centraal tussen OPN-syntaxboom en OPN-functionele structuur. De syntaxboom wordt uit <code>structure-config.html</code> gelezen en bottom-up berekend: eerst leaf/subtree-boxen, daarna plaatsing, daarna renderen. Projecties worden horizontaal naar hun as getekend. <strong>Groei</strong> presenteert dezelfde berekende layout stapsgewijs: eerst leaves, dan hogere categorieën/boxen, daarna OPN-slot en LEX-projectie. De functionele structuur gebruikt dezelfde recursieve werkwijze, is n-ary, heeft ook een eigen LEX-projectie, reserveert slot 1 voor vooropplaatsing/topicalisatie en heeft configkeuzes <strong>left-first</strong>/<strong>right-first</strong> en <strong>flipdoel compact/align en flip-config per vertakking</strong>. <strong>Voorbeeld-input</strong>: <code>examples-input.html</code> bevat de zinnen met <strong>subject vet</strong> en <em>object cursief</em>. <strong>LEX</strong>: gebruik de orderlijst of plaatsingsregel.</p>
+        <p><strong>OPN/Assen</strong>: kies centraal tussen OPN-syntaxboom en OPN-functionele structuur. De syntaxboom wordt uit <code>structure-config.html</code> gelezen en bottom-up berekend: eerst leaf/subtree-boxen, daarna plaatsing, daarna renderen. Projecties worden horizontaal naar hun as getekend. <strong>Boomruimte</strong> maakt de HOR-afstand groter en de VER-afstand kleiner; <strong>Venster auto</strong> past de viewBox dynamisch aan. <strong>Groei</strong> presenteert dezelfde berekende layout stapsgewijs: eerst leaves, dan hogere categorieën/boxen, daarna OPN-slot en LEX-projectie. De functionele structuur gebruikt dezelfde recursieve werkwijze, is n-ary, heeft ook een eigen LEX-projectie, reserveert slot 1 voor vooropplaatsing/topicalisatie en slot 2 voor V2/PV en heeft configkeuzes <strong>left-first</strong>/<strong>right-first</strong> en <strong>flipdoel compact/align en flip-config per vertakking</strong>. <strong>Voorbeeld-input</strong>: <code>examples-input.html</code> bevat de zinnen met <strong>subject vet</strong> en <em>object cursief</em>. <strong>LEX</strong>: gebruik de orderlijst of plaatsingsregel.</p>
       </details>
     </section>
   </main>
 
 
   <script>
-    window.__opengraphBoot = { version: 'v4408', loaded: false, marker: 'viewer-index' };
+    window.__opengraphBoot = { version: 'v4417', loaded: false, marker: 'viewer-index' };
     function ogStatus(message) {
       var target = document.getElementById('actionFeedback') || document.body;
       if (target) target.textContent = message;
@@ -192,10 +196,10 @@
     });
     setTimeout(function() {
       if (!window.__opengraphBoot || !window.__opengraphBoot.loaded) {
-        ogStatus('Viewer start niet volledig. Gebruik Reset cache of open http://127.0.0.1:8088/reset-cache.html?v4408.');
+        ogStatus('Viewer start niet volledig. Gebruik Reset cache of open http://127.0.0.1:8088/reset-cache.html?v4417.');
       }
     }, 2500);
   </script>
-  <script src="viewer.js?v4408" defer></script>
+  <script src="viewer.js?v4417" defer></script>
 </body>
 </html>

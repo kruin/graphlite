@@ -6,7 +6,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>OpenGraph voorbeeldzinnen input v4408</title>
+  <title>OpenGraph voorbeeldzinnen input v4414</title>
   <style>
     :root { font-family: system-ui, -apple-system, Segoe UI, sans-serif; color: #0f172a; background: #f8fafc; }
     body { margin: 0; padding: 24px; }
@@ -28,81 +28,73 @@
 <body>
   <main>
     <h1>OpenGraph voorbeeldzinnen · HTML-input</h1>
-    <p class="note">Deze file is de leesbare inputbron voor voorbeeldzinnen. <strong>Vet</strong> markeert subject; <em>cursief</em> markeert object. Lidwoorden zijn uit deze laag verwijderd: <code>de man</code> wordt <code>man</code>, <code>de hond</code> wordt <code>hond</code>. De lexicale vulling komt uit <a class="button-link" href="lexicon-config.html?v4408">lexicon-config.html</a>. Bewerk via <a class="button-link" href="examples-editor.html?v4408">examples-editor.html</a>.</p>
+    <p class="note">Deze file is de leesbare inputbron voor voorbeeldzinnen. <strong>Vet</strong> markeert subject/agens; <em>cursief</em> markeert object/patiens. Lidwoorden zijn uit deze laag verwijderd: <code>de man</code> wordt <code>man</code>, <code>de hond</code> wordt <code>hond</code>. De lexicale vulling en thematische rollen komen uit <a class="button-link" href="lexicon-config.html?v4414">lexicon-config.html</a>. Beheer lexemen én uitingen via <a class="button-link" href="lexicon-editor.html?v4414">lexicon-editor.html</a>.</p>
     <section id="opengraph-example-input" aria-label="Voorbeeldzinnen">
       <article class="example-input" data-id="hond-bijt-man" data-phase="Fase 1+2" data-lex-rule="hoofdzininvariant" data-predicate="BIJT">
-        <p class="sentence" title="Vet = subject; cursief = object"><strong data-role="subject">HOND</strong> BIJT <em data-role="object">MAN</em></p>
-        <p class="meta">hoofdzin · centrale boom invariant · zonder lidwoorden</p>
+        <p class="sentence" title="Vet = subject/agens; cursief = object/patiens"><strong data-role="subject" data-thematic-role="agens">HOND</strong> BIJT <em data-role="object" data-thematic-role="patiens">MAN</em></p>
+        <p class="meta">hoofdzin V2 · subject=agens · object=patiens · Wissel predicaat→slot 2; oude plek=t[V] · zonder lidwoorden</p>
         <ol class="lex-sequence" aria-label="LEX-volgorde">
-          <li class="lex-token" data-id="subject-hond" data-source="subject" data-role="subject" data-lexeme="hond"><strong data-role="subject">HOND</strong></li>
+          <li class="lex-token" data-id="subject-hond" data-source="subject" data-role="subject" data-thematic-role="agens" data-lexeme="hond"><strong data-role="subject" data-thematic-role="agens">HOND</strong></li>
           <li class="lex-token" data-id="pred-bijt" data-source="predicate" data-role="predicate" data-lexeme="bijt">BIJT</li>
-          <li class="lex-token" data-id="object-man" data-source="object" data-role="object" data-lexeme="man"><em data-role="object">MAN</em></li>
+          <li class="lex-token" data-id="object-man" data-source="object" data-role="object" data-thematic-role="patiens" data-lexeme="man"><em data-role="object" data-thematic-role="patiens">MAN</em></li>
         </ol>
-        <button type="button" class="swap-demo">Wissel S/O</button>
       </article>
 
       <article class="example-input" data-id="omdat-hond-man-bijt" data-phase="Fase 3" data-lex-rule="bijzin-omdat" data-predicate="BIJT">
-        <p class="sentence" title="Vet = subject; cursief = object">OMDAT <strong data-role="subject">HOND</strong> <em data-role="object">MAN</em> BIJT</p>
-        <p class="meta">bijzin · Comp/(om)dat in LEX-slot 0 · zonder lidwoorden</p>
+        <p class="sentence" title="Vet = subject/agens; cursief = object/patiens">OMDAT <strong data-role="subject" data-thematic-role="agens">HOND</strong> <em data-role="object" data-thematic-role="patiens">MAN</em> BIJT</p>
+        <p class="meta">bijzin · subject=agens · object=patiens · Comp/(om)dat in LEX-slot 0 · zonder lidwoorden</p>
         <ol class="lex-sequence" aria-label="LEX-volgorde">
           <li class="lex-token local" data-id="omdat" data-slot="comp" data-lexeme="omdat">OMDAT</li>
-          <li class="lex-token" data-id="subject-hond" data-source="subject" data-role="subject" data-lexeme="hond"><strong data-role="subject">HOND</strong></li>
-          <li class="lex-token" data-id="object-man" data-source="object" data-role="object" data-lexeme="man"><em data-role="object">MAN</em></li>
+          <li class="lex-token" data-id="subject-hond" data-source="subject" data-role="subject" data-thematic-role="agens" data-lexeme="hond"><strong data-role="subject" data-thematic-role="agens">HOND</strong></li>
+          <li class="lex-token" data-id="object-man" data-source="object" data-role="object" data-thematic-role="patiens" data-lexeme="man"><em data-role="object" data-thematic-role="patiens">MAN</em></li>
           <li class="lex-token" data-id="pred-bijt" data-source="predicate" data-role="predicate" data-lexeme="bijt">BIJT</li>
         </ol>
-        <button type="button" class="swap-demo">Wissel S/O</button>
       </article>
 
       <article class="example-input" data-id="vrouw-breit-trui" data-phase="Lexicon-test" data-lex-rule="hoofdzininvariant" data-predicate="BREIT">
-        <p class="sentence" title="Vet = subject; cursief = object"><strong data-role="subject">VROUW</strong> BREIT <em data-role="object">TRUI</em></p>
-        <p class="meta">hoofdzin · lexicon-vulling · zonder lidwoorden</p>
+        <p class="sentence" title="Vet = subject/agens; cursief = object/patiens"><strong data-role="subject" data-thematic-role="agens">VROUW</strong> BREIT <em data-role="object" data-thematic-role="patiens">TRUI</em></p>
+        <p class="meta">hoofdzin · subject=agens · object=patiens · lexicon-vulling · zonder lidwoorden</p>
         <ol class="lex-sequence" aria-label="LEX-volgorde">
-          <li class="lex-token" data-id="subject-vrouw" data-source="subject" data-role="subject" data-lexeme="vrouw"><strong data-role="subject">VROUW</strong></li>
+          <li class="lex-token" data-id="subject-vrouw" data-source="subject" data-role="subject" data-thematic-role="agens" data-lexeme="vrouw"><strong data-role="subject" data-thematic-role="agens">VROUW</strong></li>
           <li class="lex-token" data-id="pred-breit" data-source="predicate" data-role="predicate" data-lexeme="breit">BREIT</li>
-          <li class="lex-token" data-id="object-trui" data-source="object" data-role="object" data-lexeme="trui"><em data-role="object">TRUI</em></li>
+          <li class="lex-token" data-id="object-trui" data-source="object" data-role="object" data-thematic-role="patiens" data-lexeme="trui"><em data-role="object" data-thematic-role="patiens">TRUI</em></li>
         </ol>
-        <button type="button" class="swap-demo">Wissel S/O</button>
       </article>
 
       <article class="example-input" data-id="omdat-vrouw-trui-breit" data-phase="Lexicon-test" data-lex-rule="bijzin-omdat" data-predicate="BREIT">
-        <p class="sentence" title="Vet = subject; cursief = object">OMDAT <strong data-role="subject">VROUW</strong> <em data-role="object">TRUI</em> BREIT</p>
-        <p class="meta">bijzin · Comp/(om)dat in LEX-slot 0 · zonder lidwoorden</p>
+        <p class="sentence" title="Vet = subject/agens; cursief = object/patiens">OMDAT <strong data-role="subject" data-thematic-role="agens">VROUW</strong> <em data-role="object" data-thematic-role="patiens">TRUI</em> BREIT</p>
+        <p class="meta">bijzin · subject=agens · object=patiens · Comp/(om)dat in LEX-slot 0 · zonder lidwoorden</p>
         <ol class="lex-sequence" aria-label="LEX-volgorde">
           <li class="lex-token local" data-id="omdat" data-slot="comp" data-lexeme="omdat">OMDAT</li>
-          <li class="lex-token" data-id="subject-vrouw" data-source="subject" data-role="subject" data-lexeme="vrouw"><strong data-role="subject">VROUW</strong></li>
-          <li class="lex-token" data-id="object-trui" data-source="object" data-role="object" data-lexeme="trui"><em data-role="object">TRUI</em></li>
+          <li class="lex-token" data-id="subject-vrouw" data-source="subject" data-role="subject" data-thematic-role="agens" data-lexeme="vrouw"><strong data-role="subject" data-thematic-role="agens">VROUW</strong></li>
+          <li class="lex-token" data-id="object-trui" data-source="object" data-role="object" data-thematic-role="patiens" data-lexeme="trui"><em data-role="object" data-thematic-role="patiens">TRUI</em></li>
           <li class="lex-token" data-id="pred-breit" data-source="predicate" data-role="predicate" data-lexeme="breit">BREIT</li>
         </ol>
-        <button type="button" class="swap-demo">Wissel S/O</button>
+      </article>
+
+
+
+      <article class="example-input" data-id="trui-breit-vrouw-topic" data-phase="V2 topicalisatie" data-lex-rule="hoofdzininvariant" data-predicate="BREIT">
+        <p class="sentence" title="Object/patiens staat voorop; dit maakt TRUI niet tot agens"><em data-role="object" data-thematic-role="patiens">TRUI</em> BREIT <strong data-role="subject" data-thematic-role="agens">VROUW</strong></p>
+        <p class="meta">hoofdzin V2 + topicalisatie · TRUI blijft patiens · VROUW blijft agens · Wissel object→slot 1 en predicaat→slot 2; oude plekken=traces</p>
+        <ol class="lex-sequence" aria-label="LEX-volgorde">
+          <li class="lex-token" data-id="object-trui-topic" data-source="object" data-role="object" data-thematic-role="patiens" data-lexeme="trui"><em data-role="object" data-thematic-role="patiens">TRUI</em></li>
+          <li class="lex-token" data-id="pred-breit" data-source="predicate" data-role="predicate" data-lexeme="breit">BREIT</li>
+          <li class="lex-token" data-id="subject-vrouw" data-source="subject" data-role="subject" data-thematic-role="agens" data-lexeme="vrouw"><strong data-role="subject" data-thematic-role="agens">VROUW</strong></li>
+        </ol>
       </article>
 
       <article class="example-input" data-id="hond-heeft-man-gebeten" data-phase="Perfectum" data-lex-rule="perfectum-heeft-vdw" data-predicate="GEBETEN">
-        <p class="sentence" title="Vet = subject; cursief = object"><strong data-role="subject">HOND</strong> HEEFT <em data-role="object">MAN</em> GEBETEN</p>
-        <p class="meta">perfectum · VP → NP VP; VP → pv VDW · zonder lidwoorden</p>
+        <p class="sentence" title="Vet = subject/agens; cursief = object/patiens"><strong data-role="subject" data-thematic-role="agens">HOND</strong> HEEFT <em data-role="object" data-thematic-role="patiens">MAN</em> GEBETEN</p>
+        <p class="meta">perfectum V2 · subject=agens · object=patiens · Wissel pv→slot 2; oude plek=t[pv] · zonder lidwoorden</p>
         <ol class="lex-sequence" aria-label="LEX-volgorde">
-          <li class="lex-token" data-id="subject-hond" data-source="subject" data-role="subject" data-lexeme="hond"><strong data-role="subject">HOND</strong></li>
+          <li class="lex-token" data-id="subject-hond" data-source="subject" data-role="subject" data-thematic-role="agens" data-lexeme="hond"><strong data-role="subject" data-thematic-role="agens">HOND</strong></li>
           <li class="lex-token" data-id="pv-heeft" data-source="pv" data-role="aux" data-lexeme="heeft">HEEFT</li>
-          <li class="lex-token" data-id="object-man" data-source="object" data-role="object" data-lexeme="man"><em data-role="object">MAN</em></li>
+          <li class="lex-token" data-id="object-man" data-source="object" data-role="object" data-thematic-role="patiens" data-lexeme="man"><em data-role="object" data-thematic-role="patiens">MAN</em></li>
           <li class="lex-token" data-id="vdw-bijt" data-source="vdw" data-role="participle" data-lexeme="bijt">GEBETEN</li>
         </ol>
-        <button type="button" class="swap-demo">Wissel S/O</button>
       </article>
     </section>
   </main>
-  <script>
-    document.querySelectorAll('.example-input').forEach(card => {
-      const subject = card.querySelector('[data-role="subject"]');
-      const object = card.querySelector('[data-role="object"]');
-      const subjectToken = card.querySelector('.lex-token[data-role="subject"]');
-      const objectToken = card.querySelector('.lex-token[data-role="object"]');
-      card.querySelector('.swap-demo')?.addEventListener('click', () => {
-        const s = subject?.textContent || ''; const o = object?.textContent || '';
-        if (!subject || !object) return;
-        subject.textContent = o; object.textContent = s;
-        if (subjectToken) subjectToken.innerHTML = '<strong data-role="subject">' + o + '</strong>';
-        if (objectToken) objectToken.innerHTML = '<em data-role="object">' + s + '</em>';
-      });
-    });
-  </script>
 </body>
 </html>

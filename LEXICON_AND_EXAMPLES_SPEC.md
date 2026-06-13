@@ -1,24 +1,134 @@
-# Lexicon en voorbeeldzinnen v4408
+# Lexicon en voorbeeldzinnen v4414
+
+## v4414 · plaatsingsregels op de LEX-as
+
+Voorlopig worden plaatsingsregels alleen op de LEX-as genoteerd. De regel heet **Wissel**:
+
+```text
+Wissel = vul een vrij slot met een broninhoud;
+         op de oude bron-/basispositie verschijnt een trace.
+```
+
+Nederlandse hoofdzinnen gebruiken V2:
+
+```text
+subject/topic → slot 1 indien vooropgeplaatst
+persoonsvorm/predicaat → slot 2
+oude plek → t[V] of t[pv]
+```
+
+Bijzinnen met `OMDAT` gebruiken slot 0 voor Comp en hebben in deze demo geen V2-Wissel. V1-talen kunnen later als andere LEX-regel worden toegevoegd: de persoonsvorm zou dan in een eerste vrij slot staan in plaats van in slot 2.
+
+---
+
+Vanaf v4414 is `lexicon-editor.html` de gecombineerde editor voor lexemen en voorbeelduitingen. De verzameling uitingen wordt dus niet meer primair in een losse voorbeelden-editor beheerd.
+
+## Beheermodel
+
+```text
+structure-config.html  = structurele sources en LEX-slots
+lexicon-config.html    = lexemen / woordvormen
+examples-input.html    = concrete korte uitingen
+lexicon-editor.html    = beheer van lexicon + korte uitingen
+```
+
+
+## Thematische rollen en selectieframes
+
+Naast syntactische rollen gebruikt het lexicon nu thematische rollen. Voor de korte actieve patronen geldt voorlopig:
+
+```text
+subject → agens
+object  → patiens
+```
+
+Een noun kan dus syntactisch `object` zijn en thematisch `patiens`. Een predicaat kan daarnaast een eenvoudig frame hebben:
+
+```html
+data-frame-subjects="vrouw"
+data-frame-objects="trui"
+```
+
+Voor `breit` betekent dit: de uitingenbouwer laat `vrouw` als agens toe en `trui` als patiens. `trui` wordt niet als agens aangeboden.
+
+## Ondersteunde korte uitingen in v4414
+
+| type | LEX-volgorde | voorbeeld |
+|---|---|---|
+| hoofdzin | subject predicate object | HOND BIJT MAN |
+| omdat-bijzin | comp subject object predicate | OMDAT HOND MAN BIJT |
+| perfectum | subject aux object participle | HOND HEEFT MAN GEBETEN |
+
+De editor gebruikt bij export dezelfde HTML-structuur als de viewer al leest: `article.example-input` met een `ol.lex-sequence` en `li.lex-token`-tokens.
+
+---
+
+# Lexicon en voorbeeldzinnen v4414
 
 ## Bestanden
 
 ```text
 lexicon-config.html
+lexicon-editor.html
 examples-input.html
 examples-editor.html
 ```
 
 ## Lexicon
 
-Bescheiden startlexicon:
+`lexicon-config.html` is de leesbare bron met `div.lexicon-entry`-regels. Elke entry gebruikt data-attributen:
 
-| klasse | items |
+```html
+<div class="lexicon-entry"
+  data-id="hond"
+  data-label="HOND"
+  data-lemma="hond"
+  data-cat="N"
+  data-phrase="NP"
+  data-kind="noun"
+  data-roles="subject object">
+```
+
+Belangrijke velden:
+
+| veld | betekenis |
 |---|---|
-| N/NP | man, hond, kat, vrouw, trui |
-| V | bijt, breit |
-| VDW | gebeten, gebreid |
-| AUX/pv | heeft |
-| COMP | omdat, dat |
+| `id` | stabiele lexeme-id, gebruikt in examples-input |
+| `label` | zichtbaar woord op LEX-as |
+| `lemma` | woordenboekvorm |
+| `cat` | categorie: N, V, AUX, COMP, ... |
+| `phrase` | eventuele phrasecategorie, bv. NP |
+| `kind` | editorgroep: noun, verb, aux, comp, ... |
+| `roles` | bruikbare rollen: subject/object/predicate/... |
+| `source-default` | standaard structurele source, bv. predicate |
+| `slot-default` | standaard LEX-slot, bv. comp of aux |
+| `infinitive` | werkwoordvorm voor latere regels |
+| `participle` | VDW/perfectumvorm |
+
+## Lexicon-editor
+
+`lexicon-editor.html` laadt `lexicon-config.html` en `structure-config.html`. Daardoor kan de editor valideren of `sourceDefault` en `slotDefault` werkelijk in de omgeving bestaan.
+
+De editor kan lexemen toevoegen, dupliceren, verwijderen, zoeken/filteren, lokaal als concept bewaren en een nieuwe `lexicon-config.html` downloaden.
+
+## Voorbeeldzinnen
+
+`examples-input.html` koppelt lexemen aan abstracte sources:
+
+```text
+lexeme=hond  source=subject
+lexeme=bijt  source=predicate
+lexeme=man   source=object
+```
+
+Het lexeme kan wisselen; de source blijft de structurele projectiebron.
+
+## Markering in examples-input
+
+```html
+<strong>subject</strong>
+<em>object</em>
+```
 
 Lidwoorden zijn verwijderd. Dus:
 
@@ -28,30 +138,11 @@ de hond → hond
 de trui → trui
 ```
 
-## Markering in examples-input
+## v4414 · LEX-volgorde
 
-```html
-<strong>subject</strong>
-<em>object</em>
-```
+De volgorde van `<li class="lex-token">` in `examples-input.html` is de gezaghebbende woordvolgorde op de LEX-as. V2, topicalisatie en andere plaatsingsregels mogen die lijst niet herordenen; zij tekenen alleen gevulde vrije slots, Wissel-pijlen en traces.
 
-Voorbeelden:
+## v4414 · trace als lokaal LEX-object
 
-```html
-<strong>HOND</strong> BIJT <em>MAN</em>
-OMDAT <strong>HOND</strong> <em>MAN</em> BIJT
-<strong>VROUW</strong> BREIT <em>TRUI</em>
-OMDAT <strong>VROUW</strong> <em>TRUI</em> BREIT
-<strong>HOND</strong> HEEFT <em>MAN</em> GEBETEN
-```
+Voor V2 en topicalisatie wordt de trace als lokaal LEX-object behandeld. De voorbeeldzin bepaalt de gevulde slots; de Wisselregel tekent daarnaast een trace-slot op de LEX-as. Daardoor worden `HOND BIJT MAN` en `TRUI BREIT VROUW` als oppervlaktestring behouden, terwijl de oude basispositie als lokale trace zichtbaar blijft.
 
-## Koppeling
-
-Een voorbeeldzin koppelt zichtbare lexemen aan structurele bronnen:
-
-```text
-lexeme = HOND
-source = subject
-```
-
-Het lexeme kan wisselen. De source blijft de projectiebron.

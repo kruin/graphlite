@@ -1,4 +1,49 @@
-# Gebruikershandleiding — concept v4408
+# Gebruikershandleiding — concept v4417
+
+## Horizontale LEX-projectie lezen
+
+In `Assen` loopt elke projectielijn van een bronknoop horizontaal naar de LEX-as. Daarna toont de LEX-as eventuele Wissels. Bij `HOND BIJT MAN` blijft `HOND` op zijn bronhoogte; `BIJT` wisselt lokaal naar het V2-slot en laat op de oude V-positie een trace achter.
+
+
+---
+
+# Gebruikershandleiding — concept v4417
+
+## V2 en Wissel bekijken
+
+Open `Assen` of `LEX`. In hoofdzinnen tekent de LEX-as nu:
+
+```text
+slot 1 · TOPIC
+slot 2 · V2/PV
+trace op oude basispositie
+Wissel-pijl tussen trace en gevuld slot
+```
+
+Gebruik de voorbeelden `HOND BIJT MAN`, `VROUW BREIT TRUI` of `TRUI BREIT VROUW`. In het laatste voorbeeld staat `TRUI` voorop, maar blijft het object/patiens.
+
+---
+
+## Lexicon en korte uitingen beheren
+
+Open:
+
+```text
+lexicon-editor.html
+```
+
+Gebruik dit scherm voor twee bestanden:
+
+```text
+lexicon-config.html   = woorden/lexemen
+examples-input.html   = korte voorbeeldzinnen
+```
+
+Vooralsnog ondersteunt de editor korte zinnen: hoofdzin, omdat-bijzin en perfectum. Na bewerken download je beide HTML-bestanden en vervang je ze in de viewer-map.
+
+---
+
+# Gebruikershandleiding — concept v4417
 
 ## Starten
 
@@ -11,9 +56,9 @@
 
 Kies bovenin een voorbeeldzin. De zin wordt geladen in de centrale OPN-weergave en in LEX.
 
-## Subject/object wisselen
+## Thematische rollen gebruiken
 
-Gebruik `Wissel S/O`. Dit wisselt de lexicale vulling van subject en object. De structurele rollen veranderen niet.
+In de lexicon-editor krijgen nouns thematische rollen zoals `agens` en `patiens`. Voor de huidige korte actieve zinnen geldt: subject = agens, object = patiens. De editor filtert de keuzelijsten zodat onwaarschijnlijke combinaties, zoals `trui` als agens, niet worden aangeboden.
 
 ## Structuur bewerken
 
@@ -25,7 +70,26 @@ Open `Voorbeeldeditor`. Voeg voorbeelden toe, wijzig tokens, kies source/rol en 
 
 ## Lexicon bewerken
 
-Open `lexicon-config.html` om het huidige lexicon te bekijken. Nieuwe lexiconeditor is nog een mogelijke vervolgstap.
+Open `Lexicon-editor`.
+
+Gebruik:
+
+```text
++ N      nieuw naamwoord
++ V      nieuw werkwoord
++ AUX    nieuw hulpwerkwoord
++ COMP   nieuw complementizerwoord
+```
+
+Na bewerking:
+
+```text
+Download lexicon-config.html
+vervang het bestaande bestand in de viewer-map
+herlaad examples-editor.html en de viewer
+```
+
+De editor valideert tegen `structure-config.html`: sources zoals `subject`, `object`, `predicate`, `pv`, `vdw` en slots zoals `comp`, `topic`, `aux`.
 
 
 
@@ -56,3 +120,17 @@ De viewer berekent eerst de volledige layout. Tijdens de groei verschijnen allee
 ## Documentatie openen
 
 Gebruik de knop `Docs` in de viewer of open `docs/docs-home.html`.
+
+
+## Boom passend maken
+
+Gebruik in het projectiepaneel:
+
+```text
+Boomruimte: auto / compact / breed-lager / breed+groter font
+Venster: automatisch passend / vast 1500×900
+FIT: pas de viewBox onmiddellijk aan de getekende inhoud aan
+```
+
+`Boomruimte` verandert de visuele afstand tussen gridposities. De onderliggende boom- en LEX-regels blijven gelijk.
+

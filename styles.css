@@ -19,6 +19,7 @@
   --log: #7c3aed;
   --warn: #b45309;
   --shadow: rgba(15, 23, 42, 0.16);
+  --og-font-scale: 1;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -257,6 +258,7 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
   height: 100%;
   touch-action: none;
   user-select: none;
+  --og-font-scale: 1;
 }
 .grid-line { stroke: var(--grid); stroke-width: 1; vector-effect: non-scaling-stroke; }
 .grid-line.major { stroke: var(--grid-major); stroke-width: 1.25; }
@@ -438,7 +440,7 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
 }
 .jan-box-caption {
   fill: #475569;
-  font-size: 13px;
+  font-size: calc(13px * var(--og-font-scale));
   font-weight: 800;
   letter-spacing: .08em;
 }
@@ -474,7 +476,7 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
 }
 .node-main-label {
   fill: #0f172a;
-  font-size: 18px;
+  font-size: calc(18px * var(--og-font-scale));
   font-weight: 900;
   text-anchor: middle;
   dominant-baseline: middle;
@@ -484,7 +486,7 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
 }
 .node-sub-label {
   fill: #475569;
-  font-size: 12px;
+  font-size: calc(12px * var(--og-font-scale));
   font-weight: 800;
   text-anchor: middle;
 }
@@ -498,12 +500,12 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
   fill: #0f172a;
   text-anchor: middle;
   dominant-baseline: middle;
-  font-size: 16px;
+  font-size: calc(16px * var(--og-font-scale));
   font-weight: 900;
 }
 .axis-title {
   fill: #0f172a;
-  font-size: 14px;
+  font-size: calc(14px * var(--og-font-scale));
   font-weight: 900;
   letter-spacing: .04em;
 }
@@ -538,7 +540,7 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
 .lex-label,
 .lex-local-label {
   text-anchor: middle;
-  font-size: 16px;
+  font-size: calc(16px * var(--og-font-scale));
   font-weight: 900;
   fill: #0f172a;
 }
@@ -548,7 +550,7 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
 .lex-index,
 .slot-caption {
   fill: #64748b;
-  font-size: 12px;
+  font-size: calc(12px * var(--og-font-scale));
   font-weight: 800;
   text-anchor: middle;
 }
@@ -593,7 +595,7 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
   stroke-dasharray: 7 4 !important;
 }
 .role-node .box-label {
-  font-size: 15px !important;
+  font-size: calc(15px * var(--og-font-scale)) !important;
   font-weight: 950 !important;
 }
 
@@ -618,7 +620,7 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
 }
 .opn-slot-label {
   fill: #0e7490;
-  font-size: 15px;
+  font-size: calc(15px * var(--og-font-scale));
   font-weight: 950;
   text-anchor: middle;
   dominant-baseline: middle;
@@ -658,7 +660,8 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
   color: #7c2d12;
 }
 
-/* v4408: compact menu for per-branch flip configuration. */
+/* v4417: compact menu for layout density/fit and per-branch flip configuration. */
+.view-config-grid,
 .branch-config-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -670,7 +673,7 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
   background: rgba(248, 250, 252, .72);
 }
 .mini-field span { font-size: 11px; }
-.mini-field select { min-height: 34px; font-size: 12px; }
+.mini-field select { min-height: 34px; font-size: calc(12px * var(--og-font-scale)); }
 
 
 .growth-controls {
@@ -706,4 +709,57 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
 .growth-buttons button {
   min-height: 2.05rem;
   padding: 0.2rem 0.35rem;
+}
+
+
+/* v4414: V2/Wissel on the LEX axis. */
+.opn-v2-slot {
+  fill: #eff6ff;
+  stroke: #2563eb;
+  stroke-width: 2.2;
+  stroke-dasharray: 9 5;
+  vector-effect: non-scaling-stroke;
+  opacity: 0.96;
+}
+.v2-slot {
+  stroke: #2563eb;
+  fill: #eff6ff;
+}
+.moved-slot {
+  stroke: #1d4ed8;
+  stroke-width: 2.8;
+  fill: #dbeafe;
+}
+.lex-trace-slot {
+  fill: #f8fafc;
+  stroke: #94a3b8;
+  stroke-width: 1.6;
+  stroke-dasharray: 4 4;
+  vector-effect: non-scaling-stroke;
+}
+.lex-trace-label {
+  fill: #64748b;
+  font-size: calc(15px * var(--og-font-scale));
+  font-weight: 950;
+  text-anchor: middle;
+}
+.trace-caption {
+  fill: #64748b;
+}
+.lex-wissel-line {
+  stroke: #1d4ed8;
+  stroke-width: 2.2;
+  stroke-dasharray: 7 5;
+  vector-effect: non-scaling-stroke;
+}
+.lex-wissel-arrow {
+  fill: #1d4ed8;
+}
+.wissel-label {
+  fill: #1e3a8a;
+  font-size: calc(12px * var(--og-font-scale));
+  font-weight: 900;
+}
+.trace-projection {
+  opacity: 0.55;
 }

@@ -1,4 +1,4 @@
-# Screenshot notes v4408
+# Screenshot notes v4414
 
 Bewaar screenshots in een map naast `docs/`:
 
@@ -9,11 +9,11 @@ screenshots/
 Aanbevolen naamgeving:
 
 ```text
-v4408-syntax-left-normal.png
-v4408-syntax-auto-align.png
-v4408-functional-left-normal.png
-v4408-functional-auto-align.png
-v4408-lex-perfectum.png
+v4414-syntax-left-normal.png
+v4414-syntax-auto-align.png
+v4414-functional-left-normal.png
+v4414-functional-auto-align.png
+v4414-lex-perfectum.png
 ```
 
 Leg per screenshot vast:
