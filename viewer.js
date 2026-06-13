@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'v4432';
+  const VERSION = 'v4433';
   const BASE_CELL = 74;
   const ROOT_SIDE_GAP = 1;
   const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -172,12 +172,12 @@
         { id: 'ft-pred', label: 'PRED', cat: 'PRED', kind: 'role', role: 'pred', children: ['f-root'] },
         { id: 'f-root', label: '{predicate}', cat: 'V', kind: 'leaf', role: 'predicate', source: 'predicate', children: [] },
         { id: 'ft-argstruct', label: 'ARG-STRUCT', cat: 'ARG-STRUCT', kind: 'role', role: 'arguments', children: ['ft-arg1', 'ft-arg2'] },
-        { id: 'ft-arg1', label: 'ARG1', cat: 'ARG', kind: 'role', role: 'arg1', children: ['f-subj-np'] },
-        { id: 'f-subj-np', label: 'NP', cat: 'NP', kind: 'role', role: 'np-subj', children: ['f-subj'] },
-        { id: 'f-subj', label: '{subject}', cat: 'N', kind: 'leaf', role: 'subject', source: 'subject', children: [] },
-        { id: 'ft-arg2', label: 'ARG2', cat: 'ARG', kind: 'role', role: 'arg2', children: ['f-obj-np'] },
-        { id: 'f-obj-np', label: 'NP', cat: 'NP', kind: 'role', role: 'np-obj', children: ['f-obj'] },
-        { id: 'f-obj', label: '{object}', cat: 'N', kind: 'leaf', role: 'object', source: 'object', children: [] }
+        { id: 'ft-arg1', label: 'AGENS', cat: 'ROLE', kind: 'role', role: 'agens', children: ['f-subj-np'] },
+        { id: 'f-subj-np', label: 'NP', cat: 'NP', kind: 'role', role: 'agens-np', children: ['f-subj'] },
+        { id: 'f-subj', label: '{subject}', cat: 'N', kind: 'leaf', role: 'agens', source: 'subject', children: [] },
+        { id: 'ft-arg2', label: 'PATIENS', cat: 'ROLE', kind: 'role', role: 'patiens', children: ['f-obj-np'] },
+        { id: 'f-obj-np', label: 'NP', cat: 'NP', kind: 'role', role: 'patiens-np', children: ['f-obj'] },
+        { id: 'f-obj', label: '{object}', cat: 'N', kind: 'leaf', role: 'patiens', source: 'object', children: [] }
       ],
       lexSlots: [
         { id: 'comp', label: 'slot 0 · Comp/(om)dat' },
@@ -245,8 +245,8 @@
   function activeLexItems() {
     const roles = roleLabels();
     return (state.example.lexItems || []).map(item => {
-      if (item.role === 'subject') return { ...item, label: roles.subject };
-      if (item.role === 'object') return { ...item, label: roles.object };
+      if (item.role === 'subject' || item.source === 'subject') return { ...item, label: roles.subject };
+      if (item.role === 'object' || item.source === 'object') return { ...item, label: roles.object };
       if (item.role === 'predicate') return { ...item, label: roles.predicate };
       return { ...item };
     });
@@ -1357,7 +1357,7 @@
   }
 
   function topicMovementForItem(item, index) {
-    // v4432: in Nederlandse V2-hoofdzinnen bezet het eerste zinsdeel slot 1.
+    // v4433: in Nederlandse V2-hoofdzinnen bezet het eerste zinsdeel slot 1.
     // Dat geldt ook wanneer dat eerste zinsdeel het subject is. Het eerste
     // lexicale zinsdeel laat dus altijd een trace achter op de oude basispositie.
     if (!isMainV2Rule()) return null;
@@ -1450,12 +1450,12 @@
   }
 
   function localTraceY(item, index, y0, items = state.example?.lexItems || []) {
-    // v4432: een trace blijft exact op de oude basispositie van het verplaatste item.
+    // v4433: een trace blijft exact op de oude basispositie van het verplaatste item.
     return baseLexY(item, index, y0, null, items);
   }
 
   function baseLexY(item, index, y0, sourceMap = null, items = state.example?.lexItems || []) {
-    // v4432: de basisprojectie wordt niet gecomprimeerd. In Assen blijft de
+    // v4433: de basisprojectie wordt niet gecomprimeerd. In Assen blijft de
     // LEX-basisplek exact horizontaal gelijk aan de bronknoop in de boom.
     // Alleen zonder centrale boom/sourceMap valt de LEX-only view terug op
     // een eenvoudige, leesbare rijafstand.
@@ -1568,7 +1568,7 @@
       : 'Plaatsingsregel: resultaat = voorbeeldzin; Comp gebruikt slot 0; geen automatische subject/object-Wissel.';
     g.appendChild(svgEl('text', { x: x + 150, y: axisMinY + 18, class: 'wissel-label' }, ruleText));
 
-    // v4432: geen stippel- of verplaatsingslijnen vanuit de boom naar de LEX-as.
+    // v4433: geen stippel- of verplaatsingslijnen vanuit de boom naar de LEX-as.
     // De boom levert alleen de basisstructuur; alle zichtbare Wissels en traces
     // worden lokaal op de LEX-as getekend.  Dit voorkomt dat projectielijnen
     // opnieuw als verplaatsingen vanuit de boom gelezen worden.
@@ -1779,8 +1779,8 @@
     els.projectionHelp.textContent = helpText();
     els.explainHeading.textContent = `Uitleg · ${activeSentenceText()}`;
     els.explainText.textContent = state.example.id === 'hond-bijt-man'
-      ? 'Auto per voorbeeldtype kiest een hiërarchische basisboom, niet de surface-volgorde. Voor hoofdzin/V2 blijft de basis S → NP VP; VP → NP V. De voorbeeldzin wordt daarna op de LEX-as gerealiseerd via lokale Wissels zoals V2 en topic.'
-      : 'De LEX-as projecteert eerst elke bronknoop horizontaal op zijn basispositie. Daarna maken lokale Wissels de voorbeeldzinvolgorde; verplaatste knopen laten op de basispositie een trace achter.';
+      ? 'LEX-regel: eerst horizontale basisprojectie, daarna lokale Wissels naar vrije slots. Hoofdzin: eerste zinsdeel → slot 1, persoonsvorm → slot 2; traces blijven op de oude basisplek.'
+      : 'LEX-regel: verplaats alleen naar vrije slots 0/1/2. Niet-verplaatste woorden blijven op hun horizontale basisplek. Traces staan lokaal op de oude plek.';
   }
 
   function projectionLabel() {
@@ -1789,10 +1789,10 @@
 
   function helpText() {
     if (state.projection === 'source') return 'Bron: OPN-syntax en OPN-functioneel worden gelezen uit structure-config.html. Beide gebruiken dezelfde left/right layoutstrategie en reserveren OPN-slot 1.';
-    if (state.projection === 'lex') return 'LEX: lokale plaatsingsregels. Nederlands hoofdzin = V2: persoonsvorm naar vrij slot 2; trace blijft lokaal op de LEX-as. Bijzin met OMDAT heeft geen V2.';
+    if (state.projection === 'lex') return 'LEX: plaatsingsregels per zinstype. Hoofdzin: eerste zinsdeel naar slot 1, persoonsvorm naar slot 2. Bijzin met OMDAT: Comp in slot 0, geen V2.';
     if (state.projection === 'synt') return 'SYNTAX-projectie: regels uit structure-config.html. Nieuwe VP-regelsets worden hier zichtbaar.';
     if (state.projection === 'log') return 'LOG/FT: functioneel = CLAUSE met aparte PRED-knoop en ARG-STRUCT-subtree; bottom-up vrij geplaatst.';
-    return 'Assen: centrale OPN-boom; links LEX. De voorbeeldzin bepaalt de LEX-volgorde; Wissels en traces blijven lokaal op de LEX-as.';
+    return 'Assen: centrale OPN-boom; links LEX. Eerst horizontale basisprojectie, daarna lokale Wissels naar vrije slots; resultaat leest als de voorbeeldzin.';
   }
 
   function renderSideLists() {

@@ -77,3 +77,26 @@ Daarmee kan JAN/Open Notation didactisch worden getoond als een groeiende vrije 
 ## Lexicon- en uitingeneditor vanaf v4430
 
 `lexicon-editor.html` is nu de centrale beheerlaag voor lexemen én korte voorbeelduitingen. Daarmee ontstaat één lokale workflow voor de lexicale voorraad en de concrete testzinnen.
+
+
+## v4435 — eenvoudige documentatie LEX-plaatsingsregels
+
+Toegevoegd: `docs/LEX_MOVEMENT_RULES.md`.
+
+Kernregel:
+
+```text
+basisprojectie blijft staan
+vrije slots worden gevuld
+oude plek wordt trace
+resultaat = voorbeeldzin
+```
+
+Beschreven zinstypen: hoofdzin, bijzin met OMDAT, topicalisatie, perfectum en voorlopige vraagzin.
+
+
+## v4435 update
+
+- `commit_and_push.bat` wordt vanaf deze versie standaard meegeleverd in de ZIP-root.
+- LOG/FT toont thematische rollen expliciet: `AGENS` voor subject/handelende deelnemer en `PATIENS` voor object/ondergaande deelnemer.
+- De syntaxrollen blijven `subject` en `object`; de functionele projectie benoemt dezelfde lexicale bronnen thematisch.

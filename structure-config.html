@@ -50,25 +50,25 @@
 
     <section id="opengraph-functional-config" data-root="ft-clause" data-order="left-first" aria-label="Functional-config">
       <h2>Functional-config</h2>
-      <p class="note">Functionele structuur scheidt het predicaat van de argumentstructuur: <code>CLAUSE → PRED ARG-STRUCT</code>. Het predicaat staat in een eigen PRED-subtree; subject/object staan als ARG1/ARG2 in de ARG-STRUCT-subtree. Daardoor kunnen PRED en ARG-STRUCT als vrije boxen apart geplaatst worden. Perfectum blijft vormelijk in syntax/LEX: <code>pv/vdw</code>. Lidwoorden zijn niet opgenomen in syntax, functional, lexicon of voorbeeldzinnen.</p>
+      <p class="note">Functionele structuur scheidt het predicaat van de thematische argumentstructuur: <code>CLAUSE → PRED ARG-STRUCT</code>. Het predicaat staat in een eigen PRED-subtree; subject/object worden functioneel getoond als <code>AGENS</code> en <code>PATIENS</code> in de ARG-STRUCT-subtree. Daardoor kunnen PRED en ARG-STRUCT als vrije boxen apart geplaatst worden. Perfectum blijft vormelijk in syntax/LEX: <code>pv/vdw</code>. Lidwoorden zijn niet opgenomen in syntax, functional, lexicon of voorbeeldzinnen.</p>
       <div class="node-config" data-id="ft-clause" data-label="CLAUSE" data-cat="CLAUSE" data-kind="role-root" data-role="top" data-children="ft-pred ft-argstruct">ft-clause:CLAUSE → ft-pred ft-argstruct</div>
       <div class="node-config" data-id="ft-pred" data-label="PRED" data-cat="PRED" data-kind="role" data-role="pred" data-children="f-root">ft-pred:PRED → f-root</div>
       <div class="node-config" data-id="f-root" data-label="{predicate}" data-cat="V" data-kind="leaf" data-role="predicate" data-source="predicate">f-root:{predicate} [leaf role=predicate source=predicate cat=V]</div>
       <div class="node-config" data-id="ft-argstruct" data-label="ARG-STRUCT" data-cat="ARG-STRUCT" data-kind="role" data-role="arguments" data-children="ft-arg1 ft-arg2">ft-argstruct:ARG-STRUCT → ft-arg1 ft-arg2</div>
-      <div class="node-config" data-id="ft-arg1" data-label="ARG1" data-cat="ARG" data-kind="role" data-role="arg1" data-children="f-subj-np">ft-arg1:ARG1 → f-subj-np</div>
-      <div class="node-config" data-id="f-subj-np" data-label="NP" data-cat="NP" data-kind="role" data-role="np-subj" data-children="f-subj">f-subj-np:NP → f-subj</div>
-      <div class="node-config" data-id="f-subj" data-label="{subject}" data-cat="N" data-kind="leaf" data-role="subject" data-source="subject">f-subj:{subject} [leaf role=subject source=subject cat=N]</div>
-      <div class="node-config" data-id="ft-arg2" data-label="ARG2" data-cat="ARG" data-kind="role" data-role="arg2" data-children="f-obj-np">ft-arg2:ARG2 → f-obj-np</div>
-      <div class="node-config" data-id="f-obj-np" data-label="NP" data-cat="NP" data-kind="role" data-role="np-obj" data-children="f-obj">f-obj-np:NP → f-obj</div>
-      <div class="node-config" data-id="f-obj" data-label="{object}" data-cat="N" data-kind="leaf" data-role="object" data-source="object">f-obj:{object} [leaf role=object source=object cat=N]</div>
+      <div class="node-config" data-id="ft-arg1" data-label="AGENS" data-cat="ROLE" data-kind="role" data-role="agens" data-children="f-subj-np">ft-arg1:AGENS → f-subj-np</div>
+      <div class="node-config" data-id="f-subj-np" data-label="NP" data-cat="NP" data-kind="role" data-role="agens-np" data-children="f-subj">f-subj-np:NP → f-subj</div>
+      <div class="node-config" data-id="f-subj" data-label="{subject}" data-cat="N" data-kind="leaf" data-role="agens" data-source="subject">f-subj:{subject} [leaf role=subject source=subject cat=N]</div>
+      <div class="node-config" data-id="ft-arg2" data-label="PATIENS" data-cat="ROLE" data-kind="role" data-role="patiens" data-children="f-obj-np">ft-arg2:PATIENS → f-obj-np</div>
+      <div class="node-config" data-id="f-obj-np" data-label="NP" data-cat="NP" data-kind="role" data-role="patiens-np" data-children="f-obj">f-obj-np:NP → f-obj</div>
+      <div class="node-config" data-id="f-obj" data-label="{object}" data-cat="N" data-kind="leaf" data-role="patiens" data-source="object">f-obj:{object} [leaf role=object source=object cat=N]</div>
     </section>
 
     <section id="opengraph-lexical-config" aria-label="Structurele sources">
       <h2>Structurele sources</h2>
       <p class="note">Dit zijn projectiebronnen/posities, geen lexicale items. Voorbeeld: <code>lexeme=HEEFT</code> projecteert op <code>source=pv</code>; <code>lexeme=GEBETEN</code> projecteert op <code>source=vdw</code>.</p>
-      <div class="lexical-config" data-source="subject" data-label="{subject}" data-role="subject" data-cat="N" data-from="syntax functional">subject:{subject} [role=subject cat=N from=syntax+functional]</div>
+      <div class="lexical-config" data-source="subject" data-label="{subject}" data-role="subject" data-cat="N" data-from="syntax functional">subject:{subject} [syntax-role=subject functional-role=agens cat=N]</div>
       <div class="lexical-config" data-source="predicate" data-label="{predicate}" data-role="predicate" data-cat="V" data-from="syntax functional">predicate:{predicate} [role=predicate cat=V from=syntax+functional]</div>
-      <div class="lexical-config" data-source="object" data-label="{object}" data-role="object" data-cat="N" data-from="syntax functional">object:{object} [role=object cat=N from=syntax+functional]</div>
+      <div class="lexical-config" data-source="object" data-label="{object}" data-role="object" data-cat="N" data-from="syntax functional">object:{object} [syntax-role=object functional-role=patiens cat=N]</div>
       <div class="lexical-config" data-source="pv" data-label="{pv}" data-role="aux" data-cat="AUX" data-from="syntax-perfectum">pv:{pv} [role=aux cat=AUX from=syntax-perfectum]</div>
       <div class="lexical-config" data-source="vdw" data-label="{vdw}" data-role="participle" data-cat="V" data-from="syntax-perfectum">vdw:{vdw} [role=participle cat=V from=syntax-perfectum]</div>
     </section>

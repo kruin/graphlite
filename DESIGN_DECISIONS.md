@@ -66,3 +66,19 @@
 36. Vanaf v4430 is er onderscheid tussen discrete layoutcoördinaten en pixelprojectie.
 37. `Boomruimte` mag cellX/cellY/fontScale wijzigen, maar niet de grammaticale of LEX-volgorde.
 38. Auto-fit wijzigt alleen de SVG-viewBox; het is geen layoutstrategie.
+
+
+## v4435 — eenvoudige documentatie LEX-plaatsingsregels
+
+Toegevoegd: `docs/LEX_MOVEMENT_RULES.md`.
+
+Kernregel:
+
+```text
+basisprojectie blijft staan
+vrije slots worden gevuld
+oude plek wordt trace
+resultaat = voorbeeldzin
+```
+
+Beschreven zinstypen: hoofdzin, bijzin met OMDAT, topicalisatie, perfectum en voorlopige vraagzin.

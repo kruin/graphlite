@@ -38,3 +38,10 @@
 - Exportbundel maken voor beide HTML-configs tegelijk.
 
 - Dynamische boomruimte visueel testen met bredere voorbeeldsets en langere zinnen.
+
+
+## Na v4435
+
+- Vraagzin als echt voorbeeldtype toevoegen.
+- Per zinstype automatische validatie toevoegen: resultaat moet exact de voorbeeldzin zijn.
+- Visueel controleren dat de LEX-as niet comprimeert en dat traces op de oude basisplek blijven.

@@ -270,7 +270,14 @@
 - Traces staan in een aparte lokale trace-zone onder de voorbeeldzin.
 
 
-## v4432
+## v4435
 
 - LEX-basisprojectie in Assen wordt niet meer gecomprimeerd: basisposities en traces blijven horizontaal gelijk aan de boomknopen.
 - Alleen de vrije slots 0/1/2 staan bovenaan als lokale LEX-slots.
+
+
+## v4435 update
+
+- `commit_and_push.bat` wordt vanaf deze versie standaard meegeleverd in de ZIP-root.
+- LOG/FT toont thematische rollen expliciet: `AGENS` voor subject/handelende deelnemer en `PATIENS` voor object/ondergaande deelnemer.
+- De syntaxrollen blijven `subject` en `object`; de functionele projectie benoemt dezelfde lexicale bronnen thematisch.
