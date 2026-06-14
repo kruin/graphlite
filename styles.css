@@ -1413,6 +1413,7 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
 
 /* v4450: mobiele viewer-first bediening */
 .mobile-bottom-nav,
+.mobile-growth-nav,
 .mobile-sheet,
 .mobile-sheet-backdrop {
   display: none;
@@ -1441,7 +1442,7 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
 
 @media (max-width: 760px) {
   body {
-    padding-bottom: calc(4.5rem + env(safe-area-inset-bottom));
+    padding-bottom: calc(8.1rem + env(safe-area-inset-bottom));
   }
 
   .app-header {
@@ -1668,4 +1669,58 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
   overflow: hidden !important;
   clip: rect(0 0 0 0) !important;
   white-space: nowrap !important;
+}
+
+
+/* v4454: portrait mobile had no visible Play because the sticky desktop growth bar is hidden.
+   This fixed mini-bar exposes growth reset/step/play directly above the mobile bottom nav. */
+.mobile-growth-step-label {
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--muted);
+  font-size: .78rem;
+  font-weight: 900;
+}
+
+@media (max-width: 760px) {
+  .mobile-growth-nav {
+    position: fixed;
+    left: .5rem;
+    right: .5rem;
+    bottom: calc(4.75rem + env(safe-area-inset-bottom));
+    z-index: 295;
+    display: grid;
+    grid-template-columns: 2.45rem 2.45rem minmax(3.75rem, .72fr) 2.45rem minmax(0, 1fr);
+    gap: .28rem;
+    align-items: stretch;
+    padding: .34rem .38rem;
+    border: 1px solid var(--line);
+    border-radius: .95rem;
+    background: color-mix(in srgb, var(--panel), white 8%);
+    box-shadow: 0 12px 28px rgba(15, 23, 42, .22);
+    backdrop-filter: blur(12px);
+  }
+
+  .mobile-growth-nav button {
+    min-height: 2.35rem;
+    padding: .28rem .18rem;
+    border-radius: .74rem;
+    font-size: .82rem;
+  }
+
+  #mobileGrowthPlayButton {
+    font-weight: 900;
+  }
+}
+
+@media (max-width: 360px) {
+  .mobile-growth-nav {
+    grid-template-columns: 2.15rem 2.15rem minmax(3.3rem, .7fr) 2.15rem minmax(0, 1fr);
+    gap: .2rem;
+  }
+  .mobile-growth-step-label { font-size: .72rem; }
 }

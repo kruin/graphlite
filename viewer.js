@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'v4451';
+  const VERSION = 'v4454';
   const BASE_CELL = 74;
   const ROOT_SIDE_GAP = 1;
   const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -69,6 +69,11 @@
     growthNextButton: document.getElementById('growthNextButton'),
     growthPlayButton: document.getElementById('growthPlayButton'),
     growthResetButton: document.getElementById('growthResetButton'),
+    mobileGrowthPrevButton: document.getElementById('mobileGrowthPrevButton'),
+    mobileGrowthNextButton: document.getElementById('mobileGrowthNextButton'),
+    mobileGrowthPlayButton: document.getElementById('mobileGrowthPlayButton'),
+    mobileGrowthResetButton: document.getElementById('mobileGrowthResetButton'),
+    mobileGrowthStepLabel: document.getElementById('mobileGrowthStepLabel'),
     mobilePrevButton: document.getElementById('mobilePrevButton'),
     mobileNextButton: document.getElementById('mobileNextButton'),
     mobileFitButton: document.getElementById('mobileFitButton'),
@@ -1202,6 +1207,38 @@
     if (rerender) render();
   }
 
+  function toggleGrowthPlayback() {
+    // v4454: deze functie ontbrak in v4453. Daardoor stopte registerEvents()
+    // vóór de eerste init-render bij addEventListener(..., toggleGrowthPlayback),
+    // met als gevolg: geen boom bij start en een Play-knop zonder werking.
+    if (!growthSupportedProjection()) {
+      setProjection('axes');
+    }
+    const max = growthStepMax();
+    state.growthEnabled = true;
+    if (state.growthTimer) {
+      stopGrowthPlayback();
+      render();
+      return;
+    }
+    if (state.growthStep >= max) state.growthStep = 0;
+    render();
+    state.growthTimer = window.setInterval(() => {
+      const currentMax = growthStepMax();
+      if (!state.growthEnabled || !growthSupportedProjection()) {
+        stopGrowthPlayback();
+        render();
+        return;
+      }
+      if (state.growthStep >= currentMax) {
+        stopGrowthPlayback();
+        render();
+        return;
+      }
+      setGrowthStep(state.growthStep + 1);
+    }, 700);
+  }
+
   function orderedGrowthNodes(layout, metrics) {
     // v4451: groei start bij de wortel/topknoop en loopt daarna naar
     // lagere knopen. In v4450 werden bladeren eerst getoond; daardoor kon
@@ -1849,7 +1886,7 @@
       .map(id => functionalNodes.find(n => n.id === id)?.label || id)
       .join(' + ') || 'role-boxen';
     if (options.showTitle !== false) drawAxisTitle(g, origin.x - 180, origin.y - 70, `OPN · functionele structuur · ${rootLabel} → ${roleNames} · ${state.functionalOrder}`);
-    drawAxisTitle(g, origin.x - 176, origin.y - 48, `v4451 · ${branchModeLabel()} · vrije plaatsing + V2-slot`);
+    drawAxisTitle(g, origin.x - 176, origin.y - 48, `v4454 · ${branchModeLabel()} · vrije plaatsing + V2-slot`);
     const growthPlan = growthPlanForLayout(layout);
     layout.__growthPlan = growthPlan;
     drawSubtreeBoxes(g, layout, origin, growthPlan);
@@ -2043,6 +2080,18 @@
     renderSelection();
   }
 
+  function stabilizeInitialTreeView() {
+    // v4454: in de lokale viewer kan de eerste automatische SVG-bbox vóór de
+    // eerste paint leeg of onvolledig zijn. Een tweede render na layout/paint
+    // voorkomt dat de boom pas verschijnt na handmatig Groei aan/uit.
+    if (!els.svg || state.manualViewBox || state.viewDrag) return;
+    resetManualViewBox();
+    render();
+    requestAnimationFrame(() => {
+      if (!state.manualViewBox && !state.viewDrag) applyViewBoxFit(true);
+    });
+  }
+
   function renderStatus() {
     els.titleLine.textContent = `${activeSentenceText()} · ${state.projectionLabel || projectionLabel()} · ${state.centerMode === 'syntax' ? 'OPN-syntaxboom' : 'OPN-functioneel'}`;
     const noticeText = state.example.notice ? ` · NOTICE=${state.example.notice}` : '';
@@ -2145,10 +2194,22 @@
     if (els.growthPrevButton) els.growthPrevButton.disabled = !state.growthEnabled || !growthSupported || state.growthStep <= 0;
     if (els.growthNextButton) els.growthNextButton.disabled = !state.growthEnabled || !growthSupported || state.growthStep >= growthMax;
     if (els.growthResetButton) els.growthResetButton.disabled = !state.growthEnabled || !growthSupported;
+    const growthPlayText = state.growthTimer ? 'Pauze' : 'Play';
+    const growthPrevDisabled = !state.growthEnabled || !growthSupported || state.growthStep <= 0;
+    const growthNextDisabled = !state.growthEnabled || !growthSupported || state.growthStep >= growthMax;
+    const growthResetDisabled = !state.growthEnabled || !growthSupported;
     if (els.growthPlayButton) {
       els.growthPlayButton.disabled = !growthSupported;
-      els.growthPlayButton.textContent = state.growthTimer ? 'Pauze' : 'Play';
+      els.growthPlayButton.textContent = growthPlayText;
     }
+    if (els.mobileGrowthPlayButton) {
+      els.mobileGrowthPlayButton.disabled = !growthSupported;
+      els.mobileGrowthPlayButton.textContent = growthPlayText;
+    }
+    if (els.mobileGrowthPrevButton) els.mobileGrowthPrevButton.disabled = growthPrevDisabled;
+    if (els.mobileGrowthNextButton) els.mobileGrowthNextButton.disabled = growthNextDisabled;
+    if (els.mobileGrowthResetButton) els.mobileGrowthResetButton.disabled = growthResetDisabled;
+    if (els.mobileGrowthStepLabel) els.mobileGrowthStepLabel.textContent = growthLabel();
     document.querySelectorAll('.projection-tab').forEach(tab => {
       const active = tab.dataset.projection === state.projection;
       tab.classList.toggle('active', active);
@@ -2563,14 +2624,11 @@
     els.growthPrevButton?.addEventListener('click', () => { state.growthEnabled = true; setGrowthStep(state.growthStep - 1); });
     els.growthNextButton?.addEventListener('click', () => { state.growthEnabled = true; setGrowthStep(state.growthStep + 1); });
     els.growthResetButton?.addEventListener('click', () => { state.growthEnabled = true; stopGrowthPlayback(); setGrowthStep(0); });
-    els.growthPlayButton?.addEventListener('click', () => {
-      if (state.growthTimer) { stopGrowthPlayback(); render(); return; }
-      if (!growthSupportedProjection()) return;
-      state.growthEnabled = true;
-      if (state.growthStep >= growthStepMax()) state.growthStep = 0;
-      state.growthTimer = setInterval(() => setGrowthStep(state.growthStep + 1), 850);
-      render();
-    });
+    els.growthPlayButton?.addEventListener('click', toggleGrowthPlayback);
+    els.mobileGrowthPlayButton?.addEventListener('click', toggleGrowthPlayback);
+    els.mobileGrowthPrevButton?.addEventListener('click', () => { state.growthEnabled = true; setGrowthStep(state.growthStep - 1); });
+    els.mobileGrowthNextButton?.addEventListener('click', () => { state.growthEnabled = true; setGrowthStep(state.growthStep + 1); });
+    els.mobileGrowthResetButton?.addEventListener('click', () => { state.growthEnabled = true; stopGrowthPlayback(); setGrowthStep(0); });
     els.resetExampleButton?.addEventListener('click', () => { resetForNewExample(); render(); });
     els.fitButton?.addEventListener('click', () => { applyViewBoxFit(true); });
     els.mobileFitButton?.addEventListener('click', () => { applyViewBoxFit(true); });
@@ -2632,6 +2690,10 @@
     await loadStructureConfig();
     await loadExamplesFromHtml();
     render();
+    requestAnimationFrame(() => requestAnimationFrame(stabilizeInitialTreeView));
+    window.addEventListener('load', () => {
+      requestAnimationFrame(stabilizeInitialTreeView);
+    }, { once: true });
     window.__opengraphBoot = { version: VERSION, loaded: true };
     // v4427: lokale ontwikkelviewer gebruikt geen PWA-cache meer.
     // Oude service workers worden actief verwijderd, zodat structure-config/examples-input

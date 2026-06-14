@@ -1,3 +1,10 @@
+
+## v4454 — start-render en Play-fix
+
+- Hersteld: ontbrekende `toggleGrowthPlayback()` veroorzaakte afgebroken init in v4453.
+- Lokale viewer tekent de boom nu direct bij start.
+- Play/Pauze werkt weer voor de groeipresentatie.
+
 # Release notes
 
 ## v4430

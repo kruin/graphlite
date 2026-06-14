@@ -1,4 +1,11 @@
-# OpenGraph Lite Viewer — PWA v4451
+# OpenGraph Lite Viewer — PWA v4454
+
+## v4454 — start-render en Play-fix
+
+- Hersteld: `toggleGrowthPlayback()` ontbrak in v4453. Daardoor stopte de event-registratie vóór de eerste volledige render.
+- De boom wordt nu direct bij het openen van de lokale viewer getekend; `Groei aan/uit` is niet meer nodig als workaround.
+- `Play/Pauze` is opnieuw gekoppeld aan de groeistappen.
+- Cacheversie verhoogd naar `v4454`.
 
 ## v4451 — correctie groei-start
 
