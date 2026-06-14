@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'v4433';
+  const VERSION = 'v4440';
   const BASE_CELL = 74;
   const ROOT_SIDE_GAP = 1;
   const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -1056,8 +1056,14 @@
     return normalizeLayout(addOpnTopicalizationSlot(layoutTree(cloneTree(functionalSpec()), 0, { firstSide, branchOrder: state.branchOrder, branchOverrides: state.branchOverrides }), STRUCTURE_CONFIG.functionalRoot || 'ft-clause'));
   }
 
+  function isMobileViewport() {
+    return typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(max-width: 760px)').matches;
+  }
+
   function layoutVisualProfile() {
     const mode = state.layoutDensity || 'auto';
+    const mobile = isMobileViewport();
+    if (mobile && mode === 'auto') return { cellX: BASE_CELL * 1.08, cellY: BASE_CELL * 0.86, fontScale: 1.04, label: 'mobile auto' };
     if (mode === 'compact') return { cellX: BASE_CELL, cellY: BASE_CELL, fontScale: 1.00, label: 'compact' };
     if (mode === 'wide') return { cellX: BASE_CELL * 1.34, cellY: BASE_CELL * 0.86, fontScale: 1.08, label: 'breed/lager' };
     if (mode === 'large') return { cellX: BASE_CELL * 1.46, cellY: BASE_CELL * 0.82, fontScale: 1.16, label: 'breed + groter font' };
@@ -1144,7 +1150,7 @@
     const metrics = collectGrowthMetrics(activeCentralSpec());
     const structureSteps = metrics.count;
     if (state.projection === 'axes') {
-      // v4439: de maximale groeistap moet alle lokale LEX-Wissels tellen.
+      // v4440: de maximale groeistap moet alle lokale LEX-Wissels tellen.
       // Anders stopt de slider/playback na de eerste Wissel, waardoor bij
       // HOND BIJT MAN de tweede stap (BIJT → slot 2 + t[V]) nooit zichtbaar wordt.
       return structureSteps + orderedLexMovements(activeLexItems()).length + 3;
@@ -1178,7 +1184,7 @@
   }
 
   function orderedGrowthNodes(layout, metrics) {
-    // v4439: groei heeft nu ook binnen een niveau een expliciete volgorde.
+    // v4440: groei heeft nu ook binnen een niveau een expliciete volgorde.
     // Leaves verschijnen dus niet langer allemaal tegelijk. Eerst komen de
     // lexicale knopen, in ruimtelijke basisvolgorde: boven-naar-beneden,
     // dan links-naar-rechts. Daarna volgen steeds grotere categorieknopen.
@@ -1457,7 +1463,7 @@
   }
 
   function topicMovementForItem(item, index) {
-    // v4433: in Nederlandse V2-hoofdzinnen bezet het eerste zinsdeel slot 1.
+    // v4440: in Nederlandse V2-hoofdzinnen bezet het eerste zinsdeel slot 1.
     // Dat geldt ook wanneer dat eerste zinsdeel het subject is. Het eerste
     // lexicale zinsdeel laat dus altijd een trace achter op de oude basispositie.
     if (!isMainV2Rule()) return null;
@@ -1583,12 +1589,12 @@
   }
 
   function localTraceY(item, index, y0, items = state.example?.lexItems || []) {
-    // v4433: een trace blijft exact op de oude basispositie van het verplaatste item.
+    // v4440: een trace blijft exact op de oude basispositie van het verplaatste item.
     return baseLexY(item, index, y0, null, items);
   }
 
   function baseLexY(item, index, y0, sourceMap = null, items = state.example?.lexItems || []) {
-    // v4433: de basisprojectie wordt niet gecomprimeerd. In Assen blijft de
+    // v4440: de basisprojectie wordt niet gecomprimeerd. In Assen blijft de
     // LEX-basisplek exact horizontaal gelijk aan de bronknoop in de boom.
     // Alleen zonder centrale boom/sourceMap valt de LEX-only view terug op
     // een eenvoudige, leesbare rijafstand.
@@ -1698,7 +1704,7 @@
       : 'Plaatsingsregel: resultaat = voorbeeldzin; Comp gebruikt slot 0; geen automatische subject/object-Wissel.';
     g.appendChild(svgEl('text', { x: x + 150, y: axisMinY + 18, class: 'wissel-label' }, ruleText));
 
-    // v4433: geen stippel- of verplaatsingslijnen vanuit de boom naar de LEX-as.
+    // v4440: geen stippel- of verplaatsingslijnen vanuit de boom naar de LEX-as.
     // De boom levert alleen de basisstructuur; alle zichtbare Wissels en traces
     // worden lokaal op de LEX-as getekend.  Dit voorkomt dat projectielijnen
     // opnieuw als verplaatsingen vanuit de boom gelezen worden.
@@ -1767,7 +1773,7 @@
       .map(id => functionalNodes.find(n => n.id === id)?.label || id)
       .join(' + ') || 'role-boxen';
     if (options.showTitle !== false) drawAxisTitle(g, origin.x - 180, origin.y - 70, `OPN · functionele structuur · ${rootLabel} → ${roleNames} · ${state.functionalOrder}`);
-    drawAxisTitle(g, origin.x - 176, origin.y - 48, `v4439 · ${branchModeLabel()} · vrije plaatsing + V2-slot`);
+    drawAxisTitle(g, origin.x - 176, origin.y - 48, `v4440 · ${branchModeLabel()} · vrije plaatsing + V2-slot`);
     const growthPlan = growthPlanForLayout(layout);
     layout.__growthPlan = growthPlan;
     drawSubtreeBoxes(g, layout, origin, growthPlan);
@@ -1865,7 +1871,9 @@
         els.svg.setAttribute('viewBox', '0 0 1500 900');
         return;
       }
-      const margin = Math.max(72, Math.min(160, Math.max(bbox.width, bbox.height) * 0.06));
+      const margin = isMobileViewport()
+        ? Math.max(42, Math.min(92, Math.max(bbox.width, bbox.height) * 0.045))
+        : Math.max(72, Math.min(160, Math.max(bbox.width, bbox.height) * 0.06));
       const x = bbox.x - margin;
       const y = bbox.y - margin;
       const w = bbox.width + margin * 2;

@@ -763,3 +763,154 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
 .trace-projection {
   opacity: 0.55;
 }
+
+
+/* v4440: mobile-first repair.  The graph must be readable before the control stack. */
+.mobile-only { display: none; }
+
+@media (max-width: 760px) {
+  html, body { min-height: 100%; overflow-x: hidden; }
+  body { font-size: 15px; }
+
+  .app-header {
+    padding: max(.52rem, env(safe-area-inset-top)) .62rem .48rem;
+    gap: .45rem;
+  }
+  .eyebrow { font-size: .58rem; letter-spacing: .10em; }
+  h1 { font-size: 1.02rem; }
+  .version-tag { font-size: .62rem; }
+  .header-subtitle { display: none; }
+
+  .app-shell {
+    max-width: none;
+    width: 100%;
+    padding: .42rem;
+    gap: .45rem;
+  }
+
+  .toolbar {
+    display: flex;
+    overflow-x: auto;
+    align-items: stretch;
+    gap: .45rem;
+    padding: .48rem;
+    border-radius: .82rem;
+    scroll-snap-type: x proximity;
+    -webkit-overflow-scrolling: touch;
+  }
+  .toolbar > * {
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+  }
+  .toolbar .example-field { width: min(82vw, 26rem); }
+  .input-sentence-tools { width: max-content; max-width: none; flex-wrap: nowrap; align-items: stretch; }
+  .input-sentence-tools .button-link { white-space: nowrap; min-height: 2.25rem; }
+  .compact-actions { flex-wrap: nowrap; justify-content: flex-start; }
+  .compact-actions > * { white-space: nowrap; }
+
+  .intro-panel { display: none; }
+
+  .status-panel {
+    padding: .55rem .62rem;
+    border-radius: .82rem;
+  }
+  .title-line { font-size: .92rem; margin-bottom: .12rem; }
+  .meta-line { font-size: .74rem; max-height: 2.3em; overflow: hidden; }
+  .sentence-preview { font-size: .92rem; padding: .35rem .5rem; margin-top: .25rem; }
+  .action-feedback { font-size: .74rem; padding: .38rem .48rem; margin-top: .35rem; }
+
+  .workspace {
+    display: flex;
+    flex-direction: column;
+    gap: .45rem;
+    min-height: 0;
+  }
+  .canvas-wrap {
+    order: -1;
+    height: 66dvh;
+    min-height: 25rem;
+    max-height: 46rem;
+    overflow: auto;
+    border-radius: .82rem;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
+  #graphSvg {
+    width: 1020px;
+    min-width: 1020px;
+    height: 100%;
+    min-height: 100%;
+    touch-action: pan-x pan-y;
+  }
+  .canvas-wrap::before {
+    content: "mobiel: veeg/scroll het canvas horizontaal";
+    position: sticky;
+    left: .45rem;
+    top: .45rem;
+    z-index: 3;
+    display: inline-block;
+    padding: .22rem .42rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--panel), transparent 8%);
+    color: var(--muted);
+    font-size: .68rem;
+    font-weight: 800;
+    pointer-events: none;
+  }
+
+  .side-panel {
+    max-height: none;
+    overflow: visible;
+    padding-right: 0;
+    gap: .45rem;
+  }
+  .panel-card { padding: .58rem .62rem; border-radius: .82rem; }
+  .panel-card h2 { font-size: .9rem; margin-bottom: .35rem; }
+
+  .projection-tabs {
+    display: flex;
+    overflow-x: auto;
+    gap: .28rem;
+    margin-bottom: .45rem;
+    -webkit-overflow-scrolling: touch;
+  }
+  .projection-tab {
+    flex: 0 0 auto;
+    min-width: 5.2rem;
+    min-height: 2rem;
+    font-size: .74rem;
+    padding: .22rem .4rem;
+  }
+  .field { font-size: .76rem; }
+  .field input,
+  .field select { min-height: 2.05rem; border-radius: .62rem; }
+  .branch-config-grid,
+  .view-config-grid {
+    grid-template-columns: 1fr 1fr;
+    padding: .48rem;
+    gap: .38rem;
+  }
+  .branch-config-grid .mini-field:first-child { grid-column: 1 / -1; }
+  .check-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); font-size: .78rem; }
+  .inline-help, .muted-box, .text-panel p { font-size: .76rem; line-height: 1.35; }
+  .growth-controls { padding: .48rem; gap: .32rem; }
+  .growth-buttons button { min-height: 1.95rem; }
+
+  .node-editor, .editor-card, .lex-card, .relation-card { gap: .4rem; }
+  .two-cols { grid-template-columns: 1fr; }
+  .lex-order-list, .edge-list { max-height: 8rem; }
+
+  .text-panel { padding: .58rem .62rem; border-radius: .82rem; }
+  .text-panel details[open] { max-height: 8rem; overflow: auto; }
+}
+
+@media (max-width: 420px) {
+  .app-shell { padding: .32rem; }
+  .canvas-wrap { height: 68dvh; min-height: 24rem; }
+  #graphSvg { width: 980px; min-width: 980px; }
+  .branch-config-grid,
+  .view-config-grid { grid-template-columns: 1fr; }
+  .check-grid { grid-template-columns: 1fr 1fr; }
+  button, .file-label, .button-link { min-height: 2.12rem; padding: .28rem .48rem; font-size: .78rem; }
+}
