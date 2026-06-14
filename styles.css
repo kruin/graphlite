@@ -261,7 +261,7 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
   --og-font-scale: 1;
 }
 
-/* v4446: canvas/boom links, projectievenster rechts. */
+/* v4447: canvas/boom links, projectievenster rechts. */
 .canvas-wrap { grid-column: 1; grid-row: 1; }
 .side-panel { grid-column: 2; grid-row: 1; }
 .grid-line { stroke: var(--grid); stroke-width: 1; vector-effect: non-scaling-stroke; }
@@ -769,7 +769,7 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
 }
 
 
-/* v4446: mobile stage-first UX.  The visual tree/projection stage comes first;
+/* v4447: mobile stage-first UX.  The visual tree/projection stage comes first;
    projection controls sit left of the canvas, the rest follows below. */
 .mobile-only { display: none; }
 
@@ -940,7 +940,7 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
 }
 
 
-/* v4446: stage-first layout for every platform.
+/* v4447: stage-first layout for every platform.
    Het boom/LEX-canvas staat links, het projectievenster rechts.
    Alle overige controls en tekst volgen daaronder. */
 .app-shell {
@@ -1074,7 +1074,7 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
 }
 
 
-/* v4446: boom + LEX-as zijn beweeglijk binnen het canvas. */
+/* v4447: boom + LEX-as zijn beweeglijk binnen het canvas. */
 .canvas-wrap {
   cursor: grab;
 }
@@ -1101,7 +1101,7 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
 }
 
 
-/* v4446: viewer-first UI cleanup */
+/* v4447: viewer-first UI cleanup */
 .toolbar {
   grid-template-columns: minmax(14rem, 22rem) minmax(18rem, 1fr) auto;
 }
@@ -1155,7 +1155,7 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
 }
 
 
-/* v4446: vaste projectie- en groeibalk boven de boom, op alle platforms. */
+/* v4447: vaste projectie- en groeibalk boven de boom, op alle platforms. */
 .projection-sticky-bar {
   order: 0;
   position: sticky;
@@ -1304,5 +1304,109 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
   .projection-sticky-bar .growth-buttons button {
     flex: 1 1 auto;
     padding-inline: .38rem;
+  }
+}
+
+
+/* v4447: compacte Groei-bediening. De voortgangsbalk is kort; Play/pijlen staan links ervan.
+   Belangrijk voor portrait mobile: geen hoge sticky balk en geen full-width range. */
+.projection-sticky-bar .top-growth-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-start;
+  gap: .32rem .42rem;
+  width: fit-content;
+  max-width: 100%;
+  padding: .34rem .42rem;
+}
+
+.projection-sticky-bar .growth-toggle {
+  flex: 0 0 auto;
+  font-size: .82rem;
+}
+
+.projection-sticky-bar .growth-buttons {
+  order: 2;
+  flex: 0 0 auto;
+  display: flex;
+  flex-wrap: nowrap;
+  gap: .22rem;
+}
+
+.projection-sticky-bar .growth-buttons button {
+  min-height: 1.82rem;
+  min-width: 2.25rem;
+  padding: .18rem .42rem;
+  font-size: .82rem;
+}
+
+.projection-sticky-bar .growth-range {
+  order: 3;
+  flex: 0 1 clamp(7rem, 18vw, 12rem);
+  width: clamp(7rem, 18vw, 12rem);
+  min-width: 7rem;
+}
+
+.projection-sticky-bar .growth-step-label {
+  order: 4;
+  flex: 0 1 18rem;
+  min-width: 0;
+  max-width: min(18rem, 45vw);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: .76rem;
+}
+
+.projection-sticky-bar .top-growth-controls > .inline-help {
+  display: none;
+}
+
+@media (min-width: 901px) {
+  .projection-sticky-bar .top-growth-wrap {
+    display: flex;
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 900px) {
+  .projection-sticky-bar .top-growth-controls {
+    width: 100%;
+    box-sizing: border-box;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+  }
+  .projection-sticky-bar .growth-step-label {
+    max-width: 13rem;
+  }
+}
+
+@media (max-width: 520px) {
+  .projection-sticky-bar {
+    max-height: none;
+    overflow: visible;
+  }
+  .projection-sticky-bar .top-growth-controls {
+    gap: .24rem;
+    padding: .28rem .34rem;
+  }
+  .projection-sticky-bar .growth-toggle {
+    font-size: .76rem;
+  }
+  .projection-sticky-bar .growth-buttons button {
+    min-width: 2rem;
+    min-height: 1.7rem;
+    padding-inline: .32rem;
+  }
+  .projection-sticky-bar .growth-range {
+    flex: 0 0 6.8rem;
+    width: 6.8rem;
+    min-width: 6.8rem;
+  }
+  .projection-sticky-bar .growth-step-label {
+    flex: 0 0 5.8rem;
+    max-width: 5.8rem;
   }
 }

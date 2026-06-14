@@ -1,6 +1,6 @@
 <!doctype html>
-<!-- OPENGRAPH_ROOT_VIEWER_INDEX_v4446: this root index is the app, not docs. -->
-<html lang="nl" data-opengraph-app="viewer" data-version="v4446">
+<!-- OPENGRAPH_ROOT_VIEWER_INDEX_v4447: this root index is the app, not docs. -->
+<html lang="nl" data-opengraph-app="viewer" data-version="v4447">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
@@ -9,18 +9,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#0f172a">
   <meta name="description" content="OpenGraph Lite Viewer: vrije JAN-bronknopen, edits, LEX-plaatsingsregels en projecties.">
-  <title>OpenGraph Lite Viewer v4446</title>
+  <title>OpenGraph Lite Viewer v4447</title>
   <link rel="icon" href="favicon.ico" sizes="any">
   <link rel="icon" href="icons/icon-192.svg" type="image/svg+xml">
-  <!-- v4446: manifest disabled in local/dev build to avoid PWA/service-worker confusion. -->
+  <!-- v4447: manifest disabled in local/dev build to avoid PWA/service-worker confusion. -->
   <!-- <link rel="manifest" href="manifest.webmanifest"> -->
-  <link rel="stylesheet" href="styles.css?v4446">
+  <link rel="stylesheet" href="styles.css?v4447">
 </head>
 <body>
   <header class="app-header">
     <div>
       <div class="eyebrow">OpenGraph · JAN · Open Notation</div>
-      <h1>OpenGraph Lite Viewer <span class="version-tag">v4446</span></h1>
+      <h1>OpenGraph Lite Viewer <span class="version-tag">v4447</span></h1>
       <p class="header-subtitle">Redesign: eerst syntax-tree, daarna LEX-projectie, daarna lokale LEX-regel/Wissel (V2).</p>
     </div>
     <button id="installButton" class="ghost hidden" type="button">Installeer</button>
@@ -59,13 +59,13 @@
         <select id="exampleSelect" aria-label="Voorbeeld kiezen"></select>
       </label>
       <div class="input-sentence-tools" aria-label="Zin-input">
-        <a class="button-link" href="examples-input.html?v4446" title="Open de HTML-inputfile met voorbeeldzinnen, subject vet en object cursief">HTML-input</a>
-        <a class="button-link" href="lexicon-config.html?v4446" title="Leesbare lexicon-config voor voorbeeldzinnen">Lexicon</a>
-        <a class="button-link" href="lexicon-editor.html?v4446" title="Lexicon én korte voorbeelduitingen beheren; exporteert lexicon-config.html en examples-input.html">Lexicon+uitingen-editor</a>
-        <a class="button-link" href="structure-editor.html?v4446" title="Bewerk eerst syntax-config en functional-config">Structure-editor</a>
-        <a class="button-link" href="docs/docs-home.html?v4446" title="Projectcontext, layoutspec en release notes">Docs</a>
-        <a class="button-link" href="lex-movement-rules.html?v4446" title="Simpele uitleg van de LEX-Wissels per zinstype">Plaatsingsregels</a>
-        <a class="button-link" href="reset-cache.html?v4446" title="Verwijder browsercache/service worker en open de viewer opnieuw">Reset cache</a>
+        <a class="button-link" href="examples-input.html?v4447" title="Open de HTML-inputfile met voorbeeldzinnen, subject vet en object cursief">HTML-input</a>
+        <a class="button-link" href="lexicon-config.html?v4447" title="Leesbare lexicon-config voor voorbeeldzinnen">Lexicon</a>
+        <a class="button-link" href="lexicon-editor.html?v4447" title="Lexicon én korte voorbeelduitingen beheren; exporteert lexicon-config.html en examples-input.html">Lexicon+uitingen-editor</a>
+        <a class="button-link" href="structure-editor.html?v4447" title="Bewerk eerst syntax-config en functional-config">Structure-editor</a>
+        <a class="button-link" href="docs/docs-home.html?v4447" title="Projectcontext, layoutspec en release notes">Docs</a>
+        <a class="button-link" href="lex-movement-rules.html?v4447" title="Simpele uitleg van de LEX-Wissels per zinstype">Plaatsingsregels</a>
+        <a class="button-link" href="reset-cache.html?v4447" title="Verwijder browsercache/service worker en open de viewer opnieuw">Reset cache</a>
       </div>
       <div class="button-row compact-actions">
         <button id="resetExampleButton" type="button" title="Herlaad het gekozen voorbeeld">Reset voorbeeld</button>
@@ -160,7 +160,7 @@
 
 
   <script>
-    window.__opengraphBoot = { version: 'v4446', loaded: false, marker: 'viewer-index' };
+    window.__opengraphBoot = { version: 'v4447', loaded: false, marker: 'viewer-index' };
     function ogStatus(message) {
       var target = document.getElementById('actionFeedback') || document.body;
       if (target) target.textContent = message;
@@ -173,10 +173,10 @@
     });
     setTimeout(function() {
       if (!window.__opengraphBoot || !window.__opengraphBoot.loaded) {
-        ogStatus('Viewer start niet volledig. Gebruik Reset cache of open http://127.0.0.1:8088/reset-cache.html?v4446.');
+        ogStatus('Viewer start niet volledig. Gebruik Reset cache of open http://127.0.0.1:8088/reset-cache.html?v4447.');
       }
     }, 2500);
   </script>
-  <script src="viewer.js?v4446" defer></script>
+  <script src="viewer.js?v4447" defer></script>
 </body>
 </html>
