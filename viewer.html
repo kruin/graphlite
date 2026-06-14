@@ -1,6 +1,6 @@
 <!doctype html>
-<!-- OPENGRAPH_VIEWER_HTML_v4447: fallback app entry. -->
-<html lang="nl" data-opengraph-app="viewer" data-version="v4447">
+<!-- OPENGRAPH_VIEWER_HTML_v4451: fallback app entry mirrors root index. -->
+<html lang="nl" data-opengraph-app="viewer" data-version="v4451">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
@@ -9,42 +9,65 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#0f172a">
   <meta name="description" content="OpenGraph Lite Viewer: vrije JAN-bronknopen, edits, LEX-plaatsingsregels en projecties.">
-  <title>OpenGraph Lite Viewer v4447</title>
+  <title>OpenGraph Lite Viewer v4451</title>
   <link rel="icon" href="favicon.ico" sizes="any">
   <link rel="icon" href="icons/icon-192.svg" type="image/svg+xml">
-  <!-- v4447: manifest disabled in local/dev build to avoid PWA/service-worker confusion. -->
+  <!-- v4451: manifest disabled in local/dev build to avoid PWA/service-worker confusion. -->
   <!-- <link rel="manifest" href="manifest.webmanifest"> -->
-  <link rel="stylesheet" href="styles.css?v4447">
+  <link rel="stylesheet" href="styles.css?v4451">
 </head>
 <body>
   <header class="app-header">
     <div>
       <div class="eyebrow">OpenGraph · JAN · Open Notation</div>
-      <h1>OpenGraph Lite Viewer <span class="version-tag">v4447</span></h1>
+      <h1>OpenGraph Lite Viewer <span class="version-tag">v4451</span></h1>
       <p class="header-subtitle">Redesign: eerst syntax-tree, daarna LEX-projectie, daarna lokale LEX-regel/Wissel (V2).</p>
     </div>
     <button id="installButton" class="ghost hidden" type="button">Installeer</button>
   </header>
 
   <main class="app-shell">
+
+    <section class="projection-sticky-bar" aria-label="Vaste projectie- en groeibediening">
+      <div class="top-projection-tabs" aria-label="Projectiekeuze">
+<div class="projection-tabs" role="tablist" aria-label="Projectiekeuze">
+            <button class="projection-tab active" data-projection="axes" type="button" role="tab" aria-selected="true">Assen</button>
+            <button class="projection-tab" data-projection="source" type="button" role="tab" aria-selected="false">Bron</button>
+            <button class="projection-tab" data-projection="lex" type="button" role="tab" aria-selected="false">LEX</button>
+            <button class="projection-tab" data-projection="synt" type="button" role="tab" aria-selected="false">SYNTAX-projectie</button>
+            <button class="projection-tab" data-projection="log" type="button" role="tab" aria-selected="false">LOG/FT</button>
+          </div>
+      </div>
+      <div class="top-growth-wrap" aria-label="Groei-presentatie">
+<div class="growth-controls top-growth-controls" aria-label="Groei-presentatie">
+            <label class="growth-toggle"><input id="growthEnabledInput" type="checkbox"> Groei: tonen</label>
+            <input id="growthStepInput" class="growth-range" type="range" min="0" max="1" value="0" step="1" aria-label="Groei-stap">
+            <div id="growthStepLabel" class="growth-step-label">Groei uit</div>
+            <div class="button-row growth-buttons">
+              <button id="growthResetButton" type="button" title="Terug naar stap 0">0</button>
+              <button id="growthPrevButton" type="button" title="Vorige groei-stap">←</button>
+              <button id="growthPlayButton" type="button" title="Speel groei-presentatie af">Play</button>
+              <button id="growthNextButton" type="button" title="Volgende groei-stap">→</button>
+            </div>
+            <p class="inline-help">Groei berekent eerst de volledige layout en toont daarna bottom-up steeds meer nodes, boxen en projecties. Posities blijven dus stabiel.</p>
+          </div>
+      </div>
+    </section>
     <section class="toolbar" aria-label="Hoofdbediening">
       <label class="field example-field">
         <span>Voorbeeld</span>
         <select id="exampleSelect" aria-label="Voorbeeld kiezen"></select>
       </label>
       <div class="input-sentence-tools" aria-label="Zin-input">
-        <a class="button-link" href="examples-input.html?v4447" title="Open de HTML-inputfile met voorbeeldzinnen, subject vet en object cursief">HTML-input</a>
-        <a class="button-link" href="examples-editor.html?v4447" title="Oude aparte voorbeeldeditor; hoofdbeheer zit nu in de Lexicon-editor">Voorbeeldeditor (oud)</a>
-        <a class="button-link" href="lexicon-config.html?v4447" title="Leesbare lexicon-config voor voorbeeldzinnen">Lexicon</a>
-        <a class="button-link" href="lexicon-editor.html?v4447" title="Lexicon én korte voorbeelduitingen beheren; exporteert lexicon-config.html en examples-input.html">Lexicon+uitingen-editor</a>
-        <a class="button-link" href="structure-editor.html?v4447" title="Bewerk eerst syntax-config en functional-config">Structure-editor</a>
-        <a class="button-link" href="docs/docs-home.html?v4447" title="Projectcontext, layoutspec en release notes">Docs</a>
-        <a class="button-link" href="lex-movement-rules.html?v4447" title="Simpele uitleg van de LEX-Wissels per zinstype">Plaatsingsregels</a>
-        <a class="button-link" href="reset-cache.html?v4447" title="Verwijder browsercache/service worker en open de viewer opnieuw">Reset cache</a>
+        <a class="button-link" href="examples-input.html?v4451" title="Open de HTML-inputfile met voorbeeldzinnen, subject vet en object cursief">HTML-input</a>
+        <a class="button-link" href="lexicon-config.html?v4451" title="Leesbare lexicon-config voor voorbeeldzinnen">Lexicon</a>
+        <a class="button-link" href="lexicon-editor.html?v4451" title="Lexicon én korte voorbeelduitingen beheren; exporteert lexicon-config.html en examples-input.html">Lexicon+uitingen-editor</a>
+        <a class="button-link" href="structure-editor.html?v4451" title="Bewerk eerst syntax-config en functional-config">Structure-editor</a>
+        <a class="button-link" href="docs/docs-home.html?v4451" title="Projectcontext, layoutspec en release notes">Docs</a>
+        <a class="button-link" href="lex-movement-rules.html?v4451" title="Simpele uitleg van de LEX-Wissels per zinstype">Plaatsingsregels</a>
+        <a class="button-link" href="reset-cache.html?v4451" title="Verwijder browsercache/service worker en open de viewer opnieuw">Reset cache</a>
       </div>
       <div class="button-row compact-actions">
-        <button id="undoButton" type="button" title="Undo edit">↶ Undo</button>
-        <button id="redoButton" type="button" title="Redo edit">↷ Redo</button>
         <button id="resetExampleButton" type="button" title="Herlaad het gekozen voorbeeld">Reset voorbeeld</button>
         <button id="fitButton" type="button" title="Passend maken">FIT</button>
       </div>
@@ -54,35 +77,29 @@
           <input id="fileInput" type="file" accept="application/json,.json,.opn">
         </label>
         <button id="downloadJsonButton" type="button" title="Download actuele OpenGraph Lite JSON">Download JSON</button>
-        <button id="downloadOpnButton" type="button" title="Download compacte .opn tekstexport">Download .OPN</button>
         <a class="button-link" href="carousel/index.html" title="Open JAN-carousel">Carousel</a>
       </div>
     </section>
 
     <section class="intro-panel" aria-label="Introductie">
       <div class="intro-kicker">Redesign · boom eerst</div>
-      <p><strong>Fase 1</strong>: maak eerst de centrale boom voor <strong>HOND BIJT MAN</strong>. <strong>Fase 2</strong>: teken de LEX-projectie horizontaal vanaf de centrale boom naar de LEX-as. Beide OPN-bronnen reserveren daarbij <strong>slot 1</strong> voor vooropplaatsing/topicalisatie tussen beginknoop en boom. <strong>Fase 3</strong>: regel lokaal op de LEX-as het uitingtype <strong>OMDAT HOND MAN BIJT</strong>. De centrale boom blijft daarbij onveranderd. Lidwoorden zijn verwijderd: de man → man; de hond → hond. Structuren staan in <code>structure-config.html</code>: eerst syntax-config en functional-config. Functioneel gebruikt <code>CLAUSE → PRED ARG-STRUCT</code>, zodat predicaat en argumentstructuur apart vrij kunnen worden geplaatst. De layout-switch <code>left-first/right-first</code> geldt voor syntax én functioneel. Takvolgorde staat standaard op grammaticale volgorde: S → NP VP en VP → NP V; compact/align/flip blijven handmatige vergelijkingsopties. Daarna volgen de voorbeeldzinnen. Voorbeeldzinnen staan in <code>examples-input.html</code>: <strong>vet</strong> markeert subject/agens, <em>cursief</em> markeert object/patiens. Lexicale vulling en thematische rollen komen uit <code>lexicon-config.html</code>. Beheer lexicon én korte voorbeeldzinnen via <code>lexicon-editor.html</code>; die editor exporteert zowel <code>lexicon-config.html</code> als <code>examples-input.html</code>. Bewerk structuren via <code>structure-editor.html</code>. <code>examples-editor.html</code> blijft voorlopig beschikbaar als aparte/oude zinneneditor.</p>
+      <p><strong>Fase 1</strong>: maak eerst de centrale boom voor <strong>HOND BIJT MAN</strong>. <strong>Fase 2</strong>: teken de LEX-projectie horizontaal vanaf de centrale boom naar de LEX-as. Beide OPN-bronnen reserveren daarbij <strong>slot 1</strong> voor vooropplaatsing/topicalisatie tussen beginknoop en boom. <strong>Fase 3</strong>: regel lokaal op de LEX-as het uitingtype <strong>OMDAT HOND MAN BIJT</strong>. In auto-min wordt de centrale syntaxvolgorde per voorbeeldzin gekozen; in structure-config blijft de oudere basisboom onveranderd. Lidwoorden zijn verwijderd: de man → man; de hond → hond. Structuren staan in <code>structure-config.html</code>: eerst syntax-config en functional-config. Functioneel gebruikt <code>CLAUSE → PRED ARG-STRUCT</code>, zodat predicaat en argumentstructuur apart vrij kunnen worden geplaatst. De layout-switch <code>left-first/right-first</code> geldt voor syntax én functioneel. Takvolgorde staat standaard op grammaticale volgorde: S → NP VP en VP → NP V; compact/align/flip blijven handmatige vergelijkingsopties. Daarna volgen de voorbeeldzinnen. Voorbeeldzinnen staan in <code>examples-input.html</code>. Boomkeuze <code>auto per voorbeeldtype</code> behoudt de hiërarchische syntax; LEX-wissels volgen pas lokaal uit het voorbeeldtype: <strong>vet</strong> markeert subject/agens, <em>cursief</em> markeert object/patiens. Lexicale vulling en thematische rollen komen uit <code>lexicon-config.html</code>. Beheer lexicon én korte voorbeeldzinnen via <code>lexicon-editor.html</code>; die editor exporteert zowel <code>lexicon-config.html</code> als <code>examples-input.html</code>. Bewerk structuren via <code>structure-editor.html</code>. <code>examples-editor.html</code> blijft voorlopig beschikbaar als aparte/oude zinneneditor.</p>
     </section>
 
     <section class="status-panel" aria-live="polite">
       <div id="titleLine" class="title-line">—</div>
       <div id="metaLine" class="meta-line">Kies een voorbeeld of laad JSON.</div>
       <div id="sentencePreview" class="sentence-preview" title="Vet = subject/agens; cursief = object/patiens.">—</div>
-      <div id="actionFeedback" class="action-feedback neutral">Bronmodus: sleep knopen vrij over het raster. Selecteer een knoop om label, categorie en rol te wijzigen.</div>
+      <div id="actionFeedback" class="action-feedback neutral">Viewer: sleep in canvas om boom + LEX-as te verplaatsen. FIT herstelt de view.</div>
     </section>
 
     <section class="workspace" aria-label="OpenGraph werkvlak">
       <aside class="side-panel" aria-label="Projecties en bewerking">
         <section class="panel-card">
-          <h2>Projectie</h2>
-          <div class="projection-tabs" role="tablist" aria-label="Projectiekeuze">
-            <button class="projection-tab active" data-projection="axes" type="button" role="tab" aria-selected="true">Assen</button>
-            <button class="projection-tab" data-projection="source" type="button" role="tab" aria-selected="false">Bron</button>
-            <button class="projection-tab" data-projection="lex" type="button" role="tab" aria-selected="false">LEX</button>
-            <button class="projection-tab" data-projection="synt" type="button" role="tab" aria-selected="false">SYNTAX-projectie</button>
-            <button class="projection-tab" data-projection="log" type="button" role="tab" aria-selected="false">LOG/FT</button>
-          </div>
+          <h2>Projectie-instellingen</h2>
+          <p class="inline-help sticky-note">Projectiekeuze en Groei staan vast boven de boom.</p>
           <label class="field center-mode-field"><span>Centraal OPN</span><select id="centralModeSelect"></select></label>
+          <label class="field center-mode-field"><span>Boomkeuze</span><select id="treeChoiceSelect"></select></label>
           <label class="field center-mode-field"><span>Layout order</span><select id="functionalOrderSelect"></select></label>
           <label class="field center-mode-field"><span>Takvolgorde</span><select id="branchOrderSelect"></select></label>
           <div class="branch-config-grid" aria-label="Flip-config per vertakking">
@@ -94,47 +111,11 @@
             <label class="field mini-field"><span>Boomruimte</span><select id="layoutDensitySelect"></select></label>
             <label class="field mini-field"><span>Venster</span><select id="viewFitSelect"></select></label>
           </div>
-          <p id="projectionHelp" class="inline-help">OPN/Assen: centrale OPN-weergave; LEX links, SYNTAX rechts, LOGICAL onder. Boomruimte kan breed/lager worden gezet; FIT past de viewBox aan de echte tekening aan.</p>
+          <p id="projectionHelp" class="inline-help">OPN/Assen: centrale OPN-weergave; LEX links, SYNTAX rechts, LOGICAL onder. Boomkeuze auto per voorbeeldtype houdt de basisboom vast; de LEX-as volgt de voorbeeldzin met Wissels. Boomruimte kan breed/lager worden gezet; FIT past de viewBox aan de echte tekening aan.</p>
           <div class="check-grid">
             <label><input id="showGridInput" type="checkbox" checked> Raster</label>
-            <label><input id="showRelationsInput" type="checkbox" checked> Relaties</label>
-            <label><input id="showLabelsInput" type="checkbox" checked> Labels</label>
-            <label><input id="snapInput" type="checkbox" checked> Snap</label>
-          </div>
-          <div class="growth-controls" aria-label="Groei-presentatie">
-            <label class="growth-toggle"><input id="growthEnabledInput" type="checkbox"> Groei</label>
-            <input id="growthStepInput" class="growth-range" type="range" min="0" max="1" value="0" step="1" aria-label="Groei-stap">
-            <div id="growthStepLabel" class="growth-step-label">Groei uit</div>
-            <div class="button-row growth-buttons">
-              <button id="growthResetButton" type="button" title="Terug naar stap 0">0</button>
-              <button id="growthPrevButton" type="button" title="Vorige groei-stap">←</button>
-              <button id="growthPlayButton" type="button" title="Speel groei-presentatie af">Play</button>
-              <button id="growthNextButton" type="button" title="Volgende groei-stap">→</button>
-            </div>
-            <p class="inline-help">Groei berekent eerst de volledige layout en toont daarna bottom-up steeds meer nodes, boxen en projecties. Posities blijven dus stabiel.</p>
-          </div>
-        </section>
-
-        <section class="panel-card editor-card">
-          <h2>Geselecteerde knoop</h2>
-          <div id="selectionEmpty" class="muted-box">Geen knoop geselecteerd.</div>
-          <div id="nodeEditor" class="node-editor hidden">
-            <label class="field"><span>ID</span><input id="nodeIdField" type="text" disabled></label>
-            <label class="field"><span>Label</span><input id="nodeLabelInput" type="text"></label>
-            <label class="field"><span>Categorie</span><select id="nodeCatInput"></select></label>
-            <label class="field"><span>Rol</span><select id="nodeRoleInput"></select></label>
-            <div class="two-cols">
-              <label class="field"><span>x</span><input id="nodeXInput" type="number" step="1"></label>
-              <label class="field"><span>y</span><input id="nodeYInput" type="number" step="1"></label>
-            </div>
-            <div class="button-row">
-              <button id="applyNodeButton" type="button">Pas toe</button>
-              <button id="deleteNodeButton" type="button">Verwijder</button>
-            </div>
-          </div>
-          <div class="button-row">
-            <button id="addNodeButton" type="button">Nieuwe knoop</button>
-            <button id="duplicateNodeButton" type="button">Dupliceer</button>
+            <label><input id="showRelationsInput" type="checkbox" checked> Taklijnen</label>
+            <label><input id="showLabelsInput" type="checkbox" checked> Boomlabels</label>
           </div>
         </section>
 
@@ -151,19 +132,14 @@
         </section>
 
         <section class="panel-card relation-card">
-          <h2>Relaties</h2>
-          <div class="two-cols">
-            <label class="field"><span>Van</span><select id="edgeFromSelect"></select></label>
-            <label class="field"><span>Naar</span><select id="edgeToSelect"></select></label>
-          </div>
-          <label class="field"><span>Type</span><select id="edgeTypeSelect"></select></label>
-          <button id="addEdgeButton" type="button">Relatie toevoegen</button>
-          <div id="edgeList" class="edge-list" aria-label="Relatielijst"></div>
+          <h2>Relaties / regels</h2>
+          <p id="relationHelp" class="inline-help">Geen losse editor-relaties. Deze lijst volgt de actieve structuur: syntaxregels bij syntax/assen, functionele rollen bij LOG/FT.</p>
+          <div id="edgeList" class="edge-list" aria-label="Structuurregels"></div>
         </section>
       </aside>
 
       <section id="canvasWrap" class="canvas-wrap" aria-label="OpenGraph canvas">
-        <svg id="graphSvg" role="img" aria-label="OpenGraph projectie" xmlns="http://www.w3.org/2000/svg"></svg>
+        <svg id="graphSvg" role="img" aria-label="OpenGraph projectie" tabindex="0" title="Sleep om boom/LEX-as te verplaatsen; FIT herstelt de view" xmlns="http://www.w3.org/2000/svg"></svg>
       </section>
     </section>
 
@@ -172,7 +148,7 @@
       <p id="explainText">De viewer is geladen.</p>
       <details open>
         <summary>Wat zit in deze eerste Lite-versie?</summary>
-        <p>Deze versie bevat beperkte editing: knopen toevoegen/verplaatsen/verwijderen, labels/categorieën/rollen wijzigen, relaties toevoegen/verwijderen, LEX-volgorde aanpassen, JSON laden/downloaden en een compacte .OPN-export.</p>
+        <p>Deze versie is een viewer/demo: voorbeeldzin kiezen, projectie kiezen, groei tonen, canvas pannen/zoomen, JSON laden/downloaden en documentatie openen. Losse knoop- en relatie-editing is verwijderd.</p>
         <p>Niet overgenomen uit de Java-app: klassieke graph-algoritmen zoals planarity, Dijkstra, MST, biconnectivity en canonical ordering. Die horen niet bij deze eerste JAN-taalboomlaag.</p>
       </details>
       <details>
@@ -183,8 +159,62 @@
   </main>
 
 
+  <nav class="mobile-bottom-nav" aria-label="Mobiele viewerbediening">
+    <button id="mobilePrevButton" type="button" title="Vorige voorbeeldzin">← Zin</button>
+    <button id="mobileFitButton" type="button" title="Passend maken">FIT</button>
+    <button id="mobileNextButton" type="button" title="Volgende voorbeeldzin">Zin →</button>
+    <button id="mobileMenuButton" type="button" aria-controls="mobileSheet" aria-expanded="false" title="Meer opties">Meer</button>
+  </nav>
+
+  <div id="mobileSheetBackdrop" class="mobile-sheet-backdrop hidden" aria-hidden="true"></div>
+  <section id="mobileSheet" class="mobile-sheet hidden" aria-label="Mobiel menu" aria-modal="true">
+    <div class="mobile-sheet-handle" aria-hidden="true"></div>
+    <header class="mobile-sheet-header">
+      <div>
+        <div class="intro-kicker">Mobiele viewer</div>
+        <h2>JAN / OpenGraph</h2>
+      </div>
+      <button id="mobileCloseButton" type="button" title="Sluit mobiel menu">Sluit</button>
+    </header>
+
+    <div class="mobile-sheet-section" aria-label="Projecties">
+      <h3>Projectie</h3>
+      <div class="mobile-projection-grid">
+        <button data-mobile-projection="axes" type="button">Assen</button>
+        <button data-mobile-projection="source" type="button">Bron</button>
+        <button data-mobile-projection="lex" type="button">LEX</button>
+        <button data-mobile-projection="synt" type="button">SYNTAX</button>
+        <button data-mobile-projection="log" type="button">LOG/FT</button>
+      </div>
+    </div>
+
+    <div class="mobile-sheet-section" aria-label="Snelle acties">
+      <h3>Acties</h3>
+      <div class="mobile-action-grid">
+        <button id="mobileGrowthButton" type="button">Groei aan/uit</button>
+        <button id="mobileResetButton" type="button">Reset voorbeeld</button>
+        <label for="mobileFileInput" class="mobile-sheet-button">JSON laden</label>
+        <input id="mobileFileInput" class="visually-hidden-file" type="file" accept="application/json,.json,.opn">
+        <button id="mobileDownloadJsonButton" type="button">Download JSON</button>
+      </div>
+    </div>
+
+    <div class="mobile-sheet-section" aria-label="Documentatie">
+      <h3>Documentatie</h3>
+      <div class="mobile-link-grid">
+        <a href="carousel/index.html">JAN-carousel</a>
+        <a href="docs/docs-home.html?v4451">Docs</a>
+        <a href="lex-movement-rules.html?v4451">Plaatsingsregels</a>
+        <a href="reset-cache.html?v4451">Reset cache</a>
+      </div>
+    </div>
+
+    <p class="mobile-sheet-note">Sleep met één vinger om te pannen. Knijp met twee vingers om te zoomen. FIT zet de boom en projectie-assen terug passend in beeld.</p>
+  </section>
+
+
   <script>
-    window.__opengraphBoot = { version: 'v4447', loaded: false, marker: 'viewer-index' };
+    window.__opengraphBoot = { version: 'v4451', loaded: false, marker: 'viewer-index' };
     function ogStatus(message) {
       var target = document.getElementById('actionFeedback') || document.body;
       if (target) target.textContent = message;
@@ -197,10 +227,10 @@
     });
     setTimeout(function() {
       if (!window.__opengraphBoot || !window.__opengraphBoot.loaded) {
-        ogStatus('Viewer start niet volledig. Gebruik Reset cache of open http://127.0.0.1:8088/reset-cache.html?v4447.');
+        ogStatus('Viewer start niet volledig. Gebruik Reset cache of open http://127.0.0.1:8088/reset-cache.html?v4451.');
       }
     }, 2500);
   </script>
-  <script src="viewer.js?v4447" defer></script>
+  <script src="viewer.js?v4451" defer></script>
 </body>
 </html>

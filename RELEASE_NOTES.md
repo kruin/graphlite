@@ -270,33 +270,33 @@
 - Traces staan in een aparte lokale trace-zone onder de voorbeeldzin.
 
 
-## v4447
+## v4449
 
 - LEX-basisprojectie in Assen wordt niet meer gecomprimeerd: basisposities en traces blijven horizontaal gelijk aan de boomknopen.
 - Alleen de vrije slots 0/1/2 staan bovenaan als lokale LEX-slots.
 
 
-## v4447 update
+## v4449 update
 
 - `commit_and_push.bat` wordt vanaf deze versie standaard meegeleverd in de ZIP-root.
 - LOG/FT toont thematische rollen expliciet: `AGENS` voor subject/handelende deelnemer en `PATIENS` voor object/ondergaande deelnemer.
 - De syntaxrollen blijven `subject` en `object`; de functionele projectie benoemt dezelfde lexicale bronnen thematisch.
 
-## v4447
+## v4449
 
 - Groei-presentatie verfijnd: lexicale leaves verschijnen niet meer tegelijk.
 - Binnen dezelfde diepte/hoogte gebruikt Groei nu expliciete render-/presentatievolgorde: eerst bottom-up, bij gelijke hoogte boven-naar-beneden en daarna links-naar-rechts.
 - Voor `HOND BIJT MAN` verschijnen `HOND`, `MAN` en `BIJT` dus in aparte tussenstappen voordat categorieknopen, OPN-slot en LEX-regels volgen.
 
 
-## v4447 · stapsgewijze LEX-Wissels
+## v4449 · stapsgewijze LEX-Wissels
 
 - De boomgroei blijft deterministisch: binnen een groeilaag wordt gerenderd van boven naar beneden en daarna van links naar rechts.
 - Flip/layout wijzigt de berekende posities; daardoor kan de groeivolgorde indirect veranderen, maar de renderregel blijft ruimtelijk: boven → beneden, links → rechts.
 - In Assen verschijnt de LEX-as nu stapsgewijs: eerst de horizontale basisprojectie, daarna per stap één lokale Wissel met trace, daarna pas het volledige resultaat met projectiepanelen.
 - Verplaatsingen blijven lokaal op de LEX-as; er komen geen verplaatsingslijnen vanuit de boom.
 
-## v4447 · mobiele weergave
+## v4449 · mobiele weergave
 
 - Canvas staat op mobiel boven de bediening.
 - Toolbar wordt horizontaal scrollbaar in plaats van hoog gestapeld.
@@ -306,14 +306,14 @@
 - Bij resize/orientatie wissel rendert de viewer opnieuw.
 
 
-## v4447
+## v4449
 
 - Layout op alle platforms stage-first gemaakt.
 - Bovenaan: Projectie-window links, boom/canvas rechts.
 - Toolbar, status, uitleg en bewerkpanelen volgen onder de stage.
 
 
-## v4447 - beweeglijke boom/LEX-view
+## v4449 - beweeglijke boom/LEX-view
 
 - Boom en LEX-as zijn niet meer vast in het canvas.
 - Sleep in het SVG-canvas om de view te verplaatsen.
@@ -321,7 +321,7 @@
 - Shift + muiswiel pant horizontaal.
 - FIT herstelt de automatische view.
 
-## v4447 · boom links, projectie rechts
+## v4449 · boom links, projectie rechts
 
 - Boom/LEX-canvas staat nu links in de hoofd-stage.
 - Projectie-instellingen staan rechts naast de boom.
