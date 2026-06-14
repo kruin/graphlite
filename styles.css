@@ -1672,7 +1672,7 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
 }
 
 
-/* v4454: portrait mobile had no visible Play because the sticky desktop growth bar is hidden.
+/* v4455: portrait mobile had no visible Play because the sticky desktop growth bar is hidden.
    This fixed mini-bar exposes growth reset/step/play directly above the mobile bottom nav. */
 .mobile-growth-step-label {
   display: inline-flex;
@@ -1723,4 +1723,59 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
     gap: .2rem;
   }
   .mobile-growth-step-label { font-size: .72rem; }
+}
+
+
+/* v4455: mobile portrait en landscape gebruiken dezelfde bovenbalk voor Groei/Play.
+   De aparte portrait-growthbalk boven de onderbalk blijft in DOM voor compatibiliteit,
+   maar is visueel uitgeschakeld. */
+@media (max-width: 760px) {
+  body {
+    padding-bottom: calc(4.7rem + env(safe-area-inset-bottom));
+  }
+
+  .header-subtitle,
+  .toolbar,
+  .intro-panel {
+    display: none;
+  }
+
+  .projection-sticky-bar {
+    order: 0;
+    display: grid;
+    position: sticky;
+    top: 0;
+    z-index: 285;
+    margin: 0;
+    max-height: none;
+    overflow: visible;
+  }
+
+  .workspace {
+    order: 1;
+  }
+
+  .status-panel {
+    order: 2;
+  }
+
+  .text-panel {
+    order: 3;
+  }
+
+  .mobile-growth-nav {
+    display: none !important;
+  }
+}
+
+@media (max-width: 420px) {
+  .projection-sticky-bar .projection-tab {
+    min-width: 4.15rem;
+    font-size: .74rem;
+  }
+
+  .projection-sticky-bar .growth-step-label {
+    flex: 0 0 5.2rem;
+    max-width: 5.2rem;
+  }
 }

@@ -1,5 +1,13 @@
+# Release notes v4455
 
-## v4454 — start-render en Play-fix
+## v4455 — mobile Play consistent boven
+
+- Mobile portrait en mobile landscape tonen Groei/Play op dezelfde plek: de bovenbalk.
+- De oude portrait-only mini-groeibalk boven de onderbalk is verborgen om dubbele bediening te vermijden.
+- Onderbalk blijft beperkt tot voorbeeldzin-navigatie, FIT en Meer.
+
+
+## v4455 — start-render en Play-fix
 
 - Hersteld: ontbrekende `toggleGrowthPlayback()` veroorzaakte afgebroken init in v4453.
 - Lokale viewer tekent de boom nu direct bij start.

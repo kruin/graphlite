@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'v4454';
+  const VERSION = 'v4455';
   const BASE_CELL = 74;
   const ROOT_SIDE_GAP = 1;
   const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -1208,7 +1208,7 @@
   }
 
   function toggleGrowthPlayback() {
-    // v4454: deze functie ontbrak in v4453. Daardoor stopte registerEvents()
+    // v4455: deze functie ontbrak in v4453. Daardoor stopte registerEvents()
     // vóór de eerste init-render bij addEventListener(..., toggleGrowthPlayback),
     // met als gevolg: geen boom bij start en een Play-knop zonder werking.
     if (!growthSupportedProjection()) {
@@ -1886,7 +1886,7 @@
       .map(id => functionalNodes.find(n => n.id === id)?.label || id)
       .join(' + ') || 'role-boxen';
     if (options.showTitle !== false) drawAxisTitle(g, origin.x - 180, origin.y - 70, `OPN · functionele structuur · ${rootLabel} → ${roleNames} · ${state.functionalOrder}`);
-    drawAxisTitle(g, origin.x - 176, origin.y - 48, `v4454 · ${branchModeLabel()} · vrije plaatsing + V2-slot`);
+    drawAxisTitle(g, origin.x - 176, origin.y - 48, `v4455 · ${branchModeLabel()} · vrije plaatsing + V2-slot`);
     const growthPlan = growthPlanForLayout(layout);
     layout.__growthPlan = growthPlan;
     drawSubtreeBoxes(g, layout, origin, growthPlan);
@@ -2081,7 +2081,7 @@
   }
 
   function stabilizeInitialTreeView() {
-    // v4454: in de lokale viewer kan de eerste automatische SVG-bbox vóór de
+    // v4455: in de lokale viewer kan de eerste automatische SVG-bbox vóór de
     // eerste paint leeg of onvolledig zijn. Een tweede render na layout/paint
     // voorkomt dat de boom pas verschijnt na handmatig Groei aan/uit.
     if (!els.svg || state.manualViewBox || state.viewDrag) return;

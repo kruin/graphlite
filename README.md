@@ -1,11 +1,20 @@
-# OpenGraph Lite Viewer — PWA v4454
+# OpenGraph Lite Viewer v4455
 
-## v4454 — start-render en Play-fix
+## v4455 — mobile Play consistent boven
 
-- Hersteld: `toggleGrowthPlayback()` ontbrak in v4453. Daardoor stopte de event-registratie vóór de eerste volledige render.
-- De boom wordt nu direct bij het openen van de lokale viewer getekend; `Groei aan/uit` is niet meer nodig als workaround.
-- `Play/Pauze` is opnieuw gekoppeld aan de groeistappen.
-- Cacheversie verhoogd naar `v4454`.
+- Mobile portrait gebruikt nu dezelfde bovenbalk voor Groei/Play als landscape.
+- De aparte portrait mini-groeibalk boven de onderbalk is visueel uitgeschakeld.
+- De mobiele onderbalk blijft voor zin-navigatie, FIT en Meer.
+- Cacheversies bijgewerkt naar `v4455`.
+
+# OpenGraph Lite Viewer — PWA v4455
+
+## v4455 — mobile portrait Play-fix
+
+- In mobile portrait werd de sticky Groei-balk verborgen, waardoor `Play` niet bereikbaar was.
+- Toegevoegd: vaste mini-Groei-balk boven de mobiele onderbalk met `0`, `←`, `Play/Pauze`, `→` en staplabel.
+- Dezelfde knoppen blijven gekoppeld aan de bestaande groei-state; geen tweede groeimodus.
+- Cacheversie verhoogd naar `v4455`.
 
 ## v4451 — correctie groei-start
 
