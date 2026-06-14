@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'v4442';
+  const VERSION = 'v4443';
   const BASE_CELL = 74;
   const ROOT_SIDE_GAP = 1;
   const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -211,7 +211,10 @@
     growthStep: 0,
     lastSupportedGrowthStep: 1,
     growthTimer: null,
-    exampleValidationMessages: []
+    exampleValidationMessages: [],
+    manualViewBox: null,
+    viewDrag: null,
+    viewClickSuppressed: false
   };
 
   function svgEl(name, attrs = {}, text = '') {
@@ -1109,6 +1112,7 @@
 
   function setProjection(projection) {
     const next = projection || 'axes';
+    if (next !== state.projection) resetManualViewBox();
     if (growthSupportedProjection(state.projection) && state.growthStep > 0) {
       state.lastSupportedGrowthStep = state.growthStep;
     }
@@ -1150,7 +1154,7 @@
     const metrics = collectGrowthMetrics(activeCentralSpec());
     const structureSteps = metrics.count;
     if (state.projection === 'axes') {
-      // v4442: de maximale groeistap moet alle lokale LEX-Wissels tellen.
+      // v4443: de maximale groeistap moet alle lokale LEX-Wissels tellen.
       // Anders stopt de slider/playback na de eerste Wissel, waardoor bij
       // HOND BIJT MAN de tweede stap (BIJT → slot 2 + t[V]) nooit zichtbaar wordt.
       return structureSteps + orderedLexMovements(activeLexItems()).length + 3;
@@ -1184,7 +1188,7 @@
   }
 
   function orderedGrowthNodes(layout, metrics) {
-    // v4442: groei heeft nu ook binnen een niveau een expliciete volgorde.
+    // v4443: groei heeft nu ook binnen een niveau een expliciete volgorde.
     // Leaves verschijnen dus niet langer allemaal tegelijk. Eerst komen de
     // lexicale knopen, in ruimtelijke basisvolgorde: boven-naar-beneden,
     // dan links-naar-rechts. Daarna volgen steeds grotere categorieknopen.
@@ -1463,7 +1467,7 @@
   }
 
   function topicMovementForItem(item, index) {
-    // v4442: in Nederlandse V2-hoofdzinnen bezet het eerste zinsdeel slot 1.
+    // v4443: in Nederlandse V2-hoofdzinnen bezet het eerste zinsdeel slot 1.
     // Dat geldt ook wanneer dat eerste zinsdeel het subject is. Het eerste
     // lexicale zinsdeel laat dus altijd een trace achter op de oude basispositie.
     if (!isMainV2Rule()) return null;
@@ -1589,12 +1593,12 @@
   }
 
   function localTraceY(item, index, y0, items = state.example?.lexItems || []) {
-    // v4442: een trace blijft exact op de oude basispositie van het verplaatste item.
+    // v4443: een trace blijft exact op de oude basispositie van het verplaatste item.
     return baseLexY(item, index, y0, null, items);
   }
 
   function baseLexY(item, index, y0, sourceMap = null, items = state.example?.lexItems || []) {
-    // v4442: de basisprojectie wordt niet gecomprimeerd. In Assen blijft de
+    // v4443: de basisprojectie wordt niet gecomprimeerd. In Assen blijft de
     // LEX-basisplek exact horizontaal gelijk aan de bronknoop in de boom.
     // Alleen zonder centrale boom/sourceMap valt de LEX-only view terug op
     // een eenvoudige, leesbare rijafstand.
@@ -1704,7 +1708,7 @@
       : 'Plaatsingsregel: resultaat = voorbeeldzin; Comp gebruikt slot 0; geen automatische subject/object-Wissel.';
     g.appendChild(svgEl('text', { x: x + 150, y: axisMinY + 18, class: 'wissel-label' }, ruleText));
 
-    // v4442: geen stippel- of verplaatsingslijnen vanuit de boom naar de LEX-as.
+    // v4443: geen stippel- of verplaatsingslijnen vanuit de boom naar de LEX-as.
     // De boom levert alleen de basisstructuur; alle zichtbare Wissels en traces
     // worden lokaal op de LEX-as getekend.  Dit voorkomt dat projectielijnen
     // opnieuw als verplaatsingen vanuit de boom gelezen worden.
@@ -1773,7 +1777,7 @@
       .map(id => functionalNodes.find(n => n.id === id)?.label || id)
       .join(' + ') || 'role-boxen';
     if (options.showTitle !== false) drawAxisTitle(g, origin.x - 180, origin.y - 70, `OPN · functionele structuur · ${rootLabel} → ${roleNames} · ${state.functionalOrder}`);
-    drawAxisTitle(g, origin.x - 176, origin.y - 48, `v4442 · ${branchModeLabel()} · vrije plaatsing + V2-slot`);
+    drawAxisTitle(g, origin.x - 176, origin.y - 48, `v4443 · ${branchModeLabel()} · vrije plaatsing + V2-slot`);
     const growthPlan = growthPlanForLayout(layout);
     layout.__growthPlan = growthPlan;
     drawSubtreeBoxes(g, layout, origin, growthPlan);
@@ -1855,10 +1859,51 @@
     els.svg.dataset.layoutDensity = state.layoutDensity || 'auto';
   }
 
+  function viewBoxToString(box) {
+    return `${box.x} ${box.y} ${box.w} ${box.h}`;
+  }
+
+  function fallbackViewBox() {
+    return { x: 0, y: 0, w: 1500, h: 900 };
+  }
+
+  function parseViewBox() {
+    const raw = (els.svg?.getAttribute('viewBox') || '').trim().split(/\s+/).map(Number);
+    if (raw.length === 4 && raw.every(Number.isFinite) && raw[2] > 0 && raw[3] > 0) {
+      return { x: raw[0], y: raw[1], w: raw[2], h: raw[3] };
+    }
+    return fallbackViewBox();
+  }
+
+  function setViewBox(box, manual = false) {
+    if (!els.svg || !box) return;
+    const next = {
+      x: Number(box.x) || 0,
+      y: Number(box.y) || 0,
+      w: Math.max(80, Number(box.w) || 1500),
+      h: Math.max(80, Number(box.h) || 900)
+    };
+    els.svg.setAttribute('viewBox', viewBoxToString(next));
+    if (manual) state.manualViewBox = next;
+  }
+
+  function resetManualViewBox() {
+    state.manualViewBox = null;
+    state.viewDrag = null;
+    state.viewClickSuppressed = false;
+    els.svg?.classList.remove('is-panning');
+    els.canvasWrap?.classList.remove('is-panning');
+  }
+
   function applyViewBoxFit(force = false) {
     if (!els.svg) return;
+    if (force) resetManualViewBox();
+    if (!force && state.manualViewBox) {
+      setViewBox(state.manualViewBox, false);
+      return;
+    }
     if (!force && state.viewFitMode !== 'auto') {
-      els.svg.setAttribute('viewBox', '0 0 1500 900');
+      setViewBox(fallbackViewBox(), false);
       return;
     }
     const grids = [...els.svg.querySelectorAll('.grid')];
@@ -1868,7 +1913,7 @@
       grids.forEach(grid => { grid.style.display = 'none'; });
       const bbox = els.svg.getBBox();
       if (!bbox || !Number.isFinite(bbox.width) || !Number.isFinite(bbox.height) || bbox.width <= 0 || bbox.height <= 0) {
-        els.svg.setAttribute('viewBox', '0 0 1500 900');
+        setViewBox(fallbackViewBox(), false);
         return;
       }
       const margin = isMobileViewport()
@@ -1878,9 +1923,9 @@
       const y = bbox.y - margin;
       const w = bbox.width + margin * 2;
       const h = bbox.height + margin * 2;
-      els.svg.setAttribute('viewBox', `${x} ${y} ${w} ${h}`);
+      setViewBox({ x, y, w, h }, false);
     } catch (_err) {
-      els.svg.setAttribute('viewBox', '0 0 1500 900');
+      setViewBox(fallbackViewBox(), false);
     } finally {
       grids.forEach((grid, index) => { grid.style.display = oldDisplays[index] || ''; });
     }
@@ -1889,10 +1934,11 @@
   function baseSvg(className) {
     els.svg.replaceChildren();
     setSvgPresentationVars();
-    els.svg.setAttribute('viewBox', '0 0 1500 900');
+    setViewBox(fallbackViewBox(), false);
     els.svg.classList.toggle('no-grid', !state.showGrid);
     const g = svgEl('g', { class: className });
     if (state.showGrid) drawGrid(g, 1800, 1000);
+    g.appendChild(svgEl('text', { x: 22, y: 28, class: 'view-pan-hint' }, 'sleep canvas = verplaats view · Ctrl+wiel = zoom · FIT = herstel'));
     return g;
   }
 
@@ -2093,6 +2139,103 @@
     download(`${state.example.id}.${VERSION}.opn`, lines.join('\n'), 'text/plain');
   }
 
+  function panViewByClientDelta(dx, dy) {
+    if (!els.svg) return;
+    const rect = els.svg.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
+    const vb = parseViewBox();
+    const next = {
+      x: vb.x - dx * (vb.w / rect.width),
+      y: vb.y - dy * (vb.h / rect.height),
+      w: vb.w,
+      h: vb.h
+    };
+    setViewBox(next, true);
+  }
+
+  function zoomViewAtClientPoint(clientX, clientY, factor) {
+    if (!els.svg) return;
+    const rect = els.svg.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
+    const vb = parseViewBox();
+    const relX = (clientX - rect.left) / rect.width;
+    const relY = (clientY - rect.top) / rect.height;
+    const anchorX = vb.x + relX * vb.w;
+    const anchorY = vb.y + relY * vb.h;
+    const w = Math.max(140, Math.min(4500, vb.w * factor));
+    const h = Math.max(90, Math.min(3000, vb.h * factor));
+    const x = anchorX - relX * w;
+    const y = anchorY - relY * h;
+    setViewBox({ x, y, w, h }, true);
+  }
+
+  function registerCanvasPan() {
+    if (!els.svg) return;
+    els.svg.addEventListener('pointerdown', event => {
+      if (event.button !== undefined && event.button !== 0) return;
+      if (event.target?.closest?.('input,select,button,a,label')) return;
+      const vb = parseViewBox();
+      state.viewDrag = {
+        pointerId: event.pointerId,
+        startClientX: event.clientX,
+        startClientY: event.clientY,
+        lastClientX: event.clientX,
+        lastClientY: event.clientY,
+        moved: false,
+        startViewBox: vb
+      };
+      els.svg.setPointerCapture?.(event.pointerId);
+      els.svg.classList.add('is-panning');
+      els.canvasWrap?.classList.add('is-panning');
+      event.preventDefault();
+    });
+
+    els.svg.addEventListener('pointermove', event => {
+      const drag = state.viewDrag;
+      if (!drag || drag.pointerId !== event.pointerId) return;
+      const dx = event.clientX - drag.lastClientX;
+      const dy = event.clientY - drag.lastClientY;
+      if (Math.abs(event.clientX - drag.startClientX) + Math.abs(event.clientY - drag.startClientY) > 3) drag.moved = true;
+      drag.lastClientX = event.clientX;
+      drag.lastClientY = event.clientY;
+      panViewByClientDelta(dx, dy);
+      event.preventDefault();
+    });
+
+    const endDrag = event => {
+      const drag = state.viewDrag;
+      if (!drag || drag.pointerId !== event.pointerId) return;
+      state.viewClickSuppressed = !!drag.moved;
+      state.viewDrag = null;
+      els.svg.releasePointerCapture?.(event.pointerId);
+      els.svg.classList.remove('is-panning');
+      els.canvasWrap?.classList.remove('is-panning');
+      window.setTimeout(() => { state.viewClickSuppressed = false; }, 0);
+      event.preventDefault();
+    };
+    els.svg.addEventListener('pointerup', endDrag);
+    els.svg.addEventListener('pointercancel', endDrag);
+
+    els.svg.addEventListener('click', event => {
+      if (!state.viewClickSuppressed) return;
+      event.preventDefault();
+      event.stopPropagation();
+      state.viewClickSuppressed = false;
+    }, true);
+
+    els.svg.addEventListener('wheel', event => {
+      if (!event.ctrlKey && !event.metaKey && !event.shiftKey) return;
+      event.preventDefault();
+      if (event.ctrlKey || event.metaKey) {
+        const factor = Math.exp(Math.sign(event.deltaY) * 0.12);
+        zoomViewAtClientPoint(event.clientX, event.clientY, factor);
+      } else {
+        const dx = -event.deltaX || -event.deltaY;
+        panViewByClientDelta(dx, 0);
+      }
+    }, { passive: false });
+  }
+
   function resetForNewExample() {
     stopGrowthPlayback();
     state.growthEnabled = false;
@@ -2100,6 +2243,7 @@
     state.lastSupportedGrowthStep = 1;
     state.roleSwap = false;
     state.selectedNodeId = null;
+    resetManualViewBox();
   }
 
   function registerEvents() {
@@ -2116,26 +2260,30 @@
     });
     els.centralModeSelect?.addEventListener('change', event => {
       state.centerMode = event.target.value;
+      resetManualViewBox();
       render();
     });
     els.functionalOrderSelect?.addEventListener('change', event => {
       state.functionalOrder = event.target.value === 'right-first' ? 'right-first' : 'left-first';
+      resetManualViewBox();
       render();
     });
     els.branchOrderSelect?.addEventListener('change', event => {
       const allowed = new Set(BRANCH_ORDERS.map(opt => opt.id));
       state.branchOrder = allowed.has(event.target.value) ? event.target.value : 'normal';
+      resetManualViewBox();
       render();
     });
     const updateBranchOverride = (key, value) => {
       state.branchOverrides[key] = ['auto', 'normal', 'flip'].includes(value) ? value : 'auto';
+      resetManualViewBox();
       render();
     };
     els.branchTopSelect?.addEventListener('change', event => updateBranchOverride('top', event.target.value));
     els.branchMiddleSelect?.addEventListener('change', event => updateBranchOverride('middle', event.target.value));
     els.branchOtherSelect?.addEventListener('change', event => updateBranchOverride('other', event.target.value));
-    els.layoutDensitySelect?.addEventListener('change', event => { state.layoutDensity = event.target.value || 'auto'; render(); });
-    els.viewFitSelect?.addEventListener('change', event => { state.viewFitMode = event.target.value || 'auto'; render(); });
+    els.layoutDensitySelect?.addEventListener('change', event => { state.layoutDensity = event.target.value || 'auto'; resetManualViewBox(); render(); });
+    els.viewFitSelect?.addEventListener('change', event => { state.viewFitMode = event.target.value || 'auto'; resetManualViewBox(); render(); });
     els.lexRuleSelect?.addEventListener('change', event => {
       const targetExample = event.target.value === 'bijzin-omdat' ? (EXAMPLES.find(e => e.lexRule === 'bijzin-omdat') || EXAMPLES[1]) : (EXAMPLES.find(e => e.lexRule === 'hoofdzininvariant') || EXAMPLES[0]);
       state.example = targetExample;
@@ -2189,6 +2337,10 @@
       else if (event.key.toLowerCase() === 'n') { state.growthEnabled = true; setGrowthStep(state.growthStep + 1, false); }
       else if (event.key.toLowerCase() === 'p') { state.growthEnabled = true; setGrowthStep(state.growthStep - 1, false); }
       else if (event.key.toLowerCase() === 'f') applyViewBoxFit(true);
+      else if (event.key === 'ArrowLeft') { panViewByClientDelta(60, 0); event.preventDefault(); return; }
+      else if (event.key === 'ArrowRight') { panViewByClientDelta(-60, 0); event.preventDefault(); return; }
+      else if (event.key === 'ArrowUp') { panViewByClientDelta(0, 60); event.preventDefault(); return; }
+      else if (event.key === 'ArrowDown') { panViewByClientDelta(0, -60); event.preventDefault(); return; }
       else return;
       render();
     });
@@ -2196,6 +2348,7 @@
 
   async function init() {
     registerEvents();
+    registerCanvasPan();
     await loadStructureConfig();
     await loadExamplesFromHtml();
     render();

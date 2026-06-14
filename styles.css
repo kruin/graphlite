@@ -765,7 +765,7 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
 }
 
 
-/* v4442: mobile stage-first UX.  The visual tree/projection stage comes first;
+/* v4443: mobile stage-first UX.  The visual tree/projection stage comes first;
    projection controls sit left of the canvas, the rest follows below. */
 .mobile-only { display: none; }
 
@@ -936,7 +936,7 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
 }
 
 
-/* v4442: stage-first layout for every platform.
+/* v4443: stage-first layout for every platform.
    The visual stage is always first: projection controls on the left,
    tree/canvas on the right. All other controls and text follow below. */
 .app-shell {
@@ -1067,4 +1067,31 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
   .side-panel > .panel-card:first-child,
   .canvas-wrap { height: 72dvh; min-height: 24rem; }
   #graphSvg { min-width: 760px; }
+}
+
+
+/* v4443: boom + LEX-as zijn beweeglijk binnen het canvas. */
+.canvas-wrap {
+  cursor: grab;
+}
+.canvas-wrap:active,
+.canvas-wrap.is-panning {
+  cursor: grabbing;
+}
+#graphSvg {
+  cursor: grab;
+  touch-action: none;
+}
+#graphSvg:active,
+#graphSvg.is-panning {
+  cursor: grabbing;
+}
+#graphSvg:focus-visible {
+  outline: 3px solid #2563eb;
+  outline-offset: -3px;
+}
+.view-pan-hint {
+  fill: #64748b;
+  font-size: calc(12px * var(--og-font-scale));
+  font-weight: 800;
 }

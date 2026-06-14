@@ -253,7 +253,7 @@ De optie `Venster: automatisch passend` verandert alleen de SVG-viewBox. Zij her
 
 De standaardtakvolgorde is grammaticaal/normaal: `S → NP VP` en `VP → NP V`. De eerste child wordt links en hoger geplaatst; de tweede child rechts en lager. Hierdoor ligt de basisprojectie op de LEX-as in de verwachte volgorde: subject hoog, object daaronder, V/PV onderaan. Alleen expliciete vrije-slotregels zoals V2 of topicalisatie veroorzaken een Wissel en een trace.
 
-## Groei-volgorde v4442
+## Groei-volgorde v4443
 
 Groei-volgorde is een presentatievolgorde, geen layoutvolgorde. De layout wordt volledig vooraf berekend. Daarna krijgen alle knopen een `growthStep`.
 
@@ -267,9 +267,18 @@ De `growthStep` wordt bepaald door:
 Hierdoor verschijnen leaves niet meer allemaal tegelijk. Dit maakt zichtbaar of bijvoorbeeld `HOND`, `MAN` en `BIJT` in een bepaalde presentatievolgorde worden getoond.
 
 
-## v4442 · stapsgewijze LEX-Wissels
+## v4443 · stapsgewijze LEX-Wissels
 
 - De boomgroei blijft deterministisch: binnen een groeilaag wordt gerenderd van boven naar beneden en daarna van links naar rechts.
 - Flip/layout wijzigt de berekende posities; daardoor kan de groeivolgorde indirect veranderen, maar de renderregel blijft ruimtelijk: boven → beneden, links → rechts.
 - In Assen verschijnt de LEX-as nu stapsgewijs: eerst de horizontale basisprojectie, daarna per stap één lokale Wissel met trace, daarna pas het volledige resultaat met projectiepanelen.
 - Verplaatsingen blijven lokaal op de LEX-as; er komen geen verplaatsingslijnen vanuit de boom.
+
+
+## v4443 - beweeglijke boom/LEX-view
+
+- Boom en LEX-as zijn niet meer vast in het canvas.
+- Sleep in het SVG-canvas om de view te verplaatsen.
+- Ctrl + muiswiel zoomt rond de cursor.
+- Shift + muiswiel pant horizontaal.
+- FIT herstelt de automatische view.
