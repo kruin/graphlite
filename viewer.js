@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'v4455';
+  const VERSION = 'v4457';
   const BASE_CELL = 74;
   const ROOT_SIDE_GAP = 1;
   const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -11,6 +11,8 @@
     svg: document.getElementById('graphSvg'),
     canvasWrap: document.getElementById('canvasWrap'),
     exampleSelect: document.getElementById('exampleSelect'),
+    desktopExampleSelect: document.getElementById('desktopExampleSelect'),
+    mobileExampleSelect: document.getElementById('mobileExampleSelect'),
     centralModeSelect: document.getElementById('centralModeSelect'),
     treeChoiceSelect: document.getElementById('treeChoiceSelect'),
     functionalOrderSelect: document.getElementById('functionalOrderSelect'),
@@ -1208,7 +1210,7 @@
   }
 
   function toggleGrowthPlayback() {
-    // v4455: deze functie ontbrak in v4453. Daardoor stopte registerEvents()
+    // v4457: deze functie ontbrak in v4453. Daardoor stopte registerEvents()
     // vóór de eerste init-render bij addEventListener(..., toggleGrowthPlayback),
     // met als gevolg: geen boom bij start en een Play-knop zonder werking.
     if (!growthSupportedProjection()) {
@@ -1826,38 +1828,122 @@
   }
 
   function syntaxRules() {
-    const rules = [];
-    const label = node => String(node?.label || node?.id || '')
-      .replace(/\{subject\}/gi, 'SUBJ')
-      .replace(/\{object\}/gi, 'OBJ')
-      .replace(/\{predicate\}/gi, roleLabels().predicate)
+    return stringRulesForSpec(treeSpec(), 'syntax');
+  }
+
+  function functionalRules() {
+    return stringRulesForSpec(nodeConfigToTree(STRUCTURE_CONFIG.functionalNodes, STRUCTURE_CONFIG.functionalRoot), 'functional');
+  }
+
+  function ruleDisplayLabel(node, mode = 'syntax') {
+    const roles = roleLabels();
+    const base = String(node?.label || node?.id || '')
+      .replace(/\{subject\}/gi, mode === 'functional' ? 'AGENS' : roles.subject)
+      .replace(/\{object\}/gi, mode === 'functional' ? 'PATIENS' : roles.object)
+      .replace(/\{predicate\}/gi, mode === 'functional' ? 'PRED' : roles.predicate)
       .replace(/\{pv\}/gi, 'PV')
       .replace(/\{vdw\}/gi, 'VDW');
+    return base;
+  }
+
+  function stringRulesForSpec(spec, mode = 'syntax') {
+    const rules = [];
     function visit(node) {
       if (!node || !(node.children || []).length) return;
-      rules.push(`${label(node)} → ${(node.children || []).map(label).join(' ')}`);
+      const lhs = ruleDisplayLabel(node, mode);
+      const rhs = (node.children || []).map(child => ruleDisplayLabel(child, mode)).join(' ');
+      rules.push(`${lhs} → ${rhs}`);
       for (const child of node.children || []) visit(child);
     }
-    visit(treeSpec());
+    visit(spec);
     return rules;
   }
 
-
-  function functionalRules() {
-    const rules = [];
-    const label = node => String(node?.label || node?.id || '')
-      .replace(/\{subject\}/gi, 'AGENS')
-      .replace(/\{object\}/gi, 'PATIENS')
-      .replace(/\{predicate\}/gi, 'PRED')
-      .replace(/\{pv\}/gi, 'PV')
-      .replace(/\{vdw\}/gi, 'VDW');
+  function projectedRuleRows(spec, layout, origin, mode = 'syntax') {
+    const nodeById = new Map((layout?.nodes || []).map(node => [node.id, node]));
+    const rows = [];
     function visit(node) {
       if (!node || !(node.children || []).length) return;
-      rules.push(`${label(node)} → ${(node.children || []).map(label).join(' ')}`);
+      const layoutNode = nodeById.get(node.id);
+      if (layoutNode) {
+        const lhs = ruleDisplayLabel(node, mode);
+        const rhs = (node.children || []).map(child => ruleDisplayLabel(child, mode)).join(' ');
+        rows.push({
+          id: node.id,
+          text: `${lhs} → ${rhs}`,
+          x0: px(layoutNode.x, origin),
+          y: py(layoutNode.y, origin),
+          kind: node.kind || layoutNode.kind || 'cat'
+        });
+      }
       for (const child of node.children || []) visit(child);
     }
-    visit(nodeConfigToTree(STRUCTURE_CONFIG.functionalNodes, STRUCTURE_CONFIG.functionalRoot));
-    return rules;
+    visit(spec);
+    return rows.sort((a, b) => (a.y - b.y) || String(a.id).localeCompare(String(b.id)));
+  }
+
+  function drawProjectedRules(g, x, layout, origin, spec, options = {}) {
+    if (!layout || !origin || !spec) return;
+    const mode = options.mode || 'syntax';
+    const title = options.title || (mode === 'functional' ? 'LOG/FT-projectie · regels/rollen' : 'SYNTAX-projectie · regels');
+    const cls = mode === 'functional' ? 'log' : 'synt';
+    const boxClass = mode === 'functional' ? 'syntax-rule-box projected-rule-box projected-functional-rule-box' : 'syntax-rule-box projected-rule-box';
+    const ruleClass = mode === 'functional' ? 'rule-label projected-rule-label projected-functional-rule-label' : 'rule-label projected-rule-label';
+    const rows = projectedRuleRows(spec, layout, origin, mode).filter(row => {
+      const plan = options.growthPlan || null;
+      return !plan?.active || visibleAt(plan, nodeGrowthStep(plan, row.id));
+    });
+    const maxText = rows.reduce((max, row) => Math.max(max, row.text.length), 0);
+    const width = Math.max(mode === 'functional' ? 250 : 210, Math.min(380, maxText * 8.2 + 34));
+    drawCanvasGuideText(g, x - width / 2, Math.max(28, (rows[0]?.y || 92) - 56), title, 'axis-title');
+    rows.forEach(row => {
+      g.appendChild(svgEl('line', {
+        x1: row.x0 + 58,
+        y1: row.y,
+        x2: x - width / 2,
+        y2: row.y,
+        class: `projection-line ${cls} orthogonal projected-rule-line`
+      }));
+      g.appendChild(svgEl('rect', { x: x - width / 2, y: row.y - 26, width, height: 52, rx: 14, class: boxClass }));
+      g.appendChild(svgEl('text', { x, y: row.y + 5, class: ruleClass }, row.text));
+    });
+  }
+
+  function drawSyntaxRules(g, x, y, layout = null, origin = null, growthPlan = null) {
+    if (layout && origin) {
+      drawProjectedRules(g, x, layout, origin, treeSpec(), {
+        mode: 'syntax',
+        title: 'SYNTAX-projectie · regels op boomhoogte',
+        growthPlan
+      });
+      return;
+    }
+    drawAxisTitle(g, x, y - 60, 'SYNTAX-projectie · regels');
+    const rules = syntaxRules();
+    rules.forEach((rule, i) => {
+      const yy = y + i * 66;
+      const width = Math.max(210, Math.min(340, rule.length * 8.2 + 34));
+      g.appendChild(svgEl('rect', { x: x - width / 2, y: yy - 26, width, height: 52, rx: 14, class: 'syntax-rule-box projected-rule-box' }));
+      g.appendChild(svgEl('text', { x, y: yy + 5, class: 'rule-label projected-rule-label' }, rule));
+    });
+  }
+
+  function drawFunctionalRules(g, x, layout = null, origin = null, growthPlan = null) {
+    if (layout && origin) {
+      drawProjectedRules(g, x, layout, origin, functionalSpec(), {
+        mode: 'functional',
+        title: 'LOG/FT-projectie · regels op boomhoogte',
+        growthPlan
+      });
+      return;
+    }
+    drawAxisTitle(g, x, 40, 'LOG/FT-projectie · regels/rollen');
+    functionalRules().forEach((rule, i) => {
+      const yy = 86 + i * 66;
+      const width = Math.max(250, Math.min(380, rule.length * 8.2 + 34));
+      g.appendChild(svgEl('rect', { x: x - width / 2, y: yy - 26, width, height: 52, rx: 14, class: 'syntax-rule-box projected-rule-box projected-functional-rule-box' }));
+      g.appendChild(svgEl('text', { x, y: yy + 5, class: 'rule-label projected-rule-label projected-functional-rule-label' }, rule));
+    });
   }
 
   function activeRelationRows() {
@@ -1865,16 +1951,6 @@
     const title = useFunctional ? 'LOG/FT · functionele relaties' : 'SYNTAX · boomrelaties';
     const rows = useFunctional ? functionalRules() : syntaxRules();
     return [title, ...rows];
-  }
-
-  function drawSyntaxRules(g, x, y) {
-    drawAxisTitle(g, x, y - 60, 'SYNTAX-projectie · regels');
-    const rules = syntaxRules();
-    rules.forEach((rule, i) => {
-      const yy = y + i * 66;
-      g.appendChild(svgEl('rect', { x: x - 62, y: yy - 26, width: 170, height: 52, rx: 14, class: 'syntax-rule-box' }));
-      g.appendChild(svgEl('text', { x: x - 42, y: yy + 5, class: 'rule-label' }, rule));
-    });
   }
 
   function drawFunctional(g, origin, options = {}) {
@@ -1886,7 +1962,7 @@
       .map(id => functionalNodes.find(n => n.id === id)?.label || id)
       .join(' + ') || 'role-boxen';
     if (options.showTitle !== false) drawAxisTitle(g, origin.x - 180, origin.y - 70, `OPN · functionele structuur · ${rootLabel} → ${roleNames} · ${state.functionalOrder}`);
-    drawAxisTitle(g, origin.x - 176, origin.y - 48, `v4455 · ${branchModeLabel()} · vrije plaatsing + V2-slot`);
+    drawAxisTitle(g, origin.x - 176, origin.y - 48, `v4457 · ${branchModeLabel()} · vrije plaatsing + V2-slot`);
     const growthPlan = growthPlanForLayout(layout);
     layout.__growthPlan = growthPlan;
     drawSubtreeBoxes(g, layout, origin, growthPlan);
@@ -1916,7 +1992,8 @@
     const showProjectionPanels = !growthPlan?.active || visibleAt(growthPlan, growthPlan.projectionStep);
     if (showProjectionPanels) {
       drawLexAxis(g, 210, 126, activeLexItems(), sourceMap);
-      drawSyntaxRules(g, 1240, 126);
+      if (state.centerMode === 'functional') drawFunctionalRules(g, 1240, centralLayout, origin, growthPlan);
+      else drawSyntaxRules(g, 1240, 126, centralLayout, origin, growthPlan);
     } else if (showLexBaseStep) {
       const executedMovementCount = growthPlan?.active
         ? Math.max(0, Math.min(growthPlan.lexMovementCount, growthPlan.current - growthPlan.lexMovementStartStep + 1))
@@ -1951,14 +2028,18 @@
 
   function drawSynt() {
     const g = baseSvg('synt-view');
-    drawSyntaxRules(g, 540, 86);
-    drawCanvasGuideText(g, 540, 370, 'Alleen regels. Geen rollenboom en geen LEX-verplaatsing op de syntax-as.', 'rule-label');
+    const origin = { x: 430, y: 92 };
+    const layout = drawSyntaxTree(g, origin);
+    drawSyntaxRules(g, 1040, 86, layout, origin, layout?.__growthPlan || null);
+    drawCanvasGuideText(g, 540, 370, 'SYNTAX: regels staan op dezelfde hoogte als hun bronknoop in de boom.', 'rule-label');
     els.svg.appendChild(g);
   }
 
   function drawLog() {
     const g = baseSvg('log-view');
-    drawFunctional(g, { x: 650, y: 92 });
+    const origin = { x: 430, y: 92 };
+    const layout = drawFunctional(g, origin);
+    drawFunctionalRules(g, 1060, layout, origin, layout?.__growthPlan || null);
     els.svg.appendChild(g);
   }
 
@@ -2019,7 +2100,7 @@
     if (!els.svg) return;
     if (force) resetManualViewBox();
     const growthBox = stableGrowthViewBox();
-    if (growthBox && (force || !state.manualViewBox)) {
+    if (growthBox && !force && !state.manualViewBox) {
       setViewBox(growthBox, false);
       return;
     }
@@ -2056,6 +2137,11 @@
     }
   }
 
+  function runFit() {
+    applyViewBoxFit(true);
+    requestAnimationFrame(() => applyViewBoxFit(true));
+  }
+
   function baseSvg(className) {
     els.svg.replaceChildren();
     setSvgPresentationVars();
@@ -2081,7 +2167,7 @@
   }
 
   function stabilizeInitialTreeView() {
-    // v4455: in de lokale viewer kan de eerste automatische SVG-bbox vóór de
+    // v4457: in de lokale viewer kan de eerste automatische SVG-bbox vóór de
     // eerste paint leeg of onvolledig zijn. Een tweede render na layout/paint
     // voorkomt dat de boom pas verschijnt na handmatig Groei aan/uit.
     if (!els.svg || state.manualViewBox || state.viewDrag) return;
@@ -2159,6 +2245,8 @@
 
   function syncControls() {
     fillSelect(els.exampleSelect, EXAMPLES, state.example.id);
+    fillSelect(els.desktopExampleSelect, EXAMPLES, state.example.id);
+    fillSelect(els.mobileExampleSelect, EXAMPLES, state.example.id);
     fillSelect(els.centralModeSelect, CENTER_MODES, state.centerMode);
     fillSelect(els.treeChoiceSelect, TREE_CHOICES, activeTreeChoice());
     fillSelect(els.functionalOrderSelect, FUNCTIONAL_ORDERS, state.functionalOrder);
@@ -2221,6 +2309,11 @@
       button.setAttribute('aria-pressed', String(active));
     });
     if (els.mobileMenuButton) els.mobileMenuButton.setAttribute('aria-expanded', String(state.mobileSheetOpen));
+    const exampleIndex = Math.max(0, EXAMPLES.findIndex(example => example.id === state.example?.id));
+    const noPreviousExample = !EXAMPLES.length || exampleIndex <= 0;
+    const noNextExample = !EXAMPLES.length || exampleIndex >= EXAMPLES.length - 1;
+    if (els.mobilePrevButton) els.mobilePrevButton.disabled = noPreviousExample;
+    if (els.mobileNextButton) els.mobileNextButton.disabled = noNextExample;
   }
 
   function selectNode(id) {
@@ -2374,7 +2467,11 @@
   function cycleExample(delta) {
     if (!EXAMPLES.length) return;
     const currentIndex = Math.max(0, EXAMPLES.findIndex(example => example.id === state.example?.id));
-    const nextIndex = (currentIndex + delta + EXAMPLES.length) % EXAMPLES.length;
+    const nextIndex = Math.max(0, Math.min(EXAMPLES.length - 1, currentIndex + delta));
+    if (nextIndex === currentIndex) {
+      render();
+      return;
+    }
     state.example = EXAMPLES[nextIndex];
     resetForNewExample();
     render();
@@ -2580,6 +2677,16 @@
       resetForNewExample();
       render();
     });
+    els.desktopExampleSelect?.addEventListener('change', event => {
+      state.example = EXAMPLES.find(e => e.id === event.target.value) || EXAMPLES[0];
+      resetForNewExample();
+      render();
+    });
+    els.mobileExampleSelect?.addEventListener('change', event => {
+      state.example = EXAMPLES.find(e => e.id === event.target.value) || EXAMPLES[0];
+      resetForNewExample();
+      render();
+    });
     els.centralModeSelect?.addEventListener('change', event => {
       state.centerMode = event.target.value;
       resetManualViewBox();
@@ -2630,8 +2737,8 @@
     els.mobileGrowthNextButton?.addEventListener('click', () => { state.growthEnabled = true; setGrowthStep(state.growthStep + 1); });
     els.mobileGrowthResetButton?.addEventListener('click', () => { state.growthEnabled = true; stopGrowthPlayback(); setGrowthStep(0); });
     els.resetExampleButton?.addEventListener('click', () => { resetForNewExample(); render(); });
-    els.fitButton?.addEventListener('click', () => { applyViewBoxFit(true); });
-    els.mobileFitButton?.addEventListener('click', () => { applyViewBoxFit(true); });
+    els.fitButton?.addEventListener('click', runFit);
+    els.mobileFitButton?.addEventListener('click', runFit);
     els.mobilePrevButton?.addEventListener('click', () => cycleExample(-1));
     els.mobileNextButton?.addEventListener('click', () => cycleExample(1));
     els.mobileMenuButton?.addEventListener('click', toggleMobileSheet);
@@ -2674,7 +2781,7 @@
       else if (event.key.toLowerCase() === 'g') { state.growthEnabled = !state.growthEnabled; if (!state.growthEnabled) stopGrowthPlayback(); }
       else if (event.key.toLowerCase() === 'n') { state.growthEnabled = true; setGrowthStep(state.growthStep + 1, false); }
       else if (event.key.toLowerCase() === 'p') { state.growthEnabled = true; setGrowthStep(state.growthStep - 1, false); }
-      else if (event.key.toLowerCase() === 'f') applyViewBoxFit(true);
+      else if (event.key.toLowerCase() === 'f') runFit();
       else if (event.key === 'ArrowLeft') { panViewByClientDelta(60, 0); event.preventDefault(); return; }
       else if (event.key === 'ArrowRight') { panViewByClientDelta(-60, 0); event.preventDefault(); return; }
       else if (event.key === 'ArrowUp') { panViewByClientDelta(0, 60); event.preventDefault(); return; }
