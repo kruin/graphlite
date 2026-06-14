@@ -152,7 +152,7 @@ Voor V2 en topicalisatie wordt de trace als lokaal LEX-object behandeld. De voor
 
 
 
-## v4445
+## v4446
 
 - Bij keuze van een nieuwe voorbeeldzin reset de groei automatisch: playback stopt, stap gaat naar 0, selectie en role-swap worden leeggemaakt.
 - Voorbeeldzinnen worden inhoudelijk gevalideerd op thematische rollen en selectieframes.

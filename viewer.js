@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'v4445';
+  const VERSION = 'v4446';
   const BASE_CELL = 74;
   const ROOT_SIDE_GAP = 1;
   const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -1154,7 +1154,7 @@
     const metrics = collectGrowthMetrics(activeCentralSpec());
     const structureSteps = metrics.count;
     if (state.projection === 'axes') {
-      // v4445: de maximale groeistap moet alle lokale LEX-Wissels tellen.
+      // v4446: de maximale groeistap moet alle lokale LEX-Wissels tellen.
       // Anders stopt de slider/playback na de eerste Wissel, waardoor bij
       // HOND BIJT MAN de tweede stap (BIJT → slot 2 + t[V]) nooit zichtbaar wordt.
       return structureSteps + orderedLexMovements(activeLexItems()).length + 3;
@@ -1188,7 +1188,7 @@
   }
 
   function orderedGrowthNodes(layout, metrics) {
-    // v4445: groei heeft nu ook binnen een niveau een expliciete volgorde.
+    // v4446: groei heeft nu ook binnen een niveau een expliciete volgorde.
     // Leaves verschijnen dus niet langer allemaal tegelijk. Eerst komen de
     // lexicale knopen, in ruimtelijke basisvolgorde: boven-naar-beneden,
     // dan links-naar-rechts. Daarna volgen steeds grotere categorieknopen.
@@ -1467,7 +1467,7 @@
   }
 
   function topicMovementForItem(item, index) {
-    // v4445: in Nederlandse V2-hoofdzinnen bezet het eerste zinsdeel slot 1.
+    // v4446: in Nederlandse V2-hoofdzinnen bezet het eerste zinsdeel slot 1.
     // Dat geldt ook wanneer dat eerste zinsdeel het subject is. Het eerste
     // lexicale zinsdeel laat dus altijd een trace achter op de oude basispositie.
     if (!isMainV2Rule()) return null;
@@ -1593,12 +1593,12 @@
   }
 
   function localTraceY(item, index, y0, items = state.example?.lexItems || []) {
-    // v4445: een trace blijft exact op de oude basispositie van het verplaatste item.
+    // v4446: een trace blijft exact op de oude basispositie van het verplaatste item.
     return baseLexY(item, index, y0, null, items);
   }
 
   function baseLexY(item, index, y0, sourceMap = null, items = state.example?.lexItems || []) {
-    // v4445: de basisprojectie wordt niet gecomprimeerd. In Assen blijft de
+    // v4446: de basisprojectie wordt niet gecomprimeerd. In Assen blijft de
     // LEX-basisplek exact horizontaal gelijk aan de bronknoop in de boom.
     // Alleen zonder centrale boom/sourceMap valt de LEX-only view terug op
     // een eenvoudige, leesbare rijafstand.
@@ -1708,7 +1708,7 @@
       : 'Plaatsingsregel: resultaat = voorbeeldzin; Comp gebruikt slot 0; geen automatische subject/object-Wissel.';
     g.appendChild(svgEl('text', { x: x + 150, y: axisMinY + 18, class: 'wissel-label' }, ruleText));
 
-    // v4445: geen stippel- of verplaatsingslijnen vanuit de boom naar de LEX-as.
+    // v4446: geen stippel- of verplaatsingslijnen vanuit de boom naar de LEX-as.
     // De boom levert alleen de basisstructuur; alle zichtbare Wissels en traces
     // worden lokaal op de LEX-as getekend.  Dit voorkomt dat projectielijnen
     // opnieuw als verplaatsingen vanuit de boom gelezen worden.
@@ -1802,7 +1802,7 @@
       .map(id => functionalNodes.find(n => n.id === id)?.label || id)
       .join(' + ') || 'role-boxen';
     if (options.showTitle !== false) drawAxisTitle(g, origin.x - 180, origin.y - 70, `OPN · functionele structuur · ${rootLabel} → ${roleNames} · ${state.functionalOrder}`);
-    drawAxisTitle(g, origin.x - 176, origin.y - 48, `v4445 · ${branchModeLabel()} · vrije plaatsing + V2-slot`);
+    drawAxisTitle(g, origin.x - 176, origin.y - 48, `v4446 · ${branchModeLabel()} · vrije plaatsing + V2-slot`);
     const growthPlan = growthPlanForLayout(layout);
     layout.__growthPlan = growthPlan;
     drawSubtreeBoxes(g, layout, origin, growthPlan);
