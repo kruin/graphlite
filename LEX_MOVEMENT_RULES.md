@@ -223,7 +223,7 @@ resultaat = voorbeeldzin
 ```
 
 
-## v4438 · stapsgewijze LEX-Wissels
+## v4439 · stapsgewijze LEX-Wissels
 
 - De boomgroei blijft deterministisch: binnen een groeilaag wordt gerenderd van boven naar beneden en daarna van links naar rechts.
 - Flip/layout wijzigt de berekende posities; daardoor kan de groeivolgorde indirect veranderen, maar de renderregel blijft ruimtelijk: boven → beneden, links → rechts.

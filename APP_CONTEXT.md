@@ -79,7 +79,7 @@ Daarmee kan JAN/Open Notation didactisch worden getoond als een groeiende vrije 
 `lexicon-editor.html` is nu de centrale beheerlaag voor lexemen én korte voorbeelduitingen. Daarmee ontstaat één lokale workflow voor de lexicale voorraad en de concrete testzinnen.
 
 
-## v4438 — eenvoudige documentatie LEX-plaatsingsregels
+## v4439 — eenvoudige documentatie LEX-plaatsingsregels
 
 Toegevoegd: `docs/LEX_MOVEMENT_RULES.md`.
 
@@ -95,7 +95,7 @@ resultaat = voorbeeldzin
 Beschreven zinstypen: hoofdzin, bijzin met OMDAT, topicalisatie, perfectum en voorlopige vraagzin.
 
 
-## v4438 update
+## v4439 update
 
 - `commit_and_push.bat` wordt vanaf deze versie standaard meegeleverd in de ZIP-root.
 - LOG/FT toont thematische rollen expliciet: `AGENS` voor subject/handelende deelnemer en `PATIENS` voor object/ondergaande deelnemer.

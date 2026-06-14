@@ -141,7 +141,7 @@ FIT: pas de viewBox onmiddellijk aan de getekende inhoud aan
 De standaardtakvolgorde is grammaticaal/normaal: `S → NP VP` en `VP → NP V`. De eerste child wordt links en hoger geplaatst; de tweede child rechts en lager. Hierdoor ligt de basisprojectie op de LEX-as in de verwachte volgorde: subject hoog, object daaronder, V/PV onderaan. Alleen expliciete vrije-slotregels zoals V2 of topicalisatie veroorzaken een Wissel en een trace.
 
 
-## v4438 — eenvoudige documentatie LEX-plaatsingsregels
+## v4439 — eenvoudige documentatie LEX-plaatsingsregels
 
 Toegevoegd: `docs/LEX_MOVEMENT_RULES.md`.
 
@@ -157,7 +157,7 @@ resultaat = voorbeeldzin
 Beschreven zinstypen: hoofdzin, bijzin met OMDAT, topicalisatie, perfectum en voorlopige vraagzin.
 
 
-## v4438 update
+## v4439 update
 
 - `commit_and_push.bat` wordt vanaf deze versie standaard meegeleverd in de ZIP-root.
 - LOG/FT toont thematische rollen expliciet: `AGENS` voor subject/handelende deelnemer en `PATIENS` voor object/ondergaande deelnemer.
@@ -179,7 +179,7 @@ Volgorde:
 Bij gelijke soort knopen is de presentatievolgorde: boven naar beneden, daarna links naar rechts. De posities veranderen niet tijdens de groei.
 
 
-## v4438 · stapsgewijze LEX-Wissels
+## v4439 · stapsgewijze LEX-Wissels
 
 - De boomgroei blijft deterministisch: binnen een groeilaag wordt gerenderd van boven naar beneden en daarna van links naar rechts.
 - Flip/layout wijzigt de berekende posities; daardoor kan de groeivolgorde indirect veranderen, maar de renderregel blijft ruimtelijk: boven → beneden, links → rechts.

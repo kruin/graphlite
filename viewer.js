@@ -210,7 +210,8 @@
     growthEnabled: false,
     growthStep: 0,
     lastSupportedGrowthStep: 1,
-    growthTimer: null
+    growthTimer: null,
+    exampleValidationMessages: []
   };
 
   function svgEl(name, attrs = {}, text = '') {
@@ -270,6 +271,53 @@
     return activeLexItems().map(tokenHtml).join(' ');
   }
 
+  const SIMPLE_LEXICON_POLICY = {
+    trui: { roles: ['object'], themes: ['patiens'] },
+    vrouw: { roles: ['subject'], themes: ['agens'] },
+    hond: { roles: ['subject', 'object'], themes: ['agens', 'patiens'] },
+    man: { roles: ['subject', 'object'], themes: ['agens', 'patiens'] }
+  };
+
+  const SIMPLE_VERB_FRAMES = {
+    breit: { subjects: ['vrouw'], objects: ['trui'], participle: 'GEBREID' },
+    bijt: { subjects: ['hond', 'kat', 'man', 'vrouw'], objects: ['man', 'hond', 'kat', 'vrouw'], participle: 'GEBETEN' }
+  };
+
+  function tokenLexemeId(item) {
+    return String(item?.lexeme || item?.label || '').toLowerCase();
+  }
+
+  function validateExamplePolicy(ex) {
+    const reasons = [];
+    const notices = [];
+    const tokens = ex.lexItems || [];
+    const subject = tokens.find(t => t.role === 'subject');
+    const object = tokens.find(t => t.role === 'object');
+    const verbToken = tokens.find(t => t.role === 'predicate' || t.role === 'participle');
+    const subjId = tokenLexemeId(subject);
+    const objId = tokenLexemeId(object);
+    const verbId = tokenLexemeId(verbToken);
+    const subjPolicy = SIMPLE_LEXICON_POLICY[subjId];
+    const objPolicy = SIMPLE_LEXICON_POLICY[objId];
+    const frame = SIMPLE_VERB_FRAMES[verbId];
+    if (subjPolicy && !subjPolicy.themes.includes('agens')) {
+      reasons.push(`${subject.label}: kan niet als agens/subject; ${subject.label} is ${subjPolicy.themes.join('/')}.`);
+    }
+    if (objPolicy && !objPolicy.themes.includes('patiens')) {
+      reasons.push(`${object.label}: kan niet als patiens/object; ${object.label} is ${objPolicy.themes.join('/')}.`);
+    }
+    if (frame) {
+      if (subjId && !frame.subjects.includes(subjId)) reasons.push(`${subject.label}: geen voor-de-hand-liggende agens bij ${verbToken.label}.`);
+      if (objId && !frame.objects.includes(objId)) reasons.push(`${object.label}: geen voor-de-hand-liggende patiens bij ${verbToken.label}.`);
+    }
+    const firstSource = tokens.find(t => t.source);
+    if (firstSource?.role === 'object' && objPolicy?.themes?.includes('patiens')) {
+      const part = frame?.participle || verbToken?.label || 'gedaan';
+      notices.push(`marked/topic: ${object.label} blijft object en patiens; lees als: (Die) ${object.label.toLowerCase()} heeft ${subject?.label?.toLowerCase() || 'agens'} ${String(part).toLowerCase()}.`);
+    }
+    return { ok: reasons.length === 0, reasons, notices };
+  }
+
   async function loadExamplesFromHtml() {
     try {
       const response = await fetch(`examples-input.html?${VERSION}`, { cache: 'no-store' });
@@ -305,8 +353,22 @@
       }).filter(ex => ex.id && ex.lexItems.length);
       if (parsed.length) {
         const currentId = state.example?.id;
-        EXAMPLES = parsed;
-        state.example = EXAMPLES.find(ex => ex.id === currentId) || EXAMPLES[0];
+        const accepted = [];
+        const messages = [];
+        for (const ex of parsed) {
+          const verdict = validateExamplePolicy(ex);
+          if (verdict.ok) {
+            if (verdict.notices.length) ex.notice = verdict.notices.join(' ');
+            accepted.push(ex);
+          } else {
+            messages.push(`AFGEKEURD ${ex.id}: ${verdict.reasons.join(' ')}`);
+          }
+        }
+        if (messages.length) state.exampleValidationMessages = messages;
+        if (accepted.length) {
+          EXAMPLES = accepted;
+          state.example = EXAMPLES.find(ex => ex.id === currentId) || EXAMPLES[0];
+        }
       }
     } catch (err) {
       // Fetch kan mislukken via file://. De ingebouwde fallback blijft dan actief.
@@ -1082,7 +1144,7 @@
     const metrics = collectGrowthMetrics(activeCentralSpec());
     const structureSteps = metrics.count;
     if (state.projection === 'axes') {
-      // v4438: de maximale groeistap moet alle lokale LEX-Wissels tellen.
+      // v4439: de maximale groeistap moet alle lokale LEX-Wissels tellen.
       // Anders stopt de slider/playback na de eerste Wissel, waardoor bij
       // HOND BIJT MAN de tweede stap (BIJT → slot 2 + t[V]) nooit zichtbaar wordt.
       return structureSteps + orderedLexMovements(activeLexItems()).length + 3;
@@ -1116,7 +1178,7 @@
   }
 
   function orderedGrowthNodes(layout, metrics) {
-    // v4438: groei heeft nu ook binnen een niveau een expliciete volgorde.
+    // v4439: groei heeft nu ook binnen een niveau een expliciete volgorde.
     // Leaves verschijnen dus niet langer allemaal tegelijk. Eerst komen de
     // lexicale knopen, in ruimtelijke basisvolgorde: boven-naar-beneden,
     // dan links-naar-rechts. Daarna volgen steeds grotere categorieknopen.
@@ -1705,7 +1767,7 @@
       .map(id => functionalNodes.find(n => n.id === id)?.label || id)
       .join(' + ') || 'role-boxen';
     if (options.showTitle !== false) drawAxisTitle(g, origin.x - 180, origin.y - 70, `OPN · functionele structuur · ${rootLabel} → ${roleNames} · ${state.functionalOrder}`);
-    drawAxisTitle(g, origin.x - 176, origin.y - 48, `v4438 · ${branchModeLabel()} · vrije plaatsing + V2-slot`);
+    drawAxisTitle(g, origin.x - 176, origin.y - 48, `v4439 · ${branchModeLabel()} · vrije plaatsing + V2-slot`);
     const growthPlan = growthPlanForLayout(layout);
     layout.__growthPlan = growthPlan;
     drawSubtreeBoxes(g, layout, origin, growthPlan);
@@ -1841,12 +1903,15 @@
 
   function renderStatus() {
     els.titleLine.textContent = `${activeSentenceText()} · ${state.projectionLabel || projectionLabel()} · ${state.centerMode === 'syntax' ? 'OPN-syntaxboom' : 'OPN-functioneel'}`;
-    els.metaLine.textContent = `${state.example.phase} · ${movementSummaryLabel()} · LEX=${activeSentenceText()} · HTML-input=examples-input.html · lexicon=lexicon-config.html`;
+    const noticeText = state.example.notice ? ` · NOTICE=${state.example.notice}` : '';
+    els.metaLine.textContent = `${state.example.phase} · ${movementSummaryLabel()} · LEX=${activeSentenceText()} · HTML-input=examples-input.html · lexicon=lexicon-config.html${noticeText}`;
     if (els.sentencePreview) els.sentencePreview.innerHTML = activeSentenceHtml();
     const baseFeedback = state.projection === 'source'
       ? 'Bron toont de gekozen OPN-bron uit structure-config.html. Syntax en functioneel gebruiken bottom-up recursieve box-layout; left/right stuurt beide layouts; takvolgorde kan globaal, compact-auto of align-auto zijn.'
       : 'Faseversie: eerst structure-config, dan voorbeeldzinnen die naar die sources projecteren, dan lokale LEX-regel.';
-    els.actionFeedback.textContent = state.growthEnabled ? `${baseFeedback} · ${growthLabel()}` : baseFeedback;
+    const validationMsg = state.exampleValidationMessages?.length ? ` · ${state.exampleValidationMessages[0]}` : '';
+    const noticeMsg = state.example.notice ? ` · ${state.example.notice}` : '';
+    els.actionFeedback.textContent = state.growthEnabled ? `${baseFeedback} · ${growthLabel()}${noticeMsg}${validationMsg}` : `${baseFeedback}${noticeMsg}${validationMsg}`;
     els.projectionHelp.textContent = helpText();
     els.explainHeading.textContent = `Uitleg · ${activeSentenceText()}`;
     els.explainText.textContent = state.example.id === 'hond-bijt-man'
@@ -2020,6 +2085,15 @@
     download(`${state.example.id}.${VERSION}.opn`, lines.join('\n'), 'text/plain');
   }
 
+  function resetForNewExample() {
+    stopGrowthPlayback();
+    state.growthEnabled = false;
+    state.growthStep = 0;
+    state.lastSupportedGrowthStep = 1;
+    state.roleSwap = false;
+    state.selectedNodeId = null;
+  }
+
   function registerEvents() {
     document.querySelectorAll('.projection-tab').forEach(tab => {
       tab.addEventListener('click', () => {
@@ -2029,8 +2103,7 @@
     });
     els.exampleSelect?.addEventListener('change', event => {
       state.example = EXAMPLES.find(e => e.id === event.target.value) || EXAMPLES[0];
-      state.roleSwap = false;
-      state.selectedNodeId = null;
+      resetForNewExample();
       render();
     });
     els.centralModeSelect?.addEventListener('change', event => {
@@ -2058,7 +2131,7 @@
     els.lexRuleSelect?.addEventListener('change', event => {
       const targetExample = event.target.value === 'bijzin-omdat' ? (EXAMPLES.find(e => e.lexRule === 'bijzin-omdat') || EXAMPLES[1]) : (EXAMPLES.find(e => e.lexRule === 'hoofdzininvariant') || EXAMPLES[0]);
       state.example = targetExample;
-      state.roleSwap = false;
+      resetForNewExample();
       render();
     });
     els.showGridInput?.addEventListener('change', event => { state.showGrid = event.target.checked; render(); });
@@ -2082,12 +2155,13 @@
       state.growthTimer = setInterval(() => setGrowthStep(state.growthStep + 1), 850);
       render();
     });
-    els.resetExampleButton?.addEventListener('click', () => { state.selectedNodeId = null; render(); });
+    els.resetExampleButton?.addEventListener('click', () => { resetForNewExample(); render(); });
     els.fitButton?.addEventListener('click', () => { applyViewBoxFit(true); });
     els.downloadJsonButton?.addEventListener('click', downloadJson);
     els.downloadOpnButton?.addEventListener('click', downloadOpn);
     els.applyLexRuleButton?.addEventListener('click', () => {
       state.example = state.example.lexRule === 'bijzin-omdat' ? (EXAMPLES.find(e => e.lexRule === 'bijzin-omdat') || EXAMPLES[1]) : (EXAMPLES.find(e => e.lexRule === 'hoofdzininvariant') || EXAMPLES[0]);
+      resetForNewExample();
       render();
     });
     els.swapRolesButton?.addEventListener('click', () => {

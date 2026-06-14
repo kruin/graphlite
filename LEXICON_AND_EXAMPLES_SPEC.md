@@ -150,3 +150,11 @@ De volgorde van `<li class="lex-token">` in `examples-input.html` is de gezagheb
 
 Voor V2 en topicalisatie wordt de trace als lokaal LEX-object behandeld. De voorbeeldzin bepaalt de gevulde slots; de Wisselregel tekent daarnaast een trace-slot op de LEX-as. Daardoor worden `HOND BIJT MAN` en `TRUI BREIT VROUW` als oppervlaktestring behouden, terwijl de oude basispositie als lokale trace zichtbaar blijft.
 
+
+
+## v4439
+
+- Bij keuze van een nieuwe voorbeeldzin reset de groei automatisch: playback stopt, stap gaat naar 0, selectie en role-swap worden leeggemaakt.
+- Voorbeeldzinnen worden inhoudelijk gevalideerd op thematische rollen en selectieframes.
+- Ongeldige combinaties zoals `TRUI BREIT VROUW` met `TRUI` als subject/agens worden afgekeurd met reden: `trui` is patiens/object, geen agens/subject.
+- Gemarkeerde/topicalisatie-uitingen zoals `TRUI BREIT VROUW` worden geaccepteerd wanneer `TRUI` object/patiens blijft en `VROUW` subject/agens blijft; de viewer toont dan een notice.
