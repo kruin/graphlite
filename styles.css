@@ -765,7 +765,7 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
 }
 
 
-/* v4443: mobile stage-first UX.  The visual tree/projection stage comes first;
+/* v4445: mobile stage-first UX.  The visual tree/projection stage comes first;
    projection controls sit left of the canvas, the rest follows below. */
 .mobile-only { display: none; }
 
@@ -936,7 +936,7 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
 }
 
 
-/* v4443: stage-first layout for every platform.
+/* v4445: stage-first layout for every platform.
    The visual stage is always first: projection controls on the left,
    tree/canvas on the right. All other controls and text follow below. */
 .app-shell {
@@ -1070,7 +1070,7 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
 }
 
 
-/* v4443: boom + LEX-as zijn beweeglijk binnen het canvas. */
+/* v4445: boom + LEX-as zijn beweeglijk binnen het canvas. */
 .canvas-wrap {
   cursor: grab;
 }
@@ -1094,4 +1094,202 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
   fill: #64748b;
   font-size: calc(12px * var(--og-font-scale));
   font-weight: 800;
+}
+
+
+/* v4445: viewer-first UI cleanup */
+.toolbar {
+  grid-template-columns: minmax(14rem, 22rem) minmax(18rem, 1fr) auto;
+}
+.input-sentence-tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  align-items: center;
+}
+.panel-card > .field:not(.example-field),
+.panel-card .two-cols > .field,
+.branch-config-grid .field,
+.view-config-grid .field {
+  grid-template-columns: minmax(6.8rem, max-content) minmax(7.5rem, 1fr);
+  align-items: center;
+  column-gap: 0.55rem;
+}
+.panel-card > .field:not(.example-field) span,
+.branch-config-grid .field span,
+.view-config-grid .field span {
+  white-space: nowrap;
+}
+.panel-card select { width: 100%; min-width: 7.5rem; }
+.example-field select { min-width: 14rem; }
+.branch-config-grid,
+.view-config-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  gap: 0.42rem;
+}
+.relation-heading {
+  font-weight: 800;
+  background: color-mix(in srgb, var(--panel), var(--accent) 10%);
+}
+.edge-item {
+  border: 1px solid var(--line);
+  border-radius: 0.65rem;
+  padding: 0.38rem 0.48rem;
+  background: var(--panel-2);
+  font-size: 0.83rem;
+}
+@media (max-width: 760px) {
+  .toolbar { grid-template-columns: 1fr; }
+  .panel-card > .field:not(.example-field),
+  .panel-card .two-cols > .field,
+  .branch-config-grid .field,
+  .view-config-grid .field {
+    grid-template-columns: 1fr;
+  }
+  .example-field select { min-width: 0; }
+}
+
+
+/* v4445: vaste projectie- en groeibalk boven de boom, op alle platforms. */
+.projection-sticky-bar {
+  order: 0;
+  position: sticky;
+  top: 0;
+  z-index: 80;
+  display: grid;
+  grid-template-columns: minmax(22rem, max-content) minmax(20rem, 1fr);
+  gap: .65rem;
+  align-items: start;
+  padding: .48rem .58rem;
+  border: 1px solid var(--line);
+  border-radius: 0 0 1rem 1rem;
+  background: color-mix(in srgb, var(--panel), white 4%);
+  box-shadow: 0 12px 26px rgba(15, 23, 42, .14);
+  backdrop-filter: blur(10px);
+}
+
+.projection-sticky-bar .top-projection-tabs {
+  min-width: 0;
+}
+
+.projection-sticky-bar .projection-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .42rem;
+  margin: 0;
+}
+
+.projection-sticky-bar .projection-tab {
+  min-width: 5.2rem;
+  min-height: 2.42rem;
+  padding: .36rem .68rem;
+  font-size: .86rem;
+  line-height: 1.05;
+}
+
+.projection-sticky-bar .top-growth-controls {
+  margin: 0;
+  padding: .42rem .5rem;
+  border-radius: .8rem;
+  display: grid;
+  grid-template-columns: max-content minmax(9rem, 1fr) max-content;
+  gap: .38rem .55rem;
+  align-items: center;
+  background: color-mix(in srgb, var(--panel-2), var(--accent) 5%);
+}
+
+.projection-sticky-bar .growth-toggle {
+  white-space: nowrap;
+  font-weight: 900;
+}
+
+.projection-sticky-bar .growth-range {
+  width: 100%;
+  min-width: 8rem;
+}
+
+.projection-sticky-bar .growth-step-label {
+  white-space: nowrap;
+  font-size: .82rem;
+  font-weight: 900;
+}
+
+.projection-sticky-bar .growth-buttons {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  gap: .35rem;
+}
+
+.projection-sticky-bar .growth-buttons button {
+  min-height: 2rem;
+  padding: .24rem .68rem;
+}
+
+.projection-sticky-bar .top-growth-controls > .inline-help {
+  display: none;
+}
+
+.workspace { order: 1; }
+.status-panel { order: 2; }
+.toolbar { order: 3; }
+.intro-panel { order: 4; }
+.text-panel { order: 5; }
+
+.sticky-note {
+  background: color-mix(in srgb, var(--panel-2), var(--accent) 7%);
+  border: 1px solid var(--line);
+  border-radius: .7rem;
+  padding: .42rem .52rem;
+}
+
+@media (max-width: 900px) {
+  .projection-sticky-bar {
+    grid-template-columns: 1fr;
+    gap: .42rem;
+    padding: .38rem .42rem;
+    border-radius: 0 0 .82rem .82rem;
+  }
+  .projection-sticky-bar .projection-tabs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: .08rem;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x proximity;
+  }
+  .projection-sticky-bar .projection-tab {
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+    min-width: 4.9rem;
+  }
+  .projection-sticky-bar .top-growth-controls {
+    grid-template-columns: max-content minmax(7rem, 1fr);
+  }
+  .projection-sticky-bar .growth-step-label {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 520px) {
+  .projection-sticky-bar {
+    top: 0;
+    max-height: 44dvh;
+    overflow: auto;
+  }
+  .projection-sticky-bar .projection-tab {
+    min-height: 2.15rem;
+    min-width: 4.4rem;
+    padding: .28rem .48rem;
+    font-size: .78rem;
+  }
+  .projection-sticky-bar .top-growth-controls {
+    grid-template-columns: 1fr;
+    gap: .28rem;
+  }
+  .projection-sticky-bar .growth-buttons button {
+    flex: 1 1 auto;
+    padding-inline: .38rem;
+  }
 }

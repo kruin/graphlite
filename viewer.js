@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'v4443';
+  const VERSION = 'v4445';
   const BASE_CELL = 74;
   const ROOT_SIDE_GAP = 1;
   const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -1154,7 +1154,7 @@
     const metrics = collectGrowthMetrics(activeCentralSpec());
     const structureSteps = metrics.count;
     if (state.projection === 'axes') {
-      // v4443: de maximale groeistap moet alle lokale LEX-Wissels tellen.
+      // v4445: de maximale groeistap moet alle lokale LEX-Wissels tellen.
       // Anders stopt de slider/playback na de eerste Wissel, waardoor bij
       // HOND BIJT MAN de tweede stap (BIJT → slot 2 + t[V]) nooit zichtbaar wordt.
       return structureSteps + orderedLexMovements(activeLexItems()).length + 3;
@@ -1188,7 +1188,7 @@
   }
 
   function orderedGrowthNodes(layout, metrics) {
-    // v4443: groei heeft nu ook binnen een niveau een expliciete volgorde.
+    // v4445: groei heeft nu ook binnen een niveau een expliciete volgorde.
     // Leaves verschijnen dus niet langer allemaal tegelijk. Eerst komen de
     // lexicale knopen, in ruimtelijke basisvolgorde: boven-naar-beneden,
     // dan links-naar-rechts. Daarna volgen steeds grotere categorieknopen.
@@ -1389,7 +1389,7 @@
     }
 
     g.appendChild(shapeLayer);
-    g.appendChild(labelLayer);
+    if (state.showLabels) g.appendChild(labelLayer);
   }
 
   function drawSyntaxTree(g, origin, options = {}) {
@@ -1399,7 +1399,7 @@
     drawSubtreeBoxes(g, layout, origin, growthPlan);
     drawTreeEdges(g, layout, origin, growthPlan);
     drawOpnTopicalizationSlot(g, layout, origin, growthPlan);
-    drawTreeNodes(g, layout, origin, options.selectable !== false, growthPlan);
+    drawTreeNodes(g, layout, origin, options.selectable === true, growthPlan);
     return layout;
   }
 
@@ -1467,7 +1467,7 @@
   }
 
   function topicMovementForItem(item, index) {
-    // v4443: in Nederlandse V2-hoofdzinnen bezet het eerste zinsdeel slot 1.
+    // v4445: in Nederlandse V2-hoofdzinnen bezet het eerste zinsdeel slot 1.
     // Dat geldt ook wanneer dat eerste zinsdeel het subject is. Het eerste
     // lexicale zinsdeel laat dus altijd een trace achter op de oude basispositie.
     if (!isMainV2Rule()) return null;
@@ -1593,12 +1593,12 @@
   }
 
   function localTraceY(item, index, y0, items = state.example?.lexItems || []) {
-    // v4443: een trace blijft exact op de oude basispositie van het verplaatste item.
+    // v4445: een trace blijft exact op de oude basispositie van het verplaatste item.
     return baseLexY(item, index, y0, null, items);
   }
 
   function baseLexY(item, index, y0, sourceMap = null, items = state.example?.lexItems || []) {
-    // v4443: de basisprojectie wordt niet gecomprimeerd. In Assen blijft de
+    // v4445: de basisprojectie wordt niet gecomprimeerd. In Assen blijft de
     // LEX-basisplek exact horizontaal gelijk aan de bronknoop in de boom.
     // Alleen zonder centrale boom/sourceMap valt de LEX-only view terug op
     // een eenvoudige, leesbare rijafstand.
@@ -1708,7 +1708,7 @@
       : 'Plaatsingsregel: resultaat = voorbeeldzin; Comp gebruikt slot 0; geen automatische subject/object-Wissel.';
     g.appendChild(svgEl('text', { x: x + 150, y: axisMinY + 18, class: 'wissel-label' }, ruleText));
 
-    // v4443: geen stippel- of verplaatsingslijnen vanuit de boom naar de LEX-as.
+    // v4445: geen stippel- of verplaatsingslijnen vanuit de boom naar de LEX-as.
     // De boom levert alleen de basisstructuur; alle zichtbare Wissels en traces
     // worden lokaal op de LEX-as getekend.  Dit voorkomt dat projectielijnen
     // opnieuw als verplaatsingen vanuit de boom gelezen worden.
@@ -1758,6 +1758,31 @@
     return rules;
   }
 
+
+  function functionalRules() {
+    const rules = [];
+    const label = node => String(node?.label || node?.id || '')
+      .replace(/\{subject\}/gi, 'AGENS')
+      .replace(/\{object\}/gi, 'PATIENS')
+      .replace(/\{predicate\}/gi, 'PRED')
+      .replace(/\{pv\}/gi, 'PV')
+      .replace(/\{vdw\}/gi, 'VDW');
+    function visit(node) {
+      if (!node || !(node.children || []).length) return;
+      rules.push(`${label(node)} → ${(node.children || []).map(label).join(' ')}`);
+      for (const child of node.children || []) visit(child);
+    }
+    visit(nodeConfigToTree(STRUCTURE_CONFIG.functionalNodes, STRUCTURE_CONFIG.functionalRoot));
+    return rules;
+  }
+
+  function activeRelationRows() {
+    const useFunctional = state.projection === 'log' || state.centerMode === 'functional';
+    const title = useFunctional ? 'LOG/FT · functionele relaties' : 'SYNTAX · boomrelaties';
+    const rows = useFunctional ? functionalRules() : syntaxRules();
+    return [title, ...rows];
+  }
+
   function drawSyntaxRules(g, x, y) {
     drawAxisTitle(g, x, y - 60, 'SYNTAX-projectie · regels');
     const rules = syntaxRules();
@@ -1777,13 +1802,13 @@
       .map(id => functionalNodes.find(n => n.id === id)?.label || id)
       .join(' + ') || 'role-boxen';
     if (options.showTitle !== false) drawAxisTitle(g, origin.x - 180, origin.y - 70, `OPN · functionele structuur · ${rootLabel} → ${roleNames} · ${state.functionalOrder}`);
-    drawAxisTitle(g, origin.x - 176, origin.y - 48, `v4443 · ${branchModeLabel()} · vrije plaatsing + V2-slot`);
+    drawAxisTitle(g, origin.x - 176, origin.y - 48, `v4445 · ${branchModeLabel()} · vrije plaatsing + V2-slot`);
     const growthPlan = growthPlanForLayout(layout);
     layout.__growthPlan = growthPlan;
     drawSubtreeBoxes(g, layout, origin, growthPlan);
     drawTreeEdges(g, layout, origin, growthPlan);
     drawOpnTopicalizationSlot(g, layout, origin, growthPlan);
-    drawTreeNodes(g, layout, origin, options.selectable !== false, growthPlan);
+    drawTreeNodes(g, layout, origin, options.selectable === true, growthPlan);
     return layout;
   }
 
@@ -1999,10 +2024,10 @@
   function fillEdgeList() {
     if (!els.edgeList) return;
     els.edgeList.replaceChildren();
-    const rows = syntaxRules();
-    for (const row of rows) {
+    const rows = activeRelationRows();
+    for (const [i, row] of rows.entries()) {
       const div = document.createElement('div');
-      div.className = 'edge-item';
+      div.className = i === 0 ? 'edge-item relation-heading' : 'edge-item';
       div.textContent = row;
       els.edgeList.appendChild(div);
     }
@@ -2326,7 +2351,7 @@
     });
     for (const button of [els.undoButton, els.redoButton, els.addNodeButton, els.duplicateNodeButton, els.deleteNodeButton, els.applyNodeButton, els.addEdgeButton, els.lexLeftButton, els.lexRightButton]) {
       button?.addEventListener('click', () => {
-        if (els.actionFeedback) els.actionFeedback.textContent = 'Deze redesign-fase is bewust beperkt: eerst layout corrigeren, daarna editing weer uitbreiden.';
+        if (els.actionFeedback) els.actionFeedback.textContent = 'Deze viewer heeft geen losse knoop-/relatie-editor. Gebruik structure-config/lexicon-config voor bronaanpassing.';
       });
     }
     window.addEventListener('keydown', event => {
