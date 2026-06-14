@@ -270,14 +270,28 @@
 - Traces staan in een aparte lokale trace-zone onder de voorbeeldzin.
 
 
-## v4435
+## v4438
 
 - LEX-basisprojectie in Assen wordt niet meer gecomprimeerd: basisposities en traces blijven horizontaal gelijk aan de boomknopen.
 - Alleen de vrije slots 0/1/2 staan bovenaan als lokale LEX-slots.
 
 
-## v4435 update
+## v4438 update
 
 - `commit_and_push.bat` wordt vanaf deze versie standaard meegeleverd in de ZIP-root.
 - LOG/FT toont thematische rollen expliciet: `AGENS` voor subject/handelende deelnemer en `PATIENS` voor object/ondergaande deelnemer.
 - De syntaxrollen blijven `subject` en `object`; de functionele projectie benoemt dezelfde lexicale bronnen thematisch.
+
+## v4438
+
+- Groei-presentatie verfijnd: lexicale leaves verschijnen niet meer tegelijk.
+- Binnen dezelfde diepte/hoogte gebruikt Groei nu expliciete render-/presentatievolgorde: eerst bottom-up, bij gelijke hoogte boven-naar-beneden en daarna links-naar-rechts.
+- Voor `HOND BIJT MAN` verschijnen `HOND`, `MAN` en `BIJT` dus in aparte tussenstappen voordat categorieknopen, OPN-slot en LEX-regels volgen.
+
+
+## v4438 · stapsgewijze LEX-Wissels
+
+- De boomgroei blijft deterministisch: binnen een groeilaag wordt gerenderd van boven naar beneden en daarna van links naar rechts.
+- Flip/layout wijzigt de berekende posities; daardoor kan de groeivolgorde indirect veranderen, maar de renderregel blijft ruimtelijk: boven → beneden, links → rechts.
+- In Assen verschijnt de LEX-as nu stapsgewijs: eerst de horizontale basisprojectie, daarna per stap één lokale Wissel met trace, daarna pas het volledige resultaat met projectiepanelen.
+- Verplaatsingen blijven lokaal op de LEX-as; er komen geen verplaatsingslijnen vanuit de boom.

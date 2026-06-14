@@ -1,6 +1,6 @@
-# OpenGraph Lite Viewer — PWA v4435
+# OpenGraph Lite Viewer — PWA v4438
 
-## v4435 — documentatie plaatsingsregels
+## v4438 — documentatie plaatsingsregels
 
 Toegevoegd: `docs/LEX_MOVEMENT_RULES.md`.
 
@@ -18,12 +18,12 @@ Zinstypen: hoofdzin, bijzin met OMDAT, topicalisatie, perfectum en voorlopige vr
 ---
 
 
-## v4435 — lokale Wissel op de LEX-as
+## v4438 — lokale Wissel op de LEX-as
 
 V2 en topicalisatie worden niet meer als verplaatsing vanuit de centrale boom naar de as getekend. De centrale boom projecteert naar het gevulde LEX-slot. De Wissel zelf staat lokaal op de LEX-as; de oude basispositie verschijnt daar als trace.
 
 
-## v4435 — lexicon- en uitingeneditor
+## v4438 — lexicon- en uitingeneditor
 
 `lexicon-editor.html` is nu de centrale editor voor:
 
@@ -78,7 +78,7 @@ Deze versie beperkt de test bewust tot drie stappen:
 De centrale boom blijft invariant. `OMDAT` wordt niet in de centrale syntaxboom ingevoegd. Lidwoorden/determinatoren zijn uit deze systeemlaag verwijderd.
 
 
-## v4435 — lexicon-editor
+## v4438 — lexicon-editor
 
 Toegevoegd:
 
@@ -209,17 +209,17 @@ Gebruik na updates zo nodig `Ctrl+F5` of verwijder de oude service worker.
 4. Open `Assen` en controleer dat LEX apart blijft.
 5. Kies `OMDAT HOND MAN BIJT` en controleer dat alleen de LEX-as verandert.
 
-## v4435-correctie functioneel
+## v4438-correctie functioneel
 
 `OPN · functionele structuur` tekent nu zichtbaar `CLAUSE > AGENS/PRED/PATIENS`. `BIJT` is alleen de leaf onder `PRED` en mag dus niet meer als centrale root van een driehoek verschijnen.
 
-## v4435-noot
+## v4438-noot
 
 De header/subtitel is bewust gelijk gehouden: **Redesign: eerst syntax-tree, daarna LEX-projectie, daarna lokale LEX-regel.**  
-Om te voorkomen dat de browser alleen `index.html` vernieuwt maar een oude `viewer.js` houdt, laadt `index.html` nu `viewer.js?v4435` en `styles.css?v4435`.
+Om te voorkomen dat de browser alleen `index.html` vernieuwt maar een oude `viewer.js` houdt, laadt `index.html` nu `viewer.js?v4438` en `styles.css?v4438`.
 
 
-## v4435 — OPN-slot voor vooropplaatsing
+## v4438 — OPN-slot voor vooropplaatsing
 
 De OPN-bronnen reserveren nu expliciet een plaats voor vooropplaatsing/topicalisatie:
 
@@ -231,7 +231,7 @@ De OPN-bronnen reserveren nu expliciet een plaats voor vooropplaatsing/topicalis
 De functionele structuur heeft daarmee, net als de syntaxboom, een eigen LEX-projectie. De functionele structuur blijft n-ary en gebruikt de config `left-first` / `right-first` voor de vrije role-boxplaatsing.
 
 
-## v4435 — voorbeeldzinnen als HTML-input
+## v4438 — voorbeeldzinnen als HTML-input
 
 De actieve voorbeeldzinnen staan nu ook in `examples-input.html`.
 
@@ -247,7 +247,7 @@ Actieve beginvoorbeelden:
 OMDAT <strong>HOND</strong> <em>MAN</em> BIJT
 ```
 
-## v4435 — voorbeeldzinnen-editor
+## v4438 — voorbeeldzinnen-editor
 
 Toegevoegd:
 
@@ -277,7 +277,7 @@ Conventie blijft:
 De viewer leest `examples-input.html` bij start. Na wijziging via de editor: download de nieuwe `examples-input.html`, vervang het bestand in de viewer-map en herlaad de viewer hard met `Ctrl+F5`.
 
 
-## v4435 — structure-config als eerste stap
+## v4438 — structure-config als eerste stap
 
 De werkwijze is aangescherpt:
 
@@ -302,7 +302,7 @@ Functioneel idem: n-ary role-boxes met dezelfde abstracte sources `subject`, `pr
 
 De knop `Voorbeeld VP: NP-VP / VP: pv-VDW` maakt een nieuwe VP-regelset met structurele posities `pv` en `vdw`; dat zijn dus geen lexicale items.
 
-## v4435 — bescheiden lexicon
+## v4438 — bescheiden lexicon
 
 Er is nu een aparte lexiconbron toegevoegd:
 
@@ -328,7 +328,7 @@ source  = structurele projectiebron
 
 Voorbeeld: `VROUW` kan als subject zichtbaar zijn, maar blijft projecteren naar de structurele subjectbron.
 
-## v4435 — perfectumregel
+## v4438 — perfectumregel
 
 Toegevoegd aan de structure-laag:
 
@@ -346,11 +346,11 @@ Deze regel beschrijft het perfectum `heeft gebeten` structureel als twee project
 
 De lexicale woorden blijven in `lexicon-config.html`; de structure-config bevat alleen posities en bronnen. De voorbeeldzinnen-editor heeft een patroon `perfectum: S HEEFT O VDW`. Lidwoorden zijn verwijderd.
 
-## v4435 — functional config: PRED apart, ARG-STRUCT apart
+## v4438 — functional config: PRED apart, ARG-STRUCT apart
 
 De functionele configuratie is aangepast van `CLAUSE → AGENS PRED PATIENS` naar `CLAUSE → PRED ARG-STRUCT`. `ARG-STRUCT` bevat `ARG1` en `ARG2`, elk met een eigen NP-subtree. Hierdoor worden predicaat en argumentstructuur als eigen vrije subtree-boxes behandeld.
 
-## v4435 — lidwoorden verwijderd
+## v4438 — lidwoorden verwijderd
 
 Lidwoorden/determinatoren zijn verwijderd uit voorbeeldzinnen, lexicon, LEX-slots, viewer-fallback en voorbeeldeditor. Voorbeelden gebruiken nu kale NP/N-vulling: `de man` → `man`, `de hond` → `hond`.
 
@@ -359,7 +359,7 @@ Lidwoorden/determinatoren zijn verwijderd uit voorbeeldzinnen, lexicon, LEX-slot
 
 `left-first/right-first` geldt voor syntax én functioneel. Deze keuze stuurt de zoekrichting van vrije plaatsing; het is geen inhoudelijke transformatie.
 
-## v4435 — flip per vertakking
+## v4438 — flip per vertakking
 
 Nieuwe menuconfiguratie:
 
@@ -395,7 +395,7 @@ De flip verandert alleen de plaatsingsvolgorde van complete subtree-boxes. Gramm
 Deze versie bevat een vaste `docs/`-map met projectcontext, ontwerpbeslissingen, layoutspecificatie, configuratiespecificatie, lexicon/voorbeeldspecificatie, current state, known issues, next steps en release notes. Deze documenten vormen vanaf nu de canonieke context voor handleiding en technische documentatie.
 
 
-## v4435 — flip per vertakking
+## v4438 — flip per vertakking
 
 Menuconfiguratie toegevoegd:
 
@@ -423,12 +423,12 @@ Top / VP-ARG / Overig = auto
 `auto-compact` probeert per vertakking normale en geflipte childvolgorde en kiest de kleinste box. `auto-align` probeert daarnaast verticale rolcorridors te benaderen, bijvoorbeeld `subject/AGENS` en `object/PATIENS`. Dit blijft layout; rollen en lexicale bronnen worden niet gewisseld.
 
 
-### v4435 startdiagnose
-Open bij startproblemen `reset-cache.html?v4435` of `debug.html?v4435`. De debug controleert nu of de root-index daadwerkelijk de viewer is.
+### v4438 startdiagnose
+Open bij startproblemen `reset-cache.html?v4438` of `debug.html?v4438`. De debug controleert nu of de root-index daadwerkelijk de viewer is.
 
 
 
-## v4435 — expliciete render-volgorde
+## v4438 — expliciete render-volgorde
 
 De derde stap is nu strikt een tekenlaag:
 
@@ -441,10 +441,10 @@ De derde stap is nu strikt een tekenlaag:
 
 Equal-size subtree-boxes worden deterministisch getekend: boven naar beneden, links naar rechts, daarna oorspronkelijke layoutvolgorde. Leaf-nodes zoals HOND, BIJT en MAN zijn geen subtree-boxen; zij worden in de node-lagen getekend, met labels altijd bovenop.
 
-## v4435 root-index fix
-`docs/index.html` is vervangen door `docs/docs-home.html`; `viewer.html` is toegevoegd als fallback. Gebruik `debug.html?v4435` om te testen of root `index.html` echt de viewer is.
+## v4438 root-index fix
+`docs/index.html` is vervangen door `docs/docs-home.html`; `viewer.html` is toegevoegd als fallback. Gebruik `debug.html?v4438` om te testen of root `index.html` echt de viewer is.
 
-## v4435 — groei-presentatie
+## v4438 — groei-presentatie
 
 De viewer bevat nu een aparte groei-presentatie. De volledige layout wordt eerst berekend; daarna toont de renderlaag stapsgewijs elementen met `growthStep <= huidige stap`.
 
@@ -474,16 +474,16 @@ p = vorige stap
 Belangrijk: groei is presentatie, geen layout. Posities blijven stabiel tijdens het afspelen.
 
 
-## v4435-correctie groei/projectiewissel
+## v4438-correctie groei/projectiewissel
 
-`LEX` is geen groei-projectie. In v4407 kon wisselen naar `LEX` de globale groeistap naar 0 zetten, waardoor `Assen`, `Bron` en `LOG/FT` leeg bleven zolang groei actief was. v4435 bewaart de laatst geldige groeistap en clamped alleen in ondersteunde groei-projecties.
+`LEX` is geen groei-projectie. In v4407 kon wisselen naar `LEX` de globale groeistap naar 0 zetten, waardoor `Assen`, `Bron` en `LOG/FT` leeg bleven zolang groei actief was. v4438 bewaart de laatst geldige groeistap en clamped alleen in ondersteunde groei-projecties.
 
-## v4435 takvolgorde
+## v4438 takvolgorde
 
 De standaardtakvolgorde is grammaticaal/normaal: `S → NP VP` en `VP → NP V`. De eerste child wordt links en hoger geplaatst; de tweede child rechts en lager. Hierdoor ligt de basisprojectie op de LEX-as in de verwachte volgorde: subject hoog, object daaronder, V/PV onderaan. Alleen expliciete vrije-slotregels zoals V2 of topicalisatie veroorzaken een Wissel en een trace.
 
 
-## v4435 update
+## v4438 update
 
 - `commit_and_push.bat` wordt vanaf deze versie standaard meegeleverd in de ZIP-root.
 - LOG/FT toont thematische rollen expliciet: `AGENS` voor subject/handelende deelnemer en `PATIENS` voor object/ondergaande deelnemer.

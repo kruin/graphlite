@@ -1061,7 +1061,9 @@
 
   function collectGrowthMetrics(root) {
     const byId = new Map();
+    let count = 0;
     function visit(node, depth = 0) {
+      count += 1;
       let height = 0;
       for (const child of node.children || []) {
         const childInfo = visit(child, depth + 1);
@@ -1072,14 +1074,20 @@
       return info;
     }
     const rootInfo = visit(root, 0);
-    return { byId, maxHeight: rootInfo.height, rootId: root.id };
+    return { byId, maxHeight: rootInfo.height, rootId: root.id, count };
   }
 
   function growthStepMax() {
     if (!growthSupportedProjection()) return 0;
     const metrics = collectGrowthMetrics(activeCentralSpec());
-    const structureSteps = metrics.maxHeight + 1;
-    return state.projection === 'axes' ? structureSteps + 2 : structureSteps + 1;
+    const structureSteps = metrics.count;
+    if (state.projection === 'axes') {
+      // v4438: de maximale groeistap moet alle lokale LEX-Wissels tellen.
+      // Anders stopt de slider/playback na de eerste Wissel, waardoor bij
+      // HOND BIJT MAN de tweede stap (BIJT → slot 2 + t[V]) nooit zichtbaar wordt.
+      return structureSteps + orderedLexMovements(activeLexItems()).length + 3;
+    }
+    return structureSteps + 1;
   }
 
   function clampGrowthStep(value) {
@@ -1107,21 +1115,42 @@
     if (rerender) render();
   }
 
+  function orderedGrowthNodes(layout, metrics) {
+    // v4438: groei heeft nu ook binnen een niveau een expliciete volgorde.
+    // Leaves verschijnen dus niet langer allemaal tegelijk. Eerst komen de
+    // lexicale knopen, in ruimtelijke basisvolgorde: boven-naar-beneden,
+    // dan links-naar-rechts. Daarna volgen steeds grotere categorieknopen.
+    return [...layout.nodes]
+      .map((node, sourceIndex) => {
+        const info = metrics.byId.get(node.id) || { height: 0, depth: 0 };
+        return { node, sourceIndex, height: info.height, depth: info.depth };
+      })
+      .sort((a, b) => {
+        const h = a.height - b.height;
+        if (h) return h;
+        const r = (a.node.row ?? 0) - (b.node.row ?? 0);
+        if (r) return r;
+        const c = (a.node.col ?? 0) - (b.node.col ?? 0);
+        if (c) return c;
+        return a.sourceIndex - b.sourceIndex;
+      });
+  }
+
   function growthPlanForLayout(layout) {
-    if (!growthActive()) return { active: false, current: Infinity, max: 0, nodeStep: new Map(), structureStep: 0, slotStep: 0, axisStep: 0, projectionStep: 0 };
+    if (!growthActive()) return { active: false, current: Infinity, max: 0, nodeStep: new Map(), structureStep: 0, slotStep: 0, lexBaseStep: 0, lexMovementStartStep: 0, lexMovementCount: 0, projectionStep: 0 };
     const metrics = collectGrowthMetrics(activeCentralSpec());
-    const structureStep = metrics.maxHeight + 1;
+    const orderedNodes = orderedGrowthNodes(layout, metrics);
+    const structureStep = Math.max(1, orderedNodes.length);
     const slotStep = structureStep + 1;
-    const axisStep = structureStep + 2;
-    const projectionStep = structureStep + 3;
+    const lexBaseStep = structureStep + 2;
+    const lexMovementCount = orderedLexMovements(activeLexItems()).length;
+    const lexMovementStartStep = lexBaseStep + 1;
+    const projectionStep = lexBaseStep + lexMovementCount + 1;
     const max = state.projection === 'axes' ? projectionStep : slotStep;
     if (state.growthStep > max) state.growthStep = max;
     const nodeStep = new Map();
-    for (const node of layout.nodes) {
-      const info = metrics.byId.get(node.id);
-      nodeStep.set(node.id, info ? (info.height + 1) : 1);
-    }
-    return { active: true, current: state.growthStep, max, nodeStep, structureStep, slotStep, axisStep, projectionStep };
+    orderedNodes.forEach(({ node }, index) => nodeStep.set(node.id, index + 1));
+    return { active: true, current: state.growthStep, max, nodeStep, structureStep, slotStep, lexBaseStep, lexMovementStartStep, lexMovementCount, projectionStep };
   }
 
   function visibleAt(plan, step) {
@@ -1147,11 +1176,20 @@
     if (!state.growthEnabled) return `Groei uit · max ${max}`;
     if (step === 0) return `stap 0/${max}: raster/titels`;
     const metrics = collectGrowthMetrics(activeCentralSpec());
-    const structureStep = metrics.maxHeight + 1;
-    if (step <= structureStep) return `stap ${step}/${max}: boom groeit bottom-up`;
+    const structureStep = metrics.count;
+    if (step <= structureStep) return `stap ${step}/${max}: boom groeit knoop voor knoop`;
     if (step === structureStep + 1) return `stap ${step}/${max}: OPN-slot 1`;
-    if (state.projection === 'axes' && step === structureStep + 2) return `stap ${step}/${max}: LEX-as · lokale Wissels en traces`;
-    return `stap ${step}/${max}: LEX-projectie en projectiepanelen`;
+    if (state.projection === 'axes') {
+      const movementCount = orderedLexMovements(activeLexItems()).length;
+      const lexBaseStep = structureStep + 2;
+      const movementStart = lexBaseStep + 1;
+      if (step === lexBaseStep) return `stap ${step}/${max}: LEX-basisprojectie`;
+      if (step >= movementStart && step < movementStart + movementCount) {
+        const currentMove = step - movementStart + 1;
+        return `stap ${step}/${max}: LEX-Wissel ${currentMove}/${movementCount}`;
+      }
+    }
+    return `stap ${step}/${max}: LEX-resultaat en projectiepanelen`;
   }
 
   function orderedSubtreeBoxes(layout) {
@@ -1430,6 +1468,39 @@
     return y0 + (hasCompItem(items) ? 64 : 0) + (showTopicSlot(items) ? 64 : 0);
   }
 
+  function lexMovementRank(movement) {
+    if (!movement) return 99;
+    if (movement.slot === 'topic') return 1;
+    if (movement.slot === 'v2') return 2;
+    if (movement.slot === 'comp') return 0;
+    return 10;
+  }
+
+  function orderedLexMovements(items = state.example?.lexItems || []) {
+    return items
+      .map((item, index) => ({ item, index, movement: movementForItem(item, index) }))
+      .filter(entry => entry.item?.source && entry.movement)
+      .sort((a, b) => {
+        const r = lexMovementRank(a.movement) - lexMovementRank(b.movement);
+        if (r) return r;
+        const byTarget = (lexSlotIndex(a.item, a.index, items, a.movement) || '').localeCompare(lexSlotIndex(b.item, b.index, items, b.movement) || '', 'nl', { numeric: true });
+        if (byTarget) return byTarget;
+        return a.index - b.index;
+      });
+  }
+
+  function movementOrderIndex(item, index, items = state.example?.lexItems || []) {
+    return orderedLexMovements(items).findIndex(entry => entry.item === item && entry.index === index);
+  }
+
+  function appliedMovementForItem(item, index, items = state.example?.lexItems || [], options = {}) {
+    const movement = movementForItem(item, index);
+    if (!movement) return null;
+    if (typeof options.executedMovementCount !== 'number') return movement;
+    const moveIndex = movementOrderIndex(item, index, items);
+    return moveIndex >= 0 && moveIndex < options.executedMovementCount ? movement : null;
+  }
+
   function movementForItem(item, index) {
     if (!item?.source) return null;
     // v4427: de voorbeeldzin bepaalt de gevulde LEX-slots. De boom wordt niet
@@ -1487,34 +1558,31 @@
     return fallbackIndex;
   }
 
-  function lexTargetY(item, index, y0, sourceMap = null, items = state.example?.lexItems || []) {
+  function lexTargetY(item, index, y0, sourceMap = null, items = state.example?.lexItems || [], options = {}) {
     if (!item?.source) return item.slot === 'comp' ? compSlotY(y0) : lexWordOrderY(index, y0);
-    const movement = movementForItem(item, index);
+    const movement = appliedMovementForItem(item, index, items, options);
     if (movement?.slot === 'topic') return topicSlotY(y0, items);
     if (movement?.slot === 'v2') return v2SlotY(y0, items);
     return baseLexY(item, index, y0, sourceMap, items);
   }
 
-  function lexItemY(item, index, y0, sourceMap = null, items = state.example?.lexItems || []) {
-    return lexTargetY(item, index, y0, sourceMap, items);
+  function lexItemY(item, index, y0, sourceMap = null, items = state.example?.lexItems || [], options = {}) {
+    return lexTargetY(item, index, y0, sourceMap, items, options);
   }
 
-  function lexSlotIndex(item, index, items = []) {
-    const movement = movementForItem(item, index);
+  function lexSlotIndex(item, index, items = [], movementOverride = undefined) {
+    const movement = movementOverride === undefined ? movementForItem(item, index) : movementOverride;
     if (item.slot === 'comp') return '0';
     if (movement?.slot === 'topic') return '1';
     if (movement?.slot === 'v2') return '2';
     if (movement?.slot === 'local') return String(index + 1);
+    if (item?.source) return `b${basisSourceIndex(item, index) + 1}`;
     const hasComp = items[0]?.slot === 'comp';
     return String(hasComp ? index : index + 1);
   }
 
-  function localAxisMovement(item, index, fromY, toY) {
-    // v4427: verplaatsingen zijn alleen toegestaan door expliciete regels die
-    // naar een vrij slot gaan. Een gewone afwijking tussen basishoogte en
-    // voorbeeldzinrij mag geen automatische Wissel veroorzaken. Daardoor laten
-    // subject/object geen trace achter; alleen het verplaatste element doet dat.
-    return movementForItem(item, index);
+  function localAxisMovement(item, index, fromY, toY, items = state.example?.lexItems || [], options = {}) {
+    return appliedMovementForItem(item, index, items, options);
   }
 
   function drawLexTrace(g, x, y, label, caption = 'trace') {
@@ -1547,7 +1615,7 @@
     const horizontalProjectionMode = !!sourceMap && !options.localOnly;
     drawAxisTitle(g, x - 98, y0 - 70, horizontalProjectionMode ? 'LEX-projectie · Wisselregels' : 'LEX-as · lokale plaatsingsregels');
 
-    const itemYs = items.map((item, i) => lexItemY(item, i, y0, sourceMap, items));
+    const itemYs = items.map((item, i) => lexItemY(item, i, y0, sourceMap, items, options));
     const baseYs = items.map((item, i) => baseLexY(item, i, y0, sourceMap, items));
     const projectionYs = items.map((item, i) => projectionAnchorY(item, i, y0, sourceMap, items));
     const topicIndex = isMainV2Rule() ? items.findIndex((item, i) => movementForItem(item, i)?.slot === 'topic') : -1;
@@ -1575,9 +1643,9 @@
 
     items.forEach((item, i) => {
       const p = item.source && sourceMap ? sourceMap.get(item.source) : null;
-      const y = lexItemY(item, i, y0, sourceMap, items);
+      const y = lexItemY(item, i, y0, sourceMap, items, options);
       const oldY = baseLexY(item, i, y0, sourceMap, items);
-      const movement = localAxisMovement(item, i, oldY, y);
+      const movement = localAxisMovement(item, i, oldY, y, items, options);
       positions.set(item.id, { x, y, baseY: oldY, item, sourcePoint: p || null });
 
       if (movement && item.source) {
@@ -1594,7 +1662,7 @@
         const cls = movement ? 'lex-slot-box lex-projection-slot moved-slot' : 'lex-slot-box lex-projection-slot';
         g.appendChild(svgEl('rect', { x: x - 62, y: y - 28, width: 124, height: 56, rx: 14, class: cls }));
       }
-      g.appendChild(svgEl('text', { x: x - 92, y: y + 5, class: 'lex-index' }, lexSlotIndex(item, i, items)));
+      g.appendChild(svgEl('text', { x: x - 92, y: y + 5, class: 'lex-index' }, lexSlotIndex(item, i, items, movement)));
       g.appendChild(svgEl('text', { x, y: y + 5, class: item.source ? 'lex-label' : 'lex-local-label' }, item.label));
     });
 
@@ -1637,7 +1705,7 @@
       .map(id => functionalNodes.find(n => n.id === id)?.label || id)
       .join(' + ') || 'role-boxen';
     if (options.showTitle !== false) drawAxisTitle(g, origin.x - 180, origin.y - 70, `OPN · functionele structuur · ${rootLabel} → ${roleNames} · ${state.functionalOrder}`);
-    drawAxisTitle(g, origin.x - 176, origin.y - 48, `v4427 · ${branchModeLabel()} · vrije plaatsing + V2-slot`);
+    drawAxisTitle(g, origin.x - 176, origin.y - 48, `v4438 · ${branchModeLabel()} · vrije plaatsing + V2-slot`);
     const growthPlan = growthPlanForLayout(layout);
     layout.__growthPlan = growthPlan;
     drawSubtreeBoxes(g, layout, origin, growthPlan);
@@ -1663,13 +1731,16 @@
     }
 
     const growthPlan = centralLayout?.__growthPlan;
-    const showLocalLexStep = !growthPlan?.active || visibleAt(growthPlan, growthPlan.axisStep);
+    const showLexBaseStep = !growthPlan?.active || visibleAt(growthPlan, growthPlan.lexBaseStep);
     const showProjectionPanels = !growthPlan?.active || visibleAt(growthPlan, growthPlan.projectionStep);
     if (showProjectionPanels) {
       drawLexAxis(g, 210, 185, activeLexItems(), sourceMap);
       drawSyntaxRules(g, 1240, 180);
-    } else if (showLocalLexStep) {
-      drawLexAxis(g, 210, 185, activeLexItems(), sourceMap, { localOnly: true });
+    } else if (showLexBaseStep) {
+      const executedMovementCount = growthPlan?.active
+        ? Math.max(0, Math.min(growthPlan.lexMovementCount, growthPlan.current - growthPlan.lexMovementStartStep + 1))
+        : undefined;
+      drawLexAxis(g, 210, 185, activeLexItems(), sourceMap, { localOnly: true, executedMovementCount });
       drawAxisTitle(g, 1210, 116, 'SYNTAX-projectie verschijnt in de laatste stap');
     } else {
       drawAxisTitle(g, 165, 116, `Groei-presentatie · ${growthLabel()}`);

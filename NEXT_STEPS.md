@@ -40,7 +40,7 @@
 - Dynamische boomruimte visueel testen met bredere voorbeeldsets en langere zinnen.
 
 
-## Na v4435
+## Na v4438
 
 - Vraagzin als echt voorbeeldtype toevoegen.
 - Per zinstype automatische validatie toevoegen: resultaat moet exact de voorbeeldzin zijn.
