@@ -1971,7 +1971,7 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
   font-weight: 900;
 }
 
-/* v4479: mobile portrait stage-first. Het gridvenster staat standaard helemaal bovenaan.
+/* v4480: mobile portrait stage-first. Het gridvenster staat standaard helemaal bovenaan.
    Portret-menu-ruimte is configureerbaar: 0, 1 of 2 menuhoogtes; standaard 0. */
 .mobile-sheet-field {
   display: grid;
@@ -2069,7 +2069,7 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
 }
 
 
-/* v4479: portrait definitief grid-eerst. Geen menu of reserve boven het grid;
+/* v4480: portrait definitief grid-eerst. Geen menu of reserve boven het grid;
    eventuele portret-menu-ruimte komt onder het gridvenster. */
 @media (max-width: 760px) and (orientation: portrait) {
   html,
@@ -2186,7 +2186,7 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
 }
 
 
-/* v4479: harde portrait-correctie. De browser kan in portrait breder dan 760px
+/* v4480: harde portrait-correctie. De browser kan in portrait breder dan 760px
    rapporteren; daarom gebruikt JS body.portrait-grid-first. In die modus mag
    niets boven het gridvenster staan. Alle menu's komen eronder. */
 body.portrait-grid-first {
@@ -2276,7 +2276,7 @@ body.portrait-grid-first .status-panel { order: 4 !important; }
 body.portrait-grid-first .text-panel { order: 5 !important; }
 
 
-/* v4479: grid-first geldt op alle platforms, niet alleen mobile/portrait.
+/* v4480: grid-first geldt op alle platforms, niet alleen mobile/portrait.
    Niets staat nog boven het gridvenster: projectiekeuze, zinmenu, groei/play,
    toolbar, status en documentatie komen onder het canvas. */
 body.grid-first-all,
@@ -2347,7 +2347,7 @@ body.grid-first-all #graphSvg,
   height: 100% !important;
 }
 
-/* v4479: benoemde meerkeuze voor menu's boven het grid.
+/* v4480: benoemde meerkeuze voor menu's boven het grid.
    Standaard: geen enkel menu boven het grid. Alle benoemde menu's kunnen boven het grid. */
 .top-menu-choice-field {
   grid-column: 1 / -1;
@@ -2469,7 +2469,7 @@ body.grid-first-all .toolbar {
   align-self: stretch;
 }
 
-/* v4479: configureerbare vrije LEX-slots op de LEX-as. */
+/* v4480: configureerbare vrije LEX-slots op de LEX-as. */
 .lex-config-free-slot {
   fill: color-mix(in srgb, var(--lex), var(--panel) 84%);
   stroke: var(--lex);
@@ -2515,7 +2515,7 @@ body.grid-first-all .toolbar {
 }
 
 
-/* v4479: portrait split tussen grid en rechter menu.
+/* v4480: portrait split tussen grid en rechter menu.
    Het grid gebruikt niet meer de volle breedte als dat niet nodig is;
    het rechter menu blijft zichtbaar en de grens is sleepbaar/touchbaar. */
 .pane-splitter {
@@ -2640,7 +2640,7 @@ body.pane-split-dragging * {
 }
 
 
-/* v4479: desktop toont LEX-insertie en takverlenging in het rechter menu. */
+/* v4480: desktop toont LEX-insertie en takverlenging in het rechter menu. */
 .lex-extension-field {
   grid-column: 1 / -1;
   border: 1px solid var(--line);
@@ -2681,7 +2681,7 @@ body.portrait-grid-first .side-panel .lex-extension-field label {
 }
 
 
-/* v4479: gridvenster past op boom + assen; resterende breedte is rechterkolom. */
+/* v4480: gridvenster past op boom + assen; resterende breedte is rechterkolom. */
 body.grid-first-all .workspace,
 .workspace {
   display: grid !important;
@@ -2803,7 +2803,7 @@ body.grid-first-all .view-pan-hint {
 }
 
 
-/* v4479: maak Rechterkolom-config zichtbaar bovenaan het rechter menu. */
+/* v4480: maak Rechterkolom-config zichtbaar bovenaan het rechter menu. */
 .right-menu-width-callout {
   grid-column: 1 / -1;
   border: 2px solid color-mix(in srgb, var(--accent), var(--line) 18%);
@@ -2857,7 +2857,7 @@ body.portrait-grid-first #rightMenuWidthSelectTop {
 }
 
 
-/* v4479: mobile portrait grid smaller and fixed; right menu + splitter visible. */
+/* v4480: mobile portrait grid smaller and fixed; right menu + splitter visible. */
 body.portrait-grid-first .workspace {
   grid-template-columns: minmax(92px, var(--stage-pane-width, 40vw)) var(--pane-splitter-width, 18px) minmax(13rem, var(--side-pane-width, 56vw)) !important;
 }
@@ -2887,4 +2887,212 @@ body.grid-first-all .pane-splitter::before,
 body.portrait-grid-first .side-panel {
   min-width: 0 !important;
   overflow: auto !important;
+}
+
+
+/* v4480 app redesign: hoofdbeeld = grid + zin + config. Config = apart scherm met alle menu's. */
+.main-topbar,
+.config-topbar {
+  display: none;
+}
+.main-topbar {
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+  padding: .45rem .6rem;
+  border: 1px solid var(--line);
+  border-radius: .9rem;
+  background: color-mix(in srgb, var(--panel), var(--bg) 16%);
+  box-shadow: var(--shadow-soft);
+}
+.main-sentence-field {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  min-width: 0;
+  flex: 1 1 auto;
+  font-weight: 900;
+  color: var(--muted);
+}
+.main-sentence-field select {
+  width: min(100%, 32rem);
+  min-height: 2.35rem;
+  border: 1px solid var(--line);
+  border-radius: .72rem;
+  background: var(--panel);
+  color: var(--text);
+  padding: .25rem .65rem;
+  font-weight: 900;
+}
+.config-open-button,
+.config-back-button {
+  min-height: 2.35rem;
+  padding-inline: 1rem;
+  font-weight: 950;
+}
+.config-topbar {
+  align-items: center;
+  gap: 1rem;
+  padding: .7rem .85rem;
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  background: color-mix(in srgb, var(--panel), var(--bg) 12%);
+  box-shadow: var(--shadow-soft);
+}
+.config-topbar h2 {
+  margin: 0;
+  font-size: 1.12rem;
+}
+.config-topbar p {
+  margin: .18rem 0 0;
+  color: var(--muted);
+  font-size: .92rem;
+}
+
+body.main-screen-active .app-header,
+body.main-screen-active .projection-sticky-bar,
+body.main-screen-active .mobile-sentence-bar,
+body.main-screen-active .toolbar,
+body.main-screen-active .intro-panel,
+body.main-screen-active .status-panel,
+body.main-screen-active .side-panel,
+body.main-screen-active .pane-splitter,
+body.main-screen-active .text-panel,
+body.main-screen-active .mobile-growth-nav,
+body.main-screen-active .mobile-bottom-nav,
+body.main-screen-active .mobile-sheet,
+body.main-screen-active .mobile-sheet-backdrop,
+body.main-screen-active .config-topbar {
+  display: none !important;
+}
+body.main-screen-active .main-topbar {
+  display: flex !important;
+  order: 0 !important;
+}
+body.main-screen-active .app-shell {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: .35rem !important;
+  padding: .35rem !important;
+  max-width: none !important;
+  width: 100vw !important;
+  min-height: 100dvh !important;
+}
+body.main-screen-active .workspace {
+  display: block !important;
+  order: 1 !important;
+  width: 100% !important;
+  max-width: 100vw !important;
+  min-height: 0 !important;
+  height: auto !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  overflow: visible !important;
+}
+body.main-screen-active .canvas-wrap {
+  display: block !important;
+  width: min(100%, var(--stage-pane-width, 100%)) !important;
+  max-width: 100% !important;
+  margin: 0 auto !important;
+  min-height: 18rem !important;
+  height: min(var(--mobile-canvas-height, 76dvh), calc(100dvh - 4.2rem)) !important;
+  max-height: calc(100dvh - 4.2rem) !important;
+  border-radius: .9rem !important;
+}
+body.main-screen-active #graphSvg {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+body.config-screen-active .app-header,
+body.config-screen-active .main-topbar,
+body.config-screen-active .canvas-wrap,
+body.config-screen-active .pane-splitter,
+body.config-screen-active .mobile-growth-nav,
+body.config-screen-active .mobile-bottom-nav,
+body.config-screen-active .mobile-sheet,
+body.config-screen-active .mobile-sheet-backdrop {
+  display: none !important;
+}
+body.config-screen-active .config-topbar {
+  display: flex !important;
+  order: 0 !important;
+}
+body.config-screen-active .app-shell {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: .75rem !important;
+  padding: .75rem !important;
+  max-width: 1280px !important;
+  margin-inline: auto !important;
+}
+body.config-screen-active .projection-sticky-bar,
+body.config-screen-active .toolbar,
+body.config-screen-active .status-panel,
+body.config-screen-active .intro-panel,
+body.config-screen-active .text-panel {
+  display: block !important;
+  order: initial !important;
+}
+body.config-screen-active .projection-sticky-bar {
+  display: grid !important;
+}
+body.config-screen-active .toolbar {
+  display: flex !important;
+}
+body.config-screen-active .workspace {
+  display: block !important;
+  width: 100% !important;
+  min-height: 0 !important;
+  height: auto !important;
+  padding: 0 !important;
+  overflow: visible !important;
+  background: transparent !important;
+  border: 0 !important;
+}
+body.config-screen-active .side-panel {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr)) !important;
+  gap: .8rem !important;
+  width: 100% !important;
+  max-width: none !important;
+  max-height: none !important;
+  overflow: visible !important;
+}
+body.config-screen-active .side-panel > .panel-card,
+body.config-screen-active .side-panel > .panel-card:first-child,
+body.config-screen-active .side-panel > .editor-card,
+body.config-screen-active .side-panel > .lex-card,
+body.config-screen-active .side-panel > .relation-card {
+  display: block !important;
+  grid-column: auto !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  overflow: visible !important;
+}
+@media (max-width: 760px) {
+  body.main-screen-active .app-shell {
+    padding: .25rem !important;
+  }
+  body.main-screen-active .main-topbar {
+    border-radius: .75rem;
+    padding: .35rem .45rem;
+  }
+  body.main-screen-active .main-sentence-field span {
+    font-size: .86rem;
+  }
+  body.main-screen-active .config-open-button {
+    padding-inline: .8rem;
+  }
+  body.config-screen-active .config-topbar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+body.main-screen-active .canvas-wrap::before {
+  content: none !important;
+  display: none !important;
 }
