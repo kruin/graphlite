@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'v4466';
+  const VERSION = 'v4471';
   const BASE_CELL = 74;
   const ROOT_SIDE_GAP = 1;
   const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -23,6 +23,8 @@
     layoutDensitySelect: document.getElementById('layoutDensitySelect'),
     viewFitSelect: document.getElementById('viewFitSelect'),
     freeSlotCountSelect: document.getElementById('freeSlotCountSelect'),
+    portraitMenuSlotsSelect: document.getElementById('portraitMenuSlotsSelect'),
+    mobilePortraitMenuSlotsSelect: document.getElementById('mobilePortraitMenuSlotsSelect'),
     projectionHelp: document.getElementById('projectionHelp'),
     titleLine: document.getElementById('titleLine'),
     metaLine: document.getElementById('metaLine'),
@@ -182,6 +184,20 @@
     { id: '4', label: 'vrije slots: 4' }
   ];
 
+  const PORTRAIT_MENU_SLOT_COUNTS = [
+    { id: '0', label: 'onderruimte: 0 menu’s' },
+    { id: '1', label: 'onderruimte: 1 menu' },
+    { id: '2', label: 'onderruimte: 2 menu’s' }
+  ];
+
+  const TOP_MENU_CHOICES = [
+    { id: 'projection', label: 'Projectiekeuze', cssClass: 'top-menu-projection', tip: 'Projectiekeuze: Assen, Bron, LEX, SYNTAX-projectie en LOG/FT. Nuttig voor vergelijken van projecties.' },
+    { id: 'sentence', label: 'Voorbeeldzin', cssClass: 'top-menu-sentence', tip: 'Voorbeeldzin: kies snel HOND BIJT MAN en varianten. Nuttig voor contrast tussen zinnen.' },
+    { id: 'play', label: 'Play/Groei', cssClass: 'top-menu-play', tip: 'Play/Groei: stap voor stap boom, LEX-as en projecties tonen. Nuttig voor didactische uitleg.' },
+    { id: 'tools', label: 'Werkknoppen', cssClass: 'top-menu-tools', tip: 'Werkknoppen: FIT, reset, JSON, Docs, Carousel en editors. Nuttig bij bouwen en testen.' }
+  ];
+  const TOP_MENU_MAX = 2;
+
   function southLogicalModeOrder(mode = 'SOV') {
     return ({
       SOV: ['S', 'O', 'V'],
@@ -259,6 +275,8 @@
     growthStep: 0,
     southLogicalMode: 'SOV',
     freeSlotCount: 2,
+    portraitMenuSlots: 0,
+    topMenusAbove: [],
     lastSupportedGrowthStep: 0,
     growthTimer: null,
     exampleValidationMessages: [],
@@ -977,6 +995,12 @@
     return Math.max(0, Math.min(6, Math.round(n)));
   }
 
+  function reservedPortraitMenuSlots() {
+    const n = Number(state.portraitMenuSlots);
+    if (!Number.isFinite(n)) return 0;
+    return Math.max(0, Math.min(2, Math.round(n)));
+  }
+
   function addOpnTopicalizationSlot(layout, rootId = null) {
     // v4462: centrale slotboxen blijven weg, maar de boom reserveert wel
     // verticale ruimte onder de wortel. Daardoor wordt de eerste tak langer
@@ -1230,6 +1254,136 @@
 
   function isMobileViewport() {
     return typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(max-width: 760px)').matches;
+  }
+
+  function isPortraitGridFirstViewport() {
+    if (typeof window === 'undefined') return false;
+    const mq = window.matchMedia ? window.matchMedia('(orientation: portrait)').matches : false;
+    const bySize = (window.innerHeight || 0) >= (window.innerWidth || 1);
+    return mq || bySize;
+  }
+
+  function isPortraitMobileViewport() {
+    // v4471: grid-first and fit-height are no longer mobile-only.
+    // The canvas height is based on the actual viewBox on every platform.
+    return true;
+  }
+
+  function syncPortraitStageMode() {
+    const portrait = isPortraitGridFirstViewport();
+    document.body?.classList.add('grid-first-all');
+    document.documentElement?.classList.add('grid-first-all');
+    document.body?.classList.toggle('portrait-grid-first', portrait);
+    document.documentElement?.classList.toggle('portrait-grid-first', portrait);
+  }
+
+  function syncPortraitMenuSpace() {
+    // v4471: de oude numerieke onderruimte blijft op 0. De relevante instelling
+    // is nu: welke benoemde menu's mogen boven het grid staan.
+    document.documentElement?.style.setProperty('--portrait-menu-reserve', '0px');
+    document.documentElement?.style.setProperty('--portrait-menu-slots', '0');
+  }
+
+  function validTopMenuIds() {
+    return new Set(TOP_MENU_CHOICES.map(choice => choice.id));
+  }
+
+  function normalizeTopMenusAbove(value = state.topMenusAbove) {
+    const allowed = validTopMenuIds();
+    const out = [];
+    (Array.isArray(value) ? value : []).forEach(item => {
+      const id = String(item || '');
+      if (allowed.has(id) && !out.includes(id) && out.length < TOP_MENU_MAX) out.push(id);
+    });
+    return out;
+  }
+
+  function topMenuLabel(id) {
+    return TOP_MENU_CHOICES.find(choice => choice.id === id)?.label || id;
+  }
+
+  function topMenuTip(id) {
+    return TOP_MENU_CHOICES.find(choice => choice.id === id)?.tip || '';
+  }
+
+  function syncTopMenuPlacement() {
+    state.topMenusAbove = normalizeTopMenusAbove();
+    const body = document.body;
+    const root = document.documentElement;
+    if (!body || !root) return;
+    TOP_MENU_CHOICES.forEach(choice => {
+      body.classList.toggle(choice.cssClass, state.topMenusAbove.includes(choice.id));
+      root.classList.toggle(choice.cssClass, state.topMenusAbove.includes(choice.id));
+    });
+    const value = state.topMenusAbove.length ? state.topMenusAbove.join(' ') : 'none';
+    body.dataset.topMenusAbove = value;
+    root.dataset.topMenusAbove = value;
+  }
+
+  function renderTopMenuChoiceControls() {
+    const selected = normalizeTopMenusAbove();
+    state.topMenusAbove = selected;
+    const selectedSet = new Set(selected);
+    const summary = selected.length
+      ? `Boven grid: ${selected.map(topMenuLabel).join(' + ')}. Maximaal ${TOP_MENU_MAX}; overige menu’s staan onder het grid.`
+      : `Geen menu boven het grid. Maximaal ${TOP_MENU_MAX}; alle menu’s staan onder het grid.`;
+    document.querySelectorAll('[data-top-menu-choice]').forEach(input => {
+      const id = input.getAttribute('data-top-menu-choice');
+      const checked = selectedSet.has(id);
+      input.checked = checked;
+      input.disabled = !checked && selected.length >= TOP_MENU_MAX;
+      const label = topMenuLabel(id);
+      const tip = topMenuTip(id);
+      input.title = `${label}. ${tip} Maximaal ${TOP_MENU_MAX} keuzes boven het grid.`;
+      const wrapper = input.closest('label');
+      if (wrapper) wrapper.title = input.title;
+    });
+    document.querySelectorAll('[data-top-menu-count]').forEach(node => {
+      node.textContent = `${selected.length}/${TOP_MENU_MAX}`;
+    });
+    document.querySelectorAll('[data-top-menu-help]').forEach(node => {
+      node.textContent = summary;
+      node.title = selected.map(topMenuTip).filter(Boolean).join(' ');
+    });
+  }
+
+  function setTopMenuChoice(id, checked) {
+    const allowed = validTopMenuIds();
+    if (!allowed.has(id)) return;
+    const current = normalizeTopMenusAbove();
+    if (checked) {
+      if (!current.includes(id)) {
+        if (current.length >= TOP_MENU_MAX) {
+          if (els.actionFeedback) els.actionFeedback.textContent = `Maximaal ${TOP_MENU_MAX} menu’s boven het grid. Zet eerst een andere optie uit.`;
+          renderTopMenuChoiceControls();
+          return;
+        }
+        current.push(id);
+      }
+    } else {
+      const index = current.indexOf(id);
+      if (index >= 0) current.splice(index, 1);
+    }
+    state.topMenusAbove = current;
+    resetManualViewBox();
+    render();
+  }
+
+  function syncMobileCanvasHeight(box = null) {
+    syncPortraitStageMode();
+    if (!els.canvasWrap) return;
+    syncPortraitMenuSpace();
+    // v4471: never remove the fit-height outside mobile; all platforms use it.
+    const fit = box || parseViewBox();
+    const wrapWidth = els.canvasWrap.clientWidth || window.innerWidth || 360;
+    const ratio = fit && Number.isFinite(fit.w) && fit.w > 0 && Number.isFinite(fit.h) && fit.h > 0 ? fit.h / fit.w : 0.62;
+    const menuReserveBelow = 0;
+    const bottomReserve = isPortraitGridFirstViewport() ? 92 + 12 : 48;
+    const maxAvailable = Math.max(190, (window.innerHeight || 640) - menuReserveBelow - bottomReserve);
+    const needed = Math.ceil(wrapWidth * ratio);
+    // Niet groter dan nodig voor de actuele boom + assen; wel begrensd door het zichtbare portretvenster.
+    const height = Math.max(150, Math.min(maxAvailable, needed));
+    els.canvasWrap.style.setProperty('--mobile-fit-height', `${height}px`);
   }
 
   function layoutVisualProfile() {
@@ -2228,7 +2382,7 @@
       .map(id => functionalNodes.find(n => n.id === id)?.label || id)
       .join(' + ') || 'role-boxen';
     if (options.showTitle !== false) drawAxisTitle(g, origin.x - 180, origin.y - 70, `OPN · functionele structuur · ${rootLabel} → ${roleNames} · ${state.functionalOrder}`);
-    drawAxisTitle(g, origin.x - 176, origin.y - 48, `v4466 · ${branchModeLabel()} · vrije plaatsing + gereserveerde vrije slots`);
+    drawAxisTitle(g, origin.x - 176, origin.y - 48, `v4471 · ${branchModeLabel()} · vrije plaatsing + gereserveerde vrije slots`);
     const growthPlan = growthPlanForLayout(layout);
     layout.__growthPlan = growthPlan;
     drawSubtreeBoxes(g, layout, origin, growthPlan);
@@ -2392,6 +2546,7 @@
       h: Math.max(80, Number(box.h) || 900)
     };
     els.svg.setAttribute('viewBox', viewBoxToString(next));
+    syncMobileCanvasHeight(next);
     if (manual) state.manualViewBox = next;
   }
 
@@ -2471,6 +2626,7 @@
   }
 
   function render() {
+    syncPortraitStageMode();
     syncControls();
     if (state.projection === 'source') drawSource();
     else if (state.projection === 'lex') drawLex();
@@ -2478,6 +2634,7 @@
     else if (state.projection === 'log') drawLog();
     else drawAxes();
     applyViewBoxFit(false);
+    syncMobileCanvasHeight(parseViewBox());
     renderSideLists();
     renderStatus();
     renderSelection();
@@ -2509,7 +2666,7 @@
     els.projectionHelp.textContent = helpText();
     els.explainHeading.textContent = `Uitleg · ${activeSentenceText()}`;
     els.explainText.textContent = state.example.id === 'hond-bijt-man'
-      ? 'LEX-regel: eerst horizontale basisprojectie, daarna lokale Wissels naar vrije slots. Hoofdzin: eerste zinsdeel → slot 1, persoonsvorm → slot 2; traces blijven op de oude basisplek. FIT kadert alleen het zicht, niet de boom. Centrale slotboxen zijn verwijderd; de eerste tak reserveert lege vrije-slotruimte; wissels zie je alleen op de LEX-as. De ZUID-badge doorloopt de zuid-as-volgorde: SOV, SVO, OVS, OSV, VSO, VOS. De centrale subject/object/verb-vertakkingen draaien mee.'
+      ? 'LEX-regel: eerst horizontale basisprojectie, daarna lokale Wissels naar vrije slots. Hoofdzin: eerste zinsdeel → slot 1, persoonsvorm → slot 2; traces blijven op de oude basisplek. FIT kadert alleen het zicht, niet de boom. Centrale slotboxen zijn verwijderd; de eerste tak reserveert lege vrije-slotruimte; wissels zie je alleen op de LEX-as. De ZUID-badge doorloopt de zuid-as-volgorde: SOV, SVO, OVS, OSV, VSO, VOS. De centrale subject/object/verb-vertakkingen draaien mee. Menu’s boven het grid zijn expliciet gekozen: maximaal twee, bijvoorbeeld Voorbeeldzin en Play/Groei.'
       : 'LEX-regel: verplaats alleen naar vrije slots 0/1/2. Niet-verplaatste woorden blijven op hun horizontale basisplek. Traces staan lokaal op de oude plek. In LOG/FT kan de onderprojectie SOV, SVO, OVS, OSV, VSO of VOS tonen.';
   }
 
@@ -2522,7 +2679,7 @@
     if (state.projection === 'lex') return 'LEX: plaatsingsregels per zinstype. Hoofdzin: eerste zinsdeel naar slot 1, persoonsvorm naar slot 2. De ruimte in de centrale boom is leeg; de vulling staat op de LEX-as.';
     if (state.projection === 'synt') return 'SYNTAX-projectie: regels staan op boomhoogte; onder de boom staat nu ook de LOGICAL-projectie uit FT/LOG.';
     if (state.projection === 'log') return 'LOG/FT: functioneel = CLAUSE met aparte PRED-knoop en ARG-STRUCT-subtree; onderaan toont de FT-projectie de logische volgorde (bijv. SOV/SVO/OVS/OSV/VSO/VOS).';
-    return 'Assen: centrale OPN-boom; west-as = LEX direct naast de boom; zuid-as = LOGICAL-projectie; onder de wortel is vrije-slotruimte gereserveerd. Klik op de grote ZUID-knop om alleen de zuid-as binnen het boomvenster cyclisch te wijzigen: SOV → SVO → OVS → OSV → VSO → VOS; west/oost blijven gelijk; de as zelf loopt alleen onder de centrale boom.';
+    return 'Assen: centrale OPN-boom; west-as = LEX direct naast de boom; zuid-as = LOGICAL-projectie. Het grid staat standaard bovenaan; boven het grid komen alleen de door jou gekozen menu’s, maximaal twee: Projectiekeuze, Voorbeeldzin, Play/Groei of Werkknoppen.';
   }
 
   function renderSideLists() {
@@ -2574,6 +2731,9 @@
     fillSelect(els.layoutDensitySelect, LAYOUT_DENSITIES, state.layoutDensity);
     fillSelect(els.viewFitSelect, VIEW_FIT_MODES, state.viewFitMode);
     fillSelect(els.freeSlotCountSelect, FREE_SLOT_COUNTS, String(reservedFreeSlotCount()));
+    renderTopMenuChoiceControls();
+    syncPortraitMenuSpace();
+    syncTopMenuPlacement();
     if (els.functionalOrderSelect) els.functionalOrderSelect.disabled = false;
     if (els.branchOrderSelect) els.branchOrderSelect.disabled = false;
     fillSelect(els.lexRuleSelect, LEX_RULES, state.example.lexRule);
@@ -2680,6 +2840,7 @@
       branch_order: state.branchOrder,
       branch_overrides: state.branchOverrides,
       free_slot_count: reservedFreeSlotCount(),
+      top_menus_above_grid: normalizeTopMenusAbove(),
       syntax_rules: syntaxRules(),
       structure_config: 'structure-config.html',
       lex: activeLexItems()
@@ -2701,6 +2862,8 @@
         if (payload.functional_order === 'left-first' || payload.functional_order === 'right-first') state.functionalOrder = payload.functional_order;
         if (payload.branch_order && BRANCH_ORDERS.some(order => order.id === payload.branch_order)) state.branchOrder = payload.branch_order;
         if (Number.isFinite(Number(payload.free_slot_count))) state.freeSlotCount = Math.max(0, Math.min(6, Number(payload.free_slot_count)));
+        if (Array.isArray(payload.top_menus_above_grid)) state.topMenusAbove = normalizeTopMenusAbove(payload.top_menus_above_grid);
+        else if (Number.isFinite(Number(payload.portrait_menu_slots))) state.topMenusAbove = [];
         if (payload.branch_overrides && typeof payload.branch_overrides === 'object') {
           for (const key of ['top', 'middle', 'other']) {
             if (['auto', 'normal', 'flip'].includes(payload.branch_overrides[key])) state.branchOverrides[key] = payload.branch_overrides[key];
@@ -2733,6 +2896,7 @@
       `lex_rule: ${state.example.lexRule}`,
       `placement_rule: ${isMainV2Rule() ? 'LEX-as: eerst horizontale basisprojectie; daarna lokale Wissel naar voorbeeldzinvolgorde; oude basispositie = trace' : 'geen V2-Wissel; Comp-slot 0 indien aanwezig'}`,
       `free_slot_count: ${reservedFreeSlotCount()}`,
+      `top_menus_above_grid: ${normalizeTopMenusAbove().map(topMenuLabel).join(', ') || 'geen'}`,
       `free_slots: slot1=TOPIC, slot2=V2/PV; extra slots = gereserveerde lege rijen onder de wortel`,
       `tree_choice: ${activeTreeChoice()}`,
       `movement_summary: ${movementSummaryLabel()}`,
@@ -3053,6 +3217,12 @@
     els.layoutDensitySelect?.addEventListener('change', event => { state.layoutDensity = event.target.value || 'auto'; resetManualViewBox(); render(); });
     els.viewFitSelect?.addEventListener('change', event => { state.viewFitMode = event.target.value || 'auto'; resetManualViewBox(); render(); });
     els.freeSlotCountSelect?.addEventListener('change', event => { state.freeSlotCount = Math.max(0, Math.min(6, Number(event.target.value) || 0)); resetManualViewBox(); render(); });
+    document.querySelectorAll('[data-top-menu-choice]').forEach(input => {
+      input.addEventListener('change', event => {
+        const id = event.target?.getAttribute?.('data-top-menu-choice');
+        setTopMenuChoice(id, !!event.target.checked);
+      });
+    });
     els.lexRuleSelect?.addEventListener('change', event => {
       const targetExample = event.target.value === 'bijzin-omdat' ? (EXAMPLES.find(e => e.lexRule === 'bijzin-omdat') || EXAMPLES[1]) : (EXAMPLES.find(e => e.lexRule === 'hoofdzininvariant') || EXAMPLES[0]);
       state.example = targetExample;
@@ -3141,6 +3311,16 @@
     window.addEventListener('load', () => {
       requestAnimationFrame(stabilizeInitialTreeView);
     }, { once: true });
+    window.addEventListener('resize', () => {
+      syncPortraitStageMode();
+      syncMobileCanvasHeight(parseViewBox());
+    });
+    window.addEventListener('orientationchange', () => {
+      requestAnimationFrame(() => {
+        resetManualViewBox();
+        render();
+      });
+    });
     window.__opengraphBoot = { version: VERSION, loaded: true };
     // v4427: lokale ontwikkelviewer gebruikt geen PWA-cache meer.
     // Oude service workers worden actief verwijderd, zodat structure-config/examples-input

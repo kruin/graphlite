@@ -200,6 +200,6 @@ Op een telefoon staat het canvas bovenaan. Veeg horizontaal in het canvas om de 
 - FIT herstelt de automatische view.
 
 
-## Carousel-uitleglaag (v4466)
+## Carousel-uitleglaag (v4471)
 
-De map `carousel/` bevat de stapbare uitlegbeelden. Gebruik `carousel/index.html?v4466` voor de didactische route; de viewer zelf blijft de interactieve testlaag voor assen, groei, vrije slots en projecties.
+De map `carousel/` bevat de stapbare uitlegbeelden. Gebruik `carousel/index.html?v4471` voor de didactische route; de viewer zelf blijft de interactieve testlaag voor assen, groei, vrije slots en projecties.

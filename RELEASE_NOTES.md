@@ -1,3 +1,31 @@
+
+## v4471 · Menu’s boven grid als benoemde meerkeuze
+
+- De oude instelling `Ruimte onder grid` is vervangen door een benoemde meerkeuze: `Menu’s boven grid`.
+- De gebruiker kiest maximaal twee menu’s die boven het grid mogen staan.
+- Beschikbare keuzes: Projectiekeuze, Voorbeeldzin, Play/Groei en Werkknoppen.
+- Standaard staat geen enkel menu boven het grid; alle menu’s staan dan onder het grid.
+- De tooltip en helptekst leggen per keuze uit waarom een taalkundige die boven het grid kan willen zetten.
+
+# OpenGraph Lite Viewer v4471
+
+## v4471 — benoemde menu's boven het grid
+
+- Vervangt `Ruimte onder grid` door `Menu's boven grid`.
+- User kiest maximaal twee benoemde menu's die boven het grid mogen staan.
+- Opties: Projectiekeuze, Voorbeeldzin, Play/Groei en Werkknoppen.
+- Niet gekozen menu's staan onder het grid.
+- Max > 2 wordt geblokkeerd en toegelicht in de viewer.
+
+# OpenGraph Lite Viewer v4471
+
+## v4471 — mobile portrait grid-first
+
+- Mobile portrait: grid/boomvenster staat standaard helemaal bovenaan; header, projectiebalk, zinmenu en toolbar staan niet meer boven het grid.
+- Nieuwe config `portrait_menu_slots`: ruimte boven het grid voor 0, 1 of 2 toekomstige menuhoogtes; standaard 0.
+- Gridvensterhoogte wordt in portrait afgeleid van de actuele viewBox/tekening, zodat het venster niet groter is dan nodig voor boom + assen.
+- Config is beschikbaar in Projectie-instellingen en in het mobiele menu.
+
 # Release notes v4457
 
 ## v4457 — mobile Play consistent boven
