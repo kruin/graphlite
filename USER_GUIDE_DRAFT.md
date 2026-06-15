@@ -200,9 +200,9 @@ Op een telefoon staat het canvas bovenaan. Veeg horizontaal in het canvas om de 
 - FIT herstelt de automatische view.
 
 
-## Carousel-uitleglaag (v4475)
+## Carousel-uitleglaag (v4478)
 
-De map `carousel/` bevat de stapbare uitlegbeelden. Gebruik `carousel/index.html?v4475` voor de didactische route; de viewer zelf blijft de interactieve testlaag voor assen, groei, vrije slots en projecties.
+De map `carousel/` bevat de stapbare uitlegbeelden. Gebruik `carousel/index.html?v4478` voor de didactische route; de viewer zelf blijft de interactieve testlaag voor assen, groei, vrije slots en projecties.
 
 
 ### NOORD-as (PM)
@@ -210,4 +210,9 @@ De map `carousel/` bevat de stapbare uitlegbeelden. Gebruik `carousel/index.html
 Naast west/LEX, oost/SYNTAX en zuid/LOGICAL is ook een NOORD-as mogelijk. Die is genoteerd als uitbreiding, maar nog niet gebruikt.
 
 
-Aanvulling v4475: LEX vrije slots zijn plaatsbare insertiepunten op de LEX-as voor later materiaal uit andere LEX-assen/bomen en anafora. Boom vrije rijen blijven apart.
+Aanvulling v4478: LEX vrije slots zijn plaatsbare insertiepunten op de LEX-as voor later materiaal uit andere LEX-assen/bomen en anafora. Boom vrije rijen blijven apart.
+
+
+## v4478 desktop LEX-insertie zichtbaar
+
+De rechter desktop-config toont nu dezelfde LEX-insertieconfig als mobiel: LEX vrije slots, LEX insertie-inhoud en takverlenging door insertie. De insertie blijft een aparte box op de LEX-as; de gekozen takken/boxgrenzen worden alleen layoutmatig verlengd.

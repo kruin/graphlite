@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'v4475';
+  const VERSION = 'v4478';
   const BASE_CELL = 74;
   const ROOT_SIDE_GAP = 1;
   const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -23,6 +23,9 @@
     branchOtherSelect: document.getElementById('branchOtherSelect'),
     layoutDensitySelect: document.getElementById('layoutDensitySelect'),
     viewFitSelect: document.getElementById('viewFitSelect'),
+    rightMenuWidthSelect: document.getElementById('rightMenuWidthSelect'),
+    rightMenuWidthSelectTop: document.getElementById('rightMenuWidthSelectTop'),
+    mobileRightMenuWidthSelect: document.getElementById('mobileRightMenuWidthSelect'),
     freeSlotCountSelect: document.getElementById('freeSlotCountSelect'),
     lexFreeSlotCountSelect: document.getElementById('lexFreeSlotCountSelect'),
     lexFreeSlotPlacementSelect: document.getElementById('lexFreeSlotPlacementSelect'),
@@ -179,6 +182,13 @@
   const VIEW_FIT_MODES = [
     { id: 'auto', label: 'venster: automatisch passend' },
     { id: 'fixed', label: 'venster: vast 1500×900' }
+  ];
+
+  const RIGHT_MENU_WIDTHS = [
+    { id: 'auto', label: 'rechterkolom: auto/rest', minPx: 320, minFraction: 0.34, preferredFraction: 0.42 },
+    { id: 'wide', label: 'rechterkolom: breed', minPx: 420, minFraction: 0.42, preferredFraction: 0.50 },
+    { id: 'very-wide', label: 'rechterkolom: zeer breed', minPx: 540, minFraction: 0.50, preferredFraction: 0.58 },
+    { id: 'max', label: 'rechterkolom: maximaal', minPx: 640, minFraction: 0.58, preferredFraction: 0.66 }
   ];
 
   const SOUTH_LOGICAL_MODES = ['SOV', 'SVO', 'OVS', 'OSV', 'VSO', 'VOS'];
@@ -1477,7 +1487,7 @@
   }
 
   function isPortraitMobileViewport() {
-    // v4475: grid-first and fit-height are no longer mobile-only.
+    // v4478: grid-first and fit-height are no longer mobile-only.
     // The canvas height is based on the actual viewBox on every platform.
     return true;
   }
@@ -1491,7 +1501,7 @@
   }
 
   function syncPortraitMenuSpace() {
-    // v4475: de oude numerieke onderruimte blijft op 0. De relevante instelling
+    // v4478: de oude numerieke onderruimte blijft op 0. De relevante instelling
     // is nu: welke benoemde menu's mogen boven het grid staan.
     document.documentElement?.style.setProperty('--portrait-menu-reserve', '0px');
     document.documentElement?.style.setProperty('--portrait-menu-slots', '0');
@@ -1517,6 +1527,19 @@
 
   function topMenuTip(id) {
     return TOP_MENU_CHOICES.find(choice => choice.id === id)?.tip || '';
+  }
+
+  function validRightMenuMode(value = state.rightMenuMode) {
+    const id = String(value || 'wide');
+    return RIGHT_MENU_WIDTHS.some(option => option.id === id) ? id : 'wide';
+  }
+
+  function rightMenuProfile() {
+    return RIGHT_MENU_WIDTHS.find(option => option.id === validRightMenuMode()) || RIGHT_MENU_WIDTHS[1];
+  }
+
+  function rightMenuLabel() {
+    return rightMenuProfile().label.replace(/^rechterkolom:\s*/i, '');
   }
 
   function syncTopMenuPlacement() {
@@ -1588,53 +1611,60 @@
 
   function clampPanePixels(stageWidth, menuWidth, totalWidth) {
     const splitterWidth = 12;
-    const total = Math.max(260, Number(totalWidth) || window.innerWidth || 360);
-    const minMenu = Math.min(220, Math.max(138, Math.round(total * 0.34)));
-    const minStage = Math.min(240, Math.max(148, Math.round(total * 0.42)));
+    const total = Math.max(320, Number(totalWidth) || window.innerWidth || 360);
+    const profile = rightMenuProfile();
+    const maxMenu = Math.max(170, total - splitterWidth - 120);
+    const requestedMinMenu = Math.max(Number(profile.minPx) || 320, Math.round(total * (Number(profile.minFraction) || 0.42)));
+    const minMenu = Math.max(150, Math.min(maxMenu, requestedMinMenu));
+    const minStage = Math.min(260, Math.max(120, Math.round(total * 0.18)));
     let stage = Number(stageWidth);
     let menu = Number(menuWidth);
     if (!Number.isFinite(stage) || !Number.isFinite(menu)) {
-      menu = Math.min(260, Math.max(minMenu, Math.round(total * 0.42)));
+      menu = Math.min(maxMenu, Math.max(minMenu, Math.round(total * (Number(profile.preferredFraction) || 0.5))));
       stage = total - splitterWidth - menu;
     }
-    menu = Math.max(minMenu, Math.min(total - splitterWidth - 120, menu));
+    menu = Math.max(minMenu, Math.min(maxMenu, menu));
     stage = total - splitterWidth - menu;
-    if (stage < minStage) {
+    if (stage < minStage && maxMenu > minMenu) {
       stage = Math.max(120, Math.min(minStage, total - splitterWidth - minMenu));
       menu = Math.max(minMenu, total - splitterWidth - stage);
     }
     return { stageWidth: Math.round(stage), menuWidth: Math.round(menu), splitterWidth, totalWidth: total };
   }
 
+  function neededStageWidthFromFit(fit, total, minMenu, splitterWidth = 12) {
+    if (!fit || !Number.isFinite(fit.w) || fit.w <= 0 || !Number.isFinite(fit.h) || fit.h <= 0) {
+      return Math.max(160, total - splitterWidth - minMenu);
+    }
+    const ratio = Math.max(0.16, fit.h / fit.w);
+    const topMenuReserve = Math.min(170, normalizeTopMenusAbove().length * 42);
+    const maxHeight = Math.min(880, Math.max(220, (window.innerHeight || 720) - 108 - topMenuReserve));
+    const widthForHeight = Math.ceil(maxHeight / ratio);
+    const maxStage = Math.max(120, total - splitterWidth - minMenu);
+    return Math.max(120, Math.min(maxStage, widthForHeight));
+  }
+
   function syncRightMenuSplit(fit = null) {
     const workspace = workspaceForStage();
     if (!workspace) return null;
-    if (!isPortraitGridFirstViewport()) {
-      workspace.style.removeProperty('--stage-pane-width');
-      workspace.style.removeProperty('--side-pane-width');
-      workspace.style.removeProperty('--pane-splitter-width');
-      document.documentElement?.style.removeProperty('--stage-pane-width');
-      document.documentElement?.style.removeProperty('--side-pane-width');
-      return null;
-    }
-
-    const total = Math.max(280, workspace.clientWidth || window.innerWidth || 360);
+    const total = Math.max(320, workspace.clientWidth || window.innerWidth || 360);
     const splitterWidth = 12;
-    const validFit = fit && Number.isFinite(fit.w) && fit.w > 0 && Number.isFinite(fit.h) && fit.h > 0;
-    const bottomReserve = 92 + 12;
-    const maxAvailableHeight = Math.max(170, (window.innerHeight || 640) - bottomReserve);
-    let menuWidth = Number(state.rightMenuWidth);
-    if (!state.paneSplitManual || !Number.isFinite(menuWidth)) {
-      menuWidth = Math.min(280, Math.max(150, Math.round(total * 0.44)));
-    }
-    let stageWidth = total - splitterWidth - menuWidth;
+    const profile = rightMenuProfile();
+    const maxMenu = Math.max(170, total - splitterWidth - 120);
+    const minMenu = Math.max(150, Math.min(maxMenu, Math.max(Number(profile.minPx) || 320, Math.round(total * (Number(profile.minFraction) || 0.42)))));
 
-    if (!state.paneSplitManual && validFit) {
-      const ratio = Math.max(0.16, fit.h / fit.w);
-      const maxNeededWidth = Math.ceil(maxAvailableHeight / ratio);
-      // Gebruik niet meer breedte dan nodig is om de actuele viewBox passend te tonen.
-      stageWidth = Math.min(stageWidth, maxNeededWidth);
+    let stageWidth;
+    let menuWidth;
+    if (state.paneSplitManual && Number.isFinite(Number(state.rightMenuWidth))) {
+      menuWidth = Number(state.rightMenuWidth);
+      stageWidth = total - splitterWidth - menuWidth;
+    } else {
+      stageWidth = neededStageWidthFromFit(fit, total, minMenu, splitterWidth);
       menuWidth = total - splitterWidth - stageWidth;
+      if (!fit || !Number.isFinite(fit.w)) {
+        menuWidth = Math.max(minMenu, Math.round(total * (Number(profile.preferredFraction) || 0.5)));
+        stageWidth = total - splitterWidth - menuWidth;
+      }
     }
 
     const clamped = clampPanePixels(stageWidth, menuWidth, total);
@@ -1650,17 +1680,16 @@
     syncPortraitStageMode();
     if (!els.canvasWrap) return;
     syncPortraitMenuSpace();
-    // v4475: het gridvenster wordt gemaximeerd op de actuele fit-box
+    // v4478: het gridvenster wordt gemaximeerd op de actuele fit-box
     // van boom + assen. Het canvas schaalt dus niet groter dan nodig.
     const fit = box || parseViewBox();
     const validFit = fit && Number.isFinite(fit.w) && fit.w > 0 && Number.isFinite(fit.h) && fit.h > 0;
     const workspace = workspaceForStage();
-    const wrapWidth = workspace?.clientWidth || els.canvasWrap.parentElement?.clientWidth || window.innerWidth || 360;
     const split = syncRightMenuSplit(fit);
     const ratio = validFit ? Math.max(0.16, fit.h / fit.w) : 0.62;
-    const stageWidth = split?.stageWidth || Math.min(wrapWidth, Math.max(isMobileViewport() ? 320 : 520, Math.min(wrapWidth, validFit ? Math.ceil(fit.w) : wrapWidth)));
-    const bottomReserve = isPortraitGridFirstViewport() ? 92 + 12 : 48;
-    const maxAvailable = Math.max(180, (window.innerHeight || 640) - bottomReserve);
+    const stageWidth = split?.stageWidth || Math.min(620, window.innerWidth || 620);
+    const bottomReserve = isPortraitGridFirstViewport() ? 92 + 12 : 78;
+    const maxAvailable = Math.max(180, Math.min(880, (window.innerHeight || 640) - bottomReserve));
     const needed = Math.ceil(stageWidth * ratio);
     const height = Math.max(140, Math.min(maxAvailable, needed));
     els.canvasWrap.style.setProperty('--mobile-fit-height', `${height}px`);
@@ -2705,7 +2734,7 @@
       .map(id => functionalNodes.find(n => n.id === id)?.label || id)
       .join(' + ') || 'role-boxen';
     if (options.showTitle !== false) drawAxisTitle(g, origin.x - 180, origin.y - 70, `OPN · functionele structuur · ${rootLabel} → ${roleNames} · ${state.functionalOrder}`);
-    drawAxisTitle(g, origin.x - 176, origin.y - 48, `v4475 · ${branchModeLabel()} · vrije plaatsing + gereserveerde vrije slots`);
+    drawAxisTitle(g, origin.x - 176, origin.y - 48, `v4478 · ${branchModeLabel()} · vrije plaatsing + gereserveerde vrije slots`);
     const growthPlan = growthPlanForLayout(layout);
     layout.__growthPlan = growthPlan;
     drawSubtreeBoxes(g, layout, origin, growthPlan);
@@ -3002,7 +3031,7 @@
     if (state.projection === 'lex') return 'LEX: plaatsingsregels per zinstype. Hoofdzin: eerste zinsdeel naar slot 1, persoonsvorm naar slot 2. De ruimte in de centrale boom is leeg; de vulling staat op de LEX-as.';
     if (state.projection === 'synt') return 'SYNTAX-projectie: regels staan op boomhoogte; onder de boom staat nu ook de LOGICAL-projectie uit FT/LOG.';
     if (state.projection === 'log') return 'LOG/FT: functioneel = CLAUSE met aparte PRED-knoop en ARG-STRUCT-subtree; onderaan toont de FT-projectie de logische volgorde (bijv. SOV/SVO/OVS/OSV/VSO/VOS).';
-    return 'Assen: centrale OPN-boom; west-as = LEX direct naast de boom; zuid-as = LOGICAL-projectie. Het grid staat standaard bovenaan; in portrait staat het rechter menu naast het grid. Sleep de smalle grens om grid/menu links-rechts te verdelen. Boven het grid komen alleen gekozen menu’s.';
+    return 'Assen: centrale OPN-boom; west-as = LEX direct naast de boom; zuid-as = LOGICAL-projectie. Het grid staat standaard bovenaan; in portrait staat het rechter menu naast het grid. Sleep de smalle grens of kies de zichtbare instelling Rechterkolom bovenaan om grid/menu te verdelen. Het gridvenster past op boom + assen; canvas-panning staat uit.';
   }
 
   function renderSideLists() {
@@ -3072,6 +3101,9 @@
     fillSelect(els.branchOtherSelect, BRANCH_CHOICES, state.branchOverrides.other);
     fillSelect(els.layoutDensitySelect, LAYOUT_DENSITIES, state.layoutDensity);
     fillSelect(els.viewFitSelect, VIEW_FIT_MODES, state.viewFitMode);
+    fillSelect(els.rightMenuWidthSelect, RIGHT_MENU_WIDTHS, validRightMenuMode());
+    fillSelect(els.rightMenuWidthSelectTop, RIGHT_MENU_WIDTHS, validRightMenuMode());
+    fillSelect(els.mobileRightMenuWidthSelect, RIGHT_MENU_WIDTHS, validRightMenuMode());
     fillSelect(els.freeSlotCountSelect, FREE_SLOT_COUNTS, String(reservedFreeSlotCount()));
     fillSelect(els.lexFreeSlotCountSelect, LEX_FREE_SLOT_COUNTS, String(lexFreeSlotCount()));
     fillSelect(els.mobileLexFreeSlotCountSelect, LEX_FREE_SLOT_COUNTS, String(lexFreeSlotCount()));
@@ -3203,6 +3235,8 @@
         multi_tree_ready: true
       },
       top_menus_above_grid: normalizeTopMenusAbove(),
+      right_menu_width: validRightMenuMode(),
+      canvas_pan_enabled: !!state.canvasPanEnabled,
       syntax_rules: syntaxRules(),
       structure_config: 'structure-config.html',
       lex: activeLexItems()
@@ -3229,6 +3263,7 @@
         if (payload.lex_insertion_content) state.lexInsertionContent = validLexInsertionContent(payload.lex_insertion_content);
         if (Array.isArray(payload.lex_insertion_extension_targets)) state.lexInsertionExtensionTargets = validLexInsertionTargets(payload.lex_insertion_extension_targets);
         if (Array.isArray(payload.top_menus_above_grid)) state.topMenusAbove = normalizeTopMenusAbove(payload.top_menus_above_grid);
+        if (payload.right_menu_width) state.rightMenuMode = validRightMenuMode(payload.right_menu_width);
         else if (Number.isFinite(Number(payload.portrait_menu_slots))) state.topMenusAbove = [];
         if (payload.branch_overrides && typeof payload.branch_overrides === 'object') {
           for (const key of ['top', 'middle', 'other']) {
@@ -3268,6 +3303,8 @@
       `lex_insertion_extension_targets: ${validLexInsertionTargets().map(lexInsertionTargetLabel).join(', ') || 'geen'}`,
       `lex_free_slots: configureerbare insertieboxen op de LEX-as; future_sources=other-lex-axis, other-tree, anaphor, adverbial-headless-clause`,
       `top_menus_above_grid: ${normalizeTopMenusAbove().map(topMenuLabel).join(', ') || 'geen'}`,
+      `right_menu_width: ${validRightMenuMode()} (${rightMenuLabel()})`,
+      `canvas_pan: disabled; window fits tree + axes`,
       `free_slots: boomrijen voor open OPN-plaatsing; LEX-inserties zijn aparte as-posities`,
       `tree_choice: ${activeTreeChoice()}`,
       `movement_summary: ${movementSummaryLabel()}`,
@@ -3404,6 +3441,7 @@
   function registerCanvasPan() {
     if (!els.svg) return;
     els.svg.addEventListener('pointerdown', event => {
+      if (!state.canvasPanEnabled) return;
       if (event.button !== undefined && event.button !== 0) return;
       if (event.target?.closest?.('input,select,button,a,label,[data-action]')) return;
       state.activePointers.set(event.pointerId, { clientX: event.clientX, clientY: event.clientY, pointerType: event.pointerType });
@@ -3509,6 +3547,7 @@
     }, true);
 
     els.svg.addEventListener('wheel', event => {
+      if (!state.canvasPanEnabled) return;
       if (!event.ctrlKey && !event.metaKey && !event.shiftKey) return;
       event.preventDefault();
       if (event.ctrlKey || event.metaKey) {
@@ -3544,7 +3583,6 @@
     if (!splitter) return;
     const startDrag = event => {
       if (event.button !== undefined && event.button !== 0) return;
-      if (!isPortraitGridFirstViewport()) return;
       const workspace = workspaceForStage();
       if (!workspace) return;
       const rect = workspace.getBoundingClientRect();
@@ -3637,6 +3675,10 @@
     els.branchOtherSelect?.addEventListener('change', event => updateBranchOverride('other', event.target.value));
     els.layoutDensitySelect?.addEventListener('change', event => { state.layoutDensity = event.target.value || 'auto'; resetManualViewBox(); render(); });
     els.viewFitSelect?.addEventListener('change', event => { state.viewFitMode = event.target.value || 'auto'; resetManualViewBox(); render(); });
+    const setRightMenuMode = value => { state.rightMenuMode = validRightMenuMode(value); state.paneSplitManual = false; state.rightMenuWidth = null; resetManualViewBox(); render(); };
+    els.rightMenuWidthSelect?.addEventListener('change', event => setRightMenuMode(event.target.value));
+    els.rightMenuWidthSelectTop?.addEventListener('change', event => setRightMenuMode(event.target.value));
+    els.mobileRightMenuWidthSelect?.addEventListener('change', event => setRightMenuMode(event.target.value));
     els.freeSlotCountSelect?.addEventListener('change', event => { state.freeSlotCount = Math.max(0, Math.min(6, Number(event.target.value) || 0)); resetManualViewBox(); render(); });
     const updateLexFreeSlotCount = event => { state.lexFreeSlotCount = Math.max(0, Math.min(8, Number(event.target.value) || 0)); resetManualViewBox(); render(); };
     const updateLexFreeSlotPlacement = event => { state.lexFreeSlotPlacement = validLexSlotPlacement(event.target.value); resetManualViewBox(); render(); };
