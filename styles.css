@@ -1971,7 +1971,7 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
   font-weight: 900;
 }
 
-/* v4472: mobile portrait stage-first. Het gridvenster staat standaard helemaal bovenaan.
+/* v4474: mobile portrait stage-first. Het gridvenster staat standaard helemaal bovenaan.
    Portret-menu-ruimte is configureerbaar: 0, 1 of 2 menuhoogtes; standaard 0. */
 .mobile-sheet-field {
   display: grid;
@@ -2069,7 +2069,7 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
 }
 
 
-/* v4472: portrait definitief grid-eerst. Geen menu of reserve boven het grid;
+/* v4474: portrait definitief grid-eerst. Geen menu of reserve boven het grid;
    eventuele portret-menu-ruimte komt onder het gridvenster. */
 @media (max-width: 760px) and (orientation: portrait) {
   html,
@@ -2186,7 +2186,7 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
 }
 
 
-/* v4472: harde portrait-correctie. De browser kan in portrait breder dan 760px
+/* v4474: harde portrait-correctie. De browser kan in portrait breder dan 760px
    rapporteren; daarom gebruikt JS body.portrait-grid-first. In die modus mag
    niets boven het gridvenster staan. Alle menu's komen eronder. */
 body.portrait-grid-first {
@@ -2276,7 +2276,7 @@ body.portrait-grid-first .status-panel { order: 4 !important; }
 body.portrait-grid-first .text-panel { order: 5 !important; }
 
 
-/* v4472: grid-first geldt op alle platforms, niet alleen mobile/portrait.
+/* v4474: grid-first geldt op alle platforms, niet alleen mobile/portrait.
    Niets staat nog boven het gridvenster: projectiekeuze, zinmenu, groei/play,
    toolbar, status en documentatie komen onder het canvas. */
 body.grid-first-all,
@@ -2347,7 +2347,7 @@ body.grid-first-all #graphSvg,
   height: 100% !important;
 }
 
-/* v4472: benoemde meerkeuze voor menu's boven het grid.
+/* v4474: benoemde meerkeuze voor menu's boven het grid.
    Standaard: geen enkel menu boven het grid. Alle benoemde menu's kunnen boven het grid. */
 .top-menu-choice-field {
   grid-column: 1 / -1;
@@ -2467,4 +2467,49 @@ body.grid-first-all .top-growth-controls,
 body.grid-first-all .toolbar {
   width: min(100%, 1600px);
   align-self: stretch;
+}
+
+/* v4474: configureerbare vrije LEX-slots op de LEX-as. */
+.lex-config-free-slot {
+  fill: color-mix(in srgb, var(--lex), var(--panel) 84%);
+  stroke: var(--lex);
+  stroke-width: 1.8;
+  stroke-dasharray: 7 4;
+}
+.lex-free-slot-sub {
+  text-anchor: middle;
+  dominant-baseline: middle;
+  pointer-events: none;
+  fill: var(--muted);
+  font-size: calc(10px * var(--og-font-scale));
+  font-weight: 850;
+}
+.mobile-sheet-field {
+  display: grid;
+  grid-template-columns: minmax(7rem, auto) 1fr;
+  align-items: center;
+  gap: .5rem;
+  margin: .35rem 0;
+  font-weight: 850;
+}
+.mobile-sheet-field select {
+  min-height: 2.35rem;
+  border: 1px solid var(--line);
+  border-radius: .72rem;
+  background: var(--panel);
+  color: var(--text);
+  padding: .25rem .55rem;
+  font-weight: 850;
+}
+.lex-extension-field {
+  grid-column: 1 / -1;
+}
+.lex-extension-field label {
+  display: inline-flex;
+  margin-right: .55rem;
+  margin-bottom: .35rem;
+}
+.lex-insertion-box {
+  stroke-width: 2.05;
+  stroke-dasharray: 8 4;
 }

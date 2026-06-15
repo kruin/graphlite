@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'v4472';
+  const VERSION = 'v4474';
   const BASE_CELL = 74;
   const ROOT_SIDE_GAP = 1;
   const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -23,6 +23,12 @@
     layoutDensitySelect: document.getElementById('layoutDensitySelect'),
     viewFitSelect: document.getElementById('viewFitSelect'),
     freeSlotCountSelect: document.getElementById('freeSlotCountSelect'),
+    lexFreeSlotCountSelect: document.getElementById('lexFreeSlotCountSelect'),
+    lexFreeSlotPlacementSelect: document.getElementById('lexFreeSlotPlacementSelect'),
+    lexInsertionContentSelect: document.getElementById('lexInsertionContentSelect'),
+    mobileLexInsertionContentSelect: document.getElementById('mobileLexInsertionContentSelect'),
+    mobileLexFreeSlotCountSelect: document.getElementById('mobileLexFreeSlotCountSelect'),
+    mobileLexFreeSlotPlacementSelect: document.getElementById('mobileLexFreeSlotPlacementSelect'),
     portraitMenuSlotsSelect: document.getElementById('portraitMenuSlotsSelect'),
     mobilePortraitMenuSlotsSelect: document.getElementById('mobilePortraitMenuSlotsSelect'),
     projectionHelp: document.getElementById('projectionHelp'),
@@ -177,11 +183,51 @@
   const SOUTH_LOGICAL_MODES = ['SOV', 'SVO', 'OVS', 'OSV', 'VSO', 'VOS'];
 
   const FREE_SLOT_COUNTS = [
-    { id: '0', label: 'vrije slots: 0' },
-    { id: '1', label: 'vrije slots: 1' },
-    { id: '2', label: 'vrije slots: 2' },
-    { id: '3', label: 'vrije slots: 3' },
-    { id: '4', label: 'vrije slots: 4' }
+    { id: '0', label: 'boomrijen: 0' },
+    { id: '1', label: 'boomrijen: 1' },
+    { id: '2', label: 'boomrijen: 2' },
+    { id: '3', label: 'boomrijen: 3' },
+    { id: '4', label: 'boomrijen: 4' },
+    { id: '5', label: 'boomrijen: 5' },
+    { id: '6', label: 'boomrijen: 6' }
+  ];
+
+  const LEX_FREE_SLOT_COUNTS = [
+    { id: '0', label: 'LEX-slots: 0' },
+    { id: '1', label: 'LEX-slots: 1' },
+    { id: '2', label: 'LEX-slots: 2' },
+    { id: '3', label: 'LEX-slots: 3' },
+    { id: '4', label: 'LEX-slots: 4' },
+    { id: '5', label: 'LEX-slots: 5' },
+    { id: '6', label: 'LEX-slots: 6' },
+    { id: '7', label: 'LEX-slots: 7' },
+    { id: '8', label: 'LEX-slots: 8' }
+  ];
+
+  const LEX_SLOT_PLACEMENTS = [
+    { id: 'after-lex', label: 'onder LEX-woorden', tip: 'Insertieboxen staan onder de huidige LEX-woorden. Veilig voor materiaal dat nog niet tussen bestaande posities hoeft te worden getoond.' },
+    { id: 'after-system', label: 'na slot 0/1/2', tip: 'Insertieboxen staan direct na Comp/TOPIC/V2 en vóór gewone basisposities.' },
+    { id: 'above-system', label: 'boven slot 0', tip: 'Vrije LEX-slots staan boven de bestaande LEX-asposities.' },
+    { id: 'after-surface-1', label: 'tussen positie 1/2', tip: 'Insertiebox op de grens tussen de eerste en tweede LEX-positie.' },
+    { id: 'after-surface-2', label: 'tussen positie 2/3', tip: 'Insertiebox op de grens tussen de tweede en derde LEX-positie. Voorbeeld: HOND BIJT VANDAAG MAN.' },
+    { id: 'after-surface-3', label: 'tussen positie 3/4', tip: 'Insertiebox op de grens na de derde LEX-positie.' }
+  ];
+
+  const LEX_INSERTION_CONTENTS = [
+    { id: 'empty', label: 'slot leeg', text: 'INSERTIEPUNT', sub: 'gereserveerd · andere LEX-as', tip: 'Leeg insertiepunt: reserveert alleen plaats op de LEX-as.' },
+    { id: 'vandaag', label: 'VANDAAG', text: 'VANDAAG', sub: 'bijwoord · andere LEX-as', tip: 'Voorbeeld: HOND BIJT VANDAAG MAN. VANDAAG grijpt aan op de LEX-as, niet als nieuwe boomknoop.' },
+    { id: 'anafoor', label: 'anafoor', text: 'ANAFOOR', sub: 'verwijzing uit andere uiting', tip: 'Voor later: anaforisch element uit een andere zin/uiting.' },
+    { id: 'other-lex-axis', label: 'andere LEX-as', text: 'LEX-AS', sub: 'insertie uit andere boom', tip: 'Voor later: materiaal uit de LEX-as van een andere boom.' }
+  ];
+
+  const LEX_INSERTION_EXTENSION_TARGETS = [
+    { id: 'vp-boundary', label: 'VP-grens V ↔ object', tip: 'Standaard voor VANDAAG: insertie tussen werkwoord en object verlengt de VP-zone/grens, zonder VANDAAG als boomknoop toe te voegen.' },
+    { id: 's-boundary', label: 'S-grens subject ↔ VP', tip: 'Verlengt de grens tussen subject en VP. Nuttig als de insertie tussen zinsdelen ligt.' },
+    { id: 'object-branch', label: 'tak naar object / NP obj / patiens', tip: 'Verlengt de objecttak; bruikbaar als de insertie vlak vóór het object staat.' },
+    { id: 'verb-branch', label: 'tak naar verb / V / pred', tip: 'Verlengt de verb/predicaattak; bruikbaar als de insertie direct aan het verbcluster kleeft.' },
+    { id: 'subject-branch', label: 'tak naar subject / NP subj / agens', tip: 'Verlengt de subjecttak; minder gebruikelijk, maar beschikbaar voor tests.' },
+    { id: 'arg-boundary', label: 'ARG-STRUCT-grens agens ↔ patiens', tip: 'Functionele variant: verlengt de argumentstructuur tussen agens en patiens.' },
+    { id: 'clause-boundary', label: 'CLAUSE-grens pred ↔ ARG-STRUCT', tip: 'Functionele variant: verlengt de grens tussen predicaat en argumentstructuur.' }
   ];
 
   const PORTRAIT_MENU_SLOT_COUNTS = [
@@ -275,6 +321,10 @@
     growthStep: 0,
     southLogicalMode: 'SOV',
     freeSlotCount: 2,
+    lexFreeSlotCount: 1,
+    lexFreeSlotPlacement: 'after-surface-2',
+    lexInsertionContent: 'vandaag',
+    lexInsertionExtensionTargets: ['vp-boundary'],
     portraitMenuSlots: 0,
     topMenusAbove: [],
     lastSupportedGrowthStep: 0,
@@ -995,6 +1045,76 @@
     return Math.max(0, Math.min(6, Math.round(n)));
   }
 
+  function lexFreeSlotCount() {
+    const n = Number(state.lexFreeSlotCount);
+    if (!Number.isFinite(n)) return 2;
+    return Math.max(0, Math.min(8, Math.round(n)));
+  }
+
+  function validLexSlotPlacement(value = state.lexFreeSlotPlacement) {
+    const id = String(value || 'after-lex');
+    return LEX_SLOT_PLACEMENTS.some(option => option.id === id) ? id : 'after-lex';
+  }
+
+  function lexSlotPlacementLabel(id = validLexSlotPlacement()) {
+    return LEX_SLOT_PLACEMENTS.find(option => option.id === id)?.label || id;
+  }
+
+  function lexSlotPlacementTip(id = validLexSlotPlacement()) {
+    return LEX_SLOT_PLACEMENTS.find(option => option.id === id)?.tip || '';
+  }
+
+  function validLexInsertionContent(value = state.lexInsertionContent) {
+    const id = String(value || 'empty');
+    return LEX_INSERTION_CONTENTS.some(option => option.id === id) ? id : 'empty';
+  }
+
+  function lexInsertionContentDef(id = validLexInsertionContent()) {
+    return LEX_INSERTION_CONTENTS.find(option => option.id === id) || LEX_INSERTION_CONTENTS[0];
+  }
+
+  function validLexInsertionTargets(value = state.lexInsertionExtensionTargets) {
+    const allowed = new Set(LEX_INSERTION_EXTENSION_TARGETS.map(option => option.id));
+    const out = [];
+    (Array.isArray(value) ? value : []).forEach(item => {
+      const id = String(item || '');
+      if (allowed.has(id) && !out.includes(id)) out.push(id);
+    });
+    return out;
+  }
+
+  function lexInsertionTargetLabel(id) {
+    return LEX_INSERTION_EXTENSION_TARGETS.find(option => option.id === id)?.label || id;
+  }
+
+  function lexInsertionTargetTip(id) {
+    return LEX_INSERTION_EXTENSION_TARGETS.find(option => option.id === id)?.tip || '';
+  }
+
+  function insertionBranchExtensionRows() {
+    return lexFreeSlotCount() > 0 ? Math.max(1, lexFreeSlotCount()) : 0;
+  }
+
+  function lexFreeSlotDescriptors() {
+    const placement = validLexSlotPlacement();
+    const content = lexInsertionContentDef();
+    const extensionTargets = validLexInsertionTargets();
+    return Array.from({ length: lexFreeSlotCount() }, (_, index) => ({
+      id: `lex-insert-${index + 1}`,
+      label: `LEX-insertie ${index + 1}`,
+      kind: 'lex-axis-insertion-box',
+      axis: 'LEX',
+      placement,
+      content: content.id,
+      text: content.text,
+      sub: content.sub,
+      extension_targets: extensionTargets,
+      insertion_grips_tree: false,
+      effect: 'extends-selected-branches-or-box-boundaries',
+      accepts_future_sources: ['other-lex-axis', 'other-tree', 'anaphoric-element', 'adverbial-headless-clause']
+    }));
+  }
+
   function reservedPortraitMenuSlots() {
     const n = Number(state.portraitMenuSlots);
     if (!Number.isFinite(n)) return 0;
@@ -1037,6 +1157,95 @@
     return layout;
   }
 
+  function descendantIds(layout, rootId) {
+    const out = new Set([rootId]);
+    let changed = true;
+    while (changed) {
+      changed = false;
+      for (const edge of layout.edges || []) {
+        if (out.has(edge.from) && !out.has(edge.to)) {
+          out.add(edge.to);
+          changed = true;
+        }
+      }
+    }
+    return out;
+  }
+
+  function recomputeLayoutBox(layout) {
+    if (!layout?.nodes?.length) return layout;
+    let box = { minX: layout.nodes[0].x, maxX: layout.nodes[0].x, minY: layout.nodes[0].y, maxY: layout.nodes[0].y };
+    for (const n of layout.nodes.slice(1)) box = unionBox(box, { minX: n.x, maxX: n.x, minY: n.y, maxY: n.y });
+    for (const b of layout.boxes || []) box = unionBox(box, b);
+    layout.box = box;
+    return layout;
+  }
+
+  function shiftSubtreeY(layout, rootNodeId, dy) {
+    if (!layout || !rootNodeId || !dy) return layout;
+    const ids = descendantIds(layout, rootNodeId);
+    const original = new Map(layout.nodes.map(n => [n.id, { x: n.x, y: n.y }]));
+    for (const n of layout.nodes) if (ids.has(n.id)) n.y += dy;
+    for (const e of layout.edges) {
+      if (ids.has(e.from)) e.fromY += dy;
+      if (ids.has(e.to)) e.toY += dy;
+    }
+    for (const b of layout.boxes) {
+      const rootInside = ids.has(b.nodeId);
+      const containedShifted = [...ids].some(id => {
+        const pos = original.get(id);
+        return pos && pos.x >= b.minX && pos.x <= b.maxX && pos.y >= b.minY && pos.y <= b.maxY;
+      });
+      if (rootInside) {
+        b.minY += dy;
+        b.maxY += dy;
+        if (typeof b.rootY === 'number') b.rootY += dy;
+      } else if (containedShifted) {
+        b.maxY += dy;
+      }
+    }
+    return recomputeLayoutBox(layout);
+  }
+
+  function findLayoutNode(layout, target, mode = 'syntax') {
+    if (!layout) return null;
+    if (target === 'subject-branch') {
+      return mode === 'functional'
+        ? nodeByRoleOrPattern(layout, ['agens', 'subject'], ['ft-agens', 'agens'], { leaf: false })
+        : nodeByRoleOrPattern(layout, ['subject'], ['np-subj', 'subject'], { leaf: false });
+    }
+    if (target === 'object-branch' || target === 'vp-boundary' || target === 'arg-boundary') {
+      return mode === 'functional'
+        ? nodeByRoleOrPattern(layout, ['patiens', 'object'], ['ft-patiens', 'patiens'], { leaf: false })
+        : nodeByRoleOrPattern(layout, ['object'], ['np-obj', 'object'], { leaf: false });
+    }
+    if (target === 'verb-branch' || target === 'clause-boundary') {
+      return mode === 'functional'
+        ? nodeByRoleOrPattern(layout, ['pred', 'predicate'], ['ft-pred', 'pred'], { leaf: false })
+        : nodeByRoleOrPattern(layout, ['predicate', 'aux', 'participle'], ['vp-perfectum', 'aux', 'vdw', 'v'], { leaf: false });
+    }
+    if (target === 's-boundary') return (layout.nodes || []).find(n => String(n.id || '').toLowerCase().includes('vp') || String(n.label || '').toLowerCase() === 'vp');
+    return null;
+  }
+
+  function applyLexInsertionBranchExtensions(layout, mode = 'syntax') {
+    const rows = insertionBranchExtensionRows();
+    const targets = validLexInsertionTargets();
+    if (!layout || rows <= 0 || !targets.length) return layout;
+    const applied = [];
+    let offset = 0;
+    for (const target of targets) {
+      const node = findLayoutNode(layout, target, mode);
+      if (!node) continue;
+      const dy = rows + offset;
+      shiftSubtreeY(layout, node.id, dy);
+      applied.push({ target, nodeId: node.id, rows: dy, label: lexInsertionTargetLabel(target) });
+      offset += Math.max(0, rows - 1);
+    }
+    layout.lexInsertionExtensions = applied;
+    return recomputeLayoutBox(layout);
+  }
+
   function layoutFirstSide() {
     return state.functionalOrder === 'right-first' ? 1 : -1;
   }
@@ -1050,7 +1259,7 @@
 
   function getSyntaxLayout() {
     const firstSide = layoutFirstSide();
-    return normalizeLayout(addOpnTopicalizationSlot(layoutTree(cloneTree(treeSpec()), 0, { firstSide, branchOrder: state.branchOrder, branchOverrides: state.branchOverrides }), STRUCTURE_CONFIG.syntaxRoot || 's'));
+    return applyLexInsertionBranchExtensions(normalizeLayout(addOpnTopicalizationSlot(layoutTree(cloneTree(treeSpec()), 0, { firstSide, branchOrder: state.branchOrder, branchOverrides: state.branchOverrides }), STRUCTURE_CONFIG.syntaxRoot || 's')), 'syntax');
   }
 
   function layoutFunctionalRoleTree(order = 'left-first') {
@@ -1131,7 +1340,7 @@
 
   function getFunctionalLayout() {
     const firstSide = layoutFirstSide();
-    return normalizeLayout(addOpnTopicalizationSlot(layoutTree(cloneTree(functionalSpec()), 0, { firstSide, branchOrder: state.branchOrder, branchOverrides: state.branchOverrides }), STRUCTURE_CONFIG.functionalRoot || 'ft-clause'));
+    return applyLexInsertionBranchExtensions(normalizeLayout(addOpnTopicalizationSlot(layoutTree(cloneTree(functionalSpec()), 0, { firstSide, branchOrder: state.branchOrder, branchOverrides: state.branchOverrides }), STRUCTURE_CONFIG.functionalRoot || 'ft-clause')), 'functional');
   }
 
   function sortChildrenByRanks(children = [], rankFn) {
@@ -1215,12 +1424,12 @@
 
   function getSouthAwareSyntaxLayout() {
     const firstSide = layoutFirstSide();
-    return normalizeLayout(addOpnTopicalizationSlot(layoutTree(southAwareSyntaxSpec(), 0, { firstSide, branchOrder: state.branchOrder, branchOverrides: state.branchOverrides }), STRUCTURE_CONFIG.syntaxRoot || 's'));
+    return applyLexInsertionBranchExtensions(normalizeLayout(addOpnTopicalizationSlot(layoutTree(southAwareSyntaxSpec(), 0, { firstSide, branchOrder: state.branchOrder, branchOverrides: state.branchOverrides }), STRUCTURE_CONFIG.syntaxRoot || 's')), 'syntax');
   }
 
   function getSouthAwareFunctionalLayout() {
     const firstSide = layoutFirstSide();
-    return normalizeLayout(addOpnTopicalizationSlot(layoutTree(southAwareFunctionalSpec(), 0, { firstSide, branchOrder: state.branchOrder, branchOverrides: state.branchOverrides }), STRUCTURE_CONFIG.functionalRoot || 'ft-clause'));
+    return applyLexInsertionBranchExtensions(normalizeLayout(addOpnTopicalizationSlot(layoutTree(southAwareFunctionalSpec(), 0, { firstSide, branchOrder: state.branchOrder, branchOverrides: state.branchOverrides }), STRUCTURE_CONFIG.functionalRoot || 'ft-clause')), 'functional');
   }
 
   function southLogicalItemsFromCentralLayout(layout, origin, projectionKind = 'syntax', order = southLogicalOrder()) {
@@ -1264,7 +1473,7 @@
   }
 
   function isPortraitMobileViewport() {
-    // v4472: grid-first and fit-height are no longer mobile-only.
+    // v4474: grid-first and fit-height are no longer mobile-only.
     // The canvas height is based on the actual viewBox on every platform.
     return true;
   }
@@ -1278,7 +1487,7 @@
   }
 
   function syncPortraitMenuSpace() {
-    // v4472: de oude numerieke onderruimte blijft op 0. De relevante instelling
+    // v4474: de oude numerieke onderruimte blijft op 0. De relevante instelling
     // is nu: welke benoemde menu's mogen boven het grid staan.
     document.documentElement?.style.setProperty('--portrait-menu-reserve', '0px');
     document.documentElement?.style.setProperty('--portrait-menu-slots', '0');
@@ -1373,7 +1582,7 @@
     syncPortraitStageMode();
     if (!els.canvasWrap) return;
     syncPortraitMenuSpace();
-    // v4472: het gridvenster wordt gemaximeerd op de actuele fit-box
+    // v4474: het gridvenster wordt gemaximeerd op de actuele fit-box
     // van boom + assen. Het canvas schaalt dus niet groter dan nodig.
     const fit = box || parseViewBox();
     const validFit = fit && Number.isFinite(fit.w) && fit.w > 0 && Number.isFinite(fit.h) && fit.h > 0;
@@ -1825,6 +2034,45 @@
     return v2SlotY(y0, items);
   }
 
+  function lexSystemSlotCount(items = state.example?.lexItems || []) {
+    let count = 0;
+    if (hasCompItem(items)) count += 1;
+    if (showTopicSlot(items)) count += 1;
+    if (showV2Slot(items)) count += 1;
+    return count;
+  }
+
+  function lexConfiguredFreeSlots(y0, items = state.example?.lexItems || [], contextYs = []) {
+    const count = lexFreeSlotCount();
+    if (!count) return [];
+    const placement = validLexSlotPlacement();
+    const systemCount = lexSystemSlotCount(items);
+    const maxContextY = contextYs.filter(Number.isFinite).length ? Math.max(...contextYs.filter(Number.isFinite)) : y0 + Math.max(4, items.length + 1) * 64;
+    let startY;
+    if (placement === 'above-system') startY = y0 - count * 64;
+    else if (placement === 'after-system') startY = y0 + systemCount * 64;
+    else if (placement === 'after-surface-1') startY = y0 + (systemCount + 1) * 64;
+    else if (placement === 'after-surface-2') startY = y0 + (systemCount + 2) * 64;
+    else if (placement === 'after-surface-3') startY = y0 + (systemCount + 3) * 64;
+    else startY = maxContextY + 64;
+    return Array.from({ length: count }, (_, index) => ({
+      id: `lex-insert-${index + 1}`,
+      label: `LEX-insertie ${index + 1}`,
+      caption: lexInsertionContentDef().id === 'vandaag' ? 'extern bijwoord' : `extern/anafoor ${index + 1}`,
+      content: lexInsertionContentDef(),
+      y: startY + index * 64,
+      placement
+    }));
+  }
+
+  function drawLexConfiguredFreeSlot(g, x, slot) {
+    const content = slot.content || lexInsertionContentDef();
+    g.appendChild(svgEl('rect', { x: x - 118, y: slot.y - 30, width: 236, height: 60, rx: 17, class: 'lex-free-slot lex-config-free-slot lex-insertion-box' }));
+    g.appendChild(svgEl('text', { x, y: slot.y - 38, class: 'slot-caption' }, slot.label));
+    g.appendChild(svgEl('text', { x, y: slot.y - 4, class: 'lex-local-label' }, content.text || 'INSERTIEPUNT'));
+    g.appendChild(svgEl('text', { x, y: slot.y + 15, class: 'lex-free-slot-sub' }, content.sub || 'andere LEX-as / anafoor'));
+  }
+
   function drawLexTopicSlot(g, x, y) {
     g.appendChild(svgEl('rect', { x: x - 98, y: y - 27, width: 196, height: 54, rx: 16, class: 'lex-free-slot topic-slot' }));
     g.appendChild(svgEl('text', { x, y: y - 34, class: 'slot-caption' }, 'slot 1 · eerste zinsdeel'));
@@ -2077,7 +2325,8 @@
     const v2Index = isMainV2Rule() ? items.findIndex((item, i) => movementForItem(item, i)?.slot === 'v2') : -1;
     const topicSlotY = topicIndex >= 0 ? lexTopicSlotY(sourceMap, y0, items) : null;
     const v2SlotY = v2Index >= 0 ? lexV2SlotY(sourceMap, y0, items) : null;
-    const axisYs = [...itemYs, ...baseYs, ...projectionYs, ...(topicSlotY === null ? [] : [topicSlotY]), ...(v2SlotY === null ? [] : [v2SlotY]), y0 - 48, y0 + Math.max(4, items.length + 1) * 64 + 40];
+    const configuredSlots = lexConfiguredFreeSlots(y0, items, [...itemYs, ...baseYs, ...projectionYs, ...(topicSlotY === null ? [] : [topicSlotY]), ...(v2SlotY === null ? [] : [v2SlotY])]);
+    const axisYs = [...itemYs, ...baseYs, ...projectionYs, ...configuredSlots.map(slot => slot.y), ...(topicSlotY === null ? [] : [topicSlotY]), ...(v2SlotY === null ? [] : [v2SlotY]), y0 - 48, y0 + Math.max(4, items.length + 1) * 64 + 40];
     const axisMinY = Math.min(...axisYs) - 36;
     const axisMaxY = Math.max(...axisYs) + 44;
     g.appendChild(svgEl('line', { x1: x, y1: axisMinY, x2: x, y2: axisMaxY, class: 'lex-axis-line' }));
@@ -2085,10 +2334,11 @@
     const positions = new Map();
     if (topicSlotY !== null && isMainV2Rule()) drawLexTopicSlot(g, x, topicSlotY);
     if (v2SlotY !== null) drawLexV2Slot(g, x, v2SlotY);
+    configuredSlots.forEach(slot => drawLexConfiguredFreeSlot(g, x, slot));
 
     const ruleText = isMainV2Rule()
-      ? 'Plaatsingsregel: eerst horizontale basisprojectie; daarna alleen expliciete Wissels naar vrije slots 0/1/2; traces blijven op de oude basisplek.'
-      : 'Plaatsingsregel: resultaat = voorbeeldzin; Comp gebruikt slot 0; geen automatische subject/object-Wissel.';
+      ? `Plaatsingsregel: basisprojectie + Wissels naar 0/1/2; configureerbare LEX-insertieboxen (${lexFreeSlotCount()} · ${lexSlotPlacementLabel()}) zijn LEX-as-inserties.`
+      : `Plaatsingsregel: resultaat = voorbeeldzin; Comp gebruikt slot 0; configureerbare LEX-insertieboxen (${lexFreeSlotCount()} · ${lexSlotPlacementLabel()}) blijven LEX-as-inserties.`;
     drawCanvasGuideText(g, x + 150, axisMinY + 18, ruleText, 'wissel-label');
 
     // v4450: geen stippel- of verplaatsingslijnen vanuit de boom naar de LEX-as.
@@ -2386,7 +2636,7 @@
       .map(id => functionalNodes.find(n => n.id === id)?.label || id)
       .join(' + ') || 'role-boxen';
     if (options.showTitle !== false) drawAxisTitle(g, origin.x - 180, origin.y - 70, `OPN · functionele structuur · ${rootLabel} → ${roleNames} · ${state.functionalOrder}`);
-    drawAxisTitle(g, origin.x - 176, origin.y - 48, `v4472 · ${branchModeLabel()} · vrije plaatsing + gereserveerde vrije slots`);
+    drawAxisTitle(g, origin.x - 176, origin.y - 48, `v4474 · ${branchModeLabel()} · vrije plaatsing + gereserveerde vrije slots`);
     const growthPlan = growthPlanForLayout(layout);
     layout.__growthPlan = growthPlan;
     drawSubtreeBoxes(g, layout, origin, growthPlan);
@@ -2465,7 +2715,7 @@
     const g = baseSvg('source-view');
     if (state.centerMode === 'functional') {
       drawFunctional(g, { x: 760, y: 92 });
-      drawAxisTitle(g, 520, 70, `BRON · OPN-functioneel · vrije slots + structure-config · ${state.functionalOrder}`);
+      drawAxisTitle(g, 520, 70, `BRON · OPN-functioneel · vrije boomrijen + LEX-insertieslots + structure-config · ${state.functionalOrder}`);
     } else {
       drawAxisTitle(g, 490, 58, 'BRON · OPN-syntax-tree · vrije HOR/VER-boxplaatsing + vrije-slotruimte');
       drawSyntaxTree(g, { x: 780, y: 82 });
@@ -2721,6 +2971,25 @@
     }
   }
 
+  function renderLexInsertionTargetControls() {
+    const selected = new Set(validLexInsertionTargets());
+    document.querySelectorAll('[data-lex-extension-target]').forEach(input => {
+      const id = input.getAttribute('data-lex-extension-target');
+      input.checked = selected.has(id);
+      const tip = lexInsertionTargetTip(id);
+      input.title = `${lexInsertionTargetLabel(id)}. ${tip}`;
+      const wrapper = input.closest('label');
+      if (wrapper) wrapper.title = input.title;
+    });
+    const text = selected.size
+      ? `Takverlenging: ${[...selected].map(lexInsertionTargetLabel).join(' + ')}. Insertie grijpt aan op de LEX-as; de boom krijgt alleen extra taklengte/boxruimte.`
+      : 'Geen takverlenging: insertie blijft alleen op de LEX-as zichtbaar.';
+    document.querySelectorAll('[data-lex-extension-help]').forEach(node => {
+      node.textContent = text;
+      node.title = [...selected].map(lexInsertionTargetTip).join(' ');
+    });
+  }
+
   function syncControls() {
     fillSelect(els.exampleSelect, EXAMPLES, state.example.id);
     fillSelect(els.desktopExampleSelect, EXAMPLES, state.example.id);
@@ -2735,6 +3004,15 @@
     fillSelect(els.layoutDensitySelect, LAYOUT_DENSITIES, state.layoutDensity);
     fillSelect(els.viewFitSelect, VIEW_FIT_MODES, state.viewFitMode);
     fillSelect(els.freeSlotCountSelect, FREE_SLOT_COUNTS, String(reservedFreeSlotCount()));
+    fillSelect(els.lexFreeSlotCountSelect, LEX_FREE_SLOT_COUNTS, String(lexFreeSlotCount()));
+    fillSelect(els.mobileLexFreeSlotCountSelect, LEX_FREE_SLOT_COUNTS, String(lexFreeSlotCount()));
+    fillSelect(els.lexFreeSlotPlacementSelect, LEX_SLOT_PLACEMENTS, validLexSlotPlacement());
+    fillSelect(els.mobileLexFreeSlotPlacementSelect, LEX_SLOT_PLACEMENTS, validLexSlotPlacement());
+    fillSelect(els.lexInsertionContentSelect, LEX_INSERTION_CONTENTS, validLexInsertionContent());
+    fillSelect(els.mobileLexInsertionContentSelect, LEX_INSERTION_CONTENTS, validLexInsertionContent());
+    [els.lexFreeSlotPlacementSelect, els.mobileLexFreeSlotPlacementSelect].forEach(select => { if (select) select.title = lexSlotPlacementTip(); });
+    [els.lexInsertionContentSelect, els.mobileLexInsertionContentSelect].forEach(select => { if (select) select.title = lexInsertionContentDef().tip; });
+    renderLexInsertionTargetControls();
     renderTopMenuChoiceControls();
     syncPortraitMenuSpace();
     syncTopMenuPlacement();
@@ -2844,6 +3122,17 @@
       branch_order: state.branchOrder,
       branch_overrides: state.branchOverrides,
       free_slot_count: reservedFreeSlotCount(),
+      lex_free_slot_count: lexFreeSlotCount(),
+      lex_free_slot_placement: validLexSlotPlacement(),
+      lex_insertion_content: validLexInsertionContent(),
+      lex_insertion_extension_targets: validLexInsertionTargets(),
+      lex_free_slots: lexFreeSlotDescriptors(),
+      lex_free_slot_schema: {
+        kind: 'insertion-point',
+        target: 'LEX-axis',
+        future_sources: ['other-lex-axis', 'other-tree', 'anaphoric-element', 'adverbial-headless-clause'],
+        multi_tree_ready: true
+      },
       top_menus_above_grid: normalizeTopMenusAbove(),
       syntax_rules: syntaxRules(),
       structure_config: 'structure-config.html',
@@ -2866,6 +3155,10 @@
         if (payload.functional_order === 'left-first' || payload.functional_order === 'right-first') state.functionalOrder = payload.functional_order;
         if (payload.branch_order && BRANCH_ORDERS.some(order => order.id === payload.branch_order)) state.branchOrder = payload.branch_order;
         if (Number.isFinite(Number(payload.free_slot_count))) state.freeSlotCount = Math.max(0, Math.min(6, Number(payload.free_slot_count)));
+        if (Number.isFinite(Number(payload.lex_free_slot_count))) state.lexFreeSlotCount = Math.max(0, Math.min(8, Number(payload.lex_free_slot_count)));
+        if (payload.lex_free_slot_placement) state.lexFreeSlotPlacement = validLexSlotPlacement(payload.lex_free_slot_placement);
+        if (payload.lex_insertion_content) state.lexInsertionContent = validLexInsertionContent(payload.lex_insertion_content);
+        if (Array.isArray(payload.lex_insertion_extension_targets)) state.lexInsertionExtensionTargets = validLexInsertionTargets(payload.lex_insertion_extension_targets);
         if (Array.isArray(payload.top_menus_above_grid)) state.topMenusAbove = normalizeTopMenusAbove(payload.top_menus_above_grid);
         else if (Number.isFinite(Number(payload.portrait_menu_slots))) state.topMenusAbove = [];
         if (payload.branch_overrides && typeof payload.branch_overrides === 'object') {
@@ -2900,8 +3193,13 @@
       `lex_rule: ${state.example.lexRule}`,
       `placement_rule: ${isMainV2Rule() ? 'LEX-as: eerst horizontale basisprojectie; daarna lokale Wissel naar voorbeeldzinvolgorde; oude basispositie = trace' : 'geen V2-Wissel; Comp-slot 0 indien aanwezig'}`,
       `free_slot_count: ${reservedFreeSlotCount()}`,
+      `lex_free_slot_count: ${lexFreeSlotCount()}`,
+      `lex_free_slot_placement: ${validLexSlotPlacement()} (${lexSlotPlacementLabel()})`,
+      `lex_insertion_content: ${validLexInsertionContent()} (${lexInsertionContentDef().label})`,
+      `lex_insertion_extension_targets: ${validLexInsertionTargets().map(lexInsertionTargetLabel).join(', ') || 'geen'}`,
+      `lex_free_slots: configureerbare insertieboxen op de LEX-as; future_sources=other-lex-axis, other-tree, anaphor, adverbial-headless-clause`,
       `top_menus_above_grid: ${normalizeTopMenusAbove().map(topMenuLabel).join(', ') || 'geen'}`,
-      `free_slots: slot1=TOPIC, slot2=V2/PV; extra slots = gereserveerde lege rijen onder de wortel`,
+      `free_slots: boomrijen voor open OPN-plaatsing; LEX-inserties zijn aparte as-posities`,
       `tree_choice: ${activeTreeChoice()}`,
       `movement_summary: ${movementSummaryLabel()}`,
       `functional_order: ${state.functionalOrder}`,
@@ -3221,6 +3519,26 @@
     els.layoutDensitySelect?.addEventListener('change', event => { state.layoutDensity = event.target.value || 'auto'; resetManualViewBox(); render(); });
     els.viewFitSelect?.addEventListener('change', event => { state.viewFitMode = event.target.value || 'auto'; resetManualViewBox(); render(); });
     els.freeSlotCountSelect?.addEventListener('change', event => { state.freeSlotCount = Math.max(0, Math.min(6, Number(event.target.value) || 0)); resetManualViewBox(); render(); });
+    const updateLexFreeSlotCount = event => { state.lexFreeSlotCount = Math.max(0, Math.min(8, Number(event.target.value) || 0)); resetManualViewBox(); render(); };
+    const updateLexFreeSlotPlacement = event => { state.lexFreeSlotPlacement = validLexSlotPlacement(event.target.value); resetManualViewBox(); render(); };
+    els.lexFreeSlotCountSelect?.addEventListener('change', updateLexFreeSlotCount);
+    els.mobileLexFreeSlotCountSelect?.addEventListener('change', updateLexFreeSlotCount);
+    els.lexFreeSlotPlacementSelect?.addEventListener('change', updateLexFreeSlotPlacement);
+    els.mobileLexFreeSlotPlacementSelect?.addEventListener('change', updateLexFreeSlotPlacement);
+    const updateLexInsertionContent = event => { state.lexInsertionContent = validLexInsertionContent(event.target.value); resetManualViewBox(); render(); };
+    els.lexInsertionContentSelect?.addEventListener('change', updateLexInsertionContent);
+    els.mobileLexInsertionContentSelect?.addEventListener('change', updateLexInsertionContent);
+    document.querySelectorAll('[data-lex-extension-target]').forEach(input => {
+      input.addEventListener('change', event => {
+        const id = event.target?.getAttribute?.('data-lex-extension-target');
+        const current = validLexInsertionTargets();
+        if (event.target.checked && !current.includes(id)) current.push(id);
+        if (!event.target.checked) { const idx = current.indexOf(id); if (idx >= 0) current.splice(idx, 1); }
+        state.lexInsertionExtensionTargets = validLexInsertionTargets(current);
+        resetManualViewBox();
+        render();
+      });
+    });
     document.querySelectorAll('[data-top-menu-choice]').forEach(input => {
       input.addEventListener('change', event => {
         const id = event.target?.getAttribute?.('data-top-menu-choice');

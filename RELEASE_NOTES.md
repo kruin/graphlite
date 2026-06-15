@@ -1,5 +1,5 @@
 
-## v4472 · grid maximaal passend + ruimere topmenu-keuze
+## v4474 · grid maximaal passend + ruimere topmenu-keuze
 
 - Het gridvenster wordt nu gemaximeerd op de actuele fit-box van boom + assen; het schaalt niet groter dan nodig.
 - De fitmarge is kleiner, zodat minder lege rasterruimte rond boom en assen overblijft.
@@ -7,7 +7,7 @@
 - Genoteerd: een NOORD-as is mogelijk, maar nog niet gebruikt.
 
 
-## v4472 · Menu’s boven grid als benoemde meerkeuze
+## v4474 · Menu’s boven grid als benoemde meerkeuze
 
 - De oude instelling `Ruimte onder grid` is vervangen door een benoemde meerkeuze: `Menu’s boven grid`.
 - De gebruiker kiest maximaal vier menu’s die boven het grid mogen staan.
@@ -15,9 +15,9 @@
 - Standaard staat geen enkel menu boven het grid; alle menu’s staan dan onder het grid.
 - De tooltip en helptekst leggen per keuze uit waarom een taalkundige die boven het grid kan willen zetten.
 
-# OpenGraph Lite Viewer v4472
+# OpenGraph Lite Viewer v4474
 
-## v4472 — benoemde menu's boven het grid
+## v4474 — benoemde menu's boven het grid
 
 - Vervangt `Ruimte onder grid` door `Menu's boven grid`.
 - User kiest maximaal vier benoemde menu's die boven het grid mogen staan.
@@ -25,9 +25,9 @@
 - Niet gekozen menu's staan onder het grid.
 - Max > 2 wordt geblokkeerd en toegelicht in de viewer.
 
-# OpenGraph Lite Viewer v4472
+# OpenGraph Lite Viewer v4474
 
-## v4472 — mobile portrait grid-first
+## v4474 — mobile portrait grid-first
 
 - Mobile portrait: grid/boomvenster staat standaard helemaal bovenaan; header, projectiebalk, zinmenu en toolbar staan niet meer boven het grid.
 - Nieuwe config `portrait_menu_slots`: ruimte boven het grid voor 0, 1 of 2 toekomstige menuhoogtes; standaard 0.
@@ -378,3 +378,6 @@
 - Projectie-instellingen staan rechts naast de boom.
 - De vaste Groei-balk staat boven het canvas en volgt dezelfde linker kolom als het boomvenster.
 - Projectietabs blijven vast zichtbaar boven de boom.
+
+
+Aanvulling v4474: LEX vrije slots zijn plaatsbare insertiepunten op de LEX-as voor later materiaal uit andere LEX-assen/bomen en anafora. Boom vrije rijen blijven apart.
