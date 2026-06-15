@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
-  <title>OpenGraph Lite Viewer v4460 · debug</title>
+  <title>OpenGraph Lite Viewer v4466 · debug</title>
   <style>
     body{font-family:system-ui,sans-serif;margin:24px;line-height:1.5;color:#0f172a;background:#f8fafc}
     code{background:#e2e8f0;padding:2px 5px;border-radius:4px}
@@ -13,40 +13,58 @@
   </style>
 </head>
 <body>
-  <h1>OpenGraph Lite Viewer v4460 · debug</h1>
+  <h1>OpenGraph Lite Viewer v4466 · debug</h1>
   <p>Deze pagina test of statische bestanden bereikbaar zijn en of <code>index.html</code> echt de viewer-root is. <code>viewer.html</code> is toegevoegd als fallback-entry.</p>
   <pre id="out">Start...</pre>
   <p>
-    <a class="button" href="reset-cache.html?v4460">Reset cache</a>
-    <a class="button" href="index.html?v4460&fresh=1">Open / index.html</a>
-    <a class="button" href="viewer.html?v4460&fresh=1">Open viewer.html</a>
-    <a class="button" href="docs/docs-home.html?v4460">Docs</a>
+    <a class="button" href="reset-cache.html?v4466">Reset cache</a>
+    <a class="button" href="index.html?v4466&fresh=1">Open / index.html</a>
+    <a class="button" href="viewer.html?v4466&fresh=1">Open viewer.html</a>
+    <a class="button" href="docs/docs-home.html?v4466">Docs</a>
+    <a class="button" href="carousel/index.html?v4466">Carousel</a>
   </p>
   <script>
-    const version = 'v4460';
+    const version = 'v4466';
     const tests = [
-      {file:'index.html?v4460', kind:'viewer-index'},
-      {file:'viewer.html?v4460', kind:'viewer-index'},
-      {file:'styles.css?v4460'},
-      {file:'viewer.js?v4460'},
-      {file:'structure-config.html?v4460'},
-      {file:'examples-input.html?v4460'},
-      {file:'lexicon-config.html?v4460'},
-      {file:'lexicon-editor.html?v4460'},
-      {file:'docs/docs-home.html?v4460', kind:'docs-home'},
-      {file:'docs/index.html?v4460', kind:'should-404'},
+      {file:'index.html?v4466', kind:'viewer-index'},
+      {file:'viewer.html?v4466', kind:'viewer-index'},
+      {file:'styles.css?v4466'},
+      {file:'viewer.js?v4466'},
+      {file:'structure-config.html?v4466'},
+      {file:'examples-input.html?v4466'},
+      {file:'lexicon-config.html?v4466'},
+      {file:'lexicon-editor.html?v4466'},
+      {file:'docs/docs-home.html?v4466', kind:'docs-home'},
+      {file:'carousel/index.html?v4466', kind:'carousel-index'},
+      {file:'carousel/carousel.js?v4466'},
+      {file:'carousel/carousel.css?v4466'},
+      {file:'carousel/slides.json?v4466', kind:'slides-json'},
+      {file:'carousel/slides/01-simpele-vertakking-een-level.png?v4466', kind:'slide-image'},
+      {file:'docs/index.html?v4466', kind:'should-404'},
       {file:'.nojekyll'},
-      {file:'reset-cache.html?v4460'}
+      {file:'reset-cache.html?v4466'}
     ];
     const out = document.getElementById('out');
     function judge(test, r, text) {
       if (test.kind === 'viewer-index') {
-        const isViewer = text.includes('data-opengraph-app="viewer"') && text.includes('graphSvg') && text.includes('viewer.js?v4460');
+        const isViewer = text.includes('data-opengraph-app="viewer"') && text.includes('graphSvg') && text.includes('viewer.js?v4466');
         return {ok: r.ok && isViewer, extra: isViewer ? ' · viewer-index OK' : ' · FOUT: dit lijkt docs/oud index.html, niet de viewer'};
       }
       if (test.kind === 'docs-home') {
-        const ok = r.ok && text.includes('OpenGraph Lite Viewer · docs v4460');
+        const ok = r.ok && text.includes('OpenGraph Lite Viewer · docs v4466');
         return {ok, extra: ok ? ' · docs-home OK' : ' · FOUT: docs-home ontbreekt of oud'};
+      }
+      if (test.kind === 'carousel-index') {
+        const ok = r.ok && text.includes('JAN Carousel v4466') && text.includes('carousel.js?v4466');
+        return {ok, extra: ok ? ' · carousel-index OK' : ' · FOUT: carousel-index ontbreekt of oud'};
+      }
+      if (test.kind === 'slides-json') {
+        let ok = false;
+        try { ok = r.ok && Array.isArray(JSON.parse(text)) && JSON.parse(text).length > 0; } catch (_err) { ok = false; }
+        return {ok, extra: ok ? ' · slides.json OK' : ' · FOUT: slides.json niet leesbaar'};
+      }
+      if (test.kind === 'slide-image') {
+        return {ok: r.ok && text.length > 1000, extra: r.ok ? ' · slide-image OK' : ' · FOUT: slide image ontbreekt'};
       }
       if (test.kind === 'should-404') {
         return {ok: r.status === 404, extra: r.status === 404 ? ' · correct verwijderd' : ' · WAARSCHUWING: docs/index.html bestaat nog'};

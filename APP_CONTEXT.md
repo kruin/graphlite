@@ -100,3 +100,8 @@ Beschreven zinstypen: hoofdzin, bijzin met OMDAT, topicalisatie, perfectum en vo
 - `commit_and_push.bat` wordt vanaf deze versie standaard meegeleverd in de ZIP-root.
 - LOG/FT toont thematische rollen expliciet: `AGENS` voor subject/handelende deelnemer en `PATIENS` voor object/ondergaande deelnemer.
 - De syntaxrollen blijven `subject` en `object`; de functionele projectie benoemt dezelfde lexicale bronnen thematisch.
+
+
+## Carousel-uitleglaag (v4466)
+
+De map `carousel/` bevat de stapbare uitlegbeelden. Gebruik `carousel/index.html?v4466` voor de didactische route; de viewer zelf blijft de interactieve testlaag voor assen, groei, vrije slots en projecties.

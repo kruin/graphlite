@@ -283,3 +283,8 @@ Beschreven zinstypen: hoofdzin, bijzin met OMDAT, topicalisatie, perfectum en vo
 ## v4449 · mobiel
 
 Mobiel gebruikt nu een aparte responsieve presentatie: eerst canvas, daarna bediening. Het canvas is horizontaal scrollbaar om de JAN-boom leesbaar te houden. De layoutregels zelf veranderen niet.
+
+
+## Carousel-uitleglaag (v4466)
+
+De map `carousel/` bevat de stapbare uitlegbeelden. Gebruik `carousel/index.html?v4466` voor de didactische route; de viewer zelf blijft de interactieve testlaag voor assen, groei, vrije slots en projecties.

@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'v4464';
+  const VERSION = 'v4466';
   const BASE_CELL = 74;
   const ROOT_SIDE_GAP = 1;
   const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -172,7 +172,7 @@
     { id: 'fixed', label: 'venster: vast 1500×900' }
   ];
 
-  const SOUTH_LOGICAL_MODES = ['SOV', 'VSO', 'SVO', 'VOS'];
+  const SOUTH_LOGICAL_MODES = ['SOV', 'SVO', 'OVS', 'OSV', 'VSO', 'VOS'];
 
   const FREE_SLOT_COUNTS = [
     { id: '0', label: 'vrije slots: 0' },
@@ -185,10 +185,19 @@
   function southLogicalModeOrder(mode = 'SOV') {
     return ({
       SOV: ['S', 'O', 'V'],
-      VSO: ['V', 'S', 'O'],
       SVO: ['S', 'V', 'O'],
+      OVS: ['O', 'V', 'S'],
+      OSV: ['O', 'S', 'V'],
+      VSO: ['V', 'S', 'O'],
       VOS: ['V', 'O', 'S']
     })[mode] || ['S', 'O', 'V'];
+  }
+
+  function southModeRankMap(mode = state.southLogicalMode || 'SOV') {
+    const order = southLogicalModeOrder(mode);
+    const rank = new Map();
+    order.forEach((item, index) => rank.set(item, index));
+    return rank;
   }
 
 
@@ -1112,9 +1121,7 @@
 
   function southAwareSyntaxSpec(mode = state.southLogicalMode || 'SOV') {
     const tree = cloneTree(treeSpec());
-    const modeCode = String(mode || 'SOV').toUpperCase();
-    const rootVerbFirst = modeCode.startsWith('V');
-    const verbBeforeObject = modeCode === 'SVO' || modeCode === 'VSO';
+    const rank = southModeRankMap(mode);
     function visit(node) {
       if (!node?.children?.length) return;
       node.children.forEach(visit);
@@ -1126,8 +1133,9 @@
           const cl = String(child.label || child.cat || '').toLowerCase();
           const isSubject = cid.includes('np-subj') || (cl === 'np' && String(child.role || '').toLowerCase() === 'subject');
           const isVp = cid.includes('vp') || cl === 'vp';
-          if (rootVerbFirst) return isVp ? 0 : (isSubject ? 1 : 9);
-          return isSubject ? 0 : (isVp ? 1 : 9);
+          if (isSubject) return rank.get('S') ?? 0;
+          if (isVp) return Math.min(rank.get('O') ?? 9, rank.get('V') ?? 9);
+          return 99;
         });
       }
       if (label === 'vp' || id.includes('vp')) {
@@ -1136,8 +1144,9 @@
           const cl = String(child.label || child.cat || '').toLowerCase();
           const isObject = cid.includes('np-obj') || (cl === 'np' && String(child.role || '').toLowerCase() === 'object');
           const isVerbish = cid.includes('v') || cid.includes('aux') || cid.includes('vdw') || cl === 'v' || cl === 'aux' || cl === 'vdw' || cl === 'vp';
-          if (verbBeforeObject) return isVerbish ? 0 : (isObject ? 1 : 9);
-          return isObject ? 0 : (isVerbish ? 1 : 9);
+          if (isObject) return rank.get('O') ?? 0;
+          if (isVerbish) return rank.get('V') ?? 1;
+          return 99;
         });
       }
     }
@@ -1147,9 +1156,7 @@
 
   function southAwareFunctionalSpec(mode = state.southLogicalMode || 'SOV') {
     const tree = cloneTree(functionalSpec());
-    const modeCode = String(mode || 'SOV').toUpperCase();
-    const rootVerbFirst = modeCode.startsWith('V');
-    const objectBeforeSubject = modeCode === 'VOS';
+    const rank = southModeRankMap(mode);
     function visit(node) {
       if (!node?.children?.length) return;
       node.children.forEach(visit);
@@ -1161,8 +1168,9 @@
           const cl = String(child.label || child.cat || '').toLowerCase();
           const isPred = cid.includes('pred') || cl === 'pred';
           const isArgs = cid.includes('arg') || cl.includes('arg-struct');
-          if (rootVerbFirst) return isPred ? 0 : (isArgs ? 1 : 9);
-          return isArgs ? 0 : (isPred ? 1 : 9);
+          if (isPred) return rank.get('V') ?? 0;
+          if (isArgs) return Math.min(rank.get('S') ?? 9, rank.get('O') ?? 9);
+          return 99;
         });
       }
       if (id.includes('arg') || label.includes('arg-struct')) {
@@ -1171,8 +1179,9 @@
           const cl = String(child.label || child.cat || '').toLowerCase();
           const isSubj = cid.includes('agens') || cl === 'agens';
           const isObj = cid.includes('patiens') || cl === 'patiens';
-          if (objectBeforeSubject) return isObj ? 0 : (isSubj ? 1 : 9);
-          return isSubj ? 0 : (isObj ? 1 : 9);
+          if (isSubj) return rank.get('S') ?? 0;
+          if (isObj) return rank.get('O') ?? 1;
+          return 99;
         });
       }
     }
@@ -2085,27 +2094,45 @@
     const subtitle = options.subtitle || 'De logische volgorde wordt uit de FT-layout geprojecteerd.';
     const orderCode = logicalOrderCode(items);
     const badgeText = options.badgeText || `LOG · ${orderCode}`;
-    const badgeWidth = Math.max(116, 18 + badgeText.length * 8.4);
+    const badgeWidth = Math.max(176, 26 + badgeText.length * 10.2);
+    const badgeHeight = options.interactive ? 48 : 38;
+    const badgeGap = options.interactive ? 54 : 24;
+    const badgeY = y - badgeGap - badgeHeight;
     const badgeX = options.badgeAlign === 'center'
       ? ((x1 + x2) / 2) - badgeWidth / 2
       : x1 - badgeWidth - 16;
-    drawCanvasGuideText(g, x1, y - 64, `${title} · ${orderCode}`, 'axis-title');
-    drawCanvasGuideText(g, x1, y - 40, subtitle, 'rule-label');
+    drawCanvasGuideText(g, x1, y - 110, `${title} · ${orderCode}`, 'axis-title');
+    drawCanvasGuideText(g, x1, y - 86, subtitle, 'rule-label');
     const badgeGroup = svgEl('g', {
       class: options.interactive ? 'logical-badge-group clickable logical-flip-toggle' : 'logical-badge-group',
       'data-action': options.interactive ? 'south-logical-flip' : ''
     });
+    if (options.interactive) {
+      badgeGroup.appendChild(svgEl('text', {
+        x: badgeX + badgeWidth / 2,
+        y: badgeY - 12,
+        class: 'logical-order-sub logical-flip-hint'
+      }, options.tipText || 'tip: klik op ZUID om de volgorde te wisselen'));
+    }
     badgeGroup.appendChild(svgEl('rect', {
       x: badgeX,
-      y: y - 18,
+      y: badgeY,
       width: badgeWidth,
-      height: 34,
-      rx: 12,
+      height: badgeHeight,
+      rx: 16,
       class: `logical-order-box logical-order-badge${options.interactive ? ' logical-order-badge-interactive' : ''}`
     }));
-    badgeGroup.appendChild(svgEl('text', { x: badgeX + badgeWidth / 2, y: y + 2, class: 'logical-order-label' }, badgeText));
+    badgeGroup.appendChild(svgEl('text', {
+      x: badgeX + badgeWidth / 2,
+      y: badgeY + (options.interactive ? 18 : 20),
+      class: `logical-order-label${options.interactive ? ' logical-order-badge-label' : ''}`
+    }, badgeText));
     if (options.interactive) {
-      badgeGroup.appendChild(svgEl('text', { x: badgeX + badgeWidth / 2, y: y - 26, class: 'logical-order-sub logical-flip-hint' }, 'klik = volgende volgorde'));
+      badgeGroup.appendChild(svgEl('text', {
+        x: badgeX + badgeWidth / 2,
+        y: badgeY + 34,
+        class: 'logical-order-sub logical-order-badge-sub'
+      }, 'klik voor volgende optie'));
       badgeGroup.style.cursor = 'pointer';
     }
     g.appendChild(badgeGroup);
@@ -2201,7 +2228,7 @@
       .map(id => functionalNodes.find(n => n.id === id)?.label || id)
       .join(' + ') || 'role-boxen';
     if (options.showTitle !== false) drawAxisTitle(g, origin.x - 180, origin.y - 70, `OPN · functionele structuur · ${rootLabel} → ${roleNames} · ${state.functionalOrder}`);
-    drawAxisTitle(g, origin.x - 176, origin.y - 48, `v4464 · ${branchModeLabel()} · vrije plaatsing + gereserveerde vrije slots`);
+    drawAxisTitle(g, origin.x - 176, origin.y - 48, `v4466 · ${branchModeLabel()} · vrije plaatsing + gereserveerde vrije slots`);
     const growthPlan = growthPlanForLayout(layout);
     layout.__growthPlan = growthPlan;
     drawSubtreeBoxes(g, layout, origin, growthPlan);
@@ -2244,11 +2271,12 @@
       drawLogicalProjection(g, southAxisX1, southAxisX2, southAxisY, getFunctionalLayout(), {
         cls: 'log',
         title: 'ZUID-as · LOGICAL-projectie',
-        subtitle: 'Logische volgorde onder de boom; west-as blijft LEX. Klik op de badge om alleen de zuid-as door de reeksen SOV, VSO, SVO en VOS te laten lopen.',
+        subtitle: 'Logische volgorde onder de boom; west-as blijft LEX. Klik op de grotere ZUID-knop om alleen de zuid-as te wijzigen.',
         badgeText: `ZUID · ${state.southLogicalMode || 'SOV'}`,
         order: southLogicalOrder(),
         items: southItems,
         interactive: true,
+        tipText: 'tip: SOV → SVO → OVS → OSV → VSO → VOS',
         badgeAlign: 'center'
       });
     } else if (showLexBaseStep) {
@@ -2260,11 +2288,12 @@
       drawLogicalProjection(g, southAxisX1, southAxisX2, southAxisY, getFunctionalLayout(), {
         cls: 'log',
         title: 'ZUID-as · LOGICAL-projectie',
-        subtitle: 'Onderprojectie wordt mee zichtbaar in de eindfase. Klik op de badge om alleen de zuid-as door de reeksen SOV, VSO, SVO en VOS te laten lopen.',
+        subtitle: 'Onderprojectie wordt mee zichtbaar in de eindfase. Klik op de grotere ZUID-knop om alleen de zuid-as te wijzigen.',
         badgeText: `ZUID · ${state.southLogicalMode || 'SOV'}`,
         order: southLogicalOrder(),
         items: southItems,
         interactive: true,
+        tipText: 'tip: SOV → SVO → OVS → OSV → VSO → VOS',
         badgeAlign: 'center'
       });
     } else {
@@ -2316,7 +2345,7 @@
     drawLogicalProjection(g, 310, 1120, 666, layout, {
       cls: 'log',
       title: 'FT-projectie · logische volgorde',
-      subtitle: 'Flip/layout in FT kan zo verschillende logische volgorden zichtbaar maken, zoals SOV, VSO, SVO en VOS, zonder een aparte LEX-herschikking.'
+      subtitle: 'Flip/layout in FT kan zo verschillende logische volgorden zichtbaar maken, zoals SOV, SVO, OVS, OSV, VSO en VOS, zonder een aparte LEX-herschikking.'
     });
     els.svg.appendChild(g);
   }
@@ -2480,8 +2509,8 @@
     els.projectionHelp.textContent = helpText();
     els.explainHeading.textContent = `Uitleg · ${activeSentenceText()}`;
     els.explainText.textContent = state.example.id === 'hond-bijt-man'
-      ? 'LEX-regel: eerst horizontale basisprojectie, daarna lokale Wissels naar vrije slots. Hoofdzin: eerste zinsdeel → slot 1, persoonsvorm → slot 2; traces blijven op de oude basisplek. FIT kadert alleen het zicht, niet de boom. Centrale slotboxen zijn verwijderd; de eerste tak reserveert lege vrije-slotruimte; wissels zie je alleen op de LEX-as. De ZUID-badge doorloopt de zuid-as-volgorde: SOV, VSO, SVO, VOS. De centrale subject/object/verb-vertakkingen draaien mee.'
-      : 'LEX-regel: verplaats alleen naar vrije slots 0/1/2. Niet-verplaatste woorden blijven op hun horizontale basisplek. Traces staan lokaal op de oude plek. In LOG/FT kan de onderprojectie SOV, VSO, SVO of VOS tonen.';
+      ? 'LEX-regel: eerst horizontale basisprojectie, daarna lokale Wissels naar vrije slots. Hoofdzin: eerste zinsdeel → slot 1, persoonsvorm → slot 2; traces blijven op de oude basisplek. FIT kadert alleen het zicht, niet de boom. Centrale slotboxen zijn verwijderd; de eerste tak reserveert lege vrije-slotruimte; wissels zie je alleen op de LEX-as. De ZUID-badge doorloopt de zuid-as-volgorde: SOV, SVO, OVS, OSV, VSO, VOS. De centrale subject/object/verb-vertakkingen draaien mee.'
+      : 'LEX-regel: verplaats alleen naar vrije slots 0/1/2. Niet-verplaatste woorden blijven op hun horizontale basisplek. Traces staan lokaal op de oude plek. In LOG/FT kan de onderprojectie SOV, SVO, OVS, OSV, VSO of VOS tonen.';
   }
 
   function projectionLabel() {
@@ -2492,8 +2521,8 @@
     if (state.projection === 'source') return 'Bron: OPN-syntax en OPN-functioneel worden gelezen uit structure-config.html. Beide gebruiken dezelfde left/right layoutstrategie en reserveren configureerbare lege vrije-slotruimte onder de wortel.';
     if (state.projection === 'lex') return 'LEX: plaatsingsregels per zinstype. Hoofdzin: eerste zinsdeel naar slot 1, persoonsvorm naar slot 2. De ruimte in de centrale boom is leeg; de vulling staat op de LEX-as.';
     if (state.projection === 'synt') return 'SYNTAX-projectie: regels staan op boomhoogte; onder de boom staat nu ook de LOGICAL-projectie uit FT/LOG.';
-    if (state.projection === 'log') return 'LOG/FT: functioneel = CLAUSE met aparte PRED-knoop en ARG-STRUCT-subtree; onderaan toont de FT-projectie de logische volgorde (bijv. SOV/VSO/SVO/VOS).';
-    return 'Assen: centrale OPN-boom; west-as = LEX direct naast de boom; zuid-as = LOGICAL-projectie; onder de wortel is vrije-slotruimte gereserveerd. Klik op de ZUID-badge om alleen de zuid-as binnen het boomvenster cyclisch te wijzigen: SOV → VSO → SVO → VOS; west/oost blijven gelijk; de as zelf loopt alleen onder de centrale boom.';
+    if (state.projection === 'log') return 'LOG/FT: functioneel = CLAUSE met aparte PRED-knoop en ARG-STRUCT-subtree; onderaan toont de FT-projectie de logische volgorde (bijv. SOV/SVO/OVS/OSV/VSO/VOS).';
+    return 'Assen: centrale OPN-boom; west-as = LEX direct naast de boom; zuid-as = LOGICAL-projectie; onder de wortel is vrije-slotruimte gereserveerd. Klik op de grote ZUID-knop om alleen de zuid-as binnen het boomvenster cyclisch te wijzigen: SOV → SVO → OVS → OSV → VSO → VOS; west/oost blijven gelijk; de as zelf loopt alleen onder de centrale boom.';
   }
 
   function renderSideLists() {

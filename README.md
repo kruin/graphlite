@@ -1,20 +1,29 @@
-# OpenGraph Lite Viewer v4460
+# OpenGraph Lite Viewer v4466
 
-## v4460 — mobile Play consistent boven
+## v4466 — carousel fix en documentatie-integratie
+
+- Carousel laadt nu met cacheversies: `carousel/index.html?v4466`, `carousel.js?v4466` en `slides.json?v4466`.
+- Carousel heeft een fallback in `carousel.js`, zodat de slide-teksten blijven werken wanneer `slides.json` niet geladen wordt.
+- Debug test nu ook de carousel, `slides.json` en de eerste slide-afbeelding.
+- Viewer- en docs-teksten noemen de carousel expliciet als aparte uitleglaag naast de interactieve graph-viewer.
+
+# OpenGraph Lite Viewer v4466
+
+## v4466 — mobile Play consistent boven
 
 - Mobile portrait gebruikt nu dezelfde bovenbalk voor Groei/Play als landscape.
 - De aparte portrait mini-groeibalk boven de onderbalk is visueel uitgeschakeld.
 - De mobiele onderbalk blijft voor zin-navigatie, FIT en Meer.
-- Cacheversies bijgewerkt naar `v4460`.
+- Cacheversies bijgewerkt naar `v4466`.
 
-# OpenGraph Lite Viewer — PWA v4460
+# OpenGraph Lite Viewer — PWA v4466
 
-## v4460 — mobile portrait Play-fix
+## v4466 — mobile portrait Play-fix
 
 - In mobile portrait werd de sticky Groei-balk verborgen, waardoor `Play` niet bereikbaar was.
 - Toegevoegd: vaste mini-Groei-balk boven de mobiele onderbalk met `0`, `←`, `Play/Pauze`, `→` en staplabel.
 - Dezelfde knoppen blijven gekoppeld aan de bestaande groei-state; geen tweede groeimodus.
-- Cacheversie verhoogd naar `v4460`.
+- Cacheversie verhoogd naar `v4466`.
 
 ## v4451 — correctie groei-start
 

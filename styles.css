@@ -1932,10 +1932,11 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
   .desktop-sentence-field { display: none; }
 }
 
-.logical-order-badge { opacity: 0.96; }
+.logical-order-badge { opacity: 0.98; }
 
 .logical-order-badge-interactive {
-  stroke-width: 2.1;
+  stroke-width: 2.35;
+  filter: drop-shadow(0 2px 3px rgba(0,0,0,0.08));
 }
 .logical-badge-group.clickable:hover .logical-order-badge,
 .logical-badge-group.clickable:hover .logical-order-badge-interactive {
@@ -1943,7 +1944,8 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
   stroke-width: 2.4;
 }
 .logical-flip-hint {
-  font-size: calc(10px * var(--og-font-scale));
+  font-size: calc(11px * var(--og-font-scale));
+  font-weight: 900;
 }
 
 
@@ -1958,4 +1960,13 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
 .logical-source-line {
   stroke-dasharray: 6 4;
   opacity: 0.88;
+}
+
+.logical-order-badge-label {
+  font-size: calc(15px * var(--og-font-scale));
+  font-weight: 950;
+}
+.logical-order-badge-sub {
+  font-size: calc(10px * var(--og-font-scale));
+  font-weight: 900;
 }

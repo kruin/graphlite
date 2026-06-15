@@ -198,3 +198,8 @@ Op een telefoon staat het canvas bovenaan. Veeg horizontaal in het canvas om de 
 - Ctrl + muiswiel zoomt rond de cursor.
 - Shift + muiswiel pant horizontaal.
 - FIT herstelt de automatische view.
+
+
+## Carousel-uitleglaag (v4466)
+
+De map `carousel/` bevat de stapbare uitlegbeelden. Gebruik `carousel/index.html?v4466` voor de didactische route; de viewer zelf blijft de interactieve testlaag voor assen, groei, vrije slots en projecties.
