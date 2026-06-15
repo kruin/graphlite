@@ -1971,7 +1971,7 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
   font-weight: 900;
 }
 
-/* v4471: mobile portrait stage-first. Het gridvenster staat standaard helemaal bovenaan.
+/* v4472: mobile portrait stage-first. Het gridvenster staat standaard helemaal bovenaan.
    Portret-menu-ruimte is configureerbaar: 0, 1 of 2 menuhoogtes; standaard 0. */
 .mobile-sheet-field {
   display: grid;
@@ -2069,7 +2069,7 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
 }
 
 
-/* v4471: portrait definitief grid-eerst. Geen menu of reserve boven het grid;
+/* v4472: portrait definitief grid-eerst. Geen menu of reserve boven het grid;
    eventuele portret-menu-ruimte komt onder het gridvenster. */
 @media (max-width: 760px) and (orientation: portrait) {
   html,
@@ -2186,7 +2186,7 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
 }
 
 
-/* v4471: harde portrait-correctie. De browser kan in portrait breder dan 760px
+/* v4472: harde portrait-correctie. De browser kan in portrait breder dan 760px
    rapporteren; daarom gebruikt JS body.portrait-grid-first. In die modus mag
    niets boven het gridvenster staan. Alle menu's komen eronder. */
 body.portrait-grid-first {
@@ -2276,7 +2276,7 @@ body.portrait-grid-first .status-panel { order: 4 !important; }
 body.portrait-grid-first .text-panel { order: 5 !important; }
 
 
-/* v4471: grid-first geldt op alle platforms, niet alleen mobile/portrait.
+/* v4472: grid-first geldt op alle platforms, niet alleen mobile/portrait.
    Niets staat nog boven het gridvenster: projectiekeuze, zinmenu, groei/play,
    toolbar, status en documentatie komen onder het canvas. */
 body.grid-first-all,
@@ -2337,14 +2337,18 @@ body.grid-first-all .canvas-wrap,
   height: var(--mobile-fit-height, min(74vh, 880px)) !important;
   min-height: 0 !important;
   max-height: calc(100dvh - 3.5rem) !important;
+  width: 100% !important;
+  max-width: min(100%, var(--stage-fit-width, 100%)) !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
 }
 body.grid-first-all #graphSvg,
 #graphSvg {
   height: 100% !important;
 }
 
-/* v4471: benoemde meerkeuze voor menu's boven het grid.
-   Standaard: geen enkel menu boven het grid. Maximaal twee keuzes via JS. */
+/* v4472: benoemde meerkeuze voor menu's boven het grid.
+   Standaard: geen enkel menu boven het grid. Alle benoemde menu's kunnen boven het grid. */
 .top-menu-choice-field {
   grid-column: 1 / -1;
   border: 1px solid var(--line);

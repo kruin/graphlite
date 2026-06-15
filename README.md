@@ -1,48 +1,46 @@
-# OpenGraph Lite Viewer v4471
 
-## v4471 — benoemde menu's boven het grid
+## v4472 · grid maximaal passend + ruimere topmenu-keuze
 
-- Grid/boomvenster blijft standaard bovenaan op alle platforms.
-- De oude instelling `Ruimte onder grid` is vervangen door een duidelijke meerkeuze: welke menu's mogen boven het grid staan.
-- Beschikbare keuzes: Projectiekeuze, Voorbeeldzin, Play/Groei en Werkknoppen.
-- Maximaal twee menu's kunnen tegelijk boven het grid staan; overige menu's blijven onder het grid.
-- Tooltips en viewer-uitleg beschrijven waarvoor elke keuze bedoeld is.
+- Het gridvenster wordt nu gemaximeerd op de actuele fit-box van boom + assen; het schaalt niet groter dan nodig.
+- De fitmarge is kleiner, zodat minder lege rasterruimte rond boom en assen overblijft.
+- `Menu’s boven grid` staat niet meer op maximaal 2; alle vier benoemde menu’s kunnen worden gekozen.
+- Genoteerd: een NOORD-as is mogelijk, maar nog niet gebruikt.
 
-# OpenGraph Lite Viewer v4471
+# OpenGraph Lite Viewer v4472
 
-## v4471 — mobile portrait grid-first
+## v4472 — mobile portrait grid-first
 
 - Mobile portrait: grid/boomvenster staat standaard helemaal bovenaan; header, projectiebalk, zinmenu en toolbar staan niet meer boven het grid.
 - Nieuwe config `portrait_menu_slots`: ruimte boven het grid voor 0, 1 of 2 toekomstige menuhoogtes; standaard 0.
 - Gridvensterhoogte wordt in portrait afgeleid van de actuele viewBox/tekening, zodat het venster niet groter is dan nodig voor boom + assen.
 - Config is beschikbaar in Projectie-instellingen en in het mobiele menu.
 
-# OpenGraph Lite Viewer v4471
+# OpenGraph Lite Viewer v4472
 
-## v4471 — carousel fix en documentatie-integratie
+## v4472 — carousel fix en documentatie-integratie
 
-- Carousel laadt nu met cacheversies: `carousel/index.html?v4471`, `carousel.js?v4471` en `slides.json?v4471`.
+- Carousel laadt nu met cacheversies: `carousel/index.html?v4472`, `carousel.js?v4472` en `slides.json?v4472`.
 - Carousel heeft een fallback in `carousel.js`, zodat de slide-teksten blijven werken wanneer `slides.json` niet geladen wordt.
 - Debug test nu ook de carousel, `slides.json` en de eerste slide-afbeelding.
 - Viewer- en docs-teksten noemen de carousel expliciet als aparte uitleglaag naast de interactieve graph-viewer.
 
-# OpenGraph Lite Viewer v4471
+# OpenGraph Lite Viewer v4472
 
-## v4471 — mobile Play consistent boven
+## v4472 — mobile Play consistent boven
 
 - Mobile portrait gebruikt nu dezelfde bovenbalk voor Groei/Play als landscape.
 - De aparte portrait mini-groeibalk boven de onderbalk is visueel uitgeschakeld.
 - De mobiele onderbalk blijft voor zin-navigatie, FIT en Meer.
-- Cacheversies bijgewerkt naar `v4471`.
+- Cacheversies bijgewerkt naar `v4472`.
 
-# OpenGraph Lite Viewer — PWA v4471
+# OpenGraph Lite Viewer — PWA v4472
 
-## v4471 — mobile portrait Play-fix
+## v4472 — mobile portrait Play-fix
 
 - In mobile portrait werd de sticky Groei-balk verborgen, waardoor `Play` niet bereikbaar was.
 - Toegevoegd: vaste mini-Groei-balk boven de mobiele onderbalk met `0`, `←`, `Play/Pauze`, `→` en staplabel.
 - Dezelfde knoppen blijven gekoppeld aan de bestaande groei-state; geen tweede groeimodus.
-- Cacheversie verhoogd naar `v4471`.
+- Cacheversie verhoogd naar `v4472`.
 
 ## v4451 — correctie groei-start
 
@@ -556,7 +554,7 @@ De viewer gebruikt op kleine schermen een mobiele presentatie: canvas eerst, con
 - FIT herstelt de automatische view.
 
 
-## v4471 · gridvenster bovenaan op alle platforms
+## v4472 · gridvenster bovenaan op alle platforms
 
 - Grid/boomvenster staat nu op alle platforms bovenaan, niet alleen in mobile portrait.
 - Projectiekeuze, zinmenu, groei/play, toolbar, status en documentatie staan onder het grid.

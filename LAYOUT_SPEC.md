@@ -282,3 +282,8 @@ Hierdoor verschijnen leaves niet meer allemaal tegelijk. Dit maakt zichtbaar of 
 - Ctrl + muiswiel zoomt rond de cursor.
 - Shift + muiswiel pant horizontaal.
 - FIT herstelt de automatische view.
+
+
+### NOORD-as (PM)
+
+Naast west/LEX, oost/SYNTAX en zuid/LOGICAL is ook een NOORD-as mogelijk. Die is genoteerd als uitbreiding, maar nog niet gebruikt.

@@ -200,6 +200,11 @@ Op een telefoon staat het canvas bovenaan. Veeg horizontaal in het canvas om de 
 - FIT herstelt de automatische view.
 
 
-## Carousel-uitleglaag (v4471)
+## Carousel-uitleglaag (v4472)
 
-De map `carousel/` bevat de stapbare uitlegbeelden. Gebruik `carousel/index.html?v4471` voor de didactische route; de viewer zelf blijft de interactieve testlaag voor assen, groei, vrije slots en projecties.
+De map `carousel/` bevat de stapbare uitlegbeelden. Gebruik `carousel/index.html?v4472` voor de didactische route; de viewer zelf blijft de interactieve testlaag voor assen, groei, vrije slots en projecties.
+
+
+### NOORD-as (PM)
+
+Naast west/LEX, oost/SYNTAX en zuid/LOGICAL is ook een NOORD-as mogelijk. Die is genoteerd als uitbreiding, maar nog niet gebruikt.
