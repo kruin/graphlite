@@ -285,9 +285,9 @@ Beschreven zinstypen: hoofdzin, bijzin met OMDAT, topicalisatie, perfectum en vo
 Mobiel gebruikt nu een aparte responsieve presentatie: eerst canvas, daarna bediening. Het canvas is horizontaal scrollbaar om de JAN-boom leesbaar te houden. De layoutregels zelf veranderen niet.
 
 
-## Carousel-uitleglaag (v4478)
+## Carousel-uitleglaag (v4479)
 
-De map `carousel/` bevat de stapbare uitlegbeelden. Gebruik `carousel/index.html?v4478` voor de didactische route; de viewer zelf blijft de interactieve testlaag voor assen, groei, vrije slots en projecties.
+De map `carousel/` bevat de stapbare uitlegbeelden. Gebruik `carousel/index.html?v4479` voor de didactische route; de viewer zelf blijft de interactieve testlaag voor assen, groei, vrije slots en projecties.
 
 
 ### NOORD-as (PM)
@@ -295,20 +295,20 @@ De map `carousel/` bevat de stapbare uitlegbeelden. Gebruik `carousel/index.html
 Naast west/LEX, oost/SYNTAX en zuid/LOGICAL is ook een NOORD-as mogelijk. Die is genoteerd als uitbreiding, maar nog niet gebruikt.
 
 
-Aanvulling v4478: LEX vrije slots zijn plaatsbare insertiepunten op de LEX-as voor later materiaal uit andere LEX-assen/bomen en anafora. Boom vrije rijen blijven apart.
+Aanvulling v4479: LEX vrije slots zijn plaatsbare insertiepunten op de LEX-as voor later materiaal uit andere LEX-assen/bomen en anafora. Boom vrije rijen blijven apart.
 
 
-## v4478 · portrait split grid/menu
+## v4479 · portrait split grid/menu
 
 - In mobile portrait staat het rechter menu naast het grid in plaats van verborgen of onder het grid.
 - De breedte van het grid wordt gemaximeerd op de actuele boom + assen.
 - De grens tussen grid en rechter menu is sleepbaar/touchbaar: links/rechts schuiven past de verdeling aan.
 
 
-## v4478 desktop LEX-insertie zichtbaar
+## v4479 desktop LEX-insertie zichtbaar
 
 De rechter desktop-config toont nu dezelfde LEX-insertieconfig als mobiel: LEX vrije slots, LEX insertie-inhoud en takverlenging door insertie. De insertie blijft een aparte box op de LEX-as; de gekozen takken/boxgrenzen worden alleen layoutmatig verlengd.
 
-## v4478 · gridvenster en rechterkolom
+## v4479 · gridvenster en rechterkolom
 
 Het gridvenster is niet langer een pannend subvenster. De actuele boom + assen bepalen de benodigde stage-breedte en -hoogte. De resterende breedte wordt toegewezen aan de rechterkolom. Gebruiker kan de rechterkolom via config verbreden of de grens handmatig slepen.

@@ -1971,7 +1971,7 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
   font-weight: 900;
 }
 
-/* v4478: mobile portrait stage-first. Het gridvenster staat standaard helemaal bovenaan.
+/* v4479: mobile portrait stage-first. Het gridvenster staat standaard helemaal bovenaan.
    Portret-menu-ruimte is configureerbaar: 0, 1 of 2 menuhoogtes; standaard 0. */
 .mobile-sheet-field {
   display: grid;
@@ -2069,7 +2069,7 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
 }
 
 
-/* v4478: portrait definitief grid-eerst. Geen menu of reserve boven het grid;
+/* v4479: portrait definitief grid-eerst. Geen menu of reserve boven het grid;
    eventuele portret-menu-ruimte komt onder het gridvenster. */
 @media (max-width: 760px) and (orientation: portrait) {
   html,
@@ -2186,7 +2186,7 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
 }
 
 
-/* v4478: harde portrait-correctie. De browser kan in portrait breder dan 760px
+/* v4479: harde portrait-correctie. De browser kan in portrait breder dan 760px
    rapporteren; daarom gebruikt JS body.portrait-grid-first. In die modus mag
    niets boven het gridvenster staan. Alle menu's komen eronder. */
 body.portrait-grid-first {
@@ -2276,7 +2276,7 @@ body.portrait-grid-first .status-panel { order: 4 !important; }
 body.portrait-grid-first .text-panel { order: 5 !important; }
 
 
-/* v4478: grid-first geldt op alle platforms, niet alleen mobile/portrait.
+/* v4479: grid-first geldt op alle platforms, niet alleen mobile/portrait.
    Niets staat nog boven het gridvenster: projectiekeuze, zinmenu, groei/play,
    toolbar, status en documentatie komen onder het canvas. */
 body.grid-first-all,
@@ -2347,7 +2347,7 @@ body.grid-first-all #graphSvg,
   height: 100% !important;
 }
 
-/* v4478: benoemde meerkeuze voor menu's boven het grid.
+/* v4479: benoemde meerkeuze voor menu's boven het grid.
    Standaard: geen enkel menu boven het grid. Alle benoemde menu's kunnen boven het grid. */
 .top-menu-choice-field {
   grid-column: 1 / -1;
@@ -2469,7 +2469,7 @@ body.grid-first-all .toolbar {
   align-self: stretch;
 }
 
-/* v4478: configureerbare vrije LEX-slots op de LEX-as. */
+/* v4479: configureerbare vrije LEX-slots op de LEX-as. */
 .lex-config-free-slot {
   fill: color-mix(in srgb, var(--lex), var(--panel) 84%);
   stroke: var(--lex);
@@ -2515,7 +2515,7 @@ body.grid-first-all .toolbar {
 }
 
 
-/* v4478: portrait split tussen grid en rechter menu.
+/* v4479: portrait split tussen grid en rechter menu.
    Het grid gebruikt niet meer de volle breedte als dat niet nodig is;
    het rechter menu blijft zichtbaar en de grens is sleepbaar/touchbaar. */
 .pane-splitter {
@@ -2523,7 +2523,7 @@ body.grid-first-all .toolbar {
 }
 body.portrait-grid-first .workspace {
   display: grid !important;
-  grid-template-columns: minmax(138px, var(--stage-pane-width, 56vw)) var(--pane-splitter-width, 12px) minmax(138px, var(--side-pane-width, 40vw)) !important;
+  grid-template-columns: minmax(96px, var(--stage-pane-width, 40vw)) var(--pane-splitter-width, 18px) minmax(12rem, var(--side-pane-width, 56vw)) !important;
   grid-template-rows: auto !important;
   align-items: stretch !important;
   gap: 0 !important;
@@ -2640,7 +2640,7 @@ body.pane-split-dragging * {
 }
 
 
-/* v4478: desktop toont LEX-insertie en takverlenging in het rechter menu. */
+/* v4479: desktop toont LEX-insertie en takverlenging in het rechter menu. */
 .lex-extension-field {
   grid-column: 1 / -1;
   border: 1px solid var(--line);
@@ -2681,11 +2681,11 @@ body.portrait-grid-first .side-panel .lex-extension-field label {
 }
 
 
-/* v4478: gridvenster past op boom + assen; resterende breedte is rechterkolom. */
+/* v4479: gridvenster past op boom + assen; resterende breedte is rechterkolom. */
 body.grid-first-all .workspace,
 .workspace {
   display: grid !important;
-  grid-template-columns: minmax(120px, var(--stage-pane-width, 52vw)) var(--pane-splitter-width, 12px) minmax(16rem, var(--side-pane-width, 42vw)) !important;
+  grid-template-columns: minmax(96px, var(--stage-pane-width, 40vw)) var(--pane-splitter-width, 12px) minmax(16rem, var(--side-pane-width, 56vw)) !important;
   grid-template-rows: auto !important;
   gap: 0 !important;
   overflow: hidden !important;
@@ -2803,7 +2803,7 @@ body.grid-first-all .view-pan-hint {
 }
 
 
-/* v4478: maak Rechterkolom-config zichtbaar bovenaan het rechter menu. */
+/* v4479: maak Rechterkolom-config zichtbaar bovenaan het rechter menu. */
 .right-menu-width-callout {
   grid-column: 1 / -1;
   border: 2px solid color-mix(in srgb, var(--accent), var(--line) 18%);
@@ -2854,4 +2854,37 @@ body.portrait-grid-first .right-menu-width-callout-field span {
 body.portrait-grid-first #rightMenuWidthSelectTop {
   min-height: 2rem !important;
   font-size: .76rem !important;
+}
+
+
+/* v4479: mobile portrait grid smaller and fixed; right menu + splitter visible. */
+body.portrait-grid-first .workspace {
+  grid-template-columns: minmax(92px, var(--stage-pane-width, 40vw)) var(--pane-splitter-width, 18px) minmax(13rem, var(--side-pane-width, 56vw)) !important;
+}
+body.portrait-grid-first .canvas-wrap {
+  max-width: none !important;
+  overflow: hidden !important;
+  touch-action: none !important;
+  overscroll-behavior: contain !important;
+}
+body.portrait-grid-first #graphSvg {
+  touch-action: none !important;
+  user-select: none !important;
+  -webkit-user-select: none !important;
+}
+body.portrait-grid-first .pane-splitter,
+body.grid-first-all .pane-splitter,
+.pane-splitter {
+  min-width: var(--pane-splitter-width, 18px) !important;
+  touch-action: none !important;
+}
+body.portrait-grid-first .pane-splitter::before,
+body.grid-first-all .pane-splitter::before,
+.pane-splitter::before {
+  content: "⇆" !important;
+  font-size: .9rem !important;
+}
+body.portrait-grid-first .side-panel {
+  min-width: 0 !important;
+  overflow: auto !important;
 }

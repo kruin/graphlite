@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'v4478';
+  const VERSION = 'v4479';
   const BASE_CELL = 74;
   const ROOT_SIDE_GAP = 1;
   const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -349,7 +349,8 @@
     mobileSheetOpen: false,
     paneSplitManual: false,
     rightMenuWidth: null,
-    paneSplitDrag: null
+    paneSplitDrag: null,
+    canvasPanEnabled: false
   };
 
   function svgEl(name, attrs = {}, text = '') {
@@ -1487,7 +1488,7 @@
   }
 
   function isPortraitMobileViewport() {
-    // v4478: grid-first and fit-height are no longer mobile-only.
+    // v4479: grid-first and fit-height are no longer mobile-only.
     // The canvas height is based on the actual viewBox on every platform.
     return true;
   }
@@ -1501,7 +1502,7 @@
   }
 
   function syncPortraitMenuSpace() {
-    // v4478: de oude numerieke onderruimte blijft op 0. De relevante instelling
+    // v4479: de oude numerieke onderruimte blijft op 0. De relevante instelling
     // is nu: welke benoemde menu's mogen boven het grid staan.
     document.documentElement?.style.setProperty('--portrait-menu-reserve', '0px');
     document.documentElement?.style.setProperty('--portrait-menu-slots', '0');
@@ -1540,6 +1541,10 @@
 
   function rightMenuLabel() {
     return rightMenuProfile().label.replace(/^rechterkolom:\s*/i, '');
+  }
+
+  function paneSplitterWidth() {
+    return isPortraitGridFirstViewport() ? 18 : 12;
   }
 
   function syncTopMenuPlacement() {
@@ -1610,13 +1615,16 @@
   }
 
   function clampPanePixels(stageWidth, menuWidth, totalWidth) {
-    const splitterWidth = 12;
+    const splitterWidth = paneSplitterWidth();
     const total = Math.max(320, Number(totalWidth) || window.innerWidth || 360);
     const profile = rightMenuProfile();
     const maxMenu = Math.max(170, total - splitterWidth - 120);
     const requestedMinMenu = Math.max(Number(profile.minPx) || 320, Math.round(total * (Number(profile.minFraction) || 0.42)));
     const minMenu = Math.max(150, Math.min(maxMenu, requestedMinMenu));
-    const minStage = Math.min(260, Math.max(120, Math.round(total * 0.18)));
+    const portrait = isPortraitGridFirstViewport();
+    const minStage = portrait
+      ? Math.min(150, Math.max(92, Math.round(total * 0.24)))
+      : Math.min(260, Math.max(120, Math.round(total * 0.18)));
     let stage = Number(stageWidth);
     let menu = Number(menuWidth);
     if (!Number.isFinite(stage) || !Number.isFinite(menu)) {
@@ -1632,15 +1640,25 @@
     return { stageWidth: Math.round(stage), menuWidth: Math.round(menu), splitterWidth, totalWidth: total };
   }
 
-  function neededStageWidthFromFit(fit, total, minMenu, splitterWidth = 12) {
+  function neededStageWidthFromFit(fit, total, minMenu, splitterWidth = paneSplitterWidth()) {
+    const portrait = isPortraitGridFirstViewport();
+    const maxStage = Math.max(portrait ? 92 : 120, total - splitterWidth - minMenu);
     if (!fit || !Number.isFinite(fit.w) || fit.w <= 0 || !Number.isFinite(fit.h) || fit.h <= 0) {
-      return Math.max(160, total - splitterWidth - minMenu);
+      return portrait
+        ? Math.max(92, Math.min(maxStage, Math.round(total * 0.40)))
+        : Math.max(160, maxStage);
     }
     const ratio = Math.max(0.16, fit.h / fit.w);
     const topMenuReserve = Math.min(170, normalizeTopMenusAbove().length * 42);
     const maxHeight = Math.min(880, Math.max(220, (window.innerHeight || 720) - 108 - topMenuReserve));
     const widthForHeight = Math.ceil(maxHeight / ratio);
-    const maxStage = Math.max(120, total - splitterWidth - minMenu);
+    if (portrait) {
+      // Mobile portrait: het grid krijgt niet automatisch de hele resterende
+      // breedte. Bepaal een bruikbare bovengrens voor boom + assen en geef de
+      // rest aan de rechterkolom. De grens blijft via splitter verschuifbaar.
+      const portraitCap = Math.max(96, Math.round(total * 0.40));
+      return Math.max(92, Math.min(maxStage, portraitCap, widthForHeight));
+    }
     return Math.max(120, Math.min(maxStage, widthForHeight));
   }
 
@@ -1648,7 +1666,7 @@
     const workspace = workspaceForStage();
     if (!workspace) return null;
     const total = Math.max(320, workspace.clientWidth || window.innerWidth || 360);
-    const splitterWidth = 12;
+    const splitterWidth = paneSplitterWidth();
     const profile = rightMenuProfile();
     const maxMenu = Math.max(170, total - splitterWidth - 120);
     const minMenu = Math.max(150, Math.min(maxMenu, Math.max(Number(profile.minPx) || 320, Math.round(total * (Number(profile.minFraction) || 0.42)))));
@@ -1680,7 +1698,7 @@
     syncPortraitStageMode();
     if (!els.canvasWrap) return;
     syncPortraitMenuSpace();
-    // v4478: het gridvenster wordt gemaximeerd op de actuele fit-box
+    // v4479: het gridvenster wordt gemaximeerd op de actuele fit-box
     // van boom + assen. Het canvas schaalt dus niet groter dan nodig.
     const fit = box || parseViewBox();
     const validFit = fit && Number.isFinite(fit.w) && fit.w > 0 && Number.isFinite(fit.h) && fit.h > 0;
@@ -2734,7 +2752,7 @@
       .map(id => functionalNodes.find(n => n.id === id)?.label || id)
       .join(' + ') || 'role-boxen';
     if (options.showTitle !== false) drawAxisTitle(g, origin.x - 180, origin.y - 70, `OPN · functionele structuur · ${rootLabel} → ${roleNames} · ${state.functionalOrder}`);
-    drawAxisTitle(g, origin.x - 176, origin.y - 48, `v4478 · ${branchModeLabel()} · vrije plaatsing + gereserveerde vrije slots`);
+    drawAxisTitle(g, origin.x - 176, origin.y - 48, `v4479 · ${branchModeLabel()} · vrije plaatsing + gereserveerde vrije slots`);
     const growthPlan = growthPlanForLayout(layout);
     layout.__growthPlan = growthPlan;
     drawSubtreeBoxes(g, layout, origin, growthPlan);
@@ -2973,7 +2991,7 @@
     els.svg.classList.toggle('no-grid', !state.showGrid);
     const g = svgEl('g', { class: className });
     if (state.showGrid) drawGrid(g, 1800, 1000);
-    drawCanvasGuideText(g, 22, 28, 'sleep canvas = verplaats view · Ctrl+wiel = zoom · FIT = passend kader rond de actuele inhoud', 'view-pan-hint');
+    drawCanvasGuideText(g, 22, 28, 'gridvenster = vast passend kader · grens naast grid = menu/grid verdelen · FIT = passend kader rond inhoud', 'view-pan-hint');
     return g;
   }
 
@@ -3031,7 +3049,7 @@
     if (state.projection === 'lex') return 'LEX: plaatsingsregels per zinstype. Hoofdzin: eerste zinsdeel naar slot 1, persoonsvorm naar slot 2. De ruimte in de centrale boom is leeg; de vulling staat op de LEX-as.';
     if (state.projection === 'synt') return 'SYNTAX-projectie: regels staan op boomhoogte; onder de boom staat nu ook de LOGICAL-projectie uit FT/LOG.';
     if (state.projection === 'log') return 'LOG/FT: functioneel = CLAUSE met aparte PRED-knoop en ARG-STRUCT-subtree; onderaan toont de FT-projectie de logische volgorde (bijv. SOV/SVO/OVS/OSV/VSO/VOS).';
-    return 'Assen: centrale OPN-boom; west-as = LEX direct naast de boom; zuid-as = LOGICAL-projectie. Het grid staat standaard bovenaan; in portrait staat het rechter menu naast het grid. Sleep de smalle grens of kies de zichtbare instelling Rechterkolom bovenaan om grid/menu te verdelen. Het gridvenster past op boom + assen; canvas-panning staat uit.';
+    return 'Assen: centrale OPN-boom; west-as = LEX direct naast de boom; zuid-as = LOGICAL-projectie. Het grid staat standaard bovenaan; in portrait staat het rechter menu naast het grid. Sleep de duidelijke grens of kies de zichtbare instelling Rechterkolom bovenaan om grid/menu te verdelen. Het gridvenster past op boom + assen; canvas-panning staat uit.';
   }
 
   function renderSideLists() {
@@ -3441,7 +3459,14 @@
   function registerCanvasPan() {
     if (!els.svg) return;
     els.svg.addEventListener('pointerdown', event => {
-      if (!state.canvasPanEnabled) return;
+      if (!state.canvasPanEnabled) {
+        if (!event.target?.closest?.('[data-action]')) {
+          state.viewDrag = null;
+          state.activePointers.clear();
+          event.preventDefault();
+        }
+        return;
+      }
       if (event.button !== undefined && event.button !== 0) return;
       if (event.target?.closest?.('input,select,button,a,label,[data-action]')) return;
       state.activePointers.set(event.pointerId, { clientX: event.clientX, clientY: event.clientY, pointerType: event.pointerType });
@@ -3599,7 +3624,7 @@
       if (!workspace) return;
       const rect = workspace.getBoundingClientRect();
       const total = Math.max(260, rect.width || drag.rect.width || window.innerWidth || 360);
-      const splitterWidth = 12;
+      const splitterWidth = paneSplitterWidth();
       const rawStage = event.clientX - rect.left;
       const clamped = clampPanePixels(rawStage, total - splitterWidth - rawStage, total);
       state.paneSplitManual = true;
