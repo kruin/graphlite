@@ -1,20 +1,20 @@
-# OpenGraph Lite Viewer v4457
+# OpenGraph Lite Viewer v4460
 
-## v4457 — mobile Play consistent boven
+## v4460 — mobile Play consistent boven
 
 - Mobile portrait gebruikt nu dezelfde bovenbalk voor Groei/Play als landscape.
 - De aparte portrait mini-groeibalk boven de onderbalk is visueel uitgeschakeld.
 - De mobiele onderbalk blijft voor zin-navigatie, FIT en Meer.
-- Cacheversies bijgewerkt naar `v4457`.
+- Cacheversies bijgewerkt naar `v4460`.
 
-# OpenGraph Lite Viewer — PWA v4457
+# OpenGraph Lite Viewer — PWA v4460
 
-## v4457 — mobile portrait Play-fix
+## v4460 — mobile portrait Play-fix
 
 - In mobile portrait werd de sticky Groei-balk verborgen, waardoor `Play` niet bereikbaar was.
 - Toegevoegd: vaste mini-Groei-balk boven de mobiele onderbalk met `0`, `←`, `Play/Pauze`, `→` en staplabel.
 - Dezelfde knoppen blijven gekoppeld aan de bestaande groei-state; geen tweede groeimodus.
-- Cacheversie verhoogd naar `v4457`.
+- Cacheversie verhoogd naar `v4460`.
 
 ## v4451 — correctie groei-start
 

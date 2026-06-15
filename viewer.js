@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'v4457';
+  const VERSION = 'v4462';
   const BASE_CELL = 74;
   const ROOT_SIDE_GAP = 1;
   const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -22,6 +22,7 @@
     branchOtherSelect: document.getElementById('branchOtherSelect'),
     layoutDensitySelect: document.getElementById('layoutDensitySelect'),
     viewFitSelect: document.getElementById('viewFitSelect'),
+    freeSlotCountSelect: document.getElementById('freeSlotCountSelect'),
     projectionHelp: document.getElementById('projectionHelp'),
     titleLine: document.getElementById('titleLine'),
     metaLine: document.getElementById('metaLine'),
@@ -171,6 +172,25 @@
     { id: 'fixed', label: 'venster: vast 1500×900' }
   ];
 
+  const SOUTH_LOGICAL_MODES = ['SOV', 'VSO', 'SVO', 'VOS'];
+
+  const FREE_SLOT_COUNTS = [
+    { id: '0', label: 'vrije slots: 0' },
+    { id: '1', label: 'vrije slots: 1' },
+    { id: '2', label: 'vrije slots: 2' },
+    { id: '3', label: 'vrije slots: 3' },
+    { id: '4', label: 'vrije slots: 4' }
+  ];
+
+  function southLogicalModeOrder(mode = 'SOV') {
+    return ({
+      SOV: ['S', 'O', 'V'],
+      VSO: ['V', 'S', 'O'],
+      SVO: ['S', 'V', 'O'],
+      VOS: ['V', 'O', 'S']
+    })[mode] || ['S', 'O', 'V'];
+  }
+
 
   function baseStructureConfig() {
     return {
@@ -228,6 +248,8 @@
     roleSwap: false,
     growthEnabled: false,
     growthStep: 0,
+    southLogicalMode: 'SOV',
+    freeSlotCount: 2,
     lastSupportedGrowthStep: 0,
     growthTimer: null,
     exampleValidationMessages: [],
@@ -940,16 +962,21 @@
     return shiftLayout(layout, dx, 0);
   }
 
-  function addOpnTopicalizationSlot(layout, rootId = null) {
-    // v4427: OPN source trees reserve two explicit local placement slots before
-    // the ordinary tree material. Slot 1 is for topicalisatie/vooropplaatsing;
-    // slot 2 is the V2/persoonsvorm-slot. They are free HOR/VER positions in
-    // the central field. A LEX-Wissel may fill such a slot; the old/base
-    // position is then rendered as a trace on the LEX-as.
-    const root = layout.nodes.find(n => n.id === rootId) || layout.nodes[0];
-    if (!root) return layout;
+  function reservedFreeSlotCount() {
+    const n = Number(state.freeSlotCount);
+    if (!Number.isFinite(n)) return 2;
+    return Math.max(0, Math.min(6, Math.round(n)));
+  }
 
-    const slotRows = 2;
+  function addOpnTopicalizationSlot(layout, rootId = null) {
+    // v4462: centrale slotboxen blijven weg, maar de boom reserveert wel
+    // verticale ruimte onder de wortel. Daardoor wordt de eerste tak langer
+    // en ontstaat er zichtbaar plaats voor twee vrije slots (configureerbaar).
+    // De feitelijke vulling blijft op de LEX-as: TOPIC/vooropplaatsing en V2/PV.
+    const root = layout.nodes.find(n => n.id === rootId) || layout.nodes[0];
+    const slotRows = reservedFreeSlotCount();
+    if (!root || slotRows <= 0) return layout;
+
     for (const node of layout.nodes) {
       if (node.id !== root.id) node.y += slotRows;
     }
@@ -967,19 +994,12 @@
       }
     }
     layout.box.maxY += slotRows;
-    layout.topicalizationSlot = {
-      id: `${root.id}-topic-slot`,
-      label: 'slot 1 · vooropplaatsing/topicalisatie',
+    layout.freeSlotReservation = {
+      count: slotRows,
+      rootId: root.id,
       x: root.x,
-      y: root.y + 1,
-      rootId: root.id
-    };
-    layout.v2Slot = {
-      id: `${root.id}-v2-slot`,
-      label: 'slot 2 · V2/persoonsvorm',
-      x: root.x,
-      y: root.y + 2,
-      rootId: root.id
+      y1: root.y + 1,
+      y2: root.y + slotRows
     };
     return layout;
   }
@@ -1105,18 +1125,20 @@
   function px(x, origin) { return origin.x + x * cellX(); }
   function py(y, origin) { return origin.y + y * cellY(); }
 
-  function drawGrid(g, width = 1800, height = 1000) {
+  function drawGrid(g, width = 2600, height = 1600) {
     const grid = svgEl('g', { class: 'grid' });
     const sx = cellX() / 2;
     const sy = cellY() / 2;
-    for (let x = -600; x <= width; x += sx) {
-      grid.appendChild(svgEl('line', { x1: x, y1: -260, x2: x, y2: height, class: 'grid-line' }));
+    const minX = -1200;
+    const minY = -420;
+    for (let x = minX, i = 0; x <= width; x += sx, i++) {
+      grid.appendChild(svgEl('line', { x1: x, y1: minY, x2: x, y2: height, class: i % 2 === 0 ? 'grid-line major' : 'grid-line' }));
     }
-    for (let y = -220; y <= height; y += sy) {
-      grid.appendChild(svgEl('line', { x1: -600, y1: y, x2: width, y2: y, class: 'grid-line' }));
+    for (let y = minY, i = 0; y <= height; y += sy, i++) {
+      grid.appendChild(svgEl('line', { x1: minX, y1: y, x2: width, y2: y, class: i % 2 === 0 ? 'grid-line major' : 'grid-line' }));
     }
-    grid.appendChild(svgEl('line', { x1: -600, y1: 0, x2: width, y2: 0, class: 'grid-axis' }));
-    grid.appendChild(svgEl('line', { x1: 0, y1: -220, x2: 0, y2: height, class: 'grid-axis' }));
+    grid.appendChild(svgEl('line', { x1: minX, y1: 0, x2: width, y2: 0, class: 'grid-axis' }));
+    grid.appendChild(svgEl('line', { x1: 0, y1: minY, x2: 0, y2: height, class: 'grid-axis' }));
     g.appendChild(grid);
   }
 
@@ -1210,7 +1232,7 @@
   }
 
   function toggleGrowthPlayback() {
-    // v4457: deze functie ontbrak in v4453. Daardoor stopte registerEvents()
+    // v4458: deze functie ontbrak in v4453. Daardoor stopte registerEvents()
     // vóór de eerste init-render bij addEventListener(..., toggleGrowthPlayback),
     // met als gevolg: geen boom bij start en een Play-knop zonder werking.
     if (!growthSupportedProjection()) {
@@ -1286,12 +1308,12 @@
     const metrics = collectGrowthMetrics(activeCentralSpec());
     const orderedNodes = orderedGrowthNodes(layout, metrics);
     const structureStep = Math.max(1, orderedNodes.length);
-    const slotStep = structureStep + 1;
-    const lexBaseStep = structureStep + 2;
+    const slotStep = structureStep;
+    const lexBaseStep = structureStep + 1;
     const lexMovementCount = orderedLexMovements(activeLexItems()).length;
     const lexMovementStartStep = lexBaseStep + 1;
     const projectionStep = lexBaseStep + lexMovementCount + 1;
-    const max = state.projection === 'axes' ? projectionStep : slotStep;
+    const max = state.projection === 'axes' ? projectionStep : structureStep;
     if (state.growthStep > max) state.growthStep = max;
     const nodeStep = new Map();
     orderedNodes.forEach(({ node }, index) => nodeStep.set(node.id, index + 1));
@@ -1323,10 +1345,9 @@
     const metrics = collectGrowthMetrics(activeCentralSpec());
     const structureStep = metrics.count;
     if (step <= structureStep) return `stap ${step}/${max}: boom groeit knoop voor knoop`;
-    if (step === structureStep + 1) return `stap ${step}/${max}: OPN-slot 1`;
     if (state.projection === 'axes') {
       const movementCount = orderedLexMovements(activeLexItems()).length;
-      const lexBaseStep = structureStep + 2;
+      const lexBaseStep = structureStep + 1;
       const movementStart = lexBaseStep + 1;
       if (step === lexBaseStep) return `stap ${step}/${max}: LEX-basisprojectie`;
       if (step >= movementStart && step < movementStart + movementCount) {
@@ -1380,18 +1401,9 @@
   }
 
   function drawOpnTopicalizationSlot(g, layout, origin, growthPlan = null) {
-    if (growthPlan?.active && !visibleAt(growthPlan, growthPlan.slotStep)) return;
-    const slots = [
-      layout.topicalizationSlot ? { slot: layout.topicalizationSlot, cls: 'opn-topicalization-slot', caption: 'OPN-slot 1', label: 'vooropplaatsing / topicalisatie' } : null,
-      layout.v2Slot ? { slot: layout.v2Slot, cls: 'opn-v2-slot', caption: 'OPN-slot 2', label: 'V2 / persoonsvorm' } : null
-    ].filter(Boolean);
-    for (const entry of slots) {
-      const x = px(entry.slot.x, origin);
-      const y = py(entry.slot.y, origin);
-      g.appendChild(svgEl('rect', { x: x - 125, y: y - 28, width: 250, height: 56, rx: 16, class: entry.cls }));
-      g.appendChild(svgEl('text', { x, y: y - 36, class: 'slot-caption opn-slot-caption' }, entry.caption));
-      g.appendChild(svgEl('text', { x, y: y + 5, class: 'opn-slot-label' }, entry.label));
-    }
+    // v4459: centrale slotboxen zijn bewust verwijderd. De zichtbare wissels
+    // horen op de LEX-as thuis en worden daar in Play-modus getoond.
+    return;
   }
 
   function drawTreeEdges(g, layout, origin, growthPlan = null) {
@@ -1893,9 +1905,20 @@
       const plan = options.growthPlan || null;
       return !plan?.active || visibleAt(plan, nodeGrowthStep(plan, row.id));
     });
+    if (!rows.length) return;
     const maxText = rows.reduce((max, row) => Math.max(max, row.text.length), 0);
     const width = Math.max(mode === 'functional' ? 250 : 210, Math.min(380, maxText * 8.2 + 34));
-    drawCanvasGuideText(g, x - width / 2, Math.max(28, (rows[0]?.y || 92) - 56), title, 'axis-title');
+    const topY = Math.max(28, (rows[0]?.y || 92) - 56);
+    const axisTop = Math.max(24, Math.min(...rows.map(row => row.y)) - 46);
+    const axisBottom = Math.max(...rows.map(row => row.y)) + 46;
+    drawCanvasGuideText(g, x - width / 2, topY, title, 'axis-title');
+    g.appendChild(svgEl('line', {
+      x1: x,
+      y1: axisTop,
+      x2: x,
+      y2: axisBottom,
+      class: `projection-axis-line ${cls}`
+    }));
     rows.forEach(row => {
       g.appendChild(svgEl('line', {
         x1: row.x0 + 58,
@@ -1906,6 +1929,93 @@
       }));
       g.appendChild(svgEl('rect', { x: x - width / 2, y: row.y - 26, width, height: 52, rx: 14, class: boxClass }));
       g.appendChild(svgEl('text', { x, y: row.y + 5, class: ruleClass }, row.text));
+    });
+  }
+
+
+  function logicalProjectionItemsFromLayout(layout = null, order = null) {
+    const sourceLayout = layout || getFunctionalLayout();
+    const labels = roleLabels();
+    const byKey = {
+      S: { short: 'S', title: 'Subject', word: String(labels.subject || '').toUpperCase(), match: ['agens', 'subject'] },
+      O: { short: 'O', title: 'Object', word: String(labels.object || '').toUpperCase(), match: ['patiens', 'object'] },
+      V: { short: 'V', title: 'Verb', word: String(labels.predicate || '').toUpperCase(), match: ['pred', 'predicate'] }
+    };
+    Object.values(byKey).forEach(def => {
+      const node = (sourceLayout?.nodes || []).find(n => n.kind === 'leaf' && def.match.includes(String(n.role || '').toLowerCase()))
+        || (sourceLayout?.nodes || []).find(n => def.match.includes(String(n.role || '').toLowerCase()));
+      if (node?.label) def.word = String(node.label).toUpperCase();
+    });
+    const resolvedOrder = Array.isArray(order) && order.length ? order : ((state.branchOrder === 'flip-all' || state.functionalOrder === 'right-first') ? ['V', 'S', 'O'] : ['S', 'O', 'V']);
+    return resolvedOrder.map((key, index) => ({ ...byKey[key], x: index, y: 0 }));
+  }
+
+  function southLogicalOrder() {
+    return southLogicalModeOrder(state.southLogicalMode || 'SOV');
+  }
+
+  function logicalOrderCode(items) {
+    return (items || []).map(item => item.short).join('');
+  }
+
+  function drawLogicalProjection(g, x1, x2, y, layout = null, options = {}) {
+    const requestedOrder = Array.isArray(options.order) && options.order.length ? options.order : null;
+    const items = logicalProjectionItemsFromLayout(layout, requestedOrder);
+    if (!items.length) return;
+    const cls = options.cls || 'log';
+    const title = options.title || 'LOGICAL-projectie';
+    const subtitle = options.subtitle || 'De logische volgorde wordt uit de FT-layout geprojecteerd.';
+    const orderCode = logicalOrderCode(items);
+    const badgeText = options.badgeText || `LOG · ${orderCode}`;
+    const badgeWidth = Math.max(116, 18 + badgeText.length * 8.4);
+    const badgeX = x1 - badgeWidth - 16;
+    drawCanvasGuideText(g, x1, y - 64, `${title} · ${orderCode}`, 'axis-title');
+    drawCanvasGuideText(g, x1, y - 40, subtitle, 'rule-label');
+    const badgeGroup = svgEl('g', {
+      class: options.interactive ? 'logical-badge-group clickable logical-flip-toggle' : 'logical-badge-group',
+      'data-action': options.interactive ? 'south-logical-flip' : ''
+    });
+    badgeGroup.appendChild(svgEl('rect', {
+      x: badgeX,
+      y: y - 18,
+      width: badgeWidth,
+      height: 34,
+      rx: 12,
+      class: `logical-order-box logical-order-badge${options.interactive ? ' logical-order-badge-interactive' : ''}`
+    }));
+    badgeGroup.appendChild(svgEl('text', { x: badgeX + badgeWidth / 2, y: y + 2, class: 'logical-order-label' }, badgeText));
+    if (options.interactive) {
+      badgeGroup.appendChild(svgEl('text', { x: badgeX + badgeWidth / 2, y: y - 26, class: 'logical-order-sub logical-flip-hint' }, 'klik = flip ZUID-as'));
+      badgeGroup.style.cursor = 'pointer';
+    }
+    g.appendChild(badgeGroup);
+    g.appendChild(svgEl('line', {
+      x1,
+      y1: y,
+      x2: x2,
+      y2: y,
+      class: `logical-axis ${cls}`
+    }));
+    const step = items.length > 1 ? (x2 - x1) / (items.length - 1) : 0;
+    items.forEach((item, index) => {
+      const cx = x1 + step * index;
+      g.appendChild(svgEl('line', {
+        x1: cx,
+        y1: y,
+        x2: cx,
+        y2: y - 26,
+        class: `projection-line ${cls} logical-projection-line`
+      }));
+      g.appendChild(svgEl('rect', {
+        x: cx - 74,
+        y: y + 10,
+        width: 148,
+        height: 48,
+        rx: 14,
+        class: 'logical-order-box'
+      }));
+      g.appendChild(svgEl('text', { x: cx, y: y + 28, class: 'logical-order-label' }, `${item.short} · ${item.word}`));
+      g.appendChild(svgEl('text', { x: cx, y: y + 45, class: 'logical-order-sub' }, item.title));
     });
   }
 
@@ -1962,7 +2072,7 @@
       .map(id => functionalNodes.find(n => n.id === id)?.label || id)
       .join(' + ') || 'role-boxen';
     if (options.showTitle !== false) drawAxisTitle(g, origin.x - 180, origin.y - 70, `OPN · functionele structuur · ${rootLabel} → ${roleNames} · ${state.functionalOrder}`);
-    drawAxisTitle(g, origin.x - 176, origin.y - 48, `v4457 · ${branchModeLabel()} · vrije plaatsing + V2-slot`);
+    drawAxisTitle(g, origin.x - 176, origin.y - 48, `v4462 · ${branchModeLabel()} · vrije plaatsing + gereserveerde vrije slots`);
     const growthPlan = growthPlanForLayout(layout);
     layout.__growthPlan = growthPlan;
     drawSubtreeBoxes(g, layout, origin, growthPlan);
@@ -1987,21 +2097,41 @@
       sourceMap = layoutNodeMap(centralLayout, origin);
     }
 
+    const leftTreePx = px((centralLayout?.box?.minX || 0) - 0.9, origin);
+    const westAxisX = Math.max(120, leftTreePx - 168);
+    const southAxisY = py((centralLayout?.box?.maxY || 0) + 2.1, origin);
+
     const growthPlan = centralLayout?.__growthPlan;
     const showLexBaseStep = !growthPlan?.active || visibleAt(growthPlan, growthPlan.lexBaseStep);
     const showProjectionPanels = !growthPlan?.active || visibleAt(growthPlan, growthPlan.projectionStep);
     if (showProjectionPanels) {
-      drawLexAxis(g, 210, 126, activeLexItems(), sourceMap);
+      drawLexAxis(g, westAxisX, 126, activeLexItems(), sourceMap);
       if (state.centerMode === 'functional') drawFunctionalRules(g, 1240, centralLayout, origin, growthPlan);
       else drawSyntaxRules(g, 1240, 126, centralLayout, origin, growthPlan);
+      drawLogicalProjection(g, westAxisX + 78, 1210, southAxisY, getFunctionalLayout(), {
+        cls: 'log',
+        title: 'ZUID-as · LOGICAL-projectie',
+        subtitle: 'Logische volgorde onder de boom; west-as blijft LEX. Klik op de badge om alleen de zuid-as door de reeksen SOV, VSO, SVO en VOS te laten lopen.',
+        badgeText: `ZUID · ${state.southLogicalMode || 'SOV'}`,
+        order: southLogicalOrder(),
+        interactive: true
+      });
     } else if (showLexBaseStep) {
       const executedMovementCount = growthPlan?.active
         ? Math.max(0, Math.min(growthPlan.lexMovementCount, growthPlan.current - growthPlan.lexMovementStartStep + 1))
         : undefined;
-      drawLexAxis(g, 210, 126, activeLexItems(), sourceMap, { localOnly: true, executedMovementCount });
+      drawLexAxis(g, westAxisX, 126, activeLexItems(), sourceMap, { localOnly: true, executedMovementCount });
       drawAxisTitle(g, 1210, 116, 'SYNTAX-projectie verschijnt in de laatste stap');
+      drawLogicalProjection(g, westAxisX + 78, 1210, southAxisY, getFunctionalLayout(), {
+        cls: 'log',
+        title: 'ZUID-as · LOGICAL-projectie',
+        subtitle: 'Onderprojectie wordt mee zichtbaar in de eindfase. Klik op de badge om alleen de zuid-as door de reeksen SOV, VSO, SVO en VOS te laten lopen.',
+        badgeText: `ZUID · ${state.southLogicalMode || 'SOV'}`,
+        order: southLogicalOrder(),
+        interactive: true
+      });
     } else {
-      drawAxisTitle(g, 165, 116, `Groei-presentatie · ${growthLabel()}`);
+      drawAxisTitle(g, westAxisX - 45, 116, `Groei-presentatie · ${growthLabel()}`);
       drawAxisTitle(g, 1210, 116, 'SYNTAX-projectie verschijnt in de laatste stap');
     }
     els.svg.appendChild(g);
@@ -2011,9 +2141,9 @@
     const g = baseSvg('source-view');
     if (state.centerMode === 'functional') {
       drawFunctional(g, { x: 760, y: 92 });
-      drawAxisTitle(g, 520, 70, `BRON · OPN-functioneel · slot 1/2 + structure-config · ${state.functionalOrder}`);
+      drawAxisTitle(g, 520, 70, `BRON · OPN-functioneel · vrije slots + structure-config · ${state.functionalOrder}`);
     } else {
-      drawAxisTitle(g, 490, 58, 'BRON · OPN-syntax-tree · vrije HOR/VER-boxplaatsing + V2-slot');
+      drawAxisTitle(g, 490, 58, 'BRON · OPN-syntax-tree · vrije HOR/VER-boxplaatsing + vrije-slotruimte');
       drawSyntaxTree(g, { x: 780, y: 82 });
     }
     els.svg.appendChild(g);
@@ -2030,7 +2160,13 @@
     const g = baseSvg('synt-view');
     const origin = { x: 430, y: 92 };
     const layout = drawSyntaxTree(g, origin);
+    const functionalLayout = getFunctionalLayout();
     drawSyntaxRules(g, 1040, 86, layout, origin, layout?.__growthPlan || null);
+    drawLogicalProjection(g, 300, 1110, 642, functionalLayout, {
+      cls: 'log',
+      title: 'LOGICAL-projectie onder de syntaxboom',
+      subtitle: 'De logische volgorde komt uit FT/LOG; syntax- en LEX-regels blijven aparte projecties.'
+    });
     drawCanvasGuideText(g, 540, 370, 'SYNTAX: regels staan op dezelfde hoogte als hun bronknoop in de boom.', 'rule-label');
     els.svg.appendChild(g);
   }
@@ -2040,6 +2176,11 @@
     const origin = { x: 430, y: 92 };
     const layout = drawFunctional(g, origin);
     drawFunctionalRules(g, 1060, layout, origin, layout?.__growthPlan || null);
+    drawLogicalProjection(g, 310, 1120, 666, layout, {
+      cls: 'log',
+      title: 'FT-projectie · logische volgorde',
+      subtitle: 'Flip/layout in FT kan zo verschillende logische volgorden zichtbaar maken, zoals SOV, VSO, SVO en VOS, zonder een aparte LEX-herschikking.'
+    });
     els.svg.appendChild(g);
   }
 
@@ -2096,6 +2237,33 @@
     els.canvasWrap?.classList.remove('is-panning');
   }
 
+  function computeAutoFitBox() {
+    if (!els.svg) return fallbackViewBox();
+    const grids = [...els.svg.querySelectorAll('.grid')];
+    const oldDisplays = grids.map(grid => grid.style.display);
+    try {
+      // FIT moet de getekende boom/projecties volgen, niet het raster.
+      grids.forEach(grid => { grid.style.display = 'none'; });
+      const bbox = els.svg.getBBox();
+      if (!bbox || !Number.isFinite(bbox.width) || !Number.isFinite(bbox.height) || bbox.width <= 0 || bbox.height <= 0) {
+        return fallbackViewBox();
+      }
+      const margin = isMobileViewport()
+        ? Math.max(28, Math.min(58, Math.max(bbox.width, bbox.height) * 0.034))
+        : Math.max(44, Math.min(104, Math.max(bbox.width, bbox.height) * 0.045));
+      return {
+        x: bbox.x - margin,
+        y: bbox.y - margin,
+        w: bbox.width + margin * 2,
+        h: bbox.height + margin * 2
+      };
+    } catch (_err) {
+      return fallbackViewBox();
+    } finally {
+      grids.forEach((grid, index) => { grid.style.display = oldDisplays[index] || ''; });
+    }
+  }
+
   function applyViewBoxFit(force = false) {
     if (!els.svg) return;
     if (force) resetManualViewBox();
@@ -2112,34 +2280,17 @@
       setViewBox(fallbackViewBox(), false);
       return;
     }
-    const grids = [...els.svg.querySelectorAll('.grid')];
-    const oldDisplays = grids.map(grid => grid.style.display);
-    try {
-      // Auto-fit moet de getekende boom/projecties volgen, niet het raster.
-      grids.forEach(grid => { grid.style.display = 'none'; });
-      const bbox = els.svg.getBBox();
-      if (!bbox || !Number.isFinite(bbox.width) || !Number.isFinite(bbox.height) || bbox.width <= 0 || bbox.height <= 0) {
-        setViewBox(fallbackViewBox(), false);
-        return;
-      }
-      const margin = isMobileViewport()
-        ? Math.max(28, Math.min(58, Math.max(bbox.width, bbox.height) * 0.034))
-        : Math.max(44, Math.min(104, Math.max(bbox.width, bbox.height) * 0.045));
-      const x = bbox.x - margin;
-      const y = bbox.y - margin;
-      const w = bbox.width + margin * 2;
-      const h = bbox.height + margin * 2;
-      setViewBox({ x, y, w, h }, false);
-    } catch (_err) {
-      setViewBox(fallbackViewBox(), false);
-    } finally {
-      grids.forEach((grid, index) => { grid.style.display = oldDisplays[index] || ''; });
-    }
+    setViewBox(computeAutoFitBox(), false);
   }
 
   function runFit() {
-    applyViewBoxFit(true);
-    requestAnimationFrame(() => applyViewBoxFit(true));
+    resetManualViewBox();
+    const applyManualFit = () => {
+      const fitBox = computeAutoFitBox();
+      setViewBox(fitBox, true);
+    };
+    applyManualFit();
+    requestAnimationFrame(applyManualFit);
   }
 
   function baseSvg(className) {
@@ -2149,7 +2300,7 @@
     els.svg.classList.toggle('no-grid', !state.showGrid);
     const g = svgEl('g', { class: className });
     if (state.showGrid) drawGrid(g, 1800, 1000);
-    drawCanvasGuideText(g, 22, 28, 'sleep canvas = verplaats view · Ctrl+wiel = zoom · FIT = herstel', 'view-pan-hint');
+    drawCanvasGuideText(g, 22, 28, 'sleep canvas = verplaats view · Ctrl+wiel = zoom · FIT = passend kader rond de actuele inhoud', 'view-pan-hint');
     return g;
   }
 
@@ -2167,7 +2318,7 @@
   }
 
   function stabilizeInitialTreeView() {
-    // v4457: in de lokale viewer kan de eerste automatische SVG-bbox vóór de
+    // v4458: in de lokale viewer kan de eerste automatische SVG-bbox vóór de
     // eerste paint leeg of onvolledig zijn. Een tweede render na layout/paint
     // voorkomt dat de boom pas verschijnt na handmatig Groei aan/uit.
     if (!els.svg || state.manualViewBox || state.viewDrag) return;
@@ -2192,8 +2343,8 @@
     els.projectionHelp.textContent = helpText();
     els.explainHeading.textContent = `Uitleg · ${activeSentenceText()}`;
     els.explainText.textContent = state.example.id === 'hond-bijt-man'
-      ? 'LEX-regel: eerst horizontale basisprojectie, daarna lokale Wissels naar vrije slots. Hoofdzin: eerste zinsdeel → slot 1, persoonsvorm → slot 2; traces blijven op de oude basisplek.'
-      : 'LEX-regel: verplaats alleen naar vrije slots 0/1/2. Niet-verplaatste woorden blijven op hun horizontale basisplek. Traces staan lokaal op de oude plek.';
+      ? 'LEX-regel: eerst horizontale basisprojectie, daarna lokale Wissels naar vrije slots. Hoofdzin: eerste zinsdeel → slot 1, persoonsvorm → slot 2; traces blijven op de oude basisplek. FIT kadert alleen het zicht, niet de boom. Centrale slotboxen zijn verwijderd; de eerste tak reserveert lege vrije-slotruimte; wissels zie je alleen op de LEX-as. De ZUID-badge doorloopt alleen de zuid-as-volgorde: SOV, VSO, SVO, VOS.'
+      : 'LEX-regel: verplaats alleen naar vrije slots 0/1/2. Niet-verplaatste woorden blijven op hun horizontale basisplek. Traces staan lokaal op de oude plek. In LOG/FT kan de onderprojectie SOV, VSO, SVO of VOS tonen.';
   }
 
   function projectionLabel() {
@@ -2201,11 +2352,11 @@
   }
 
   function helpText() {
-    if (state.projection === 'source') return 'Bron: OPN-syntax en OPN-functioneel worden gelezen uit structure-config.html. Beide gebruiken dezelfde left/right layoutstrategie en reserveren OPN-slot 1.';
-    if (state.projection === 'lex') return 'LEX: plaatsingsregels per zinstype. Hoofdzin: eerste zinsdeel naar slot 1, persoonsvorm naar slot 2. Bijzin met OMDAT: Comp in slot 0, geen V2.';
-    if (state.projection === 'synt') return 'SYNTAX-projectie: regels uit structure-config.html. Nieuwe VP-regelsets worden hier zichtbaar.';
-    if (state.projection === 'log') return 'LOG/FT: functioneel = CLAUSE met aparte PRED-knoop en ARG-STRUCT-subtree; bottom-up vrij geplaatst.';
-    return 'Assen: centrale OPN-boom; links LEX. Eerst horizontale basisprojectie, daarna lokale Wissels naar vrije slots; resultaat leest als de voorbeeldzin.';
+    if (state.projection === 'source') return 'Bron: OPN-syntax en OPN-functioneel worden gelezen uit structure-config.html. Beide gebruiken dezelfde left/right layoutstrategie en reserveren configureerbare lege vrije-slotruimte onder de wortel.';
+    if (state.projection === 'lex') return 'LEX: plaatsingsregels per zinstype. Hoofdzin: eerste zinsdeel naar slot 1, persoonsvorm naar slot 2. De ruimte in de centrale boom is leeg; de vulling staat op de LEX-as.';
+    if (state.projection === 'synt') return 'SYNTAX-projectie: regels staan op boomhoogte; onder de boom staat nu ook de LOGICAL-projectie uit FT/LOG.';
+    if (state.projection === 'log') return 'LOG/FT: functioneel = CLAUSE met aparte PRED-knoop en ARG-STRUCT-subtree; onderaan toont de FT-projectie de logische volgorde (bijv. SOV/VSO/SVO/VOS).';
+    return 'Assen: centrale OPN-boom; west-as = LEX direct naast de boom; zuid-as = LOGICAL-projectie; onder de wortel is vrije-slotruimte gereserveerd. Klik op de ZUID-badge om alleen de zuid-as cyclisch te wijzigen: SOV → VSO → SVO → VOS; west/oost blijven gelijk.';
   }
 
   function renderSideLists() {
@@ -2256,6 +2407,7 @@
     fillSelect(els.branchOtherSelect, BRANCH_CHOICES, state.branchOverrides.other);
     fillSelect(els.layoutDensitySelect, LAYOUT_DENSITIES, state.layoutDensity);
     fillSelect(els.viewFitSelect, VIEW_FIT_MODES, state.viewFitMode);
+    fillSelect(els.freeSlotCountSelect, FREE_SLOT_COUNTS, String(reservedFreeSlotCount()));
     if (els.functionalOrderSelect) els.functionalOrderSelect.disabled = false;
     if (els.branchOrderSelect) els.branchOrderSelect.disabled = false;
     fillSelect(els.lexRuleSelect, LEX_RULES, state.example.lexRule);
@@ -2361,6 +2513,7 @@
       functional_order: state.functionalOrder,
       branch_order: state.branchOrder,
       branch_overrides: state.branchOverrides,
+      free_slot_count: reservedFreeSlotCount(),
       syntax_rules: syntaxRules(),
       structure_config: 'structure-config.html',
       lex: activeLexItems()
@@ -2381,6 +2534,7 @@
         if (payload.tree_choice && TREE_CHOICES.some(choice => choice.id === payload.tree_choice)) state.treeChoice = payload.tree_choice;
         if (payload.functional_order === 'left-first' || payload.functional_order === 'right-first') state.functionalOrder = payload.functional_order;
         if (payload.branch_order && BRANCH_ORDERS.some(order => order.id === payload.branch_order)) state.branchOrder = payload.branch_order;
+        if (Number.isFinite(Number(payload.free_slot_count))) state.freeSlotCount = Math.max(0, Math.min(6, Number(payload.free_slot_count)));
         if (payload.branch_overrides && typeof payload.branch_overrides === 'object') {
           for (const key of ['top', 'middle', 'other']) {
             if (['auto', 'normal', 'flip'].includes(payload.branch_overrides[key])) state.branchOverrides[key] = payload.branch_overrides[key];
@@ -2412,7 +2566,8 @@
       `lex: ${activeSentenceText()}`,
       `lex_rule: ${state.example.lexRule}`,
       `placement_rule: ${isMainV2Rule() ? 'LEX-as: eerst horizontale basisprojectie; daarna lokale Wissel naar voorbeeldzinvolgorde; oude basispositie = trace' : 'geen V2-Wissel; Comp-slot 0 indien aanwezig'}`,
-      `free_slots: slot1=TOPIC, slot2=V2/PV`,
+      `free_slot_count: ${reservedFreeSlotCount()}`,
+      `free_slots: slot1=TOPIC, slot2=V2/PV; extra slots = gereserveerde lege rijen onder de wortel`,
       `tree_choice: ${activeTreeChoice()}`,
       `movement_summary: ${movementSummaryLabel()}`,
       `functional_order: ${state.functionalOrder}`,
@@ -2636,6 +2791,16 @@
     });
 
     els.svg.addEventListener('click', event => {
+      const actionEl = event.target?.closest?.('[data-action]');
+      if (actionEl && !state.viewClickSuppressed) {
+        const action = actionEl.getAttribute('data-action');
+        if (action === 'south-logical-flip') {
+          event.preventDefault();
+          event.stopPropagation();
+          toggleSouthLogicalFlip();
+          return;
+        }
+      }
       if (!state.viewClickSuppressed) return;
       event.preventDefault();
       event.stopPropagation();
@@ -2655,10 +2820,18 @@
     }, { passive: false });
   }
 
+  function toggleSouthLogicalFlip() {
+    const current = state.southLogicalMode || 'SOV';
+    const index = Math.max(0, SOUTH_LOGICAL_MODES.indexOf(current));
+    state.southLogicalMode = SOUTH_LOGICAL_MODES[(index + 1) % SOUTH_LOGICAL_MODES.length];
+    render();
+  }
+
   function resetForNewExample() {
     stopGrowthPlayback();
     state.growthEnabled = false;
     state.growthStep = 0;
+    state.southLogicalMode = 'SOV';
     state.lastSupportedGrowthStep = 0;
     state.roleSwap = false;
     state.selectedNodeId = null;
@@ -2713,6 +2886,7 @@
     els.branchOtherSelect?.addEventListener('change', event => updateBranchOverride('other', event.target.value));
     els.layoutDensitySelect?.addEventListener('change', event => { state.layoutDensity = event.target.value || 'auto'; resetManualViewBox(); render(); });
     els.viewFitSelect?.addEventListener('change', event => { state.viewFitMode = event.target.value || 'auto'; resetManualViewBox(); render(); });
+    els.freeSlotCountSelect?.addEventListener('change', event => { state.freeSlotCount = Math.max(0, Math.min(6, Number(event.target.value) || 0)); resetManualViewBox(); render(); });
     els.lexRuleSelect?.addEventListener('change', event => {
       const targetExample = event.target.value === 'bijzin-omdat' ? (EXAMPLES.find(e => e.lexRule === 'bijzin-omdat') || EXAMPLES[1]) : (EXAMPLES.find(e => e.lexRule === 'hoofdzininvariant') || EXAMPLES[0]);
       state.example = targetExample;
