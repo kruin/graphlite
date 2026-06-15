@@ -1945,3 +1945,17 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
 .logical-flip-hint {
   font-size: calc(10px * var(--og-font-scale));
 }
+
+
+.logical-badge-group.clickable,
+.logical-badge-group.clickable * {
+  pointer-events: auto;
+}
+.logical-badge-group.clickable {
+  cursor: pointer;
+}
+
+.logical-source-line {
+  stroke-dasharray: 6 4;
+  opacity: 0.88;
+}

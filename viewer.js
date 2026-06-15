@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'v4462';
+  const VERSION = 'v4464';
   const BASE_CELL = 74;
   const ROOT_SIDE_GAP = 1;
   const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -1101,6 +1101,124 @@
     return normalizeLayout(addOpnTopicalizationSlot(layoutTree(cloneTree(functionalSpec()), 0, { firstSide, branchOrder: state.branchOrder, branchOverrides: state.branchOverrides }), STRUCTURE_CONFIG.functionalRoot || 'ft-clause'));
   }
 
+  function sortChildrenByRanks(children = [], rankFn) {
+    return [...children].sort((a, b) => {
+      const ra = rankFn(a);
+      const rb = rankFn(b);
+      if (ra !== rb) return ra - rb;
+      return String(a.id || a.label || '').localeCompare(String(b.id || b.label || ''));
+    });
+  }
+
+  function southAwareSyntaxSpec(mode = state.southLogicalMode || 'SOV') {
+    const tree = cloneTree(treeSpec());
+    const modeCode = String(mode || 'SOV').toUpperCase();
+    const rootVerbFirst = modeCode.startsWith('V');
+    const verbBeforeObject = modeCode === 'SVO' || modeCode === 'VSO';
+    function visit(node) {
+      if (!node?.children?.length) return;
+      node.children.forEach(visit);
+      const label = String(node.label || node.cat || node.id || '').toLowerCase();
+      const id = String(node.id || '').toLowerCase();
+      if (label === 's' || id === 's') {
+        node.children = sortChildrenByRanks(node.children, child => {
+          const cid = String(child.id || '').toLowerCase();
+          const cl = String(child.label || child.cat || '').toLowerCase();
+          const isSubject = cid.includes('np-subj') || (cl === 'np' && String(child.role || '').toLowerCase() === 'subject');
+          const isVp = cid.includes('vp') || cl === 'vp';
+          if (rootVerbFirst) return isVp ? 0 : (isSubject ? 1 : 9);
+          return isSubject ? 0 : (isVp ? 1 : 9);
+        });
+      }
+      if (label === 'vp' || id.includes('vp')) {
+        node.children = sortChildrenByRanks(node.children, child => {
+          const cid = String(child.id || '').toLowerCase();
+          const cl = String(child.label || child.cat || '').toLowerCase();
+          const isObject = cid.includes('np-obj') || (cl === 'np' && String(child.role || '').toLowerCase() === 'object');
+          const isVerbish = cid.includes('v') || cid.includes('aux') || cid.includes('vdw') || cl === 'v' || cl === 'aux' || cl === 'vdw' || cl === 'vp';
+          if (verbBeforeObject) return isVerbish ? 0 : (isObject ? 1 : 9);
+          return isObject ? 0 : (isVerbish ? 1 : 9);
+        });
+      }
+    }
+    visit(tree);
+    return tree;
+  }
+
+  function southAwareFunctionalSpec(mode = state.southLogicalMode || 'SOV') {
+    const tree = cloneTree(functionalSpec());
+    const modeCode = String(mode || 'SOV').toUpperCase();
+    const rootVerbFirst = modeCode.startsWith('V');
+    const objectBeforeSubject = modeCode === 'VOS';
+    function visit(node) {
+      if (!node?.children?.length) return;
+      node.children.forEach(visit);
+      const label = String(node.label || node.cat || node.id || '').toLowerCase();
+      const id = String(node.id || '').toLowerCase();
+      if (label === 'clause' || id.includes('clause')) {
+        node.children = sortChildrenByRanks(node.children, child => {
+          const cid = String(child.id || '').toLowerCase();
+          const cl = String(child.label || child.cat || '').toLowerCase();
+          const isPred = cid.includes('pred') || cl === 'pred';
+          const isArgs = cid.includes('arg') || cl.includes('arg-struct');
+          if (rootVerbFirst) return isPred ? 0 : (isArgs ? 1 : 9);
+          return isArgs ? 0 : (isPred ? 1 : 9);
+        });
+      }
+      if (id.includes('arg') || label.includes('arg-struct')) {
+        node.children = sortChildrenByRanks(node.children, child => {
+          const cid = String(child.id || '').toLowerCase();
+          const cl = String(child.label || child.cat || '').toLowerCase();
+          const isSubj = cid.includes('agens') || cl === 'agens';
+          const isObj = cid.includes('patiens') || cl === 'patiens';
+          if (objectBeforeSubject) return isObj ? 0 : (isSubj ? 1 : 9);
+          return isSubj ? 0 : (isObj ? 1 : 9);
+        });
+      }
+    }
+    visit(tree);
+    return tree;
+  }
+
+  function getSouthAwareSyntaxLayout() {
+    const firstSide = layoutFirstSide();
+    return normalizeLayout(addOpnTopicalizationSlot(layoutTree(southAwareSyntaxSpec(), 0, { firstSide, branchOrder: state.branchOrder, branchOverrides: state.branchOverrides }), STRUCTURE_CONFIG.syntaxRoot || 's'));
+  }
+
+  function getSouthAwareFunctionalLayout() {
+    const firstSide = layoutFirstSide();
+    return normalizeLayout(addOpnTopicalizationSlot(layoutTree(southAwareFunctionalSpec(), 0, { firstSide, branchOrder: state.branchOrder, branchOverrides: state.branchOverrides }), STRUCTURE_CONFIG.functionalRoot || 'ft-clause'));
+  }
+
+  function southLogicalItemsFromCentralLayout(layout, origin, projectionKind = 'syntax', order = southLogicalOrder()) {
+    const labels = roleLabels();
+    const findNode = (which) => {
+      if (projectionKind === 'functional') {
+        if (which === 'S') return nodeByRoleOrPattern(layout, ['agens', 'subject'], ['agens', 'ft-agens'], { leaf: false }) || nodeByRoleOrPattern(layout, ['agens', 'subject'], ['agens', 'ft-agens']);
+        if (which === 'O') return nodeByRoleOrPattern(layout, ['patiens', 'object'], ['patiens', 'ft-patiens'], { leaf: false }) || nodeByRoleOrPattern(layout, ['patiens', 'object'], ['patiens', 'ft-patiens']);
+        return nodeByRoleOrPattern(layout, ['pred', 'predicate'], ['pred', 'ft-pred', 'clause'], { leaf: false }) || nodeByRoleOrPattern(layout, ['pred', 'predicate'], ['pred', 'ft-pred', 'clause']);
+      }
+      if (which === 'S') return nodeByRoleOrPattern(layout, ['subject'], ['np-subj', 'subject'], { leaf: false }) || nodeByRoleOrPattern(layout, ['subject'], ['np-subj', 'subject']);
+      if (which === 'O') return nodeByRoleOrPattern(layout, ['object'], ['np-obj', 'object'], { leaf: false }) || nodeByRoleOrPattern(layout, ['object'], ['np-obj', 'object']);
+      return nodeByRoleOrPattern(layout, ['predicate', 'aux', 'participle'], ['vp-perfectum', 'aux', 'vdw', 'v'], { leaf: false }) || nodeByRoleOrPattern(layout, ['predicate', 'aux', 'participle'], ['vp-perfectum', 'aux', 'vdw', 'v']);
+    };
+    const meta = {
+      S: { title: 'Subject', word: String(labels.subject || '').toUpperCase() },
+      O: { title: 'Object', word: String(labels.object || '').toUpperCase() },
+      V: { title: 'Verb', word: String(labels.predicate || '').toUpperCase() }
+    };
+    return (order || []).map(which => {
+      const node = findNode(which);
+      return {
+        short: which,
+        title: meta[which]?.title || which,
+        word: meta[which]?.word || which,
+        px: node ? px(node.x, origin) : null,
+        sourceTopY: node ? py(node.y, origin) + 22 : null
+      };
+    }).filter(item => Number.isFinite(item.px));
+  }
+
   function isMobileViewport() {
     return typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(max-width: 760px)').matches;
   }
@@ -1478,7 +1596,7 @@
   }
 
   function drawSyntaxTree(g, origin, options = {}) {
-    const layout = getSyntaxLayout();
+    const layout = options.layout ? cloneLayout(options.layout) : getSyntaxLayout();
     const growthPlan = growthPlanForLayout(layout);
     layout.__growthPlan = growthPlan;
     drawSubtreeBoxes(g, layout, origin, growthPlan);
@@ -1960,7 +2078,7 @@
 
   function drawLogicalProjection(g, x1, x2, y, layout = null, options = {}) {
     const requestedOrder = Array.isArray(options.order) && options.order.length ? options.order : null;
-    const items = logicalProjectionItemsFromLayout(layout, requestedOrder);
+    const items = Array.isArray(options.items) && options.items.length ? options.items : logicalProjectionItemsFromLayout(layout, requestedOrder);
     if (!items.length) return;
     const cls = options.cls || 'log';
     const title = options.title || 'LOGICAL-projectie';
@@ -1968,7 +2086,9 @@
     const orderCode = logicalOrderCode(items);
     const badgeText = options.badgeText || `LOG · ${orderCode}`;
     const badgeWidth = Math.max(116, 18 + badgeText.length * 8.4);
-    const badgeX = x1 - badgeWidth - 16;
+    const badgeX = options.badgeAlign === 'center'
+      ? ((x1 + x2) / 2) - badgeWidth / 2
+      : x1 - badgeWidth - 16;
     drawCanvasGuideText(g, x1, y - 64, `${title} · ${orderCode}`, 'axis-title');
     drawCanvasGuideText(g, x1, y - 40, subtitle, 'rule-label');
     const badgeGroup = svgEl('g', {
@@ -1985,7 +2105,7 @@
     }));
     badgeGroup.appendChild(svgEl('text', { x: badgeX + badgeWidth / 2, y: y + 2, class: 'logical-order-label' }, badgeText));
     if (options.interactive) {
-      badgeGroup.appendChild(svgEl('text', { x: badgeX + badgeWidth / 2, y: y - 26, class: 'logical-order-sub logical-flip-hint' }, 'klik = flip ZUID-as'));
+      badgeGroup.appendChild(svgEl('text', { x: badgeX + badgeWidth / 2, y: y - 26, class: 'logical-order-sub logical-flip-hint' }, 'klik = volgende volgorde'));
       badgeGroup.style.cursor = 'pointer';
     }
     g.appendChild(badgeGroup);
@@ -1998,7 +2118,16 @@
     }));
     const step = items.length > 1 ? (x2 - x1) / (items.length - 1) : 0;
     items.forEach((item, index) => {
-      const cx = x1 + step * index;
+      const cx = Number.isFinite(item.px) ? item.px : (x1 + step * index);
+      if (Number.isFinite(item.sourceTopY)) {
+        g.appendChild(svgEl('line', {
+          x1: cx,
+          y1: item.sourceTopY,
+          x2: cx,
+          y2: y - 10,
+          class: `projection-line ${cls} logical-source-line`
+        }));
+      }
       g.appendChild(svgEl('line', {
         x1: cx,
         y1: y,
@@ -2064,7 +2193,7 @@
   }
 
   function drawFunctional(g, origin, options = {}) {
-    const layout = getFunctionalLayout();
+    const layout = options.layout ? cloneLayout(options.layout) : getFunctionalLayout();
     const rootLabel = layout.node?.label || STRUCTURE_CONFIG.functionalRoot || 'CLAUSE';
     const functionalNodes = STRUCTURE_CONFIG.functionalNodes || [];
     const rootDef = functionalNodes.find(n => n.id === STRUCTURE_CONFIG.functionalRoot);
@@ -2072,7 +2201,7 @@
       .map(id => functionalNodes.find(n => n.id === id)?.label || id)
       .join(' + ') || 'role-boxen';
     if (options.showTitle !== false) drawAxisTitle(g, origin.x - 180, origin.y - 70, `OPN · functionele structuur · ${rootLabel} → ${roleNames} · ${state.functionalOrder}`);
-    drawAxisTitle(g, origin.x - 176, origin.y - 48, `v4462 · ${branchModeLabel()} · vrije plaatsing + gereserveerde vrije slots`);
+    drawAxisTitle(g, origin.x - 176, origin.y - 48, `v4464 · ${branchModeLabel()} · vrije plaatsing + gereserveerde vrije slots`);
     const growthPlan = growthPlanForLayout(layout);
     layout.__growthPlan = growthPlan;
     drawSubtreeBoxes(g, layout, origin, growthPlan);
@@ -2089,17 +2218,21 @@
 
     let sourceMap = null;
     let centralLayout = null;
+    const centralKind = state.centerMode === 'functional' ? 'functional' : 'syntax';
     if (state.centerMode === 'functional') {
-      centralLayout = drawFunctional(g, origin, { showTitle: false });
+      centralLayout = drawFunctional(g, origin, { showTitle: false, layout: getSouthAwareFunctionalLayout() });
       sourceMap = layoutNodeMap(centralLayout, origin);
     } else {
-      centralLayout = drawSyntaxTree(g, origin);
+      centralLayout = drawSyntaxTree(g, origin, { layout: getSouthAwareSyntaxLayout() });
       sourceMap = layoutNodeMap(centralLayout, origin);
     }
+    const southItems = southLogicalItemsFromCentralLayout(centralLayout, origin, centralKind, southLogicalOrder());
 
     const leftTreePx = px((centralLayout?.box?.minX || 0) - 0.9, origin);
     const westAxisX = Math.max(120, leftTreePx - 168);
     const southAxisY = py((centralLayout?.box?.maxY || 0) + 2.1, origin);
+    const southAxisX1 = px((centralLayout?.box?.minX || 0) - 0.75, origin);
+    const southAxisX2 = px((centralLayout?.box?.maxX || 0) + 0.75, origin);
 
     const growthPlan = centralLayout?.__growthPlan;
     const showLexBaseStep = !growthPlan?.active || visibleAt(growthPlan, growthPlan.lexBaseStep);
@@ -2108,13 +2241,15 @@
       drawLexAxis(g, westAxisX, 126, activeLexItems(), sourceMap);
       if (state.centerMode === 'functional') drawFunctionalRules(g, 1240, centralLayout, origin, growthPlan);
       else drawSyntaxRules(g, 1240, 126, centralLayout, origin, growthPlan);
-      drawLogicalProjection(g, westAxisX + 78, 1210, southAxisY, getFunctionalLayout(), {
+      drawLogicalProjection(g, southAxisX1, southAxisX2, southAxisY, getFunctionalLayout(), {
         cls: 'log',
         title: 'ZUID-as · LOGICAL-projectie',
         subtitle: 'Logische volgorde onder de boom; west-as blijft LEX. Klik op de badge om alleen de zuid-as door de reeksen SOV, VSO, SVO en VOS te laten lopen.',
         badgeText: `ZUID · ${state.southLogicalMode || 'SOV'}`,
         order: southLogicalOrder(),
-        interactive: true
+        items: southItems,
+        interactive: true,
+        badgeAlign: 'center'
       });
     } else if (showLexBaseStep) {
       const executedMovementCount = growthPlan?.active
@@ -2122,13 +2257,15 @@
         : undefined;
       drawLexAxis(g, westAxisX, 126, activeLexItems(), sourceMap, { localOnly: true, executedMovementCount });
       drawAxisTitle(g, 1210, 116, 'SYNTAX-projectie verschijnt in de laatste stap');
-      drawLogicalProjection(g, westAxisX + 78, 1210, southAxisY, getFunctionalLayout(), {
+      drawLogicalProjection(g, southAxisX1, southAxisX2, southAxisY, getFunctionalLayout(), {
         cls: 'log',
         title: 'ZUID-as · LOGICAL-projectie',
         subtitle: 'Onderprojectie wordt mee zichtbaar in de eindfase. Klik op de badge om alleen de zuid-as door de reeksen SOV, VSO, SVO en VOS te laten lopen.',
         badgeText: `ZUID · ${state.southLogicalMode || 'SOV'}`,
         order: southLogicalOrder(),
-        interactive: true
+        items: southItems,
+        interactive: true,
+        badgeAlign: 'center'
       });
     } else {
       drawAxisTitle(g, westAxisX - 45, 116, `Groei-presentatie · ${growthLabel()}`);
@@ -2343,7 +2480,7 @@
     els.projectionHelp.textContent = helpText();
     els.explainHeading.textContent = `Uitleg · ${activeSentenceText()}`;
     els.explainText.textContent = state.example.id === 'hond-bijt-man'
-      ? 'LEX-regel: eerst horizontale basisprojectie, daarna lokale Wissels naar vrije slots. Hoofdzin: eerste zinsdeel → slot 1, persoonsvorm → slot 2; traces blijven op de oude basisplek. FIT kadert alleen het zicht, niet de boom. Centrale slotboxen zijn verwijderd; de eerste tak reserveert lege vrije-slotruimte; wissels zie je alleen op de LEX-as. De ZUID-badge doorloopt alleen de zuid-as-volgorde: SOV, VSO, SVO, VOS.'
+      ? 'LEX-regel: eerst horizontale basisprojectie, daarna lokale Wissels naar vrije slots. Hoofdzin: eerste zinsdeel → slot 1, persoonsvorm → slot 2; traces blijven op de oude basisplek. FIT kadert alleen het zicht, niet de boom. Centrale slotboxen zijn verwijderd; de eerste tak reserveert lege vrije-slotruimte; wissels zie je alleen op de LEX-as. De ZUID-badge doorloopt de zuid-as-volgorde: SOV, VSO, SVO, VOS. De centrale subject/object/verb-vertakkingen draaien mee.'
       : 'LEX-regel: verplaats alleen naar vrije slots 0/1/2. Niet-verplaatste woorden blijven op hun horizontale basisplek. Traces staan lokaal op de oude plek. In LOG/FT kan de onderprojectie SOV, VSO, SVO of VOS tonen.';
   }
 
@@ -2356,7 +2493,7 @@
     if (state.projection === 'lex') return 'LEX: plaatsingsregels per zinstype. Hoofdzin: eerste zinsdeel naar slot 1, persoonsvorm naar slot 2. De ruimte in de centrale boom is leeg; de vulling staat op de LEX-as.';
     if (state.projection === 'synt') return 'SYNTAX-projectie: regels staan op boomhoogte; onder de boom staat nu ook de LOGICAL-projectie uit FT/LOG.';
     if (state.projection === 'log') return 'LOG/FT: functioneel = CLAUSE met aparte PRED-knoop en ARG-STRUCT-subtree; onderaan toont de FT-projectie de logische volgorde (bijv. SOV/VSO/SVO/VOS).';
-    return 'Assen: centrale OPN-boom; west-as = LEX direct naast de boom; zuid-as = LOGICAL-projectie; onder de wortel is vrije-slotruimte gereserveerd. Klik op de ZUID-badge om alleen de zuid-as cyclisch te wijzigen: SOV → VSO → SVO → VOS; west/oost blijven gelijk.';
+    return 'Assen: centrale OPN-boom; west-as = LEX direct naast de boom; zuid-as = LOGICAL-projectie; onder de wortel is vrije-slotruimte gereserveerd. Klik op de ZUID-badge om alleen de zuid-as binnen het boomvenster cyclisch te wijzigen: SOV → VSO → SVO → VOS; west/oost blijven gelijk; de as zelf loopt alleen onder de centrale boom.';
   }
 
   function renderSideLists() {
@@ -2704,7 +2841,7 @@
     if (!els.svg) return;
     els.svg.addEventListener('pointerdown', event => {
       if (event.button !== undefined && event.button !== 0) return;
-      if (event.target?.closest?.('input,select,button,a,label')) return;
+      if (event.target?.closest?.('input,select,button,a,label,[data-action]')) return;
       state.activePointers.set(event.pointerId, { clientX: event.clientX, clientY: event.clientY, pointerType: event.pointerType });
       els.svg.setPointerCapture?.(event.pointerId);
       els.svg.classList.add('is-panning');
