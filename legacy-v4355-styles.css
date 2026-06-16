@@ -131,13 +131,13 @@ button:disabled { opacity: 0.45; }
 .status-panel,
 .config-panel,
 .intro-panel,
-.carousel-panel { padding: 0.75rem 0.85rem; }
+.carrousel-panel { padding: 0.75rem 0.85rem; }
 .intro-panel { line-height: 1.42; }
 .intro-panel p { color: var(--muted); font-size: 0.92rem; margin-top: 0.45rem; }
 .intro-kicker { color: var(--muted); font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.16em; font-weight: 800; margin-bottom: 0.22rem; }
-.carousel-panel { display: grid; gap: 0.55rem; }
-.carousel-panel label { display: grid; gap: 0.25rem; color: var(--muted); font-size: 0.86rem; font-weight: 700; }
-.carousel-panel select { width: 100%; min-height: 2.4rem; border: 1px solid var(--line); border-radius: 0.65rem; background: var(--panel); color: var(--text); padding: 0.25rem 0.5rem; font: inherit; }
+.carrousel-panel { display: grid; gap: 0.55rem; }
+.carrousel-panel label { display: grid; gap: 0.25rem; color: var(--muted); font-size: 0.86rem; font-weight: 700; }
+.carrousel-panel select { width: 100%; min-height: 2.4rem; border: 1px solid var(--line); border-radius: 0.65rem; background: var(--panel); color: var(--text); padding: 0.25rem 0.5rem; font: inherit; }
 .title-line { font-weight: 700; margin-bottom: 0.5rem; }
 .meta-line { color: var(--muted); font-size: 0.86rem; margin-top: 0.45rem; }
 .meter-row { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 0.75rem; }
@@ -261,7 +261,7 @@ button:disabled { opacity: 0.45; }
   }
   .toolbar { grid-area: toolbar; grid-template-columns: repeat(5, minmax(0, 1fr)); }
   .intro-panel { grid-area: intro; }
-  .carousel-panel { grid-area: sample; }
+  .carrousel-panel { grid-area: sample; }
   .status-panel { grid-area: status; }
   .config-panel { grid-area: config; }
   .canvas-wrap { grid-area: canvas; height: calc(100vh - 6.2rem); min-height: 620px; }
@@ -312,13 +312,13 @@ button:disabled { opacity: 0.45; }
 }
 
 
-/* v4348: JAN viewer keeps labels readable; examples moved to carousel. */
+/* v4348: JAN viewer keeps labels readable; examples moved to carrousel. */
 .node-label-long {
   text-anchor: start;
   dominant-baseline: central;
   font-weight: 720;
 }
-/* v4348: examples moved out of the viewer. The carousel is the didactic layer. */
+/* v4348: examples moved out of the viewer. The carrousel is the didactic layer. */
 .button-link {
   margin-top: 0.75rem;
   appearance: none;

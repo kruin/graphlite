@@ -1,6 +1,6 @@
 <!doctype html>
-<!-- OPENGRAPH_VIEWER_HTML_v4497: fallback app entry mirrors root index. -->
-<html lang="nl" data-opengraph-app="viewer" data-version="v4497">
+<!-- OPENGRAPH_VIEWER_HTML_v4500: fallback app entry mirrors root index. -->
+<html lang="nl" data-opengraph-app="viewer" data-version="v4500">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
@@ -9,18 +9,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#0f172a">
   <meta name="description" content="OpenGraph Lite Viewer: vrije JAN-bronknopen, edits, LEX-plaatsingsregels en projecties.">
-  <title>OpenGraph Lite Viewer v4497</title>
+  <title>OpenGraph Lite Viewer v4500</title>
   <link rel="icon" href="favicon.ico" sizes="any">
   <link rel="icon" href="icons/icon-192.svg" type="image/svg+xml">
-  <!-- v4497: manifest disabled in local/dev build to avoid PWA/service-worker confusion. -->
+  <!-- v4500: manifest disabled in local/dev build to avoid PWA/service-worker confusion. -->
   <!-- <link rel="manifest" href="manifest.webmanifest"> -->
-  <link rel="stylesheet" href="styles.css?v4497">
+  <link rel="stylesheet" href="styles.css?v4500">
 </head>
 <body class="main-screen-active">
   <header class="app-header">
     <div>
       <div class="eyebrow">OpenGraph · JAN · Open Notation</div>
-      <h1>OpenGraph Lite Viewer <span class="version-tag">v4497</span></h1>
+      <h1>OpenGraph Lite Viewer <span class="version-tag">v4500</span></h1>
       <p class="header-subtitle">Redesign: eerst syntax-tree, daarna LEX-projectie, daarna lokale LEX-regel/Wissel (V2).</p>
     </div>
     <button id="installButton" class="ghost hidden" type="button">Installeer</button>
@@ -34,6 +34,7 @@
         <select id="mainExampleSelect" aria-label="Voorbeeldzin kiezen"></select>
       </label>
       <div class="main-topbar-actions" aria-label="Hoofdbeeld acties">
+        <button data-language-toggle class="language-toggle-button" type="button" title="Wissel de UI/help-taal">Taal: Nederlands</button>
         <button id="openHelpButton" class="help-open-button" type="button" title="Open het help-scherm met de carrousel.">Help</button>
         <button id="openConfigButton" class="primary config-open-button" type="button" title="Open het configuratiescherm met alle projectie-, LEX-, layout- en documentatie-instellingen.">Config</button>
       </div>
@@ -41,6 +42,7 @@
 
     <section class="config-topbar" aria-label="Configuratiescherm bediening">
       <button id="closeConfigButton" class="primary config-back-button" type="button" title="Terug naar hoofdbeeld: alleen grid, zinmenu, Help en Config-knop.">← Terug naar main</button>
+      <button data-language-toggle class="language-toggle-button" type="button" title="Wissel de UI/help-taal">Taal: Nederlands</button>
       <button id="openHelpFromConfigButton" class="help-open-button" type="button" title="Open het help-scherm met de carrousel.">Help</button>
       <div>
         <div class="intro-kicker">Config</div>
@@ -60,8 +62,8 @@
     </section>
 
     <section id="helpScreen" class="help-screen" aria-label="Help en carrousel">
-      <iframe id="helpCarouselFrame" title="JAN carrousel" src="carousel.html?v4497" loading="lazy"></iframe>
-      <p class="help-fallback">Als de carrousel niet verschijnt: <a href="carousel.html?v4497" target="_blank" rel="noopener">open de carrousel los</a> of gebruik <a href="carousel.html?v4497" target="_blank" rel="noopener">carousel.html</a>.</p>
+      <iframe id="helpCarrouselFrame" title="JAN carrousel" src="carrousel/index.html?v4500" loading="lazy"></iframe>
+      <p class="help-fallback">Als de carrousel niet verschijnt: <a href="carrousel/index.html?v4500" target="_blank" rel="noopener">open de carrousel los</a> of gebruik <a href="carrousel/index.html?v4500" target="_blank" rel="noopener">carrousel/index.html</a>.</p>
     </section>
 
     <section class="projection-sticky-bar" aria-label="Vaste projectie- en groeibediening">
@@ -99,13 +101,13 @@
         <select id="exampleSelect" aria-label="Voorbeeldzin kiezen"></select>
       </label>
       <div class="input-sentence-tools" aria-label="Zin-input">
-        <a class="button-link" href="examples-input.html?v4497" title="Open de HTML-inputfile met voorbeeldzinnen, subject vet en object cursief">HTML-input</a>
-        <a class="button-link" href="lexicon-config.html?v4497" title="Leesbare lexicon-config voor voorbeeldzinnen">Lexicon</a>
-        <a class="button-link" href="lexicon-editor.html?v4497" title="Lexicon én korte voorbeelduitingen beheren; exporteert lexicon-config.html en examples-input.html">Lexicon+uitingen-editor</a>
-        <a class="button-link" href="structure-editor.html?v4497" title="Bewerk eerst syntax-config en functional-config">Structure-editor</a>
-        <a class="button-link" href="docs/docs-home.html?v4497" title="Projectcontext, layoutspec en release notes">Docs</a>
-        <a class="button-link" href="lex-movement-rules.html?v4497" title="Simpele uitleg van de LEX-Wissels per zinstype">Plaatsingsregels</a>
-        <a class="button-link" href="reset-cache.html?v4497" title="Verwijder browsercache/service worker en open de viewer opnieuw">Reset cache</a>
+        <a class="button-link" href="examples-input.html?v4500" title="Open de HTML-inputfile met voorbeeldzinnen, subject vet en object cursief">HTML-input</a>
+        <a class="button-link" href="lexicon-config.html?v4500" title="Leesbare lexicon-config voor voorbeeldzinnen">Lexicon</a>
+        <a class="button-link" href="lexicon-editor.html?v4500" title="Lexicon én korte voorbeelduitingen beheren; exporteert lexicon-config.html en examples-input.html">Lexicon+uitingen-editor</a>
+        <a class="button-link" href="structure-editor.html?v4500" title="Bewerk eerst syntax-config en functional-config">Structure-editor</a>
+        <a class="button-link" href="docs/docs-home.html?v4500" title="Projectcontext, layoutspec en release notes">Docs</a>
+        <a class="button-link" href="lex-movement-rules.html?v4500" title="Simpele uitleg van de LEX-Wissels per zinstype">Plaatsingsregels</a>
+        <a class="button-link" href="reset-cache.html?v4500" title="Verwijder browsercache/service worker en open de viewer opnieuw">Reset cache</a>
       </div>
       <div class="button-row compact-actions">
         <button id="resetExampleButton" type="button" title="Herlaad het gekozen voorbeeld">Reset voorbeeld</button>
@@ -117,13 +119,13 @@
           <input id="fileInput" type="file" accept="application/json,.json,.opn">
         </label>
         <button id="downloadJsonButton" type="button" title="Download actuele OpenGraph Lite JSON">Download JSON</button>
-        <a class="button-link" href="carousel.html?v4497" title="Open JAN-carousel">Carousel</a>
+        <a class="button-link" href="carrousel/index.html?v4500" title="Open JAN-carrousel">Carrousel</a>
       </div>
     </section>
 
     <section class="intro-panel" aria-label="Introductie">
       <div class="intro-kicker">Redesign · boom eerst</div>
-      <p><strong>Fase 1</strong>: maak eerst de centrale boom voor <strong>HOND BIJT MAN</strong>. <strong>Fase 2</strong>: teken de LEX-projectie horizontaal vanaf de centrale boom naar de LEX-as. Beide OPN-bronnen reserveren lege ruimte onder de wortel voor vrije slots; standaard twee rijen: slot 1 voor vooropplaatsing/topicalisatie en slot 2 voor V2/PV. <strong>Fase 3</strong>: regel lokaal op de LEX-as het uitingtype <strong>OMDAT HOND MAN BIJT</strong>. In auto-min wordt de centrale syntaxvolgorde per voorbeeldzin gekozen; in structure-config blijft de oudere basisboom onveranderd. Lidwoorden zijn verwijderd: de man → man; de hond → hond. Structuren staan in <code>structure-config.html</code>: eerst syntax-config en functional-config. Functioneel gebruikt <code>CLAUSE → PRED ARG-STRUCT</code>, zodat predicaat en argumentstructuur apart vrij kunnen worden geplaatst. De layout-switch <code>left-first/right-first</code> geldt voor syntax én functioneel. Takvolgorde staat standaard op grammaticale volgorde: S → NP VP en VP → NP V; compact/align/flip blijven handmatige vergelijkingsopties. Daarna volgen de voorbeeldzinnen. Voorbeeldzinnen staan in <code>examples-input.html</code>. Boomkeuze <code>auto per voorbeeldtype</code> behoudt de hiërarchische syntax; LEX-wissels volgen pas lokaal uit het voorbeeldtype: <strong>vet</strong> markeert subject/agens, <em>cursief</em> markeert object/patiens. Lexicale vulling en thematische rollen komen uit <code>lexicon-config.html</code>. Beheer lexicon én korte voorbeeldzinnen via <code>lexicon-editor.html</code>; die editor exporteert zowel <code>lexicon-config.html</code> als <code>examples-input.html</code>. Bewerk structuren via <code>structure-editor.html</code>. <code>examples-editor.html</code> blijft voorlopig beschikbaar als aparte/oude zinneneditor. De <strong>Carousel</strong> is de aparte uitleglaag: die toont de route van vrije knopen naar projectie-assen zonder de interactieve viewer te belasten. Vanaf v4497 is het hoofdbeeld grid-only: boven het grid staan Zin, Help en Config. Het configuratiescherm bevat alle menu’s. Het gridvenster staat standaard bovenaan op alle platforms; in portrait krijgt het grid alleen een gemaximeerde breedte voor boom + assen, staat het rechter menu naast het grid en is de grens duidelijk sleepbaar. De gebruiker kan maximaal vier menu’s boven het grid kiezen: Projectiekeuze, Voorbeeldzin, Play/Groei of Werkknoppen; alle andere menu’s blijven onder het grid.</p>
+      <p><strong>Fase 1</strong>: maak eerst de centrale boom voor <strong>HOND BIJT MAN</strong>. <strong>Fase 2</strong>: teken de LEX-projectie horizontaal vanaf de centrale boom naar de LEX-as. Beide OPN-bronnen reserveren lege ruimte onder de wortel voor vrije slots; standaard twee rijen: slot 1 voor vooropplaatsing/topicalisatie en slot 2 voor V2/PV. <strong>Fase 3</strong>: regel lokaal op de LEX-as het uitingtype <strong>OMDAT HOND MAN BIJT</strong>. In auto-min wordt de centrale syntaxvolgorde per voorbeeldzin gekozen; in structure-config blijft de oudere basisboom onveranderd. Lidwoorden zijn verwijderd: de man → man; de hond → hond. Structuren staan in <code>structure-config.html</code>: eerst syntax-config en functional-config. Functioneel gebruikt <code>CLAUSE → PRED ARG-STRUCT</code>, zodat predicaat en argumentstructuur apart vrij kunnen worden geplaatst. De layout-switch <code>left-first/right-first</code> geldt voor syntax én functioneel. Takvolgorde staat standaard op grammaticale volgorde: S → NP VP en VP → NP V; compact/align/flip blijven handmatige vergelijkingsopties. Daarna volgen de voorbeeldzinnen. Voorbeeldzinnen staan in <code>examples-input.html</code>. Boomkeuze <code>auto per voorbeeldtype</code> behoudt de hiërarchische syntax; LEX-wissels volgen pas lokaal uit het voorbeeldtype: <strong>vet</strong> markeert subject/agens, <em>cursief</em> markeert object/patiens. Lexicale vulling en thematische rollen komen uit <code>lexicon-config.html</code>. Beheer lexicon én korte voorbeeldzinnen via <code>lexicon-editor.html</code>; die editor exporteert zowel <code>lexicon-config.html</code> als <code>examples-input.html</code>. Bewerk structuren via <code>structure-editor.html</code>. <code>examples-editor.html</code> blijft voorlopig beschikbaar als aparte/oude zinneneditor. De <strong>Carrousel</strong> is de aparte uitleglaag: die toont de route van vrije knopen naar projectie-assen zonder de interactieve viewer te belasten. Vanaf v4500 is het hoofdbeeld grid-only: boven het grid staan Zin, Help en Config. Het configuratiescherm bevat alle menu’s. Het gridvenster staat standaard bovenaan op alle platforms; in portrait krijgt het grid alleen een gemaximeerde breedte voor boom + assen, staat het rechter menu naast het grid en is de grens duidelijk sleepbaar. De gebruiker kan maximaal vier menu’s boven het grid kiezen: Projectiekeuze, Voorbeeldzin, Play/Groei of Werkknoppen; alle andere menu’s blijven onder het grid.</p>
     </section>
 
     <section class="status-panel" aria-live="polite">
@@ -181,7 +183,7 @@ aria-label="Menu's boven grid" title="Kies maximaal vier menu's die boven het gr
               <label title="Projectiekeuze: Assen, Bron, LEX, SYNTAX-projectie en LOG/FT. Nuttig als je vaak tussen projecties vergelijkt."><input type="checkbox" data-top-menu-choice="projection"> Projectiekeuze</label>
               <label title="Voorbeeldzin: kies snel HOND BIJT MAN en varianten. Nuttig bij contrasten tussen zinnen."><input type="checkbox" data-top-menu-choice="sentence"> Voorbeeldzin</label>
               <label title="Play/Groei: groei-presentatie, stapknoppen en afspelen. Nuttig voor didactische demonstratie."><input type="checkbox" data-top-menu-choice="play"> Play/Groei</label>
-              <label title="Werkknoppen: FIT, reset, JSON, Docs, Carousel en editors. Nuttig bij bouwen/testen, minder bij uitleg."><input type="checkbox" data-top-menu-choice="tools"> Werkknoppen</label>
+              <label title="Werkknoppen: FIT, reset, JSON, Docs, Carrousel en editors. Nuttig bij bouwen/testen, minder bij uitleg."><input type="checkbox" data-top-menu-choice="tools"> Werkknoppen</label>
               <p class="top-menu-choice-help" data-top-menu-help>Geen menu boven het grid. Maximaal vier keuzes; overige menu’s staan onder het grid.</p>
             </fieldset>
           </div>
@@ -249,7 +251,7 @@ aria-label="Menu's boven grid" title="Kies maximaal vier menu's die boven het gr
       </details>
       <details>
         <summary>Bediening</summary>
-        <p><strong>OPN/Assen</strong>: kies centraal tussen OPN-syntaxboom en OPN-functionele structuur. De syntaxboom wordt uit <code>structure-config.html</code> gelezen en bottom-up berekend: eerst leaf/subtree-boxen, daarna plaatsing, daarna renderen. Projecties worden horizontaal naar hun as getekend; SYNTAX en LOG/FT staan nu ook op gekleurde projectie-assen en de syntaxweergave krijgt onderaan een LOGICAL-projectie. <strong>Boomruimte</strong> maakt de HOR-afstand groter en de VER-afstand kleiner; <strong>Boom vrije rijen</strong> bepaalt hoeveel lege rijen onder de wortel worden gereserveerd; <strong>LEX vrije slots</strong> zijn plaatsbare insertiepunten op de LEX-as voor later materiaal uit andere LEX-assen/bomen of anaforische elementen; <strong>LEX insertie</strong> kiest de voorbeeldinhoud van de insertiebox; <strong>Takverlenging</strong> kiest welke takken/boxgrenzen extra lengte krijgen door die insertie; <strong>Venster auto</strong> past de viewBox dynamisch aan; <strong>FIT</strong> zet handmatig steeds een passend kader rond de actuele inhoud. <strong>Groei</strong> presenteert dezelfde berekende layout stapsgewijs: eerst leaves, dan hogere categorieën/boxen, daarna LEX-basisprojectie en LEX-wissels. De functionele structuur gebruikt dezelfde recursieve werkwijze, is n-ary, heeft ook een eigen LEX-projectie, reserveert configureerbare vrije-slotruimte onder de wortel; standaard slot 1 voor vooropplaatsing/topicalisatie en slot 2 voor V2/PV; en heeft configkeuzes <strong>left-first</strong>/<strong>right-first</strong> en <strong>flipdoel compact/align en flip-config per vertakking</strong>. <strong>Voorbeeld-input</strong>: <code>examples-input.html</code> bevat de zinnen met <strong>subject vet</strong> en <em>object cursief</em>. <strong>LEX</strong>: gebruik de orderlijst of plaatsingsregel. <strong>Carousel</strong>: gebruik de uitlegbeelden voor de didactische route; de viewer blijft de interactieve testlaag.</p>
+        <p><strong>OPN/Assen</strong>: kies centraal tussen OPN-syntaxboom en OPN-functionele structuur. De syntaxboom wordt uit <code>structure-config.html</code> gelezen en bottom-up berekend: eerst leaf/subtree-boxen, daarna plaatsing, daarna renderen. Projecties worden horizontaal naar hun as getekend; SYNTAX en LOG/FT staan nu ook op gekleurde projectie-assen en de syntaxweergave krijgt onderaan een LOGICAL-projectie. <strong>Boomruimte</strong> maakt de HOR-afstand groter en de VER-afstand kleiner; <strong>Boom vrije rijen</strong> bepaalt hoeveel lege rijen onder de wortel worden gereserveerd; <strong>LEX vrije slots</strong> zijn plaatsbare insertiepunten op de LEX-as voor later materiaal uit andere LEX-assen/bomen of anaforische elementen; <strong>LEX insertie</strong> kiest de voorbeeldinhoud van de insertiebox; <strong>Takverlenging</strong> kiest welke takken/boxgrenzen extra lengte krijgen door die insertie; <strong>Venster auto</strong> past de viewBox dynamisch aan; <strong>FIT</strong> zet handmatig steeds een passend kader rond de actuele inhoud. <strong>Groei</strong> presenteert dezelfde berekende layout stapsgewijs: eerst leaves, dan hogere categorieën/boxen, daarna LEX-basisprojectie en LEX-wissels. De functionele structuur gebruikt dezelfde recursieve werkwijze, is n-ary, heeft ook een eigen LEX-projectie, reserveert configureerbare vrije-slotruimte onder de wortel; standaard slot 1 voor vooropplaatsing/topicalisatie en slot 2 voor V2/PV; en heeft configkeuzes <strong>left-first</strong>/<strong>right-first</strong> en <strong>flipdoel compact/align en flip-config per vertakking</strong>. <strong>Voorbeeld-input</strong>: <code>examples-input.html</code> bevat de zinnen met <strong>subject vet</strong> en <em>object cursief</em>. <strong>LEX</strong>: gebruik de orderlijst of plaatsingsregel. <strong>Carrousel</strong>: gebruik de uitlegbeelden voor de didactische route; de viewer blijft de interactieve testlaag.</p>
       </details>
     </section>
   </main>
@@ -310,7 +312,7 @@ aria-label="Menu's boven grid" title="Kies maximaal vier menu's die boven het gr
         <label title="Projectiekeuze: Assen, Bron, LEX, SYNTAX-projectie en LOG/FT."><input type="checkbox" data-top-menu-choice="projection"> Projectiekeuze</label>
         <label title="Voorbeeldzin: kies snel HOND BIJT MAN en varianten."><input type="checkbox" data-top-menu-choice="sentence"> Voorbeeldzin</label>
         <label title="Play/Groei: groei-presentatie, stapknoppen en afspelen."><input type="checkbox" data-top-menu-choice="play"> Play/Groei</label>
-        <label title="Werkknoppen: FIT, reset, JSON, Docs, Carousel en editors."><input type="checkbox" data-top-menu-choice="tools"> Werkknoppen</label>
+        <label title="Werkknoppen: FIT, reset, JSON, Docs, Carrousel en editors."><input type="checkbox" data-top-menu-choice="tools"> Werkknoppen</label>
         <p class="top-menu-choice-help" data-top-menu-help>Geen menu boven het grid. Maximaal vier keuzes; overige menu’s staan onder het grid.</p>
       </fieldset>
     </div>
@@ -337,10 +339,10 @@ aria-label="Menu's boven grid" title="Kies maximaal vier menu's die boven het gr
     <div class="mobile-sheet-section" aria-label="Documentatie">
       <h3>Documentatie</h3>
       <div class="mobile-link-grid">
-        <a href="carousel.html?v4497">JAN-carousel</a>
-        <a href="docs/docs-home.html?v4497">Docs</a>
-        <a href="lex-movement-rules.html?v4497">Plaatsingsregels</a>
-        <a href="reset-cache.html?v4497">Reset cache</a>
+        <a href="carrousel/index.html?v4500">JAN-carrousel</a>
+        <a href="docs/docs-home.html?v4500">Docs</a>
+        <a href="lex-movement-rules.html?v4500">Plaatsingsregels</a>
+        <a href="reset-cache.html?v4500">Reset cache</a>
       </div>
     </div>
 
@@ -349,7 +351,7 @@ aria-label="Menu's boven grid" title="Kies maximaal vier menu's die boven het gr
 
 
   <script>
-    window.__opengraphBoot = { version: 'v4497', loaded: false, marker: 'viewer-index' };
+    window.__opengraphBoot = { version: 'v4500', loaded: false, marker: 'viewer-index' };
     function ogStatus(message) {
       var target = document.getElementById('actionFeedback') || document.body;
       if (target) target.textContent = message;
@@ -362,10 +364,10 @@ aria-label="Menu's boven grid" title="Kies maximaal vier menu's die boven het gr
     });
     setTimeout(function() {
       if (!window.__opengraphBoot || !window.__opengraphBoot.loaded) {
-        ogStatus('Viewer start niet volledig. Gebruik Reset cache of open http://127.0.0.1:8088/reset-cache.html?v4497.');
+        ogStatus('Viewer start niet volledig. Gebruik Reset cache of open http://127.0.0.1:8088/reset-cache.html?v4500.');
       }
     }, 2500);
   </script>
-  <script src="viewer.js?v4497" defer></script>
+  <script src="viewer.js?v4500" defer></script>
 </body>
 </html>

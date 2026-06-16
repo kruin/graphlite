@@ -1,0 +1,1 @@
+Projectie met kopie van een knoop. De kopie hoort niet als nieuw syntactisch kind in de centrale boom; zij toont een andere lezing of projectielaag.

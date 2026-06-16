@@ -1,0 +1,1 @@
+Projectie met ruimte voor labels. Pas na de kale projectie worden namen als LEX, SYN of LF nuttig; eerst moet duidelijk zijn wat de lijn en kopie doen.

@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'v4497';
+  const VERSION = 'v4500';
   const BASE_CELL = 74;
   const ROOT_SIDE_GAP = 1;
   const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -21,7 +21,7 @@
     openHelpFromConfigButton: document.getElementById('openHelpFromConfigButton'),
     closeHelpButton: document.getElementById('closeHelpButton'),
     openConfigFromHelpButton: document.getElementById('openConfigFromHelpButton'),
-    helpCarouselFrame: document.getElementById('helpCarouselFrame'),
+    helpCarrouselFrame: document.getElementById('helpCarrouselFrame'),
     centralModeSelect: document.getElementById('centralModeSelect'),
     treeChoiceSelect: document.getElementById('treeChoiceSelect'),
     functionalOrderSelect: document.getElementById('functionalOrderSelect'),
@@ -272,7 +272,7 @@
     { id: 'projection', label: 'Projectiekeuze', cssClass: 'top-menu-projection', tip: 'Projectiekeuze: Assen, Bron, LEX, SYNTAX-projectie en LOG/FT. Nuttig voor vergelijken van projecties.' },
     { id: 'sentence', label: 'Voorbeeldzin', cssClass: 'top-menu-sentence', tip: 'Voorbeeldzin: kies snel HOND BIJT MAN en varianten. Nuttig voor contrast tussen zinnen.' },
     { id: 'play', label: 'Play/Groei', cssClass: 'top-menu-play', tip: 'Play/Groei: stap voor stap boom, LEX-as en projecties tonen. Nuttig voor didactische uitleg.' },
-    { id: 'tools', label: 'Werkknoppen', cssClass: 'top-menu-tools', tip: 'Werkknoppen: FIT, reset, JSON, Docs, Carousel en editors. Nuttig bij bouwen en testen.' }
+    { id: 'tools', label: 'Werkknoppen', cssClass: 'top-menu-tools', tip: 'Werkknoppen: FIT, reset, JSON, Docs, Carrousel en editors. Nuttig bij bouwen en testen.' }
   ];
   const TOP_MENU_MAX = TOP_MENU_CHOICES.length;
 
@@ -336,6 +336,7 @@
 
   const state = {
     example: EXAMPLES[0],
+    language: (function(){ try { return localStorage.getItem('opengraph_language') === 'en' ? 'en' : 'nl'; } catch (_err) { return 'nl'; } })(),
     projection: 'axes',
     centerMode: 'syntax',
     treeChoice: 'auto-min',
@@ -1120,10 +1121,12 @@
   }
 
   function lexInsertionTargetLabel(id) {
+    if (isEnglish()) return LEX_EXTENSION_LABELS_EN[id]?.[0] || id;
     return LEX_INSERTION_EXTENSION_TARGETS.find(option => option.id === id)?.label || id;
   }
 
   function lexInsertionTargetTip(id) {
+    if (isEnglish()) return LEX_EXTENSION_LABELS_EN[id]?.[1] || '';
     return LEX_INSERTION_EXTENSION_TARGETS.find(option => option.id === id)?.tip || '';
   }
 
@@ -1598,7 +1601,7 @@
   }
 
   function isPortraitMobileViewport() {
-    // v4497: grid-first and fit-height are no longer mobile-only.
+    // v4500: grid-first and fit-height are no longer mobile-only.
     // The canvas height is based on the actual viewBox on every platform.
     return true;
   }
@@ -1612,7 +1615,7 @@
   }
 
   function syncPortraitMenuSpace() {
-    // v4497: de oude numerieke onderruimte blijft op 0. De relevante instelling
+    // v4500: de oude numerieke onderruimte blijft op 0. De relevante instelling
     // is nu: welke benoemde menu's mogen boven het grid staan.
     document.documentElement?.style.setProperty('--portrait-menu-reserve', '0px');
     document.documentElement?.style.setProperty('--portrait-menu-slots', '0');
@@ -1633,10 +1636,12 @@
   }
 
   function topMenuLabel(id) {
+    if (isEnglish()) return TOP_MENU_LABELS_EN[id]?.[0] || id;
     return TOP_MENU_CHOICES.find(choice => choice.id === id)?.label || id;
   }
 
   function topMenuTip(id) {
+    if (isEnglish()) return TOP_MENU_LABELS_EN[id]?.[1] || '';
     return TOP_MENU_CHOICES.find(choice => choice.id === id)?.tip || '';
   }
 
@@ -1676,8 +1681,12 @@
     state.topMenusAbove = selected;
     const selectedSet = new Set(selected);
     const summary = selected.length
-      ? `Boven grid: ${selected.map(topMenuLabel).join(' + ')}. Alle ${TOP_MENU_MAX} benoemde menu’s kunnen boven het grid; overige menu’s staan onder het grid.`
-      : `Geen menu boven het grid. Alle ${TOP_MENU_MAX} benoemde menu’s kunnen boven het grid; standaard staat alles onder het grid.`;
+      ? (isEnglish()
+        ? `Above grid: ${selected.map(topMenuLabel).join(' + ')}. All ${TOP_MENU_MAX} named menus can be placed above the grid; the others stay below it.`
+        : `Boven grid: ${selected.map(topMenuLabel).join(' + ')}. Alle ${TOP_MENU_MAX} benoemde menu’s kunnen boven het grid; overige menu’s staan onder het grid.`)
+      : (isEnglish()
+        ? `No menu above the grid. All ${TOP_MENU_MAX} named menus can be placed above the grid; by default everything stays below it.`
+        : `Geen menu boven het grid. Alle ${TOP_MENU_MAX} benoemde menu’s kunnen boven het grid; standaard staat alles onder het grid.`);
     document.querySelectorAll('[data-top-menu-choice]').forEach(input => {
       const id = input.getAttribute('data-top-menu-choice');
       const checked = selectedSet.has(id);
@@ -1685,7 +1694,10 @@
       input.disabled = !checked && selected.length >= TOP_MENU_MAX;
       const label = topMenuLabel(id);
       const tip = topMenuTip(id);
-      input.title = `${label}. ${tip} Alle ${TOP_MENU_MAX} benoemde menu’s kunnen boven het grid.`;
+      input.title = isEnglish()
+        ? `${label}. ${tip} All ${TOP_MENU_MAX} named menus can be placed above the grid.`
+        : `${label}. ${tip} Alle ${TOP_MENU_MAX} benoemde menu’s kunnen boven het grid.`;
+      setInputLabelText(input, label);
       const wrapper = input.closest('label');
       if (wrapper) wrapper.title = input.title;
     });
@@ -1808,7 +1820,7 @@
     syncPortraitStageMode();
     if (!els.canvasWrap) return;
     syncPortraitMenuSpace();
-    // v4497: het gridvenster wordt gemaximeerd op de actuele fit-box
+    // v4500: het gridvenster wordt gemaximeerd op de actuele fit-box
     // van boom + assen. Het canvas schaalt dus niet groter dan nodig.
     const fit = box || parseViewBox();
     const validFit = fit && Number.isFinite(fit.w) && fit.w > 0 && Number.isFinite(fit.h) && fit.h > 0;
@@ -2918,7 +2930,7 @@
       .map(id => functionalNodes.find(n => n.id === id)?.label || id)
       .join(' + ') || 'role-boxen';
     if (options.showTitle !== false) drawAxisTitle(g, origin.x - 180, origin.y - 70, `OPN · functionele structuur · ${rootLabel} → ${roleNames} · ${state.functionalOrder}`);
-    drawAxisTitle(g, origin.x - 176, origin.y - 48, `v4497 · ${branchModeLabel()} · vrije plaatsing + gereserveerde vrije slots`);
+    drawAxisTitle(g, origin.x - 176, origin.y - 48, `v4500 · ${branchModeLabel()} · vrije plaatsing + gereserveerde vrije slots`);
     const growthPlan = growthPlanForLayout(layout);
     layout.__growthPlan = growthPlan;
     drawSubtreeBoxes(g, layout, origin, growthPlan);
@@ -3238,7 +3250,7 @@
     const svgLocalRight = Math.min(hostRect.width, svgRect.right - hostRect.left);
     const svgLocalBottom = Math.min(hostRect.height, svgRect.bottom - hostRect.top);
 
-    // v4497: HTML controls are children of the canvas/boomvenster, but the SVG
+    // v4500: HTML controls are children of the canvas/boomvenster, but the SVG
     // itself uses preserveAspectRatio=meet.  Therefore placement is clamped to
     // the actually drawn grid rectangle, not to the full letterboxed canvas.
     // All overlay coordinates are therefore clamped to the canvas rect, not to
@@ -3405,6 +3417,7 @@
     renderSideLists();
     renderStatus();
     renderSelection();
+    applyLanguage();
   }
 
   function stabilizeInitialTreeView() {
@@ -3419,29 +3432,55 @@
     });
   }
 
+  function isEnglish() {
+    return state.language === 'en';
+  }
+
   function renderStatus() {
-    els.titleLine.textContent = `${activeSentenceText()} · ${state.projectionLabel || projectionLabel()} · ${state.centerMode === 'syntax' ? 'OPN-syntaxboom' : 'OPN-functioneel'}`;
+    const syntaxModeLabel = isEnglish() ? 'OPN syntax tree' : 'OPN-syntaxboom';
+    const functionalModeLabel = isEnglish() ? 'OPN functional structure' : 'OPN-functioneel';
+    els.titleLine.textContent = `${activeSentenceText()} · ${state.projectionLabel || projectionLabel()} · ${state.centerMode === 'syntax' ? syntaxModeLabel : functionalModeLabel}`;
     const noticeText = state.example.notice ? ` · NOTICE=${state.example.notice}` : '';
-    els.metaLine.textContent = `${state.example.phase} · ${movementSummaryLabel()} · LEX=${activeSentenceText()} · HTML-input=examples-input.html · lexicon=lexicon-config.html${noticeText}`;
+    els.metaLine.textContent = isEnglish()
+      ? `${state.example.phase} · ${movementSummaryLabel()} · LEX=${activeSentenceText()} · HTML input=examples-input.html · lexicon=lexicon-config.html${noticeText}`
+      : `${state.example.phase} · ${movementSummaryLabel()} · LEX=${activeSentenceText()} · HTML-input=examples-input.html · lexicon=lexicon-config.html${noticeText}`;
     if (els.sentencePreview) els.sentencePreview.innerHTML = activeSentenceHtml();
-    const baseFeedback = state.projection === 'source'
-      ? 'Bron toont de gekozen OPN-bron uit structure-config.html. Syntax en functioneel gebruiken bottom-up recursieve box-layout; left/right stuurt beide layouts; takvolgorde kan globaal, compact-auto of align-auto zijn.'
-      : 'Faseversie: eerst structure-config, dan voorbeeldzinnen die naar die sources projecteren, dan lokale LEX-regel.';
+    const baseFeedback = isEnglish()
+      ? (state.projection === 'source'
+        ? 'Source shows the selected OPN source from structure-config.html. Syntax and functional views use bottom-up recursive box layout; left/right controls both layouts; branch order can be global, compact-auto or align-auto.'
+        : 'Phase view: first the structure config, then sample sentences projected to those sources, then the local LEX placement rule.')
+      : (state.projection === 'source'
+        ? 'Bron toont de gekozen OPN-bron uit structure-config.html. Syntax en functioneel gebruiken bottom-up recursieve box-layout; left/right stuurt beide layouts; takvolgorde kan globaal, compact-auto of align-auto zijn.'
+        : 'Faseversie: eerst structure-config, dan voorbeeldzinnen die naar die sources projecteren, dan lokale LEX-regel.');
     const validationMsg = state.exampleValidationMessages?.length ? ` · ${state.exampleValidationMessages[0]}` : '';
     const noticeMsg = state.example.notice ? ` · ${state.example.notice}` : '';
     els.actionFeedback.textContent = state.growthEnabled ? `${baseFeedback} · ${growthLabel()}${noticeMsg}${validationMsg}` : `${baseFeedback}${noticeMsg}${validationMsg}`;
     els.projectionHelp.textContent = helpText();
-    els.explainHeading.textContent = `Uitleg · ${activeSentenceText()}`;
-    els.explainText.textContent = state.example.id === 'hond-bijt-man'
-      ? 'LEX-regel: eerst horizontale basisprojectie, daarna lokale Wissels naar vrije slots. Hoofdzin: eerste zinsdeel → slot 1, persoonsvorm → slot 2; traces blijven op de oude basisplek. FIT kadert alleen het zicht, niet de boom. Centrale slotboxen zijn verwijderd; de eerste tak reserveert lege vrije-slotruimte; wissels zie je alleen op de LEX-as. De volgordeknop doorloopt de LOG-volgorde: SOV, SVO, OVS, OSV, VSO, VOS. De centrale subject/object/verb-vertakkingen draaien mee. Menu’s boven het grid zijn expliciet gekozen: maximaal vier, bijvoorbeeld Voorbeeldzin en Play/Groei.'
-      : 'LEX-regel: verplaats alleen naar vrije slots 0/1/2. Niet-verplaatste woorden blijven op hun horizontale basisplek. Traces staan lokaal op de oude plek. In LOG/FT kan de onderprojectie SOV, SVO, OVS, OSV, VSO of VOS tonen.';
+    els.explainHeading.textContent = `${isEnglish() ? 'Explanation' : 'Uitleg'} · ${activeSentenceText()}`;
+    els.explainText.textContent = isEnglish()
+      ? (state.example.id === 'hond-bijt-man'
+        ? 'LEX rule: first draw the horizontal base projection, then local exchanges to free slots. Main clause: first phrase to slot 1, finite verb to slot 2; traces remain at the old base position. FIT frames the view, not the tree. Central slot boxes have been removed; the first branch reserves empty free-slot space; exchanges are visible only on the LEX axis. The order button cycles the LOG order: SOV, SVO, OVS, OSV, VSO, VOS. The central subject/object/verb branches follow that order.'
+        : 'LEX rule: move only to free slots 0/1/2. Non-moved words remain at their horizontal base position. Traces stay locally at the old position. In LOG/FT, the south projection can show SOV, SVO, OVS, OSV, VSO or VOS.')
+      : (state.example.id === 'hond-bijt-man'
+        ? 'LEX-regel: eerst horizontale basisprojectie, daarna lokale Wissels naar vrije slots. Hoofdzin: eerste zinsdeel → slot 1, persoonsvorm → slot 2; traces blijven op de oude basisplek. FIT kadert alleen het zicht, niet de boom. Centrale slotboxen zijn verwijderd; de eerste tak reserveert lege vrije-slotruimte; wissels zie je alleen op de LEX-as. De volgordeknop doorloopt de LOG-volgorde: SOV, SVO, OVS, OSV, VSO, VOS. De centrale subject/object/verb-vertakkingen draaien mee. Menu’s boven het grid zijn expliciet gekozen: maximaal vier, bijvoorbeeld Voorbeeldzin en Play/Groei.'
+        : 'LEX-regel: verplaats alleen naar vrije slots 0/1/2. Niet-verplaatste woorden blijven op hun horizontale basisplek. Traces staan lokaal op de oude plek. In LOG/FT kan de onderprojectie SOV, SVO, OVS, OSV of VSO tonen.');
   }
 
   function projectionLabel() {
-    return ({ axes: 'OPN/assen', source: 'Bron', lex: 'LEX', synt: 'SYNTAX-projectie', log: 'LOG/FT' })[state.projection] || state.projection;
+    const labels = isEnglish()
+      ? { axes: 'All axes', source: 'Source', lex: 'LEX', synt: 'SYNTAX projection', log: 'LOG/FT' }
+      : { axes: 'OPN/assen', source: 'Bron', lex: 'LEX', synt: 'SYNTAX-projectie', log: 'LOG/FT' };
+    return labels[state.projection] || state.projection;
   }
 
   function helpText() {
+    if (isEnglish()) {
+      if (state.projection === 'source') return 'Source: OPN syntax and OPN functional structures are read from structure-config.html. Both use the same left/right layout strategy and reserve configurable empty free-slot space under the root.';
+      if (state.projection === 'lex') return 'LEX: placement rules per sentence type. Main clause: first phrase to slot 1, finite verb to slot 2. The central tree keeps empty space; the filled positions are shown on the LEX axis.';
+      if (state.projection === 'synt') return 'SYNTAX projection: rules are placed at tree-node height; the LOGICAL projection from FT/LOG is also shown below the tree.';
+      if (state.projection === 'log') return 'LOG/FT: functional view = CLAUSE with separate PRED node and ARG-STRUCT subtree; the lower FT projection shows logical order, for example SOV/SVO/OVS/OSV/VSO/VOS.';
+      return 'All: central OPN tree; west axis = LEX next to the tree; south axis = LOGICAL projection. The grid window is fitted to tree + axes; canvas panning is off.';
+    }
     if (state.projection === 'source') return 'Bron: OPN-syntax en OPN-functioneel worden gelezen uit structure-config.html. Beide gebruiken dezelfde left/right layoutstrategie en reserveren configureerbare lege vrije-slotruimte onder de wortel.';
     if (state.projection === 'lex') return 'LEX: plaatsingsregels per zinstype. Hoofdzin: eerste zinsdeel naar slot 1, persoonsvorm naar slot 2. De ruimte in de centrale boom is leeg; de vulling staat op de LEX-as.';
     if (state.projection === 'synt') return 'SYNTAX-projectie: regels staan op boomhoogte; onder de boom staat nu ook de LOGICAL-projectie uit FT/LOG.';
@@ -3472,13 +3511,60 @@
     }
   }
 
+  const SELECT_OPTION_LABELS_EN = {
+    centralModeSelect: { syntax: 'OPN syntax tree', functional: 'OPN functional structure' },
+    treeChoiceSelect: { 'auto-min': 'tree choice: auto per sample type', 'structure-config': 'tree choice: structure-config base tree' },
+    functionalOrderSelect: { 'left-first': 'layout: left-first', 'right-first': 'layout: right-first' },
+    branchOrderSelect: { normal: 'default: grammatical order', 'auto-compact': 'goal: compact - auto per branch', 'auto-align': 'goal: align subject/agent + object/patient', 'flip-all': 'global: flip all branches' },
+    branchTopSelect: { auto: 'auto', normal: 'normal', flip: 'flip' },
+    branchMiddleSelect: { auto: 'auto', normal: 'normal', flip: 'flip' },
+    branchOtherSelect: { auto: 'auto', normal: 'normal', flip: 'flip' },
+    layoutDensitySelect: { auto: 'tree spacing: auto-fit wide/lower', compact: 'tree spacing: compact/classic', wide: 'tree spacing: wide/lower', large: 'tree spacing: wide + larger font' },
+    viewFitSelect: { auto: 'window: fit automatically', fixed: 'window: fixed 1500x900' },
+    rightMenuWidthSelect: { auto: 'right column: auto/rest', wide: 'right column: wide', 'very-wide': 'right column: very wide', max: 'right column: maximum' },
+    rightMenuWidthSelectTop: { auto: 'right column: auto/rest', wide: 'right column: wide', 'very-wide': 'right column: very wide', max: 'right column: maximum' },
+    mobileRightMenuWidthSelect: { auto: 'right column: auto/rest', wide: 'right column: wide', 'very-wide': 'right column: very wide', max: 'right column: maximum' },
+    freeSlotCountSelect: { 0: 'tree rows: 0', 1: 'tree rows: 1', 2: 'tree rows: 2', 3: 'tree rows: 3', 4: 'tree rows: 4', 5: 'tree rows: 5', 6: 'tree rows: 6' },
+    lexFreeSlotCountSelect: { 0: 'LEX slots: 0', 1: 'LEX slots: 1', 2: 'LEX slots: 2', 3: 'LEX slots: 3', 4: 'LEX slots: 4', 5: 'LEX slots: 5', 6: 'LEX slots: 6', 7: 'LEX slots: 7', 8: 'LEX slots: 8' },
+    mobileLexFreeSlotCountSelect: { 0: 'LEX slots: 0', 1: 'LEX slots: 1', 2: 'LEX slots: 2', 3: 'LEX slots: 3', 4: 'LEX slots: 4', 5: 'LEX slots: 5', 6: 'LEX slots: 6', 7: 'LEX slots: 7', 8: 'LEX slots: 8' },
+    lexFreeSlotPlacementSelect: { 'after-lex': 'below LEX words', 'after-system': 'after slot 0/1/2', 'above-system': 'above slot 0', 'after-surface-1': 'between position 1/2', 'after-surface-2': 'between position 2/3', 'after-surface-3': 'between position 3/4' },
+    mobileLexFreeSlotPlacementSelect: { 'after-lex': 'below LEX words', 'after-system': 'after slot 0/1/2', 'above-system': 'above slot 0', 'after-surface-1': 'between position 1/2', 'after-surface-2': 'between position 2/3', 'after-surface-3': 'between position 3/4' },
+    lexInsertionContentSelect: { empty: 'empty slot', vandaag: 'VANDAAG', anafoor: 'anaphor', 'other-lex-axis': 'other LEX axis' },
+    mobileLexInsertionContentSelect: { empty: 'empty slot', vandaag: 'VANDAAG', anafoor: 'anaphor', 'other-lex-axis': 'other LEX axis' },
+    portraitMenuSlotsSelect: { 0: 'bottom space: 0 menus', 1: 'bottom space: 1 menu', 2: 'bottom space: 2 menus' },
+    mobilePortraitMenuSlotsSelect: { 0: 'bottom space: 0 menus', 1: 'bottom space: 1 menu', 2: 'bottom space: 2 menus' },
+    lexRuleSelect: { hoofdzininvariant: 'main clause V2: subject/topic - finite verb/predicate - object - exchange', 'bijzin-omdat': 'subordinate clause: Comp/(om)dat + subject + object + predicate - no V2', 'perfectum-heeft-vdw': 'perfect V2: subject/topic - finite verb - object - participle - exchange' }
+  };
+
+  const TOP_MENU_LABELS_EN = {
+    projection: ['Projection choice', 'Projection choice: All, Source, LEX, SYNTAX projection and LOG/FT. Useful for comparing projections.'],
+    sentence: ['Sample sentence', 'Sample sentence: quickly choose HOND BIJT MAN and variants. Useful for contrasts between sentences.'],
+    play: ['Play/Grow', 'Play/Grow: show tree, LEX axis and projections step by step. Useful for explanation.'],
+    tools: ['Work buttons', 'Work buttons: FIT, reset, JSON, Docs, Carrousel and editors. Useful for building and testing.']
+  };
+
+  const LEX_EXTENSION_LABELS_EN = {
+    'vp-boundary': ['VP boundary V <-> object', 'Default for VANDAAG: insertion between verb and object lengthens the VP zone/boundary without adding VANDAAG as a tree node.'],
+    's-boundary': ['S boundary subject <-> VP', 'Lengthens the boundary between subject and VP. Useful when the insertion lies between phrase zones.'],
+    'object-branch': ['branch to object / NP obj / patient', 'Lengthens the object branch; useful when insertion is directly before the object.'],
+    'verb-branch': ['branch to verb / V / pred', 'Lengthens the verb/predicate branch; useful when insertion attaches close to the verb cluster.'],
+    'subject-branch': ['branch to subject / NP subj / agent', 'Lengthens the subject branch; less common, but available for testing.'],
+    'arg-boundary': ['ARG-STRUCT boundary agent <-> patient', 'Functional variant: lengthens the argument structure between agent and patient.'],
+    'clause-boundary': ['CLAUSE boundary pred <-> ARG-STRUCT', 'Functional variant: lengthens the boundary between predicate and argument structure.']
+  };
+
+  function localizedOptionLabel(select, opt) {
+    if (!select || !isEnglish()) return opt.label || opt.title || opt.id;
+    return SELECT_OPTION_LABELS_EN[select.id]?.[String(opt.id)] || opt.labelEn || opt.titleEn || opt.label || opt.title || opt.id;
+  }
+
   function fillSelect(select, options, selected) {
     if (!select) return;
     select.replaceChildren();
     for (const opt of options) {
       const el = document.createElement('option');
       el.value = opt.id;
-      el.textContent = opt.label || opt.title || opt.id;
+      el.textContent = localizedOptionLabel(select, opt);
       if (opt.id === selected) el.selected = true;
       select.appendChild(el);
     }
@@ -3491,12 +3577,15 @@
       input.checked = selected.has(id);
       const tip = lexInsertionTargetTip(id);
       input.title = `${lexInsertionTargetLabel(id)}. ${tip}`;
+      setInputLabelText(input, lexInsertionTargetLabel(id));
       const wrapper = input.closest('label');
       if (wrapper) wrapper.title = input.title;
     });
     const text = selected.size
-      ? `Takverlenging: ${[...selected].map(lexInsertionTargetLabel).join(' + ')}. Insertie grijpt aan op de LEX-as; de boom krijgt alleen extra taklengte/boxruimte.`
-      : 'Geen takverlenging: insertie blijft alleen op de LEX-as zichtbaar.';
+      ? (isEnglish()
+        ? `Branch extension: ${[...selected].map(lexInsertionTargetLabel).join(' + ')}. Insertion attaches to the LEX axis; the tree only receives extra branch length/box space.`
+        : `Takverlenging: ${[...selected].map(lexInsertionTargetLabel).join(' + ')}. Insertie grijpt aan op de LEX-as; de boom krijgt alleen extra taklengte/boxruimte.`)
+      : (isEnglish() ? 'No branch extension: insertion remains visible only on the LEX axis.' : 'Geen takverlenging: insertie blijft alleen op de LEX-as zichtbaar.');
     document.querySelectorAll('[data-lex-extension-help]').forEach(node => {
       node.textContent = text;
       node.title = [...selected].map(lexInsertionTargetTip).join(' ');
@@ -4078,6 +4167,176 @@
     splitter.addEventListener('pointercancel', endDrag);
   }
 
+  function setText(selector, text) {
+    document.querySelectorAll(selector).forEach(node => { node.textContent = text; });
+  }
+
+  function setTitle(selector, text) {
+    document.querySelectorAll(selector).forEach(node => { node.title = text; });
+  }
+
+  function setInputLabelText(inputOrSelector, text) {
+    const inputs = typeof inputOrSelector === 'string' ? document.querySelectorAll(inputOrSelector) : [inputOrSelector].filter(Boolean);
+    inputs.forEach(input => {
+      const label = input.closest?.('label');
+      if (!label) return;
+      const kept = [];
+      label.childNodes.forEach(node => {
+        if (node === input || (node.nodeType === 1 && node.contains?.(input))) kept.push(node);
+      });
+      label.replaceChildren(...kept, document.createTextNode(` ${text}`));
+    });
+  }
+
+  function setLabelSpan(selectId, text, title = null) {
+    const select = document.getElementById(selectId);
+    const label = select?.closest?.('label');
+    const span = label?.querySelector?.('span');
+    if (span) span.textContent = text;
+    if (title && label) label.title = title;
+  }
+
+  function setPanelHeading(index, text) {
+    const card = document.querySelectorAll('.side-panel .panel-card')[index];
+    const h2 = card?.querySelector('h2');
+    if (h2) h2.textContent = text;
+  }
+
+  function applyConfigLanguageTexts(en) {
+    setText('.main-sentence-field span, .desktop-sentence-field span, .mobile-sentence-field span, .toolbar .example-field span', en ? 'Sentence' : 'Zin');
+    setText('.config-topbar h2', en ? 'All settings' : 'Alle instellingen');
+    setText('.config-topbar p', en ? 'Configure projections, sample sentences, Play/Grow, LEX insertions, branch extension, layout, export and documentation here. The main view stays clean: grid + sentence + Help + Config.' : 'Projecties, voorbeeldzinnen, Play/Groei, LEX-inserties, takverlenging, layout, export en documentatie staan hier. Het hoofdbeeld is full screen: grid over de volledige viewport, met Zin, Help en Config als overlay.');
+    setPanelHeading(0, en ? 'Projection settings' : 'Projectie-instellingen');
+    setPanelHeading(1, en ? 'LEX axis - utterance type' : 'LEX-as · uitingtype');
+    setPanelHeading(2, en ? 'Relations / rules' : 'Relaties / regels');
+    setText('.right-menu-width-callout .inline-help', en ? 'Set the width of the right menu directly. The grid uses only the space needed for tree + axes; the remaining space goes to this column.' : 'Kies hier direct de breedte van het rechter menu. Het grid gebruikt alleen de benodigde ruimte voor boom + assen; de rest gaat naar deze kolom.');
+    setText('.side-panel .panel-card:first-child > .sticky-note', en ? 'Grid first. The right column is visible at the top; then choose which menus may appear above the grid.' : 'Grid eerst. Rechterkolom staat nu zichtbaar bovenaan; kies daarna welke menu’s boven het grid mogen staan.');
+
+    setLabelSpan('rightMenuWidthSelectTop', en ? 'Right column visible' : 'Rechterkolom zichtbaar');
+    setLabelSpan('centralModeSelect', en ? 'Central OPN' : 'Centraal OPN');
+    setLabelSpan('treeChoiceSelect', en ? 'Tree choice' : 'Boomkeuze');
+    setLabelSpan('functionalOrderSelect', en ? 'Layout order' : 'Layout order');
+    setLabelSpan('branchOrderSelect', en ? 'Branch order' : 'Takvolgorde');
+    setLabelSpan('branchTopSelect', en ? 'Top S/CLAUSE' : 'Top S/CLAUSE');
+    setLabelSpan('branchMiddleSelect', en ? 'VP / ARG-STRUCT' : 'VP / ARG-STRUCT');
+    setLabelSpan('branchOtherSelect', en ? 'Other' : 'Overig');
+    setLabelSpan('layoutDensitySelect', en ? 'Tree spacing' : 'Boomruimte');
+    setLabelSpan('viewFitSelect', en ? 'Window' : 'Venster');
+    setLabelSpan('freeSlotCountSelect', en ? 'Free tree rows' : 'Boom vrije rijen');
+    setLabelSpan('lexFreeSlotCountSelect', en ? 'LEX free slots' : 'LEX vrije slots');
+    setLabelSpan('lexFreeSlotPlacementSelect', en ? 'LEX slot position' : 'LEX slotpositie');
+    setLabelSpan('lexInsertionContentSelect', en ? 'LEX insertion' : 'LEX insertie');
+    setLabelSpan('lexRuleSelect', en ? 'Utterance-type rule' : 'Uitingtype-regel');
+
+    document.querySelectorAll('.lex-extension-field legend').forEach(node => { node.textContent = en ? 'Branch extension by insertion' : (node.closest('.mobile-sheet') ? 'Takverlenging' : 'Takverlenging door insertie'); });
+    document.querySelectorAll('.top-menu-choice-field:not(.lex-extension-field) legend').forEach(node => {
+      const count = node.querySelector('[data-top-menu-count]')?.textContent || '0/4';
+      node.textContent = en ? 'Menus above grid ' : 'Menu’s boven grid ';
+      const span = document.createElement('span');
+      span.className = 'top-menu-choice-count';
+      span.setAttribute('data-top-menu-count', '');
+      span.textContent = count;
+      node.appendChild(span);
+    });
+
+    setInputLabelText('#showGridInput', en ? 'Grid' : 'Raster');
+    setInputLabelText('#showRelationsInput', en ? 'Branches' : 'Taklijnen');
+    setInputLabelText('#showLabelsInput', en ? 'Tree labels' : 'Boomlabels');
+    setText('#applyLexRuleButton', en ? 'Apply rule' : 'Pas regel toe');
+    setText('#relationHelp', en ? 'No separate relation editor. This list follows the active structure: syntax rules for syntax/all, functional roles for LOG/FT.' : 'Geen losse editor-relaties. Deze lijst volgt de actieve structuur: syntaxregels bij syntax/assen, functionele rollen bij LOG/FT.');
+
+    setText('.mobile-sheet-header .intro-kicker', en ? 'Mobile viewer' : 'Mobiele viewer');
+    setText('#mobileCloseButton', en ? 'Close' : 'Sluit');
+    setText('.mobile-sheet-section[aria-label="Projecties"] h3', en ? 'Projection' : 'Projectie');
+    setText('.mobile-sheet-section[aria-label="Snelle acties"] h3', en ? 'Actions' : 'Acties');
+    setText('.mobile-sheet-section[aria-label="Menu\'s boven grid"] h3', en ? 'Menus above grid' : 'Menu’s boven grid');
+    setText('.mobile-sheet-section[aria-label="LEX vrije slots"] h3', en ? 'LEX free slots' : 'LEX vrije slots');
+    setText('.mobile-sheet-section[aria-label="Documentatie"] h3', en ? 'Documentation' : 'Documentatie');
+    setLabelSpan('mobileLexFreeSlotCountSelect', en ? 'Count' : 'Aantal');
+    setLabelSpan('mobileLexFreeSlotPlacementSelect', en ? 'Position' : 'Positie');
+    setLabelSpan('mobileLexInsertionContentSelect', en ? 'Content' : 'Inhoud');
+    setText('#mobileGrowthButton', en ? 'Grow on/off' : 'Groei aan/uit');
+    setText('#mobileResetButton', en ? 'Reset sample' : 'Reset voorbeeld');
+    setText('label[for="mobileFileInput"]', en ? 'Load JSON' : 'JSON laden');
+    setText('#mobileDownloadJsonButton', en ? 'Download JSON' : 'Download JSON');
+    setText('.mobile-sheet-note', en ? 'Main grid panning is disabled. Use FIT to frame the tree and projection axes.' : 'Sleep met één vinger om te pannen. Knijp met twee vingers om te zoomen. FIT zet de boom en projectie-assen terug passend in beeld.');
+
+    document.querySelectorAll('.text-panel summary').forEach((node, index) => {
+      if (index === 0) node.textContent = en ? 'What is included in this Lite version?' : 'Wat zit in deze eerste Lite-versie?';
+      if (index === 1) node.textContent = en ? 'Controls' : 'Bediening';
+    });
+    const details = document.querySelectorAll('.text-panel details');
+    if (details[0]) details[0].querySelectorAll('p').forEach((p, i) => {
+      if (i === 0) p.textContent = en ? 'This version is a viewer/demo: choose a sample sentence, choose a projection, show growth, load/download JSON and open documentation. Separate node and relation editing has been removed.' : 'Deze versie is een viewer/demo: voorbeeldzin kiezen, projectie kiezen, groei tonen, canvas pannen/zoomen, JSON laden/downloaden en documentatie openen. Losse knoop- en relatie-editing is verwijderd.';
+      if (i === 1) p.textContent = en ? 'Not carried over from the Java app: classical graph algorithms such as planarity, Dijkstra, MST, biconnectivity and canonical ordering. They are outside this first JAN language-tree layer.' : 'Niet overgenomen uit de Java-app: klassieke graph-algoritmen zoals planarity, Dijkstra, MST, biconnectivity en canonical ordering. Die horen niet bij deze eerste JAN-taalboomlaag.';
+    });
+  }
+
+  function applyLanguage() {
+    const en = isEnglish();
+    document.documentElement.lang = en ? 'en' : 'nl';
+    document.body.classList.toggle('lang-en', en);
+    document.body.classList.toggle('lang-nl', !en);
+    applyConfigLanguageTexts(en);
+    document.querySelectorAll('[data-language-toggle]').forEach(button => {
+      button.textContent = en ? 'UI: English' : 'Taal: Nederlands';
+      button.setAttribute('aria-pressed', String(en));
+      button.title = en ? 'Click to switch UI/help back to Dutch.' : 'Klik om UI/help naar Engels te wisselen.';
+      button.setAttribute('aria-label', button.title);
+    });
+
+    setText('.main-sentence-field span, .desktop-sentence-field span, .mobile-sentence-field span, .sentence-card .field span', en ? 'Sentence' : 'Zin');
+    setTitle('#openHelpButton, #openHelpFromConfigButton', en ? 'Open the Help screen with the carrousel.' : 'Open het help-scherm met de carrousel.');
+    setTitle('#openConfigButton', en ? 'Open the configuration screen with projection, LEX, layout and documentation settings.' : 'Open het configuratiescherm met alle projectie-, LEX-, layout- en documentatie-instellingen.');
+    setTitle('#closeConfigButton, #closeHelpButton', en ? 'Back to main view.' : 'Terug naar hoofdbeeld.');
+    setText('#closeConfigButton, #closeHelpButton', en ? '← Back to main' : '← Terug naar main');
+    setText('#openConfigButton, #openConfigFromHelpButton', 'Config');
+    setText('#openHelpButton, #openHelpFromConfigButton', 'Help');
+
+    setText('.config-topbar .intro-kicker', 'Config');
+    setText('.config-topbar h2', en ? 'All settings' : 'Alle instellingen');
+    setText('.config-topbar p', en ? 'Projections, sample sentences, Play/Grow, LEX insertions, branch extension, layout, export and documentation are configured here. The main view stays deliberately clean: grid + sentence + Help + Config.' : 'Projecties, voorbeeldzinnen, Play/Groei, LEX-inserties, takverlenging, layout, export en documentatie staan hier. Het hoofdbeeld blijft bewust leeg: grid + zin + Help + Config.');
+    setText('.help-topbar .intro-kicker', 'Help');
+    setText('.help-topbar h2', 'Carrousel');
+    setText('.help-topbar p', en ? 'Explanatory images are available in this separate Help screen. The carrousel can also run as a standalone folder.' : 'Uitlegbeelden staan in een apart Help-scherm. De carrousel blijft ook direct bereikbaar als los bestand.');
+    document.querySelectorAll('.help-fallback').forEach(node => {
+      node.innerHTML = en
+        ? 'If the carrousel does not appear: <a href="carrousel/index-en.html?v4500" target="_blank" rel="noopener">open the carrousel separately</a>.'
+        : 'Als de carrousel niet verschijnt: <a href="carrousel/index.html?v4500" target="_blank" rel="noopener">open de carrousel los</a>.';
+    });
+    if (els.helpCarrouselFrame) {
+      const wanted = en ? `carrousel/index-en.html?${VERSION}` : `carrousel/index.html?${VERSION}`;
+      if (!String(els.helpCarrouselFrame.getAttribute('src') || '').includes(wanted)) {
+        els.helpCarrouselFrame.src = wanted;
+        els.helpCarrouselFrame.dataset.loaded = '1';
+      }
+    }
+
+    setText('[data-projection="axes"], [data-main-projection="axes"]', en ? 'All' : 'Alle');
+    setText('[data-projection="source"], [data-main-projection="source"], [data-mobile-projection="source"]', en ? 'Source' : 'Bron');
+    setText('[data-projection="synt"]', en ? 'SYNTAX projection' : 'SYNTAX-projectie');
+    setText('[data-main-projection="synt"]', 'SYN');
+    setText('#mainResetButton, #growthResetButton, #mobileGrowthResetButton', en ? 'Reset' : 'Reset');
+    if (els.mainGrowthPlayButton) els.mainGrowthPlayButton.textContent = state.growthTimer ? (en ? 'Pause' : 'Pauze') : 'Play';
+
+    document.querySelectorAll('a[href="docs/OpenGraph_Lite_Viewer_EN_v4500.pdf"]').forEach(a => {
+      a.textContent = en ? 'English PDF' : 'English PDF';
+      a.title = en ? 'Open English PDF documentation' : 'Open Engelstalige PDF-documentatie';
+    });
+  }
+
+  function setLanguage(language) {
+    state.language = language === 'en' ? 'en' : 'nl';
+    try { localStorage.setItem('opengraph_language', state.language); } catch (_err) {}
+    syncControls();
+    applyLanguage();
+    renderStatus();
+  }
+
+  function toggleLanguage() {
+    setLanguage(isEnglish() ? 'nl' : 'en');
+  }
+
   function setAppScreen(screen = 'main') {
     const next = ['main', 'config', 'help'].includes(screen) ? screen : 'main';
     const isMain = next === 'main';
@@ -4090,9 +4349,9 @@
     els.closeConfigButton?.setAttribute('aria-expanded', isConfig ? 'true' : 'false');
     els.openHelpButton?.setAttribute('aria-expanded', isHelp ? 'true' : 'false');
     els.closeHelpButton?.setAttribute('aria-expanded', isHelp ? 'true' : 'false');
-    if (isHelp && els.helpCarouselFrame && !els.helpCarouselFrame.dataset.loaded) {
-      els.helpCarouselFrame.src = `carousel.html?${VERSION}`;
-      els.helpCarouselFrame.dataset.loaded = '1';
+    if (isHelp && els.helpCarrouselFrame && !els.helpCarrouselFrame.dataset.loaded) {
+      els.helpCarrouselFrame.src = isEnglish() ? `carrousel/index-en.html?${VERSION}` : `carrousel/index.html?${VERSION}`;
+      els.helpCarrouselFrame.dataset.loaded = '1';
     }
     window.setTimeout(() => {
       syncExampleSelectSizing();
@@ -4145,6 +4404,9 @@
     els.openHelpButton?.addEventListener('click', () => setHelpScreen(true));
     els.openHelpFromConfigButton?.addEventListener('click', () => setHelpScreen(true));
     els.closeHelpButton?.addEventListener('click', () => setHelpScreen(false));
+    document.querySelectorAll('[data-language-toggle]').forEach(button => {
+      button.addEventListener('click', toggleLanguage);
+    });
     window.addEventListener('keydown', event => {
       if (event.key === 'Escape' && (document.body.classList.contains('config-screen-active') || document.body.classList.contains('help-screen-active'))) setAppScreen('main');
     });
@@ -4306,6 +4568,7 @@
     await loadStructureConfig();
     await loadExamplesFromHtml();
     render();
+    applyLanguage();
     requestAnimationFrame(() => requestAnimationFrame(stabilizeInitialTreeView));
     window.addEventListener('load', () => {
       requestAnimationFrame(stabilizeInitialTreeView);

@@ -1,0 +1,2 @@
+# Static GitHub Pages deploy: do not run Jekyll.
+# Needed because this viewer contains docs, HTML config files and generated assets.
