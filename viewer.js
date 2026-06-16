@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'v4488';
+  const VERSION = 'v4497';
   const BASE_CELL = 74;
   const ROOT_SIDE_GAP = 1;
   const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -17,6 +17,11 @@
     mainExampleSelect: document.getElementById('mainExampleSelect'),
     openConfigButton: document.getElementById('openConfigButton'),
     closeConfigButton: document.getElementById('closeConfigButton'),
+    openHelpButton: document.getElementById('openHelpButton'),
+    openHelpFromConfigButton: document.getElementById('openHelpFromConfigButton'),
+    closeHelpButton: document.getElementById('closeHelpButton'),
+    openConfigFromHelpButton: document.getElementById('openConfigFromHelpButton'),
+    helpCarouselFrame: document.getElementById('helpCarouselFrame'),
     centralModeSelect: document.getElementById('centralModeSelect'),
     treeChoiceSelect: document.getElementById('treeChoiceSelect'),
     functionalOrderSelect: document.getElementById('functionalOrderSelect'),
@@ -1593,7 +1598,7 @@
   }
 
   function isPortraitMobileViewport() {
-    // v4488: grid-first and fit-height are no longer mobile-only.
+    // v4497: grid-first and fit-height are no longer mobile-only.
     // The canvas height is based on the actual viewBox on every platform.
     return true;
   }
@@ -1607,7 +1612,7 @@
   }
 
   function syncPortraitMenuSpace() {
-    // v4488: de oude numerieke onderruimte blijft op 0. De relevante instelling
+    // v4497: de oude numerieke onderruimte blijft op 0. De relevante instelling
     // is nu: welke benoemde menu's mogen boven het grid staan.
     document.documentElement?.style.setProperty('--portrait-menu-reserve', '0px');
     document.documentElement?.style.setProperty('--portrait-menu-slots', '0');
@@ -1803,7 +1808,7 @@
     syncPortraitStageMode();
     if (!els.canvasWrap) return;
     syncPortraitMenuSpace();
-    // v4488: het gridvenster wordt gemaximeerd op de actuele fit-box
+    // v4497: het gridvenster wordt gemaximeerd op de actuele fit-box
     // van boom + assen. Het canvas schaalt dus niet groter dan nodig.
     const fit = box || parseViewBox();
     const validFit = fit && Number.isFinite(fit.w) && fit.w > 0 && Number.isFinite(fit.h) && fit.h > 0;
@@ -2913,7 +2918,7 @@
       .map(id => functionalNodes.find(n => n.id === id)?.label || id)
       .join(' + ') || 'role-boxen';
     if (options.showTitle !== false) drawAxisTitle(g, origin.x - 180, origin.y - 70, `OPN · functionele structuur · ${rootLabel} → ${roleNames} · ${state.functionalOrder}`);
-    drawAxisTitle(g, origin.x - 176, origin.y - 48, `v4488 · ${branchModeLabel()} · vrije plaatsing + gereserveerde vrije slots`);
+    drawAxisTitle(g, origin.x - 176, origin.y - 48, `v4497 · ${branchModeLabel()} · vrije plaatsing + gereserveerde vrije slots`);
     const growthPlan = growthPlanForLayout(layout);
     layout.__growthPlan = growthPlan;
     drawSubtreeBoxes(g, layout, origin, growthPlan);
@@ -3098,6 +3103,13 @@
     els.canvasWrap?.classList.remove('is-panning');
   }
 
+  function syncExampleSelectSizing() {
+    const labels = (EXAMPLES || []).map(ex => String(ex?.title || ex?.sentence || ex?.id || ''));
+    const longest = labels.reduce((max, value) => Math.max(max, value.length), 12);
+    const ch = Math.max(12, Math.min(44, longest + 2));
+    document.documentElement.style.setProperty('--main-example-select-ch', `${ch}ch`);
+  }
+
   function syncMainTopbarLayout() {
     const main = document.body?.classList.contains('main-screen-active');
     if (!main) return;
@@ -3226,7 +3238,7 @@
     const svgLocalRight = Math.min(hostRect.width, svgRect.right - hostRect.left);
     const svgLocalBottom = Math.min(hostRect.height, svgRect.bottom - hostRect.top);
 
-    // v4494: HTML controls are children of the canvas/boomvenster, but the SVG
+    // v4497: HTML controls are children of the canvas/boomvenster, but the SVG
     // itself uses preserveAspectRatio=meet.  Therefore placement is clamped to
     // the actually drawn grid rectangle, not to the full letterboxed canvas.
     // All overlay coordinates are therefore clamped to the canvas rect, not to
@@ -3496,6 +3508,7 @@
     fillSelect(els.desktopExampleSelect, EXAMPLES, state.example.id);
     fillSelect(els.mobileExampleSelect, EXAMPLES, state.example.id);
     fillSelect(els.mainExampleSelect, EXAMPLES, state.example.id);
+    syncExampleSelectSizing();
     fillSelect(els.centralModeSelect, CENTER_MODES, state.centerMode);
     fillSelect(els.treeChoiceSelect, TREE_CHOICES, activeTreeChoice());
     fillSelect(els.functionalOrderSelect, FUNCTIONAL_ORDERS, state.functionalOrder);
@@ -4065,17 +4078,38 @@
     splitter.addEventListener('pointercancel', endDrag);
   }
 
-  function setConfigScreen(open) {
-    document.body.classList.toggle('config-screen-active', !!open);
-    document.body.classList.toggle('main-screen-active', !open);
-    els.openConfigButton?.setAttribute('aria-expanded', open ? 'true' : 'false');
-    els.closeConfigButton?.setAttribute('aria-expanded', open ? 'true' : 'false');
+  function setAppScreen(screen = 'main') {
+    const next = ['main', 'config', 'help'].includes(screen) ? screen : 'main';
+    const isMain = next === 'main';
+    const isConfig = next === 'config';
+    const isHelp = next === 'help';
+    document.body.classList.toggle('main-screen-active', isMain);
+    document.body.classList.toggle('config-screen-active', isConfig);
+    document.body.classList.toggle('help-screen-active', isHelp);
+    els.openConfigButton?.setAttribute('aria-expanded', isConfig ? 'true' : 'false');
+    els.closeConfigButton?.setAttribute('aria-expanded', isConfig ? 'true' : 'false');
+    els.openHelpButton?.setAttribute('aria-expanded', isHelp ? 'true' : 'false');
+    els.closeHelpButton?.setAttribute('aria-expanded', isHelp ? 'true' : 'false');
+    if (isHelp && els.helpCarouselFrame && !els.helpCarouselFrame.dataset.loaded) {
+      els.helpCarouselFrame.src = `carousel.html?${VERSION}`;
+      els.helpCarouselFrame.dataset.loaded = '1';
+    }
     window.setTimeout(() => {
+      syncExampleSelectSizing();
       syncMainTopbarLayout();
       try { render(); } catch (_) {}
-      if (open) els.closeConfigButton?.focus?.();
+      if (isConfig) els.closeConfigButton?.focus?.();
+      else if (isHelp) els.closeHelpButton?.focus?.();
       else els.openConfigButton?.focus?.();
     }, 0);
+  }
+
+  function setConfigScreen(open) {
+    setAppScreen(open ? 'config' : 'main');
+  }
+
+  function setHelpScreen(open) {
+    setAppScreen(open ? 'help' : 'main');
   }
 
   function registerEvents() {
@@ -4107,8 +4141,12 @@
     });
     els.openConfigButton?.addEventListener('click', () => setConfigScreen(true));
     els.closeConfigButton?.addEventListener('click', () => setConfigScreen(false));
+    els.openConfigFromHelpButton?.addEventListener('click', () => setConfigScreen(true));
+    els.openHelpButton?.addEventListener('click', () => setHelpScreen(true));
+    els.openHelpFromConfigButton?.addEventListener('click', () => setHelpScreen(true));
+    els.closeHelpButton?.addEventListener('click', () => setHelpScreen(false));
     window.addEventListener('keydown', event => {
-      if (event.key === 'Escape' && document.body.classList.contains('config-screen-active')) setConfigScreen(false);
+      if (event.key === 'Escape' && (document.body.classList.contains('config-screen-active') || document.body.classList.contains('help-screen-active'))) setAppScreen('main');
     });
     els.centralModeSelect?.addEventListener('change', event => {
       state.centerMode = event.target.value;
@@ -4261,6 +4299,7 @@
   async function init() {
     document.body.classList.add('main-screen-active');
     document.body.classList.remove('config-screen-active');
+    document.body.classList.remove('help-screen-active');
     registerEvents();
     registerCanvasPan();
     registerPaneSplitter();

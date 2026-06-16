@@ -1,20 +1,20 @@
 
 
-## v4487 · Main-controls naast SYNTAX-as
+## v4497 · Main-controls naast SYNTAX-as
 
 - De Main-projectiebalk toont nu de volledige reeks: Assen, Bron, LEX, SYN en LOG/FT.
 - In landscape wordt de rechter vensterbalk naast de SYNTAX-as geplaatst met een kleine tussenruimte.
 - `portrait-test.html` toegevoegd voor lokale desktop/laptop-tests met een portrait-venster.
 
 
-## v4487 · strak passend raster rond boom + assen
+## v4497 · strak passend raster rond boom + assen
 
 - In het hoofdscherm volgt de SVG-viewBox nu exact de getekende boom plus projectie-assen.
 - Het raster wordt dynamisch opnieuw opgebouwd binnen dezelfde fit-box; lege rastervelden rondom worden niet meer meegetekend.
 - Hulplabels en het raster zelf tellen niet meer mee bij FIT.
 - In Config blijft de ruimere aspect-fit beschikbaar voor beheer en vergelijking.
 
-## v4487 · grid maximaal passend + ruimere topmenu-keuze
+## v4497 · grid maximaal passend + ruimere topmenu-keuze
 
 - Het gridvenster wordt nu gemaximeerd op de actuele fit-box van boom + assen; het schaalt niet groter dan nodig.
 - De fitmarge is kleiner, zodat minder lege rasterruimte rond boom en assen overblijft.
@@ -22,7 +22,7 @@
 - Genoteerd: een NOORD-as is mogelijk, maar nog niet gebruikt.
 
 
-## v4487 · Menu’s boven grid als benoemde meerkeuze
+## v4497 · Menu’s boven grid als benoemde meerkeuze
 
 - De oude instelling `Ruimte onder grid` is vervangen door een benoemde meerkeuze: `Menu’s boven grid`.
 - De gebruiker kiest maximaal vier menu’s die boven het grid mogen staan.
@@ -30,9 +30,9 @@
 - Standaard staat geen enkel menu boven het grid; alle menu’s staan dan onder het grid.
 - De tooltip en helptekst leggen per keuze uit waarom een taalkundige die boven het grid kan willen zetten.
 
-# OpenGraph Lite Viewer v4487
+# OpenGraph Lite Viewer v4497
 
-## v4487 — benoemde menu's boven het grid
+## v4497 — benoemde menu's boven het grid
 
 - Vervangt `Ruimte onder grid` door `Menu's boven grid`.
 - User kiest maximaal vier benoemde menu's die boven het grid mogen staan.
@@ -40,9 +40,9 @@
 - Niet gekozen menu's staan onder het grid.
 - Max > 2 wordt geblokkeerd en toegelicht in de viewer.
 
-# OpenGraph Lite Viewer v4487
+# OpenGraph Lite Viewer v4497
 
-## v4487 — mobile portrait grid-first
+## v4497 — mobile portrait grid-first
 
 - Mobile portrait: grid/boomvenster staat standaard helemaal bovenaan; header, projectiebalk, zinmenu en toolbar staan niet meer boven het grid.
 - Nieuwe config `portrait_menu_slots`: ruimte boven het grid voor 0, 1 of 2 toekomstige menuhoogtes; standaard 0.
@@ -395,33 +395,33 @@
 - Projectietabs blijven vast zichtbaar boven de boom.
 
 
-Aanvulling v4487: LEX vrije slots zijn plaatsbare insertiepunten op de LEX-as voor later materiaal uit andere LEX-assen/bomen en anafora. Boom vrije rijen blijven apart.
+Aanvulling v4497: LEX vrije slots zijn plaatsbare insertiepunten op de LEX-as voor later materiaal uit andere LEX-assen/bomen en anafora. Boom vrije rijen blijven apart.
 
 
-## v4487 desktop LEX-insertie zichtbaar
+## v4497 desktop LEX-insertie zichtbaar
 
 De rechter desktop-config toont nu dezelfde LEX-insertieconfig als mobiel: LEX vrije slots, LEX insertie-inhoud en takverlenging door insertie. De insertie blijft een aparte box op de LEX-as; de gekozen takken/boxgrenzen worden alleen layoutmatig verlengd.
 
-## v4487 · rechterkolom en gridvenster
+## v4497 · rechterkolom en gridvenster
 
 - Rechterkolom-config toegevoegd: auto/rest, breed, zeer breed, maximaal.
 - Gridvenster wordt op boom + assen begrensd; de rest van de workspace gaat naar het rechter menu.
 - Canvas-panning is uitgezet, omdat het venster zelf passend wordt gemaakt.
 
 
-## v4487 · hoofdbeeld en config-scherm
+## v4497 · hoofdbeeld en config-scherm
 
 Het hoofdbeeld is opnieuw ontworpen als grid-only view: boven het grid staan alleen het zinmenu en één knop **Config**. Alle andere instellingen zijn verplaatst naar een apart configuratiescherm met **Terug naar main**. Daardoor blijft de werkweergave schoon, terwijl projecties, Play/Groei, LEX-inserties, takverlenging, layout, export en documentatie in één config-scherm bereikbaar blijven.
 
 
-### v4487 — Main-bediening in boomvenster
+### v4497 — Main-bediening in boomvenster
 
 - Main behoudt een vaste topbalk met alleen Zin en Config.
 - De ZUID-volgorde staat nu als zichtbare pijlbediening onder in het boomvenster.
 - In portrait staat de Play-balk onder het grid met Reset direct ernaast; de Assen/LOG/FT-balk sluit daaronder aan.
 - In landscape staat Play verticaal rechts in het boomvenster, met Reset en Assen/LOG/FT eronder.
 
-## v4487 · Main-controls in het boomvenster
+## v4497 · Main-controls in het boomvenster
 
 - Rechter vensterbalk blijft in het boomvenster en wordt rechts naast de SYNTAX-as gepositioneerd.
 - Projectiereeks in Main is volledig: Assen, Bron, LEX, SYN en LOG/FT.
