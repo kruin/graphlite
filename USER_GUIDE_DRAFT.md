@@ -200,9 +200,9 @@ Op een telefoon staat het canvas bovenaan. Veeg horizontaal in het canvas om de 
 - FIT herstelt de automatische view.
 
 
-## Carousel-uitleglaag (v4483)
+## Carousel-uitleglaag (v4487)
 
-De map `carousel/` bevat de stapbare uitlegbeelden. Gebruik `carousel/index.html?v4483` voor de didactische route; de viewer zelf blijft de interactieve testlaag voor assen, groei, vrije slots en projecties.
+De map `carousel/` bevat de stapbare uitlegbeelden. Gebruik `carousel/index.html?v4487` voor de didactische route; de viewer zelf blijft de interactieve testlaag voor assen, groei, vrije slots en projecties.
 
 
 ### NOORD-as (PM)
@@ -210,14 +210,14 @@ De map `carousel/` bevat de stapbare uitlegbeelden. Gebruik `carousel/index.html
 Naast west/LEX, oost/SYNTAX en zuid/LOGICAL is ook een NOORD-as mogelijk. Die is genoteerd als uitbreiding, maar nog niet gebruikt.
 
 
-Aanvulling v4483: LEX vrije slots zijn plaatsbare insertiepunten op de LEX-as voor later materiaal uit andere LEX-assen/bomen en anafora. Boom vrije rijen blijven apart.
+Aanvulling v4487: LEX vrije slots zijn plaatsbare insertiepunten op de LEX-as voor later materiaal uit andere LEX-assen/bomen en anafora. Boom vrije rijen blijven apart.
 
 
-## v4483 desktop LEX-insertie zichtbaar
+## v4487 desktop LEX-insertie zichtbaar
 
 De rechter desktop-config toont nu dezelfde LEX-insertieconfig als mobiel: LEX vrije slots, LEX insertie-inhoud en takverlenging door insertie. De insertie blijft een aparte box op de LEX-as; de gekozen takken/boxgrenzen worden alleen layoutmatig verlengd.
 
 
-## v4483 · hoofdbeeld en config-scherm
+## v4487 · hoofdbeeld en config-scherm
 
 Het hoofdbeeld is opnieuw ontworpen als grid-only view: boven het grid staan alleen het zinmenu en één knop **Config**. Alle andere instellingen zijn verplaatst naar een apart configuratiescherm met **Terug naar main**. Daardoor blijft de werkweergave schoon, terwijl projecties, Play/Groei, LEX-inserties, takverlenging, layout, export en documentatie in één config-scherm bereikbaar blijven.

@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'v4483';
+  const VERSION = 'v4488';
   const BASE_CELL = 74;
   const ROOT_SIDE_GAP = 1;
   const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -87,6 +87,19 @@
     growthNextButton: document.getElementById('growthNextButton'),
     growthPlayButton: document.getElementById('growthPlayButton'),
     growthResetButton: document.getElementById('growthResetButton'),
+    mainGrowthPrevButton: document.getElementById('mainGrowthPrevButton'),
+    mainGrowthNextButton: document.getElementById('mainGrowthNextButton'),
+    mainGrowthPlayButton: document.getElementById('mainGrowthPlayButton'),
+    mainResetButton: document.getElementById('mainResetButton'),
+    mainGrowthStepLabel: document.getElementById('mainGrowthStepLabel'),
+    mainSouthPrevButton: document.getElementById('mainSouthPrevButton'),
+    mainSouthNextButton: document.getElementById('mainSouthNextButton'),
+    mainSouthModeButton: document.getElementById('mainSouthModeButton'),
+    mainProjectionAxesButton: document.getElementById('mainProjectionAxesButton'),
+    mainProjectionSourceButton: document.getElementById('mainProjectionSourceButton'),
+    mainProjectionLexButton: document.getElementById('mainProjectionLexButton'),
+    mainProjectionSyntButton: document.getElementById('mainProjectionSyntButton'),
+    mainProjectionLogButton: document.getElementById('mainProjectionLogButton'),
     mobileGrowthPrevButton: document.getElementById('mobileGrowthPrevButton'),
     mobileGrowthNextButton: document.getElementById('mobileGrowthNextButton'),
     mobileGrowthPlayButton: document.getElementById('mobileGrowthPlayButton'),
@@ -1442,12 +1455,96 @@
 
   function getSouthAwareSyntaxLayout() {
     const firstSide = layoutFirstSide();
-    return applyLexInsertionBranchExtensions(normalizeLayout(addOpnTopicalizationSlot(layoutTree(southAwareSyntaxSpec(), 0, { firstSide, branchOrder: state.branchOrder, branchOverrides: state.branchOverrides }), STRUCTURE_CONFIG.syntaxRoot || 's')), 'syntax');
+    const base = applyLexInsertionBranchExtensions(normalizeLayout(addOpnTopicalizationSlot(layoutTree(southAwareSyntaxSpec(), 0, { firstSide, branchOrder: state.branchOrder, branchOverrides: state.branchOverrides }), STRUCTURE_CONFIG.syntaxRoot || 's')), 'syntax');
+    return normalizeLayout(applySouthLogicalSyntaxGroupOrder(base, state.southLogicalMode || 'SOV'));
   }
 
   function getSouthAwareFunctionalLayout() {
     const firstSide = layoutFirstSide();
     return applyLexInsertionBranchExtensions(normalizeLayout(addOpnTopicalizationSlot(layoutTree(southAwareFunctionalSpec(), 0, { firstSide, branchOrder: state.branchOrder, branchOverrides: state.branchOverrides }), STRUCTURE_CONFIG.functionalRoot || 'ft-clause')), 'functional');
+  }
+
+  function applySouthLogicalSyntaxGroupOrder(layout, mode = state.southLogicalMode || 'SOV') {
+    const order = southLogicalModeOrder(mode);
+    if (!layout || !Array.isArray(layout.nodes) || order.length !== 3) return layout;
+
+    const nodeById = new Map(layout.nodes.map(n => [String(n.id || ''), n]));
+    const sRoot = nodeById.get('s');
+    const vpRoot = nodeById.get('vp');
+    const subjRoot = nodeById.get('np-subj');
+    const subjLeaf = nodeById.get('subj');
+    const objRoot = nodeById.get('np-obj');
+    const objLeaf = nodeById.get('obj');
+    const verbRoot = nodeById.get('v');
+    const verbLeaf = nodeById.get('pred');
+    if (!sRoot || !vpRoot || !subjRoot || !subjLeaf || !objRoot || !objLeaf || !verbRoot || !verbLeaf) return layout;
+
+    const originalXs = [subjRoot.x, objRoot.x, verbRoot.x].slice().sort((a, b) => a - b);
+    const targetRootX = {};
+    order.forEach((key, index) => { targetRootX[key] = originalXs[index]; });
+
+    const offsets = {
+      S: subjLeaf.x - subjRoot.x,
+      O: objLeaf.x - objRoot.x,
+      V: verbLeaf.x - verbRoot.x
+    };
+
+    subjRoot.x = targetRootX.S;
+    subjLeaf.x = targetRootX.S + offsets.S;
+    objRoot.x = targetRootX.O;
+    objLeaf.x = targetRootX.O + offsets.O;
+    verbRoot.x = targetRootX.V;
+    verbLeaf.x = targetRootX.V + offsets.V;
+
+    vpRoot.x = Math.round((objRoot.x + verbRoot.x) / 2);
+    sRoot.x = Math.round((subjRoot.x + vpRoot.x) / 2);
+
+    layout.edges.forEach(e => {
+      const from = nodeById.get(String(e.from || ''));
+      const to = nodeById.get(String(e.to || ''));
+      if (from) {
+        e.fromX = from.x;
+        e.fromY = from.y;
+      }
+      if (to) {
+        e.toX = to.x;
+        e.toY = to.y;
+      }
+    });
+
+    const syntaxNodes = (STRUCTURE_CONFIG.syntaxNodes || []).map(n => ({ id: n.id, children: Array.isArray(n.children) ? [...n.children] : [] }));
+    const treeById = new Map(syntaxNodes.map(n => [String(n.id), n]));
+    const descendantsCache = new Map();
+    function descendantIds(id) {
+      if (descendantsCache.has(id)) return descendantsCache.get(id);
+      const node = treeById.get(String(id));
+      const out = new Set([String(id)]);
+      (node?.children || []).forEach(childId => descendantIds(childId).forEach(v => out.add(v)));
+      descendantsCache.set(String(id), out);
+      return out;
+    }
+    layout.boxes.forEach(b => {
+      const nodeId = String(b.nodeId || '').replace(/^box-/, '');
+      const ids = [...descendantIds(nodeId).values()].filter(v => nodeById.has(v));
+      if (!ids.length) return;
+      const pts = ids.map(v => nodeById.get(v));
+      b.minX = Math.min(...pts.map(n => n.x));
+      b.maxX = Math.max(...pts.map(n => n.x));
+      b.minY = Math.min(...pts.map(n => n.y));
+      b.maxY = Math.max(...pts.map(n => n.y));
+      const root = nodeById.get(nodeId);
+      if (root) {
+        b.rootX = root.x;
+        b.rootY = root.y;
+      }
+    });
+    layout.box = {
+      minX: Math.min(...layout.nodes.map(n => n.x)),
+      maxX: Math.max(...layout.nodes.map(n => n.x)),
+      minY: Math.min(...layout.nodes.map(n => n.y)),
+      maxY: Math.max(...layout.nodes.map(n => n.y))
+    };
+    return layout;
   }
 
   function southLogicalItemsFromCentralLayout(layout, origin, projectionKind = 'syntax', order = southLogicalOrder()) {
@@ -1460,7 +1557,12 @@
       }
       if (which === 'S') return nodeByRoleOrPattern(layout, ['subject'], ['np-subj', 'subject'], { leaf: false }) || nodeByRoleOrPattern(layout, ['subject'], ['np-subj', 'subject']);
       if (which === 'O') return nodeByRoleOrPattern(layout, ['object'], ['np-obj', 'object'], { leaf: false }) || nodeByRoleOrPattern(layout, ['object'], ['np-obj', 'object']);
-      return nodeByRoleOrPattern(layout, ['predicate', 'aux', 'participle'], ['vp-perfectum', 'aux', 'vdw', 'v'], { leaf: false }) || nodeByRoleOrPattern(layout, ['predicate', 'aux', 'participle'], ['vp-perfectum', 'aux', 'vdw', 'v']);
+      const syntaxVerbNode = (layout?.nodes || []).find(n => n.kind !== 'leaf' && ['v'].includes(String(n.label || '').toLowerCase()))
+        || (layout?.nodes || []).find(n => n.kind !== 'leaf' && ['v'].includes(String(n.cat || '').toLowerCase()))
+        || (layout?.nodes || []).find(n => n.kind !== 'leaf' && ['predicate', 'aux', 'participle'].includes(String(n.role || '').toLowerCase()) && !['vp'].includes(String(n.label || '').toLowerCase()) && !['vp'].includes(String(n.cat || '').toLowerCase()) && !String(n.id || '').toLowerCase().includes('vp'))
+        || nodeByRoleOrPattern(layout, ['predicate', 'aux', 'participle'], ['aux', 'vdw', 'box-v', '-v', ' v'], { leaf: false })
+        || nodeByRoleOrPattern(layout, ['predicate', 'aux', 'participle'], ['aux', 'vdw', 'v']);
+      return syntaxVerbNode;
     };
     const meta = {
       S: { title: 'Subject', word: String(labels.subject || '').toUpperCase() },
@@ -1491,7 +1593,7 @@
   }
 
   function isPortraitMobileViewport() {
-    // v4483: grid-first and fit-height are no longer mobile-only.
+    // v4488: grid-first and fit-height are no longer mobile-only.
     // The canvas height is based on the actual viewBox on every platform.
     return true;
   }
@@ -1505,7 +1607,7 @@
   }
 
   function syncPortraitMenuSpace() {
-    // v4483: de oude numerieke onderruimte blijft op 0. De relevante instelling
+    // v4488: de oude numerieke onderruimte blijft op 0. De relevante instelling
     // is nu: welke benoemde menu's mogen boven het grid staan.
     document.documentElement?.style.setProperty('--portrait-menu-reserve', '0px');
     document.documentElement?.style.setProperty('--portrait-menu-slots', '0');
@@ -1701,7 +1803,7 @@
     syncPortraitStageMode();
     if (!els.canvasWrap) return;
     syncPortraitMenuSpace();
-    // v4483: het gridvenster wordt gemaximeerd op de actuele fit-box
+    // v4488: het gridvenster wordt gemaximeerd op de actuele fit-box
     // van boom + assen. Het canvas schaalt dus niet groter dan nodig.
     const fit = box || parseViewBox();
     const validFit = fit && Number.isFinite(fit.w) && fit.w > 0 && Number.isFinite(fit.h) && fit.h > 0;
@@ -2632,6 +2734,28 @@
     return (items || []).map(item => item.short).join('');
   }
 
+  function layoutLogicalProjectionCenters(items, x1, x2, boxWidth = 148, gap = 18) {
+    const half = boxWidth / 2;
+    const step = items.length > 1 ? (x2 - x1) / (items.length - 1) : 0;
+    const sources = items.map((item, index) => Number.isFinite(item.px) ? item.px : (x1 + step * index));
+    if (items.length <= 1) return sources;
+    const minSpacing = boxWidth + gap;
+    const available = Math.max(boxWidth, x2 - x1);
+    if (available < boxWidth + (items.length - 1) * minSpacing) {
+      const start = x1 + half;
+      const compactStep = items.length > 1 ? Math.max(boxWidth * 0.82, (available - boxWidth) / (items.length - 1)) : 0;
+      return items.map((_item, index) => start + compactStep * index);
+    }
+    const centers = sources.slice();
+    centers[0] = Math.max(x1 + half, Math.min(x2 - half, centers[0]));
+    for (let i = 1; i < centers.length; i += 1) centers[i] = Math.max(centers[i], centers[i - 1] + minSpacing);
+    centers[centers.length - 1] = Math.min(centers[centers.length - 1], x2 - half);
+    for (let i = centers.length - 2; i >= 0; i -= 1) centers[i] = Math.min(centers[i], centers[i + 1] - minSpacing);
+    centers[0] = Math.max(x1 + half, centers[0]);
+    for (let i = 1; i < centers.length; i += 1) centers[i] = Math.max(centers[i], centers[i - 1] + minSpacing);
+    return centers;
+  }
+
   function drawLogicalProjection(g, x1, x2, y, layout = null, options = {}) {
     const requestedOrder = Array.isArray(options.order) && options.order.length ? options.order : null;
     const items = Array.isArray(options.items) && options.items.length ? options.items : logicalProjectionItemsFromLayout(layout, requestedOrder);
@@ -2659,7 +2783,7 @@
         x: badgeX + badgeWidth / 2,
         y: badgeY - 12,
         class: 'logical-order-sub logical-flip-hint'
-      }, options.tipText || 'tip: klik op ZUID om de volgorde te wisselen'));
+      }, options.tipText || 'tip: wissel de LOG-volgorde'));
     }
     badgeGroup.appendChild(svgEl('rect', {
       x: badgeX,
@@ -2691,27 +2815,41 @@
       class: `logical-axis ${cls}`
     }));
     const step = items.length > 1 ? (x2 - x1) / (items.length - 1) : 0;
+    const sourceCenters = items.map((item, index) => Number.isFinite(item.px) ? item.px : (x1 + step * index));
+    const boxCenters = layoutLogicalProjectionCenters(items, x1, x2, 148, 18);
     items.forEach((item, index) => {
-      const cx = Number.isFinite(item.px) ? item.px : (x1 + step * index);
+      const sourceX = sourceCenters[index];
+      const cx = boxCenters[index];
+      const boxLeft = cx - 74;
+      const boxRight = cx + 74;
+      const boxTop = y + 10;
+      const joinX = Math.max(boxLeft + 18, Math.min(boxRight - 18, sourceX));
       if (Number.isFinite(item.sourceTopY)) {
         g.appendChild(svgEl('line', {
-          x1: cx,
+          x1: sourceX,
           y1: item.sourceTopY,
-          x2: cx,
+          x2: sourceX,
           y2: y - 10,
           class: `projection-line ${cls} logical-source-line`
         }));
       }
       g.appendChild(svgEl('line', {
-        x1: cx,
+        x1: sourceX,
         y1: y,
-        x2: cx,
-        y2: y - 26,
+        x2: sourceX,
+        y2: boxTop - 8,
+        class: `projection-line ${cls} logical-projection-line`
+      }));
+      g.appendChild(svgEl('line', {
+        x1: sourceX,
+        y1: boxTop - 8,
+        x2: joinX,
+        y2: boxTop,
         class: `projection-line ${cls} logical-projection-line`
       }));
       g.appendChild(svgEl('rect', {
-        x: cx - 74,
-        y: y + 10,
+        x: boxLeft,
+        y: boxTop,
         width: 148,
         height: 48,
         rx: 14,
@@ -2775,7 +2913,7 @@
       .map(id => functionalNodes.find(n => n.id === id)?.label || id)
       .join(' + ') || 'role-boxen';
     if (options.showTitle !== false) drawAxisTitle(g, origin.x - 180, origin.y - 70, `OPN · functionele structuur · ${rootLabel} → ${roleNames} · ${state.functionalOrder}`);
-    drawAxisTitle(g, origin.x - 176, origin.y - 48, `v4483 · ${branchModeLabel()} · vrije plaatsing + gereserveerde vrije slots`);
+    drawAxisTitle(g, origin.x - 176, origin.y - 48, `v4488 · ${branchModeLabel()} · vrije plaatsing + gereserveerde vrije slots`);
     const growthPlan = growthPlanForLayout(layout);
     layout.__growthPlan = growthPlan;
     drawSubtreeBoxes(g, layout, origin, growthPlan);
@@ -2817,9 +2955,9 @@
       else drawSyntaxRules(g, 1240, 126, centralLayout, origin, growthPlan);
       drawLogicalProjection(g, southAxisX1, southAxisX2, southAxisY, getFunctionalLayout(), {
         cls: 'log',
-        title: 'ZUID-as · LOGICAL-projectie',
-        subtitle: 'Logische volgorde onder de boom; west-as blijft LEX. Klik op de grotere ZUID-knop om alleen de zuid-as te wijzigen.',
-        badgeText: `ZUID · ${state.southLogicalMode || 'SOV'}`,
+        title: 'LOG-as · LOGICAL-projectie',
+        subtitle: 'Logische volgorde onder de boom; west-as blijft LEX. Gebruik de volgordeknop om alleen de LOG-volgorde onder de boom te wijzigen.',
+        badgeText: `${state.southLogicalMode || 'SOV'}`,
         order: southLogicalOrder(),
         items: southItems,
         interactive: true,
@@ -2834,9 +2972,9 @@
       drawAxisTitle(g, 1210, 116, 'SYNTAX-projectie verschijnt in de laatste stap');
       drawLogicalProjection(g, southAxisX1, southAxisX2, southAxisY, getFunctionalLayout(), {
         cls: 'log',
-        title: 'ZUID-as · LOGICAL-projectie',
-        subtitle: 'Onderprojectie wordt mee zichtbaar in de eindfase. Klik op de grotere ZUID-knop om alleen de zuid-as te wijzigen.',
-        badgeText: `ZUID · ${state.southLogicalMode || 'SOV'}`,
+        title: 'LOG-as · LOGICAL-projectie',
+        subtitle: 'LOG-projectie wordt mee zichtbaar in de eindfase. Gebruik de volgordeknop om alleen de LOG-volgorde onder de boom te wijzigen.',
+        badgeText: `${state.southLogicalMode || 'SOV'}`,
         order: southLogicalOrder(),
         items: southItems,
         interactive: true,
@@ -2947,6 +3085,8 @@
     els.svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
     sizeDynamicGridToBox(next);
     syncMobileCanvasHeight(next);
+    syncMainOverlayControlPlacement();
+    requestAnimationFrame(syncMainOverlayControlPlacement);
     if (manual) state.manualViewBox = next;
   }
 
@@ -2976,6 +3116,177 @@
     const rect = els.canvasWrap?.getBoundingClientRect?.();
     if (!rect || !Number.isFinite(rect.width) || !Number.isFinite(rect.height) || rect.width <= 0 || rect.height <= 0) return null;
     return rect.width / rect.height;
+  }
+
+  function svgMeetClientMetrics(viewBox = parseViewBox()) {
+    const rect = els.canvasWrap?.getBoundingClientRect?.();
+    if (!rect || !viewBox || !Number.isFinite(viewBox.w) || !Number.isFinite(viewBox.h) || viewBox.w <= 0 || viewBox.h <= 0 || rect.width <= 0 || rect.height <= 0) return null;
+    const scale = Math.min(rect.width / viewBox.w, rect.height / viewBox.h);
+    const drawnW = viewBox.w * scale;
+    const drawnH = viewBox.h * scale;
+    const offsetX = (rect.width - drawnW) / 2;
+    const offsetY = (rect.height - drawnH) / 2;
+    return {
+      host: rect,
+      scale,
+      left: rect.left + offsetX,
+      top: rect.top + offsetY,
+      width: drawnW,
+      height: drawnH,
+      right: rect.left + offsetX + drawnW,
+      bottom: rect.top + offsetY + drawnH
+    };
+  }
+
+  function svgXToClient(xSvg, viewBox = parseViewBox()) {
+    const metrics = svgMeetClientMetrics(viewBox);
+    if (!metrics || !Number.isFinite(xSvg)) return null;
+    return metrics.left + (xSvg - viewBox.x) * metrics.scale;
+  }
+
+  function svgYToClient(ySvg, viewBox = parseViewBox()) {
+    const metrics = svgMeetClientMetrics(viewBox);
+    if (!metrics || !Number.isFinite(ySvg)) return null;
+    return metrics.top + (ySvg - viewBox.y) * metrics.scale;
+  }
+
+  function syntAxisAnchorBox() {
+    if (!els.svg) return null;
+    const candidates = [
+      '.axes-synt-rules .projection-axis-line.synt',
+      '.synt-rule-view .projection-axis-line.synt',
+      '.projection-axis-line.synt',
+      '.synt-rule-view',
+      '.axes-synt-rules'
+    ];
+    for (const selector of candidates) {
+      const node = els.svg.querySelector(selector);
+      if (!node) continue;
+      try {
+        if (node.tagName && node.tagName.toLowerCase() === 'line') {
+          const x1 = Number(node.getAttribute('x1'));
+          const x2 = Number(node.getAttribute('x2'));
+          const y1 = Number(node.getAttribute('y1'));
+          const y2 = Number(node.getAttribute('y2'));
+          if ([x1, x2, y1, y2].every(Number.isFinite)) {
+            return { x: Math.max(x1, x2), y: Math.min(y1, y2), h: Math.abs(y2 - y1), source: selector };
+          }
+        }
+        const b = node.getBBox?.();
+        if (b && Number.isFinite(b.x) && Number.isFinite(b.y) && b.width >= 0 && b.height >= 0) {
+          return { x: b.x + b.width, y: b.y, h: b.height, source: selector };
+        }
+      } catch (_err) {
+        // Element may be temporarily unavailable during SVG replacement.
+      }
+    }
+    return null;
+  }
+
+  function southLogicalBadgeAnchorBox() {
+    if (!els.svg) return null;
+    const candidates = [
+      '.logical-flip-toggle .logical-order-badge-interactive',
+      '.logical-order-badge-interactive',
+      '.logical-flip-toggle'
+    ];
+    for (const selector of candidates) {
+      const node = els.svg.querySelector(selector);
+      if (!node) continue;
+      try {
+        const b = node.getBBox?.();
+        if (b && Number.isFinite(b.x) && Number.isFinite(b.y) && b.width > 0 && b.height > 0) {
+          return {
+            x: b.x + b.width / 2,
+            y: b.y + b.height / 2,
+            w: b.width,
+            h: b.height,
+            source: selector
+          };
+        }
+      } catch (_err) {
+        // SVG bbox can be temporarily unavailable while rerendering.
+      }
+    }
+    return null;
+  }
+
+  function syncMainOverlayControlPlacement() {
+    const controls = document.querySelector('.main-grid-controls');
+    const southControl = document.querySelector('.main-south-control');
+    const workspace = workspaceForStage();
+    const host = els.canvasWrap || workspace;
+    if (!workspace || !host || !isMainScreenActive()) return;
+    const root = document.documentElement;
+    const viewBox = parseViewBox();
+    const hostRect = host.getBoundingClientRect();
+    const svgRect = svgMeetClientMetrics(viewBox) || { left: hostRect.left, top: hostRect.top, right: hostRect.right, bottom: hostRect.bottom, width: hostRect.width, height: hostRect.height };
+    const svgLocalLeft = Math.max(0, svgRect.left - hostRect.left);
+    const svgLocalTop = Math.max(0, svgRect.top - hostRect.top);
+    const svgLocalRight = Math.min(hostRect.width, svgRect.right - hostRect.left);
+    const svgLocalBottom = Math.min(hostRect.height, svgRect.bottom - hostRect.top);
+
+    // v4494: HTML controls are children of the canvas/boomvenster, but the SVG
+    // itself uses preserveAspectRatio=meet.  Therefore placement is clamped to
+    // the actually drawn grid rectangle, not to the full letterboxed canvas.
+    // All overlay coordinates are therefore clamped to the canvas rect, not to
+    // the outer workspace. This keeps the right control strip inside the grid
+    // window, next to the SYNTAX axis like the LEX strip is inside on the left.
+    if (southControl && !southControl.classList.contains('is-hidden')) {
+      const southAnchor = southLogicalBadgeAnchorBox();
+      const sxClient = southAnchor ? svgXToClient(southAnchor.x, viewBox) : null;
+      const syClient = southAnchor ? svgYToClient(southAnchor.y, viewBox) : null;
+      const southRect = southControl.getBoundingClientRect();
+      if (Number.isFinite(sxClient) && Number.isFinite(syClient)) {
+        const halfW = Math.max(48, (southRect.width || 160) / 2);
+        const halfH = Math.max(22, (southRect.height || 48) / 2);
+        const minLeft = svgLocalLeft + halfW + 6;
+        const maxLeft = Math.max(minLeft, svgLocalRight - halfW - 6);
+        const minTop = svgLocalTop + halfH + 6;
+        const maxTop = Math.max(minTop, svgLocalBottom - halfH - 6);
+        const left = Math.round(Math.max(minLeft, Math.min(maxLeft, sxClient - hostRect.left)));
+        const top = Math.round(Math.max(minTop, Math.min(maxTop, syClient - hostRect.top)));
+        root.style.setProperty('--main-south-left', `${left}px`);
+        root.style.setProperty('--main-south-top', `${top}px`);
+      } else {
+        root.style.removeProperty('--main-south-left');
+        root.style.removeProperty('--main-south-top');
+      }
+    } else {
+      root.style.removeProperty('--main-south-left');
+      root.style.removeProperty('--main-south-top');
+    }
+
+    if (!controls) return;
+    const portrait = isPortraitGridFirstViewport();
+    if (portrait) {
+      root.style.removeProperty('--main-controls-left');
+      root.style.removeProperty('--main-controls-top');
+      controls.style.removeProperty('--main-controls-left');
+      controls.style.removeProperty('--main-controls-top');
+      return;
+    }
+    const anchor = syntAxisAnchorBox();
+    const controlsRect = controls.getBoundingClientRect();
+    const xClient = anchor ? svgXToClient(anchor.x, viewBox) : null;
+    const yClient = anchor ? svgYToClient(anchor.y, viewBox) : null;
+    const gap = 20;
+    const inset = 14;
+    const outsideGap = 14;
+    const controlW = Math.max(100, controlsRect.width || 104);
+    const controlH = Math.max(180, controlsRect.height || 220);
+    const windowMinLeft = Math.max(inset, 0 + inset);
+    const windowMaxLeft = Math.max(windowMinLeft, hostRect.width - controlW - inset);
+    const anchorLeft = Number.isFinite(xClient) ? (xClient - hostRect.left + gap) : windowMaxLeft;
+    const afterGridLeft = svgLocalRight + outsideGap;
+    const preferredLeft = Math.max(anchorLeft, afterGridLeft);
+    const left = Math.round(Math.max(windowMinLeft, Math.min(windowMaxLeft, preferredLeft)));
+    const minTop = Math.max(8, svgLocalTop + 8);
+    const maxTop = Math.max(minTop, svgLocalBottom - controlH - 10);
+    const rawTop = Number.isFinite(yClient) ? (yClient - hostRect.top + 8) : minTop;
+    const top = Math.round(Math.max(minTop, Math.min(maxTop, rawTop)));
+    root.style.setProperty('--main-controls-left', `${left}px`);
+    root.style.setProperty('--main-controls-top', `${top}px`);
   }
 
   function expandBoxToAspect(box, aspect = null) {
@@ -3110,7 +3421,7 @@
     els.projectionHelp.textContent = helpText();
     els.explainHeading.textContent = `Uitleg · ${activeSentenceText()}`;
     els.explainText.textContent = state.example.id === 'hond-bijt-man'
-      ? 'LEX-regel: eerst horizontale basisprojectie, daarna lokale Wissels naar vrije slots. Hoofdzin: eerste zinsdeel → slot 1, persoonsvorm → slot 2; traces blijven op de oude basisplek. FIT kadert alleen het zicht, niet de boom. Centrale slotboxen zijn verwijderd; de eerste tak reserveert lege vrije-slotruimte; wissels zie je alleen op de LEX-as. De ZUID-badge doorloopt de zuid-as-volgorde: SOV, SVO, OVS, OSV, VSO, VOS. De centrale subject/object/verb-vertakkingen draaien mee. Menu’s boven het grid zijn expliciet gekozen: maximaal vier, bijvoorbeeld Voorbeeldzin en Play/Groei.'
+      ? 'LEX-regel: eerst horizontale basisprojectie, daarna lokale Wissels naar vrije slots. Hoofdzin: eerste zinsdeel → slot 1, persoonsvorm → slot 2; traces blijven op de oude basisplek. FIT kadert alleen het zicht, niet de boom. Centrale slotboxen zijn verwijderd; de eerste tak reserveert lege vrije-slotruimte; wissels zie je alleen op de LEX-as. De volgordeknop doorloopt de LOG-volgorde: SOV, SVO, OVS, OSV, VSO, VOS. De centrale subject/object/verb-vertakkingen draaien mee. Menu’s boven het grid zijn expliciet gekozen: maximaal vier, bijvoorbeeld Voorbeeldzin en Play/Groei.'
       : 'LEX-regel: verplaats alleen naar vrije slots 0/1/2. Niet-verplaatste woorden blijven op hun horizontale basisplek. Traces staan lokaal op de oude plek. In LOG/FT kan de onderprojectie SOV, SVO, OVS, OSV, VSO of VOS tonen.';
   }
 
@@ -3244,6 +3555,28 @@
       els.growthPlayButton.disabled = !growthSupported;
       els.growthPlayButton.textContent = growthPlayText;
     }
+    if (els.mainGrowthPlayButton) {
+      els.mainGrowthPlayButton.disabled = !growthSupported;
+      els.mainGrowthPlayButton.textContent = growthPlayText;
+    }
+    if (els.mainGrowthPrevButton) els.mainGrowthPrevButton.disabled = growthPrevDisabled;
+    if (els.mainGrowthNextButton) els.mainGrowthNextButton.disabled = growthNextDisabled;
+    if (els.mainResetButton) els.mainResetButton.textContent = 'Reset';
+    if (els.mainGrowthStepLabel) els.mainGrowthStepLabel.textContent = growthLabel();
+    if (els.mainSouthModeButton) els.mainSouthModeButton.textContent = `${state.southLogicalMode || 'SOV'}`;
+    if (els.mainSouthPrevButton) els.mainSouthPrevButton.title = 'Vorige LOG-volgorde';
+    if (els.mainSouthNextButton) els.mainSouthNextButton.title = 'Volgende LOG-volgorde';
+    const mainSouthControl = document.querySelector('.main-south-control');
+    const mainSouthVisible = state.projection === 'axes';
+    if (mainSouthControl) {
+      mainSouthControl.classList.toggle('is-hidden', !mainSouthVisible);
+      mainSouthControl.setAttribute('aria-hidden', String(!mainSouthVisible));
+    }
+    document.querySelectorAll('[data-main-projection]').forEach(button => {
+      const active = button.dataset.mainProjection === state.projection;
+      button.classList.toggle('active', active);
+      button.setAttribute('aria-pressed', String(active));
+    });
     if (els.mobileGrowthPlayButton) {
       els.mobileGrowthPlayButton.disabled = !growthSupported;
       els.mobileGrowthPlayButton.textContent = growthPlayText;
@@ -3660,11 +3993,16 @@
     }, { passive: false });
   }
 
-  function toggleSouthLogicalFlip() {
+  function cycleSouthLogicalMode(delta = 1) {
     const current = state.southLogicalMode || 'SOV';
     const index = Math.max(0, SOUTH_LOGICAL_MODES.indexOf(current));
-    state.southLogicalMode = SOUTH_LOGICAL_MODES[(index + 1) % SOUTH_LOGICAL_MODES.length];
+    const nextIndex = (index + delta + SOUTH_LOGICAL_MODES.length) % SOUTH_LOGICAL_MODES.length;
+    state.southLogicalMode = SOUTH_LOGICAL_MODES[nextIndex];
     render();
+  }
+
+  function toggleSouthLogicalFlip() {
+    cycleSouthLogicalMode(1);
   }
 
   function resetForNewExample() {
@@ -3844,13 +4182,26 @@
       render();
     });
     els.growthStepInput?.addEventListener('input', event => setGrowthStep(event.target.value));
-    els.growthPrevButton?.addEventListener('click', () => { state.growthEnabled = true; setGrowthStep(state.growthStep - 1); });
-    els.growthNextButton?.addEventListener('click', () => { state.growthEnabled = true; setGrowthStep(state.growthStep + 1); });
+    els.growthPrevButton?.addEventListener('click', () => { stopGrowthPlayback(); state.growthEnabled = true; setGrowthStep(state.growthStep - 1); });
+    els.growthNextButton?.addEventListener('click', () => { stopGrowthPlayback(); state.growthEnabled = true; setGrowthStep(state.growthStep + 1); });
     els.growthResetButton?.addEventListener('click', () => { state.growthEnabled = true; stopGrowthPlayback(); setGrowthStep(0); });
     els.growthPlayButton?.addEventListener('click', toggleGrowthPlayback);
+    els.mainGrowthPlayButton?.addEventListener('click', toggleGrowthPlayback);
+    els.mainGrowthPrevButton?.addEventListener('click', () => { stopGrowthPlayback(); state.growthEnabled = true; setGrowthStep(state.growthStep - 1); });
+    els.mainGrowthNextButton?.addEventListener('click', () => { stopGrowthPlayback(); state.growthEnabled = true; setGrowthStep(state.growthStep + 1); });
+    els.mainResetButton?.addEventListener('click', () => { resetForNewExample(); render(); });
+    els.mainSouthPrevButton?.addEventListener('click', () => { stopGrowthPlayback(); cycleSouthLogicalMode(-1); });
+    els.mainSouthNextButton?.addEventListener('click', () => { stopGrowthPlayback(); cycleSouthLogicalMode(1); });
+    els.mainSouthModeButton?.addEventListener('click', () => { stopGrowthPlayback(); cycleSouthLogicalMode(1); });
+    document.querySelectorAll('[data-main-projection]').forEach(button => {
+      button.addEventListener('click', () => {
+        setProjection(button.dataset.mainProjection || 'axes');
+        render();
+      });
+    });
     els.mobileGrowthPlayButton?.addEventListener('click', toggleGrowthPlayback);
-    els.mobileGrowthPrevButton?.addEventListener('click', () => { state.growthEnabled = true; setGrowthStep(state.growthStep - 1); });
-    els.mobileGrowthNextButton?.addEventListener('click', () => { state.growthEnabled = true; setGrowthStep(state.growthStep + 1); });
+    els.mobileGrowthPrevButton?.addEventListener('click', () => { stopGrowthPlayback(); state.growthEnabled = true; setGrowthStep(state.growthStep - 1); });
+    els.mobileGrowthNextButton?.addEventListener('click', () => { stopGrowthPlayback(); state.growthEnabled = true; setGrowthStep(state.growthStep + 1); });
     els.mobileGrowthResetButton?.addEventListener('click', () => { state.growthEnabled = true; stopGrowthPlayback(); setGrowthStep(0); });
     els.resetExampleButton?.addEventListener('click', () => { resetForNewExample(); render(); });
     els.fitButton?.addEventListener('click', runFit);

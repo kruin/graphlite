@@ -288,9 +288,17 @@ Hierdoor verschijnen leaves niet meer allemaal tegelijk. Dit maakt zichtbaar of 
 
 Naast west/LEX, oost/SYNTAX en zuid/LOGICAL is ook een NOORD-as mogelijk. Die is genoteerd als uitbreiding, maar nog niet gebruikt.
 
-## v4483 · strak passend raster rond boom + assen
+## v4487 · strak passend raster rond boom + assen
 
 - In het hoofdscherm volgt de SVG-viewBox nu exact de getekende boom plus projectie-assen.
 - Het raster wordt dynamisch opnieuw opgebouwd binnen dezelfde fit-box; lege rastervelden rondom worden niet meer meegetekend.
 - Hulplabels en het raster zelf tellen niet meer mee bij FIT.
 - In Config blijft de ruimere aspect-fit beschikbaar voor beheer en vergelijking.
+
+
+### v4487 — Main-bediening in boomvenster
+
+- Main behoudt een vaste topbalk met alleen Zin en Config.
+- De ZUID-volgorde staat nu als zichtbare pijlbediening onder in het boomvenster.
+- In portrait staat de Play-balk onder het grid met Reset direct ernaast; de Assen/LOG/FT-balk sluit daaronder aan.
+- In landscape staat Play verticaal rechts in het boomvenster, met Reset en Assen/LOG/FT eronder.

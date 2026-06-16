@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <title>OpenGraph portrait-test v4494</title>
+  <style>
+    :root { color-scheme: light dark; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; background: #0f172a; color: #e5edf8; display: grid; grid-template-rows: auto 1fr; }
+    header { display: flex; align-items: center; justify-content: space-between; gap: .75rem; padding: .7rem .9rem; border-bottom: 1px solid rgba(226,232,240,.18); background: rgba(15,23,42,.94); position: sticky; top: 0; z-index: 3; }
+    h1 { margin: 0; font-size: 1rem; }
+    .tools { display: flex; flex-wrap: wrap; gap: .45rem; align-items: center; }
+    button, a { border: 1px solid rgba(226,232,240,.22); background: #182339; color: #e5edf8; border-radius: .65rem; padding: .42rem .62rem; font-weight: 800; text-decoration: none; cursor: pointer; }
+    button.active { background: #2563eb; border-color: #60a5fa; }
+    main { display: grid; place-items: center; padding: .8rem; overflow: auto; }
+    .frame-shell { display: grid; gap: .45rem; justify-items: center; }
+    .caption { color: #b6c4d8; font-size: .86rem; }
+    .phone-frame { width: 390px; height: 844px; max-width: calc(100vw - 1.6rem); max-height: calc(100vh - 5.8rem); border: 10px solid #020617; border-radius: 2rem; overflow: hidden; box-shadow: 0 1.4rem 3rem rgba(0,0,0,.45); background: #fff; resize: both; }
+    iframe { display: block; width: 100%; height: 100%; border: 0; background: white; }
+    @media (max-width: 520px) { header { align-items: stretch; flex-direction: column; } .tools { width: 100%; } button, a { flex: 1 1 auto; } }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <h1>Portrait-test v4494</h1>
+      <div class="caption">Desktop/laptop-testvenster met portrait-verhouding. Sleep de hoek om lokaal formaat te testen.</div>
+    </div>
+    <nav class="tools" aria-label="Portrait test formaten">
+      <button type="button" data-size="390x844" class="active">390×844</button>
+      <button type="button" data-size="430x932">430×932</button>
+      <button type="button" data-size="540x960">540×960</button>
+      <button type="button" data-size="768x1024">tablet</button>
+      <a href="index.html?v4494">normaal</a>
+    </nav>
+  </header>
+  <main>
+    <section class="frame-shell" aria-label="Portrait iframe">
+      <div id="frame" class="phone-frame">
+        <iframe id="viewerFrame" title="OpenGraph portrait viewer" src="index.html?portrait-test=v4494"></iframe>
+      </div>
+      <div id="sizeCaption" class="caption">390 × 844 portrait window</div>
+    </section>
+  </main>
+  <script>
+    const frame = document.getElementById('frame');
+    const caption = document.getElementById('sizeCaption');
+    document.querySelectorAll('[data-size]').forEach(button => {
+      button.addEventListener('click', () => {
+        const [w, h] = button.dataset.size.split('x').map(Number);
+        frame.style.width = `${w}px`;
+        frame.style.height = `${h}px`;
+        caption.textContent = `${w} × ${h} portrait window`;
+        document.querySelectorAll('[data-size]').forEach(b => b.classList.toggle('active', b === button));
+      });
+    });
+  </script>
+</body>
+</html>
