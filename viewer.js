@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'v4481';
+  const VERSION = 'v4482';
   const BASE_CELL = 74;
   const ROOT_SIDE_GAP = 1;
   const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -1491,7 +1491,7 @@
   }
 
   function isPortraitMobileViewport() {
-    // v4481: grid-first and fit-height are no longer mobile-only.
+    // v4482: grid-first and fit-height are no longer mobile-only.
     // The canvas height is based on the actual viewBox on every platform.
     return true;
   }
@@ -1505,7 +1505,7 @@
   }
 
   function syncPortraitMenuSpace() {
-    // v4481: de oude numerieke onderruimte blijft op 0. De relevante instelling
+    // v4482: de oude numerieke onderruimte blijft op 0. De relevante instelling
     // is nu: welke benoemde menu's mogen boven het grid staan.
     document.documentElement?.style.setProperty('--portrait-menu-reserve', '0px');
     document.documentElement?.style.setProperty('--portrait-menu-slots', '0');
@@ -1701,7 +1701,7 @@
     syncPortraitStageMode();
     if (!els.canvasWrap) return;
     syncPortraitMenuSpace();
-    // v4481: het gridvenster wordt gemaximeerd op de actuele fit-box
+    // v4482: het gridvenster wordt gemaximeerd op de actuele fit-box
     // van boom + assen. Het canvas schaalt dus niet groter dan nodig.
     const fit = box || parseViewBox();
     const validFit = fit && Number.isFinite(fit.w) && fit.w > 0 && Number.isFinite(fit.h) && fit.h > 0;
@@ -2755,7 +2755,7 @@
       .map(id => functionalNodes.find(n => n.id === id)?.label || id)
       .join(' + ') || 'role-boxen';
     if (options.showTitle !== false) drawAxisTitle(g, origin.x - 180, origin.y - 70, `OPN · functionele structuur · ${rootLabel} → ${roleNames} · ${state.functionalOrder}`);
-    drawAxisTitle(g, origin.x - 176, origin.y - 48, `v4481 · ${branchModeLabel()} · vrije plaatsing + gereserveerde vrije slots`);
+    drawAxisTitle(g, origin.x - 176, origin.y - 48, `v4482 · ${branchModeLabel()} · vrije plaatsing + gereserveerde vrije slots`);
     const growthPlan = growthPlanForLayout(layout);
     layout.__growthPlan = growthPlan;
     drawSubtreeBoxes(g, layout, origin, growthPlan);
@@ -2911,6 +2911,7 @@
   }
 
   function setViewBox(box, manual = false) {
+    syncMainTopbarLayout();
     if (!els.svg || !box) return;
     const next = {
       x: Number(box.x) || 0,
@@ -2931,6 +2932,41 @@
     els.canvasWrap?.classList.remove('is-panning');
   }
 
+  function syncMainTopbarLayout() {
+    const main = document.body?.classList.contains('main-screen-active');
+    if (!main) return;
+    const bar = document.querySelector('.main-topbar');
+    const root = document.documentElement;
+    if (!bar || !root) return;
+    const rect = bar.getBoundingClientRect();
+    const gap = 6;
+    const top = Math.max(0, Math.ceil(rect.bottom + gap));
+    root.style.setProperty('--main-grid-top', `${top}px`);
+    root.style.setProperty('--main-grid-height', `calc(100dvh - ${top}px)`);
+  }
+
+  function canvasAspectRatio() {
+    syncMainTopbarLayout();
+    const rect = els.canvasWrap?.getBoundingClientRect?.();
+    if (!rect || !Number.isFinite(rect.width) || !Number.isFinite(rect.height) || rect.width <= 0 || rect.height <= 0) return null;
+    return rect.width / rect.height;
+  }
+
+  function expandBoxToAspect(box, aspect = null) {
+    if (!box || !Number.isFinite(aspect) || aspect <= 0) return box;
+    const centerX = box.x + box.w / 2;
+    const centerY = box.y + box.h / 2;
+    const boxAspect = box.w / box.h;
+    if (!Number.isFinite(boxAspect) || boxAspect <= 0) return box;
+    if (Math.abs(boxAspect - aspect) < 0.01) return box;
+    if (boxAspect < aspect) {
+      const w = box.h * aspect;
+      return { x: centerX - w / 2, y: box.y, w, h: box.h };
+    }
+    const h = box.w / aspect;
+    return { x: box.x, y: centerY - h / 2, w: box.w, h };
+  }
+
   function computeAutoFitBox() {
     if (!els.svg) return fallbackViewBox();
     const grids = [...els.svg.querySelectorAll('.grid')];
@@ -2942,15 +2978,20 @@
       if (!bbox || !Number.isFinite(bbox.width) || !Number.isFinite(bbox.height) || bbox.width <= 0 || bbox.height <= 0) {
         return fallbackViewBox();
       }
-      const margin = isMobileViewport()
-        ? Math.max(18, Math.min(38, Math.max(bbox.width, bbox.height) * 0.024))
-        : Math.max(24, Math.min(56, Math.max(bbox.width, bbox.height) * 0.028));
-      return {
+      const main = document.body?.classList.contains('main-screen-active');
+      const base = Math.max(bbox.width, bbox.height);
+      const margin = main
+        ? Math.max(10, Math.min(26, base * 0.014))
+        : (isMobileViewport()
+          ? Math.max(18, Math.min(38, base * 0.024))
+          : Math.max(24, Math.min(56, base * 0.028)));
+      const fit = {
         x: bbox.x - margin,
         y: bbox.y - margin,
         w: bbox.width + margin * 2,
         h: bbox.height + margin * 2
       };
+      return expandBoxToAspect(fit, canvasAspectRatio());
     } catch (_err) {
       return fallbackViewBox();
     } finally {
@@ -3000,6 +3041,7 @@
 
   function render() {
     syncPortraitStageMode();
+    syncMainTopbarLayout();
     syncControls();
     if (state.projection === 'source') drawSource();
     else if (state.projection === 'lex') drawLex();
@@ -3662,6 +3704,7 @@
     els.openConfigButton?.setAttribute('aria-expanded', open ? 'true' : 'false');
     els.closeConfigButton?.setAttribute('aria-expanded', open ? 'true' : 'false');
     window.setTimeout(() => {
+      syncMainTopbarLayout();
       try { render(); } catch (_) {}
       if (open) els.closeConfigButton?.focus?.();
       else els.openConfigButton?.focus?.();
@@ -3850,7 +3893,9 @@
     }, { once: true });
     window.addEventListener('resize', () => {
       syncPortraitStageMode();
-      syncMobileCanvasHeight(parseViewBox());
+      syncMainTopbarLayout();
+      resetManualViewBox();
+      render();
     });
     window.addEventListener('orientationchange', () => {
       requestAnimationFrame(() => {

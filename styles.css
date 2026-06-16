@@ -1971,7 +1971,7 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
   font-weight: 900;
 }
 
-/* v4481: mobile portrait stage-first. Het gridvenster staat standaard helemaal bovenaan.
+/* v4482: mobile portrait stage-first. Het gridvenster staat standaard helemaal bovenaan.
    Portret-menu-ruimte is configureerbaar: 0, 1 of 2 menuhoogtes; standaard 0. */
 .mobile-sheet-field {
   display: grid;
@@ -2069,7 +2069,7 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
 }
 
 
-/* v4481: portrait definitief grid-eerst. Geen menu of reserve boven het grid;
+/* v4482: portrait definitief grid-eerst. Geen menu of reserve boven het grid;
    eventuele portret-menu-ruimte komt onder het gridvenster. */
 @media (max-width: 760px) and (orientation: portrait) {
   html,
@@ -2186,7 +2186,7 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
 }
 
 
-/* v4481: harde portrait-correctie. De browser kan in portrait breder dan 760px
+/* v4482: harde portrait-correctie. De browser kan in portrait breder dan 760px
    rapporteren; daarom gebruikt JS body.portrait-grid-first. In die modus mag
    niets boven het gridvenster staan. Alle menu's komen eronder. */
 body.portrait-grid-first {
@@ -2276,7 +2276,7 @@ body.portrait-grid-first .status-panel { order: 4 !important; }
 body.portrait-grid-first .text-panel { order: 5 !important; }
 
 
-/* v4481: grid-first geldt op alle platforms, niet alleen mobile/portrait.
+/* v4482: grid-first geldt op alle platforms, niet alleen mobile/portrait.
    Niets staat nog boven het gridvenster: projectiekeuze, zinmenu, groei/play,
    toolbar, status en documentatie komen onder het canvas. */
 body.grid-first-all,
@@ -2347,7 +2347,7 @@ body.grid-first-all #graphSvg,
   height: 100% !important;
 }
 
-/* v4481: benoemde meerkeuze voor menu's boven het grid.
+/* v4482: benoemde meerkeuze voor menu's boven het grid.
    Standaard: geen enkel menu boven het grid. Alle benoemde menu's kunnen boven het grid. */
 .top-menu-choice-field {
   grid-column: 1 / -1;
@@ -2469,7 +2469,7 @@ body.grid-first-all .toolbar {
   align-self: stretch;
 }
 
-/* v4481: configureerbare vrije LEX-slots op de LEX-as. */
+/* v4482: configureerbare vrije LEX-slots op de LEX-as. */
 .lex-config-free-slot {
   fill: color-mix(in srgb, var(--lex), var(--panel) 84%);
   stroke: var(--lex);
@@ -2515,7 +2515,7 @@ body.grid-first-all .toolbar {
 }
 
 
-/* v4481: portrait split tussen grid en rechter menu.
+/* v4482: portrait split tussen grid en rechter menu.
    Het grid gebruikt niet meer de volle breedte als dat niet nodig is;
    het rechter menu blijft zichtbaar en de grens is sleepbaar/touchbaar. */
 .pane-splitter {
@@ -2640,7 +2640,7 @@ body.pane-split-dragging * {
 }
 
 
-/* v4481: desktop toont LEX-insertie en takverlenging in het rechter menu. */
+/* v4482: desktop toont LEX-insertie en takverlenging in het rechter menu. */
 .lex-extension-field {
   grid-column: 1 / -1;
   border: 1px solid var(--line);
@@ -2681,7 +2681,7 @@ body.portrait-grid-first .side-panel .lex-extension-field label {
 }
 
 
-/* v4481: gridvenster past op boom + assen; resterende breedte is rechterkolom. */
+/* v4482: gridvenster past op boom + assen; resterende breedte is rechterkolom. */
 body.grid-first-all .workspace,
 .workspace {
   display: grid !important;
@@ -2803,7 +2803,7 @@ body.grid-first-all .view-pan-hint {
 }
 
 
-/* v4481: maak Rechterkolom-config zichtbaar bovenaan het rechter menu. */
+/* v4482: maak Rechterkolom-config zichtbaar bovenaan het rechter menu. */
 .right-menu-width-callout {
   grid-column: 1 / -1;
   border: 2px solid color-mix(in srgb, var(--accent), var(--line) 18%);
@@ -2857,7 +2857,7 @@ body.portrait-grid-first #rightMenuWidthSelectTop {
 }
 
 
-/* v4481: mobile portrait grid smaller and fixed; right menu + splitter visible. */
+/* v4482: mobile portrait grid smaller and fixed; right menu + splitter visible. */
 body.portrait-grid-first .workspace {
   grid-template-columns: minmax(92px, var(--stage-pane-width, 40vw)) var(--pane-splitter-width, 18px) minmax(13rem, var(--side-pane-width, 56vw)) !important;
 }
@@ -2890,7 +2890,7 @@ body.portrait-grid-first .side-panel {
 }
 
 
-/* v4481 app redesign: hoofdbeeld = grid + zin + config. Config = apart scherm met alle menu's. */
+/* v4482 app redesign: hoofdbeeld = grid + zin + config. Config = apart scherm met alle menu's. */
 .main-topbar,
 .config-topbar {
   display: none;
@@ -3097,7 +3097,7 @@ body.main-screen-active .canvas-wrap::before {
   display: none !important;
 }
 
-/* v4481: main fullscreen on all platforms.
+/* v4482: main fixed topbar on all platforms.
    Main = alleen full viewport grid, met overlay topmenu Zin + Config.
    Config blijft apart scherm met alle instellingen. */
 html,
@@ -3230,5 +3230,69 @@ body.main-screen-active .config-topbar {
   body.main-screen-active .config-open-button {
     min-height: 2.2rem !important;
     font-size: .9rem !important;
+  }
+}
+
+
+/* v4482: fixed topbar; grid starts below it and fits content with minimal empty grid. */
+body.main-screen-active .main-topbar {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  z-index: 140 !important;
+  width: 100vw !important;
+  max-width: 100vw !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+  border-left: 0 !important;
+  border-right: 0 !important;
+  border-top: 0 !important;
+  padding: max(.36rem, env(safe-area-inset-top)) max(.55rem, env(safe-area-inset-right)) .46rem max(.55rem, env(safe-area-inset-left)) !important;
+  background: color-mix(in srgb, var(--panel), var(--bg) 4%) !important;
+  box-shadow: 0 .25rem .9rem rgba(15, 23, 42, .16) !important;
+}
+body.main-screen-active .workspace {
+  position: fixed !important;
+  left: 0 !important;
+  right: 0 !important;
+  top: var(--main-grid-top, 3.55rem) !important;
+  bottom: 0 !important;
+  width: 100vw !important;
+  height: var(--main-grid-height, calc(100dvh - 3.55rem)) !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  overflow: hidden !important;
+}
+body.main-screen-active .canvas-wrap {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  max-width: 100vw !important;
+  max-height: none !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  overflow: hidden !important;
+  background: var(--panel) !important;
+}
+body.main-screen-active #graphSvg {
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  max-width: none !important;
+  max-height: none !important;
+}
+@media (max-width: 760px) {
+  body.main-screen-active .main-topbar {
+    gap: .45rem !important;
+    padding: max(.28rem, env(safe-area-inset-top)) .42rem .38rem max(.42rem, env(safe-area-inset-left)) !important;
+  }
+  body.main-screen-active .main-sentence-field select,
+  body.main-screen-active .config-open-button {
+    min-height: 2.05rem !important;
   }
 }
