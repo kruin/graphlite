@@ -1,5 +1,12 @@
 
-## v4482 · grid maximaal passend + ruimere topmenu-keuze
+## v4483 · strak passend raster rond boom + assen
+
+- In het hoofdscherm volgt de SVG-viewBox nu exact de getekende boom plus projectie-assen.
+- Het raster wordt dynamisch opnieuw opgebouwd binnen dezelfde fit-box; lege rastervelden rondom worden niet meer meegetekend.
+- Hulplabels en het raster zelf tellen niet meer mee bij FIT.
+- In Config blijft de ruimere aspect-fit beschikbaar voor beheer en vergelijking.
+
+## v4483 · grid maximaal passend + ruimere topmenu-keuze
 
 - Het gridvenster wordt nu gemaximeerd op de actuele fit-box van boom + assen; het schaalt niet groter dan nodig.
 - De fitmarge is kleiner, zodat minder lege rasterruimte rond boom en assen overblijft.
@@ -7,7 +14,7 @@
 - Genoteerd: een NOORD-as is mogelijk, maar nog niet gebruikt.
 
 
-## v4482 · Menu’s boven grid als benoemde meerkeuze
+## v4483 · Menu’s boven grid als benoemde meerkeuze
 
 - De oude instelling `Ruimte onder grid` is vervangen door een benoemde meerkeuze: `Menu’s boven grid`.
 - De gebruiker kiest maximaal vier menu’s die boven het grid mogen staan.
@@ -15,9 +22,9 @@
 - Standaard staat geen enkel menu boven het grid; alle menu’s staan dan onder het grid.
 - De tooltip en helptekst leggen per keuze uit waarom een taalkundige die boven het grid kan willen zetten.
 
-# OpenGraph Lite Viewer v4482
+# OpenGraph Lite Viewer v4483
 
-## v4482 — benoemde menu's boven het grid
+## v4483 — benoemde menu's boven het grid
 
 - Vervangt `Ruimte onder grid` door `Menu's boven grid`.
 - User kiest maximaal vier benoemde menu's die boven het grid mogen staan.
@@ -25,9 +32,9 @@
 - Niet gekozen menu's staan onder het grid.
 - Max > 2 wordt geblokkeerd en toegelicht in de viewer.
 
-# OpenGraph Lite Viewer v4482
+# OpenGraph Lite Viewer v4483
 
-## v4482 — mobile portrait grid-first
+## v4483 — mobile portrait grid-first
 
 - Mobile portrait: grid/boomvenster staat standaard helemaal bovenaan; header, projectiebalk, zinmenu en toolbar staan niet meer boven het grid.
 - Nieuwe config `portrait_menu_slots`: ruimte boven het grid voor 0, 1 of 2 toekomstige menuhoogtes; standaard 0.
@@ -380,20 +387,20 @@
 - Projectietabs blijven vast zichtbaar boven de boom.
 
 
-Aanvulling v4482: LEX vrije slots zijn plaatsbare insertiepunten op de LEX-as voor later materiaal uit andere LEX-assen/bomen en anafora. Boom vrije rijen blijven apart.
+Aanvulling v4483: LEX vrije slots zijn plaatsbare insertiepunten op de LEX-as voor later materiaal uit andere LEX-assen/bomen en anafora. Boom vrije rijen blijven apart.
 
 
-## v4482 desktop LEX-insertie zichtbaar
+## v4483 desktop LEX-insertie zichtbaar
 
 De rechter desktop-config toont nu dezelfde LEX-insertieconfig als mobiel: LEX vrije slots, LEX insertie-inhoud en takverlenging door insertie. De insertie blijft een aparte box op de LEX-as; de gekozen takken/boxgrenzen worden alleen layoutmatig verlengd.
 
-## v4482 · rechterkolom en gridvenster
+## v4483 · rechterkolom en gridvenster
 
 - Rechterkolom-config toegevoegd: auto/rest, breed, zeer breed, maximaal.
 - Gridvenster wordt op boom + assen begrensd; de rest van de workspace gaat naar het rechter menu.
 - Canvas-panning is uitgezet, omdat het venster zelf passend wordt gemaakt.
 
 
-## v4482 · hoofdbeeld en config-scherm
+## v4483 · hoofdbeeld en config-scherm
 
 Het hoofdbeeld is opnieuw ontworpen als grid-only view: boven het grid staan alleen het zinmenu en één knop **Config**. Alle andere instellingen zijn verplaatst naar een apart configuratiescherm met **Terug naar main**. Daardoor blijft de werkweergave schoon, terwijl projecties, Play/Groei, LEX-inserties, takverlenging, layout, export en documentatie in één config-scherm bereikbaar blijven.

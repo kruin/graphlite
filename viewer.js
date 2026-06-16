@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'v4482';
+  const VERSION = 'v4483';
   const BASE_CELL = 74;
   const ROOT_SIDE_GAP = 1;
   const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -1491,7 +1491,7 @@
   }
 
   function isPortraitMobileViewport() {
-    // v4482: grid-first and fit-height are no longer mobile-only.
+    // v4483: grid-first and fit-height are no longer mobile-only.
     // The canvas height is based on the actual viewBox on every platform.
     return true;
   }
@@ -1505,7 +1505,7 @@
   }
 
   function syncPortraitMenuSpace() {
-    // v4482: de oude numerieke onderruimte blijft op 0. De relevante instelling
+    // v4483: de oude numerieke onderruimte blijft op 0. De relevante instelling
     // is nu: welke benoemde menu's mogen boven het grid staan.
     document.documentElement?.style.setProperty('--portrait-menu-reserve', '0px');
     document.documentElement?.style.setProperty('--portrait-menu-slots', '0');
@@ -1701,7 +1701,7 @@
     syncPortraitStageMode();
     if (!els.canvasWrap) return;
     syncPortraitMenuSpace();
-    // v4482: het gridvenster wordt gemaximeerd op de actuele fit-box
+    // v4483: het gridvenster wordt gemaximeerd op de actuele fit-box
     // van boom + assen. Het canvas schaalt dus niet groter dan nodig.
     const fit = box || parseViewBox();
     const validFit = fit && Number.isFinite(fit.w) && fit.w > 0 && Number.isFinite(fit.h) && fit.h > 0;
@@ -1738,20 +1738,40 @@
   function px(x, origin) { return origin.x + x * cellX(); }
   function py(y, origin) { return origin.y + y * cellY(); }
 
-  function drawGrid(g, width = 2600, height = 1600) {
-    const grid = svgEl('g', { class: 'grid' });
+  function populateGridLines(grid, box) {
+    if (!grid || !box) return;
+    grid.replaceChildren();
     const sx = cellX() / 2;
     const sy = cellY() / 2;
-    const minX = -1200;
-    const minY = -420;
-    for (let x = minX, i = 0; x <= width; x += sx, i++) {
-      grid.appendChild(svgEl('line', { x1: x, y1: minY, x2: x, y2: height, class: i % 2 === 0 ? 'grid-line major' : 'grid-line' }));
+    const minX = Number(box.x);
+    const minY = Number(box.y);
+    const maxX = minX + Number(box.w);
+    const maxY = minY + Number(box.h);
+    if (![minX, minY, maxX, maxY, sx, sy].every(Number.isFinite) || sx <= 0 || sy <= 0) return;
+    const startX = Math.floor(minX / sx) * sx;
+    const startY = Math.floor(minY / sy) * sy;
+    let xi = Math.round(startX / sx);
+    for (let x = startX; x <= maxX + sx * 0.5; x += sx, xi += 1) {
+      grid.appendChild(svgEl('line', { x1: x, y1: minY, x2: x, y2: maxY, class: xi % 2 === 0 ? 'grid-line major' : 'grid-line' }));
     }
-    for (let y = minY, i = 0; y <= height; y += sy, i++) {
-      grid.appendChild(svgEl('line', { x1: minX, y1: y, x2: width, y2: y, class: i % 2 === 0 ? 'grid-line major' : 'grid-line' }));
+    let yi = Math.round(startY / sy);
+    for (let y = startY; y <= maxY + sy * 0.5; y += sy, yi += 1) {
+      grid.appendChild(svgEl('line', { x1: minX, y1: y, x2: maxX, y2: y, class: yi % 2 === 0 ? 'grid-line major' : 'grid-line' }));
     }
-    grid.appendChild(svgEl('line', { x1: minX, y1: 0, x2: width, y2: 0, class: 'grid-axis' }));
-    grid.appendChild(svgEl('line', { x1: 0, y1: minY, x2: 0, y2: height, class: 'grid-axis' }));
+    if (minY <= 0 && maxY >= 0) grid.appendChild(svgEl('line', { x1: minX, y1: 0, x2: maxX, y2: 0, class: 'grid-axis' }));
+    if (minX <= 0 && maxX >= 0) grid.appendChild(svgEl('line', { x1: 0, y1: minY, x2: 0, y2: maxY, class: 'grid-axis' }));
+  }
+
+  function sizeDynamicGridToBox(box) {
+    if (!els.svg || !box) return;
+    els.svg.querySelectorAll('.grid[data-dynamic-grid="true"]').forEach(grid => {
+      populateGridLines(grid, box);
+    });
+  }
+
+  function drawGrid(g, width = 2600, height = 1600) {
+    const grid = svgEl('g', { class: 'grid', 'data-dynamic-grid': 'true' });
+    populateGridLines(grid, { x: -1200, y: -420, w: width + 1200, h: height + 420 });
     g.appendChild(grid);
   }
 
@@ -2755,7 +2775,7 @@
       .map(id => functionalNodes.find(n => n.id === id)?.label || id)
       .join(' + ') || 'role-boxen';
     if (options.showTitle !== false) drawAxisTitle(g, origin.x - 180, origin.y - 70, `OPN · functionele structuur · ${rootLabel} → ${roleNames} · ${state.functionalOrder}`);
-    drawAxisTitle(g, origin.x - 176, origin.y - 48, `v4482 · ${branchModeLabel()} · vrije plaatsing + gereserveerde vrije slots`);
+    drawAxisTitle(g, origin.x - 176, origin.y - 48, `v4483 · ${branchModeLabel()} · vrije plaatsing + gereserveerde vrije slots`);
     const growthPlan = growthPlanForLayout(layout);
     layout.__growthPlan = growthPlan;
     drawSubtreeBoxes(g, layout, origin, growthPlan);
@@ -2910,6 +2930,10 @@
     return fallbackViewBox();
   }
 
+  function isMainScreenActive() {
+    return !!document.body?.classList.contains('main-screen-active');
+  }
+
   function setViewBox(box, manual = false) {
     syncMainTopbarLayout();
     if (!els.svg || !box) return;
@@ -2920,6 +2944,8 @@
       h: Math.max(80, Number(box.h) || 900)
     };
     els.svg.setAttribute('viewBox', viewBoxToString(next));
+    els.svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+    sizeDynamicGridToBox(next);
     syncMobileCanvasHeight(next);
     if (manual) state.manualViewBox = next;
   }
@@ -2969,19 +2995,20 @@
 
   function computeAutoFitBox() {
     if (!els.svg) return fallbackViewBox();
-    const grids = [...els.svg.querySelectorAll('.grid')];
-    const oldDisplays = grids.map(grid => grid.style.display);
+    const ignored = [...els.svg.querySelectorAll('.grid, .view-pan-hint')];
+    const oldDisplays = ignored.map(node => node.style.display);
     try {
-      // FIT moet de getekende boom/projecties volgen, niet het raster.
-      grids.forEach(grid => { grid.style.display = 'none'; });
+      // FIT volgt uitsluitend boom + projectie-assen. Raster en hulplabels
+      // mogen de fit-box niet breder of hoger maken.
+      ignored.forEach(node => { node.style.display = 'none'; });
       const bbox = els.svg.getBBox();
       if (!bbox || !Number.isFinite(bbox.width) || !Number.isFinite(bbox.height) || bbox.width <= 0 || bbox.height <= 0) {
         return fallbackViewBox();
       }
-      const main = document.body?.classList.contains('main-screen-active');
+      const main = isMainScreenActive();
       const base = Math.max(bbox.width, bbox.height);
       const margin = main
-        ? Math.max(10, Math.min(26, base * 0.014))
+        ? Math.max(2, Math.min(8, base * 0.004))
         : (isMobileViewport()
           ? Math.max(18, Math.min(38, base * 0.024))
           : Math.max(24, Math.min(56, base * 0.028)));
@@ -2991,11 +3018,13 @@
         w: bbox.width + margin * 2,
         h: bbox.height + margin * 2
       };
-      return expandBoxToAspect(fit, canvasAspectRatio());
+      // In het hoofdscherm moet het raster precies om boom + assen vallen.
+      // Dus geen aspect-uitbreiding die extra lege rastervelden veroorzaakt.
+      return main ? fit : expandBoxToAspect(fit, canvasAspectRatio());
     } catch (_err) {
       return fallbackViewBox();
     } finally {
-      grids.forEach((grid, index) => { grid.style.display = oldDisplays[index] || ''; });
+      ignored.forEach((node, index) => { node.style.display = oldDisplays[index] || ''; });
     }
   }
 
@@ -3035,7 +3064,7 @@
     els.svg.classList.toggle('no-grid', !state.showGrid);
     const g = svgEl('g', { class: className });
     if (state.showGrid) drawGrid(g, 1800, 1000);
-    drawCanvasGuideText(g, 22, 28, 'gridvenster = vast passend kader · grens naast grid = menu/grid verdelen · FIT = passend kader rond inhoud', 'view-pan-hint');
+    drawCanvasGuideText(g, 22, 28, 'grid past strak rond boom + assen · geen leeg raster rondom · Config opent instellingen', 'view-pan-hint');
     return g;
   }
 

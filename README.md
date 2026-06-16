@@ -1,38 +1,38 @@
-# OpenGraph Lite Viewer v4482
+# OpenGraph Lite Viewer v4483
 
-## v4482 — mobile portrait grid-first
+## v4483 — mobile portrait grid-first
 
 - Mobile portrait: grid/boomvenster staat standaard helemaal bovenaan; header, projectiebalk, zinmenu en toolbar staan niet meer boven het grid.
 - Nieuwe config `portrait_menu_slots`: ruimte boven het grid voor 0, 1 of 2 toekomstige menuhoogtes; standaard 0.
 - Gridvensterhoogte wordt in portrait afgeleid van de actuele viewBox/tekening, zodat het venster niet groter is dan nodig voor boom + assen.
 - Config is beschikbaar in Projectie-instellingen en in het mobiele menu.
 
-# OpenGraph Lite Viewer v4482
+# OpenGraph Lite Viewer v4483
 
-## v4482 — carousel fix en documentatie-integratie
+## v4483 — carousel fix en documentatie-integratie
 
-- Carousel laadt nu met cacheversies: `carousel/index.html?v4482`, `carousel.js?v4482` en `slides.json?v4482`.
+- Carousel laadt nu met cacheversies: `carousel/index.html?v4483`, `carousel.js?v4483` en `slides.json?v4483`.
 - Carousel heeft een fallback in `carousel.js`, zodat de slide-teksten blijven werken wanneer `slides.json` niet geladen wordt.
 - Debug test nu ook de carousel, `slides.json` en de eerste slide-afbeelding.
 - Viewer- en docs-teksten noemen de carousel expliciet als aparte uitleglaag naast de interactieve graph-viewer.
 
-# OpenGraph Lite Viewer v4482
+# OpenGraph Lite Viewer v4483
 
-## v4482 — mobile Play consistent boven
+## v4483 — mobile Play consistent boven
 
 - Mobile portrait gebruikt nu dezelfde bovenbalk voor Groei/Play als landscape.
 - De aparte portrait mini-groeibalk boven de onderbalk is visueel uitgeschakeld.
 - De mobiele onderbalk blijft voor zin-navigatie, FIT en Meer.
-- Cacheversies bijgewerkt naar `v4482`.
+- Cacheversies bijgewerkt naar `v4483`.
 
-# OpenGraph Lite Viewer — PWA v4482
+# OpenGraph Lite Viewer — PWA v4483
 
-## v4482 — mobile portrait Play-fix
+## v4483 — mobile portrait Play-fix
 
 - In mobile portrait werd de sticky Groei-balk verborgen, waardoor `Play` niet bereikbaar was.
 - Toegevoegd: vaste mini-Groei-balk boven de mobiele onderbalk met `0`, `←`, `Play/Pauze`, `→` en staplabel.
 - Dezelfde knoppen blijven gekoppeld aan de bestaande groei-state; geen tweede groeimodus.
-- Cacheversie verhoogd naar `v4482`.
+- Cacheversie verhoogd naar `v4483`.
 
 ## v4451 — correctie groei-start
 
@@ -546,25 +546,32 @@ De viewer gebruikt op kleine schermen een mobiele presentatie: canvas eerst, con
 - FIT herstelt de automatische view.
 
 
-## v4482 · gridvenster bovenaan op alle platforms
+## v4483 · gridvenster bovenaan op alle platforms
 
 - Grid/boomvenster staat nu op alle platforms bovenaan, niet alleen in mobile portrait.
 - Projectiekeuze, zinmenu, groei/play, toolbar, status en documentatie staan onder het grid.
 - Canvas-hoogte gebruikt de actuele viewBox, zodat het gridvenster niet groter wordt dan nodig voor boom + assen.
 
 
-## v4482 · portrait split grid/menu
+## v4483 · portrait split grid/menu
 
 - In mobile portrait staat het rechter menu naast het grid in plaats van verborgen of onder het grid.
 - De breedte van het grid wordt gemaximeerd op de actuele boom + assen.
 - De grens tussen grid en rechter menu is sleepbaar/touchbaar: links/rechts schuiven past de verdeling aan.
 
 
-## v4482 desktop LEX-insertie zichtbaar
+## v4483 desktop LEX-insertie zichtbaar
 
 De rechter desktop-config toont nu dezelfde LEX-insertieconfig als mobiel: LEX vrije slots, LEX insertie-inhoud en takverlenging door insertie. De insertie blijft een aparte box op de LEX-as; de gekozen takken/boxgrenzen worden alleen layoutmatig verlengd.
 
 
-## v4482 · hoofdbeeld en config-scherm
+## v4483 · hoofdbeeld en config-scherm
 
 Het hoofdbeeld is opnieuw ontworpen als grid-only view: boven het grid staan alleen het zinmenu en één knop **Config**. Alle andere instellingen zijn verplaatst naar een apart configuratiescherm met **Terug naar main**. Daardoor blijft de werkweergave schoon, terwijl projecties, Play/Groei, LEX-inserties, takverlenging, layout, export en documentatie in één config-scherm bereikbaar blijven.
+
+## v4483 · strak passend raster rond boom + assen
+
+- In het hoofdscherm volgt de SVG-viewBox nu exact de getekende boom plus projectie-assen.
+- Het raster wordt dynamisch opnieuw opgebouwd binnen dezelfde fit-box; lege rastervelden rondom worden niet meer meegetekend.
+- Hulplabels en het raster zelf tellen niet meer mee bij FIT.
+- In Config blijft de ruimere aspect-fit beschikbaar voor beheer en vergelijking.

@@ -287,3 +287,10 @@ Hierdoor verschijnen leaves niet meer allemaal tegelijk. Dit maakt zichtbaar of 
 ### NOORD-as (PM)
 
 Naast west/LEX, oost/SYNTAX en zuid/LOGICAL is ook een NOORD-as mogelijk. Die is genoteerd als uitbreiding, maar nog niet gebruikt.
+
+## v4483 · strak passend raster rond boom + assen
+
+- In het hoofdscherm volgt de SVG-viewBox nu exact de getekende boom plus projectie-assen.
+- Het raster wordt dynamisch opnieuw opgebouwd binnen dezelfde fit-box; lege rastervelden rondom worden niet meer meegetekend.
+- Hulplabels en het raster zelf tellen niet meer mee bij FIT.
+- In Config blijft de ruimere aspect-fit beschikbaar voor beheer en vergelijking.
