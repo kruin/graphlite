@@ -1,4 +1,4 @@
-# OpenGraph Lite Viewer - English version v4500
+# OpenGraph Lite Viewer - English version v4504
 
 This is the first maintained English-language version of the OpenGraph Lite Viewer documentation.
 
@@ -20,7 +20,7 @@ The main view stays minimal:
 - English/Nederlands language toggle
 - projection grid
 
-The right-hand in-window control strip contains the projection choices: All, Source, LEX, SYN and LOG/FT. The SOV/SVO/OVS/OSV/VSO/VOS order button is visible only in the All view.
+The right-hand in-window control strip contains the projection choices: All, Source, LEX, SYN and LOG/FT. The SOV/SVO/OVS/OSV-!/VSO/VOS order button is visible only in the All view.
 
 ## JAN Open Notation
 
@@ -52,4 +52,8 @@ carrousel/slides/
 
 ## Documentation maintenance rule
 
-From v4500 onward, when the user requests an English release, the English UI/help/docs should be updated together with the Dutch implementation. Dutch example sentences and Dutch-specific syntactic test data should remain unchanged unless explicitly requested.
+From v4504 onward, when the user requests an English release, the English UI/help/docs should be updated together with the Dutch implementation. Dutch example sentences and Dutch-specific syntactic test data should remain unchanged unless explicitly requested.
+
+## v4505 - OSV-!
+
+Keep the OSV warning translated in every English release: OSV-! is not a base alternative. The box approach cannot produce OSV; correct LEX rendering requires an explicit movement rule.

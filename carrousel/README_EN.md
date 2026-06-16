@@ -1,4 +1,4 @@
-# JAN Carrousel module v4500 - English
+# JAN Carrousel module v4505 - English
 
 This folder can be extracted from the project zip and run independently.
 

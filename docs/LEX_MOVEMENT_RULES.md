@@ -234,3 +234,10 @@ resultaat = voorbeeldzin
 ## v4478 · configureerbare vrije LEX-slots
 
 Vrije slots zijn nu gesplitst in twee soorten. **Boom vrije rijen** reserveren lege ruimte onder de wortel van de centrale OPN-boom. **LEX vrije slots** zijn configureerbare, plaatsbare insertiepunten op de LEX-as. Ze zijn voorbereid op toekomstig gebruik: insertie van lexicale elementen uit andere LEX-assen/andere bomen, bijvoorbeeld bijwoordelijke onthoofde zinnen, en anaforische elementen uit andere zinnen of uitingen. De export noteert daarom `lex_free_slot_count`, `lex_free_slot_placement` en een schema voor toekomstige bronnen. De NOORD-as blijft als mogelijke toekomstige as genoteerd, maar is nog niet actief.
+
+## v4505 - OSV-! en LEX-rendering
+
+OSV-! is bewust gemarkeerd met een uitroepteken. De box-aanpak kan nooit OSV opleveren als basisalternatief: de VP blijft object en werkwoord als subtree groeperen. Een pure flip van boxen is dan onvoldoende.
+
+Voor een correcte zichtbare LEX-as moet altijd een expliciete verplaatsingsregel werken. OSV-! is dus geen basis-layout of taalkundig alternatief, maar een waarschuwing/testlabel bij een onmogelijke boxvariant. De andere volgordes en bestaande flips blijven hierdoor ongemoeid.
+

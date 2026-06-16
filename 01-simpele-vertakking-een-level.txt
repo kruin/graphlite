@@ -1,1 +1,0 @@
-Simpele vertakking: één niveau. De eerste stap is niet een volledige syntactische eindboom, maar een klein OpenGraph-veld met vrije knopen en takken. De student ziet hier dat een vertakking een ruimtelijke notatie is, geen zwaartekracht.

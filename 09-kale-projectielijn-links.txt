@@ -1,1 +1,0 @@
-Kale projectielijn naar links. Eerst zonder projectienaam: alleen een lijn en kopieën van knopen. Dat maakt zichtbaar wat projecteren betekent voordat LEX/SYN/LF-labels worden toegevoegd.

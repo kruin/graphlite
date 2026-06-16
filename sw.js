@@ -1,4 +1,4 @@
-// OpenGraph Lite Viewer v4500
+// OpenGraph Lite Viewer v4505
 // Service worker intentionally disabled for the local editor workflow.
 // The viewer unregisters old service workers on load. This file remains only
 // so stale registrations can update once and stop caching older config files.

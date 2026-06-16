@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>LEX-plaatsingsregels</title>
-  <link rel="stylesheet" href="../styles.css?v4500">
+  <link rel="stylesheet" href="../styles.css?v4505">
   <style>
     body { margin: 0; background: #f8fafc; color: #0f172a; }
     main { max-width: 920px; margin: 0 auto; padding: 28px 22px 56px; line-height: 1.55; }
@@ -18,9 +18,9 @@
 </head>
 <body>
   <nav class="topbar">
-    <a href="../index.html?v4500">Viewer</a>
-    <a href="docs-home.html?v4500">Docs</a>
-    <a href="LEX_MOVEMENT_RULES.md?v4500">Markdown</a>
+    <a href="../index.html?v4505">Viewer</a>
+    <a href="docs-home.html?v4505">Docs</a>
+    <a href="LEX_MOVEMENT_RULES.md?v4505">Markdown</a>
   </nav>
   <main>
 <h1>LEX-plaatsingsregels — simpel overzicht</h1>
@@ -234,8 +234,14 @@ resultaat = voorbeeldzin
 </code></pre>
   
 <section>
-<h2>v4500 · Configureerbare vrije LEX-slots</h2>
+<h2>v4505 · Configureerbare vrije LEX-slots</h2>
 <p><strong>Boom vrije rijen</strong> reserveren lege ruimte in de centrale boom. <strong>LEX vrije slots</strong> zijn aparte, plaatsbare insertiepunten op de LEX-as. Ze zijn bedoeld voor latere insertie van materiaal uit andere LEX-assen/andere bomen, zoals bijwoordelijke onthoofde zinnen, en voor anaforische elementen uit andere zinnen of uitingen. De NOORD-as blijft mogelijk, maar is nog niet actief.</p>
+</section>
+
+<section>
+<h2>v4505 - OSV-! en LEX-rendering</h2>
+<p><strong>OSV-!</strong> is geen basis-alternatief. De box-aanpak kan nooit OSV opleveren: VP blijft object en werkwoord als subtree groeperen.</p>
+<p>Voor een correcte LEX-as moet dus altijd een expliciete verplaatsingsregel werken. OSV-! is een waarschuwing/testlabel, geen taalkundige basisboom.</p>
 </section>
 </main>
 </body>

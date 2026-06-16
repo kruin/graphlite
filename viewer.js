@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'v4500';
+  const VERSION = 'v4505';
   const BASE_CELL = 74;
   const ROOT_SIDE_GAP = 1;
   const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -31,6 +31,8 @@
     branchOtherSelect: document.getElementById('branchOtherSelect'),
     layoutDensitySelect: document.getElementById('layoutDensitySelect'),
     viewFitSelect: document.getElementById('viewFitSelect'),
+    mainViewFitSelectTop: document.getElementById('mainViewFitSelectTop'),
+    mainLayoutDensitySelectTop: document.getElementById('mainLayoutDensitySelectTop'),
     rightMenuWidthSelect: document.getElementById('rightMenuWidthSelect'),
     rightMenuWidthSelectTop: document.getElementById('rightMenuWidthSelectTop'),
     mobileRightMenuWidthSelect: document.getElementById('mobileRightMenuWidthSelect'),
@@ -196,12 +198,15 @@
   const LAYOUT_DENSITIES = [
     { id: 'auto', label: 'boomruimte: auto-fit breed/lager' },
     { id: 'compact', label: 'boomruimte: compact/klassiek' },
+    { id: 'flat', label: 'boomruimte: platter / minder hoog' },
     { id: 'wide', label: 'boomruimte: breed/lager' },
     { id: 'large', label: 'boomruimte: breed + groter font' }
   ];
 
   const VIEW_FIT_MODES = [
-    { id: 'auto', label: 'venster: automatisch passend' },
+    { id: 'window', label: 'hoofdvenster: passend (boom + assen + knoppen)' },
+    { id: 'auto', label: 'venster: alleen boom + assen passend' },
+    { id: 'scroll', label: 'venster: scroll toegestaan' },
     { id: 'fixed', label: 'venster: vast 1500×900' }
   ];
 
@@ -272,7 +277,8 @@
     { id: 'projection', label: 'Projectiekeuze', cssClass: 'top-menu-projection', tip: 'Projectiekeuze: Assen, Bron, LEX, SYNTAX-projectie en LOG/FT. Nuttig voor vergelijken van projecties.' },
     { id: 'sentence', label: 'Voorbeeldzin', cssClass: 'top-menu-sentence', tip: 'Voorbeeldzin: kies snel HOND BIJT MAN en varianten. Nuttig voor contrast tussen zinnen.' },
     { id: 'play', label: 'Play/Groei', cssClass: 'top-menu-play', tip: 'Play/Groei: stap voor stap boom, LEX-as en projecties tonen. Nuttig voor didactische uitleg.' },
-    { id: 'tools', label: 'Werkknoppen', cssClass: 'top-menu-tools', tip: 'Werkknoppen: FIT, reset, JSON, Docs, Carrousel en editors. Nuttig bij bouwen en testen.' }
+    { id: 'tools', label: 'Werkknoppen', cssClass: 'top-menu-tools', tip: 'Werkknoppen: FIT, reset, JSON, Docs, Carrousel en editors. Nuttig bij bouwen en testen.' },
+    { id: 'fit', label: 'Hoofdvenster', cssClass: 'top-menu-fit', tip: 'Hoofdvenster: kies Passend/Scroll en Boomruimte direct boven het grid.' }
   ];
   const TOP_MENU_MAX = TOP_MENU_CHOICES.length;
 
@@ -285,6 +291,27 @@
       VSO: ['V', 'S', 'O'],
       VOS: ['V', 'O', 'S']
     })[mode] || ['S', 'O', 'V'];
+  }
+
+
+  function southLogicalModeLabel(mode = state.southLogicalMode || 'SOV') {
+    return mode === 'OSV' ? 'OSV-!' : mode;
+  }
+
+  function southLogicalModeListLabel() {
+    return SOUTH_LOGICAL_MODES.map(southLogicalModeLabel).join(', ');
+  }
+
+  function osvLexMovementComment() {
+    return isEnglish()
+      ? 'OSV-!: the box approach can never produce OSV. A movement rule is always required to render the LEX axis correctly. OSV cannot be a base alternative.'
+      : 'OSV-!: de box-aanpak kan nooit OSV opleveren. Altijd moet er een verplaatsingsregel werken om de LEX-as correct te renderen. OSV kan dus geen basis-alternatief zijn.';
+  }
+
+  function osvShortComment() {
+    return isEnglish()
+      ? 'OSV-!: box layout cannot produce OSV; LEX needs a movement rule.'
+      : 'OSV-!: box-layout kan geen OSV opleveren; LEX vraagt een verplaatsingsregel.';
   }
 
   function southModeRankMap(mode = state.southLogicalMode || 'SOV') {
@@ -344,7 +371,7 @@
     branchOrder: 'normal',
     branchOverrides: { top: 'auto', middle: 'auto', other: 'auto' },
     layoutDensity: 'auto',
-    viewFitMode: 'auto',
+    viewFitMode: 'window',
     selectedNodeId: null,
     showGrid: true,
     showRelations: true,
@@ -359,7 +386,7 @@
     lexInsertionContent: 'vandaag',
     lexInsertionExtensionTargets: ['vp-boundary'],
     portraitMenuSlots: 0,
-    topMenusAbove: [],
+    topMenusAbove: ['fit'],
     lastSupportedGrowthStep: 0,
     growthTimer: null,
     exampleValidationMessages: [],
@@ -1463,8 +1490,15 @@
 
   function getSouthAwareSyntaxLayout() {
     const firstSide = layoutFirstSide();
-    const base = applyLexInsertionBranchExtensions(normalizeLayout(addOpnTopicalizationSlot(layoutTree(southAwareSyntaxSpec(), 0, { firstSide, branchOrder: state.branchOrder, branchOverrides: state.branchOverrides }), STRUCTURE_CONFIG.syntaxRoot || 's')), 'syntax');
-    return normalizeLayout(applySouthLogicalSyntaxGroupOrder(base, state.southLogicalMode || 'SOV'));
+    const mode = state.southLogicalMode || 'SOV';
+    // OSV-! is not a possible base alternative in the box approach. A box
+    // layout cannot itself yield OSV while VP still groups object and verb.
+    // The visible LEX axis would require a separate movement rule. Keep all
+    // normal trees/flips untouched; use the stable base tree here and apply only
+    // the local OSV visual marker below.
+    const spec = mode === 'OSV' ? cloneTree(treeSpec()) : southAwareSyntaxSpec(mode);
+    const base = applyLexInsertionBranchExtensions(normalizeLayout(addOpnTopicalizationSlot(layoutTree(spec, 0, { firstSide, branchOrder: state.branchOrder, branchOverrides: state.branchOverrides }), STRUCTURE_CONFIG.syntaxRoot || 's')), 'syntax');
+    return normalizeLayout(applySouthLogicalSyntaxGroupOrder(base, mode));
   }
 
   function getSouthAwareFunctionalLayout() {
@@ -1601,7 +1635,7 @@
   }
 
   function isPortraitMobileViewport() {
-    // v4500: grid-first and fit-height are no longer mobile-only.
+    // v4505: grid-first and fit-height are no longer mobile-only.
     // The canvas height is based on the actual viewBox on every platform.
     return true;
   }
@@ -1615,7 +1649,7 @@
   }
 
   function syncPortraitMenuSpace() {
-    // v4500: de oude numerieke onderruimte blijft op 0. De relevante instelling
+    // v4505: de oude numerieke onderruimte blijft op 0. De relevante instelling
     // is nu: welke benoemde menu's mogen boven het grid staan.
     document.documentElement?.style.setProperty('--portrait-menu-reserve', '0px');
     document.documentElement?.style.setProperty('--portrait-menu-slots', '0');
@@ -1654,6 +1688,24 @@
     return RIGHT_MENU_WIDTHS.find(option => option.id === validRightMenuMode()) || RIGHT_MENU_WIDTHS[1];
   }
 
+  function validViewFitMode(value = state.viewFitMode) {
+    const id = String(value || 'window');
+    return VIEW_FIT_MODES.some(option => option.id === id) ? id : 'window';
+  }
+
+  function syncViewFitModeClasses() {
+    const mode = validViewFitMode();
+    const body = document.body;
+    const root = document.documentElement;
+    if (!body || !root) return;
+    ['window', 'auto', 'scroll', 'fixed'].forEach(id => {
+      body.classList.toggle(`main-window-${id}`, mode === id);
+      root.classList.toggle(`main-window-${id}`, mode === id);
+    });
+    body.dataset.viewFitMode = mode;
+    root.dataset.viewFitMode = mode;
+  }
+
   function rightMenuLabel() {
     return rightMenuProfile().label.replace(/^rechterkolom:\s*/i, '');
   }
@@ -1674,6 +1726,7 @@
     const value = state.topMenusAbove.length ? state.topMenusAbove.join(' ') : 'none';
     body.dataset.topMenusAbove = value;
     root.dataset.topMenusAbove = value;
+    syncViewFitModeClasses();
   }
 
   function renderTopMenuChoiceControls() {
@@ -1820,7 +1873,7 @@
     syncPortraitStageMode();
     if (!els.canvasWrap) return;
     syncPortraitMenuSpace();
-    // v4500: het gridvenster wordt gemaximeerd op de actuele fit-box
+    // v4505: het gridvenster wordt gemaximeerd op de actuele fit-box
     // van boom + assen. Het canvas schaalt dus niet groter dan nodig.
     const fit = box || parseViewBox();
     const validFit = fit && Number.isFinite(fit.w) && fit.w > 0 && Number.isFinite(fit.h) && fit.h > 0;
@@ -1842,6 +1895,7 @@
     const mobile = isMobileViewport();
     if (mobile && mode === 'auto') return { cellX: BASE_CELL * 1.08, cellY: BASE_CELL * 0.86, fontScale: 1.04, label: 'mobile auto' };
     if (mode === 'compact') return { cellX: BASE_CELL, cellY: BASE_CELL, fontScale: 1.00, label: 'compact' };
+    if (mode === 'flat') return { cellX: BASE_CELL * 1.48, cellY: BASE_CELL * 0.72, fontScale: 1.04, label: 'platter' };
     if (mode === 'wide') return { cellX: BASE_CELL * 1.34, cellY: BASE_CELL * 0.86, fontScale: 1.08, label: 'breed/lager' };
     if (mode === 'large') return { cellX: BASE_CELL * 1.46, cellY: BASE_CELL * 0.82, fontScale: 1.16, label: 'breed + groter font' };
     // Auto: Assen/Bron/LOG krijgen meer horizontale ruimte en minder verticale
@@ -2747,8 +2801,14 @@
     return southLogicalModeOrder(state.southLogicalMode || 'SOV');
   }
 
+  function southModeWarningText() {
+    if ((state.southLogicalMode || 'SOV') !== 'OSV') return '';
+    return ` ${osvShortComment()}`;
+  }
+
   function logicalOrderCode(items) {
-    return (items || []).map(item => item.short).join('');
+    const code = (items || []).map(item => item.short).join('');
+    return code === 'OSV' ? 'OSV-!' : code;
   }
 
   function layoutLogicalProjectionCenters(items, x1, x2, boxWidth = 148, gap = 18) {
@@ -2930,7 +2990,7 @@
       .map(id => functionalNodes.find(n => n.id === id)?.label || id)
       .join(' + ') || 'role-boxen';
     if (options.showTitle !== false) drawAxisTitle(g, origin.x - 180, origin.y - 70, `OPN · functionele structuur · ${rootLabel} → ${roleNames} · ${state.functionalOrder}`);
-    drawAxisTitle(g, origin.x - 176, origin.y - 48, `v4500 · ${branchModeLabel()} · vrije plaatsing + gereserveerde vrije slots`);
+    drawAxisTitle(g, origin.x - 176, origin.y - 48, `v4505 · ${branchModeLabel()} · vrije plaatsing + gereserveerde vrije slots`);
     const growthPlan = growthPlanForLayout(layout);
     layout.__growthPlan = growthPlan;
     drawSubtreeBoxes(g, layout, origin, growthPlan);
@@ -2973,12 +3033,12 @@
       drawLogicalProjection(g, southAxisX1, southAxisX2, southAxisY, getFunctionalLayout(), {
         cls: 'log',
         title: 'LOG-as · LOGICAL-projectie',
-        subtitle: 'Logische volgorde onder de boom; west-as blijft LEX. Gebruik de volgordeknop om alleen de LOG-volgorde onder de boom te wijzigen.',
-        badgeText: `${state.southLogicalMode || 'SOV'}`,
+        subtitle: `Logische volgorde onder de boom; west-as blijft LEX. Gebruik de volgordeknop om alleen de LOG-volgorde onder de boom te wijzigen.${southModeWarningText()}`,
+        badgeText: southLogicalModeLabel(state.southLogicalMode || 'SOV'),
         order: southLogicalOrder(),
         items: southItems,
         interactive: true,
-        tipText: 'tip: SOV → SVO → OVS → OSV → VSO → VOS',
+        tipText: 'tip: SOV → SVO → OVS → OSV-! → VSO → VOS',
         badgeAlign: 'center'
       });
     } else if (showLexBaseStep) {
@@ -2990,12 +3050,12 @@
       drawLogicalProjection(g, southAxisX1, southAxisX2, southAxisY, getFunctionalLayout(), {
         cls: 'log',
         title: 'LOG-as · LOGICAL-projectie',
-        subtitle: 'LOG-projectie wordt mee zichtbaar in de eindfase. Gebruik de volgordeknop om alleen de LOG-volgorde onder de boom te wijzigen.',
-        badgeText: `${state.southLogicalMode || 'SOV'}`,
+        subtitle: `LOG-projectie wordt mee zichtbaar in de eindfase. Gebruik de volgordeknop om alleen de LOG-volgorde onder de boom te wijzigen.${southModeWarningText()}`,
+        badgeText: southLogicalModeLabel(state.southLogicalMode || 'SOV'),
         order: southLogicalOrder(),
         items: southItems,
         interactive: true,
-        tipText: 'tip: SOV → SVO → OVS → OSV → VSO → VOS',
+        tipText: 'tip: SOV → SVO → OVS → OSV-! → VSO → VOS',
         badgeAlign: 'center'
       });
     } else {
@@ -3047,7 +3107,7 @@
     drawLogicalProjection(g, 310, 1120, 666, layout, {
       cls: 'log',
       title: 'FT-projectie · logische volgorde',
-      subtitle: 'Flip/layout in FT kan zo verschillende logische volgorden zichtbaar maken, zoals SOV, SVO, OVS, OSV, VSO en VOS, zonder een aparte LEX-herschikking.'
+      subtitle: 'Flip/layout in FT kan basisvolgorden tonen zoals SOV, SVO, OVS, VSO en VOS. OSV-! is geen basis-alternatief: de box-aanpak kan OSV niet opleveren; de LEX-as vraagt dan een verplaatsingsregel.'
     });
     els.svg.appendChild(g);
   }
@@ -3250,7 +3310,7 @@
     const svgLocalRight = Math.min(hostRect.width, svgRect.right - hostRect.left);
     const svgLocalBottom = Math.min(hostRect.height, svgRect.bottom - hostRect.top);
 
-    // v4500: HTML controls are children of the canvas/boomvenster, but the SVG
+    // v4505: HTML controls are children of the canvas/boomvenster, but the SVG
     // itself uses preserveAspectRatio=meet.  Therefore placement is clamped to
     // the actually drawn grid rectangle, not to the full letterboxed canvas.
     // All overlay coordinates are therefore clamped to the canvas rect, not to
@@ -3328,6 +3388,34 @@
     return { x: box.x, y: centerY - h / 2, w: box.w, h };
   }
 
+  function expandFitBoxForMainWindow(fit) {
+    if (!fit || !isMainScreenActive() || validViewFitMode() !== 'window') return fit;
+    const controls = document.querySelector('.main-grid-controls');
+    const south = document.querySelector('.main-south-control:not(.is-hidden)');
+    const svgRect = els.svg?.getBoundingClientRect?.();
+    const current = parseViewBox();
+    const unitX = svgRect?.width > 0 && current?.w > 0 ? current.w / svgRect.width : fit.w / Math.max(320, window.innerWidth || 1024);
+    const unitY = svgRect?.height > 0 && current?.h > 0 ? current.h / svgRect.height : fit.h / Math.max(240, window.innerHeight || 720);
+    const controlsRect = controls?.getBoundingClientRect?.();
+    const southRect = south?.getBoundingClientRect?.();
+    const portrait = isPortraitGridFirstViewport();
+    const extra = { right: 0, bottom: 0, left: 0, top: 0 };
+    if (portrait) {
+      const bottomPx = Math.max(110, (controlsRect?.height || 92) + (southRect?.height || 0) * 0.45 + 26);
+      extra.bottom = Math.max(fit.h * 0.11, bottomPx * unitY);
+    } else {
+      const rightPx = Math.max(138, (controlsRect?.width || 112) + 34);
+      extra.right = Math.max(fit.w * 0.11, rightPx * unitX);
+      if (southRect?.height) extra.bottom = Math.max(0, southRect.height * unitY * 0.20);
+    }
+    return {
+      x: fit.x - extra.left,
+      y: fit.y - extra.top,
+      w: fit.w + extra.left + extra.right,
+      h: fit.h + extra.top + extra.bottom
+    };
+  }
+
   function computeAutoFitBox() {
     if (!els.svg) return fallbackViewBox();
     const ignored = [...els.svg.querySelectorAll('.grid, .view-pan-hint')];
@@ -3353,9 +3441,9 @@
         w: bbox.width + margin * 2,
         h: bbox.height + margin * 2
       };
-      // In het hoofdscherm moet het raster precies om boom + assen vallen.
-      // Dus geen aspect-uitbreiding die extra lege rastervelden veroorzaakt.
-      return main ? fit : expandBoxToAspect(fit, canvasAspectRatio());
+      // In hoofdvenster-passend wordt de fit-box uitgebreid met ruimte voor de
+      // vaste Main-knoppen: boom + assen + knoppen moeten samen in het venster passen.
+      return main ? expandFitBoxForMainWindow(fit) : expandBoxToAspect(fit, canvasAspectRatio());
     } catch (_err) {
       return fallbackViewBox();
     } finally {
@@ -3375,7 +3463,8 @@
       setViewBox(state.manualViewBox, false);
       return;
     }
-    if (!force && state.viewFitMode !== 'auto') {
+    const viewMode = validViewFitMode();
+    if (!force && viewMode === 'fixed') {
       setViewBox(fallbackViewBox(), false);
       return;
     }
@@ -3454,16 +3543,19 @@
         : 'Faseversie: eerst structure-config, dan voorbeeldzinnen die naar die sources projecteren, dan lokale LEX-regel.');
     const validationMsg = state.exampleValidationMessages?.length ? ` · ${state.exampleValidationMessages[0]}` : '';
     const noticeMsg = state.example.notice ? ` · ${state.example.notice}` : '';
-    els.actionFeedback.textContent = state.growthEnabled ? `${baseFeedback} · ${growthLabel()}${noticeMsg}${validationMsg}` : `${baseFeedback}${noticeMsg}${validationMsg}`;
+    const osvMsg = (state.southLogicalMode || 'SOV') === 'OSV'
+      ? ` · ${osvLexMovementComment()}`
+      : '';
+    els.actionFeedback.textContent = state.growthEnabled ? `${baseFeedback} · ${growthLabel()}${noticeMsg}${validationMsg}${osvMsg}` : `${baseFeedback}${noticeMsg}${validationMsg}${osvMsg}`;
     els.projectionHelp.textContent = helpText();
     els.explainHeading.textContent = `${isEnglish() ? 'Explanation' : 'Uitleg'} · ${activeSentenceText()}`;
     els.explainText.textContent = isEnglish()
       ? (state.example.id === 'hond-bijt-man'
-        ? 'LEX rule: first draw the horizontal base projection, then local exchanges to free slots. Main clause: first phrase to slot 1, finite verb to slot 2; traces remain at the old base position. FIT frames the view, not the tree. Central slot boxes have been removed; the first branch reserves empty free-slot space; exchanges are visible only on the LEX axis. The order button cycles the LOG order: SOV, SVO, OVS, OSV, VSO, VOS. The central subject/object/verb branches follow that order.'
-        : 'LEX rule: move only to free slots 0/1/2. Non-moved words remain at their horizontal base position. Traces stay locally at the old position. In LOG/FT, the south projection can show SOV, SVO, OVS, OSV, VSO or VOS.')
+        ? 'LEX rule: first draw the horizontal base projection, then local exchanges to free slots. Main clause: first phrase to slot 1, finite verb to slot 2; traces remain at the old base position. FIT frames the view, not the tree. Central slot boxes have been removed; the first branch reserves empty free-slot space; exchanges are visible only on the LEX axis. The order button cycles the LOG order: SOV, SVO, OVS, OSV-!, VSO, VOS. SOV/SVO/OVS/VSO/VOS are layout variants. OSV-! is marked because box layout cannot produce OSV; a movement rule is required to render the LEX axis correctly.'
+        : 'LEX rule: move only to free slots 0/1/2. Non-moved words remain at their horizontal base position. Traces stay locally at the old position. In LOG/FT, the south projection can show SOV, SVO, OVS, OSV-!, VSO or VOS. OSV-! is marked: box layout cannot produce OSV; the LEX axis needs a movement rule.')
       : (state.example.id === 'hond-bijt-man'
-        ? 'LEX-regel: eerst horizontale basisprojectie, daarna lokale Wissels naar vrije slots. Hoofdzin: eerste zinsdeel → slot 1, persoonsvorm → slot 2; traces blijven op de oude basisplek. FIT kadert alleen het zicht, niet de boom. Centrale slotboxen zijn verwijderd; de eerste tak reserveert lege vrije-slotruimte; wissels zie je alleen op de LEX-as. De volgordeknop doorloopt de LOG-volgorde: SOV, SVO, OVS, OSV, VSO, VOS. De centrale subject/object/verb-vertakkingen draaien mee. Menu’s boven het grid zijn expliciet gekozen: maximaal vier, bijvoorbeeld Voorbeeldzin en Play/Groei.'
-        : 'LEX-regel: verplaats alleen naar vrije slots 0/1/2. Niet-verplaatste woorden blijven op hun horizontale basisplek. Traces staan lokaal op de oude plek. In LOG/FT kan de onderprojectie SOV, SVO, OVS, OSV of VSO tonen.');
+        ? 'LEX-regel: eerst horizontale basisprojectie, daarna lokale Wissels naar vrije slots. Hoofdzin: eerste zinsdeel → slot 1, persoonsvorm → slot 2; traces blijven op de oude basisplek. FIT kadert alleen het zicht, niet de boom. Centrale slotboxen zijn verwijderd; de eerste tak reserveert lege vrije-slotruimte; wissels zie je alleen op de LEX-as. De volgordeknop doorloopt de LOG-volgorde: SOV, SVO, OVS, OSV-!, VSO, VOS. SOV/SVO/OVS/VSO/VOS zijn layoutvarianten. OSV-! is gemarkeerd: de box-aanpak kan nooit OSV opleveren; voor correcte LEX-rendering is een verplaatsingsregel nodig. Menu’s boven het grid zijn expliciet gekozen: maximaal vier, bijvoorbeeld Voorbeeldzin en Play/Groei.'
+        : 'LEX-regel: verplaats alleen naar vrije slots 0/1/2. Niet-verplaatste woorden blijven op hun horizontale basisplek. Traces staan lokaal op de oude plek. In LOG/FT kan de onderprojectie SOV, SVO, OVS, OSV-!, VSO of VOS tonen. OSV-! is gemarkeerd: de box-aanpak kan OSV niet opleveren; de LEX-as vraagt een verplaatsingsregel.');
   }
 
   function projectionLabel() {
@@ -3478,13 +3570,13 @@
       if (state.projection === 'source') return 'Source: OPN syntax and OPN functional structures are read from structure-config.html. Both use the same left/right layout strategy and reserve configurable empty free-slot space under the root.';
       if (state.projection === 'lex') return 'LEX: placement rules per sentence type. Main clause: first phrase to slot 1, finite verb to slot 2. The central tree keeps empty space; the filled positions are shown on the LEX axis.';
       if (state.projection === 'synt') return 'SYNTAX projection: rules are placed at tree-node height; the LOGICAL projection from FT/LOG is also shown below the tree.';
-      if (state.projection === 'log') return 'LOG/FT: functional view = CLAUSE with separate PRED node and ARG-STRUCT subtree; the lower FT projection shows logical order, for example SOV/SVO/OVS/OSV/VSO/VOS.';
+      if (state.projection === 'log') return 'LOG/FT: functional view = CLAUSE with separate PRED node and ARG-STRUCT subtree; the lower FT projection shows logical order, for example SOV/SVO/OVS/OSV-!/VSO/VOS.';
       return 'All: central OPN tree; west axis = LEX next to the tree; south axis = LOGICAL projection. The grid window is fitted to tree + axes; canvas panning is off.';
     }
     if (state.projection === 'source') return 'Bron: OPN-syntax en OPN-functioneel worden gelezen uit structure-config.html. Beide gebruiken dezelfde left/right layoutstrategie en reserveren configureerbare lege vrije-slotruimte onder de wortel.';
     if (state.projection === 'lex') return 'LEX: plaatsingsregels per zinstype. Hoofdzin: eerste zinsdeel naar slot 1, persoonsvorm naar slot 2. De ruimte in de centrale boom is leeg; de vulling staat op de LEX-as.';
     if (state.projection === 'synt') return 'SYNTAX-projectie: regels staan op boomhoogte; onder de boom staat nu ook de LOGICAL-projectie uit FT/LOG.';
-    if (state.projection === 'log') return 'LOG/FT: functioneel = CLAUSE met aparte PRED-knoop en ARG-STRUCT-subtree; onderaan toont de FT-projectie de logische volgorde (bijv. SOV/SVO/OVS/OSV/VSO/VOS).';
+    if (state.projection === 'log') return 'LOG/FT: functioneel = CLAUSE met aparte PRED-knoop en ARG-STRUCT-subtree; onderaan toont de FT-projectie de logische volgorde (bijv. SOV/SVO/OVS/OSV-!/VSO/VOS).';
     return 'Assen: centrale OPN-boom; west-as = LEX direct naast de boom; zuid-as = LOGICAL-projectie. Het grid staat standaard bovenaan; in portrait staat het rechter menu naast het grid. Sleep de duidelijke grens of kies de zichtbare instelling Rechterkolom bovenaan om grid/menu te verdelen. Het gridvenster past op boom + assen; canvas-panning staat uit.';
   }
 
@@ -3519,8 +3611,10 @@
     branchTopSelect: { auto: 'auto', normal: 'normal', flip: 'flip' },
     branchMiddleSelect: { auto: 'auto', normal: 'normal', flip: 'flip' },
     branchOtherSelect: { auto: 'auto', normal: 'normal', flip: 'flip' },
-    layoutDensitySelect: { auto: 'tree spacing: auto-fit wide/lower', compact: 'tree spacing: compact/classic', wide: 'tree spacing: wide/lower', large: 'tree spacing: wide + larger font' },
-    viewFitSelect: { auto: 'window: fit automatically', fixed: 'window: fixed 1500x900' },
+    layoutDensitySelect: { auto: 'tree spacing: auto-fit wide/lower', compact: 'tree spacing: compact/classic', flat: 'tree spacing: flatter / less high', wide: 'tree spacing: wide/lower', large: 'tree spacing: wide + larger font' },
+    mainLayoutDensitySelectTop: { auto: 'tree spacing: auto-fit wide/lower', compact: 'tree spacing: compact/classic', flat: 'tree spacing: flatter / less high', wide: 'tree spacing: wide/lower', large: 'tree spacing: wide + larger font' },
+    viewFitSelect: { window: 'main window: fit tree + axes + buttons', auto: 'window: fit tree + axes only', scroll: 'window: scrolling allowed', fixed: 'window: fixed 1500x900' },
+    mainViewFitSelectTop: { window: 'main window: fit all', auto: 'tree + axes only', scroll: 'scroll allowed', fixed: 'fixed 1500x900' },
     rightMenuWidthSelect: { auto: 'right column: auto/rest', wide: 'right column: wide', 'very-wide': 'right column: very wide', max: 'right column: maximum' },
     rightMenuWidthSelectTop: { auto: 'right column: auto/rest', wide: 'right column: wide', 'very-wide': 'right column: very wide', max: 'right column: maximum' },
     mobileRightMenuWidthSelect: { auto: 'right column: auto/rest', wide: 'right column: wide', 'very-wide': 'right column: very wide', max: 'right column: maximum' },
@@ -3540,7 +3634,8 @@
     projection: ['Projection choice', 'Projection choice: All, Source, LEX, SYNTAX projection and LOG/FT. Useful for comparing projections.'],
     sentence: ['Sample sentence', 'Sample sentence: quickly choose HOND BIJT MAN and variants. Useful for contrasts between sentences.'],
     play: ['Play/Grow', 'Play/Grow: show tree, LEX axis and projections step by step. Useful for explanation.'],
-    tools: ['Work buttons', 'Work buttons: FIT, reset, JSON, Docs, Carrousel and editors. Useful for building and testing.']
+    tools: ['Work buttons', 'Work buttons: FIT, reset, JSON, Docs, Carrousel and editors. Useful for building and testing.'],
+    fit: ['Main window', 'Main window: place Fit/Scroll and Tree spacing directly above the grid.']
   };
 
   const LEX_EXTENSION_LABELS_EN = {
@@ -3605,8 +3700,11 @@
     fillSelect(els.branchTopSelect, BRANCH_CHOICES, state.branchOverrides.top);
     fillSelect(els.branchMiddleSelect, BRANCH_CHOICES, state.branchOverrides.middle);
     fillSelect(els.branchOtherSelect, BRANCH_CHOICES, state.branchOverrides.other);
+    state.viewFitMode = validViewFitMode();
     fillSelect(els.layoutDensitySelect, LAYOUT_DENSITIES, state.layoutDensity);
+    fillSelect(els.mainLayoutDensitySelectTop, LAYOUT_DENSITIES, state.layoutDensity);
     fillSelect(els.viewFitSelect, VIEW_FIT_MODES, state.viewFitMode);
+    fillSelect(els.mainViewFitSelectTop, VIEW_FIT_MODES, state.viewFitMode);
     fillSelect(els.rightMenuWidthSelect, RIGHT_MENU_WIDTHS, validRightMenuMode());
     fillSelect(els.rightMenuWidthSelectTop, RIGHT_MENU_WIDTHS, validRightMenuMode());
     fillSelect(els.mobileRightMenuWidthSelect, RIGHT_MENU_WIDTHS, validRightMenuMode());
@@ -3665,9 +3763,14 @@
     if (els.mainGrowthNextButton) els.mainGrowthNextButton.disabled = growthNextDisabled;
     if (els.mainResetButton) els.mainResetButton.textContent = 'Reset';
     if (els.mainGrowthStepLabel) els.mainGrowthStepLabel.textContent = growthLabel();
-    if (els.mainSouthModeButton) els.mainSouthModeButton.textContent = `${state.southLogicalMode || 'SOV'}`;
-    if (els.mainSouthPrevButton) els.mainSouthPrevButton.title = 'Vorige LOG-volgorde';
-    if (els.mainSouthNextButton) els.mainSouthNextButton.title = 'Volgende LOG-volgorde';
+    if (els.mainSouthModeButton) {
+      els.mainSouthModeButton.textContent = southLogicalModeLabel(state.southLogicalMode || 'SOV');
+      els.mainSouthModeButton.title = (state.southLogicalMode || 'SOV') === 'OSV'
+        ? osvLexMovementComment()
+        : (isEnglish() ? `Next LOG order: ${southLogicalModeListLabel()}` : `Volgende LOG-volgorde: ${southLogicalModeListLabel()}`);
+    }
+    if (els.mainSouthPrevButton) els.mainSouthPrevButton.title = isEnglish() ? 'Previous LOG order' : 'Vorige LOG-volgorde';
+    if (els.mainSouthNextButton) els.mainSouthNextButton.title = isEnglish() ? 'Next LOG order' : 'Volgende LOG-volgorde';
     const mainSouthControl = document.querySelector('.main-south-control');
     const mainSouthVisible = state.projection === 'axes';
     if (mainSouthControl) {
@@ -4205,7 +4308,7 @@
   function applyConfigLanguageTexts(en) {
     setText('.main-sentence-field span, .desktop-sentence-field span, .mobile-sentence-field span, .toolbar .example-field span', en ? 'Sentence' : 'Zin');
     setText('.config-topbar h2', en ? 'All settings' : 'Alle instellingen');
-    setText('.config-topbar p', en ? 'Configure projections, sample sentences, Play/Grow, LEX insertions, branch extension, layout, export and documentation here. The main view stays clean: grid + sentence + Help + Config.' : 'Projecties, voorbeeldzinnen, Play/Groei, LEX-inserties, takverlenging, layout, export en documentatie staan hier. Het hoofdbeeld is full screen: grid over de volledige viewport, met Zin, Help en Config als overlay.');
+    setText('.config-topbar p', en ? 'Configure LEX insertions, branch extension, layout, main-window fit, export and documentation here. Projection, sentence and Play/Grow live in Main.' : 'LEX-inserties, takverlenging, layout, hoofdvenster, export en documentatie staan hier. Projectie, zin en Play/Groei staan in Main.');
     setPanelHeading(0, en ? 'Projection settings' : 'Projectie-instellingen');
     setPanelHeading(1, en ? 'LEX axis - utterance type' : 'LEX-as · uitingtype');
     setPanelHeading(2, en ? 'Relations / rules' : 'Relaties / regels');
@@ -4221,7 +4324,9 @@
     setLabelSpan('branchMiddleSelect', en ? 'VP / ARG-STRUCT' : 'VP / ARG-STRUCT');
     setLabelSpan('branchOtherSelect', en ? 'Other' : 'Overig');
     setLabelSpan('layoutDensitySelect', en ? 'Tree spacing' : 'Boomruimte');
-    setLabelSpan('viewFitSelect', en ? 'Window' : 'Venster');
+    setLabelSpan('mainLayoutDensitySelectTop', en ? 'Tree spacing' : 'Boomruimte');
+    setLabelSpan('viewFitSelect', en ? 'Main window' : 'Hoofdvenster');
+    setLabelSpan('mainViewFitSelectTop', en ? 'Main window' : 'Hoofdvenster');
     setLabelSpan('freeSlotCountSelect', en ? 'Free tree rows' : 'Boom vrije rijen');
     setLabelSpan('lexFreeSlotCountSelect', en ? 'LEX free slots' : 'LEX vrije slots');
     setLabelSpan('lexFreeSlotPlacementSelect', en ? 'LEX slot position' : 'LEX slotpositie');
@@ -4295,14 +4400,22 @@
 
     setText('.config-topbar .intro-kicker', 'Config');
     setText('.config-topbar h2', en ? 'All settings' : 'Alle instellingen');
-    setText('.config-topbar p', en ? 'Projections, sample sentences, Play/Grow, LEX insertions, branch extension, layout, export and documentation are configured here. The main view stays deliberately clean: grid + sentence + Help + Config.' : 'Projecties, voorbeeldzinnen, Play/Groei, LEX-inserties, takverlenging, layout, export en documentatie staan hier. Het hoofdbeeld blijft bewust leeg: grid + zin + Help + Config.');
+    setText('.config-topbar p', en ? 'LEX insertions, branch extension, layout, main-window fit, export and documentation are configured here. Projection, sentence and Play/Grow live in Main. The Back to main bar stays fixed while this page scrolls.' : 'LEX-inserties, takverlenging, layout, hoofdvenster, export en documentatie staan hier. Projectie, zin en Play/Groei staan in Main. De Terug-naar-main-balk blijft vast staan bij scrollen.');
     setText('.help-topbar .intro-kicker', 'Help');
     setText('.help-topbar h2', 'Carrousel');
     setText('.help-topbar p', en ? 'Explanatory images are available in this separate Help screen. The carrousel can also run as a standalone folder.' : 'Uitlegbeelden staan in een apart Help-scherm. De carrousel blijft ook direct bereikbaar als los bestand.');
+    setText('[data-help-boom-title]', en ? 'Tree first' : 'Boom eerst');
+    setText('[data-help-boom-text]', en
+      ? 'Tree first is the didactic and notational sequence: start with the central open tree as the source; then project to LEX, SYNTAX and LOG/FT. LEX exchanges and insertions stay on the LEX axis. Dutch sample sentences remain language data.'
+      : 'Boom eerst is de didactische en notationele volgorde: begin met de centrale open boom als bron; projecteer daarna naar LEX, SYNTAX en LOG/FT. De LEX-wissels en inserties blijven op de LEX-as. De Nederlandse voorbeeldzinnen blijven taaldata.');
+    setText('[data-help-recursion-title]', en ? 'Recursion technique in the tree' : 'Recursie-techniek in de boom');
+    setText('[data-help-recursion-text]', en
+      ? 'Recursion is the technical drawing method: the viewer builds the layout bottom-up, from leaves to category nodes, subtrees and boxes. This is separate from the didactic step called tree first.'
+      : 'Recursie is hier de technische tekenmethode: de viewer bouwt de layout bottom-up, van bladeren naar categorieknopen, subtrees en boxen. Dat is iets anders dan de didactische stap boom eerst.');
     document.querySelectorAll('.help-fallback').forEach(node => {
       node.innerHTML = en
-        ? 'If the carrousel does not appear: <a href="carrousel/index-en.html?v4500" target="_blank" rel="noopener">open the carrousel separately</a>.'
-        : 'Als de carrousel niet verschijnt: <a href="carrousel/index.html?v4500" target="_blank" rel="noopener">open de carrousel los</a>.';
+        ? 'If the carrousel does not appear: <a href="carrousel/index-en.html?v4505" target="_blank" rel="noopener">open the carrousel separately</a>.'
+        : 'Als de carrousel niet verschijnt: <a href="carrousel/index.html?v4505" target="_blank" rel="noopener">open de carrousel los</a>.';
     });
     if (els.helpCarrouselFrame) {
       const wanted = en ? `carrousel/index-en.html?${VERSION}` : `carrousel/index.html?${VERSION}`;
@@ -4319,7 +4432,7 @@
     setText('#mainResetButton, #growthResetButton, #mobileGrowthResetButton', en ? 'Reset' : 'Reset');
     if (els.mainGrowthPlayButton) els.mainGrowthPlayButton.textContent = state.growthTimer ? (en ? 'Pause' : 'Pauze') : 'Play';
 
-    document.querySelectorAll('a[href="docs/OpenGraph_Lite_Viewer_EN_v4500.pdf"]').forEach(a => {
+    document.querySelectorAll('a[href="docs/OpenGraph_Lite_Viewer_EN_v4505.pdf"]').forEach(a => {
       a.textContent = en ? 'English PDF' : 'English PDF';
       a.title = en ? 'Open English PDF documentation' : 'Open Engelstalige PDF-documentatie';
     });
@@ -4434,8 +4547,12 @@
     els.branchTopSelect?.addEventListener('change', event => updateBranchOverride('top', event.target.value));
     els.branchMiddleSelect?.addEventListener('change', event => updateBranchOverride('middle', event.target.value));
     els.branchOtherSelect?.addEventListener('change', event => updateBranchOverride('other', event.target.value));
-    els.layoutDensitySelect?.addEventListener('change', event => { state.layoutDensity = event.target.value || 'auto'; resetManualViewBox(); render(); });
-    els.viewFitSelect?.addEventListener('change', event => { state.viewFitMode = event.target.value || 'auto'; resetManualViewBox(); render(); });
+    const setLayoutDensity = value => { state.layoutDensity = LAYOUT_DENSITIES.some(opt => opt.id === value) ? value : 'auto'; resetManualViewBox(); render(); };
+    const setViewFitMode = value => { state.viewFitMode = validViewFitMode(value); resetManualViewBox(); render(); };
+    els.layoutDensitySelect?.addEventListener('change', event => setLayoutDensity(event.target.value));
+    els.mainLayoutDensitySelectTop?.addEventListener('change', event => setLayoutDensity(event.target.value));
+    els.viewFitSelect?.addEventListener('change', event => setViewFitMode(event.target.value));
+    els.mainViewFitSelectTop?.addEventListener('change', event => setViewFitMode(event.target.value));
     const setRightMenuMode = value => { state.rightMenuMode = validRightMenuMode(value); state.paneSplitManual = false; state.rightMenuWidth = null; resetManualViewBox(); render(); };
     els.rightMenuWidthSelect?.addEventListener('change', event => setRightMenuMode(event.target.value));
     els.rightMenuWidthSelectTop?.addEventListener('change', event => setRightMenuMode(event.target.value));

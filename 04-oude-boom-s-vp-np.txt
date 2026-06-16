@@ -1,1 +1,0 @@
-Variant met andere lokale volgorde: S-VP,NP. Dit is in de klassieke notatie een andere boomvorm. OpenGraph wil laten zien dat volgorde ook als projectie kan worden behandeld.

@@ -1971,7 +1971,7 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
   font-weight: 900;
 }
 
-/* v4500: mobile portrait stage-first. Het gridvenster staat standaard helemaal bovenaan.
+/* v4504: mobile portrait stage-first. Het gridvenster staat standaard helemaal bovenaan.
    Portret-menu-ruimte is configureerbaar: 0, 1 of 2 menuhoogtes; standaard 0. */
 .mobile-sheet-field {
   display: grid;
@@ -2069,7 +2069,7 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
 }
 
 
-/* v4500: portrait definitief grid-eerst. Geen menu of reserve boven het grid;
+/* v4504: portrait definitief grid-eerst. Geen menu of reserve boven het grid;
    eventuele portret-menu-ruimte komt onder het gridvenster. */
 @media (max-width: 760px) and (orientation: portrait) {
   html,
@@ -2186,7 +2186,7 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
 }
 
 
-/* v4500: harde portrait-correctie. De browser kan in portrait breder dan 760px
+/* v4504: harde portrait-correctie. De browser kan in portrait breder dan 760px
    rapporteren; daarom gebruikt JS body.portrait-grid-first. In die modus mag
    niets boven het gridvenster staan. Alle menu's komen eronder. */
 body.portrait-grid-first {
@@ -2276,7 +2276,7 @@ body.portrait-grid-first .status-panel { order: 4 !important; }
 body.portrait-grid-first .text-panel { order: 5 !important; }
 
 
-/* v4500: grid-first geldt op alle platforms, niet alleen mobile/portrait.
+/* v4504: grid-first geldt op alle platforms, niet alleen mobile/portrait.
    Niets staat nog boven het gridvenster: projectiekeuze, zinmenu, groei/play,
    toolbar, status en documentatie komen onder het canvas. */
 body.grid-first-all,
@@ -2347,7 +2347,7 @@ body.grid-first-all #graphSvg,
   height: 100% !important;
 }
 
-/* v4500: benoemde meerkeuze voor menu's boven het grid.
+/* v4504: benoemde meerkeuze voor menu's boven het grid.
    Standaard: geen enkel menu boven het grid. Alle benoemde menu's kunnen boven het grid. */
 .top-menu-choice-field {
   grid-column: 1 / -1;
@@ -2469,7 +2469,7 @@ body.grid-first-all .toolbar {
   align-self: stretch;
 }
 
-/* v4500: configureerbare vrije LEX-slots op de LEX-as. */
+/* v4504: configureerbare vrije LEX-slots op de LEX-as. */
 .lex-config-free-slot {
   fill: color-mix(in srgb, var(--lex), var(--panel) 84%);
   stroke: var(--lex);
@@ -2515,7 +2515,7 @@ body.grid-first-all .toolbar {
 }
 
 
-/* v4500: portrait split tussen grid en rechter menu.
+/* v4504: portrait split tussen grid en rechter menu.
    Het grid gebruikt niet meer de volle breedte als dat niet nodig is;
    het rechter menu blijft zichtbaar en de grens is sleepbaar/touchbaar. */
 .pane-splitter {
@@ -2640,7 +2640,7 @@ body.pane-split-dragging * {
 }
 
 
-/* v4500: desktop toont LEX-insertie en takverlenging in het rechter menu. */
+/* v4504: desktop toont LEX-insertie en takverlenging in het rechter menu. */
 .lex-extension-field {
   grid-column: 1 / -1;
   border: 1px solid var(--line);
@@ -2681,7 +2681,7 @@ body.portrait-grid-first .side-panel .lex-extension-field label {
 }
 
 
-/* v4500: gridvenster past op boom + assen; resterende breedte is rechterkolom. */
+/* v4504: gridvenster past op boom + assen; resterende breedte is rechterkolom. */
 body.grid-first-all .workspace,
 .workspace {
   display: grid !important;
@@ -2803,7 +2803,7 @@ body.grid-first-all .view-pan-hint {
 }
 
 
-/* v4500: maak Rechterkolom-config zichtbaar bovenaan het rechter menu. */
+/* v4504: maak Rechterkolom-config zichtbaar bovenaan het rechter menu. */
 .right-menu-width-callout {
   grid-column: 1 / -1;
   border: 2px solid color-mix(in srgb, var(--accent), var(--line) 18%);
@@ -2857,7 +2857,7 @@ body.portrait-grid-first #rightMenuWidthSelectTop {
 }
 
 
-/* v4500: mobile portrait grid smaller and fixed; right menu + splitter visible. */
+/* v4504: mobile portrait grid smaller and fixed; right menu + splitter visible. */
 body.portrait-grid-first .workspace {
   grid-template-columns: minmax(92px, var(--stage-pane-width, 40vw)) var(--pane-splitter-width, 18px) minmax(13rem, var(--side-pane-width, 56vw)) !important;
 }
@@ -2890,7 +2890,7 @@ body.portrait-grid-first .side-panel {
 }
 
 
-/* v4500 app redesign: hoofdbeeld = grid + zin + config. Config = apart scherm met alle menu's. */
+/* v4504 app redesign: hoofdbeeld = grid + zin + config. Config = apart scherm met alle menu's. */
 .main-topbar,
 .config-topbar {
   display: none;
@@ -3097,7 +3097,7 @@ body.main-screen-active .canvas-wrap::before {
   display: none !important;
 }
 
-/* v4500: main fixed topbar on all platforms.
+/* v4504: main fixed topbar on all platforms.
    Main = alleen full viewport grid, met overlay topmenu Zin + Config.
    Config blijft apart scherm met alle instellingen. */
 html,
@@ -3234,7 +3234,7 @@ body.main-screen-active .config-topbar {
 }
 
 
-/* v4500: fixed topbar; grid starts below it and fits content with minimal empty grid. */
+/* v4504: fixed topbar; grid starts below it and fits content with minimal empty grid. */
 body.main-screen-active .main-topbar {
   position: fixed !important;
   top: 0 !important;
@@ -3298,7 +3298,7 @@ body.main-screen-active #graphSvg {
 }
 
 
-/* v4500: main placement redesign.
+/* v4504: main placement redesign.
    Main keeps a fixed topbar; the projection grid is the primary view.
    SOV/SVO controls live inside the boomvenster.  Play/Reset and Assen/LOG/FT
    move out of Config and become always visible in Main. */
@@ -3482,14 +3482,14 @@ body.main-screen-active .main-projection-strip button[aria-pressed="true"] {
   }
 }
 
-/* v4500 config: main-only controls must not leak into Config. */
+/* v4504 config: main-only controls must not leak into Config. */
 body.config-screen-active .main-grid-controls,
 body.config-screen-active .main-south-control {
   display: none !important;
 }
 
 
-/* v4500: main controls align to the SYNTAX axis in landscape and show the full projection series. */
+/* v4504: main controls align to the SYNTAX axis in landscape and show the full projection series. */
 body.main-screen-active .main-projection-strip {
   flex-wrap: wrap !important;
 }
@@ -3529,7 +3529,7 @@ body.main-screen-active .main-projection-strip button {
   }
 }
 
-/* v4500: Main-controls blijven in het boomvenster.
+/* v4504: Main-controls blijven in het boomvenster.
    De HTML ZUID/SOV-bediening vervangt de oude SVG-badge visueel en wordt
    precies op de oude badgepositie gezet.  De oude badge blijft alleen als
    onzichtbaar anker bestaan, zodat de positie uit de getekende LOG-as komt. */
@@ -3548,7 +3548,7 @@ body.main-screen-active #mainSouthModeButton {
   min-width: 7.2rem !important;
 }
 
-/* v4500: rechter vensterbalk staat als eigen paneel in het boomvenster,
+/* v4504: rechter vensterbalk staat als eigen paneel in het boomvenster,
    vlak rechts van de SYNTAX-as en met de hele projectiereeks. */
 @media (orientation: landscape) {
   body.main-screen-active .main-grid-controls {
@@ -3596,7 +3596,7 @@ body.main-screen-active #mainSouthModeButton {
 }
 
 
-/* v4500: rechter hoofd-balk echt in het boomvenster.
+/* v4504: rechter hoofd-balk echt in het boomvenster.
    De controls zijn nu DOM-kinderen van canvas-wrap. Landscape gebruikt
    absolute coördinaten t.o.v. het canvas; portrait houdt de play/projectie-balk
    onder het grid als vaste onderbalk. */
@@ -3629,7 +3629,7 @@ body.main-screen-active .canvas-wrap {
 
 body.main-screen-active .main-south-control.is-hidden { display: none !important; }
 
-/* v4500: Help-scherm met carrousel naast Config; zinmenu zo smal als langste zin. */
+/* v4504: Help-scherm met carrousel naast Config; zinmenu zo smal als langste zin. */
 .main-topbar-actions {
   display: inline-flex;
   align-items: center;
@@ -3739,7 +3739,7 @@ body.main-screen-active .help-topbar,
 body.main-screen-active .help-screen {
   display: none !important;
 }
-/* v4500: ook de voorbeeldzin-keuzes in Config volgen de langste zin. */
+/* v4504: ook de voorbeeldzin-keuzes in Config volgen de langste zin. */
 .desktop-sentence-field {
   grid-template-columns: auto minmax(12rem, calc(var(--main-example-select-ch, 18ch) + 2.6rem)) !important;
   max-width: calc(var(--main-example-select-ch, 18ch) + 5rem) !important;
@@ -3752,3 +3752,123 @@ body.main-screen-active .help-screen {
 
 .language-toggle-button { border: 1px solid var(--line); border-radius: .8rem; background: color-mix(in srgb, var(--panel), var(--bg) 6%); color: var(--text); font-weight: 900; min-height: 2.45rem; padding: .4rem .75rem; }
 .language-toggle-button[aria-pressed="true"] { background: color-mix(in srgb, var(--synt), var(--panel) 72%); border-color: color-mix(in srgb, var(--synt), var(--line) 28%); }
+
+/* v4504: controls moved to Main. Do not show their old Config/mobile duplicates. */
+body.config-screen-active .projection-sticky-bar,
+body.config-screen-active .mobile-growth-nav,
+body.config-screen-active .toolbar .example-field,
+body.config-screen-active [aria-label="Projecties"],
+body.config-screen-active [aria-label="Snelle acties"] {
+  display: none !important;
+}
+
+
+/* v4504: hoofdvenster-config kan als menu boven het Main-grid staan. */
+.main-window-fit-menu {
+  display: none;
+  align-items: center;
+  gap: .45rem;
+  flex: 1 1 24rem;
+  min-width: min(100%, 22rem);
+  max-width: 46rem;
+}
+body.main-screen-active.top-menu-fit .main-window-fit-menu {
+  display: inline-flex !important;
+}
+.main-window-fit-field {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  min-width: 0;
+  color: var(--muted);
+  font-size: .82rem;
+  font-weight: 900;
+}
+.main-window-fit-field select {
+  min-height: 2.25rem;
+  max-width: 16.5rem;
+  border: 1px solid var(--line);
+  border-radius: .72rem;
+  background: var(--panel);
+  color: var(--text);
+  padding: .22rem .55rem;
+  font-weight: 850;
+}
+body.main-screen-active .main-topbar {
+  flex-wrap: wrap !important;
+  align-content: center !important;
+}
+body.main-screen-active.main-window-window .canvas-wrap {
+  overflow: hidden !important;
+}
+body.main-screen-active.main-window-scroll {
+  overflow: auto !important;
+}
+body.main-screen-active.main-window-scroll .app-shell {
+  min-height: 100dvh !important;
+  overflow: visible !important;
+}
+body.main-screen-active.main-window-scroll .workspace {
+  overflow: auto !important;
+}
+body.main-screen-active.main-window-scroll .canvas-wrap {
+  min-width: min(1500px, 145vw) !important;
+  height: min(112dvh, 980px) !important;
+  max-height: none !important;
+}
+body.config-screen-active .top-menu-choice-field:not(.mobile-top-menu-choice-field),
+body.config-screen-active [aria-label="Menu's boven grid"] {
+  display: grid !important;
+}
+@media (max-width: 760px) {
+  body.main-screen-active.top-menu-fit .main-window-fit-menu {
+    flex-basis: 100% !important;
+    justify-content: flex-start !important;
+    overflow-x: auto !important;
+  }
+  .main-window-fit-field span { display: none; }
+  .main-window-fit-field select { max-width: 48vw; }
+}
+
+
+/* v4504: Config topbar stays fixed while the settings page scrolls. */
+body.config-screen-active .config-topbar {
+  position: sticky !important;
+  top: max(.35rem, env(safe-area-inset-top)) !important;
+  z-index: 600 !important;
+  flex-shrink: 0 !important;
+  backdrop-filter: blur(12px) saturate(1.05) !important;
+  -webkit-backdrop-filter: blur(12px) saturate(1.05) !important;
+}
+body.config-screen-active .intro-panel { display: none !important; }
+body.config-screen-active .top-menu-choice-field:not(.lex-extension-field) {
+  display: block !important;
+}
+body.config-screen-active .top-menu-choice-field:not(.lex-extension-field) label {
+  display: block;
+  margin: .22rem 0;
+}
+.help-doc-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr));
+  gap: .7rem;
+  padding: .75rem;
+  border-bottom: 1px solid var(--line);
+  background: color-mix(in srgb, var(--panel), var(--bg) 8%);
+}
+.help-doc-card {
+  border: 1px solid var(--line);
+  border-radius: .9rem;
+  background: color-mix(in srgb, var(--panel), #fff 7%);
+  padding: .75rem .85rem;
+}
+.help-doc-card h3 {
+  margin: 0 0 .28rem;
+  font-size: .98rem;
+}
+.help-doc-card p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.45;
+  font-size: .9rem;
+}

@@ -1,20 +1,20 @@
 
 
-## v4500 · Main-controls naast SYNTAX-as
+## v4504 · Main-controls naast SYNTAX-as
 
 - De Main-projectiebalk toont nu de volledige reeks: Assen, Bron, LEX, SYN en LOG/FT.
 - In landscape wordt de rechter vensterbalk naast de SYNTAX-as geplaatst met een kleine tussenruimte.
 - `portrait-test.html` toegevoegd voor lokale desktop/laptop-tests met een portrait-venster.
 
 
-## v4500 · strak passend raster rond boom + assen
+## v4504 · strak passend raster rond boom + assen
 
 - In het hoofdscherm volgt de SVG-viewBox nu exact de getekende boom plus projectie-assen.
 - Het raster wordt dynamisch opnieuw opgebouwd binnen dezelfde fit-box; lege rastervelden rondom worden niet meer meegetekend.
 - Hulplabels en het raster zelf tellen niet meer mee bij FIT.
 - In Config blijft de ruimere aspect-fit beschikbaar voor beheer en vergelijking.
 
-## v4500 · grid maximaal passend + ruimere topmenu-keuze
+## v4504 · grid maximaal passend + ruimere topmenu-keuze
 
 - Het gridvenster wordt nu gemaximeerd op de actuele fit-box van boom + assen; het schaalt niet groter dan nodig.
 - De fitmarge is kleiner, zodat minder lege rasterruimte rond boom en assen overblijft.
@@ -22,7 +22,7 @@
 - Genoteerd: een NOORD-as is mogelijk, maar nog niet gebruikt.
 
 
-## v4500 · Menu’s boven grid als benoemde meerkeuze
+## v4504 · Menu’s boven grid als benoemde meerkeuze
 
 - De oude instelling `Ruimte onder grid` is vervangen door een benoemde meerkeuze: `Menu’s boven grid`.
 - De gebruiker kiest maximaal vier menu’s die boven het grid mogen staan.
@@ -30,9 +30,9 @@
 - Standaard staat geen enkel menu boven het grid; alle menu’s staan dan onder het grid.
 - De tooltip en helptekst leggen per keuze uit waarom een taalkundige die boven het grid kan willen zetten.
 
-# OpenGraph Lite Viewer v4500
+# OpenGraph Lite Viewer v4504
 
-## v4500 — benoemde menu's boven het grid
+## v4504 — benoemde menu's boven het grid
 
 - Vervangt `Ruimte onder grid` door `Menu's boven grid`.
 - User kiest maximaal vier benoemde menu's die boven het grid mogen staan.
@@ -40,9 +40,9 @@
 - Niet gekozen menu's staan onder het grid.
 - Max > 2 wordt geblokkeerd en toegelicht in de viewer.
 
-# OpenGraph Lite Viewer v4500
+# OpenGraph Lite Viewer v4504
 
-## v4500 — mobile portrait grid-first
+## v4504 — mobile portrait grid-first
 
 - Mobile portrait: grid/boomvenster staat standaard helemaal bovenaan; header, projectiebalk, zinmenu en toolbar staan niet meer boven het grid.
 - Nieuwe config `portrait_menu_slots`: ruimte boven het grid voor 0, 1 of 2 toekomstige menuhoogtes; standaard 0.
@@ -395,35 +395,55 @@
 - Projectietabs blijven vast zichtbaar boven de boom.
 
 
-Aanvulling v4500: LEX vrije slots zijn plaatsbare insertiepunten op de LEX-as voor later materiaal uit andere LEX-assen/bomen en anafora. Boom vrije rijen blijven apart.
+Aanvulling v4504: LEX vrije slots zijn plaatsbare insertiepunten op de LEX-as voor later materiaal uit andere LEX-assen/bomen en anafora. Boom vrije rijen blijven apart.
 
 
-## v4500 desktop LEX-insertie zichtbaar
+## v4504 desktop LEX-insertie zichtbaar
 
 De rechter desktop-config toont nu dezelfde LEX-insertieconfig als mobiel: LEX vrije slots, LEX insertie-inhoud en takverlenging door insertie. De insertie blijft een aparte box op de LEX-as; de gekozen takken/boxgrenzen worden alleen layoutmatig verlengd.
 
-## v4500 · rechterkolom en gridvenster
+## v4504 · rechterkolom en gridvenster
 
 - Rechterkolom-config toegevoegd: auto/rest, breed, zeer breed, maximaal.
 - Gridvenster wordt op boom + assen begrensd; de rest van de workspace gaat naar het rechter menu.
 - Canvas-panning is uitgezet, omdat het venster zelf passend wordt gemaakt.
 
 
-## v4500 · hoofdbeeld en config-scherm
+## v4504 · hoofdbeeld en config-scherm
 
 Het hoofdbeeld is opnieuw ontworpen als grid-only view: boven het grid staan alleen het zinmenu en één knop **Config**. Alle andere instellingen zijn verplaatst naar een apart configuratiescherm met **Terug naar main**. Daardoor blijft de werkweergave schoon, terwijl projecties, Play/Groei, LEX-inserties, takverlenging, layout, export en documentatie in één config-scherm bereikbaar blijven.
 
 
-### v4500 — Main-bediening in boomvenster
+### v4504 — Main-bediening in boomvenster
 
 - Main behoudt een vaste topbalk met alleen Zin en Config.
 - De ZUID-volgorde staat nu als zichtbare pijlbediening onder in het boomvenster.
 - In portrait staat de Play-balk onder het grid met Reset direct ernaast; de Assen/LOG/FT-balk sluit daaronder aan.
 - In landscape staat Play verticaal rechts in het boomvenster, met Reset en Assen/LOG/FT eronder.
 
-## v4500 · Main-controls in het boomvenster
+## v4504 · Main-controls in het boomvenster
 
 - Rechter vensterbalk blijft in het boomvenster en wordt rechts naast de SYNTAX-as gepositioneerd.
 - Projectiereeks in Main is volledig: Assen, Bron, LEX, SYN en LOG/FT.
 - De nieuwe ZUID/SOV-bediening met pijlen vervangt de oude SVG-ZUID-badge visueel en wordt op dezelfde positie geplaatst.
 - De oude ZUID-badge blijft alleen onzichtbaar als positioneringsanker bestaan.
+
+
+## v4504 - Config topbar en documentatie
+
+- Config heeft een vaste topbalk met Terug naar main; de instellingenpagina kan daaronder scrollen.
+- Het oude blok “Redesign - boom eerst” is uit Config gehaald en verplaatst naar Help/documentatie.
+- Help/documentatie maakt nu expliciet onderscheid tussen **boom eerst** als didactisch/notatieprincipe en **recursie-techniek** als bottom-up tekenmethode.
+- Menu’s boven grid is weer zichtbaar in Config, inclusief **Hoofdvenster**, zodat hoofdvenster-fit en boomruimte boven Main kunnen verschijnen.
+
+
+## v4504
+
+OSV-! is marked as an impossible box alternative. The box approach can never produce OSV as a base layout; an explicit movement rule is required to render the LEX axis correctly. All other LOG-order trees and existing flip settings remain untouched.
+
+## v4505 - OSV-! and LEX rendering
+
+OSV-! is deliberately marked with an exclamation mark. The box approach can never produce OSV as a base alternative: VP still groups object and verb as a subtree. A pure box flip is therefore insufficient.
+
+To render the visible LEX axis correctly, an explicit movement rule is always required. OSV-! is not a base layout or linguistic alternative; it is a warning/test label for an impossible box variant. The other orders and existing flips remain untouched.
+

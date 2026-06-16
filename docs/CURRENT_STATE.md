@@ -285,9 +285,9 @@ Beschreven zinstypen: hoofdzin, bijzin met OMDAT, topicalisatie, perfectum en vo
 Mobiel gebruikt nu een aparte responsieve presentatie: eerst canvas, daarna bediening. Het canvas is horizontaal scrollbaar om de JAN-boom leesbaar te houden. De layoutregels zelf veranderen niet.
 
 
-## Carrousel-uitleglaag (v4500)
+## Carrousel-uitleglaag (v4504)
 
-De map `carrousel/` bevat de stapbare uitlegbeelden. Gebruik `carrousel/index.html?v4500` voor de didactische route; de viewer zelf blijft de interactieve testlaag voor assen, groei, vrije slots en projecties.
+De map `carrousel/` bevat de stapbare uitlegbeelden. Gebruik `carrousel/index.html?v4504` voor de didactische route; de viewer zelf blijft de interactieve testlaag voor assen, groei, vrije slots en projecties.
 
 
 ### NOORD-as (PM)
@@ -295,30 +295,30 @@ De map `carrousel/` bevat de stapbare uitlegbeelden. Gebruik `carrousel/index.ht
 Naast west/LEX, oost/SYNTAX en zuid/LOGICAL is ook een NOORD-as mogelijk. Die is genoteerd als uitbreiding, maar nog niet gebruikt.
 
 
-Aanvulling v4500: LEX vrije slots zijn plaatsbare insertiepunten op de LEX-as voor later materiaal uit andere LEX-assen/bomen en anafora. Boom vrije rijen blijven apart.
+Aanvulling v4504: LEX vrije slots zijn plaatsbare insertiepunten op de LEX-as voor later materiaal uit andere LEX-assen/bomen en anafora. Boom vrije rijen blijven apart.
 
 
-## v4500 · portrait split grid/menu
+## v4504 · portrait split grid/menu
 
 - In mobile portrait staat het rechter menu naast het grid in plaats van verborgen of onder het grid.
 - De breedte van het grid wordt gemaximeerd op de actuele boom + assen.
 - De grens tussen grid en rechter menu is sleepbaar/touchbaar: links/rechts schuiven past de verdeling aan.
 
 
-## v4500 desktop LEX-insertie zichtbaar
+## v4504 desktop LEX-insertie zichtbaar
 
 De rechter desktop-config toont nu dezelfde LEX-insertieconfig als mobiel: LEX vrije slots, LEX insertie-inhoud en takverlenging door insertie. De insertie blijft een aparte box op de LEX-as; de gekozen takken/boxgrenzen worden alleen layoutmatig verlengd.
 
-## v4500 · gridvenster en rechterkolom
+## v4504 · gridvenster en rechterkolom
 
 Het gridvenster is niet langer een pannend subvenster. De actuele boom + assen bepalen de benodigde stage-breedte en -hoogte. De resterende breedte wordt toegewezen aan de rechterkolom. Gebruiker kan de rechterkolom via config verbreden of de grens handmatig slepen.
 
 
-## v4500 · hoofdbeeld en config-scherm
+## v4504 · hoofdbeeld en config-scherm
 
 Het hoofdbeeld is opnieuw ontworpen als grid-only view: boven het grid staan alleen het zinmenu en één knop **Config**. Alle andere instellingen zijn verplaatst naar een apart configuratiescherm met **Terug naar main**. Daardoor blijft de werkweergave schoon, terwijl projecties, Play/Groei, LEX-inserties, takverlenging, layout, export en documentatie in één config-scherm bereikbaar blijven.
 
-## v4500 · strak passend raster rond boom + assen
+## v4504 · strak passend raster rond boom + assen
 
 - In het hoofdscherm volgt de SVG-viewBox nu exact de getekende boom plus projectie-assen.
 - Het raster wordt dynamisch opnieuw opgebouwd binnen dezelfde fit-box; lege rastervelden rondom worden niet meer meegetekend.
@@ -326,7 +326,7 @@ Het hoofdbeeld is opnieuw ontworpen als grid-only view: boven het grid staan all
 - In Config blijft de ruimere aspect-fit beschikbaar voor beheer en vergelijking.
 
 
-### v4500 — Main-bediening in boomvenster
+### v4504 — Main-bediening in boomvenster
 
 - Main behoudt een vaste topbalk met alleen Zin en Config.
 - De ZUID-volgorde staat nu als zichtbare pijlbediening onder in het boomvenster.
@@ -334,10 +334,30 @@ Het hoofdbeeld is opnieuw ontworpen als grid-only view: boven het grid staan all
 - In landscape staat Play verticaal rechts in het boomvenster, met Reset en Assen/LOG/FT eronder.
 
 
-## v4500 · Main-controls naast SYNTAX-as
+## v4504 · Main-controls naast SYNTAX-as
 
 Main toont alle projectiekeuzes (Assen, Bron, LEX, SYN, LOG/FT). In landscape staat de vensterbalk rechts naast de SYNTAX-as. `portrait-test.html` biedt een lokaal portrait-testvenster op desktop/laptop.
 
-## v4500 · Main-controls in venster
+## v4504 · Main-controls in venster
 
 De rechter Main-balk staat in het boomvenster, rechts naast de SYNTAX-as. De projectiereeks bevat Assen, Bron, LEX, SYN en LOG/FT. De nieuwe ZUID/SOV-box met pijlen staat op de oude ZUID-badgeplek; de oude badge wordt niet meer zichtbaar getoond.
+
+
+## v4504 - Config topbar en documentatie
+
+- Config heeft een vaste topbalk met Terug naar main; de instellingenpagina kan daaronder scrollen.
+- Het oude blok “Redesign - boom eerst” is uit Config gehaald en verplaatst naar Help/documentatie.
+- Help/documentatie maakt nu expliciet onderscheid tussen **boom eerst** als didactisch/notatieprincipe en **recursie-techniek** als bottom-up tekenmethode.
+- Menu’s boven grid is weer zichtbaar in Config, inclusief **Hoofdvenster**, zodat hoofdvenster-fit en boomruimte boven Main kunnen verschijnen.
+
+
+## v4504
+
+OSV-! is marked as an impossible box alternative. The box approach can never produce OSV as a base layout; an explicit movement rule is required to render the LEX axis correctly. All other LOG-order trees and existing flip settings remain untouched.
+
+## v4505 - OSV-! and LEX rendering
+
+OSV-! is deliberately marked with an exclamation mark. The box approach can never produce OSV as a base alternative: VP still groups object and verb as a subtree. A pure box flip is therefore insufficient.
+
+To render the visible LEX axis correctly, an explicit movement rule is always required. OSV-! is not a base layout or linguistic alternative; it is a warning/test label for an impossible box variant. The other orders and existing flips remain untouched.
+

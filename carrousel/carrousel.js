@@ -1,6 +1,6 @@
 (() => {
   'use strict';
-  const VERSION = 'v4500';
+  const VERSION = 'v4505';
   const FALLBACK_SLIDES = [
   {
     "image": "slides/01-simpele-vertakking-een-level.png",

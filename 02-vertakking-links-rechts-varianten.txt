@@ -1,1 +1,0 @@
-Varianten van een simpele vertakking. In de klassieke boomnotatie lijkt links/rechts meteen woordvolgorde te zijn. In OpenGraph is dit eerst een vrije tekening; de uitingsvolgorde kan later via LEX worden geprojecteerd.
