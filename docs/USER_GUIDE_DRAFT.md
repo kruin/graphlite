@@ -228,3 +228,25 @@ OSV-! is bewust gemarkeerd met een uitroepteken. De box-aanpak kan nooit OSV opl
 
 Voor een correcte zichtbare LEX-as moet altijd een expliciete verplaatsingsregel werken. OSV-! is dus geen basis-layout of taalkundig alternatief, maar een waarschuwing/testlabel bij een onmogelijke boxvariant. De andere volgordes en bestaande flips blijven hierdoor ongemoeid.
 
+
+
+## v4506 - LEX-bijwoordslots
+
+Vrije LEX-inserts voor bijwoorden zijn nu gedocumenteerd als slottypen met verschillende scope. De basisregel blijft: reserveer slots tussen zichtbare LEX-boxen en plaats het slot op verticale overlap als die bestaat. Daarna bepaalt het bijwoordtype de exacte plaatsing.
+
+- Tijd: `GISTEREN`, `MORGEN` - meestal `VP-BETWEEN`, eventueel `S-LEFT` bij vooropplaatsing.
+- Frequentie: `VAAK`, `SOMS`, `ALTIJD` - `VP-BETWEEN`.
+- Negatie: `NIET` - apart `NEG`/`V-NEAR` slot.
+- Wijze: `SNEL`, `HARD`, `ZACHTJES` - `V-NEAR` of `VP-RIGHT`.
+- Zinsbijwoord: `MISSCHIEN`, `WAARSCHIJNLIJK`, `HELAAS` - hoog `S/VP` of `S-LEFT`.
+- Focus: `ALLEEN`, `OOK`, `ZELFS` - bij de gefocuste phrase.
+- Graad: `HEEL`, `ERG`, `ZEER` - intern in `AP/AdvP/NP`, dus geen algemeen tussenbox-slot.
+
+De centrale boom wordt niet herschreven. Bijwoorden horen in deze fase in de LEX-renderlaag of in phrase-interne slots.
+
+Zie ook: `docs/LEX_ADVERB_INSERT_SLOTS.md`.
+
+## v4511 - OSV-!, VSO-! en VOS-!
+
+`VSO` en `VOS` worden nu net als `OSV` gemarkeerd: `VSO-!` en `VOS-!`. Het uitroepteken betekent dat de box-aanpak deze volgorde niet als basisalternatief kan opleveren. Voor correcte rendering op de LEX-as is een expliciete verplaatsingsregel nodig. Bestaande bomen en bestaande flips blijven ongemoeid.
+

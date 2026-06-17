@@ -447,3 +447,58 @@ OSV-! is deliberately marked with an exclamation mark. The box approach can neve
 
 To render the visible LEX axis correctly, an explicit movement rule is always required. OSV-! is not a base layout or linguistic alternative; it is a warning/test label for an impossible box variant. The other orders and existing flips remain untouched.
 
+
+
+## v4506 - LEX adverb insertion slots
+
+Free LEX insertions for adverbs are now documented as slot types with different scope. The base rule remains: reserve slots between visible LEX boxes and place the slot on vertical overlap when such overlap exists. The adverb type then determines the precise placement.
+
+- Time: `GISTEREN`, `MORGEN` - usually `VP-BETWEEN`, optionally `S-LEFT` when fronted.
+- Frequency: `VAAK`, `SOMS`, `ALTIJD` - `VP-BETWEEN`.
+- Negation: `NIET` - separate `NEG`/`V-NEAR` slot.
+- Manner: `SNEL`, `HARD`, `ZACHTJES` - `V-NEAR` or `VP-RIGHT`.
+- Sentence adverb: `MISSCHIEN`, `WAARSCHIJNLIJK`, `HELAAS` - high `S/VP` or `S-LEFT`.
+- Focus: `ALLEEN`, `OOK`, `ZELFS` - beside the focused phrase.
+- Degree: `HEEL`, `ERG`, `ZEER` - internal to `AP/AdvP/NP`, not a general between-box slot.
+
+The central tree is not rewritten. In this phase, adverbs belong to the LEX render layer or to phrase-internal slots.
+
+See also: `docs/LEX_ADVERB_INSERT_SLOTS_EN.md`.
+
+## v4511 - Config: zichtbare LEX-bijwoordinsert
+
+- De Config-weergave is hersteld: de velden in `Dynamische boomweergave` overlappen niet meer.
+- `LEX insertie` is apart en zichtbaar gemaakt als `Bijwoord / LEX-insert op LEX-as`.
+- De bijwoordkeuze staat nu bij de concrete LEX-slotinstellingen:
+  - aantal slots
+  - slotpositie
+  - bijwoord / inhoud
+- Mobiel gebruikt dezelfde naamgeving.
+- De Config-topbalk blijft sticky boven de scrollende instellingen.
+
+
+## v4511 - Uitleg uit Config, naar Help/docs
+
+- Het blok `Uitleg` wordt niet meer getoond in Config.
+- Config blijft beperkt tot instellingen en beheer.
+- Help bevat nu kaarten voor:
+  - Boom eerst
+  - Recursie-techniek in de boom
+  - Bijwoord-inserts op de LEX-as
+  - Render-uitleg
+- Documentatie toegevoegd:
+  - `docs/RENDER_EXPLANATION.md`
+  - `docs/RENDER_EXPLANATION_EN.md`
+- Engelse Help-tekst is mee bijgewerkt.
+
+## v4511 - Oude tijdsinsertingtest verwijderd
+
+- De eerdere vaste tijdsinsertingtest is uit de UI, Config, Help en documentatie verwijderd.
+- Standaard: `LEX-slots: 0` en insertinhoud `slot leeg`.
+- De nieuwere bijwoordplaatsingen blijven intact: tijd, frequentie, negatie, wijze, zinsbijwoord, focus en graad.
+- De structurele plaatsingsmechaniek blijft gelijk: tussenbox/overlap/domeinslot; alleen het oude concrete testwoord is verwijderd.
+
+## v4511 - VSO-! and VOS-! labels
+
+VSO and VOS are now marked in the same way as OSV: `VSO-!` and `VOS-!`. The label means that the box approach cannot produce this order as a base alternative. Correct LEX rendering requires an explicit movement rule. Existing trees and existing flip behaviour remain untouched.
+

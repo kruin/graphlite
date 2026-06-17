@@ -41,6 +41,8 @@ vrouw
 trui
 bijt
 breit
+beet
+breide
 heeft
 gebeten
 gebreid

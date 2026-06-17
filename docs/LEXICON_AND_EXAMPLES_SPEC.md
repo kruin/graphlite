@@ -158,3 +158,15 @@ Voor V2 en topicalisatie wordt de trace als lokaal LEX-object behandeld. De voor
 - Voorbeeldzinnen worden inhoudelijk gevalideerd op thematische rollen en selectieframes.
 - Ongeldige combinaties zoals `TRUI BREIT VROUW` met `TRUI` als subject/agens worden afgekeurd met reden: `trui` is patiens/object, geen agens/subject.
 - Gemarkeerde/topicalisatie-uitingen zoals `TRUI BREIT VROUW` worden geaccepteerd wanneer `TRUI` object/patiens blijft en `VROUW` subject/agens blijft; de viewer toont dan een notice.
+
+
+## OVT-vormen vanaf v4511
+
+De verbale lexemen hebben nu naast de tegenwoordige persoonsvorm en het voltooid deelwoord ook een OVT-vorm:
+
+| lemma | pv/tegenwoordige vorm | OVT | VDW |
+|---|---|---|---|
+| `bijten` | `BIJT` | `BEET` | `GEBETEN` |
+| `breien` | `BREIT` | `BREIDE` | `GEBREID` |
+
+De OVT-vorm blijft een predicate/PV-token op de LEX-as. Zij verandert het selectieframe niet: `BEET` gebruikt het frame van `bijt`; `BREIDE` gebruikt het frame van `breit`.

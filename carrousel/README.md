@@ -1,4 +1,4 @@
-# JAN Carrousel module v4505
+# JAN Carrousel module v4511
 
 Deze map is zelfstandig uit de projectzip te halen.
 
@@ -11,7 +11,7 @@ carrousel/index.html
 De hoofdviewer gebruikt dezelfde ingang:
 
 ```text
-carrousel/index.html?v4505
+carrousel/index.html?v4511
 ```
 
 ## Inhoud

@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>LEX-plaatsingsregels</title>
-  <link rel="stylesheet" href="../styles.css?v4505">
+  <link rel="stylesheet" href="../styles.css?v4506">
   <style>
     body { margin: 0; background: #f8fafc; color: #0f172a; }
     main { max-width: 920px; margin: 0 auto; padding: 28px 22px 56px; line-height: 1.55; }
@@ -18,9 +18,9 @@
 </head>
 <body>
   <nav class="topbar">
-    <a href="../index.html?v4505">Viewer</a>
-    <a href="docs-home.html?v4505">Docs</a>
-    <a href="LEX_MOVEMENT_RULES.md?v4505">Markdown</a>
+    <a href="../index.html?v4506">Viewer</a>
+    <a href="docs-home.html?v4506">Docs</a>
+    <a href="LEX_MOVEMENT_RULES.md?v4506">Markdown</a>
   </nav>
   <main>
 <h1>LEX-plaatsingsregels — simpel overzicht</h1>
@@ -234,14 +234,46 @@ resultaat = voorbeeldzin
 </code></pre>
   
 <section>
-<h2>v4505 · Configureerbare vrije LEX-slots</h2>
+<h2>v4506 · Configureerbare vrije LEX-slots</h2>
 <p><strong>Boom vrije rijen</strong> reserveren lege ruimte in de centrale boom. <strong>LEX vrije slots</strong> zijn aparte, plaatsbare insertiepunten op de LEX-as. Ze zijn bedoeld voor latere insertie van materiaal uit andere LEX-assen/andere bomen, zoals bijwoordelijke onthoofde zinnen, en voor anaforische elementen uit andere zinnen of uitingen. De NOORD-as blijft mogelijk, maar is nog niet actief.</p>
 </section>
 
 <section>
-<h2>v4505 - OSV-! en LEX-rendering</h2>
+<h2>v4506 - OSV-! en LEX-rendering</h2>
 <p><strong>OSV-!</strong> is geen basis-alternatief. De box-aanpak kan nooit OSV opleveren: VP blijft object en werkwoord als subtree groeperen.</p>
 <p>Voor een correcte LEX-as moet dus altijd een expliciete verplaatsingsregel werken. OSV-! is een waarschuwing/testlabel, geen taalkundige basisboom.</p>
+</section>
+
+<section>
+<h2>v4506 - LEX-bijwoordslots</h2>
+<p>Bijwoord-inserts krijgen niet één algemene plaats. De LEX-as reserveert vrije slots tussen boxen; bij verticale overlap komt het slot op de overlap. Daarna bepaalt de scope het domein.</p>
+<ul>
+<li><strong>Tijd/frequentie:</strong> GISTEREN, MORGEN, VAAK, SOMS, ALTIJD - tussenbox/VP-slot.</li>
+<li><strong>Negatie:</strong> NIET - apart NEG/V-nabij slot.</li>
+<li><strong>Wijze:</strong> SNEL, HARD, ZACHTJES - V-nabij of VP-rechts.</li>
+<li><strong>Zinsbijwoord:</strong> MISSCHIEN, WAARSCHIJNLIJK, HELAAS - hoog S/VP of S-links.</li>
+<li><strong>Focus:</strong> ALLEEN, OOK, ZELFS - bij de gefocuste phrase.</li>
+<li><strong>Graad:</strong> HEEL, ERG, ZEER - AP/AdvP-intern.</li>
+</ul>
+<p>De centrale boom blijft bronstructuur. Bijwoorden horen in deze fase in de LEX-renderlaag of in phrase-interne slots.</p>
+</section>
+
+<section>
+<h2>v4511 - OVT / onvoltooid verleden tijd</h2>
+<p><strong>BEET</strong> is de OVT van <strong>BIJT/BIJTEN</strong>. <strong>BREIDE</strong> is de OVT van <strong>BREIT/BREIEN</strong>.</p>
+<p>Deze vormen vullen dezelfde predicate/PV-bron op de LEX-as als de tegenwoordige vormen. Het zijn dus geen nieuwe structurele boomtypes.</p>
+<pre><code>HOND BEET MAN
+OMDAT HOND MAN BEET
+VROUW BREIDE TRUI
+OMDAT VROUW TRUI BREIDE</code></pre>
+<p>VDW blijft apart: <strong>GEBETEN</strong> en <strong>GEBREID</strong> horen bij het perfectumtype met <strong>HEEFT</strong>.</p>
+</section>
+
+
+<section class="card">
+<h2>v4511 - OSV-!, VSO-! en VOS-!</h2>
+<p><strong>VSO-!</strong> en <strong>VOS-!</strong> zijn nu net als <strong>OSV-!</strong> gemarkeerd. De box-aanpak kan deze volgordes niet als basisalternatief opleveren.</p>
+<p>Voor correcte rendering op de LEX-as is een expliciete verplaatsingsregel nodig. Bestaande bomen en bestaande flips blijven ongemoeid.</p>
 </section>
 </main>
 </body>

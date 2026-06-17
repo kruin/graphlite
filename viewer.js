@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'v4505';
+  const VERSION = 'v4511';
   const BASE_CELL = 74;
   const ROOT_SIDE_GAP = 1;
   const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -218,6 +218,7 @@
   ];
 
   const SOUTH_LOGICAL_MODES = ['SOV', 'SVO', 'OVS', 'OSV', 'VSO', 'VOS'];
+  const SOUTH_LOGICAL_MOVEMENT_REQUIRED_MODES = new Set(['OSV', 'VSO', 'VOS']);
 
   const FREE_SLOT_COUNTS = [
     { id: '0', label: 'boomrijen: 0' },
@@ -246,19 +247,36 @@
     { id: 'after-system', label: 'na slot 0/1/2', tip: 'Insertieboxen staan direct na Comp/TOPIC/V2 en vóór gewone basisposities.' },
     { id: 'above-system', label: 'boven slot 0', tip: 'Vrije LEX-slots staan boven de bestaande LEX-asposities.' },
     { id: 'after-surface-1', label: 'tussen positie 1/2', tip: 'Insertiebox op de grens tussen de eerste en tweede LEX-positie.' },
-    { id: 'after-surface-2', label: 'tussen positie 2/3', tip: 'Insertiebox op de grens tussen de tweede en derde LEX-positie. Voorbeeld: HOND BIJT VANDAAG MAN.' },
+    { id: 'after-surface-2', label: 'tussen positie 2/3', tip: 'Insertiebox op de grens tussen de tweede en derde LEX-positie.' },
     { id: 'after-surface-3', label: 'tussen positie 3/4', tip: 'Insertiebox op de grens na de derde LEX-positie.' }
   ];
 
   const LEX_INSERTION_CONTENTS = [
-    { id: 'empty', label: 'slot leeg', text: 'INSERTIEPUNT', sub: 'gereserveerd · andere LEX-as', tip: 'Leeg insertiepunt: reserveert alleen plaats op de LEX-as.' },
-    { id: 'vandaag', label: 'VANDAAG', text: 'VANDAAG', sub: 'bijwoord · andere LEX-as', tip: 'Voorbeeld: HOND BIJT VANDAAG MAN. VANDAAG grijpt aan op de LEX-as, niet als nieuwe boomknoop.' },
-    { id: 'anafoor', label: 'anafoor', text: 'ANAFOOR', sub: 'verwijzing uit andere uiting', tip: 'Voor later: anaforisch element uit een andere zin/uiting.' },
-    { id: 'other-lex-axis', label: 'andere LEX-as', text: 'LEX-AS', sub: 'insertie uit andere boom', tip: 'Voor later: materiaal uit de LEX-as van een andere boom.' }
+    { id: 'empty', label: 'slot leeg', text: 'INSERTIEPUNT', sub: 'gereserveerd · andere LEX-as', subEn: 'reserved · other LEX axis', caption: 'vrij slot', captionEn: 'free slot', tip: 'Leeg insertiepunt: reserveert alleen plaats op de LEX-as.', tipEn: 'Empty insertion point: reserves LEX-axis space only.' },
+    { id: 'gisteren', label: 'GISTEREN', text: 'GISTEREN', sub: 'tijd · VP/S-slot', subEn: 'time · VP/S slot', caption: 'extern bijwoord', captionEn: 'external adverb', tip: 'GISTEREN: tijdsbepaling. Gebruik een tussenbox-slot of S-links bij vooropplaatsing.', tipEn: 'GISTEREN: time adverb. Use a between-box slot or S-left when fronted.' },
+    { id: 'morgen', label: 'MORGEN', text: 'MORGEN', sub: 'tijd · VP/S-slot', subEn: 'time · VP/S slot', caption: 'extern bijwoord', captionEn: 'external adverb', tip: 'MORGEN: tijdsbepaling. Reserveer tussenbox-slots; bij vooropplaatsing is een LEX-verplaatsingsregel nodig.', tipEn: 'MORGEN: time adverb. Reserve between-box slots; fronting requires a LEX movement rule.' },
+    { id: 'vaak', label: 'VAAK', text: 'VAAK', sub: 'frequentie · VP-slot', subEn: 'frequency · VP slot', caption: 'extern bijwoord', captionEn: 'external adverb', tip: 'VAAK: frequentie. Voorkeur binnen VP: tussen subject en object in bijzinnen, of tussen V en object in hoofdzinnen.', tipEn: 'VAAK: frequency. Preferred inside VP: between subject and object in subordinate clauses, or between V and object in main clauses.' },
+    { id: 'soms', label: 'SOMS', text: 'SOMS', sub: 'frequentie · VP-slot', subEn: 'frequency · VP slot', caption: 'extern bijwoord', captionEn: 'external adverb', tip: 'SOMS: frequentie. Reserveer een VP-slot; hoger dan V-nabij, lager dan S-links.', tipEn: 'SOMS: frequency. Reserve a VP slot; higher than V-near, lower than S-left.' },
+    { id: 'altijd', label: 'ALTIJD', text: 'ALTIJD', sub: 'frequentie · VP-slot', subEn: 'frequency · VP slot', caption: 'extern bijwoord', captionEn: 'external adverb', tip: 'ALTIJD: frequentie. Plaats bij voorkeur in het VP-domein; niet als NP/AP-intern slot.', tipEn: 'ALTIJD: frequency. Prefer the VP domain; not an NP/AP-internal slot.' },
+    { id: 'niet', label: 'NIET', text: 'NIET', sub: 'negatie · V-nabij', subEn: 'negation · V-near', caption: 'NEG-slot', captionEn: 'NEG slot', tip: 'NIET: negatie. Reserveer een apart V-nabij/NEG-slot, meestal tussen object en werkwoord of rechts van object.', tipEn: 'NIET: negation. Reserve a separate V-near/NEG slot, usually between object and verb or to the right of the object.' },
+    { id: 'snel', label: 'SNEL', text: 'SNEL', sub: 'wijze · V-nabij', subEn: 'manner · V-near', caption: 'wijze-slot', captionEn: 'manner slot', tip: 'SNEL: wijze. Plaats dicht bij V/predicaat; in perfectum vaak tussen object en participium.', tipEn: 'SNEL: manner. Place close to V/predicate; in perfect constructions often between object and participle.' },
+    { id: 'hard', label: 'HARD', text: 'HARD', sub: 'wijze · V-nabij', subEn: 'manner · V-near', caption: 'wijze-slot', captionEn: 'manner slot', tip: 'HARD: wijze. Gebruik een V-nabij slot of VP-rechts; niet als hoog S-bijwoord.', tipEn: 'HARD: manner. Use a V-near slot or VP-right; not as a high S adverb.' },
+    { id: 'zachtjes', label: 'ZACHTJES', text: 'ZACHTJES', sub: 'wijze · V-nabij', subEn: 'manner · V-near', caption: 'wijze-slot', captionEn: 'manner slot', tip: 'ZACHTJES: wijze. Reserveer een slot dicht bij V/predicaat.', tipEn: 'ZACHTJES: manner. Reserve a slot close to V/predicate.' },
+    { id: 'misschien', label: 'MISSCHIEN', text: 'MISSCHIEN', sub: 'zinsbijwoord · S/VP', subEn: 'sentence adverb · S/VP', caption: 'S/VP-slot', captionEn: 'S/VP slot', tip: 'MISSCHIEN: zinsbijwoord. Hoger slot: S-links bij vooropplaatsing of S/VP-overgang; niet V-nabij.', tipEn: 'MISSCHIEN: sentence adverb. Higher slot: S-left when fronted or S/VP transition; not V-near.' },
+    { id: 'waarschijnlijk', label: 'WAARSCHIJNLIJK', text: 'WAARSCHIJNLIJK', sub: 'zinsbijwoord · S/VP', subEn: 'sentence adverb · S/VP', caption: 'S/VP-slot', captionEn: 'S/VP slot', tip: 'WAARSCHIJNLIJK: zinsbijwoord. Reserveer een hoog S/VP-slot; scope is de hele propositie.', tipEn: 'WAARSCHIJNLIJK: sentence adverb. Reserve a high S/VP slot; scope is the whole proposition.' },
+    { id: 'helaas', label: 'HELAAS', text: 'HELAAS', sub: 'zinsbijwoord · S-links', subEn: 'sentence adverb · S-left', caption: 'S-links-slot', captionEn: 'S-left slot', tip: 'HELAAS: zinsbijwoord. Vaak S-links of hoog S-slot; vereist LEX-plaatsingsregel bij vooropplaatsing.', tipEn: 'HELAAS: sentence adverb. Often S-left or high S slot; fronting requires a LEX placement rule.' },
+    { id: 'alleen', label: 'ALLEEN', text: 'ALLEEN', sub: 'focus · phrase-intern', subEn: 'focus · phrase-internal', caption: 'focus-slot', captionEn: 'focus slot', tip: 'ALLEEN: focus. Plaats bij de gefocuste phrase: subject-NP, object-NP of VP; geen algemeen tussenbox-slot.', tipEn: 'ALLEEN: focus. Place with the focused phrase: subject NP, object NP or VP; not a general between-box slot.' },
+    { id: 'ook', label: 'OOK', text: 'OOK', sub: 'focus/partikel · phrase', subEn: 'focus/particle · phrase', caption: 'focus-slot', captionEn: 'focus slot', tip: 'OOK: focus/partikel. Plaats bij de phrase waarop ook scope heeft; meestal phrase-intern of VP/S-rechts.', tipEn: 'OOK: focus/particle. Place with the phrase it scopes over; usually phrase-internal or VP/S-right.' },
+    { id: 'zelfs', label: 'ZELFS', text: 'ZELFS', sub: 'focus · phrase-intern', subEn: 'focus · phrase-internal', caption: 'focus-slot', captionEn: 'focus slot', tip: 'ZELFS: focus. Plaats direct bij subject, object of VP waarop het focus legt.', tipEn: 'ZELFS: focus. Place directly with the subject, object or VP it focuses.' },
+    { id: 'heel', label: 'HEEL', text: 'HEEL', sub: 'graad · AP/AdvP-intern', subEn: 'degree · AP/AdvP-internal', caption: 'graadslot', captionEn: 'degree slot', tip: 'HEEL: graadwoord. Hoort intern in AP/AdvP/NP, bijvoorbeeld heel groot; geen algemeen LEX-as-tussenboxslot.', tipEn: 'HEEL: degree word. Belongs inside AP/AdvP/NP, e.g. heel groot; not a general LEX-axis between-box slot.' },
+    { id: 'erg', label: 'ERG', text: 'ERG', sub: 'graad · AP/AdvP-intern', subEn: 'degree · AP/AdvP-internal', caption: 'graadslot', captionEn: 'degree slot', tip: 'ERG: graadwoord. Plaats intern bij AP of wijze-bijwoord, bijvoorbeeld erg hard.', tipEn: 'ERG: degree word. Place internally with an AP or manner adverb, e.g. erg hard.' },
+    { id: 'zeer', label: 'ZEER', text: 'ZEER', sub: 'graad · AP/AdvP-intern', subEn: 'degree · AP/AdvP-internal', caption: 'graadslot', captionEn: 'degree slot', tip: 'ZEER: graadwoord. Phrase-intern bij AP/AdvP; niet op de algemene LEX-as-grens.', tipEn: 'ZEER: degree word. Phrase-internal with AP/AdvP; not on a general LEX-axis boundary.' },
+    { id: 'anafoor', label: 'anafoor', text: 'ANAFOOR', sub: 'verwijzing uit andere uiting', subEn: 'reference from another utterance', caption: 'anafoor', captionEn: 'anaphor', tip: 'Voor later: anaforisch element uit een andere zin/uiting.', tipEn: 'For later: anaphoric element from another sentence/utterance.' },
+    { id: 'other-lex-axis', label: 'andere LEX-as', text: 'LEX-AS', sub: 'insertie uit andere boom', subEn: 'insertion from another tree', caption: 'andere LEX-as', captionEn: 'other LEX axis', tip: 'Voor later: materiaal uit de LEX-as van een andere boom.', tipEn: 'For later: material from the LEX axis of another tree.' }
   ];
 
   const LEX_INSERTION_EXTENSION_TARGETS = [
-    { id: 'vp-boundary', label: 'VP-grens V ↔ object', tip: 'Standaard voor VANDAAG: insertie tussen werkwoord en object verlengt de VP-zone/grens, zonder VANDAAG als boomknoop toe te voegen.' },
+    { id: 'vp-boundary', label: 'VP-grens V ↔ object', tip: 'Insertie tussen werkwoord en object verlengt de VP-zone/grens, zonder de insertie als boomknoop toe te voegen.' },
     { id: 's-boundary', label: 'S-grens subject ↔ VP', tip: 'Verlengt de grens tussen subject en VP. Nuttig als de insertie tussen zinsdelen ligt.' },
     { id: 'object-branch', label: 'tak naar object / NP obj / patiens', tip: 'Verlengt de objecttak; bruikbaar als de insertie vlak vóór het object staat.' },
     { id: 'verb-branch', label: 'tak naar verb / V / pred', tip: 'Verlengt de verb/predicaattak; bruikbaar als de insertie direct aan het verbcluster kleeft.' },
@@ -295,23 +313,25 @@
 
 
   function southLogicalModeLabel(mode = state.southLogicalMode || 'SOV') {
-    return mode === 'OSV' ? 'OSV-!' : mode;
+    return SOUTH_LOGICAL_MOVEMENT_REQUIRED_MODES.has(mode) ? `${mode}-!` : mode;
   }
 
   function southLogicalModeListLabel() {
     return SOUTH_LOGICAL_MODES.map(southLogicalModeLabel).join(', ');
   }
 
-  function osvLexMovementComment() {
+  function movementRequiredModeComment(mode = state.southLogicalMode || 'SOV') {
+    const label = southLogicalModeLabel(mode);
     return isEnglish()
-      ? 'OSV-!: the box approach can never produce OSV. A movement rule is always required to render the LEX axis correctly. OSV cannot be a base alternative.'
-      : 'OSV-!: de box-aanpak kan nooit OSV opleveren. Altijd moet er een verplaatsingsregel werken om de LEX-as correct te renderen. OSV kan dus geen basis-alternatief zijn.';
+      ? `${label}: the box approach cannot produce ${mode} as a base alternative. A movement rule is required to render the LEX axis correctly.`
+      : `${label}: de box-aanpak kan ${mode} niet als basisalternatief opleveren. Voor correcte LEX-rendering is een verplaatsingsregel nodig.`;
   }
 
-  function osvShortComment() {
+  function movementRequiredShortComment(mode = state.southLogicalMode || 'SOV') {
+    const label = southLogicalModeLabel(mode);
     return isEnglish()
-      ? 'OSV-!: box layout cannot produce OSV; LEX needs a movement rule.'
-      : 'OSV-!: box-layout kan geen OSV opleveren; LEX vraagt een verplaatsingsregel.';
+      ? `${label}: box layout cannot produce ${mode}; LEX needs a movement rule.`
+      : `${label}: box-layout kan ${mode} niet opleveren; LEX vraagt een verplaatsingsregel.`;
   }
 
   function southModeRankMap(mode = state.southLogicalMode || 'SOV') {
@@ -381,9 +401,9 @@
     growthStep: 0,
     southLogicalMode: 'SOV',
     freeSlotCount: 2,
-    lexFreeSlotCount: 1,
+    lexFreeSlotCount: 0,
     lexFreeSlotPlacement: 'after-surface-2',
-    lexInsertionContent: 'vandaag',
+    lexInsertionContent: 'empty',
     lexInsertionExtensionTargets: ['vp-boundary'],
     portraitMenuSlots: 0,
     topMenusAbove: ['fit'],
@@ -467,8 +487,8 @@
   };
 
   const SIMPLE_VERB_FRAMES = {
-    breit: { subjects: ['vrouw'], objects: ['trui'], participle: 'GEBREID' },
-    bijt: { subjects: ['hond', 'kat', 'man', 'vrouw'], objects: ['man', 'hond', 'kat', 'vrouw'], participle: 'GEBETEN' }
+    breit: { subjects: ['vrouw'], objects: ['trui'], imperfectum: 'BREIDE', participle: 'GEBREID' },
+    bijt: { subjects: ['hond', 'kat', 'man', 'vrouw'], objects: ['man', 'hond', 'kat', 'vrouw'], imperfectum: 'BEET', participle: 'GEBETEN' }
   };
 
   function tokenLexemeId(item) {
@@ -1137,6 +1157,18 @@
     return LEX_INSERTION_CONTENTS.find(option => option.id === id) || LEX_INSERTION_CONTENTS[0];
   }
 
+  function lexInsertionContentSub(def = lexInsertionContentDef()) {
+    return isEnglish() ? (def.subEn || def.sub || '') : (def.sub || '');
+  }
+
+  function lexInsertionContentCaption(def = lexInsertionContentDef()) {
+    return isEnglish() ? (def.captionEn || def.caption || '') : (def.caption || '');
+  }
+
+  function lexInsertionContentTip(def = lexInsertionContentDef()) {
+    return isEnglish() ? (def.tipEn || def.tip || '') : (def.tip || '');
+  }
+
   function validLexInsertionTargets(value = state.lexInsertionExtensionTargets) {
     const allowed = new Set(LEX_INSERTION_EXTENSION_TARGETS.map(option => option.id));
     const out = [];
@@ -1173,7 +1205,7 @@
       placement,
       content: content.id,
       text: content.text,
-      sub: content.sub,
+      sub: lexInsertionContentSub(content),
       extension_targets: extensionTargets,
       insertion_grips_tree: false,
       effect: 'extends-selected-branches-or-box-boundaries',
@@ -1635,7 +1667,7 @@
   }
 
   function isPortraitMobileViewport() {
-    // v4505: grid-first and fit-height are no longer mobile-only.
+    // v4511: grid-first and fit-height are no longer mobile-only.
     // The canvas height is based on the actual viewBox on every platform.
     return true;
   }
@@ -1649,7 +1681,7 @@
   }
 
   function syncPortraitMenuSpace() {
-    // v4505: de oude numerieke onderruimte blijft op 0. De relevante instelling
+    // v4511: de oude numerieke onderruimte blijft op 0. De relevante instelling
     // is nu: welke benoemde menu's mogen boven het grid staan.
     document.documentElement?.style.setProperty('--portrait-menu-reserve', '0px');
     document.documentElement?.style.setProperty('--portrait-menu-slots', '0');
@@ -1873,7 +1905,7 @@
     syncPortraitStageMode();
     if (!els.canvasWrap) return;
     syncPortraitMenuSpace();
-    // v4505: het gridvenster wordt gemaximeerd op de actuele fit-box
+    // v4511: het gridvenster wordt gemaximeerd op de actuele fit-box
     // van boom + assen. Het canvas schaalt dus niet groter dan nodig.
     const fit = box || parseViewBox();
     const validFit = fit && Number.isFinite(fit.w) && fit.w > 0 && Number.isFinite(fit.h) && fit.h > 0;
@@ -2370,7 +2402,7 @@
     return Array.from({ length: count }, (_, index) => ({
       id: `lex-insert-${index + 1}`,
       label: `LEX-insertie ${index + 1}`,
-      caption: lexInsertionContentDef().id === 'vandaag' ? 'extern bijwoord' : `extern/anafoor ${index + 1}`,
+      caption: lexInsertionContentCaption(lexInsertionContentDef()) || `extern ${index + 1}`,
       content: lexInsertionContentDef(),
       y: startY + index * 64,
       placement
@@ -2382,7 +2414,7 @@
     g.appendChild(svgEl('rect', { x: x - 118, y: slot.y - 30, width: 236, height: 60, rx: 17, class: 'lex-free-slot lex-config-free-slot lex-insertion-box' }));
     g.appendChild(svgEl('text', { x, y: slot.y - 38, class: 'slot-caption' }, slot.label));
     g.appendChild(svgEl('text', { x, y: slot.y - 4, class: 'lex-local-label' }, content.text || 'INSERTIEPUNT'));
-    g.appendChild(svgEl('text', { x, y: slot.y + 15, class: 'lex-free-slot-sub' }, content.sub || 'andere LEX-as / anafoor'));
+    g.appendChild(svgEl('text', { x, y: slot.y + 15, class: 'lex-free-slot-sub' }, lexInsertionContentSub(content) || 'andere LEX-as / anafoor')); 
   }
 
   function drawLexTopicSlot(g, x, y) {
@@ -2802,13 +2834,14 @@
   }
 
   function southModeWarningText() {
-    if ((state.southLogicalMode || 'SOV') !== 'OSV') return '';
-    return ` ${osvShortComment()}`;
+    const mode = state.southLogicalMode || 'SOV';
+    if (!SOUTH_LOGICAL_MOVEMENT_REQUIRED_MODES.has(mode)) return '';
+    return ` ${movementRequiredShortComment(mode)}`;
   }
 
   function logicalOrderCode(items) {
     const code = (items || []).map(item => item.short).join('');
-    return code === 'OSV' ? 'OSV-!' : code;
+    return SOUTH_LOGICAL_MOVEMENT_REQUIRED_MODES.has(code) ? `${code}-!` : code;
   }
 
   function layoutLogicalProjectionCenters(items, x1, x2, boxWidth = 148, gap = 18) {
@@ -2990,7 +3023,7 @@
       .map(id => functionalNodes.find(n => n.id === id)?.label || id)
       .join(' + ') || 'role-boxen';
     if (options.showTitle !== false) drawAxisTitle(g, origin.x - 180, origin.y - 70, `OPN · functionele structuur · ${rootLabel} → ${roleNames} · ${state.functionalOrder}`);
-    drawAxisTitle(g, origin.x - 176, origin.y - 48, `v4505 · ${branchModeLabel()} · vrije plaatsing + gereserveerde vrije slots`);
+    drawAxisTitle(g, origin.x - 176, origin.y - 48, `v4511 · ${branchModeLabel()} · vrije plaatsing + LEX-bijwoordslots`);
     const growthPlan = growthPlanForLayout(layout);
     layout.__growthPlan = growthPlan;
     drawSubtreeBoxes(g, layout, origin, growthPlan);
@@ -3038,7 +3071,7 @@
         order: southLogicalOrder(),
         items: southItems,
         interactive: true,
-        tipText: 'tip: SOV → SVO → OVS → OSV-! → VSO → VOS',
+        tipText: 'tip: SOV → SVO → OVS → OSV-! → VSO-! → VOS-!',
         badgeAlign: 'center'
       });
     } else if (showLexBaseStep) {
@@ -3055,7 +3088,7 @@
         order: southLogicalOrder(),
         items: southItems,
         interactive: true,
-        tipText: 'tip: SOV → SVO → OVS → OSV-! → VSO → VOS',
+        tipText: 'tip: SOV → SVO → OVS → OSV-! → VSO-! → VOS-!',
         badgeAlign: 'center'
       });
     } else {
@@ -3107,7 +3140,7 @@
     drawLogicalProjection(g, 310, 1120, 666, layout, {
       cls: 'log',
       title: 'FT-projectie · logische volgorde',
-      subtitle: 'Flip/layout in FT kan basisvolgorden tonen zoals SOV, SVO, OVS, VSO en VOS. OSV-! is geen basis-alternatief: de box-aanpak kan OSV niet opleveren; de LEX-as vraagt dan een verplaatsingsregel.'
+      subtitle: 'Flip/layout in FT kan basisvolgorden tonen zoals SOV en SVO. OSV-!, VSO-! en VOS-! zijn geen basis-alternatieven: de box-aanpak kan deze volgordes niet opleveren; de LEX-as vraagt dan een verplaatsingsregel.'
     });
     els.svg.appendChild(g);
   }
@@ -3310,7 +3343,7 @@
     const svgLocalRight = Math.min(hostRect.width, svgRect.right - hostRect.left);
     const svgLocalBottom = Math.min(hostRect.height, svgRect.bottom - hostRect.top);
 
-    // v4505: HTML controls are children of the canvas/boomvenster, but the SVG
+    // v4511: HTML controls are children of the canvas/boomvenster, but the SVG
     // itself uses preserveAspectRatio=meet.  Therefore placement is clamped to
     // the actually drawn grid rectangle, not to the full letterboxed canvas.
     // All overlay coordinates are therefore clamped to the canvas rect, not to
@@ -3543,19 +3576,19 @@
         : 'Faseversie: eerst structure-config, dan voorbeeldzinnen die naar die sources projecteren, dan lokale LEX-regel.');
     const validationMsg = state.exampleValidationMessages?.length ? ` · ${state.exampleValidationMessages[0]}` : '';
     const noticeMsg = state.example.notice ? ` · ${state.example.notice}` : '';
-    const osvMsg = (state.southLogicalMode || 'SOV') === 'OSV'
-      ? ` · ${osvLexMovementComment()}`
+    const osvMsg = SOUTH_LOGICAL_MOVEMENT_REQUIRED_MODES.has(state.southLogicalMode || 'SOV')
+      ? ` · ${movementRequiredModeComment(state.southLogicalMode || 'SOV')}`
       : '';
     els.actionFeedback.textContent = state.growthEnabled ? `${baseFeedback} · ${growthLabel()}${noticeMsg}${validationMsg}${osvMsg}` : `${baseFeedback}${noticeMsg}${validationMsg}${osvMsg}`;
     els.projectionHelp.textContent = helpText();
     els.explainHeading.textContent = `${isEnglish() ? 'Explanation' : 'Uitleg'} · ${activeSentenceText()}`;
     els.explainText.textContent = isEnglish()
       ? (state.example.id === 'hond-bijt-man'
-        ? 'LEX rule: first draw the horizontal base projection, then local exchanges to free slots. Main clause: first phrase to slot 1, finite verb to slot 2; traces remain at the old base position. FIT frames the view, not the tree. Central slot boxes have been removed; the first branch reserves empty free-slot space; exchanges are visible only on the LEX axis. The order button cycles the LOG order: SOV, SVO, OVS, OSV-!, VSO, VOS. SOV/SVO/OVS/VSO/VOS are layout variants. OSV-! is marked because box layout cannot produce OSV; a movement rule is required to render the LEX axis correctly.'
-        : 'LEX rule: move only to free slots 0/1/2. Non-moved words remain at their horizontal base position. Traces stay locally at the old position. In LOG/FT, the south projection can show SOV, SVO, OVS, OSV-!, VSO or VOS. OSV-! is marked: box layout cannot produce OSV; the LEX axis needs a movement rule.')
+        ? 'LEX rule: first draw the horizontal base projection, then local exchanges to free slots. Main clause: first phrase to slot 1, finite verb to slot 2; traces remain at the old base position. FIT frames the view, not the tree. Central slot boxes have been removed; the first branch reserves empty free-slot space; exchanges are visible only on the LEX axis. The order button cycles the LOG order: SOV, SVO, OVS, OSV-!, VSO-!, VOS-!. SOV/SVO/OVS are layout variants. OSV-!, VSO-! and VOS-! are marked because box layout cannot produce these orders; a movement rule is required to render the LEX axis correctly.'
+        : 'LEX rule: move only to free slots 0/1/2. Non-moved words remain at their horizontal base position. Traces stay locally at the old position. In LOG/FT, the south projection can show SOV, SVO, OVS, OSV-!, VSO-! or VOS-!. OSV-!, VSO-! and VOS-! are marked: box layout cannot produce these orders; the LEX axis needs a movement rule.')
       : (state.example.id === 'hond-bijt-man'
-        ? 'LEX-regel: eerst horizontale basisprojectie, daarna lokale Wissels naar vrije slots. Hoofdzin: eerste zinsdeel → slot 1, persoonsvorm → slot 2; traces blijven op de oude basisplek. FIT kadert alleen het zicht, niet de boom. Centrale slotboxen zijn verwijderd; de eerste tak reserveert lege vrije-slotruimte; wissels zie je alleen op de LEX-as. De volgordeknop doorloopt de LOG-volgorde: SOV, SVO, OVS, OSV-!, VSO, VOS. SOV/SVO/OVS/VSO/VOS zijn layoutvarianten. OSV-! is gemarkeerd: de box-aanpak kan nooit OSV opleveren; voor correcte LEX-rendering is een verplaatsingsregel nodig. Menu’s boven het grid zijn expliciet gekozen: maximaal vier, bijvoorbeeld Voorbeeldzin en Play/Groei.'
-        : 'LEX-regel: verplaats alleen naar vrije slots 0/1/2. Niet-verplaatste woorden blijven op hun horizontale basisplek. Traces staan lokaal op de oude plek. In LOG/FT kan de onderprojectie SOV, SVO, OVS, OSV-!, VSO of VOS tonen. OSV-! is gemarkeerd: de box-aanpak kan OSV niet opleveren; de LEX-as vraagt een verplaatsingsregel.');
+        ? 'LEX-regel: eerst horizontale basisprojectie, daarna lokale Wissels naar vrije slots. Hoofdzin: eerste zinsdeel → slot 1, persoonsvorm → slot 2; traces blijven op de oude basisplek. FIT kadert alleen het zicht, niet de boom. Centrale slotboxen zijn verwijderd; de eerste tak reserveert lege vrije-slotruimte; wissels zie je alleen op de LEX-as. De volgordeknop doorloopt de LOG-volgorde: SOV, SVO, OVS, OSV-!, VSO-!, VOS-!. SOV/SVO/OVS zijn layoutvarianten. OSV-!, VSO-! en VOS-! zijn gemarkeerd: de box-aanpak kan deze volgordes niet opleveren; voor correcte LEX-rendering is een verplaatsingsregel nodig. Menu’s boven het grid zijn expliciet gekozen: maximaal vier, bijvoorbeeld Voorbeeldzin en Play/Groei.'
+        : 'LEX-regel: verplaats alleen naar vrije slots 0/1/2. Niet-verplaatste woorden blijven op hun horizontale basisplek. Traces staan lokaal op de oude plek. In LOG/FT kan de onderprojectie SOV, SVO, OVS, OSV-!, VSO-! of VOS-! tonen. OSV-!, VSO-! en VOS-! zijn gemarkeerd: de box-aanpak kan deze volgordes niet opleveren; de LEX-as vraagt een verplaatsingsregel.');
   }
 
   function projectionLabel() {
@@ -3570,13 +3603,13 @@
       if (state.projection === 'source') return 'Source: OPN syntax and OPN functional structures are read from structure-config.html. Both use the same left/right layout strategy and reserve configurable empty free-slot space under the root.';
       if (state.projection === 'lex') return 'LEX: placement rules per sentence type. Main clause: first phrase to slot 1, finite verb to slot 2. The central tree keeps empty space; the filled positions are shown on the LEX axis.';
       if (state.projection === 'synt') return 'SYNTAX projection: rules are placed at tree-node height; the LOGICAL projection from FT/LOG is also shown below the tree.';
-      if (state.projection === 'log') return 'LOG/FT: functional view = CLAUSE with separate PRED node and ARG-STRUCT subtree; the lower FT projection shows logical order, for example SOV/SVO/OVS/OSV-!/VSO/VOS.';
+      if (state.projection === 'log') return 'LOG/FT: functional view = CLAUSE with separate PRED node and ARG-STRUCT subtree; the lower FT projection shows logical order, for example SOV/SVO/OVS/OSV-!/VSO-!/VOS-!.';
       return 'All: central OPN tree; west axis = LEX next to the tree; south axis = LOGICAL projection. The grid window is fitted to tree + axes; canvas panning is off.';
     }
     if (state.projection === 'source') return 'Bron: OPN-syntax en OPN-functioneel worden gelezen uit structure-config.html. Beide gebruiken dezelfde left/right layoutstrategie en reserveren configureerbare lege vrije-slotruimte onder de wortel.';
     if (state.projection === 'lex') return 'LEX: plaatsingsregels per zinstype. Hoofdzin: eerste zinsdeel naar slot 1, persoonsvorm naar slot 2. De ruimte in de centrale boom is leeg; de vulling staat op de LEX-as.';
     if (state.projection === 'synt') return 'SYNTAX-projectie: regels staan op boomhoogte; onder de boom staat nu ook de LOGICAL-projectie uit FT/LOG.';
-    if (state.projection === 'log') return 'LOG/FT: functioneel = CLAUSE met aparte PRED-knoop en ARG-STRUCT-subtree; onderaan toont de FT-projectie de logische volgorde (bijv. SOV/SVO/OVS/OSV-!/VSO/VOS).';
+    if (state.projection === 'log') return 'LOG/FT: functioneel = CLAUSE met aparte PRED-knoop en ARG-STRUCT-subtree; onderaan toont de FT-projectie de logische volgorde (bijv. SOV/SVO/OVS/OSV-!/VSO-!/VOS-!).';
     return 'Assen: centrale OPN-boom; west-as = LEX direct naast de boom; zuid-as = LOGICAL-projectie. Het grid staat standaard bovenaan; in portrait staat het rechter menu naast het grid. Sleep de duidelijke grens of kies de zichtbare instelling Rechterkolom bovenaan om grid/menu te verdelen. Het gridvenster past op boom + assen; canvas-panning staat uit.';
   }
 
@@ -3623,8 +3656,8 @@
     mobileLexFreeSlotCountSelect: { 0: 'LEX slots: 0', 1: 'LEX slots: 1', 2: 'LEX slots: 2', 3: 'LEX slots: 3', 4: 'LEX slots: 4', 5: 'LEX slots: 5', 6: 'LEX slots: 6', 7: 'LEX slots: 7', 8: 'LEX slots: 8' },
     lexFreeSlotPlacementSelect: { 'after-lex': 'below LEX words', 'after-system': 'after slot 0/1/2', 'above-system': 'above slot 0', 'after-surface-1': 'between position 1/2', 'after-surface-2': 'between position 2/3', 'after-surface-3': 'between position 3/4' },
     mobileLexFreeSlotPlacementSelect: { 'after-lex': 'below LEX words', 'after-system': 'after slot 0/1/2', 'above-system': 'above slot 0', 'after-surface-1': 'between position 1/2', 'after-surface-2': 'between position 2/3', 'after-surface-3': 'between position 3/4' },
-    lexInsertionContentSelect: { empty: 'empty slot', vandaag: 'VANDAAG', anafoor: 'anaphor', 'other-lex-axis': 'other LEX axis' },
-    mobileLexInsertionContentSelect: { empty: 'empty slot', vandaag: 'VANDAAG', anafoor: 'anaphor', 'other-lex-axis': 'other LEX axis' },
+    lexInsertionContentSelect: { empty: 'empty slot', gisteren: 'GISTEREN', morgen: 'MORGEN', vaak: 'VAAK', soms: 'SOMS', altijd: 'ALTIJD', niet: 'NIET', snel: 'SNEL', hard: 'HARD', zachtjes: 'ZACHTJES', misschien: 'MISSCHIEN', waarschijnlijk: 'WAARSCHIJNLIJK', helaas: 'HELAAS', alleen: 'ALLEEN', ook: 'OOK', zelfs: 'ZELFS', heel: 'HEEL', erg: 'ERG', zeer: 'ZEER', anafoor: 'anaphor', 'other-lex-axis': 'other LEX axis' },
+    mobileLexInsertionContentSelect: { empty: 'empty slot', gisteren: 'GISTEREN', morgen: 'MORGEN', vaak: 'VAAK', soms: 'SOMS', altijd: 'ALTIJD', niet: 'NIET', snel: 'SNEL', hard: 'HARD', zachtjes: 'ZACHTJES', misschien: 'MISSCHIEN', waarschijnlijk: 'WAARSCHIJNLIJK', helaas: 'HELAAS', alleen: 'ALLEEN', ook: 'OOK', zelfs: 'ZELFS', heel: 'HEEL', erg: 'ERG', zeer: 'ZEER', anafoor: 'anaphor', 'other-lex-axis': 'other LEX axis' },
     portraitMenuSlotsSelect: { 0: 'bottom space: 0 menus', 1: 'bottom space: 1 menu', 2: 'bottom space: 2 menus' },
     mobilePortraitMenuSlotsSelect: { 0: 'bottom space: 0 menus', 1: 'bottom space: 1 menu', 2: 'bottom space: 2 menus' },
     lexRuleSelect: { hoofdzininvariant: 'main clause V2: subject/topic - finite verb/predicate - object - exchange', 'bijzin-omdat': 'subordinate clause: Comp/(om)dat + subject + object + predicate - no V2', 'perfectum-heeft-vdw': 'perfect V2: subject/topic - finite verb - object - participle - exchange' }
@@ -3639,7 +3672,7 @@
   };
 
   const LEX_EXTENSION_LABELS_EN = {
-    'vp-boundary': ['VP boundary V <-> object', 'Default for VANDAAG: insertion between verb and object lengthens the VP zone/boundary without adding VANDAAG as a tree node.'],
+    'vp-boundary': ['VP boundary V <-> object', 'Insertion between verb and object lengthens the VP zone/boundary without adding the insertion as a tree node.'],
     's-boundary': ['S boundary subject <-> VP', 'Lengthens the boundary between subject and VP. Useful when the insertion lies between phrase zones.'],
     'object-branch': ['branch to object / NP obj / patient', 'Lengthens the object branch; useful when insertion is directly before the object.'],
     'verb-branch': ['branch to verb / V / pred', 'Lengthens the verb/predicate branch; useful when insertion attaches close to the verb cluster.'],
@@ -3716,7 +3749,7 @@
     fillSelect(els.lexInsertionContentSelect, LEX_INSERTION_CONTENTS, validLexInsertionContent());
     fillSelect(els.mobileLexInsertionContentSelect, LEX_INSERTION_CONTENTS, validLexInsertionContent());
     [els.lexFreeSlotPlacementSelect, els.mobileLexFreeSlotPlacementSelect].forEach(select => { if (select) select.title = lexSlotPlacementTip(); });
-    [els.lexInsertionContentSelect, els.mobileLexInsertionContentSelect].forEach(select => { if (select) select.title = lexInsertionContentDef().tip; });
+    [els.lexInsertionContentSelect, els.mobileLexInsertionContentSelect].forEach(select => { if (select) select.title = lexInsertionContentTip(); });
     renderLexInsertionTargetControls();
     renderTopMenuChoiceControls();
     syncPortraitMenuSpace();
@@ -3765,8 +3798,8 @@
     if (els.mainGrowthStepLabel) els.mainGrowthStepLabel.textContent = growthLabel();
     if (els.mainSouthModeButton) {
       els.mainSouthModeButton.textContent = southLogicalModeLabel(state.southLogicalMode || 'SOV');
-      els.mainSouthModeButton.title = (state.southLogicalMode || 'SOV') === 'OSV'
-        ? osvLexMovementComment()
+      els.mainSouthModeButton.title = SOUTH_LOGICAL_MOVEMENT_REQUIRED_MODES.has(state.southLogicalMode || 'SOV')
+        ? movementRequiredModeComment(state.southLogicalMode || 'SOV')
         : (isEnglish() ? `Next LOG order: ${southLogicalModeListLabel()}` : `Volgende LOG-volgorde: ${southLogicalModeListLabel()}`);
     }
     if (els.mainSouthPrevButton) els.mainSouthPrevButton.title = isEnglish() ? 'Previous LOG order' : 'Vorige LOG-volgorde';
@@ -4274,6 +4307,10 @@
     document.querySelectorAll(selector).forEach(node => { node.textContent = text; });
   }
 
+  function setHtml(selector, html) {
+    document.querySelectorAll(selector).forEach(node => { node.innerHTML = html; });
+  }
+
   function setTitle(selector, text) {
     document.querySelectorAll(selector).forEach(node => { node.title = text; });
   }
@@ -4328,9 +4365,11 @@
     setLabelSpan('viewFitSelect', en ? 'Main window' : 'Hoofdvenster');
     setLabelSpan('mainViewFitSelectTop', en ? 'Main window' : 'Hoofdvenster');
     setLabelSpan('freeSlotCountSelect', en ? 'Free tree rows' : 'Boom vrije rijen');
-    setLabelSpan('lexFreeSlotCountSelect', en ? 'LEX free slots' : 'LEX vrije slots');
-    setLabelSpan('lexFreeSlotPlacementSelect', en ? 'LEX slot position' : 'LEX slotpositie');
-    setLabelSpan('lexInsertionContentSelect', en ? 'LEX insertion' : 'LEX insertie');
+    setLabelSpan('lexFreeSlotCountSelect', en ? 'Number of slots' : 'Aantal slots');
+    setLabelSpan('lexFreeSlotPlacementSelect', en ? 'Slot position' : 'Slotpositie');
+    setLabelSpan('lexInsertionContentSelect', en ? 'Adverb / content' : 'Bijwoord / inhoud');
+    document.querySelectorAll('.lex-adverb-insert-field legend').forEach(node => { node.textContent = en ? 'Adverb / LEX insert on LEX axis' : 'Bijwoord / LEX-insert op LEX-as'; });
+    document.querySelectorAll('.lex-adverb-insert-field .top-menu-choice-help').forEach(node => { node.textContent = en ? 'Choose the external LEX insert for free slots, for example GISTEREN, VAAK, NIET, SNEL or MISSCHIEN. This does not change the central tree.' : 'Kies hier de externe LEX-insert voor vrije slots, bijvoorbeeld GISTEREN, VAAK, NIET, SNEL of MISSCHIEN. Dit verandert de centrale boom niet.'; });
     setLabelSpan('lexRuleSelect', en ? 'Utterance-type rule' : 'Uitingtype-regel');
 
     document.querySelectorAll('.lex-extension-field legend').forEach(node => { node.textContent = en ? 'Branch extension by insertion' : (node.closest('.mobile-sheet') ? 'Takverlenging' : 'Takverlenging door insertie'); });
@@ -4412,10 +4451,18 @@
     setText('[data-help-recursion-text]', en
       ? 'Recursion is the technical drawing method: the viewer builds the layout bottom-up, from leaves to category nodes, subtrees and boxes. This is separate from the didactic step called tree first.'
       : 'Recursie is hier de technische tekenmethode: de viewer bouwt de layout bottom-up, van bladeren naar categorieknopen, subtrees en boxen. Dat is iets anders dan de didactische stap boom eerst.');
+    setText('[data-help-adverb-title]', en ? 'Adverb inserts on the LEX axis' : 'Bijwoord-inserts op de LEX-as');
+    setHtml('[data-help-adverb-text]', en
+      ? '<strong>Adverb placement differs by scope.</strong> Time and frequency words such as GISTEREN, MORGEN, VAAK, SOMS and ALTIJD use between-box or VP slots; NIET uses a V-near/NEG slot; SNEL, HARD and ZACHTJES stay near V; MISSCHIEN, WAARSCHIJNLIJK and HELAAS use higher S/VP slots; ALLEEN, OOK and ZELFS are focus slots; HEEL, ERG and ZEER are AP/AdvP-internal.'
+      : '<strong>Bijwoordplaatsing verschilt per scope.</strong> Tijd/frequentie zoals GISTEREN, MORGEN, VAAK, SOMS en ALTIJD gebruikt tussenbox- of VP-slots; NIET gebruikt een V-nabij/NEG-slot; SNEL, HARD en ZACHTJES blijven V-nabij; MISSCHIEN, WAARSCHIJNLIJK en HELAAS gebruiken hoge S/VP-slots; ALLEEN, OOK en ZELFS zijn focus-slots; HEEL, ERG en ZEER zijn AP/AdvP-intern.');
+    setText('[data-help-render-title]', en ? 'Render explanation' : 'Render-uitleg');
+    setHtml('[data-help-render-text]', en
+      ? '<strong>Rendering</strong> means: first compute the central tree and boxes, then draw projections and the LEX axis. Free LEX inserts are placed in reserved slots; the central tree remains unchanged. OSV-!, VSO-! and VOS-! are not base trees: the box approach cannot produce these orders; the LEX axis then requires a movement rule.'
+      : '<strong>Renderen</strong> betekent: eerst de centrale boom en boxen berekenen, daarna projecties en LEX-as tekenen. Vrije LEX-inserts worden op gereserveerde slots geplaatst; de centrale boom blijft daarbij ongewijzigd. OSV-!, VSO-! en VOS-! zijn geen basisbomen: de box-aanpak kan deze volgordes niet opleveren; de LEX-as vraagt dan een verplaatsingsregel.');
     document.querySelectorAll('.help-fallback').forEach(node => {
       node.innerHTML = en
-        ? 'If the carrousel does not appear: <a href="carrousel/index-en.html?v4505" target="_blank" rel="noopener">open the carrousel separately</a>.'
-        : 'Als de carrousel niet verschijnt: <a href="carrousel/index.html?v4505" target="_blank" rel="noopener">open de carrousel los</a>.';
+        ? 'If the carrousel does not appear: <a href="carrousel/index-en.html?v4511" target="_blank" rel="noopener">open the carrousel separately</a>.'
+        : 'Als de carrousel niet verschijnt: <a href="carrousel/index.html?v4511" target="_blank" rel="noopener">open de carrousel los</a>.';
     });
     if (els.helpCarrouselFrame) {
       const wanted = en ? `carrousel/index-en.html?${VERSION}` : `carrousel/index.html?${VERSION}`;
@@ -4432,7 +4479,7 @@
     setText('#mainResetButton, #growthResetButton, #mobileGrowthResetButton', en ? 'Reset' : 'Reset');
     if (els.mainGrowthPlayButton) els.mainGrowthPlayButton.textContent = state.growthTimer ? (en ? 'Pause' : 'Pauze') : 'Play';
 
-    document.querySelectorAll('a[href="docs/OpenGraph_Lite_Viewer_EN_v4505.pdf"]').forEach(a => {
+    document.querySelectorAll('a[href="docs/OpenGraph_Lite_Viewer_EN_v4506.pdf"]').forEach(a => {
       a.textContent = en ? 'English PDF' : 'English PDF';
       a.title = en ? 'Open English PDF documentation' : 'Open Engelstalige PDF-documentatie';
     });

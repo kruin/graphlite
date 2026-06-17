@@ -82,3 +82,8 @@ resultaat = voorbeeldzin
 ```
 
 Beschreven zinstypen: hoofdzin, bijzin met OMDAT, topicalisatie, perfectum en voorlopige vraagzin.
+
+
+## v4506 - Bijwoorden op de LEX-as
+
+Bijwoord-inserts worden niet automatisch centrale boomknopen. De LEX-as reserveert plaats tussen boxen; bij verticale overlap wordt het slot op de overlap geplaatst. De uiteindelijke plaatsing hangt af van scope: tijd/frequentie in VP-slots, negatie in een NEG/V-nabij slot, wijze V-nabij, zinsbijwoorden hoog S/VP, focus phrase-intern/focus, graad AP/AdvP-intern.

@@ -361,3 +361,33 @@ OSV-! is deliberately marked with an exclamation mark. The box approach can neve
 
 To render the visible LEX axis correctly, an explicit movement rule is always required. OSV-! is not a base layout or linguistic alternative; it is a warning/test label for an impossible box variant. The other orders and existing flips remain untouched.
 
+
+
+## v4506 - LEX-bijwoordslots
+
+Vrije LEX-inserts voor bijwoorden zijn nu gedocumenteerd als slottypen met verschillende scope. De basisregel blijft: reserveer slots tussen zichtbare LEX-boxen en plaats het slot op verticale overlap als die bestaat. Daarna bepaalt het bijwoordtype de exacte plaatsing.
+
+- Tijd: `GISTEREN`, `MORGEN` - meestal `VP-BETWEEN`, eventueel `S-LEFT` bij vooropplaatsing.
+- Frequentie: `VAAK`, `SOMS`, `ALTIJD` - `VP-BETWEEN`.
+- Negatie: `NIET` - apart `NEG`/`V-NEAR` slot.
+- Wijze: `SNEL`, `HARD`, `ZACHTJES` - `V-NEAR` of `VP-RIGHT`.
+- Zinsbijwoord: `MISSCHIEN`, `WAARSCHIJNLIJK`, `HELAAS` - hoog `S/VP` of `S-LEFT`.
+- Focus: `ALLEEN`, `OOK`, `ZELFS` - bij de gefocuste phrase.
+- Graad: `HEEL`, `ERG`, `ZEER` - intern in `AP/AdvP/NP`, dus geen algemeen tussenbox-slot.
+
+De centrale boom wordt niet herschreven. Bijwoorden horen in deze fase in de LEX-renderlaag of in phrase-interne slots.
+
+Zie ook: `docs/LEX_ADVERB_INSERT_SLOTS.md`.
+
+## v4511 - Oude tijdsinsertingtest verwijderd
+
+De eerdere vaste tijdsinsertingtest is uit de standaardconfiguratie gehaald. Vrije LEX-slots staan standaard uit (`LEX-slots: 0`) en de insertinhoud staat standaard op `slot leeg`. De overige bijwoordcategorieën en plaatsingsregels blijven beschikbaar via Config → Projectie-instellingen → Bijwoord / LEX-insert op LEX-as.
+
+## v4511 - Config leesbaar en LEX-bijwoordkeuze zichtbaar
+
+De bijwoord/LEX-insertinstelling is uit de compacte boomweergavegrid gehaald en staat nu in een eigen blok. Daarmee is zichtbaar waar GISTEREN, VAAK, NIET, SNEL, MISSCHIEN enz. gekozen worden. De centrale boom blijft ongewijzigd; de keuze vult alleen vrije slots op de LEX-as.
+
+## v4511 - VSO-! and VOS-! labels
+
+VSO and VOS are now marked in the same way as OSV: `VSO-!` and `VOS-!`. The label means that the box approach cannot produce this order as a base alternative. Correct LEX rendering requires an explicit movement rule. Existing trees and existing flip behaviour remain untouched.
+

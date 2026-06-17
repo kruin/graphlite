@@ -591,3 +591,14 @@ Het hoofdbeeld is opnieuw ontworpen als grid-only view: boven het grid staan all
 - Het oude blok “Redesign - boom eerst” is uit Config gehaald en verplaatst naar Help/documentatie.
 - Help/documentatie maakt nu expliciet onderscheid tussen **boom eerst** als didactisch/notatieprincipe en **recursie-techniek** als bottom-up tekenmethode.
 - Menu’s boven grid is weer zichtbaar in Config, inclusief **Hoofdvenster**, zodat hoofdvenster-fit en boomruimte boven Main kunnen verschijnen.
+
+
+## v4511 · OVT in het lexicon
+
+Toegevoegd:
+
+- `BEET` = OVT/onvoltooid verleden tijd van `BIJT` / `BIJTEN`
+- `BREIDE` = OVT/onvoltooid verleden tijd van `BREIT` / `BREIEN`
+- `GEBETEN` en `GEBREID` blijven de VDW-vormen.
+
+De OVT-vormen zijn geen nieuw structureel boomtype. Ze vullen dezelfde predicate/PV-bron op de LEX-as.

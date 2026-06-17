@@ -3872,3 +3872,87 @@ body.config-screen-active .top-menu-choice-field:not(.lex-extension-field) label
   line-height: 1.45;
   font-size: .9rem;
 }
+
+.help-doc-card .help-doc-link { margin-top: .45rem; }
+.help-doc-card .help-doc-link a { font-weight: 800; color: var(--accent); text-decoration: none; }
+.help-doc-card .help-doc-link a:hover { text-decoration: underline; }
+
+/* v4511 config: maak LEX-bijwoordinsert zichtbaar en voorkom overlap in Config. */
+body.config-screen-active .config-topbar {
+  position: sticky !important;
+  top: .5rem !important;
+  z-index: 40 !important;
+}
+body.config-screen-active .view-config-grid,
+body.config-screen-active .branch-config-grid {
+  grid-template-columns: 1fr !important;
+  max-width: 100% !important;
+  overflow: visible !important;
+}
+.lex-adverb-insert-field {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: .45rem;
+  margin: .25rem 0;
+  padding: .75rem;
+  border: 1px solid color-mix(in srgb, var(--accent), var(--line) 65%);
+  border-radius: .85rem;
+  background: color-mix(in srgb, var(--panel), var(--accent) 7%);
+}
+.lex-adverb-insert-field legend {
+  padding: 0 .35rem;
+  font-weight: 950;
+  color: var(--text);
+}
+.lex-adverb-insert-field .field {
+  grid-template-columns: minmax(9.5rem, 13rem) minmax(0, 1fr) !important;
+  align-items: center;
+}
+.lex-adverb-insert-field .field span,
+body.config-screen-active .view-config-grid .field span,
+body.config-screen-active .branch-config-grid .field span {
+  white-space: normal !important;
+  min-width: 0 !important;
+}
+body.config-screen-active .view-config-grid .field,
+body.config-screen-active .branch-config-grid .field {
+  grid-template-columns: minmax(9.5rem, 13rem) minmax(0, 1fr) !important;
+  min-width: 0 !important;
+}
+body.config-screen-active .view-config-grid select,
+body.config-screen-active .branch-config-grid select,
+body.config-screen-active .lex-adverb-insert-field select {
+  min-width: 0 !important;
+  width: 100% !important;
+}
+@media (max-width: 900px) {
+  body.config-screen-active .view-config-grid .field,
+  body.config-screen-active .branch-config-grid .field,
+  body.config-screen-active .lex-adverb-insert-field .field {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* v4511: Uitleg hoort niet in Config. Config blijft puur instellingen; uitleg staat in Help/docs. */
+body.config-screen-active .text-panel {
+  display: none !important;
+}
+body.config-screen-active .side-panel {
+  align-items: start !important;
+}
+.help-doc-card {
+  border: 1px solid var(--line);
+  border-radius: .9rem;
+  padding: .7rem .8rem;
+  background: color-mix(in srgb, var(--panel), var(--bg) 25%);
+}
+.help-doc-card h3 {
+  margin: 0 0 .35rem;
+  font-size: 1rem;
+}
+.help-doc-card p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.45;
+}
