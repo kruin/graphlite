@@ -593,7 +593,7 @@ Het hoofdbeeld is opnieuw ontworpen als grid-only view: boven het grid staan all
 - Menu’s boven grid is weer zichtbaar in Config, inclusief **Hoofdvenster**, zodat hoofdvenster-fit en boomruimte boven Main kunnen verschijnen.
 
 
-## v4511 · OVT in het lexicon
+## v4512 · OVT in het lexicon
 
 Toegevoegd:
 
@@ -602,3 +602,16 @@ Toegevoegd:
 - `GEBETEN` en `GEBREID` blijven de VDW-vormen.
 
 De OVT-vormen zijn geen nieuw structureel boomtype. Ze vullen dezelfde predicate/PV-bron op de LEX-as.
+
+
+## v4512 - Carrousel editor in Config
+
+- Config bevat nu een apart blok **Carrousel** met `Open` en `Edit`.
+- `Edit` opent `carrousel/editor.html`.
+- De editor kan afbeeldingen toevoegen, verwijderen, vervangen, dupliceren, de volgorde wijzigen en Nederlandse/Engelse toelichting aanpassen.
+- Exportmogelijkheden:
+  - `slides.json`
+  - zelfstandige `index.html`
+  - complete modulezip `OpenGraph_Carrousel_Module_v4512_edited.zip`
+- De geëxporteerde modulezip bevat een volledige `carrousel/`-map die later in de projectzip kan worden opgenomen.
+- Engelse knoppen/tooltips en Engelstalige toelichting zijn mee bijgewerkt.

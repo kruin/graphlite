@@ -379,15 +379,28 @@ De centrale boom wordt niet herschreven. Bijwoorden horen in deze fase in de LEX
 
 Zie ook: `docs/LEX_ADVERB_INSERT_SLOTS.md`.
 
-## v4511 - Oude tijdsinsertingtest verwijderd
+## v4512 - Oude tijdsinsertingtest verwijderd
 
 De eerdere vaste tijdsinsertingtest is uit de standaardconfiguratie gehaald. Vrije LEX-slots staan standaard uit (`LEX-slots: 0`) en de insertinhoud staat standaard op `slot leeg`. De overige bijwoordcategorieën en plaatsingsregels blijven beschikbaar via Config → Projectie-instellingen → Bijwoord / LEX-insert op LEX-as.
 
-## v4511 - Config leesbaar en LEX-bijwoordkeuze zichtbaar
+## v4512 - Config leesbaar en LEX-bijwoordkeuze zichtbaar
 
 De bijwoord/LEX-insertinstelling is uit de compacte boomweergavegrid gehaald en staat nu in een eigen blok. Daarmee is zichtbaar waar GISTEREN, VAAK, NIET, SNEL, MISSCHIEN enz. gekozen worden. De centrale boom blijft ongewijzigd; de keuze vult alleen vrije slots op de LEX-as.
 
-## v4511 - VSO-! and VOS-! labels
+## v4512 - VSO-! and VOS-! labels
 
 VSO and VOS are now marked in the same way as OSV: `VSO-!` and `VOS-!`. The label means that the box approach cannot produce this order as a base alternative. Correct LEX rendering requires an explicit movement rule. Existing trees and existing flip behaviour remain untouched.
 
+
+
+## v4512 - Carrousel editor in Config
+
+- Config bevat nu een apart blok **Carrousel** met `Open` en `Edit`.
+- `Edit` opent `carrousel/editor.html`.
+- De editor kan afbeeldingen toevoegen, verwijderen, vervangen, dupliceren, de volgorde wijzigen en Nederlandse/Engelse toelichting aanpassen.
+- Exportmogelijkheden:
+  - `slides.json`
+  - zelfstandige `index.html`
+  - complete modulezip `OpenGraph_Carrousel_Module_v4512_edited.zip`
+- De geëxporteerde modulezip bevat een volledige `carrousel/`-map die later in de projectzip kan worden opgenomen.
+- Engelse knoppen/tooltips en Engelstalige toelichting zijn mee bijgewerkt.

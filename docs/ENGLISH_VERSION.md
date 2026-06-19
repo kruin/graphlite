@@ -76,11 +76,24 @@ The central tree is not rewritten. In this phase, adverbs belong to the LEX rend
 See also: `docs/LEX_ADVERB_INSERT_SLOTS_EN.md`.
 
 
-## v4511 translation note
+## v4512 translation note
 
 The Dutch linguistic test material remains Dutch. The lexicon now also records OVT/imperfect forms: `BEET` for `BIJT/BIJTEN` and `BREIDE` for `BREIT/BREIEN`; the VDW participles remain `GEBETEN` and `GEBREID`.
 
-## v4511 - OSV-!, VSO-! and VOS-!
+## v4512 - OSV-!, VSO-! and VOS-!
 
 `VSO` and `VOS` are now marked like `OSV`: `VSO-!` and `VOS-!`. The exclamation mark means that the box approach cannot produce the order as a base alternative. Correct rendering on the LEX axis requires an explicit movement rule. Existing trees and existing flip behaviour remain unchanged.
 
+
+
+## v4512 - Carrousel editor in Config
+
+- Config bevat nu een apart blok **Carrousel** met `Open` en `Edit`.
+- `Edit` opent `carrousel/editor.html`.
+- De editor kan afbeeldingen toevoegen, verwijderen, vervangen, dupliceren, de volgorde wijzigen en Nederlandse/Engelse toelichting aanpassen.
+- Exportmogelijkheden:
+  - `slides.json`
+  - zelfstandige `index.html`
+  - complete modulezip `OpenGraph_Carrousel_Module_v4512_edited.zip`
+- De geëxporteerde modulezip bevat een volledige `carrousel/`-map die later in de projectzip kan worden opgenomen.
+- Engelse knoppen/tooltips en Engelstalige toelichting zijn mee bijgewerkt.

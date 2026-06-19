@@ -144,7 +144,7 @@ Voor de viewer/config:
 
 OSV-! bevestigt dezelfde scheiding. De box-aanpak kan geen OSV als basisboom opleveren. Als de LEX-as een andere oppervlakteschikking nodig heeft, moet een LEX-verplaatsingsregel werken. Bijwoorden en OSV-! horen dus in de LEX-renderlaag, niet als basisalternatief van de centrale boom.
 
-## v4511 - OSV-!, VSO-! en VOS-!
+## v4512 - OSV-!, VSO-! en VOS-!
 
 `VSO` en `VOS` worden nu net als `OSV` gemarkeerd: `VSO-!` en `VOS-!`. Het uitroepteken betekent dat de box-aanpak deze volgorde niet als basisalternatief kan opleveren. Correcte LEX-rendering vraagt een expliciete verplaatsingsregel. Bestaande bomen en bestaande flips blijven ongemoeid.
 

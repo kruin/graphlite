@@ -64,7 +64,7 @@ slot = box boundary + vertical overlap + adverb scope
 
 OSV-! confirms the same separation. The box approach cannot produce OSV as a base tree. If the LEX axis needs another surface ordering, a LEX movement rule must apply. Adverbs and OSV-! therefore belong to the LEX render layer, not to a base alternative of the central tree.
 
-## v4511 - OSV-!, VSO-! and VOS-!
+## v4512 - OSV-!, VSO-! and VOS-!
 
 `VSO` and `VOS` are now marked like `OSV`: `VSO-!` and `VOS-!`. The exclamation mark means that the box approach cannot produce the order as a base alternative. Correct rendering on the LEX axis requires an explicit movement rule. Existing trees and existing flip behaviour remain unchanged.
 

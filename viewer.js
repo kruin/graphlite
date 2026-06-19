@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'v4511';
+  const VERSION = 'v4512';
   const BASE_CELL = 74;
   const ROOT_SIDE_GAP = 1;
   const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -1667,7 +1667,7 @@
   }
 
   function isPortraitMobileViewport() {
-    // v4511: grid-first and fit-height are no longer mobile-only.
+    // v4512: grid-first and fit-height are no longer mobile-only.
     // The canvas height is based on the actual viewBox on every platform.
     return true;
   }
@@ -1681,7 +1681,7 @@
   }
 
   function syncPortraitMenuSpace() {
-    // v4511: de oude numerieke onderruimte blijft op 0. De relevante instelling
+    // v4512: de oude numerieke onderruimte blijft op 0. De relevante instelling
     // is nu: welke benoemde menu's mogen boven het grid staan.
     document.documentElement?.style.setProperty('--portrait-menu-reserve', '0px');
     document.documentElement?.style.setProperty('--portrait-menu-slots', '0');
@@ -1905,7 +1905,7 @@
     syncPortraitStageMode();
     if (!els.canvasWrap) return;
     syncPortraitMenuSpace();
-    // v4511: het gridvenster wordt gemaximeerd op de actuele fit-box
+    // v4512: het gridvenster wordt gemaximeerd op de actuele fit-box
     // van boom + assen. Het canvas schaalt dus niet groter dan nodig.
     const fit = box || parseViewBox();
     const validFit = fit && Number.isFinite(fit.w) && fit.w > 0 && Number.isFinite(fit.h) && fit.h > 0;
@@ -3023,7 +3023,7 @@
       .map(id => functionalNodes.find(n => n.id === id)?.label || id)
       .join(' + ') || 'role-boxen';
     if (options.showTitle !== false) drawAxisTitle(g, origin.x - 180, origin.y - 70, `OPN · functionele structuur · ${rootLabel} → ${roleNames} · ${state.functionalOrder}`);
-    drawAxisTitle(g, origin.x - 176, origin.y - 48, `v4511 · ${branchModeLabel()} · vrije plaatsing + LEX-bijwoordslots`);
+    drawAxisTitle(g, origin.x - 176, origin.y - 48, `v4512 · ${branchModeLabel()} · vrije plaatsing + LEX-bijwoordslots`);
     const growthPlan = growthPlanForLayout(layout);
     layout.__growthPlan = growthPlan;
     drawSubtreeBoxes(g, layout, origin, growthPlan);
@@ -3343,7 +3343,7 @@
     const svgLocalRight = Math.min(hostRect.width, svgRect.right - hostRect.left);
     const svgLocalBottom = Math.min(hostRect.height, svgRect.bottom - hostRect.top);
 
-    // v4511: HTML controls are children of the canvas/boomvenster, but the SVG
+    // v4512: HTML controls are children of the canvas/boomvenster, but the SVG
     // itself uses preserveAspectRatio=meet.  Therefore placement is clamped to
     // the actually drawn grid rectangle, not to the full letterboxed canvas.
     // All overlay coordinates are therefore clamped to the canvas rect, not to
@@ -4461,9 +4461,20 @@
       : '<strong>Renderen</strong> betekent: eerst de centrale boom en boxen berekenen, daarna projecties en LEX-as tekenen. Vrije LEX-inserts worden op gereserveerde slots geplaatst; de centrale boom blijft daarbij ongewijzigd. OSV-!, VSO-! en VOS-! zijn geen basisbomen: de box-aanpak kan deze volgordes niet opleveren; de LEX-as vraagt dan een verplaatsingsregel.');
     document.querySelectorAll('.help-fallback').forEach(node => {
       node.innerHTML = en
-        ? 'If the carrousel does not appear: <a href="carrousel/index-en.html?v4511" target="_blank" rel="noopener">open the carrousel separately</a>.'
-        : 'Als de carrousel niet verschijnt: <a href="carrousel/index.html?v4511" target="_blank" rel="noopener">open de carrousel los</a>.';
+        ? 'If the carrousel does not appear: <a href="carrousel/index-en.html?v4512" target="_blank" rel="noopener">open the carrousel separately</a>.'
+        : 'Als de carrousel niet verschijnt: <a href="carrousel/index.html?v4512" target="_blank" rel="noopener">open de carrousel los</a>.';
     });
+    setText('[data-carrousel-config-title]', 'Carrousel');
+    setText('[data-carrousel-config-text]', en
+      ? 'Manage the explanatory images as a standalone carrousel folder. Edit opens the editor for adding, removing, reordering, title/text editing and module export.'
+      : 'Beheer de uitlegbeelden als zelfstandige carrouselmap. Edit opent de editor voor toevoegen, verwijderen, volgorde wijzigen, titel/tekst aanpassen en module-export.');
+    setText('[data-carrousel-open]', en ? 'Open' : 'Open');
+    setText('[data-carrousel-edit]', 'Edit');
+    setTitle('[data-carrousel-open]', en ? 'Open the carrousel.' : 'Open de carrousel.');
+    setTitle('[data-carrousel-edit], [data-carrousel-toolbar-edit]', en
+      ? 'Open the carrousel editor: add images, remove slides, change order and export the module.'
+      : 'Open de carrousel-editor: afbeeldingen toevoegen, verwijderen, volgorde wijzigen en exporteren.');
+    setText('[data-carrousel-toolbar-edit]', en ? 'Edit carrousel' : 'Edit carrousel');
     if (els.helpCarrouselFrame) {
       const wanted = en ? `carrousel/index-en.html?${VERSION}` : `carrousel/index.html?${VERSION}`;
       if (!String(els.helpCarrouselFrame.getAttribute('src') || '').includes(wanted)) {

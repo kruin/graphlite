@@ -465,7 +465,7 @@ The central tree is not rewritten. In this phase, adverbs belong to the LEX rend
 
 See also: `docs/LEX_ADVERB_INSERT_SLOTS_EN.md`.
 
-## v4511 - Config: zichtbare LEX-bijwoordinsert
+## v4512 - Config: zichtbare LEX-bijwoordinsert
 
 - De Config-weergave is hersteld: de velden in `Dynamische boomweergave` overlappen niet meer.
 - `LEX insertie` is apart en zichtbaar gemaakt als `Bijwoord / LEX-insert op LEX-as`.
@@ -477,7 +477,7 @@ See also: `docs/LEX_ADVERB_INSERT_SLOTS_EN.md`.
 - De Config-topbalk blijft sticky boven de scrollende instellingen.
 
 
-## v4511 - Uitleg uit Config, naar Help/docs
+## v4512 - Uitleg uit Config, naar Help/docs
 
 - Het blok `Uitleg` wordt niet meer getoond in Config.
 - Config blijft beperkt tot instellingen en beheer.
@@ -491,14 +491,27 @@ See also: `docs/LEX_ADVERB_INSERT_SLOTS_EN.md`.
   - `docs/RENDER_EXPLANATION_EN.md`
 - Engelse Help-tekst is mee bijgewerkt.
 
-## v4511 - Oude tijdsinsertingtest verwijderd
+## v4512 - Oude tijdsinsertingtest verwijderd
 
 - De eerdere vaste tijdsinsertingtest is uit de UI, Config, Help en documentatie verwijderd.
 - Standaard: `LEX-slots: 0` en insertinhoud `slot leeg`.
 - De nieuwere bijwoordplaatsingen blijven intact: tijd, frequentie, negatie, wijze, zinsbijwoord, focus en graad.
 - De structurele plaatsingsmechaniek blijft gelijk: tussenbox/overlap/domeinslot; alleen het oude concrete testwoord is verwijderd.
 
-## v4511 - VSO-! and VOS-! labels
+## v4512 - VSO-! and VOS-! labels
 
 VSO and VOS are now marked in the same way as OSV: `VSO-!` and `VOS-!`. The label means that the box approach cannot produce this order as a base alternative. Correct LEX rendering requires an explicit movement rule. Existing trees and existing flip behaviour remain untouched.
 
+
+
+## v4512 - Carrousel editor in Config
+
+- Config bevat nu een apart blok **Carrousel** met `Open` en `Edit`.
+- `Edit` opent `carrousel/editor.html`.
+- De editor kan afbeeldingen toevoegen, verwijderen, vervangen, dupliceren, de volgorde wijzigen en Nederlandse/Engelse toelichting aanpassen.
+- Exportmogelijkheden:
+  - `slides.json`
+  - zelfstandige `index.html`
+  - complete modulezip `OpenGraph_Carrousel_Module_v4512_edited.zip`
+- De geëxporteerde modulezip bevat een volledige `carrousel/`-map die later in de projectzip kan worden opgenomen.
+- Engelse knoppen/tooltips en Engelstalige toelichting zijn mee bijgewerkt.

@@ -246,7 +246,20 @@ De centrale boom wordt niet herschreven. Bijwoorden horen in deze fase in de LEX
 
 Zie ook: `docs/LEX_ADVERB_INSERT_SLOTS.md`.
 
-## v4511 - OSV-!, VSO-! en VOS-!
+## v4512 - OSV-!, VSO-! en VOS-!
 
 `VSO` en `VOS` worden nu net als `OSV` gemarkeerd: `VSO-!` en `VOS-!`. Het uitroepteken betekent dat de box-aanpak deze volgorde niet als basisalternatief kan opleveren. Voor correcte rendering op de LEX-as is een expliciete verplaatsingsregel nodig. Bestaande bomen en bestaande flips blijven ongemoeid.
 
+
+
+## v4512 - Carrousel editor in Config
+
+- Config bevat nu een apart blok **Carrousel** met `Open` en `Edit`.
+- `Edit` opent `carrousel/editor.html`.
+- De editor kan afbeeldingen toevoegen, verwijderen, vervangen, dupliceren, de volgorde wijzigen en Nederlandse/Engelse toelichting aanpassen.
+- Exportmogelijkheden:
+  - `slides.json`
+  - zelfstandige `index.html`
+  - complete modulezip `OpenGraph_Carrousel_Module_v4512_edited.zip`
+- De geëxporteerde modulezip bevat een volledige `carrousel/`-map die later in de projectzip kan worden opgenomen.
+- Engelse knoppen/tooltips en Engelstalige toelichting zijn mee bijgewerkt.

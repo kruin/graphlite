@@ -1,25 +1,3 @@
-# JAN Carrousel module v4511
+# OpenGraph carrousel module v4512
 
-Deze map is zelfstandig uit de projectzip te halen.
-
-Start lokaal met:
-
-```text
-carrousel/index.html
-```
-
-De hoofdviewer gebruikt dezelfde ingang:
-
-```text
-carrousel/index.html?v4511
-```
-
-## Inhoud
-
-- `index.html` — zelfstandige carrouselweergave; CSS/JS en afbeeldingen zijn inline opgenomen zodat lokale padproblemen geen 404 veroorzaken.
-- `carrousel.css` — bewerkbare bron-CSS voor latere niet-inline variant.
-- `carrousel.js` — bewerkbare bron-JS voor latere niet-inline variant.
-- `slides.json` — bewerkbare slide-index.
-- `slides/` — losse bronafbeeldingen en tekstbestanden.
-
-Deze map kan als geheel terug in de projectzip onder `carrousel/`.
+Gebruik `index.html` om de carrousel te bekijken. Gebruik `editor.html` om slides te bewerken: afbeeldingen toevoegen, verwijderen, volgorde wijzigen en de modulezip exporteren. Lever daarna de hele map `carrousel/` terug voor opname in de projectzip.

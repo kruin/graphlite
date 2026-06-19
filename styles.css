@@ -3877,7 +3877,7 @@ body.config-screen-active .top-menu-choice-field:not(.lex-extension-field) label
 .help-doc-card .help-doc-link a { font-weight: 800; color: var(--accent); text-decoration: none; }
 .help-doc-card .help-doc-link a:hover { text-decoration: underline; }
 
-/* v4511 config: maak LEX-bijwoordinsert zichtbaar en voorkom overlap in Config. */
+/* v4512 config: maak LEX-bijwoordinsert zichtbaar en voorkom overlap in Config. */
 body.config-screen-active .config-topbar {
   position: sticky !important;
   top: .5rem !important;
@@ -3934,7 +3934,7 @@ body.config-screen-active .lex-adverb-insert-field select {
   }
 }
 
-/* v4511: Uitleg hoort niet in Config. Config blijft puur instellingen; uitleg staat in Help/docs. */
+/* v4512: Uitleg hoort niet in Config. Config blijft puur instellingen; uitleg staat in Help/docs. */
 body.config-screen-active .text-panel {
   display: none !important;
 }
@@ -3955,4 +3955,21 @@ body.config-screen-active .side-panel {
   margin: 0;
   color: var(--muted);
   line-height: 1.45;
+}
+
+/* v4512: carrouselbeheer in Config. */
+.carrousel-config-card .carrousel-config-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .45rem;
+}
+.carrousel-config-card .carrousel-config-actions .button-link {
+  flex: 1 1 8rem;
+  justify-content: center;
+  text-align: center;
+}
+.carrousel-config-card .button-link.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-contrast);
 }
