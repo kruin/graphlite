@@ -272,7 +272,7 @@ OMDAT VROUW TRUI BREIDE
 
 VDW blijft apart: `GEBETEN` en `GEBREID` horen bij het perfectumtype met `HEEFT`.
 
-## v4512 - OSV-!, VSO-! en VOS-!
+## v4513 - OSV-!, VSO-! en VOS-!
 
 `VSO` en `VOS` worden nu net als `OSV` gemarkeerd: `VSO-!` en `VOS-!`. Het uitroepteken betekent dat de box-aanpak deze volgorde niet als basisalternatief kan opleveren. Voor correcte rendering op de LEX-as is een expliciete verplaatsingsregel nodig. Bestaande bomen en bestaande flips blijven ongemoeid.
 

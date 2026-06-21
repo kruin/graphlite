@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'v4512';
+  const VERSION = 'v4520';
   const BASE_CELL = 74;
   const ROOT_SIDE_GAP = 1;
   const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -1667,7 +1667,7 @@
   }
 
   function isPortraitMobileViewport() {
-    // v4512: grid-first and fit-height are no longer mobile-only.
+    // v4513: grid-first and fit-height are no longer mobile-only.
     // The canvas height is based on the actual viewBox on every platform.
     return true;
   }
@@ -1681,7 +1681,7 @@
   }
 
   function syncPortraitMenuSpace() {
-    // v4512: de oude numerieke onderruimte blijft op 0. De relevante instelling
+    // v4513: de oude numerieke onderruimte blijft op 0. De relevante instelling
     // is nu: welke benoemde menu's mogen boven het grid staan.
     document.documentElement?.style.setProperty('--portrait-menu-reserve', '0px');
     document.documentElement?.style.setProperty('--portrait-menu-slots', '0');
@@ -1905,7 +1905,7 @@
     syncPortraitStageMode();
     if (!els.canvasWrap) return;
     syncPortraitMenuSpace();
-    // v4512: het gridvenster wordt gemaximeerd op de actuele fit-box
+    // v4513: het gridvenster wordt gemaximeerd op de actuele fit-box
     // van boom + assen. Het canvas schaalt dus niet groter dan nodig.
     const fit = box || parseViewBox();
     const validFit = fit && Number.isFinite(fit.w) && fit.w > 0 && Number.isFinite(fit.h) && fit.h > 0;
@@ -3023,7 +3023,7 @@
       .map(id => functionalNodes.find(n => n.id === id)?.label || id)
       .join(' + ') || 'role-boxen';
     if (options.showTitle !== false) drawAxisTitle(g, origin.x - 180, origin.y - 70, `OPN · functionele structuur · ${rootLabel} → ${roleNames} · ${state.functionalOrder}`);
-    drawAxisTitle(g, origin.x - 176, origin.y - 48, `v4512 · ${branchModeLabel()} · vrije plaatsing + LEX-bijwoordslots`);
+    drawAxisTitle(g, origin.x - 176, origin.y - 48, `v4513 · ${branchModeLabel()} · vrije plaatsing + LEX-bijwoordslots`);
     const growthPlan = growthPlanForLayout(layout);
     layout.__growthPlan = growthPlan;
     drawSubtreeBoxes(g, layout, origin, growthPlan);
@@ -3343,7 +3343,7 @@
     const svgLocalRight = Math.min(hostRect.width, svgRect.right - hostRect.left);
     const svgLocalBottom = Math.min(hostRect.height, svgRect.bottom - hostRect.top);
 
-    // v4512: HTML controls are children of the canvas/boomvenster, but the SVG
+    // v4513: HTML controls are children of the canvas/boomvenster, but the SVG
     // itself uses preserveAspectRatio=meet.  Therefore placement is clamped to
     // the actually drawn grid rectangle, not to the full letterboxed canvas.
     // All overlay coordinates are therefore clamped to the canvas rect, not to
@@ -4459,15 +4459,19 @@
     setHtml('[data-help-render-text]', en
       ? '<strong>Rendering</strong> means: first compute the central tree and boxes, then draw projections and the LEX axis. Free LEX inserts are placed in reserved slots; the central tree remains unchanged. OSV-!, VSO-! and VOS-! are not base trees: the box approach cannot produce these orders; the LEX axis then requires a movement rule.'
       : '<strong>Renderen</strong> betekent: eerst de centrale boom en boxen berekenen, daarna projecties en LEX-as tekenen. Vrije LEX-inserts worden op gereserveerde slots geplaatst; de centrale boom blijft daarbij ongewijzigd. OSV-!, VSO-! en VOS-! zijn geen basisbomen: de box-aanpak kan deze volgordes niet opleveren; de LEX-as vraagt dan een verplaatsingsregel.');
+    setText('[data-help-carrousel-editor-title]', en ? 'Carrousel editor: saving and writing' : 'Carrousel-editor: bewaren en schrijven');
+    setHtml('[data-help-carrousel-editor-text]', en
+      ? '<strong>Choose module folder</strong> is the only button that opens a folder chooser. <strong>Save locally</strong> stores browser state and writes real files only if the module folder has already been chosen. <strong>Write to folder</strong> does not open a chooser: it writes directly to the chosen module folder. Browser security prevents automatic selection of the current folder.'
+      : '<strong>Kies modulemap</strong> is de enige knop die een mapvenster opent. <strong>Bewaar lokaal</strong> bewaart in browseropslag en schrijft alleen naar echte bestanden als de modulemap al gekozen is. <strong>Schrijf naar map</strong> opent geen mapvenster: die knop schrijft direct naar de gekozen modulemap. Door browserbeveiliging kan de editor de huidige map niet automatisch selecteren.');
     document.querySelectorAll('.help-fallback').forEach(node => {
       node.innerHTML = en
-        ? 'If the carrousel does not appear: <a href="carrousel/index-en.html?v4512" target="_blank" rel="noopener">open the carrousel separately</a>.'
-        : 'Als de carrousel niet verschijnt: <a href="carrousel/index.html?v4512" target="_blank" rel="noopener">open de carrousel los</a>.';
+        ? 'If the carrousel does not appear: <a href="carrousel/index-en.html?v4520" target="_blank" rel="noopener">open the carrousel separately</a>.'
+        : 'Als de carrousel niet verschijnt: <a href="carrousel/index.html?v4520" target="_blank" rel="noopener">open de carrousel los</a>.';
     });
     setText('[data-carrousel-config-title]', 'Carrousel');
     setText('[data-carrousel-config-text]', en
-      ? 'Manage the explanatory images as a standalone carrousel folder. Edit opens the editor for adding, removing, reordering, title/text editing and module export.'
-      : 'Beheer de uitlegbeelden als zelfstandige carrouselmap. Edit opent de editor voor toevoegen, verwijderen, volgorde wijzigen, titel/tekst aanpassen en module-export.');
+      ? 'Manage the explanatory images as a standalone carrousel folder. Choose module folder opens the folder chooser once; Write to folder then writes directly to that folder.'
+      : 'Beheer de uitlegbeelden als zelfstandige carrouselmap. Kies modulemap opent één keer het mapvenster; Schrijf naar map schrijft daarna direct naar die map.');
     setText('[data-carrousel-open]', en ? 'Open' : 'Open');
     setText('[data-carrousel-edit]', 'Edit');
     setTitle('[data-carrousel-open]', en ? 'Open the carrousel.' : 'Open de carrousel.');

@@ -76,17 +76,17 @@ The central tree is not rewritten. In this phase, adverbs belong to the LEX rend
 See also: `docs/LEX_ADVERB_INSERT_SLOTS_EN.md`.
 
 
-## v4512 translation note
+## v4513 translation note
 
 The Dutch linguistic test material remains Dutch. The lexicon now also records OVT/imperfect forms: `BEET` for `BIJT/BIJTEN` and `BREIDE` for `BREIT/BREIEN`; the VDW participles remain `GEBETEN` and `GEBREID`.
 
-## v4512 - OSV-!, VSO-! and VOS-!
+## v4513 - OSV-!, VSO-! and VOS-!
 
 `VSO` and `VOS` are now marked like `OSV`: `VSO-!` and `VOS-!`. The exclamation mark means that the box approach cannot produce the order as a base alternative. Correct rendering on the LEX axis requires an explicit movement rule. Existing trees and existing flip behaviour remain unchanged.
 
 
 
-## v4512 - Carrousel editor in Config
+## v4513 - Carrousel editor in Config
 
 - Config bevat nu een apart blok **Carrousel** met `Open` en `Edit`.
 - `Edit` opent `carrousel/editor.html`.
@@ -94,6 +94,11 @@ The Dutch linguistic test material remains Dutch. The lexicon now also records O
 - Exportmogelijkheden:
   - `slides.json`
   - zelfstandige `index.html`
-  - complete modulezip `OpenGraph_Carrousel_Module_v4512_edited.zip`
+  - complete modulezip `OpenGraph_Carrousel_Module_v4513_edited.zip`
 - De geëxporteerde modulezip bevat een volledige `carrousel/`-map die later in de projectzip kan worden opgenomen.
 - Engelse knoppen/tooltips en Engelstalige toelichting zijn mee bijgewerkt.
+
+
+## v4513 - Carrousel editor: tonen/niet tonen
+
+De carrousel-editor heeft nu per slide een keuze **Tonen in carrousel**. Niet-getoonde slides blijven bewerkbaar en exporteerbaar, maar verschijnen niet in de zichtbare carrousel. English UI text is maintained as **Show in carrousel**.

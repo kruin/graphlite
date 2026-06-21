@@ -379,21 +379,21 @@ De centrale boom wordt niet herschreven. Bijwoorden horen in deze fase in de LEX
 
 Zie ook: `docs/LEX_ADVERB_INSERT_SLOTS.md`.
 
-## v4512 - Oude tijdsinsertingtest verwijderd
+## v4513 - Oude tijdsinsertingtest verwijderd
 
 De eerdere vaste tijdsinsertingtest is uit de standaardconfiguratie gehaald. Vrije LEX-slots staan standaard uit (`LEX-slots: 0`) en de insertinhoud staat standaard op `slot leeg`. De overige bijwoordcategorieën en plaatsingsregels blijven beschikbaar via Config → Projectie-instellingen → Bijwoord / LEX-insert op LEX-as.
 
-## v4512 - Config leesbaar en LEX-bijwoordkeuze zichtbaar
+## v4513 - Config leesbaar en LEX-bijwoordkeuze zichtbaar
 
 De bijwoord/LEX-insertinstelling is uit de compacte boomweergavegrid gehaald en staat nu in een eigen blok. Daarmee is zichtbaar waar GISTEREN, VAAK, NIET, SNEL, MISSCHIEN enz. gekozen worden. De centrale boom blijft ongewijzigd; de keuze vult alleen vrije slots op de LEX-as.
 
-## v4512 - VSO-! and VOS-! labels
+## v4513 - VSO-! and VOS-! labels
 
 VSO and VOS are now marked in the same way as OSV: `VSO-!` and `VOS-!`. The label means that the box approach cannot produce this order as a base alternative. Correct LEX rendering requires an explicit movement rule. Existing trees and existing flip behaviour remain untouched.
 
 
 
-## v4512 - Carrousel editor in Config
+## v4513 - Carrousel editor in Config
 
 - Config bevat nu een apart blok **Carrousel** met `Open` en `Edit`.
 - `Edit` opent `carrousel/editor.html`.
@@ -401,6 +401,33 @@ VSO and VOS are now marked in the same way as OSV: `VSO-!` and `VOS-!`. The labe
 - Exportmogelijkheden:
   - `slides.json`
   - zelfstandige `index.html`
-  - complete modulezip `OpenGraph_Carrousel_Module_v4512_edited.zip`
+  - complete modulezip `OpenGraph_Carrousel_Module_v4513_edited.zip`
 - De geëxporteerde modulezip bevat een volledige `carrousel/`-map die later in de projectzip kan worden opgenomen.
 - Engelse knoppen/tooltips en Engelstalige toelichting zijn mee bijgewerkt.
+
+
+## v4513 - Carrousel editor: tonen/niet tonen
+
+De carrousel-editor heeft nu per slide een keuze **Tonen in carrousel**. Niet-getoonde slides blijven bewerkbaar en exporteerbaar, maar verschijnen niet in de zichtbare carrousel. English UI text is maintained as **Show in carrousel**.
+
+
+## v4514 - Carrousel editor: persistent local save and fixed controls
+
+- `Bewaar lokaal` wordt automatisch geladen na refresh/opnieuw openen.
+- Tonen/niet tonen staat direct in de slidelijst.
+- Vorige/volgende staan op vaste positie boven de tekst; de afbeelding staat midden-hoog.
+
+
+## v4526 - Carrousel: volledige editorstate
+
+- `Bewaar lokaal` bewaart nu een volledige editorstate, inclusief `tonen/niet tonen` per slide.
+- `slides.json` schrijft per slide expliciet `visible: true` of `visible: false`.
+- Nieuwe opslag gebruikt `opengraph_carrousel_editor_state_v3`; oude opslag wordt alleen als legacy geïmporteerd.
+
+## v4526 - Carrousel: stabiele opslag per slide
+
+- Eén projectzip bevat nu de volledige viewer en de map `carrousel/`; er is geen los editorbestand nodig.
+- De editor gebruikt een nieuwe huidige opslagkey: `opengraph_carrousel_editor_state_v4526`.
+- Bij heropenen wordt eerst de huidige v4526-opslag geladen. Oudere opslag wordt alleen als import gebruikt wanneer er nog geen v4526-opslag bestaat.
+- `toon/niet tonen` wordt exact per slide opgeslagen. Een uitgevinkt vakje blijft uitgevinkt na `Bewaar lokaal`, sluiten en heropenen.
+- Oude opslagkeys blijven staan als veiligheidskopie en worden niet automatisch verwijderd bij bewaren.

@@ -1,6 +1,6 @@
 (() => {
   'use strict';
-  const VERSION = 'v4512';
+  const VERSION = 'v4526';
   const FALLBACK_SLIDES = [
   {
     "image": "slides/01-simpele-vertakking-een-level.png",
@@ -98,12 +98,13 @@
     const title = String(slide?.title || `Slide ${i + 1}`).trim();
     const image = String(slide?.image || '').trim();
     const text = String(slide?.text || '').trim();
-    return { title, image, text };
+    const visible = slide?.visible !== false;
+    return { title, image, text, visible };
   }
 
   function normalizeSlides(value) {
     const arr = Array.isArray(value) ? value : [];
-    return arr.map(normalizeSlide).filter(slide => slide.title || slide.image || slide.text);
+    return arr.map(normalizeSlide).filter(slide => slide.visible !== false).filter(slide => slide.title || slide.image || slide.text);
   }
 
   function updateButtons() {

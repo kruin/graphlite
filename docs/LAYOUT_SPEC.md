@@ -327,7 +327,7 @@ De centrale boom wordt niet herschreven. Bijwoorden horen in deze fase in de LEX
 
 Zie ook: `docs/LEX_ADVERB_INSERT_SLOTS.md`.
 
-## v4512 - OSV-!, VSO-! en VOS-!
+## v4513 - OSV-!, VSO-! en VOS-!
 
 `VSO` en `VOS` worden nu net als `OSV` gemarkeerd: `VSO-!` en `VOS-!`. Het uitroepteken betekent dat de box-aanpak deze volgorde niet als basisalternatief kan opleveren. Voor correcte rendering op de LEX-as is een expliciete verplaatsingsregel nodig. Bestaande bomen en bestaande flips blijven ongemoeid.
 

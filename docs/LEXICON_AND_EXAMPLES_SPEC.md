@@ -160,7 +160,7 @@ Voor V2 en topicalisatie wordt de trace als lokaal LEX-object behandeld. De voor
 - Gemarkeerde/topicalisatie-uitingen zoals `TRUI BREIT VROUW` worden geaccepteerd wanneer `TRUI` object/patiens blijft en `VROUW` subject/agens blijft; de viewer toont dan een notice.
 
 
-## OVT-vormen vanaf v4512
+## OVT-vormen vanaf v4513
 
 De verbale lexemen hebben nu naast de tegenwoordige persoonsvorm en het voltooid deelwoord ook een OVT-vorm:
 

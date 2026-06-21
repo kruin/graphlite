@@ -465,7 +465,7 @@ The central tree is not rewritten. In this phase, adverbs belong to the LEX rend
 
 See also: `docs/LEX_ADVERB_INSERT_SLOTS_EN.md`.
 
-## v4512 - Config: zichtbare LEX-bijwoordinsert
+## v4513 - Config: zichtbare LEX-bijwoordinsert
 
 - De Config-weergave is hersteld: de velden in `Dynamische boomweergave` overlappen niet meer.
 - `LEX insertie` is apart en zichtbaar gemaakt als `Bijwoord / LEX-insert op LEX-as`.
@@ -477,7 +477,7 @@ See also: `docs/LEX_ADVERB_INSERT_SLOTS_EN.md`.
 - De Config-topbalk blijft sticky boven de scrollende instellingen.
 
 
-## v4512 - Uitleg uit Config, naar Help/docs
+## v4513 - Uitleg uit Config, naar Help/docs
 
 - Het blok `Uitleg` wordt niet meer getoond in Config.
 - Config blijft beperkt tot instellingen en beheer.
@@ -491,20 +491,20 @@ See also: `docs/LEX_ADVERB_INSERT_SLOTS_EN.md`.
   - `docs/RENDER_EXPLANATION_EN.md`
 - Engelse Help-tekst is mee bijgewerkt.
 
-## v4512 - Oude tijdsinsertingtest verwijderd
+## v4513 - Oude tijdsinsertingtest verwijderd
 
 - De eerdere vaste tijdsinsertingtest is uit de UI, Config, Help en documentatie verwijderd.
 - Standaard: `LEX-slots: 0` en insertinhoud `slot leeg`.
 - De nieuwere bijwoordplaatsingen blijven intact: tijd, frequentie, negatie, wijze, zinsbijwoord, focus en graad.
 - De structurele plaatsingsmechaniek blijft gelijk: tussenbox/overlap/domeinslot; alleen het oude concrete testwoord is verwijderd.
 
-## v4512 - VSO-! and VOS-! labels
+## v4513 - VSO-! and VOS-! labels
 
 VSO and VOS are now marked in the same way as OSV: `VSO-!` and `VOS-!`. The label means that the box approach cannot produce this order as a base alternative. Correct LEX rendering requires an explicit movement rule. Existing trees and existing flip behaviour remain untouched.
 
 
 
-## v4512 - Carrousel editor in Config
+## v4513 - Carrousel editor in Config
 
 - Config bevat nu een apart blok **Carrousel** met `Open` en `Edit`.
 - `Edit` opent `carrousel/editor.html`.
@@ -512,6 +512,40 @@ VSO and VOS are now marked in the same way as OSV: `VSO-!` and `VOS-!`. The labe
 - Exportmogelijkheden:
   - `slides.json`
   - zelfstandige `index.html`
-  - complete modulezip `OpenGraph_Carrousel_Module_v4512_edited.zip`
+  - complete modulezip `OpenGraph_Carrousel_Module_v4513_edited.zip`
 - De geëxporteerde modulezip bevat een volledige `carrousel/`-map die later in de projectzip kan worden opgenomen.
 - Engelse knoppen/tooltips en Engelstalige toelichting zijn mee bijgewerkt.
+
+
+## v4513 - Carrousel editor: tonen/niet tonen
+
+De carrousel-editor heeft nu per slide een keuze **Tonen in carrousel**. Niet-getoonde slides blijven bewerkbaar en exporteerbaar, maar verschijnen niet in de zichtbare carrousel. English UI text is maintained as **Show in carrousel**.
+
+
+## v4514
+
+- Carrousel-editor: lokaal bewaren wordt automatisch geladen na refresh/opnieuw openen.
+- Carrousel-editor: tonen/niet tonen staat direct in de slidelijst.
+- Carrousel: navigatieknoppen staan op vaste positie boven de tekst; afbeeldingen staan midden-hoog.
+
+## v4517 — carrousel editor local save
+
+- `Bewaar lokaal` in `carrousel/editor.html` now also writes the generated `editor.html`, `index.html`, `index-en.html`, `slides.json`, and all slide images/text files to the selected module folder.
+- The editor shows the current module path and selected write folder.
+- The selected folder is validated: it must contain `editor.html` or `slides.json`.
+- The browser cannot automatically open the current file folder; after the user selects `carrousel/` once, the editor remembers the handle where supported.
+
+
+## v4526 - Carrousel: volledige editorstate
+
+- `Bewaar lokaal` bewaart nu een volledige editorstate, inclusief `tonen/niet tonen` per slide.
+- `slides.json` schrijft per slide expliciet `visible: true` of `visible: false`.
+- Nieuwe opslag gebruikt `opengraph_carrousel_editor_state_v3`; oude opslag wordt alleen als legacy geïmporteerd.
+
+## v4526 - Carrousel: stabiele opslag per slide
+
+- Eén projectzip bevat nu de volledige viewer en de map `carrousel/`; er is geen los editorbestand nodig.
+- De editor gebruikt een nieuwe huidige opslagkey: `opengraph_carrousel_editor_state_v4526`.
+- Bij heropenen wordt eerst de huidige v4526-opslag geladen. Oudere opslag wordt alleen als import gebruikt wanneer er nog geen v4526-opslag bestaat.
+- `toon/niet tonen` wordt exact per slide opgeslagen. Een uitgevinkt vakje blijft uitgevinkt na `Bewaar lokaal`, sluiten en heropenen.
+- Oude opslagkeys blijven staan als veiligheidskopie en worden niet automatisch verwijderd bij bewaren.

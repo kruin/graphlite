@@ -1,3 +1,3 @@
-# OpenGraph carrousel module v4512
+# OpenGraph carrousel module v4526
 
-Use `index.html` to view the carrousel. Use `editor.html` to edit slides: add/remove images, reorder slides and export the module zip. Return the whole `carrousel/` folder for inclusion in the project zip.
+Use `editor.html` to edit slides. `Save locally` stores the current complete editor state, including `show/hide` per slide. On reopen v4526 first loads this current storage. Legacy storage is used only if no v4526 storage exists yet.
