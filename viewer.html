@@ -1,6 +1,6 @@
 <!doctype html>
-<!-- OPENGRAPH_VIEWER_HTML_v4520: fallback app entry mirrors root index. -->
-<html lang="nl" data-opengraph-app="viewer" data-version="v4520">
+<!-- OPENGRAPH_VIEWER_HTML_v4528: fallback app entry mirrors root index. -->
+<html lang="nl" data-opengraph-app="viewer" data-version="v4528">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
@@ -9,18 +9,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#0f172a">
   <meta name="description" content="OpenGraph Lite Viewer: vrije JAN-bronknopen, edits, LEX-plaatsingsregels en projecties.">
-  <title>OpenGraph Lite Viewer v4520</title>
+  <title>OpenGraph Lite Viewer v4528</title>
   <link rel="icon" href="favicon.ico" sizes="any">
   <link rel="icon" href="icons/icon-192.svg" type="image/svg+xml">
-  <!-- v4520: manifest disabled in local/dev build to avoid PWA/service-worker confusion. -->
+  <!-- v4528: manifest disabled in local/dev build to avoid PWA/service-worker confusion. -->
   <!-- <link rel="manifest" href="manifest.webmanifest"> -->
-  <link rel="stylesheet" href="styles.css?v4520">
+  <link rel="stylesheet" href="styles.css?v4528">
 </head>
 <body class="main-screen-active">
   <header class="app-header">
     <div>
       <div class="eyebrow">OpenGraph · JAN · Open Notation</div>
-      <h1>OpenGraph Lite Viewer <span class="version-tag">v4520</span></h1>
+      <h1>OpenGraph Lite Viewer <span class="version-tag">v4528</span></h1>
       <p class="header-subtitle">Redesign: eerst syntax-tree, daarna LEX-projectie, daarna lokale LEX-regel/Wissel (V2).</p>
     </div>
     <button id="installButton" class="ghost hidden" type="button">Installeer</button>
@@ -41,7 +41,8 @@
 
       <div class="main-topbar-actions" aria-label="Hoofdbeeld acties">
         <button data-language-toggle class="language-toggle-button" type="button" title="Wissel de UI/help-taal">Taal: Nederlands</button>
-        <button id="openHelpButton" class="help-open-button" type="button" title="Open het help-scherm met de carrousel.">Help</button>
+        <button id="openHelpButton" class="help-open-button" type="button" title="Open het help-scherm.">Help</button>
+        <button id="openCarrouselButton" class="carrousel-open-button" type="button" title="Open de carrousel als apart scherm.">Carrousel</button>
         <button id="openConfigButton" class="primary config-open-button" type="button" title="Open het configuratiescherm met alle projectie-, LEX-, layout- en documentatie-instellingen.">Config</button>
       </div>
     </section>
@@ -49,7 +50,8 @@
     <section class="config-topbar" aria-label="Configuratiescherm bediening">
       <button id="closeConfigButton" class="primary config-back-button" type="button" title="Terug naar hoofdbeeld: alleen grid, zinmenu, Help en Config-knop.">← Terug naar main</button>
       <button data-language-toggle class="language-toggle-button" type="button" title="Wissel de UI/help-taal">Taal: Nederlands</button>
-      <button id="openHelpFromConfigButton" class="help-open-button" type="button" title="Open het help-scherm met de carrousel.">Help</button>
+      <button id="openHelpFromConfigButton" class="help-open-button" type="button" title="Open het help-scherm.">Help</button>
+      <button id="openCarrouselFromConfigButton" class="carrousel-open-button" type="button" title="Open de carrousel als apart scherm.">Carrousel</button>
       <div>
         <div class="intro-kicker">Config</div>
         <h2>Alle instellingen</h2>
@@ -59,15 +61,32 @@
 
     <section class="help-topbar" aria-label="Help-scherm bediening">
       <button id="closeHelpButton" class="primary config-back-button" type="button" title="Terug naar hoofdbeeld.">← Terug naar main</button>
+      <button id="openCarrouselFromHelpButton" class="carrousel-open-button" type="button" title="Open de carrousel als apart scherm.">Carrousel</button>
       <button id="openConfigFromHelpButton" class="config-open-button" type="button" title="Open Config naast Help.">Config</button>
       <div>
         <div class="intro-kicker">Help</div>
-        <h2>Carrousel</h2>
-        <p>Uitlegbeelden staan in een apart Help-scherm. De carrousel blijft ook direct bereikbaar als los bestand.</p>
+        <h2>Uitleg</h2>
+        <p>Help bevat tekstuitleg en gebruiksaanwijzingen. De carrousel staat apart, rechts naast Help in de hoofdknoppen.</p>
       </div>
     </section>
 
-    <section id="helpScreen" class="help-screen" aria-label="Help en carrousel">
+    <section class="carrousel-topbar" aria-label="Carrousel-scherm bediening">
+      <button id="closeCarrouselButton" class="primary config-back-button" type="button" title="Terug naar hoofdbeeld.">← Terug naar main</button>
+      <button id="openHelpFromCarrouselButton" class="help-open-button" type="button" title="Open het help-scherm.">Help</button>
+      <button id="openConfigFromCarrouselButton" class="config-open-button" type="button" title="Open Config naast Carrousel.">Config</button>
+      <div>
+        <div class="intro-kicker">Carrousel</div>
+        <h2>Carrousel</h2>
+        <p>Uitlegbeelden staan in dit eigen scherm. Help blijft tekstuitleg.</p>
+      </div>
+    </section>
+
+    <section id="carrouselScreen" class="carrousel-screen" aria-label="Carrousel">
+      <iframe id="carrouselFrame" title="JAN carrousel" src="carrousel/index.html?v4528" loading="lazy"></iframe>
+      <p class="carrousel-fallback">Als de carrousel niet verschijnt: <a href="carrousel/index.html?v4528" target="_blank" rel="noopener">open de carrousel los</a>.</p>
+    </section>
+
+    <section id="helpScreen" class="help-screen" aria-label="Help en uitleg">
 
       <section class="help-doc-summary" aria-label="Boom eerst en recursieve boomtechniek">
         <article class="help-doc-card">
@@ -87,20 +106,18 @@
           <p data-help-render-text><strong>Renderen</strong> betekent: eerst de centrale boom en boxen berekenen, daarna projecties en LEX-as tekenen. Vrije LEX-inserts worden op gereserveerde slots geplaatst; de centrale boom blijft daarbij ongewijzigd. OSV-!, VSO-! en VOS-! zijn geen basisbomen: de box-aanpak kan deze volgordes niet opleveren; de LEX-as vraagt dan een verplaatsingsregel.</p>
         </article>
       </section>
-      <iframe id="helpCarrouselFrame" title="JAN carrousel" src="carrousel/index.html?v4520" loading="lazy"></iframe>
-      <p class="help-fallback">Als de carrousel niet verschijnt: <a href="carrousel/index.html?v4520" target="_blank" rel="noopener">open de carrousel los</a> of gebruik <a href="carrousel/index.html?v4520" target="_blank" rel="noopener">carrousel/index.html</a>.</p>
     </section>
 
 
     <section class="toolbar" aria-label="Hoofdbediening">
       <div class="input-sentence-tools" aria-label="Zin-input">
-        <a class="button-link" href="examples-input.html?v4520" title="Open de HTML-inputfile met voorbeeldzinnen, subject vet en object cursief">HTML-input</a>
-        <a class="button-link" href="lexicon-config.html?v4520" title="Leesbare lexicon-config voor voorbeeldzinnen">Lexicon</a>
-        <a class="button-link" href="lexicon-editor.html?v4520" title="Lexicon én korte voorbeelduitingen beheren; exporteert lexicon-config.html en examples-input.html">Lexicon+uitingen-editor</a>
-        <a class="button-link" href="structure-editor.html?v4520" title="Bewerk eerst syntax-config en functional-config">Structure-editor</a>
-        <a class="button-link" href="docs/docs-home.html?v4520" title="Projectcontext, layoutspec en release notes">Docs</a>
-        <a class="button-link" href="lex-movement-rules.html?v4520" title="Simpele uitleg van de LEX-Wissels per zinstype">Plaatsingsregels</a>
-        <a class="button-link" href="reset-cache.html?v4520" title="Verwijder browsercache/service worker en open de viewer opnieuw">Reset cache</a>
+        <a class="button-link" href="examples-input.html?v4528" title="Open de HTML-inputfile met voorbeeldzinnen, subject vet en object cursief">HTML-input</a>
+        <a class="button-link" href="lexicon-config.html?v4528" title="Leesbare lexicon-config voor voorbeeldzinnen">Lexicon</a>
+        <a class="button-link" href="lexicon-editor.html?v4528" title="Lexicon én korte voorbeelduitingen beheren; exporteert lexicon-config.html en examples-input.html">Lexicon+uitingen-editor</a>
+        <a class="button-link" href="structure-editor.html?v4528" title="Bewerk eerst syntax-config en functional-config">Structure-editor</a>
+        <a class="button-link" href="docs/docs-home.html?v4528" title="Projectcontext, layoutspec en release notes">Docs</a>
+        <a class="button-link" href="lex-movement-rules.html?v4528" title="Simpele uitleg van de LEX-Wissels per zinstype">Plaatsingsregels</a>
+        <a class="button-link" href="reset-cache.html?v4528" title="Verwijder browsercache/service worker en open de viewer opnieuw">Reset cache</a>
       </div>
       <div class="button-row compact-actions">
         <button id="resetExampleButton" type="button" title="Herlaad het gekozen voorbeeld">Reset voorbeeld</button>
@@ -112,8 +129,8 @@
           <input id="fileInput" type="file" accept="application/json,.json,.opn">
         </label>
         <button id="downloadJsonButton" type="button" title="Download actuele OpenGraph Lite JSON">Download JSON</button>
-        <a class="button-link" href="carrousel/index.html?v4520" title="Open JAN-carrousel">Carrousel</a>
-        <a class="button-link" data-carrousel-toolbar-edit href="carrousel/editor.html?v4520" title="Carrousel-editor openen">Edit carrousel</a>
+        <a class="button-link" href="carrousel/index.html?v4528" title="Open JAN-carrousel">Carrousel</a>
+        <a class="button-link" data-carrousel-toolbar-edit href="carrousel/editor.html?v4528" title="Carrousel-editor openen">Edit carrousel</a>
       </div>
     </section>
 
@@ -194,8 +211,8 @@ aria-label="Menu's boven grid" title="Kies maximaal vier menu's die boven het gr
           <h2 data-carrousel-config-title>Carrousel</h2>
           <p class="inline-help" data-carrousel-config-text>Beheer de uitlegbeelden als zelfstandige carrouselmap. Edit opent de editor voor toevoegen, verwijderen, volgorde wijzigen, titel/tekst aanpassen en module-export.</p>
           <div class="button-row carrousel-config-actions">
-            <a class="button-link" data-carrousel-open href="carrousel/index.html?v4520" title="Open de carrousel">Open</a>
-            <a class="button-link primary" data-carrousel-edit href="carrousel/editor.html?v4520" title="Open de carrousel-editor: afbeeldingen toevoegen, verwijderen, volgorde wijzigen en exporteren">Edit</a>
+            <a class="button-link" data-carrousel-open href="carrousel/index.html?v4528" title="Open de carrousel">Open</a>
+            <a class="button-link primary" data-carrousel-edit href="carrousel/editor.html?v4528" title="Open de carrousel-editor: afbeeldingen toevoegen, verwijderen, volgorde wijzigen en exporteren">Edit</a>
           </div>
         </section>
 
@@ -311,10 +328,10 @@ aria-label="Menu's boven grid" title="Kies maximaal vier menu's die boven het gr
     <div class="mobile-sheet-section" aria-label="Documentatie">
       <h3>Documentatie</h3>
       <div class="mobile-link-grid">
-        <a href="carrousel/index.html?v4520">JAN-carrousel</a>
-        <a href="docs/docs-home.html?v4520">Docs</a>
-        <a href="lex-movement-rules.html?v4520">Plaatsingsregels</a>
-        <a href="reset-cache.html?v4520">Reset cache</a>
+        <a href="carrousel/index.html?v4528">JAN-carrousel</a>
+        <a href="docs/docs-home.html?v4528">Docs</a>
+        <a href="lex-movement-rules.html?v4528">Plaatsingsregels</a>
+        <a href="reset-cache.html?v4528">Reset cache</a>
       </div>
     </div>
 
@@ -323,7 +340,7 @@ aria-label="Menu's boven grid" title="Kies maximaal vier menu's die boven het gr
 
 
   <script>
-    window.__opengraphBoot = { version: 'v4520', loaded: false, marker: 'viewer-index' };
+    window.__opengraphBoot = { version: 'v4528', loaded: false, marker: 'viewer-index' };
     function ogStatus(message) {
       var target = document.getElementById('actionFeedback') || document.body;
       if (target) target.textContent = message;
@@ -336,10 +353,10 @@ aria-label="Menu's boven grid" title="Kies maximaal vier menu's die boven het gr
     });
     setTimeout(function() {
       if (!window.__opengraphBoot || !window.__opengraphBoot.loaded) {
-        ogStatus('Viewer start niet volledig. Gebruik Reset cache of open http://127.0.0.1:8088/reset-cache.html?v4520.');
+        ogStatus('Viewer start niet volledig. Gebruik Reset cache of open http://127.0.0.1:8088/reset-cache.html?v4528.');
       }
     }, 2500);
   </script>
-  <script src="viewer.js?v4520" defer></script>
+  <script src="viewer.js?v4528" defer></script>
 </body>
 </html>

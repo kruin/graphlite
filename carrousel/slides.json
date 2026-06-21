@@ -48,9 +48,9 @@
     "visible": true
   },
   {
-    "image": "slides/09-kale-projectielijn-links.png",
-    "text": "Kale projectielijn naar links. Eerst zonder projectienaam: alleen een lijn en kopieën van knopen. Dat maakt zichtbaar wat projecteren betekent voordat LEX/SYN/LF-labels worden toegevoegd.",
-    "title": "Kale projectielijn links",
+    "image": "slides/09-vergelijking-woordvolgorde-in-zinnen.png",
+    "title": "Vergelijking woordvolgorde in zinnen",
+    "text": "Vergelijking van woordvolgorde in zinnen. Dit beeld zet OVS, SVO en SOV naast elkaar zodat de verschillen in rolvolgorde en lexicale realisatie direct zichtbaar worden.",
     "visible": true
   },
   {
