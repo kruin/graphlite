@@ -1,1 +1,0 @@
-Een standaard M-tree-achtige verdeling. Deze screenshot is bruikbaar om te laten zien hoe taklengte en vrije ruimte bepalen of projecties later leesbaar naast de bronboom passen.

@@ -200,9 +200,7 @@ Op een telefoon staat het canvas bovenaan. Veeg horizontaal in het canvas om de 
 - FIT herstelt de automatische view.
 
 
-## Carrousel-uitleglaag (v4504)
 
-De map `carrousel/` bevat de stapbare uitlegbeelden. Gebruik `carrousel/index.html?v4504` voor de didactische route; de viewer zelf blijft de interactieve testlaag voor assen, groei, vrije slots en projecties.
 
 
 ### NOORD-as (PM)
@@ -252,41 +250,28 @@ Zie ook: `docs/LEX_ADVERB_INSERT_SLOTS.md`.
 
 
 
-## v4513 - Carrousel editor in Config
 
-- Config bevat nu een apart blok **Carrousel** met `Open` en `Edit`.
-- `Edit` opent `carrousel/editor.html`.
 - De editor kan afbeeldingen toevoegen, verwijderen, vervangen, dupliceren, de volgorde wijzigen en Nederlandse/Engelse toelichting aanpassen.
 - Exportmogelijkheden:
   - `slides.json`
   - zelfstandige `index.html`
-  - complete modulezip `OpenGraph_Carrousel_Module_v4513_edited.zip`
-- De geëxporteerde modulezip bevat een volledige `carrousel/`-map die later in de projectzip kan worden opgenomen.
 - Engelse knoppen/tooltips en Engelstalige toelichting zijn mee bijgewerkt.
 
 
-## v4513 - Carrousel editor: tonen/niet tonen
-
-De carrousel-editor heeft nu per slide een keuze **Tonen in carrousel**. Niet-getoonde slides blijven bewerkbaar en exporteerbaar, maar verschijnen niet in de zichtbare carrousel. English UI text is maintained as **Show in carrousel**.
 
 
-## v4514 - Carrousel editor: persistent local save and fixed controls
+
 
 - `Bewaar lokaal` wordt automatisch geladen na refresh/opnieuw openen.
 - Tonen/niet tonen staat direct in de slidelijst.
 - Vorige/volgende staan op vaste positie boven de tekst; de afbeelding staat midden-hoog.
 
 
-## v4526 - Carrousel: volledige editorstate
 
 - `Bewaar lokaal` bewaart nu een volledige editorstate, inclusief `tonen/niet tonen` per slide.
 - `slides.json` schrijft per slide expliciet `visible: true` of `visible: false`.
-- Nieuwe opslag gebruikt `opengraph_carrousel_editor_state_v3`; oude opslag wordt alleen als legacy geïmporteerd.
 
-## v4526 - Carrousel: stabiele opslag per slide
 
-- Eén projectzip bevat nu de volledige viewer en de map `carrousel/`; er is geen los editorbestand nodig.
-- De editor gebruikt een nieuwe huidige opslagkey: `opengraph_carrousel_editor_state_v4526`.
 - Bij heropenen wordt eerst de huidige v4526-opslag geladen. Oudere opslag wordt alleen als import gebruikt wanneer er nog geen v4526-opslag bestaat.
 - `toon/niet tonen` wordt exact per slide opgeslagen. Een uitgevinkt vakje blijft uitgevinkt na `Bewaar lokaal`, sluiten en heropenen.
 - Oude opslagkeys blijven staan als veiligheidskopie en worden niet automatisch verwijderd bij bewaren.

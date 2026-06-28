@@ -8,7 +8,6 @@ Dutch-specific linguistic material remains unchanged. Example sentences such as 
 
 Use the UI language button in the top bar to switch the visible interface, configuration screen and help text. The button states the current UI language: `Taal: Nederlands` in Dutch mode and `UI: English` in English mode.
 
-The current version translates the main viewer labels, the configuration screen, select-box options, mobile configuration sheet, main help/status texts and the Help carrousel. Future releases must keep the English version in step with the Dutch version.
 
 ## Main view
 
@@ -36,19 +35,10 @@ Current axes:
 
 For main clauses, the LEX axis shows local exchanges. The first phrase can move to slot 1 and the finite verb to slot 2. Old base positions remain visible as traces. Insertions such as GISTEREN are represented as insertion boxes on the LEX axis, not as direct new nodes in the central tree.
 
-## Carrousel
 
-The carrousel is a separate help module. It can run inside the Help screen or as a standalone folder extracted from the project zip. The spelling used in the project is carrousel.
 
 The standalone module is:
 
-carrousel/index.html
-carrousel/index-en.html
-carrousel/README.md
-carrousel/carrousel.css
-carrousel/carrousel.js
-carrousel/slides.json
-carrousel/slides/
 
 ## Documentation maintenance rule
 
@@ -86,19 +76,12 @@ The Dutch linguistic test material remains Dutch. The lexicon now also records O
 
 
 
-## v4513 - Carrousel editor in Config
 
-- Config bevat nu een apart blok **Carrousel** met `Open` en `Edit`.
-- `Edit` opent `carrousel/editor.html`.
 - De editor kan afbeeldingen toevoegen, verwijderen, vervangen, dupliceren, de volgorde wijzigen en Nederlandse/Engelse toelichting aanpassen.
 - Exportmogelijkheden:
   - `slides.json`
   - zelfstandige `index.html`
-  - complete modulezip `OpenGraph_Carrousel_Module_v4513_edited.zip`
-- De geëxporteerde modulezip bevat een volledige `carrousel/`-map die later in de projectzip kan worden opgenomen.
 - Engelse knoppen/tooltips en Engelstalige toelichting zijn mee bijgewerkt.
 
 
-## v4513 - Carrousel editor: tonen/niet tonen
 
-De carrousel-editor heeft nu per slide een keuze **Tonen in carrousel**. Niet-getoonde slides blijven bewerkbaar en exporteerbaar, maar verschijnen niet in de zichtbare carrousel. English UI text is maintained as **Show in carrousel**.

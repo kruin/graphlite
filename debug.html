@@ -21,7 +21,6 @@
     <a class="button" href="index.html?v4513&fresh=1">Open / index.html</a>
     <a class="button" href="viewer.html?v4513&fresh=1">Open viewer.html</a>
     <a class="button" href="docs/docs-home.html?v4513">Docs</a>
-    <a class="button" href="carrousel/index.html?v4513">Carrousel</a>
   </p>
   <script>
     const version = 'v4513';
@@ -35,11 +34,6 @@
       {file:'lexicon-config.html?v4513'},
       {file:'lexicon-editor.html?v4513'},
       {file:'docs/docs-home.html?v4513', kind:'docs-home'},
-      {file:'carrousel/index.html?v4513', kind:'carrousel-index'},
-      {file:'carrousel/carrousel.js?v4513'},
-      {file:'carrousel/carrousel.css?v4513'},
-      {file:'carrousel/slides.json?v4513', kind:'slides-json'},
-      {file:'carrousel/slides/01-simpele-vertakking-een-level.png?v4513', kind:'slide-image'},
       {file:'docs/index.html?v4513', kind:'should-404'},
       {file:'.nojekyll'},
       {file:'reset-cache.html?v4513'}
@@ -53,10 +47,6 @@
       if (test.kind === 'docs-home') {
         const ok = r.ok && text.includes('OpenGraph Lite Viewer · docs v4513');
         return {ok, extra: ok ? ' · docs-home OK' : ' · FOUT: docs-home ontbreekt of oud'};
-      }
-      if (test.kind === 'carrousel-index') {
-        const ok = r.ok && text.includes('JAN Carrousel v4513') && text.includes('carrousel.js?v4513');
-        return {ok, extra: ok ? ' · carrousel-index OK' : ' · FOUT: carrousel-index ontbreekt of oud'};
       }
       if (test.kind === 'slides-json') {
         let ok = false;

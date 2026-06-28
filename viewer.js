@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'v4528';
+  const VERSION = 'v4532';
   const BASE_CELL = 74;
   const ROOT_SIDE_GAP = 1;
   const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -19,15 +19,8 @@
     closeConfigButton: document.getElementById('closeConfigButton'),
     openHelpButton: document.getElementById('openHelpButton'),
     openHelpFromConfigButton: document.getElementById('openHelpFromConfigButton'),
-    openHelpFromCarrouselButton: document.getElementById('openHelpFromCarrouselButton'),
     closeHelpButton: document.getElementById('closeHelpButton'),
     openConfigFromHelpButton: document.getElementById('openConfigFromHelpButton'),
-    openConfigFromCarrouselButton: document.getElementById('openConfigFromCarrouselButton'),
-    openCarrouselButton: document.getElementById('openCarrouselButton'),
-    openCarrouselFromConfigButton: document.getElementById('openCarrouselFromConfigButton'),
-    openCarrouselFromHelpButton: document.getElementById('openCarrouselFromHelpButton'),
-    closeCarrouselButton: document.getElementById('closeCarrouselButton'),
-    carrouselFrame: document.getElementById('carrouselFrame'),
     centralModeSelect: document.getElementById('centralModeSelect'),
     treeChoiceSelect: document.getElementById('treeChoiceSelect'),
     functionalOrderSelect: document.getElementById('functionalOrderSelect'),
@@ -301,7 +294,7 @@
     { id: 'projection', label: 'Projectiekeuze', cssClass: 'top-menu-projection', tip: 'Projectiekeuze: Assen, Bron, LEX, SYNTAX-projectie en LOG/FT. Nuttig voor vergelijken van projecties.' },
     { id: 'sentence', label: 'Voorbeeldzin', cssClass: 'top-menu-sentence', tip: 'Voorbeeldzin: kies snel HOND BIJT MAN en varianten. Nuttig voor contrast tussen zinnen.' },
     { id: 'play', label: 'Play/Groei', cssClass: 'top-menu-play', tip: 'Play/Groei: stap voor stap boom, LEX-as en projecties tonen. Nuttig voor didactische uitleg.' },
-    { id: 'tools', label: 'Werkknoppen', cssClass: 'top-menu-tools', tip: 'Werkknoppen: FIT, reset, JSON, Docs, Carrousel en editors. Nuttig bij bouwen en testen.' },
+    { id: 'tools', label: 'Werkknoppen', cssClass: 'top-menu-tools', tip: 'Werkknoppen: FIT, reset, JSON, Docs en editors. Nuttig bij bouwen en testen.' },
     { id: 'fit', label: 'Hoofdvenster', cssClass: 'top-menu-fit', tip: 'Hoofdvenster: kies Passend/Scroll en Boomruimte direct boven het grid.' }
   ];
   const TOP_MENU_MAX = TOP_MENU_CHOICES.length;
@@ -2664,19 +2657,62 @@
     return `boomkeuze=${m.choice} · type=${m.type} · LEX-wissels=${m.count}`;
   }
 
+  function projectedLexRootY(sourceMap = null) {
+    if (!sourceMap) return null;
+    const root = sourceMap.get(STRUCTURE_CONFIG.syntaxRoot || 's')
+      || sourceMap.get(STRUCTURE_CONFIG.functionalRoot || 'ft-clause')
+      || sourceMap.get('s')
+      || sourceMap.get('ft-clause');
+    return root && Number.isFinite(root.py) ? root.py : null;
+  }
+
+  function projectedLexSystemY0(y0, sourceMap = null) {
+    // v4532: alleen slot 0 hoort boven S/CLAUSE. De lokale V2-slots
+    // 1 en 2 horen onder S/CLAUSE. De bronprojecties blijven exact
+    // horizontaal op hun bronknoophoogte.
+    const rootY = projectedLexRootY(sourceMap);
+    return rootY === null ? y0 : rootY - 64;
+  }
+
+  function projectedCompSlotY(y0, sourceMap = null) {
+    const rootY = projectedLexRootY(sourceMap);
+    return rootY === null ? compSlotY(y0) : rootY - 64;
+  }
+
+  function projectedTopicSlotY(y0, sourceMap = null, items = state.example?.lexItems || []) {
+    const rootY = projectedLexRootY(sourceMap);
+    return rootY === null ? topicSlotY(y0, items) : rootY + 64;
+  }
+
+  function projectedV2SlotY(y0, sourceMap = null, items = state.example?.lexItems || []) {
+    const rootY = projectedLexRootY(sourceMap);
+    if (rootY === null) return v2SlotY(y0, items);
+    return rootY + (showTopicSlot(items) ? 128 : 64);
+  }
+
+  function projectedLexItemY(item, index, y0, sourceMap = null, items = state.example?.lexItems || [], options = {}) {
+    if (!sourceMap || options.localOnly) return lexItemY(item, index, y0, sourceMap, items, options);
+    if (!item?.source) return item.slot === 'comp' ? projectedCompSlotY(y0, sourceMap) : lexWordOrderY(index, y0);
+    const movement = appliedMovementForItem(item, index, items, options);
+    if (movement?.slot === 'topic') return projectedTopicSlotY(y0, sourceMap, items);
+    if (movement?.slot === 'v2') return projectedV2SlotY(y0, sourceMap, items);
+    return baseLexY(item, index, y0, sourceMap, items);
+  }
+
   function drawLexAxis(g, x, y0, items, sourceMap = null, options = {}) {
     const horizontalProjectionMode = !!sourceMap && !options.localOnly;
-    drawAxisTitle(g, x - 98, y0 - 70, horizontalProjectionMode ? 'LEX-projectie · Wisselregels' : 'LEX-as · lokale plaatsingsregels');
+    const systemY0 = sourceMap ? projectedLexSystemY0(y0, sourceMap) : y0;
+    drawAxisTitle(g, x - 98, systemY0 - 70, horizontalProjectionMode ? 'LEX-projectie · Wisselregels' : 'LEX-as · lokale plaatsingsregels');
 
-    const itemYs = items.map((item, i) => lexItemY(item, i, y0, sourceMap, items, options));
+    const itemYs = items.map((item, i) => projectedLexItemY(item, i, y0, sourceMap, items, options));
     const baseYs = items.map((item, i) => baseLexY(item, i, y0, sourceMap, items));
     const projectionYs = items.map((item, i) => projectionAnchorY(item, i, y0, sourceMap, items));
     const topicIndex = isMainV2Rule() ? items.findIndex((item, i) => movementForItem(item, i)?.slot === 'topic') : -1;
     const v2Index = isMainV2Rule() ? items.findIndex((item, i) => movementForItem(item, i)?.slot === 'v2') : -1;
-    const topicSlotY = topicIndex >= 0 ? lexTopicSlotY(sourceMap, y0, items) : null;
-    const v2SlotY = v2Index >= 0 ? lexV2SlotY(sourceMap, y0, items) : null;
-    const configuredSlots = lexConfiguredFreeSlots(y0, items, [...itemYs, ...baseYs, ...projectionYs, ...(topicSlotY === null ? [] : [topicSlotY]), ...(v2SlotY === null ? [] : [v2SlotY])]);
-    const axisYs = [...itemYs, ...baseYs, ...projectionYs, ...configuredSlots.map(slot => slot.y), ...(topicSlotY === null ? [] : [topicSlotY]), ...(v2SlotY === null ? [] : [v2SlotY]), y0 - 48, y0 + Math.max(4, items.length + 1) * 64 + 40];
+    const topicSlotY = topicIndex >= 0 ? projectedTopicSlotY(y0, sourceMap, items) : null;
+    const v2SlotY = v2Index >= 0 ? projectedV2SlotY(y0, sourceMap, items) : null;
+    const configuredSlots = lexConfiguredFreeSlots(systemY0, items, [...itemYs, ...baseYs, ...projectionYs, ...(topicSlotY === null ? [] : [topicSlotY]), ...(v2SlotY === null ? [] : [v2SlotY])]);
+    const axisYs = [...itemYs, ...baseYs, ...projectionYs, ...configuredSlots.map(slot => slot.y), ...(topicSlotY === null ? [] : [topicSlotY]), ...(v2SlotY === null ? [] : [v2SlotY]), systemY0 - 48, systemY0 + Math.max(4, items.length + 1) * 64 + 40];
     const axisMinY = Math.min(...axisYs) - 36;
     const axisMaxY = Math.max(...axisYs) + 44;
     g.appendChild(svgEl('line', { x1: x, y1: axisMinY, x2: x, y2: axisMaxY, class: 'lex-axis-line' }));
@@ -2698,7 +2734,7 @@
 
     items.forEach((item, i) => {
       const p = item.source && sourceMap ? sourceMap.get(item.source) : null;
-      const y = lexItemY(item, i, y0, sourceMap, items, options);
+      const y = projectedLexItemY(item, i, y0, sourceMap, items, options);
       const oldY = baseLexY(item, i, y0, sourceMap, items);
       const movement = localAxisMovement(item, i, oldY, y, items, options);
       positions.set(item.id, { x, y, baseY: oldY, item, sourcePoint: p || null });
@@ -3673,7 +3709,7 @@
     projection: ['Projection choice', 'Projection choice: All, Source, LEX, SYNTAX projection and LOG/FT. Useful for comparing projections.'],
     sentence: ['Sample sentence', 'Sample sentence: quickly choose HOND BIJT MAN and variants. Useful for contrasts between sentences.'],
     play: ['Play/Grow', 'Play/Grow: show tree, LEX axis and projections step by step. Useful for explanation.'],
-    tools: ['Work buttons', 'Work buttons: FIT, reset, JSON, Docs, Carrousel and editors. Useful for building and testing.'],
+    tools: ['Work buttons', 'Work buttons: FIT, reset, JSON, Docs and editors. Useful for building and testing.'],
     fit: ['Main window', 'Main window: place Fit/Scroll and Tree spacing directly above the grid.']
   };
 
@@ -4436,24 +4472,19 @@
     });
 
     setText('.main-sentence-field span, .desktop-sentence-field span, .mobile-sentence-field span, .sentence-card .field span', en ? 'Sentence' : 'Zin');
-    setTitle('#openHelpButton, #openHelpFromConfigButton, #openHelpFromCarrouselButton', en ? 'Open the Help screen.' : 'Open het help-scherm.');
-    setTitle('#openCarrouselButton, #openCarrouselFromConfigButton, #openCarrouselFromHelpButton', en ? 'Open the carrousel as a separate screen.' : 'Open de carrousel als apart scherm.');
+    setTitle('#openHelpButton, #openHelpFromConfigButton', en ? 'Open the Help screen.' : 'Open het help-scherm.');
     setTitle('#openConfigButton', en ? 'Open the configuration screen with projection, LEX, layout and documentation settings.' : 'Open het configuratiescherm met alle projectie-, LEX-, layout- en documentatie-instellingen.');
-    setTitle('#closeConfigButton, #closeHelpButton, #closeCarrouselButton', en ? 'Back to main view.' : 'Terug naar hoofdbeeld.');
-    setText('#closeConfigButton, #closeHelpButton, #closeCarrouselButton', en ? '← Back to main' : '← Terug naar main');
-    setText('#openConfigButton, #openConfigFromHelpButton, #openConfigFromCarrouselButton', 'Config');
-    setText('#openHelpButton, #openHelpFromConfigButton, #openHelpFromCarrouselButton', 'Help');
-    setText('#openCarrouselButton, #openCarrouselFromConfigButton, #openCarrouselFromHelpButton', 'Carrousel');
+    setTitle('#closeConfigButton, #closeHelpButton', en ? 'Back to main view.' : 'Terug naar hoofdbeeld.');
+    setText('#closeConfigButton, #closeHelpButton', en ? '← Back to main' : '← Terug naar main');
+    setText('#openConfigButton, #openConfigFromHelpButton', 'Config');
+    setText('#openHelpButton, #openHelpFromConfigButton', 'Help');
 
     setText('.config-topbar .intro-kicker', 'Config');
     setText('.config-topbar h2', en ? 'All settings' : 'Alle instellingen');
     setText('.config-topbar p', en ? 'LEX insertions, branch extension, layout, main-window fit, export and documentation are configured here. Projection, sentence and Play/Grow live in Main. The Back to main bar stays fixed while this page scrolls.' : 'LEX-inserties, takverlenging, layout, hoofdvenster, export en documentatie staan hier. Projectie, zin en Play/Groei staan in Main. De Terug-naar-main-balk blijft vast staan bij scrollen.');
     setText('.help-topbar .intro-kicker', 'Help');
     setText('.help-topbar h2', en ? 'Help' : 'Uitleg');
-    setText('.help-topbar p', en ? 'Help contains textual explanation and usage notes. The carrousel is a separate screen next to Help.' : 'Help bevat tekstuitleg en gebruiksaanwijzingen. De carrousel staat apart, rechts naast Help in de hoofdknoppen.');
-    setText('.carrousel-topbar .intro-kicker', 'Carrousel');
-    setText('.carrousel-topbar h2', 'Carrousel');
-    setText('.carrousel-topbar p', en ? 'Explanatory images are shown in this separate screen. Help stays textual.' : 'Uitlegbeelden staan in dit eigen scherm. Help blijft tekstuitleg.');
+    setText('.help-topbar p', en ? 'Help contains textual explanation and usage notes.' : 'Help bevat tekstuitleg en gebruiksaanwijzingen.');
     setText('[data-help-boom-title]', en ? 'Tree first' : 'Boom eerst');
     setText('[data-help-boom-text]', en
       ? 'Tree first is the didactic and notational sequence: start with the central open tree as the source; then project to LEX, SYNTAX and LOG/FT. LEX exchanges and insertions stay on the LEX axis. Dutch sample sentences remain language data.'
@@ -4470,33 +4501,6 @@
     setHtml('[data-help-render-text]', en
       ? '<strong>Rendering</strong> means: first compute the central tree and boxes, then draw projections and the LEX axis. Free LEX inserts are placed in reserved slots; the central tree remains unchanged. OSV-!, VSO-! and VOS-! are not base trees: the box approach cannot produce these orders; the LEX axis then requires a movement rule.'
       : '<strong>Renderen</strong> betekent: eerst de centrale boom en boxen berekenen, daarna projecties en LEX-as tekenen. Vrije LEX-inserts worden op gereserveerde slots geplaatst; de centrale boom blijft daarbij ongewijzigd. OSV-!, VSO-! en VOS-! zijn geen basisbomen: de box-aanpak kan deze volgordes niet opleveren; de LEX-as vraagt dan een verplaatsingsregel.');
-    setText('[data-help-carrousel-editor-title]', en ? 'Carrousel editor: saving and writing' : 'Carrousel-editor: bewaren en schrijven');
-    setHtml('[data-help-carrousel-editor-text]', en
-      ? '<strong>Choose module folder</strong> is the only button that opens a folder chooser. <strong>Save locally</strong> stores browser state and writes real files only if the module folder has already been chosen. <strong>Write to folder</strong> does not open a chooser: it writes directly to the chosen module folder. Browser security prevents automatic selection of the current folder.'
-      : '<strong>Kies modulemap</strong> is de enige knop die een mapvenster opent. <strong>Bewaar lokaal</strong> bewaart in browseropslag en schrijft alleen naar echte bestanden als de modulemap al gekozen is. <strong>Schrijf naar map</strong> opent geen mapvenster: die knop schrijft direct naar de gekozen modulemap. Door browserbeveiliging kan de editor de huidige map niet automatisch selecteren.');
-    document.querySelectorAll('.carrousel-fallback').forEach(node => {
-      node.innerHTML = en
-        ? 'If the carrousel does not appear: <a href="carrousel/index-en.html?v4528" target="_blank" rel="noopener">open the carrousel separately</a>.'
-        : 'Als de carrousel niet verschijnt: <a href="carrousel/index.html?v4528" target="_blank" rel="noopener">open de carrousel los</a>.';
-    });
-    setText('[data-carrousel-config-title]', 'Carrousel');
-    setText('[data-carrousel-config-text]', en
-      ? 'Manage the explanatory images as a standalone carrousel folder. Choose module folder opens the folder chooser once; Write to folder then writes directly to that folder.'
-      : 'Beheer de uitlegbeelden als zelfstandige carrouselmap. Kies modulemap opent één keer het mapvenster; Schrijf naar map schrijft daarna direct naar die map.');
-    setText('[data-carrousel-open]', en ? 'Open' : 'Open');
-    setText('[data-carrousel-edit]', 'Edit');
-    setTitle('[data-carrousel-open]', en ? 'Open the carrousel.' : 'Open de carrousel.');
-    setTitle('[data-carrousel-edit], [data-carrousel-toolbar-edit]', en
-      ? 'Open the carrousel editor: add images, remove slides, change order and export the module.'
-      : 'Open de carrousel-editor: afbeeldingen toevoegen, verwijderen, volgorde wijzigen en exporteren.');
-    setText('[data-carrousel-toolbar-edit]', en ? 'Edit carrousel' : 'Edit carrousel');
-    if (els.carrouselFrame) {
-      const wanted = en ? `carrousel/index-en.html?${VERSION}` : `carrousel/index.html?${VERSION}`;
-      if (!String(els.carrouselFrame.getAttribute('src') || '').includes(wanted)) {
-        els.carrouselFrame.src = wanted;
-        els.carrouselFrame.dataset.loaded = '1';
-      }
-    }
 
     setText('[data-projection="axes"], [data-main-projection="axes"]', en ? 'All' : 'Alle');
     setText('[data-projection="source"], [data-main-projection="source"], [data-mobile-projection="source"]', en ? 'Source' : 'Bron');
@@ -4524,32 +4528,23 @@
   }
 
   function setAppScreen(screen = 'main') {
-    const next = ['main', 'config', 'help', 'carrousel'].includes(screen) ? screen : 'main';
+    const next = ['main', 'config', 'help'].includes(screen) ? screen : 'main';
     const isMain = next === 'main';
     const isConfig = next === 'config';
     const isHelp = next === 'help';
-    const isCarrousel = next === 'carrousel';
     document.body.classList.toggle('main-screen-active', isMain);
     document.body.classList.toggle('config-screen-active', isConfig);
     document.body.classList.toggle('help-screen-active', isHelp);
-    document.body.classList.toggle('carrousel-screen-active', isCarrousel);
     els.openConfigButton?.setAttribute('aria-expanded', isConfig ? 'true' : 'false');
     els.closeConfigButton?.setAttribute('aria-expanded', isConfig ? 'true' : 'false');
     els.openHelpButton?.setAttribute('aria-expanded', isHelp ? 'true' : 'false');
     els.closeHelpButton?.setAttribute('aria-expanded', isHelp ? 'true' : 'false');
-    els.openCarrouselButton?.setAttribute('aria-expanded', isCarrousel ? 'true' : 'false');
-    els.closeCarrouselButton?.setAttribute('aria-expanded', isCarrousel ? 'true' : 'false');
-    if (isCarrousel && els.carrouselFrame && !els.carrouselFrame.dataset.loaded) {
-      els.carrouselFrame.src = isEnglish() ? `carrousel/index-en.html?${VERSION}` : `carrousel/index.html?${VERSION}`;
-      els.carrouselFrame.dataset.loaded = '1';
-    }
     window.setTimeout(() => {
       syncExampleSelectSizing();
       syncMainTopbarLayout();
       try { render(); } catch (_) {}
       if (isConfig) els.closeConfigButton?.focus?.();
       else if (isHelp) els.closeHelpButton?.focus?.();
-      else if (isCarrousel) els.closeCarrouselButton?.focus?.();
       else els.openConfigButton?.focus?.();
     }, 0);
   }
@@ -4560,10 +4555,6 @@
 
   function setHelpScreen(open) {
     setAppScreen(open ? 'help' : 'main');
-  }
-
-  function setCarrouselScreen(open) {
-    setAppScreen(open ? 'carrousel' : 'main');
   }
 
   function registerEvents() {
@@ -4596,20 +4587,14 @@
     els.openConfigButton?.addEventListener('click', () => setConfigScreen(true));
     els.closeConfigButton?.addEventListener('click', () => setConfigScreen(false));
     els.openConfigFromHelpButton?.addEventListener('click', () => setConfigScreen(true));
-    els.openConfigFromCarrouselButton?.addEventListener('click', () => setConfigScreen(true));
     els.openHelpButton?.addEventListener('click', () => setHelpScreen(true));
     els.openHelpFromConfigButton?.addEventListener('click', () => setHelpScreen(true));
-    els.openHelpFromCarrouselButton?.addEventListener('click', () => setHelpScreen(true));
     els.closeHelpButton?.addEventListener('click', () => setHelpScreen(false));
-    els.openCarrouselButton?.addEventListener('click', () => setCarrouselScreen(true));
-    els.openCarrouselFromConfigButton?.addEventListener('click', () => setCarrouselScreen(true));
-    els.openCarrouselFromHelpButton?.addEventListener('click', () => setCarrouselScreen(true));
-    els.closeCarrouselButton?.addEventListener('click', () => setCarrouselScreen(false));
     document.querySelectorAll('[data-language-toggle]').forEach(button => {
       button.addEventListener('click', toggleLanguage);
     });
     window.addEventListener('keydown', event => {
-      if (event.key === 'Escape' && (document.body.classList.contains('config-screen-active') || document.body.classList.contains('help-screen-active') || document.body.classList.contains('carrousel-screen-active'))) setAppScreen('main');
+      if (event.key === 'Escape' && (document.body.classList.contains('config-screen-active') || document.body.classList.contains('help-screen-active'))) setAppScreen('main');
     });
     els.centralModeSelect?.addEventListener('change', event => {
       state.centerMode = event.target.value;
@@ -4767,7 +4752,6 @@
     document.body.classList.add('main-screen-active');
     document.body.classList.remove('config-screen-active');
     document.body.classList.remove('help-screen-active');
-    document.body.classList.remove('carrousel-screen-active');
     registerEvents();
     registerCanvasPan();
     registerPaneSplitter();

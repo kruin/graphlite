@@ -16,7 +16,6 @@
 - V1 als aparte LEX-regel modelleren.
 - Topicalisatie-editor expliciet maken: topic kiezen zonder thematische rollen te wijzigen.
 - Meer trace-typen toevoegen (`t[NP]`, `t[V]`, `t[pv]`) en exporteren in `.opn`.
-- V2/Wissel uitleg opnemen in carrousel en handleiding.
 
 ---
 
@@ -29,7 +28,6 @@
 7. Functionele structuur verder testen met perfectum en meer werkwoorden.
 8. Voorbeeldenset uitbreiden zonder lidwoorden.
 9. Configschema documenteren met foutmeldingen per regel.
-10. Carrousel/documentatie koppelen aan de nieuwe docs-map en eventueel groei-presentatie als carrousel-bron gebruiken.
 
 ## Na v4430
 

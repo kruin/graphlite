@@ -331,3 +331,8 @@ Zie ook: `docs/LEX_ADVERB_INSERT_SLOTS.md`.
 
 `VSO` en `VOS` worden nu net als `OSV` gemarkeerd: `VSO-!` en `VOS-!`. Het uitroepteken betekent dat de box-aanpak deze volgorde niet als basisalternatief kan opleveren. Voor correcte rendering op de LEX-as is een expliciete verplaatsingsregel nodig. Bestaande bomen en bestaande flips blijven ongemoeid.
 
+
+
+## v4532 - LEX slot 0 boven S
+
+Slot 0 op de LEX-as staat in de gecombineerde Assen-weergave weer boven de centrale S/CLAUSE-root. Bronknopen blijven op hun eigen hoogte; alleen de lokale LEX-systeemslots starten hoger.

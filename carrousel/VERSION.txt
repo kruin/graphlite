@@ -1,2 +1,0 @@
-OpenGraph carrousel module v4528
-Storage: current v4528 state first; per-slide visible values are preserved exactly.

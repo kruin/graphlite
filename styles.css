@@ -3629,15 +3629,14 @@ body.main-screen-active .canvas-wrap {
 
 body.main-screen-active .main-south-control.is-hidden { display: none !important; }
 
-/* v4504: Help-scherm met carrousel naast Config; zinmenu zo smal als langste zin. */
+/* v4532: Help-scherm; zinmenu zo smal als langste zin. */
 .main-topbar-actions {
   display: inline-flex;
   align-items: center;
   gap: .45rem;
   flex: 0 0 auto;
 }
-.help-open-button,
-.carrousel-open-button {
+.help-open-button {
   min-height: 2.35rem;
   padding-inline: .95rem;
   border: 1px solid var(--line);
@@ -3656,13 +3655,10 @@ body.main-screen-active .main-sentence-field select {
   max-width: 100% !important;
 }
 .help-topbar,
-.help-screen,
-.carrousel-topbar,
-.carrousel-screen {
+.help-screen {
   display: none;
 }
-.help-topbar,
-.carrousel-topbar {
+.help-topbar {
   align-items: center;
   gap: .75rem;
   padding: .7rem .85rem;
@@ -3671,13 +3667,11 @@ body.main-screen-active .main-sentence-field select {
   background: color-mix(in srgb, var(--panel), var(--bg) 12%);
   box-shadow: var(--shadow-soft);
 }
-.help-topbar h2,
-.carrousel-topbar h2 {
+.help-topbar h2 {
   margin: 0;
   font-size: 1.12rem;
 }
-.help-topbar p,
-.carrousel-topbar p {
+.help-topbar p {
   margin: .18rem 0 0;
   color: var(--muted);
   font-size: .92rem;
@@ -3700,26 +3694,7 @@ body.help-screen-active .mobile-sheet,
 body.help-screen-active .mobile-sheet-backdrop {
   display: none !important;
 }
-body.carrousel-screen-active .app-header,
-body.carrousel-screen-active .main-topbar,
-body.carrousel-screen-active .config-topbar,
-body.carrousel-screen-active .projection-sticky-bar,
-body.carrousel-screen-active .mobile-sentence-bar,
-body.carrousel-screen-active .toolbar,
-body.carrousel-screen-active .intro-panel,
-body.carrousel-screen-active .status-panel,
-body.carrousel-screen-active .workspace,
-body.carrousel-screen-active .side-panel,
-body.carrousel-screen-active .pane-splitter,
-body.carrousel-screen-active .text-panel,
-body.carrousel-screen-active .mobile-growth-nav,
-body.carrousel-screen-active .mobile-bottom-nav,
-body.carrousel-screen-active .mobile-sheet,
-body.carrousel-screen-active .mobile-sheet-backdrop {
-  display: none !important;
-}
-body.help-screen-active .app-shell,
-body.carrousel-screen-active .app-shell {
+body.help-screen-active .app-shell {
   display: flex !important;
   flex-direction: column !important;
   gap: .65rem !important;
@@ -3740,38 +3715,18 @@ body.help-screen-active .help-screen {
   flex: 1 1 auto !important;
   border: 1px solid var(--line);
   border-radius: 1rem;
-  overflow: hidden;
+  overflow: auto !important;
   background: var(--panel);
   box-shadow: var(--shadow-soft);
 }
-
-body.carrousel-screen-active .carrousel-topbar {
-  display: flex !important;
-  order: 0 !important;
-}
-body.carrousel-screen-active .carrousel-screen {
-  display: flex !important;
-  flex-direction: column !important;
-  order: 1 !important;
-  min-height: 0 !important;
-  flex: 1 1 auto !important;
-  border: 1px solid var(--line);
-  border-radius: 1rem;
-  overflow: hidden;
-  background: var(--panel);
-  box-shadow: var(--shadow-soft);
-}
-
-.help-screen iframe,
-.carrousel-screen iframe {
+.help-screen iframe {
   width: 100%;
   flex: 1 1 auto;
   min-height: 0;
   border: 0;
   background: var(--bg);
 }
-.help-fallback,
-.carrousel-fallback {
+.help-fallback {
   margin: 0;
   padding: .45rem .65rem;
   border-top: 1px solid var(--line);
@@ -3780,16 +3735,8 @@ body.carrousel-screen-active .carrousel-screen {
 }
 body.config-screen-active .help-topbar,
 body.config-screen-active .help-screen,
-body.config-screen-active .carrousel-topbar,
-body.config-screen-active .carrousel-screen,
 body.main-screen-active .help-topbar,
-body.main-screen-active .help-screen,
-body.main-screen-active .carrousel-topbar,
-body.main-screen-active .carrousel-screen,
-body.help-screen-active .carrousel-topbar,
-body.help-screen-active .carrousel-screen,
-body.carrousel-screen-active .help-topbar,
-body.carrousel-screen-active .help-screen {
+body.main-screen-active .help-screen {
   display: none !important;
 }
 /* v4504: ook de voorbeeldzin-keuzes in Config volgen de langste zin. */
@@ -4010,24 +3957,7 @@ body.config-screen-active .side-panel {
   line-height: 1.45;
 }
 
-/* v4513: carrouselbeheer in Config. */
-.carrousel-config-card .carrousel-config-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: .45rem;
-}
-.carrousel-config-card .carrousel-config-actions .button-link {
-  flex: 1 1 8rem;
-  justify-content: center;
-  text-align: center;
-}
-.carrousel-config-card .button-link.primary {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: var(--accent-contrast);
-}
 
-/* v4528: Help is text-only; carrousel is its own screen next to Help. */
 body.help-screen-active .help-screen {
   overflow: auto !important;
 }

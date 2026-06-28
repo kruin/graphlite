@@ -1089,7 +1089,7 @@
       els.stepRange.max = '0';
       els.stepRange.value = '0';
       els.stepHeading.textContent = 'Stap';
-      els.stepText.textContent = 'Technische startdemo wordt geladen. Gebruik de carrousel voor uitlegbeelden.';
+      els.stepText.textContent = 'Technische startdemo wordt geladen.';
       els.metaLine.textContent = 'Wacht op een geldige Greedy Grow JSON-demo.';
       if (els.configSummary) els.configSummary.textContent = 'Greedy-config wordt geladen.';
       if (els.constraintStatus) { els.constraintStatus.textContent = 'Conflictcontrole wordt geladen.'; els.constraintStatus.className = 'constraint-status neutral'; }
