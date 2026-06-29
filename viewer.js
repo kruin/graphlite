@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'v4532';
+  const VERSION = 'v4535';
   const BASE_CELL = 74;
   const ROOT_SIDE_GAP = 1;
   const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -155,6 +155,44 @@
         { id: 'hond', label: 'HOND', source: 'subject', role: 'subject', thematicRole: 'agens' },
         { id: 'man', label: 'MAN', source: 'object', role: 'object', thematicRole: 'patiens' },
         { id: 'bijt', label: 'BIJT', source: 'predicate', role: 'predicate' }
+      ]
+    }
+    ,
+    {
+      id: 'omdat-de-hond-de-man-heeft-gebeten',
+      title: 'OMDAT DE HOND DE MAN HEEFT GEBETEN',
+      phase: 'Perfectum · omdat-bijzin',
+      lexRule: 'bijzin-omdat',
+      sentence: 'OMDAT DE HOND DE MAN HEEFT GEBETEN',
+      sentenceHtml: 'OMDAT <strong>DE HOND</strong> <em>DE MAN</em> HEEFT GEBETEN',
+      subjectDefault: 'DE HOND',
+      objectDefault: 'DE MAN',
+      predicate: 'GEBETEN',
+      lexItems: [
+        { id: 'omdat', label: 'OMDAT', source: null, slot: 'comp', lexeme: 'omdat' },
+        { id: 'subject-hond', label: 'DE HOND', source: 'subject', role: 'subject', thematicRole: 'agens', lexeme: 'hond' },
+        { id: 'object-man', label: 'DE MAN', source: 'object', role: 'object', thematicRole: 'patiens', lexeme: 'man' },
+        { id: 'pv-heeft', label: 'HEEFT', source: 'pv', role: 'aux', lexeme: 'heeft' },
+        { id: 'vdw-bijt', label: 'GEBETEN', source: 'vdw', role: 'participle', lexeme: 'bijt' }
+      ]
+    }
+    ,
+    {
+      id: 'omdat-vrouw-trui-heeft-gebreid',
+      title: 'OMDAT VROUW TRUI HEEFT GEBREID',
+      phase: 'Gebruikersinput · omdat+perfectum',
+      lexRule: 'bijzin-omdat',
+      sentence: 'OMDAT VROUW TRUI HEEFT GEBREID',
+      sentenceHtml: 'OMDAT <strong>VROUW</strong> <em>TRUI</em> HEEFT GEBREID',
+      subjectDefault: 'VROUW',
+      objectDefault: 'TRUI',
+      predicate: 'GEBREID',
+      lexItems: [
+        { id: 'omdat', label: 'OMDAT', source: null, slot: 'comp', lexeme: 'omdat' },
+        { id: 'subject-vrouw', label: 'VROUW', source: 'subject', role: 'subject', thematicRole: 'agens', lexeme: 'vrouw' },
+        { id: 'object-trui', label: 'TRUI', source: 'object', role: 'object', thematicRole: 'patiens', lexeme: 'trui' },
+        { id: 'pv-heeft', label: 'HEEFT', source: 'pv', role: 'aux', lexeme: 'heeft' },
+        { id: 'vdw-breit', label: 'GEBREID', source: 'vdw', role: 'participle', lexeme: 'breit' }
       ]
     }
   ];
@@ -1666,7 +1704,7 @@
   }
 
   function isPortraitMobileViewport() {
-    // v4513: grid-first and fit-height are no longer mobile-only.
+    // v4535: grid-first and fit-height are no longer mobile-only.
     // The canvas height is based on the actual viewBox on every platform.
     return true;
   }
@@ -1680,7 +1718,7 @@
   }
 
   function syncPortraitMenuSpace() {
-    // v4513: de oude numerieke onderruimte blijft op 0. De relevante instelling
+    // v4535: de oude numerieke onderruimte blijft op 0. De relevante instelling
     // is nu: welke benoemde menu's mogen boven het grid staan.
     document.documentElement?.style.setProperty('--portrait-menu-reserve', '0px');
     document.documentElement?.style.setProperty('--portrait-menu-slots', '0');
@@ -1904,7 +1942,7 @@
     syncPortraitStageMode();
     if (!els.canvasWrap) return;
     syncPortraitMenuSpace();
-    // v4513: het gridvenster wordt gemaximeerd op de actuele fit-box
+    // v4535: het gridvenster wordt gemaximeerd op de actuele fit-box
     // van boom + assen. Het canvas schaalt dus niet groter dan nodig.
     const fit = box || parseViewBox();
     const validFit = fit && Number.isFinite(fit.w) && fit.w > 0 && Number.isFinite(fit.h) && fit.h > 0;
@@ -2667,7 +2705,7 @@
   }
 
   function projectedLexSystemY0(y0, sourceMap = null) {
-    // v4532: alleen slot 0 hoort boven S/CLAUSE. De lokale V2-slots
+    // v4535: alleen slot 0 hoort boven S/CLAUSE. De lokale V2-slots
     // 1 en 2 horen onder S/CLAUSE. De bronprojecties blijven exact
     // horizontaal op hun bronknoophoogte.
     const rootY = projectedLexRootY(sourceMap);
@@ -3065,7 +3103,7 @@
       .map(id => functionalNodes.find(n => n.id === id)?.label || id)
       .join(' + ') || 'role-boxen';
     if (options.showTitle !== false) drawAxisTitle(g, origin.x - 180, origin.y - 70, `OPN · functionele structuur · ${rootLabel} → ${roleNames} · ${state.functionalOrder}`);
-    drawAxisTitle(g, origin.x - 176, origin.y - 48, `v4513 · ${branchModeLabel()} · vrije plaatsing + LEX-bijwoordslots`);
+    drawAxisTitle(g, origin.x - 176, origin.y - 48, `v4535 · ${branchModeLabel()} · vrije plaatsing + LEX-bijwoordslots`);
     const growthPlan = growthPlanForLayout(layout);
     layout.__growthPlan = growthPlan;
     drawSubtreeBoxes(g, layout, origin, growthPlan);
@@ -3385,7 +3423,7 @@
     const svgLocalRight = Math.min(hostRect.width, svgRect.right - hostRect.left);
     const svgLocalBottom = Math.min(hostRect.height, svgRect.bottom - hostRect.top);
 
-    // v4513: HTML controls are children of the canvas/boomvenster, but the SVG
+    // v4535: HTML controls are children of the canvas/boomvenster, but the SVG
     // itself uses preserveAspectRatio=meet.  Therefore placement is clamped to
     // the actually drawn grid rectangle, not to the full letterboxed canvas.
     // All overlay coordinates are therefore clamped to the canvas rect, not to
@@ -4583,6 +4621,17 @@
       state.example = EXAMPLES.find(e => e.id === event.target.value) || EXAMPLES[0];
       resetForNewExample();
       render();
+    });
+    document.getElementById('reloadExamplesButton')?.addEventListener('click', async () => {
+      const before = EXAMPLES.length;
+      await loadExamplesFromHtml();
+      state.example = EXAMPLES.find(e => e.id === state.example?.id) || EXAMPLES[0];
+      resetForNewExample();
+      render();
+      if (els.actionFeedback) {
+        els.actionFeedback.textContent = `Voorbeeldzinnen herladen: ${EXAMPLES.length} beschikbaar${EXAMPLES.length !== before ? ` (${before} → ${EXAMPLES.length})` : ''}.`;
+        els.actionFeedback.className = 'action-feedback neutral';
+      }
     });
     els.openConfigButton?.addEventListener('click', () => setConfigScreen(true));
     els.closeConfigButton?.addEventListener('click', () => setConfigScreen(false));

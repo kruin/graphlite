@@ -1,4 +1,4 @@
-# OpenGraph Lite Viewer v4532
+# OpenGraph Lite Viewer v4535
 
 Deze build verwijdert de aparte beeldmodule volledig uit de viewer.
 
@@ -18,3 +18,11 @@ Deze build verwijdert de aparte beeldmodule volledig uit de viewer.
 - bijbehorende links
 - bijbehorend Config-blok
 - bijbehorende startscripts
+
+## v4535
+
+Toegevoegd als voorbeeldzin in `examples-input.html` en als fallback in `viewer.js`:
+
+`OMDAT DE HOND DE MAN HEEFT GEBETEN`
+
+LEX-volgorde: `OMDAT · DE HOND · DE MAN · HEEFT · GEBETEN`.

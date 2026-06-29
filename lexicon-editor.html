@@ -6,7 +6,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>OpenGraph lexicon- en uitingeneditor v4513</title>
+  <title>OpenGraph lexicon- en uitingeneditor v4535</title>
   <style>
     :root{color-scheme:light;--bg:#f8fafc;--panel:#fff;--text:#0f172a;--muted:#64748b;--line:#cbd5e1;--soft:#eef2f7;--accent:#1d4ed8;--danger:#b91c1c;--ok:#166534;--warn:#9a3412;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
     *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text)}
@@ -21,7 +21,7 @@
 </head>
 <body>
   <header>
-    <h1>OpenGraph lexicon- en uitingeneditor <span>v4513</span></h1>
+    <h1>OpenGraph lexicon- en uitingeneditor <span>v4535</span></h1>
     <p>Beheerlaag voor <code>lexicon-config.html</code> én de verzameling <code>examples-input.html</code>. Vooralsnog beheert deze editor korte zinnen: hoofdzin, OVT, omdat-bijzin en perfectum. Lexemen bevatten syntactische rollen én thematische rollen; de uitingenbouwer filtert op voor de hand liggende combinaties, bijvoorbeeld vrouw als agens en trui als patiens.</p>
   </header>
 
@@ -43,7 +43,7 @@
 
     <section class="split">
       <section class="panel" aria-label="Lexeme bewerken">
-        <div class="panel-header"><h2>Lexeme</h2><div class="button-row"><a class="button-link" href="index.html?v4513">Viewer</a><a class="button-link" href="lexicon-config.html?v4513">Lexicon</a><a class="button-link" href="examples-input.html?v4513">Uitingen</a><a class="button-link" href="structure-editor.html?v4513">Structure-editor</a></div></div>
+        <div class="panel-header"><h2>Lexeme</h2><div class="button-row"><a class="button-link" href="index.html?v4535">Viewer</a><a class="button-link" href="lexicon-config.html?v4535">Lexicon</a><a class="button-link" href="examples-input.html?v4535">Uitingen</a><a class="button-link" href="structure-editor.html?v4535">Structure-editor</a></div></div>
         <div class="panel-body split">
           <div class="form-grid three"><label class="field"><span>ID</span><input id="idInput" type="text" placeholder="hond"></label><label class="field"><span>Label</span><input id="labelInput" type="text" placeholder="HOND"></label><label class="field"><span>Lemma</span><input id="lemmaInput" type="text" placeholder="hond"></label></div>
           <div class="form-grid three"><label class="field"><span>Kind</span><select id="kindInput"><option>noun</option><option>verb</option><option>aux</option><option>comp</option><option>adj</option><option>adv</option><option>prep</option><option>other</option></select></label><label class="field"><span>Cat</span><input id="catInput" type="text" placeholder="N / V / AUX / COMP"></label><label class="field"><span>Phrase</span><input id="phraseInput" type="text" placeholder="NP / VP / PP"></label></div>
@@ -62,7 +62,7 @@
       <section class="panel" aria-label="Voorbeelduitingen beheren">
         <div class="panel-header"><h2>Voorbeelduitingen <span id="exampleCountLabel" class="muted">—</span></h2><div class="button-row"><button id="newShortExampleButton" class="primary" type="button">+ korte zin</button><button id="replaceExampleButton" type="button">Vervang geselecteerde</button></div></div>
         <div class="panel-body split">
-          <div class="help warn"><strong>Scope v4513:</strong> deze editor beheert voorlopig korte zinnen. Subject wordt als <code>agens</code> gelezen; object als <code>patiens</code>. Hoofdzinnen gebruiken nu de LEX-plaatsingsregel <code>Wissel V2</code>: persoonsvorm naar vrij slot 2, oude plek = trace. De bouwer toont geen combinaties zoals <code>trui</code> als agens.</div>
+          <div class="help warn"><strong>Scope v4535:</strong> deze editor beheert voorlopig korte zinnen. Subject wordt als <code>agens</code> gelezen; object als <code>patiens</code>. Hoofdzinnen gebruiken nu de LEX-plaatsingsregel <code>Wissel V2</code>: persoonsvorm naar vrij slot 2, oude plek = trace. De bouwer toont geen combinaties zoals <code>trui</code> als agens.</div>
           <div class="form-grid four">
             <label class="field"><span>Type</span><select id="exampleTypeInput"><option value="main">hoofdzin: S V O</option><option value="past">OVT: S OVT O</option><option value="sub">bijzin: omdat S O V</option><option value="perfect">perfectum: S AUX O VDW</option></select></label>
             <label class="field"><span>Subject</span><select id="exampleSubjectInput"></select></label>
@@ -94,8 +94,8 @@
   </main>
 
 <script>
-const VERSION='v4513';
-const STORAGE_KEY='opengraph.lexicon.examples.editor.v4513';
+const VERSION='v4535';
+const STORAGE_KEY='opengraph.lexicon.examples.editor.v4535';
 const DEFAULT_ROLES=['subject','object','predicate','aux','participle','comp','topic','modifier'];
 const DEFAULT_THEMES=['agens','patiens','experiens','thema','doel','bron','instrument','locatie'];
 let entries=[]; let selected=0; let examples=[]; let selectedExample=0;

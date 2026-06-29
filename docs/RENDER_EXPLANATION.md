@@ -34,7 +34,7 @@ Voorbeelden:
 
 `OSV-!` is gemarkeerd omdat het geen basisboom-alternatief is. De box-aanpak kan OSV niet opleveren. Voor correcte rendering op de LEX-as is altijd een verplaatsingsregel nodig.
 
-## v4513 - OSV-!, VSO-! en VOS-!
+## v4535 - OSV-!, VSO-! en VOS-!
 
 `VSO` en `VOS` worden nu net als `OSV` gemarkeerd: `VSO-!` en `VOS-!`. Het uitroepteken betekent dat de box-aanpak deze volgorde niet als basisalternatief kan opleveren. Correcte LEX-rendering vraagt een expliciete verplaatsingsregel. Bestaande bomen en bestaande flips blijven ongemoeid.
 

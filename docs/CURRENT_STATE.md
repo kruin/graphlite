@@ -258,7 +258,7 @@ De viewer kiest standaard per voorbeeldzin een centrale syntaxbron met source-vo
 De standaardtakvolgorde is grammaticaal/normaal: `S → NP VP` en `VP → NP V`. De eerste child wordt links en hoger geplaatst; de tweede child rechts en lager. Hierdoor ligt de basisprojectie op de LEX-as in de verwachte volgorde: subject hoog, object daaronder, V/PV onderaan. Alleen expliciete vrije-slotregels zoals V2 of topicalisatie veroorzaken een Wissel en een trace.
 
 
-## v4449 — eenvoudige documentatie LEX-plaatsingsregels
+## v4535 — eenvoudige documentatie LEX-plaatsingsregels
 
 Toegevoegd: `docs/LEX_MOVEMENT_RULES.md`.
 
@@ -274,13 +274,13 @@ resultaat = voorbeeldzin
 Beschreven zinstypen: hoofdzin, bijzin met OMDAT, topicalisatie, perfectum en voorlopige vraagzin.
 
 
-## v4449 update
+## v4535 update
 
 - `commit_and_push.bat` wordt vanaf deze versie standaard meegeleverd in de ZIP-root.
 - LOG/FT toont thematische rollen expliciet: `AGENS` voor subject/handelende deelnemer en `PATIENS` voor object/ondergaande deelnemer.
 - De syntaxrollen blijven `subject` en `object`; de functionele projectie benoemt dezelfde lexicale bronnen thematisch.
 
-## v4449 · mobiel
+## v4535 · mobiel
 
 Mobiel gebruikt nu een aparte responsieve presentatie: eerst canvas, daarna bediening. Het canvas is horizontaal scrollbaar om de JAN-boom leesbaar te houden. De layoutregels zelf veranderen niet.
 
@@ -377,15 +377,15 @@ De centrale boom wordt niet herschreven. Bijwoorden horen in deze fase in de LEX
 
 Zie ook: `docs/LEX_ADVERB_INSERT_SLOTS.md`.
 
-## v4513 - Oude tijdsinsertingtest verwijderd
+## v4535 - Oude tijdsinsertingtest verwijderd
 
 De eerdere vaste tijdsinsertingtest is uit de standaardconfiguratie gehaald. Vrije LEX-slots staan standaard uit (`LEX-slots: 0`) en de insertinhoud staat standaard op `slot leeg`. De overige bijwoordcategorieën en plaatsingsregels blijven beschikbaar via Config → Projectie-instellingen → Bijwoord / LEX-insert op LEX-as.
 
-## v4513 - Config leesbaar en LEX-bijwoordkeuze zichtbaar
+## v4535 - Config leesbaar en LEX-bijwoordkeuze zichtbaar
 
 De bijwoord/LEX-insertinstelling is uit de compacte boomweergavegrid gehaald en staat nu in een eigen blok. Daarmee is zichtbaar waar GISTEREN, VAAK, NIET, SNEL, MISSCHIEN enz. gekozen worden. De centrale boom blijft ongewijzigd; de keuze vult alleen vrije slots op de LEX-as.
 
-## v4513 - VSO-! and VOS-! labels
+## v4535 - VSO-! and VOS-! labels
 
 VSO and VOS are now marked in the same way as OSV: `VSO-!` and `VOS-!`. The label means that the box approach cannot produce this order as a base alternative. Correct LEX rendering requires an explicit movement rule. Existing trees and existing flip behaviour remain untouched.
 
@@ -418,6 +418,6 @@ VSO and VOS are now marked in the same way as OSV: `VSO-!` and `VOS-!`. The labe
 - Oude opslagkeys blijven staan als veiligheidskopie en worden niet automatisch verwijderd bij bewaren.
 
 
-## v4532 - LEX slot 0 boven S
+## v4535 - LEX slot 0 boven S
 
 Slot 0 op de LEX-as staat in de gecombineerde Assen-weergave weer boven de centrale S/CLAUSE-root. Bronknopen blijven op hun eigen hoogte; alleen de lokale LEX-systeemslots starten hoger.

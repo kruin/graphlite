@@ -6,7 +6,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>OpenGraph voorbeeldzinnen-editor v4449</title>
+  <title>OpenGraph voorbeeldzinnen-editor v4535</title>
   <style>
     :root { color-scheme: light; --bg:#f8fafc; --panel:#fff; --text:#0f172a; --muted:#64748b; --line:#cbd5e1; --soft:#eef2f7; --accent:#1d4ed8; --danger:#b91c1c; --subject:#166534; --object:#7c2d12; font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif; }
     * { box-sizing:border-box; }
@@ -47,13 +47,15 @@
     .token-actions { display:flex; gap:5px; justify-content:flex-end; }
     .token-actions button { padding:7px 9px; }
     .notice { border:1px solid #bfdbfe; background:#eff6ff; color:#1e3a8a; border-radius:12px; padding:10px 12px; margin-top:12px; line-height:1.45; }
+    .user-input-row { display:grid; grid-template-columns:minmax(260px,1fr) auto; gap:8px; align-items:end; margin-top:8px; }
+    @media (max-width:720px){ .user-input-row { grid-template-columns:1fr; } }
     .warn { border-color:#fed7aa; background:#fff7ed; color:#9a3412; }
     code { background:#e2e8f0; border-radius:6px; padding:2px 5px; }
   </style>
 </head>
 <body>
   <header>
-    <h1>OpenGraph voorbeeldzinnen-editor <span>v4449</span></h1>
+    <h1>OpenGraph voorbeeldzinnen-editor <span>v4535</span></h1>
     <p>Voorbeelden worden gevoed door <code>lexicon-config.html</code>; breid lexemen uit via <code>lexicon-editor.html</code>. <strong>Bold/vet</strong> = subject; <em>italic/cursief</em> = object. Structure-config levert de projectiebronnen; het lexicon levert de woorden. Lidwoorden zijn verwijderd.</p>
   </header>
   <main>
@@ -63,6 +65,8 @@
         <div class="button-row">
           <button id="newHeadButton" type="button">+ Hoofdzin</button>
           <button id="newSubButton" type="button">+ Bijzin</button>
+          <button id="newPerfButton" type="button">+ Perfectum</button>
+          <button id="newSubPerfButton" type="button">+ Omdat+perfectum</button>
           <button id="duplicateButton" type="button">Kopie</button>
           <button id="deleteButton" class="danger" type="button">Verwijder</button>
         </div>
@@ -74,11 +78,11 @@
       <div class="panel-header">
         <h2>Bewerk geselecteerd voorbeeld</h2>
         <div class="button-row">
-          <a class="button-link" href="index.html?v4449">Viewer</a>
-          <a class="button-link" href="examples-input.html?v4449">HTML-input</a>
-          <a class="button-link" href="lexicon-config.html?v4449">Lexicon</a>
-          <a class="button-link" href="lexicon-editor.html?v4449">Lexicon-editor</a>
-          <a class="button-link" href="structure-editor.html?v4449">Structure-editor</a>
+          <a class="button-link" href="index.html?v4535">Viewer</a>
+          <a class="button-link" href="examples-input.html?v4535">HTML-input</a>
+          <a class="button-link" href="lexicon-config.html?v4535">Lexicon</a>
+          <a class="button-link" href="lexicon-editor.html?v4535">Lexicon-editor</a>
+          <a class="button-link" href="structure-editor.html?v4535">Structure-editor</a>
           <button id="reloadConfigButton" type="button">Herlaad configs</button>
         </div>
       </div>
@@ -97,11 +101,20 @@
         <div class="notice">
           Kies eerst lexicale vulling. De editor maakt daarna tokens met vaste grammaticale rollen: <code>subject</code> projecteert naar de subjectbron, <code>object</code> naar de objectbron en <code>predicate</code> naar de predicaatbron.
         </div>
+
+        <div class="notice user-sentence-builder">
+          <strong>Gebruikersinput → voorbeeldzin</strong>
+          <div class="user-input-row">
+            <label class="field"><span>Zin</span><input id="userSentenceInput" type="text" value="omdat vrouw trui eeft gebreid" spellcheck="false"></label>
+            <button id="buildFromSentenceButton" class="primary" type="button">Maak voorbeeld uit input</button>
+          </div>
+          <p class="help">De bouwer herkent eenvoudige patronen uit het lexicon, zoals <code>omdat vrouw trui eeft gebreid</code>. De tikfout <code>eeft</code> wordt als <code>heeft</code> gelezen.</p>
+        </div>
         <div class="lex-grid" style="margin-top:12px">
           <label class="field"><span>Subject NP</span><select id="subjectLexeme"></select></label>
           <label class="field"><span>Predicaat V</span><select id="verbLexeme"></select></label>
           <label class="field"><span>Object NP</span><select id="objectLexeme"></select></label>
-          <label class="field"><span>Patroon</span><select id="patternSelect"><option value="head-bare">hoofdzin: S V O</option><option value="sub-bare">bijzin: OMDAT S O V</option><option value="perf-bare">perfectum: S HEEFT O VDW</option></select></label>
+          <label class="field"><span>Patroon</span><select id="patternSelect"><option value="head-bare">hoofdzin: S V O</option><option value="sub-bare">bijzin: OMDAT S O V</option><option value="perf-bare">perfectum: S HEEFT O VDW</option><option value="sub-perf-bare">omdat + perfectum: OMDAT S O HEEFT VDW</option></select></label>
         </div>
         <div class="button-row" style="margin-top:10px">
           <button id="applyLexiconPattern" class="soft" type="button">Vul voorbeeld uit lexicon</button>
@@ -113,13 +126,14 @@
         <p class="help">Per token kun je handmatig een lexeme kiezen. <code>Lexeme</code> wijzigt de zichtbare token. <code>Source</code> blijft de structurele projectiebron uit <code>structure-config.html</code>.</p>
         <div id="tokenRows" class="tokens"></div>
 
-        <div class="notice warn">Browserbeveiliging staat meestal niet toe dat een webpagina direct een lokaal bestand overschrijft. Gebruik <strong>Download examples-input.html</strong> en vervang daarna het bestand in de viewer-map. In Chrome/Edge kan <strong>Opslaan als...</strong> eventueel direct naar de juiste map schrijven.</div>
+        <div class="notice warn">Gebruik <strong>Opslaan</strong> wanneer de viewer via <code>start-local-viewer.bat</code> draait. Dan schrijft de lokale server direct naar <code>examples-input.html</code> in de viewer-map. Bij openen via <code>file://</code> of GitHub blijft <strong>Download examples-input.html</strong> de fallback.</div>
 
         <div class="button-row" style="margin-top:12px">
           <button id="saveDraftButton" class="soft" type="button">Bewaar concept</button>
           <button id="loadDraftButton" class="soft" type="button">Laad concept</button>
           <label class="file-button">Importeer HTML<input id="fileInput" type="file" accept="text/html,.html"></label>
-          <button id="downloadButton" class="primary" type="button">Download examples-input.html</button>
+          <button id="writeFileButton" class="primary" type="button">Opslaan</button>
+          <button id="downloadButton" type="button">Download examples-input.html</button>
           <button id="saveAsButton" type="button">Opslaan als...</button>
           <button id="resetButton" class="danger" type="button">Reset naar basis</button>
         </div>
@@ -128,16 +142,16 @@
     </section>
   </main>
 <script>
-const VERSION = 'v4449';
-const STORAGE_KEY = 'opengraph.examples.editor.v4449';
+const VERSION = 'v4535';
+const STORAGE_KEY = 'opengraph.examples.editor.v4535';
 const els = {
-  list: document.getElementById('exampleList'), count: document.getElementById('countLabel'), id: document.getElementById('idInput'), phase: document.getElementById('phaseInput'), lexRule: document.getElementById('lexRuleInput'), predicate: document.getElementById('predicateInput'), meta: document.getElementById('metaInput'), validation: document.getElementById('validationOutput'), configStatus: document.getElementById('configStatus'), lexiconStatus: document.getElementById('lexiconStatus'), preview: document.getElementById('preview'), tokenRows: document.getElementById('tokenRows'), htmlOutput: document.getElementById('htmlOutput'), fileInput: document.getElementById('fileInput'), subjectLexeme: document.getElementById('subjectLexeme'), verbLexeme: document.getElementById('verbLexeme'), objectLexeme: document.getElementById('objectLexeme'), pattern: document.getElementById('patternSelect')
+  list: document.getElementById('exampleList'), count: document.getElementById('countLabel'), id: document.getElementById('idInput'), phase: document.getElementById('phaseInput'), lexRule: document.getElementById('lexRuleInput'), predicate: document.getElementById('predicateInput'), meta: document.getElementById('metaInput'), validation: document.getElementById('validationOutput'), configStatus: document.getElementById('configStatus'), lexiconStatus: document.getElementById('lexiconStatus'), preview: document.getElementById('preview'), tokenRows: document.getElementById('tokenRows'), htmlOutput: document.getElementById('htmlOutput'), fileInput: document.getElementById('fileInput'), subjectLexeme: document.getElementById('subjectLexeme'), verbLexeme: document.getElementById('verbLexeme'), objectLexeme: document.getElementById('objectLexeme'), pattern: document.getElementById('patternSelect'), userSentence: document.getElementById('userSentenceInput')
 };
 let examples = []; let selected = 0;
 let STRUCTURE_INFO = { sources:[{id:'subject',label:'subject · subject-bron'},{id:'object',label:'object · object-bron'},{id:'predicate',label:'predicate · predicaat-bron'},{id:'pv',label:'pv · hulpwerkwoord'},{id:'vdw',label:'vdw · voltooid deelwoord'}], slots:[{id:'comp',label:'slot 0 · Comp/(om)dat'},{id:'topic',label:'slot 1 · vooropplaatsing/topicalisatie'},{id:'aux',label:'AUX / pv'}], loaded:false };
 let LEXICON = { entries:[
   {id:'hond',label:'HOND',kind:'noun',cat:'N',phrase:'NP',roles:['subject','object']}, {id:'man',label:'MAN',kind:'noun',cat:'N',phrase:'NP',roles:['subject','object']}, {id:'kat',label:'KAT',kind:'noun',cat:'N',phrase:'NP',roles:['subject','object']}, {id:'vrouw',label:'VROUW',kind:'noun',cat:'N',phrase:'NP',roles:['subject','object']}, {id:'trui',label:'TRUI',kind:'noun',cat:'N',phrase:'NP',roles:['object']},
-  {id:'bijt',label:'BIJT',kind:'verb',cat:'V',defaultRole:'predicate',sourceDefault:'predicate',participle:'GEBETEN'}, {id:'breit',label:'BREIT',kind:'verb',cat:'V',defaultRole:'predicate',sourceDefault:'predicate',participle:'GEBREID'},
+  {id:'bijt',label:'BIJT',kind:'verb',cat:'V',defaultRole:'predicate',sourceDefault:'predicate',participle:'GEBETEN',imperfectum:'BEET',past:'BEET',ovt:'BEET',infinitive:'BIJTEN'}, {id:'breit',label:'BREIT',kind:'verb',cat:'V',defaultRole:'predicate',sourceDefault:'predicate',participle:'GEBREID',imperfectum:'BREIDE',past:'BREIDE',ovt:'BREIDE',infinitive:'BREIEN'},
 {id:'omdat',label:'OMDAT',kind:'comp',cat:'COMP',slotDefault:'comp'}, {id:'dat',label:'DAT',kind:'comp',cat:'COMP',slotDefault:'comp'}, {id:'heeft',label:'HEEFT',kind:'aux',cat:'AUX',slotDefault:'aux'}
 ], loaded:false };
 function slugify(value){ return String(value||'voorbeeld').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'') || 'voorbeeld'; }
@@ -152,9 +166,88 @@ function predToken(lexemeId){ const lex = byId(lexemeId) || {id:lexemeId,label:l
 function auxToken(id='heeft'){ const lex = byId(id) || {id,label:id.toUpperCase(),kind:'aux',slotDefault:'aux'}; return { id:slugify(`pv-${lex.id}`), label:lex.label, role:'aux', source:sourceForRole('aux') || 'pv', slot:'', lexeme:lex.id }; }
 function partToken(verbId){ const lex = byId(verbId) || {id:verbId,label:verbId.toUpperCase(),kind:'verb',participle:verbId.toUpperCase()}; return { id:slugify(`vdw-${lex.id}`), label:(lex.participle || lex.label || lex.id).toUpperCase(), role:'participle', source:sourceForRole('participle') || 'vdw', slot:'', lexeme:lex.id }; }
 function compToken(id='omdat'){ const lex = byId(id) || {id,label:id.toUpperCase(),kind:'comp',slotDefault:'comp'}; return { id:lex.id, label:lex.label, role:'', source:'', slot:lex.slotDefault || 'comp', lexeme:lex.id }; }
+
+function wordKey(value){ return String(value||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,''); }
+function lexMatches(lex, word){ const key=wordKey(word); const forms=[lex.id,lex.label,lex.lemma,lex.infinitive,lex.imperfectum,lex.past,lex.ovt,lex.participle].filter(Boolean); return forms.some(form=>wordKey(form)===key); }
+function findLexemeForWord(word, kinds){ const allowed=Array.isArray(kinds)?new Set(kinds):null; return LEXICON.entries.find(lex => (!allowed || allowed.has(lex.kind)) && lexMatches(lex, word)) || null; }
+function classifyUserWord(word){
+  const w = wordKey(word);
+  if(w==='eeft') return { kind:'aux', lexeme:'heeft', label:'HEEFT', corrected:true };
+  const comp=findLexemeForWord(word,['comp']); if(comp) return { kind:'comp', lexeme:comp.id, label:comp.label.toUpperCase(), slot:comp.slotDefault||'comp' };
+  const aux=findLexemeForWord(word,['aux']); if(aux) return { kind:'aux', lexeme:aux.id, label:aux.label.toUpperCase() };
+  const noun=findLexemeForWord(word,['noun']); if(noun) return { kind:'noun', lexeme:noun.id, label:noun.label.toUpperCase() };
+  const verb=findLexemeForWord(word,['verb']);
+  if(verb){
+    const key=wordKey(word);
+    const form = wordKey(verb.participle)===key ? 'participle' : ((wordKey(verb.imperfectum)===key || wordKey(verb.past)===key || wordKey(verb.ovt)===key) ? 'past' : 'present');
+    const label = form==='participle' ? (verb.participle||verb.label).toUpperCase() : (form==='past' ? (verb.imperfectum||verb.past||verb.ovt||verb.label).toUpperCase() : verb.label.toUpperCase());
+    return { kind:'verb', form, lexeme:verb.id, label };
+  }
+  return { kind:'unknown', lexeme:'', label:String(word||'').toUpperCase() };
+}
+function userItemsFromSentence(sentence){
+  const words=String(sentence||'').trim().replace(/[.,;:!?]+/g,' ').split(/\s+/).filter(Boolean);
+  const items=[];
+  for(let i=0;i<words.length;i++){
+    const raw=words[i];
+    const w=wordKey(raw);
+    if(['de','het','een'].includes(w) && words[i+1]){
+      const next=classifyUserWord(words[i+1]);
+      if(next.kind==='noun'){
+        next.label=`${raw.toUpperCase()} ${next.label}`;
+        next.article=raw.toUpperCase();
+        items.push(next); i++; continue;
+      }
+    }
+    items.push(classifyUserWord(raw));
+  }
+  return items;
+}
+function tokenWithLabel(token, label){ token.label=String(label||token.label).toUpperCase(); token.id=slugify(`${token.role||token.slot||'token'}-${token.lexeme||token.label}`); return token; }
+function exampleFromUserSentence(sentence){
+  const items=userItemsFromSentence(sentence);
+  const comp=items.find(i=>i.kind==='comp');
+  const nouns=items.filter(i=>i.kind==='noun');
+  const aux=items.find(i=>i.kind==='aux');
+  const part=items.find(i=>i.kind==='verb' && i.form==='participle');
+  const finite=items.find(i=>i.kind==='verb' && i.form!=='participle');
+  const notes=[];
+  if(items.some(i=>i.corrected)) notes.push('tikfout eeft→HEEFT');
+  if(nouns.length<2) throw new Error('minstens twee bekende naamwoorden nodig: subject en object');
+  const subj=nouns[0], obj=nouns[1];
+  let tokens=[], phase='Gebruikersinput', lexRule='hoofdzininvariant', predicate='BIJT';
+  if(comp && aux && part){
+    tokens=[compToken(comp.lexeme), tokenWithLabel(lexToken(subj.lexeme,'subject'),subj.label), tokenWithLabel(lexToken(obj.lexeme,'object'),obj.label), auxToken(aux.lexeme), partToken(part.lexeme)];
+    lexRule='bijzin-omdat'; phase='Gebruikersinput · omdat+perfectum'; predicate=part.label;
+  } else if(aux && part){
+    tokens=[tokenWithLabel(lexToken(subj.lexeme,'subject'),subj.label), auxToken(aux.lexeme), tokenWithLabel(lexToken(obj.lexeme,'object'),obj.label), partToken(part.lexeme)];
+    lexRule='perfectum-heeft-vdw'; phase='Gebruikersinput · perfectum'; predicate=part.label;
+  } else if(comp && finite){
+    tokens=[compToken(comp.lexeme), tokenWithLabel(lexToken(subj.lexeme,'subject'),subj.label), tokenWithLabel(lexToken(obj.lexeme,'object'),obj.label), predToken(finite.lexeme)];
+    lexRule='bijzin-omdat'; phase='Gebruikersinput · bijzin'; predicate=finite.label;
+  } else if(finite){
+    tokens=[tokenWithLabel(lexToken(subj.lexeme,'subject'),subj.label), predToken(finite.lexeme), tokenWithLabel(lexToken(obj.lexeme,'object'),obj.label)];
+    lexRule='hoofdzininvariant'; phase='Gebruikersinput · hoofdzin'; predicate=finite.label;
+  } else {
+    throw new Error('geen bekend werkwoord of voltooid deelwoord gevonden');
+  }
+  if(comp) tokens[0].label=comp.label;
+  const correctedSentence=String(sentence||'').replace(/\beeft\b/ig,'heeft');
+  return normalizeExample({ id:slugify(correctedSentence), phase, lexRule, predicate, meta:`gegenereerd uit gebruikersinput: ${sentence}${notes.length?' · '+notes.join(', '):''}`, tokens });
+}
+function addExampleFromUserInput(){
+  try{
+    applyFormToCurrent();
+    const sentence=els.userSentence.value || '';
+    const ex=exampleFromUserSentence(sentence);
+    examples.push(ex); selected=examples.length-1; renderAll();
+    els.validation.value=`Toegevoegd uit input: ${sentence}`;
+  } catch(err){ els.validation.value=`Input niet herkend: ${err.message}`; }
+}
 function defaultHead(subject='hond', object='man', verb='bijt'){ const tokens = [lexToken(subject,'subject'), predToken(verb), lexToken(object,'object')]; return normalizeExample({ id: slugify(tokens.map(t=>t.label).join('-')), phase:'Fase 1+2', lexRule:'hoofdzininvariant', predicate: (byId(verb)?.label || 'BIJT'), meta:'hoofdzin · centrale boom invariant · zonder lidwoorden', tokens }); }
 function defaultSub(subject='hond', object='man', verb='bijt'){ const tokens = [compToken('omdat'), lexToken(subject,'subject'), lexToken(object,'object'), predToken(verb)]; return normalizeExample({ id: slugify(tokens.map(t=>t.label).join('-')), phase:'Fase 3', lexRule:'bijzin-omdat', predicate: (byId(verb)?.label || 'BIJT'), meta:'bijzin · Comp/(om)dat in LEX-slot 0 · zonder lidwoorden', tokens }); }
 function defaultPerf(subject='hond', object='man', verb='bijt'){ const tokens = [lexToken(subject,'subject'), auxToken('heeft'), lexToken(object,'object'), partToken(verb)]; return normalizeExample({ id: slugify(tokens.map(t=>t.label).join('-')), phase:'Perfectum', lexRule:'perfectum-heeft-vdw', predicate: (byId(verb)?.participle || 'GEBETEN'), meta:'perfectum · structure-regel VP → NP VP; VP → pv VDW · zonder lidwoorden', tokens }); }
+function defaultSubPerf(subject='hond', object='man', verb='bijt'){ const tokens = [compToken('omdat'), lexToken(subject,'subject'), lexToken(object,'object'), auxToken('heeft'), partToken(verb)]; return normalizeExample({ id: slugify(tokens.map(t=>t.label).join('-')), phase:'Perfectum · omdat-bijzin', lexRule:'bijzin-omdat', predicate: (byId(verb)?.participle || 'GEBETEN'), meta:'omdat-bijzin · perfectum · Comp/(om)dat in slot 0 · subject=agens · object=patiens', tokens }); }
 function baseExamples(){ const a=defaultHead('hond','man','bijt'); a.id='hond-bijt-man'; const b=defaultSub('hond','man','bijt'); b.id='omdat-hond-man-bijt'; const c=defaultHead('vrouw','trui','breit'); c.id='vrouw-breit-trui'; const d=defaultSub('vrouw','trui','breit'); d.id='omdat-vrouw-trui-breit'; const e=defaultPerf('hond','man','bijt'); e.id='hond-heeft-man-gebeten'; return [a,b,c,d,e]; }
 function current(){ return examples[selected] || examples[0]; }
 function tokenHtml(t){ const label=escapeHtml(t.label||''); if(t.role==='subject') return `<strong data-role="subject">${label}</strong>`; if(t.role==='object') return `<em data-role="object">${label}</em>`; return label; }
@@ -183,25 +276,30 @@ function makeArticle(ex){ const lexItems=ex.tokens.map(t=>{ const classes=['lex-
 function buildHtmlDocument(list){ const articles=list.map(ex=>makeArticle(normalizeExample(ex))).join('\n\n'); return `<!doctype html>\n<html lang="nl">\n<head>\n  <meta charset="utf-8">
   <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
   <meta http-equiv="Pragma" content="no-cache">
-  <meta http-equiv="Expires" content="0">\n  <meta name="viewport" content="width=device-width, initial-scale=1">\n  <title>OpenGraph voorbeeldzinnen input ${VERSION}</title>\n  <style>\n    :root { font-family: system-ui, -apple-system, Segoe UI, sans-serif; color: #0f172a; background: #f8fafc; }\n    body { margin: 0; padding: 24px; }\n    main { max-width: 980px; margin: 0 auto; }\n    h1 { margin: 0 0 8px; font-size: 1.8rem; }\n    .note { color: #475569; margin: 0 0 20px; line-height: 1.5; }\n    .example-input { background: white; border: 1px solid #cbd5e1; border-radius: 18px; padding: 18px; margin: 16px 0; box-shadow: 0 12px 24px rgba(15,23,42,.08); }\n    .sentence { font-size: 1.5rem; letter-spacing: .03em; margin: 0 0 12px; }\n    .sentence strong { font-weight: 950; color: #166534; }\n    .sentence em { font-style: italic; color: #7c2d12; }\n    .meta { color: #64748b; font-size: .95rem; margin: 0 0 10px; }\n    .lex-sequence { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; padding: 0; margin: 10px 0; }\n    .lex-token { border: 1px solid #cbd5e1; background: #f8fafc; border-radius: 999px; padding: 6px 10px; font-weight: 700; }\n    .lex-token.local { border-style: dashed; color: #9a3412; }\n    button, .button-link { border: 1px solid #94a3b8; background: #fff; border-radius: 10px; padding: 8px 12px; font-weight: 800; cursor: pointer; color: #0f172a; text-decoration: none; display: inline-flex; }\n    code { background: #e2e8f0; border-radius: 6px; padding: 2px 5px; }\n  </style>\n</head>\n<body>\n  <main>\n    <h1>OpenGraph voorbeeldzinnen · HTML-input</h1>\n    <p class="note">Deze file is de leesbare inputbron voor voorbeeldzinnen. <strong>Vet</strong> markeert subject; <em>cursief</em> markeert object. De lexicale vulling komt uit <a class="button-link" href="lexicon-config.html?v4449">lexicon-config.html</a>; de abstracte projectiebronnen uit <a class="button-link" href="structure-config.html?v4449">structure-config.html</a>. Bewerk via <a class="button-link" href="examples-editor.html?v4449">examples-editor.html</a>.</p>\n\n    <section id="opengraph-example-input" aria-label="Voorbeeldzinnen">\n${articles}\n    </section>\n  </main>\n  <script>\n    document.querySelectorAll('.example-input').forEach(card => {\n      const subject = card.querySelector('[data-role="subject"]');\n      const object = card.querySelector('[data-role="object"]');\n      const subjectToken = card.querySelector('.lex-token[data-role="subject"]');\n      const objectToken = card.querySelector('.lex-token[data-role="object"]');\n      card.querySelector('.swap-demo')?.addEventListener('click', () => {\n        const s = subject?.textContent || '';\n        const o = object?.textContent || '';\n        if (!subject || !object) return;\n        subject.textContent = o; object.textContent = s;\n        if (subjectToken) subjectToken.innerHTML = '<strong data-role="subject">' + o + '</strong>';\n        if (objectToken) objectToken.innerHTML = '<em data-role="object">' + s + '</em>';\n      });\n    });\n  <\/script>\n</body>\n</html>\n`; }
+  <meta http-equiv="Expires" content="0">\n  <meta name="viewport" content="width=device-width, initial-scale=1">\n  <title>OpenGraph voorbeeldzinnen input ${VERSION}</title>\n  <style>\n    :root { font-family: system-ui, -apple-system, Segoe UI, sans-serif; color: #0f172a; background: #f8fafc; }\n    body { margin: 0; padding: 24px; }\n    main { max-width: 980px; margin: 0 auto; }\n    h1 { margin: 0 0 8px; font-size: 1.8rem; }\n    .note { color: #475569; margin: 0 0 20px; line-height: 1.5; }\n    .example-input { background: white; border: 1px solid #cbd5e1; border-radius: 18px; padding: 18px; margin: 16px 0; box-shadow: 0 12px 24px rgba(15,23,42,.08); }\n    .sentence { font-size: 1.5rem; letter-spacing: .03em; margin: 0 0 12px; }\n    .sentence strong { font-weight: 950; color: #166534; }\n    .sentence em { font-style: italic; color: #7c2d12; }\n    .meta { color: #64748b; font-size: .95rem; margin: 0 0 10px; }\n    .lex-sequence { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; padding: 0; margin: 10px 0; }\n    .lex-token { border: 1px solid #cbd5e1; background: #f8fafc; border-radius: 999px; padding: 6px 10px; font-weight: 700; }\n    .lex-token.local { border-style: dashed; color: #9a3412; }\n    button, .button-link { border: 1px solid #94a3b8; background: #fff; border-radius: 10px; padding: 8px 12px; font-weight: 800; cursor: pointer; color: #0f172a; text-decoration: none; display: inline-flex; }\n    code { background: #e2e8f0; border-radius: 6px; padding: 2px 5px; }\n  </style>\n</head>\n<body>\n  <main>\n    <h1>OpenGraph voorbeeldzinnen · HTML-input</h1>\n    <p class="note">Deze file is de leesbare inputbron voor voorbeeldzinnen. <strong>Vet</strong> markeert subject; <em>cursief</em> markeert object. De lexicale vulling komt uit <a class="button-link" href="lexicon-config.html?v4535">lexicon-config.html</a>; de abstracte projectiebronnen uit <a class="button-link" href="structure-config.html?v4535">structure-config.html</a>. Bewerk via <a class="button-link" href="examples-editor.html?v4535">examples-editor.html</a>.</p>\n\n    <section id="opengraph-example-input" aria-label="Voorbeeldzinnen">\n${articles}\n    </section>\n  </main>\n  <script>\n    document.querySelectorAll('.example-input').forEach(card => {\n      const subject = card.querySelector('[data-role="subject"]');\n      const object = card.querySelector('[data-role="object"]');\n      const subjectToken = card.querySelector('.lex-token[data-role="subject"]');\n      const objectToken = card.querySelector('.lex-token[data-role="object"]');\n      card.querySelector('.swap-demo')?.addEventListener('click', () => {\n        const s = subject?.textContent || '';\n        const o = object?.textContent || '';\n        if (!subject || !object) return;\n        subject.textContent = o; object.textContent = s;\n        if (subjectToken) subjectToken.innerHTML = '<strong data-role="subject">' + o + '</strong>';\n        if (objectToken) objectToken.innerHTML = '<em data-role="object">' + s + '</em>';\n      });\n    });\n  <\/script>\n</body>\n</html>\n`; }
 function parseHtmlInput(html){ const doc=new DOMParser().parseFromString(html,'text/html'); return [...doc.querySelectorAll('.example-input')].map((card,idx)=>{ const meta=card.querySelector('.meta')?.textContent.trim()||''; const tokens=[...card.querySelectorAll('.lex-token')].map((token,i)=>({ id:token.dataset.id||`token-${i+1}`, label:token.textContent.trim().toUpperCase(), role:token.dataset.role||'', source:token.dataset.source||'', slot:token.dataset.slot||'', lexeme:token.dataset.lexeme||'' })); return normalizeExample({ id:card.dataset.id||`example-${idx+1}`, phase:card.dataset.phase||'Fase', lexRule:card.dataset.lexRule||'hoofdzininvariant', predicate:card.dataset.predicate||'BIJT', meta, tokens }); }).filter(ex=>ex.tokens.length); }
 async function loadStructureConfig(){ try{ const res=await fetch(`structure-config.html?${Date.now()}`,{cache:'no-store'}); if(!res.ok) throw new Error('fetch failed'); const doc=new DOMParser().parseFromString(await res.text(),'text/html'); const map=new Map(); doc.querySelectorAll('#opengraph-lexical-config .lexical-config').forEach(entry=>{ const id=entry.dataset.source||''; if(id) map.set(id,{id,label:`${id}${entry.dataset.role?' · '+entry.dataset.role:''}${entry.dataset.cat?' · '+entry.dataset.cat:''}`}); }); doc.querySelectorAll('#opengraph-syntax-config .node-config,#opengraph-functional-config .node-config').forEach(n=>{ const id=n.dataset.source || (n.dataset.kind==='leaf'?n.dataset.id:''); if(id && !map.has(id)) map.set(id,{id,label:`${id}${n.dataset.role?' · '+n.dataset.role:''}${n.dataset.cat?' · '+n.dataset.cat:''}`}); }); const slots=[...doc.querySelectorAll('#opengraph-lex-config .lex-slot-config')].map(s=>({id:s.dataset.id||'',label:s.dataset.label||s.textContent.trim()})).filter(s=>s.id); STRUCTURE_INFO.sources=[...map.values()]; if(slots.length) STRUCTURE_INFO.slots=slots; STRUCTURE_INFO.loaded=true; els.configStatus.value=`geladen · sources=${STRUCTURE_INFO.sources.length} · slots=${STRUCTURE_INFO.slots.length}`; }catch(err){ els.configStatus.value='fallback · structure-config niet geladen'; } }
-async function loadLexiconConfig(){ try{ const res=await fetch(`lexicon-config.html?${Date.now()}`,{cache:'no-store'}); if(!res.ok) throw new Error('fetch failed'); const doc=new DOMParser().parseFromString(await res.text(),'text/html'); const entries=[...doc.querySelectorAll('#opengraph-lexicon-config .lexicon-entry')].map(el=>({ id:el.dataset.id||'', label:(el.dataset.label||el.textContent.trim()).toUpperCase(), lemma:el.dataset.lemma||'', cat:el.dataset.cat||'', phrase:el.dataset.phrase||'', kind:el.dataset.kind||'', roles:(el.dataset.roles||'').split(/\s+/).filter(Boolean), defaultRole:el.dataset.defaultRole||'', sourceDefault:el.dataset.sourceDefault||'', slotDefault:el.dataset.slotDefault||'', slots:(el.dataset.slots||'').split(/\s+/).filter(Boolean), infinitive:el.dataset.infinitive||'', participle:el.dataset.participle||'' })).filter(e=>e.id); if(entries.length) LEXICON.entries=entries; LEXICON.loaded=true; els.lexiconStatus.value=`geladen · lexemes=${LEXICON.entries.length}`; }catch(err){ els.lexiconStatus.value='fallback · lexicon-config niet geladen'; } }
+async function loadLexiconConfig(){ try{ const res=await fetch(`lexicon-config.html?${Date.now()}`,{cache:'no-store'}); if(!res.ok) throw new Error('fetch failed'); const doc=new DOMParser().parseFromString(await res.text(),'text/html'); const entries=[...doc.querySelectorAll('#opengraph-lexicon-config .lexicon-entry')].map(el=>({ id:el.dataset.id||'', label:(el.dataset.label||el.textContent.trim()).toUpperCase(), lemma:el.dataset.lemma||'', cat:el.dataset.cat||'', phrase:el.dataset.phrase||'', kind:el.dataset.kind||'', roles:(el.dataset.roles||'').split(/\s+/).filter(Boolean), defaultRole:el.dataset.defaultRole||'', sourceDefault:el.dataset.sourceDefault||'', slotDefault:el.dataset.slotDefault||'', slots:(el.dataset.slots||'').split(/\s+/).filter(Boolean), infinitive:el.dataset.infinitive||'', imperfectum:el.dataset.imperfectum||'', past:el.dataset.past||'', ovt:el.dataset.ovt||'', participle:el.dataset.participle||'' })).filter(e=>e.id); if(entries.length) LEXICON.entries=entries; LEXICON.loaded=true; els.lexiconStatus.value=`geladen · lexemes=${LEXICON.entries.length}`; }catch(err){ els.lexiconStatus.value='fallback · lexicon-config niet geladen'; } }
 function renderLexiconSelectors(){ const nps=LEXICON.entries.filter(e=>e.kind==='noun').map(e=>({id:e.id,label:e.label})); const verbs=LEXICON.entries.filter(e=>e.kind==='verb').map(e=>({id:e.id,label:e.label})); const ex=current(); const subj=ex?.tokens.find(t=>t.role==='subject')?.lexeme || 'hond'; const obj=ex?.tokens.find(t=>t.role==='object')?.lexeme || 'man'; const pred=(ex?.tokens.find(t=>t.role==='predicate') || ex?.tokens.find(t=>t.role==='participle'))?.lexeme || 'bijt'; els.subjectLexeme.innerHTML=optionsHtml(nps,subj,'kies subject'); els.objectLexeme.innerHTML=optionsHtml(nps,obj,'kies object'); els.verbLexeme.innerHTML=optionsHtml(verbs,pred,'kies V'); }
-function applyPattern(){ applyFormToCurrent(); const subj=els.subjectLexeme.value || 'hond', obj=els.objectLexeme.value || 'man', verb=els.verbLexeme.value || 'bijt'; const pattern=els.pattern.value; const fresh = pattern==='perf-bare' ? defaultPerf(subj,obj,verb) : (pattern==='sub-bare' ? defaultSub(subj,obj,verb) : defaultHead(subj,obj,verb)); Object.assign(current(), fresh, { id: current().id || fresh.id, phase: els.phase.value || fresh.phase, meta: els.meta.value || fresh.meta }); renderAll(); }
+function applyPattern(){ applyFormToCurrent(); const subj=els.subjectLexeme.value || 'hond', obj=els.objectLexeme.value || 'man', verb=els.verbLexeme.value || 'bijt'; const pattern=els.pattern.value; const fresh = pattern==='sub-perf-bare' ? defaultSubPerf(subj,obj,verb) : (pattern==='perf-bare' ? defaultPerf(subj,obj,verb) : (pattern==='sub-bare' ? defaultSub(subj,obj,verb) : defaultHead(subj,obj,verb)));  Object.assign(current(), fresh, { id: current().id || fresh.id, phase: els.phase.value || fresh.phase, meta: els.meta.value || fresh.meta }); renderAll(); }
 function selectedSubjectObject(){ const ex=current(); return { subj:ex.tokens.find(t=>t.role==='subject'), obj:ex.tokens.find(t=>t.role==='object') }; }
 function download(name,text,type='text/html'){ const blob=new Blob([text],{type}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=name; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url); }
+async function writeExamplesToViewer(){ applyFormToCurrent(); const content=buildHtmlDocument(examples); try{ const response=await fetch('/__opengraph_save_file',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({filename:'examples-input.html',content})}); const result=await response.json().catch(()=>({})); if(!response.ok || !result.ok) throw new Error(result.error || 'save endpoint failed'); els.validation.value=`Opgeslagen: examples-input.html (${result.bytes || content.length} bytes)`; return true; }catch(err){ els.validation.value='Direct opslaan niet beschikbaar; download fallback gestart.'; download('examples-input.html',content); return false; } }
 async function fetchInitial(){ try{ const res=await fetch(`examples-input.html?${Date.now()}`,{cache:'no-store'}); if(!res.ok) throw new Error('fetch failed'); const parsed=parseHtmlInput(await res.text()); if(parsed.length) return parsed; }catch(err){} return baseExamples(); }
 function saveDraft(){ applyFormToCurrent(); localStorage.setItem(STORAGE_KEY,JSON.stringify(examples)); els.validation.value='Concept bewaard in browser'; }
 function loadDraft(){ try{ const parsed=JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]').map(normalizeExample); if(parsed.length){ examples=parsed; selected=0; renderAll(); } }catch(err){ els.validation.value='Kon concept niet laden'; } }
 document.getElementById('newHeadButton').addEventListener('click',()=>{ applyFormToCurrent(); examples.push(defaultHead()); selected=examples.length-1; renderAll(); });
 document.getElementById('newSubButton').addEventListener('click',()=>{ applyFormToCurrent(); examples.push(defaultSub()); selected=examples.length-1; renderAll(); });
+document.getElementById('newPerfButton').addEventListener('click',()=>{ applyFormToCurrent(); examples.push(defaultPerf()); selected=examples.length-1; renderAll(); });
+document.getElementById('newSubPerfButton').addEventListener('click',()=>{ applyFormToCurrent(); examples.push(defaultSubPerf()); selected=examples.length-1; renderAll(); });
 document.getElementById('duplicateButton').addEventListener('click',()=>{ applyFormToCurrent(); const copy=JSON.parse(JSON.stringify(current())); copy.id=slugify(copy.id+'-kopie'); examples.splice(selected+1,0,copy); selected++; renderAll(); });
 document.getElementById('deleteButton').addEventListener('click',()=>{ if(examples.length<=1)return; examples.splice(selected,1); selected=Math.max(0,selected-1); renderAll(); });
 document.getElementById('addTokenButton').addEventListener('click',()=>{ current().tokens.push({id:`token-${current().tokens.length+1}`,label:'NIEUW',role:'',source:'',slot:'',lexeme:''}); renderAll(); });
 document.getElementById('swapRolesButton').addEventListener('click',()=>{ const {subj,obj}=selectedSubjectObject(); if(subj&&obj){ [subj.label,obj.label]=[obj.label,subj.label]; [subj.lexeme,obj.lexeme]=[obj.lexeme,subj.lexeme]; } renderAll(); });
 document.getElementById('applyLexiconPattern').addEventListener('click',applyPattern);
+document.getElementById('buildFromSentenceButton').addEventListener('click',addExampleFromUserInput);
 document.getElementById('saveDraftButton').addEventListener('click',saveDraft); document.getElementById('loadDraftButton').addEventListener('click',loadDraft);
+document.getElementById('writeFileButton').addEventListener('click',writeExamplesToViewer);
 document.getElementById('downloadButton').addEventListener('click',()=>{ applyFormToCurrent(); download('examples-input.html',buildHtmlDocument(examples)); });
 document.getElementById('resetButton').addEventListener('click',()=>{ examples=baseExamples(); selected=0; renderAll(); });
 document.getElementById('reloadConfigButton').addEventListener('click',async()=>{ await loadStructureConfig(); await loadLexiconConfig(); renderAll(); });

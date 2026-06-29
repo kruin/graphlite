@@ -253,7 +253,7 @@ De optie `Venster: automatisch passend` verandert alleen de SVG-viewBox. Zij her
 
 De standaardtakvolgorde is grammaticaal/normaal: `S → NP VP` en `VP → NP V`. De eerste child wordt links en hoger geplaatst; de tweede child rechts en lager. Hierdoor ligt de basisprojectie op de LEX-as in de verwachte volgorde: subject hoog, object daaronder, V/PV onderaan. Alleen expliciete vrije-slotregels zoals V2 of topicalisatie veroorzaken een Wissel en een trace.
 
-## Groei-volgorde v4449
+## Groei-volgorde v4535
 
 Groei-volgorde is een presentatievolgorde, geen layoutvolgorde. De layout wordt volledig vooraf berekend. Daarna krijgen alle knopen een `growthStep`.
 
@@ -267,7 +267,7 @@ De `growthStep` wordt bepaald door:
 Hierdoor verschijnen leaves niet meer allemaal tegelijk. Dit maakt zichtbaar of bijvoorbeeld `HOND`, `MAN` en `BIJT` in een bepaalde presentatievolgorde worden getoond.
 
 
-## v4449 · stapsgewijze LEX-Wissels
+## v4535 · stapsgewijze LEX-Wissels
 
 - De boomgroei blijft deterministisch: binnen een groeilaag wordt gerenderd van boven naar beneden en daarna van links naar rechts.
 - Flip/layout wijzigt de berekende posities; daardoor kan de groeivolgorde indirect veranderen, maar de renderregel blijft ruimtelijk: boven → beneden, links → rechts.
@@ -275,7 +275,7 @@ Hierdoor verschijnen leaves niet meer allemaal tegelijk. Dit maakt zichtbaar of 
 - Verplaatsingen blijven lokaal op de LEX-as; er komen geen verplaatsingslijnen vanuit de boom.
 
 
-## v4449 - beweeglijke boom/LEX-view
+## v4535 - beweeglijke boom/LEX-view
 
 - Boom en LEX-as zijn niet meer vast in het canvas.
 - Sleep in het SVG-canvas om de view te verplaatsen.
@@ -327,12 +327,12 @@ De centrale boom wordt niet herschreven. Bijwoorden horen in deze fase in de LEX
 
 Zie ook: `docs/LEX_ADVERB_INSERT_SLOTS.md`.
 
-## v4513 - OSV-!, VSO-! en VOS-!
+## v4535 - OSV-!, VSO-! en VOS-!
 
 `VSO` en `VOS` worden nu net als `OSV` gemarkeerd: `VSO-!` en `VOS-!`. Het uitroepteken betekent dat de box-aanpak deze volgorde niet als basisalternatief kan opleveren. Voor correcte rendering op de LEX-as is een expliciete verplaatsingsregel nodig. Bestaande bomen en bestaande flips blijven ongemoeid.
 
 
 
-## v4532 - LEX slot 0 boven S
+## v4535 - LEX slot 0 boven S
 
 Slot 0 op de LEX-as staat in de gecombineerde Assen-weergave weer boven de centrale S/CLAUSE-root. Bronknopen blijven op hun eigen hoogte; alleen de lokale LEX-systeemslots starten hoger.

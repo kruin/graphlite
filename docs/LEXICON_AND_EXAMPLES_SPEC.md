@@ -152,7 +152,7 @@ Voor V2 en topicalisatie wordt de trace als lokaal LEX-object behandeld. De voor
 
 
 
-## v4449
+## v4535
 
 - Bij keuze van een nieuwe voorbeeldzin reset de groei automatisch: playback stopt, stap gaat naar 0, selectie en role-swap worden leeggemaakt.
 - Voorbeeldzinnen worden inhoudelijk gevalideerd op thematische rollen en selectieframes.
@@ -160,7 +160,7 @@ Voor V2 en topicalisatie wordt de trace als lokaal LEX-object behandeld. De voor
 - Gemarkeerde/topicalisatie-uitingen zoals `TRUI BREIT VROUW` worden geaccepteerd wanneer `TRUI` object/patiens blijft en `VROUW` subject/agens blijft; de viewer toont dan een notice.
 
 
-## OVT-vormen vanaf v4513
+## OVT-vormen vanaf v4535
 
 De verbale lexemen hebben nu naast de tegenwoordige persoonsvorm en het voltooid deelwoord ook een OVT-vorm:
 

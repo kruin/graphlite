@@ -336,33 +336,33 @@
 - Traces staan in een aparte lokale trace-zone onder de voorbeeldzin.
 
 
-## v4449
+## v4535
 
 - LEX-basisprojectie in Assen wordt niet meer gecomprimeerd: basisposities en traces blijven horizontaal gelijk aan de boomknopen.
 - Alleen de vrije slots 0/1/2 staan bovenaan als lokale LEX-slots.
 
 
-## v4449 update
+## v4535 update
 
 - `commit_and_push.bat` wordt vanaf deze versie standaard meegeleverd in de ZIP-root.
 - LOG/FT toont thematische rollen expliciet: `AGENS` voor subject/handelende deelnemer en `PATIENS` voor object/ondergaande deelnemer.
 - De syntaxrollen blijven `subject` en `object`; de functionele projectie benoemt dezelfde lexicale bronnen thematisch.
 
-## v4449
+## v4535
 
 - Groei-presentatie verfijnd: lexicale leaves verschijnen niet meer tegelijk.
 - Binnen dezelfde diepte/hoogte gebruikt Groei nu expliciete render-/presentatievolgorde: eerst bottom-up, bij gelijke hoogte boven-naar-beneden en daarna links-naar-rechts.
 - Voor `HOND BIJT MAN` verschijnen `HOND`, `MAN` en `BIJT` dus in aparte tussenstappen voordat categorieknopen, OPN-slot en LEX-regels volgen.
 
 
-## v4449 · stapsgewijze LEX-Wissels
+## v4535 · stapsgewijze LEX-Wissels
 
 - De boomgroei blijft deterministisch: binnen een groeilaag wordt gerenderd van boven naar beneden en daarna van links naar rechts.
 - Flip/layout wijzigt de berekende posities; daardoor kan de groeivolgorde indirect veranderen, maar de renderregel blijft ruimtelijk: boven → beneden, links → rechts.
 - In Assen verschijnt de LEX-as nu stapsgewijs: eerst de horizontale basisprojectie, daarna per stap één lokale Wissel met trace, daarna pas het volledige resultaat met projectiepanelen.
 - Verplaatsingen blijven lokaal op de LEX-as; er komen geen verplaatsingslijnen vanuit de boom.
 
-## v4449 · mobiele weergave
+## v4535 · mobiele weergave
 
 - Canvas staat op mobiel boven de bediening.
 - Toolbar wordt horizontaal scrollbaar in plaats van hoog gestapeld.
@@ -372,14 +372,14 @@
 - Bij resize/orientatie wissel rendert de viewer opnieuw.
 
 
-## v4449
+## v4535
 
 - Layout op alle platforms stage-first gemaakt.
 - Bovenaan: Projectie-window links, boom/canvas rechts.
 - Toolbar, status, uitleg en bewerkpanelen volgen onder de stage.
 
 
-## v4449 - beweeglijke boom/LEX-view
+## v4535 - beweeglijke boom/LEX-view
 
 - Boom en LEX-as zijn niet meer vast in het canvas.
 - Sleep in het SVG-canvas om de view te verplaatsen.
@@ -387,7 +387,7 @@
 - Shift + muiswiel pant horizontaal.
 - FIT herstelt de automatische view.
 
-## v4449 · boom links, projectie rechts
+## v4535 · boom links, projectie rechts
 
 - Boom/LEX-canvas staat nu links in de hoofd-stage.
 - Projectie-instellingen staan rechts naast de boom.
@@ -465,7 +465,7 @@ The central tree is not rewritten. In this phase, adverbs belong to the LEX rend
 
 See also: `docs/LEX_ADVERB_INSERT_SLOTS_EN.md`.
 
-## v4513 - Config: zichtbare LEX-bijwoordinsert
+## v4535 - Config: zichtbare LEX-bijwoordinsert
 
 - De Config-weergave is hersteld: de velden in `Dynamische boomweergave` overlappen niet meer.
 - `LEX insertie` is apart en zichtbaar gemaakt als `Bijwoord / LEX-insert op LEX-as`.
@@ -477,7 +477,7 @@ See also: `docs/LEX_ADVERB_INSERT_SLOTS_EN.md`.
 - De Config-topbalk blijft sticky boven de scrollende instellingen.
 
 
-## v4513 - Uitleg uit Config, naar Help/docs
+## v4535 - Uitleg uit Config, naar Help/docs
 
 - Het blok `Uitleg` wordt niet meer getoond in Config.
 - Config blijft beperkt tot instellingen en beheer.
@@ -491,14 +491,14 @@ See also: `docs/LEX_ADVERB_INSERT_SLOTS_EN.md`.
   - `docs/RENDER_EXPLANATION_EN.md`
 - Engelse Help-tekst is mee bijgewerkt.
 
-## v4513 - Oude tijdsinsertingtest verwijderd
+## v4535 - Oude tijdsinsertingtest verwijderd
 
 - De eerdere vaste tijdsinsertingtest is uit de UI, Config, Help en documentatie verwijderd.
 - Standaard: `LEX-slots: 0` en insertinhoud `slot leeg`.
 - De nieuwere bijwoordplaatsingen blijven intact: tijd, frequentie, negatie, wijze, zinsbijwoord, focus en graad.
 - De structurele plaatsingsmechaniek blijft gelijk: tussenbox/overlap/domeinslot; alleen het oude concrete testwoord is verwijderd.
 
-## v4513 - VSO-! and VOS-! labels
+## v4535 - VSO-! and VOS-! labels
 
 VSO and VOS are now marked in the same way as OSV: `VSO-!` and `VOS-!`. The label means that the box approach cannot produce this order as a base alternative. Correct LEX rendering requires an explicit movement rule. Existing trees and existing flip behaviour remain untouched.
 
@@ -533,6 +533,6 @@ VSO and VOS are now marked in the same way as OSV: `VSO-!` and `VOS-!`. The labe
 - Oude opslagkeys blijven staan als veiligheidskopie en worden niet automatisch verwijderd bij bewaren.
 
 
-## v4532 - LEX slot 0 boven S
+## v4535 - LEX slot 0 boven S
 
 Slot 0 op de LEX-as staat in de gecombineerde Assen-weergave weer boven de centrale S/CLAUSE-root. Bronknopen blijven op hun eigen hoogte; alleen de lokale LEX-systeemslots starten hoger.

@@ -68,7 +68,7 @@
 38. Auto-fit wijzigt alleen de SVG-viewBox; het is geen layoutstrategie.
 
 
-## v4449 — eenvoudige documentatie LEX-plaatsingsregels
+## v4535 — eenvoudige documentatie LEX-plaatsingsregels
 
 Toegevoegd: `docs/LEX_MOVEMENT_RULES.md`.
 

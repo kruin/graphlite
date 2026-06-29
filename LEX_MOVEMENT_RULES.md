@@ -223,7 +223,7 @@ resultaat = voorbeeldzin
 ```
 
 
-## v4449 · stapsgewijze LEX-Wissels
+## v4535 · stapsgewijze LEX-Wissels
 
 - De boomgroei blijft deterministisch: binnen een groeilaag wordt gerenderd van boven naar beneden en daarna van links naar rechts.
 - Flip/layout wijzigt de berekende posities; daardoor kan de groeivolgorde indirect veranderen, maar de renderregel blijft ruimtelijk: boven → beneden, links → rechts.
@@ -243,6 +243,6 @@ OMDAT VROUW TRUI BREIDE
 
 VDW blijft apart: `GEBETEN` en `GEBREID` horen bij het perfectumtype met `HEEFT`.
 
-## v4513 - OSV-!, VSO-! en VOS-!
+## v4535 - OSV-!, VSO-! en VOS-!
 
 `VSO` en `VOS` worden nu net als `OSV` gemarkeerd: `VSO-!` en `VOS-!`. Het uitroepteken betekent dat de box-aanpak deze volgorde niet als basisalternatief kan opleveren. Voor correcte LEX-rendering is een expliciete verplaatsingsregel nodig. Bestaande bomen en bestaande flips blijven ongemoeid.

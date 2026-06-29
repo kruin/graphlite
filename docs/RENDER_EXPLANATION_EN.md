@@ -34,7 +34,7 @@ Examples:
 
 `OSV-!` is marked because it is not a base-tree alternative. The box approach cannot produce OSV. Correct rendering on the LEX axis always requires a movement rule.
 
-## v4513 - OSV-!, VSO-! and VOS-!
+## v4535 - OSV-!, VSO-! and VOS-!
 
 `VSO` and `VOS` are now marked like `OSV`: `VSO-!` and `VOS-!`. The exclamation mark means that the box approach cannot produce the order as a base alternative. Correct rendering on the LEX axis requires an explicit movement rule. Existing trees and existing flip behaviour remain unchanged.
 
