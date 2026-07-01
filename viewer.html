@@ -1,6 +1,6 @@
 <!doctype html>
-<!-- OPENGRAPH_VIEWER_HTML_v4535: fallback app entry mirrors root index. -->
-<html lang="nl" data-opengraph-app="viewer" data-version="v4535">
+<!-- OPENGRAPH_ROOT_VIEWER_INDEX_v4543: this root index is the app, not docs. -->
+<html lang="nl" data-opengraph-app="viewer" data-version="v4543">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
@@ -9,18 +9,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#0f172a">
   <meta name="description" content="OpenGraph Lite Viewer: vrije JAN-bronknopen, edits, LEX-plaatsingsregels en projecties.">
-  <title>OpenGraph Lite Viewer v4535</title>
+  <title>OpenGraph Lite Viewer v4543</title>
   <link rel="icon" href="favicon.ico" sizes="any">
   <link rel="icon" href="icons/icon-192.svg" type="image/svg+xml">
-  <!-- v4535: manifest disabled in local/dev build to avoid PWA/service-worker confusion. -->
+  <!-- v4543: manifest disabled in local/dev build to avoid PWA/service-worker confusion. -->
   <!-- <link rel="manifest" href="manifest.webmanifest"> -->
-  <link rel="stylesheet" href="styles.css?v4535">
+  <link rel="stylesheet" href="styles.css?v4543">
 </head>
 <body class="main-screen-active">
   <header class="app-header">
     <div>
       <div class="eyebrow">OpenGraph · JAN · Open Notation</div>
-      <h1>OpenGraph Lite Viewer <span class="version-tag">v4535</span></h1>
+      <h1>OpenGraph Lite Viewer <span class="version-tag">v4543</span></h1>
       <p class="header-subtitle">Redesign: eerst syntax-tree, daarna LEX-projectie, daarna lokale LEX-regel/Wissel (V2).</p>
     </div>
     <button id="installButton" class="ghost hidden" type="button">Installeer</button>
@@ -32,6 +32,11 @@
       <label class="main-sentence-field" for="mainExampleSelect" title="Kies de voorbeeldzin in het hoofdbeeld. Alleen dit menu staat standaard boven het grid.">
         <span>Zin</span>
         <select id="mainExampleSelect" aria-label="Voorbeeldzin kiezen"></select>
+      </label>
+
+      <label class="main-adverb-field" for="mainAdverbSelect" title="Kies een bijwoordlaag voor de actuele zin. Het bijwoord wordt als LEX-slot op de LEX-as geplaatst, verticaal net boven de gekozen syntaxbox.">
+        <span>Met bijwoord</span>
+        <select id="mainAdverbSelect" aria-label="Bijwoord kiezen"></select>
       </label>
 
       <div class="main-window-fit-menu" aria-label="Hoofdvenster-config boven grid">
@@ -53,7 +58,7 @@
       <div>
         <div class="intro-kicker">Config</div>
         <h2>Alle instellingen</h2>
-        <p>LEX-inserties, takverlenging, layout, export en documentatie staan hier. Projectie, zin en Play/Groei staan in Main. Het hoofdbeeld is full screen: grid over de volledige viewport, met Zin, Help en Config als overlay.</p>
+        <p>Bijwoordslots op de LEX-as, layout, export en documentatie staan hier. Projectie, zin en Play/Groei staan in Main. Het hoofdbeeld blijft bewust leeg: grid + zin + Help + Config.</p>
       </div>
     </section>
 
@@ -72,37 +77,52 @@
       <section class="help-doc-summary" aria-label="Boom eerst en recursieve boomtechniek">
         <article class="help-doc-card">
           <h3 data-help-boom-title>Boom eerst</h3>
-          <p data-help-boom-text><strong>Boom eerst</strong> is de didactische en notationele volgorde: begin met de centrale open boom als bron; projecteer daarna naar LEX, SYNTAX en LOG/FT. De LEX-wissels en inserties blijven op de LEX-as. De Nederlandse voorbeeldzinnen blijven taaldata.</p>
+          <p data-help-boom-text><strong>Boom eerst</strong> is de didactische en notationele volgorde: begin met de centrale open boom als bron; projecteer daarna naar LEX, SYNTAX en LOG/FT. De LEX-wissels blijven op de LEX-as; bijwoorden blijven ook op de LEX-as, als extern slot net boven een gekozen syntaxbox. De Nederlandse voorbeeldzinnen blijven taaldata.</p>
         </article>
         <article class="help-doc-card">
           <h3 data-help-recursion-title>Recursie-techniek in de boom</h3>
           <p data-help-recursion-text><strong>Recursie</strong> is hier de technische tekenmethode: de viewer bouwt de layout bottom-up, van bladeren naar categorieknopen, subtrees en boxen. Dat is iets anders dan de didactische stap “boom eerst”.</p>
         </article>
         <article class="help-doc-card">
-          <h3 data-help-adverb-title>Bijwoord-inserts op de LEX-as</h3>
-          <p data-help-adverb-text><strong>Bijwoordplaatsing verschilt per scope.</strong> Tijd/frequentie zoals VANDAAG, GISTEREN, MORGEN, VAAK, SOMS en ALTIJD gebruikt tussenbox- of VP-slots; NIET gebruikt een V-nabij/NEG-slot; SNEL, HARD en ZACHTJES blijven V-nabij; MISSCHIEN, WAARSCHIJNLIJK en HELAAS gebruiken hoge S/VP-slots; ALLEEN, OOK en ZELFS zijn focus-slots; HEEL, ERG en ZEER zijn AP/AdvP-intern.</p>
+          <h3 data-help-adverb-title>Bijwoordslots op de LEX-as</h3>
+          <p data-help-adverb-text><strong>Bijwoordplaatsing verschilt per scope.</strong> Bijwoorden staan niet tussen bestaande woordboxen en ook niet op de syntaxboom. Ze krijgen een extern LEX-slot op de LEX-as, verticaal net boven een geldige syntactische categoriebox. Geldige hosts: S, NP, VP, V, PP en AP. Tijd/modaliteit meestal boven S of VP; negatie en wijze boven V; graad boven AP; focus boven NP of VP.</p>
         </article>
         <article class="help-doc-card">
           <h3 data-help-render-title>Render-uitleg</h3>
-          <p data-help-render-text><strong>Renderen</strong> betekent: eerst de centrale boom en boxen berekenen, daarna projecties en LEX-as tekenen. Vrije LEX-inserts worden op gereserveerde slots geplaatst; de centrale boom blijft daarbij ongewijzigd. OSV-!, VSO-! en VOS-! zijn geen basisbomen: de box-aanpak kan deze volgordes niet opleveren; de LEX-as vraagt dan een verplaatsingsregel.</p>
+          <p data-help-render-text><strong>Renderen</strong> betekent: eerst de centrale boom en boxen berekenen, daarna projecties en LEX-as tekenen. Bijwoord-inserts worden als externe LEX-slots op de LEX-as geplaatst; de gekozen host-subboom schuift lager om ruimte te maken. De insertie komt niet als projectie uit de basisboom. OSV-!, VSO-! en VOS-! zijn geen basisbomen: de box-aanpak kan deze volgordes niet opleveren; de LEX-as vraagt dan een verplaatsingsregel.</p>
         </article>
       </section>
     </section>
 
 
+
+    <section class="mobile-sentence-bar" aria-label="Mobiele voorbeeldzin-keuze">
+      <label class="mobile-sentence-field" for="mobileExampleSelect">
+        <span>Zin</span>
+        <select id="mobileExampleSelect" aria-label="Voorbeeldzin kiezen"></select>
+      </label>
+
+      <label class="mobile-adverb-field" for="mobileAdverbSelect">
+        <span>Met bijwoord</span>
+        <select id="mobileAdverbSelect" aria-label="Bijwoord kiezen"></select>
+      </label>
+      <span class="mobile-fit-note" title="FIT past het zichtvenster aan de huidige boom/projecties aan; de boom zelf verandert niet.">FIT = passend beeld</span>
+    </section>
+
     <section class="toolbar" aria-label="Hoofdbediening">
       <div class="input-sentence-tools" aria-label="Zin-input">
-        <a class="button-link" href="examples-input.html?v4535" title="Open de HTML-inputfile met voorbeeldzinnen, subject vet en object cursief">HTML-input</a>
-        <a class="button-link" href="lexicon-config.html?v4535" title="Leesbare lexicon-config voor voorbeeldzinnen">Lexicon</a>
-        <a class="button-link" href="lexicon-editor.html?v4535" title="Lexicon én korte voorbeelduitingen beheren; exporteert lexicon-config.html en examples-input.html">Lexicon+uitingen-editor</a>
-        <a class="button-link" href="structure-editor.html?v4535" title="Bewerk eerst syntax-config en functional-config">Structure-editor</a>
-        <a class="button-link" href="docs/docs-home.html?v4535" title="Projectcontext, layoutspec en release notes">Docs</a>
-        <a class="button-link" href="lex-movement-rules.html?v4535" title="Simpele uitleg van de LEX-Wissels per zinstype">Plaatsingsregels</a>
-        <a class="button-link" href="reset-cache.html?v4535" title="Verwijder browsercache/service worker en open de viewer opnieuw">Reset cache</a>
+        <a class="button-link" href="examples-input.html?v4543" title="Open de HTML-inputfile met voorbeeldzinnen, subject vet en object cursief">HTML-input</a>
+        <a class="button-link" href="examples-adverbs.html?v4543" title="Voorbeeldset met één bijwoord per zin en default-host per categorie">Bijwoordvoorbeelden</a>
+        <a class="button-link" href="lexicon-config.html?v4543" title="Leesbare lexicon-config voor voorbeeldzinnen">Lexicon</a>
+        <a class="button-link" href="lexicon-editor.html?v4543" title="Lexicon én korte voorbeelduitingen beheren; exporteert lexicon-config.html en examples-input.html">Lexicon+uitingen-editor</a>
+        <a class="button-link" href="structure-editor.html?v4543" title="Bewerk eerst syntax-config en functional-config">Structure-editor</a>
+        <a class="button-link" href="docs/docs-home.html?v4543" title="Projectcontext, layoutspec en release notes">Docs</a>
+        <a class="button-link" href="lex-movement-rules.html?v4543" title="Simpele uitleg van de LEX-Wissels per zinstype">Plaatsingsregels</a>
+        <a class="button-link" href="reset-cache.html?v4543" title="Verwijder browsercache/service worker en open de viewer opnieuw">Reset cache</a>
       </div>
       <div class="button-row compact-actions">
         <button id="resetExampleButton" type="button" title="Herlaad het gekozen voorbeeld">Reset voorbeeld</button>
-        <button id="fitButton" type="button" title="Passend maken">FIT</button>
+        <button id="fitButton" type="button" title="FIT: pas boom en projectie-assen passend in beeld; verandert de boom niet.">FIT</button>
       </div>
       <div class="button-row compact-actions">
         <label class="file-label" title="OpenGraph Lite JSON laden">
@@ -118,18 +138,14 @@
       <div id="titleLine" class="title-line">—</div>
       <div id="metaLine" class="meta-line">Kies een voorbeeld of laad JSON.</div>
       <div id="sentencePreview" class="sentence-preview" title="Vet = subject/agens; cursief = object/patiens.">—</div>
-      <div id="actionFeedback" class="action-feedback neutral">Viewer: sleep in canvas om boom + LEX-as te verplaatsen. FIT herstelt de view.</div>
+      <div id="actionFeedback" class="action-feedback neutral">Viewer: sleep in canvas om boom + LEX-as te verplaatsen. FIT past het zichtvenster aan; de boom zelf verandert niet.</div>
     </section>
 
     <section class="workspace" aria-label="OpenGraph werkvlak">
       <aside class="side-panel" aria-label="Projecties en bewerking">
         <section class="panel-card">
           <h2>Projectie-instellingen</h2>
-          <p class="inline-help sticky-note">Grid eerst. Rechterkolom staat nu zichtbaar bovenaan; kies daarna welke menu’s boven het grid mogen staan.</p>
-          <div class="right-menu-width-callout" title="Zichtbare hoofdinstelling voor de rechterkolom. Kies hoeveel ruimte het menu rechts van het grid krijgt; het grid blijft begrensd op boom + assen.">
-            <label class="field right-menu-width-callout-field"><span>Rechterkolom zichtbaar</span><select id="rightMenuWidthSelectTop"></select></label>
-            <p class="inline-help">Kies hier direct de breedte van het rechter menu. Het grid gebruikt alleen de benodigde ruimte voor boom + assen; de rest gaat naar deze kolom.</p>
-          </div>
+          <p class="inline-help sticky-note">Grid eerst. Kies hieronder maximaal vier menu’s die boven het grid mogen staan.</p>
           <label class="field center-mode-field"><span>Centraal OPN</span><select id="centralModeSelect"></select></label>
           <label class="field center-mode-field"><span>Boomkeuze</span><select id="treeChoiceSelect"></select></label>
           <label class="field center-mode-field"><span>Layout order</span><select id="functionalOrderSelect"></select></label>
@@ -143,15 +159,15 @@
             <label class="field mini-field"><span>Boomruimte</span><select id="layoutDensitySelect"></select></label>
             <label class="field mini-field"><span>Hoofdvenster</span><select id="viewFitSelect"></select></label>
             <label class="field mini-field" title="Boom vrije rijen: lege ruimte onder de wortel in de centrale OPN-boom."><span>Boom vrije rijen</span><select id="freeSlotCountSelect"></select></label>
-            <fieldset class="lex-adverb-insert-field" aria-label="Bijwoord / LEX-insert op de LEX-as">
-              <legend>Bijwoord / LEX-insert op LEX-as</legend>
-              <p class="top-menu-choice-help">Kies hier de externe LEX-insert voor vrije slots, bijvoorbeeld VANDAAG, VAAK, NIET, SNEL of MISSCHIEN. Dit verandert de centrale boom niet.</p>
-              <label class="field mini-field" title="LEX vrije slots: plaatsbare insertiepunten op de LEX-as, voorbereid op materiaal uit andere LEX-assen/bomen of anaforen."><span>Aantal slots</span><select id="lexFreeSlotCountSelect"></select></label>
-              <label class="field mini-field" title="Kies waar de vrije LEX-slots op de LEX-as worden getekend."><span>Slotpositie</span><select id="lexFreeSlotPlacementSelect"></select></label>
-              <label class="field mini-field" title="Kies welk bijwoord of welke externe inhoud als aparte insertiebox op de LEX-as verschijnt. VANDAAG is het huidige testvoorbeeld: HOND BIJT VANDAAG MAN."><span>Bijwoord / inhoud</span><select id="lexInsertionContentSelect"></select></label>
+            <fieldset class="lex-adverb-insert-field" aria-label="Bijwoordslot op LEX-as">
+              <legend>Bijwoordslot op LEX-as</legend>
+              <p class="top-menu-choice-help">Kies het bijwoord en de hostbox. Het bijwoord verschijnt als extern LEX-slot op de LEX-as, verticaal net boven S, NP, VP, V, PP of AP. De hostbox/subboom schuift lager om ruimte te maken.</p>
+              <label class="field mini-field" title="Aantal bijwoordboxen boven een geldige syntactische categoriebox."><span>Aantal bijwoordboxen</span><select id="lexFreeSlotCountSelect"></select></label>
+              <label class="field mini-field" title="Kies de hostbox: S, NP, VP, V, PP of AP."><span>Hostbox</span><select id="lexFreeSlotPlacementSelect"></select></label>
+              <label class="field mini-field" title="Kies welk bijwoord boven de gekozen syntactische categoriebox verschijnt."><span>Bijwoord / inhoud</span><select id="lexInsertionContentSelect"></select></label>
             </fieldset>
-            <fieldset class="lex-extension-field" aria-label="Takverlenging door LEX-insertie" title="Kies welke takken of boxgrenzen langer worden doordat een insertiebox op de LEX-as ruimte vraagt. Meerdere keuzes zijn toegestaan.">
-              <legend>Takverlenging door insertie</legend>
+            <fieldset class="lex-extension-field" aria-label="Takverlenging (niet voor bijwoorden)" title="Niet meer leidend voor bijwoorden: bijwoorden staan boven een syntactische categoriebox, niet tussen boxen.">
+              <legend>Takverlenging (niet voor bijwoorden)</legend>
               <label title="Standaard voor VANDAAG: de insertie tussen werkwoord en object verlengt de VP-zone/grens, zonder VANDAAG als boomknoop toe te voegen."><input type="checkbox" data-lex-extension-target="vp-boundary"> VP-grens V ↔ object</label>
               <label title="Verlengt de grens tussen subject en VP. Nuttig als de insertie tussen zinsdelen ligt."><input type="checkbox" data-lex-extension-target="s-boundary"> S-grens subject ↔ VP</label>
               <label title="Verlengt de objecttak; bruikbaar als de insertie vlak vóór het object staat."><input type="checkbox" data-lex-extension-target="object-branch"> objecttak / NP obj / patiens</label>
@@ -161,14 +177,7 @@
               <label title="Functionele variant: verlengt de grens tussen predicaat en argumentstructuur."><input type="checkbox" data-lex-extension-target="clause-boundary"> CLAUSE-grens</label>
               <p class="top-menu-choice-help" data-lex-extension-help>Takverlenging wordt geladen.</p>
             </fieldset>
-            <fieldset class="top-menu-choice-field" 
-    <div class="mobile-sheet-section" aria-label="Rechterkolom">
-      <h3>Rechterkolom</h3>
-      <label class="mobile-sheet-field" title="Breedte van het rechter menu naast het grid. Het grid blijft begrensd op boom + assen; de rest is voor het menu."><span>Breedte</span><select id="mobileRightMenuWidthSelect"></select></label>
-      <p class="top-menu-choice-help">Maak het rechter menu breder of maximaal zichtbaar. Dit verandert niet de boom; alleen de verdeling tussen grid en menu.</p>
-    </div>
-
-aria-label="Menu's boven grid" title="Kies maximaal vier menu's die boven het grid mogen staan. Niet gekozen menu's staan onder het grid.">
+            <fieldset class="top-menu-choice-field" aria-label="Menu's boven grid" title="Kies maximaal vier menu's die boven het grid mogen staan. Niet gekozen menu's staan onder het grid.">
               <legend>Menu’s boven grid <span class="top-menu-choice-count" data-top-menu-count>0/4</span></legend>
               <label title="Projectiekeuze: Assen, Bron, LEX, SYNTAX-projectie en LOG/FT. Nuttig als je vaak tussen projecties vergelijkt."><input type="checkbox" data-top-menu-choice="projection"> Projectiekeuze</label>
               <label title="Voorbeeldzin: kies snel HOND BIJT MAN en varianten. Nuttig bij contrasten tussen zinnen."><input type="checkbox" data-top-menu-choice="sentence"> Voorbeeldzin</label>
@@ -190,8 +199,9 @@ aria-label="Menu's boven grid" title="Kies maximaal vier menu's die boven het gr
           <h2>Voorbeeldzinnen</h2>
           <p class="inline-help">Voeg voorbeeldzinnen toe via de editor. Start lokaal met <code>start-local-viewer.bat</code>; dan schrijft <strong>Opslaan</strong> direct naar <code>examples-input.html</code>. Daarna kun je hier de lijst herladen.</p>
           <div class="button-row">
-            <a class="button-link primary" href="examples-editor.html?v4535" title="Voorbeeldzinnen toevoegen en opslaan">Voorbeeldzinnen-editor</a>
-            <a class="button-link" href="examples-input.html?v4535" title="Leesbare HTML-input met voorbeeldzinnen">HTML-input</a>
+            <a class="button-link primary" href="examples-editor.html?v4543" title="Voorbeeldzinnen toevoegen en opslaan">Voorbeeldzinnen-editor</a>
+            <a class="button-link" href="examples-input.html?v4543" title="Leesbare HTML-input met voorbeeldzinnen">HTML-input</a>
+            <a class="button-link" href="examples-adverbs.html?v4543" title="Bijwoordvoorbeelden met default-host en gemarkeerde host">Bijwoordvoorbeelden</a>
             <button id="reloadExamplesButton" type="button" title="Herlees examples-input.html zonder de hele pagina opnieuw te openen">Herlaad zinnen</button>
           </div>
         </section>
@@ -217,7 +227,7 @@ aria-label="Menu's boven grid" title="Kies maximaal vier menu's die boven het gr
 
       <section id="canvasWrap" class="canvas-wrap" aria-label="OpenGraph canvas">
         <svg id="graphSvg" role="img" aria-label="OpenGraph projectie" tabindex="0" title="Grid is vastgezet; bediening staat in het boomvenster." xmlns="http://www.w3.org/2000/svg"></svg>
-        <div class="main-south-control" aria-label="LOG-volgorde in het Alle-venster">
+        <div class="main-south-control" aria-label="ZUID-volgorde in het boomvenster">
           <button id="mainSouthPrevButton" type="button" title="Vorige LOG-volgorde">‹</button>
           <button id="mainSouthModeButton" type="button" title="Volgende LOG-volgorde: SOV, SVO, OVS, OSV-!, VSO-!, VOS-!">ZUID · SOV</button>
           <button id="mainSouthNextButton" type="button" title="Volgende LOG-volgorde">›</button>
@@ -252,7 +262,7 @@ aria-label="Menu's boven grid" title="Kies maximaal vier menu's die boven het gr
       </details>
       <details>
         <summary>Bediening</summary>
-        <p><strong>OPN/Assen</strong>: kies centraal tussen OPN-syntaxboom en OPN-functionele structuur. De syntaxboom wordt uit <code>structure-config.html</code> gelezen en bottom-up berekend: eerst leaf/subtree-boxen, daarna plaatsing, daarna renderen. Projecties worden horizontaal naar hun as getekend; SYNTAX en LOG/FT staan nu ook op gekleurde projectie-assen en de syntaxweergave krijgt onderaan een LOGICAL-projectie. <strong>Boomruimte</strong> maakt de HOR-afstand groter en de VER-afstand kleiner; <strong>Boom vrije rijen</strong> bepaalt hoeveel lege rijen onder de wortel worden gereserveerd; <strong>LEX vrije slots</strong> zijn plaatsbare insertiepunten op de LEX-as voor later materiaal uit andere LEX-assen/bomen of anaforische elementen; <strong>LEX insertie</strong> kiest de voorbeeldinhoud van de insertiebox; <strong>Takverlenging</strong> kiest welke takken/boxgrenzen extra lengte krijgen door die insertie; <strong>Venster auto</strong> past de viewBox dynamisch aan; <strong>FIT</strong> zet handmatig steeds een passend kader rond de actuele inhoud. <strong>Groei</strong> presenteert dezelfde berekende layout stapsgewijs: eerst leaves, dan hogere categorieën/boxen, daarna LEX-basisprojectie en LEX-wissels. De functionele structuur gebruikt dezelfde recursieve werkwijze, is n-ary, heeft ook een eigen LEX-projectie, reserveert configureerbare vrije-slotruimte onder de wortel; standaard slot 1 voor vooropplaatsing/topicalisatie en slot 2 voor V2/PV; en heeft configkeuzes <strong>left-first</strong>/<strong>right-first</strong> en <strong>flipdoel compact/align en flip-config per vertakking</strong>. <strong>Voorbeeld-input</strong>: <code>examples-input.html</code> bevat de zinnen met <strong>subject vet</strong> en <em>object cursief</em>. <strong>LEX</strong>: gebruik de orderlijst of plaatsingsregel.</p>
+        <p><strong>OPN/Assen</strong>: kies centraal tussen OPN-syntaxboom en OPN-functionele structuur. De syntaxboom wordt uit <code>structure-config.html</code> gelezen en bottom-up berekend: eerst leaf/subtree-boxen, daarna plaatsing, daarna renderen. Projecties worden horizontaal naar hun as getekend; SYNTAX en LOG/FT staan nu ook op gekleurde projectie-assen en de syntaxweergave krijgt onderaan een LOGICAL-projectie. <strong>Boomruimte</strong> maakt de HOR-afstand groter en de VER-afstand kleiner; <strong>Vrije slots</strong> bepaalt hoeveel lege rijen onder de wortel worden gereserveerd; <strong>Venster auto</strong> past de viewBox dynamisch aan; <strong>FIT</strong> zet handmatig steeds een passend kader rond de actuele inhoud. <strong>Groei</strong> presenteert dezelfde berekende layout stapsgewijs: eerst leaves, dan hogere categorieën/boxen, daarna LEX-basisprojectie en LEX-wissels. De functionele structuur gebruikt dezelfde recursieve werkwijze, is n-ary, heeft ook een eigen LEX-projectie, reserveert configureerbare vrije-slotruimte onder de wortel; standaard slot 1 voor vooropplaatsing/topicalisatie en slot 2 voor V2/PV; en heeft configkeuzes <strong>left-first</strong>/<strong>right-first</strong> en <strong>flipdoel compact/align en flip-config per vertakking</strong>. <strong>Voorbeeld-input</strong>: <code>examples-input.html</code> bevat de zinnen met <strong>subject vet</strong> en <em>object cursief</em>. <strong>LEX</strong>: gebruik de orderlijst of plaatsingsregel.</p>
       </details>
     </section>
   </main>
@@ -262,7 +272,7 @@ aria-label="Menu's boven grid" title="Kies maximaal vier menu's die boven het gr
 
   <nav class="mobile-bottom-nav" aria-label="Mobiele viewerbediening">
     <button id="mobilePrevButton" type="button" title="Vorige voorbeeldzin">← Zin</button>
-    <button id="mobileFitButton" type="button" title="Passend maken">FIT</button>
+    <button id="mobileFitButton" type="button" title="FIT: pas boom en projectie-assen passend in beeld; verandert de boom niet.">FIT</button>
     <button id="mobileNextButton" type="button" title="Volgende voorbeeldzin">Zin →</button>
     <button id="mobileMenuButton" type="button" aria-controls="mobileSheet" aria-expanded="false" title="Meer opties">Meer</button>
   </nav>
@@ -286,12 +296,12 @@ aria-label="Menu's boven grid" title="Kies maximaal vier menu's die boven het gr
 
 
 
-    <div class="mobile-sheet-section" aria-label="Bijwoord / LEX-insert op LEX-as">
-      <h3>Bijwoord / LEX-insert</h3>
-      <label class="mobile-sheet-field" title="Aantal plaatsbare vrije slots op de LEX-as voor latere inserties uit andere LEX-assen/bomen of anaforen."><span>Aantal</span><select id="mobileLexFreeSlotCountSelect"></select></label>
-      <label class="mobile-sheet-field" title="Positie van de vrije slots op de LEX-as."><span>Positie</span><select id="mobileLexFreeSlotPlacementSelect"></select></label>
-      <label class="mobile-sheet-field" title="Kies welke inhoud als aparte insertiebox op de LEX-as verschijnt. VANDAAG is het testvoorbeeld."><span>Bijwoord / inhoud</span><select id="mobileLexInsertionContentSelect"></select></label>
-      <fieldset class="top-menu-choice-field mobile-top-menu-choice-field lex-extension-field" aria-label="Takverlenging door LEX-insertie" title="Kies welke takken of boxgrenzen langer worden doordat een LEX-insertiebox ruimte vraagt. Meerdere keuzes zijn toegestaan.">
+    <div class="mobile-sheet-section" aria-label="Bijwoordslot op LEX-as">
+      <h3>Bijwoordslot op LEX-as</h3>
+      <label class="mobile-sheet-field" title="Aantal bijwoordboxen boven een syntactische categoriebox."><span>Aantal</span><select id="mobileLexFreeSlotCountSelect"></select></label>
+      <label class="mobile-sheet-field" title="Kies de hostbox: S, NP, VP, V, PP of AP."><span>Hostbox</span><select id="mobileLexFreeSlotPlacementSelect"></select></label>
+      <label class="mobile-sheet-field" title="Kies welk bijwoord boven de gekozen syntaxbox verschijnt."><span>Bijwoord / inhoud</span><select id="mobileLexInsertionContentSelect"></select></label>
+      <fieldset class="top-menu-choice-field mobile-top-menu-choice-field lex-extension-field" aria-label="Takverlenging (niet voor bijwoorden)" title="Niet meer leidend voor bijwoorden: bijwoorden staan boven een syntactische categoriebox.">
         <legend>Takverlenging</legend>
         <label title="Standaard voor VANDAAG: verlengt de VP-zone/grens tussen werkwoord en object."><input type="checkbox" data-lex-extension-target="vp-boundary"> VP-grens V ↔ object</label>
         <label title="Verlengt de grens tussen subject en VP."><input type="checkbox" data-lex-extension-target="s-boundary"> S-grens subject ↔ VP</label>
@@ -302,24 +312,24 @@ aria-label="Menu's boven grid" title="Kies maximaal vier menu's die boven het gr
         <label title="Functionele variant: verlengt de grens tussen predicaat en argumentstructuur."><input type="checkbox" data-lex-extension-target="clause-boundary"> CLAUSE-grens</label>
         <p class="top-menu-choice-help" data-lex-extension-help>Takverlenging wordt geladen.</p>
       </fieldset>
-      <p class="top-menu-choice-help">Deze slots zijn leeg: ze reserveren LEX-asposities voor toekomstige insertie, niet voor huidige verplaatsing.</p>
+      <p class="top-menu-choice-help">Bijwoordslots staan op de LEX-as, verticaal boven S, NP, VP, V, PP of AP. Zij voegen geen centrale boomknoop toe en komen niet uit de basisboom.</p>
     </div>
 
     <div class="mobile-sheet-section" aria-label="Documentatie">
       <h3>Documentatie</h3>
       <div class="mobile-link-grid">
-        <a href="docs/docs-home.html?v4535">Docs</a>
-        <a href="lex-movement-rules.html?v4535">Plaatsingsregels</a>
-        <a href="reset-cache.html?v4535">Reset cache</a>
+        <a href="docs/docs-home.html?v4543">Docs</a>
+        <a href="lex-movement-rules.html?v4543">Plaatsingsregels</a>
+        <a href="reset-cache.html?v4543">Reset cache</a>
       </div>
     </div>
 
-    <p class="mobile-sheet-note">Sleep met één vinger om te pannen. Knijp met twee vingers om te zoomen. FIT zet de boom en projectie-assen terug passend in beeld.</p>
+    <p class="mobile-sheet-note">Sleep met één vinger om te pannen. Knijp met twee vingers om te zoomen. FIT past het zichtvenster aan de huidige boom en projectie-assen aan; de boom zelf verandert niet.</p>
   </section>
 
 
   <script>
-    window.__opengraphBoot = { version: 'v4535', loaded: false, marker: 'viewer-index' };
+    window.__opengraphBoot = { version: 'v4543', loaded: false, marker: 'viewer-index' };
     function ogStatus(message) {
       var target = document.getElementById('actionFeedback') || document.body;
       if (target) target.textContent = message;
@@ -332,10 +342,10 @@ aria-label="Menu's boven grid" title="Kies maximaal vier menu's die boven het gr
     });
     setTimeout(function() {
       if (!window.__opengraphBoot || !window.__opengraphBoot.loaded) {
-        ogStatus('Viewer start niet volledig. Gebruik Reset cache of open http://127.0.0.1:8088/reset-cache.html?v4535.');
+        ogStatus('Viewer start niet volledig. Gebruik Reset cache of open http://127.0.0.1:8088/reset-cache.html?v4543.');
       }
     }, 2500);
   </script>
-  <script src="viewer.js?v4535" defer></script>
+  <script src="viewer.js?v4543" defer></script>
 </body>
 </html>

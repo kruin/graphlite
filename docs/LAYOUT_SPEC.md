@@ -1,3 +1,8 @@
+
+## v4540 - Bijwoorden als externe LEX-slots
+
+Bijwoordplaatsing blijft volledig op de LEX-as. `Boven S/NP/VP/V/PP/AP` betekent: plaats een extern LEX-slot verticaal net boven de gekozen syntactische hostbox. Het bijwoord wordt niet op de syntaxboom getekend en is geen projectie uit de basisboom. De host-subboom wordt lager gezet om ruimte te maken. Notatie: `LEX-ADV[..., axis=LEX, source=external, host=...]`.
+
 ## v4430 · LEX-renderlaag
 
 Projectielijnen uit de boom eindigen op basisposities op dezelfde horizontale hoogte als de bronknoop. Lokale LEX-Wissels verplaatsen daarna naar de surface-slots.
@@ -321,7 +326,7 @@ Vrije LEX-inserts voor bijwoorden zijn nu gedocumenteerd als slottypen met versc
 - Wijze: `SNEL`, `HARD`, `ZACHTJES` - `V-NEAR` of `VP-RIGHT`.
 - Zinsbijwoord: `MISSCHIEN`, `WAARSCHIJNLIJK`, `HELAAS` - hoog `S/VP` of `S-LEFT`.
 - Focus: `ALLEEN`, `OOK`, `ZELFS` - bij de gefocuste phrase.
-- Graad: `HEEL`, `ERG`, `ZEER` - intern in `AP/AdvP/NP`, dus geen algemeen tussenbox-slot.
+- Graad: `HEEL`, `ERG`, `ZEER` - intern in `AP/AdvP/NP`, dus geen algemene hostloze bijwoordpositie.
 
 De centrale boom wordt niet herschreven. Bijwoorden horen in deze fase in de LEX-renderlaag of in phrase-interne slots.
 

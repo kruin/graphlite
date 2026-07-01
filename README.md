@@ -1,4 +1,26 @@
-# OpenGraph Lite Viewer v4535
+# OpenGraph Lite Viewer v4546
+
+## v4546 - bijwoord voorop = V2
+
+Bijwoordelijke vooropplaatsing is gecorrigeerd: `GISTEREN BEET HOND MAN` is hoofdzin-V2/inversie, niet bijzinsvolgorde. Het bijwoord is een externe LEX-insertie in slot 1; de persoonsvorm blijft slot 2. Bijzinsvolgorde blijft gekoppeld aan een bindterm/complementizer zoals `omdat`.
+
+## v4546 - LEX-bijwoordslot volgt echte hostbox
+
+Fix: bijwoordslots op de LEX-as gebruiken nu de bewaarde `lexAdverbAxisSlots` uit de syntaxlayout. Daardoor valt `boven VP/V/AP/NP` niet langer terug op de S-hoogte. Ook de losse LEX-view gebruikt een onzichtbare syntax-ankerkaart voor de correcte hostboxhoogte.
+
+## v4541 - correctie BIJWOORD-host
+
+De dropdown **Met bijwoord** plaatst niet meer alles boven S.
+De gekozen bijwoordoptie bepaalt de host:
+
+- modaliteit/tijd/reden/voorwaarde → S
+- frequentie/plaats → VP
+- negatie/wijze → V
+- graad → AP
+- focus/restrictief → NP
+
+Alle plaatsingen blijven LEX-slots op de LEX-as. De hostbox is alleen hoogteanker.
+
 
 Deze build verwijdert de aparte beeldmodule volledig uit de viewer.
 
@@ -19,10 +41,55 @@ Deze build verwijdert de aparte beeldmodule volledig uit de viewer.
 - bijbehorend Config-blok
 - bijbehorende startscripts
 
-## v4535
+## v4541
 
 Toegevoegd als voorbeeldzin in `examples-input.html` en als fallback in `viewer.js`:
 
 `OMDAT DE HOND DE MAN HEEFT GEBETEN`
 
 LEX-volgorde: `OMDAT · DE HOND · DE MAN · HEEFT · GEBETEN`.
+
+
+## v4541
+
+Bijwoordplaatsing: bijwoorden worden boven een geldige syntactische categoriebox getekend (`S`, `NP`, `VP`, `V`, `PP`, `AP`), niet tussen boxen.
+
+
+## v4541 — bijwoordvoorbeeldset
+
+- Toegevoegd: `examples-adverbs.html`.
+- Toegevoegd: `docs/LEX_ADVERB_EXAMPLE_SET.md`.
+- Toegevoegd: `samples/adverb_host_examples_v4537.json`.
+- `examples-input.html` is hersteld als oorspronkelijke basisvoorbeeldset; de bijwoordtestset staat apart in `examples-adverbs.html`.
+- Eén bijwoord per voorbeeldzin.
+- Default-host per categorie: MODALITEIT→S, TIJD→S, FREQUENTIE→VP, PLAATS→VP, NEGATIE→V, GRAAD→AP, WIJZE→V, REDEN/OORZAAK→S, VOORWAARDE→S, FOCUS→NP.
+- Geforceerde afwijkingen krijgen notatie `functional:marked-host`.
+
+
+## v4541 — herstel eerste voorbeeldset
+
+- `examples-input.html` is teruggezet naar de oorspronkelijke basisvoorbeeldset.
+- Bijwoordvoorbeelden staan apart in `examples-adverbs.html`, `docs/LEX_ADVERB_EXAMPLE_SET.md` en `samples/adverb_host_examples_v4537.json`.
+- De viewer-link naar Bijwoordvoorbeelden blijft bestaan, maar de eerste voorbeeldset wordt niet meer vermengd met bijwoordtests.
+
+### v4541
+
+Het hoofdbeeld heeft nu twee onafhankelijke dropdowns:
+
+- **Zin**: kiest de basiszin uit `examples-input.html`.
+- **Met bijwoord**: kiest een bijwoord uit `examples-adverbs.html` en tekent het boven de ingestelde syntaxhost.
+
+De bijwoordkeuze verandert de centrale syntactische boom niet.
+
+
+## v4541 - Bijwoorden als externe LEX-slots
+
+Met `boven S/NP/VP/V/PP/AP` wordt bedoeld: een LEX-slot op de LEX-as, verticaal net boven de gekozen syntactische box. Het bijwoord wordt nergens op de syntaxboom getekend en komt niet als projectie uit de basisboom. De gekozen host-subboom schuift lager om ruimte te maken.
+
+### v4546: Boven S = V2/inversie
+
+Bijwoordplaatsing `boven S` is nu geen gewone lokale hostplaatsing meer. In GraphLite betekent dit: het bijwoord vult een extern LEX-slot net boven de S-box en staat daarmee voorop. In een hoofdzin activeert dit V2/inversie: `BIJWOORD | PV | SUBJECT | OBJECT`.
+
+### v4546 — klikbare gemarkeerde bijwoordvariant
+
+De bijwoordbox op de LEX-as is nu zelf een klikbare knoop als er een tegenhanger bestaat. Klik op een ongemarkeerde bijwoordbox om de gemarkeerde variant te tonen; klik op de gemarkeerde bijwoordbox om terug te gaan. Dit verandert alleen de LEX-host/markering, niet de centrale boom.

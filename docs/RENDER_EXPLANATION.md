@@ -18,15 +18,15 @@ De centrale boom blijft daarbij ongewijzigd.
 
 ## Vrije LEX-inserts
 
-Bijwoorden en andere inserts op de LEX-as zijn geen gewone centrale boomknopen. Zij worden geplaatst in vrije slots, bijvoorbeeld tussen boxen of in een domeinslot.
+Bijwoorden zijn geen gewone centrale boomknopen. Vanaf v4536 worden zij boven een geldige syntactische categoriebox geplaatst: S, NP, VP, V, PP of AP. Zij staan dus niet tussen boxen.
 
 Voorbeelden:
 
-- `GISTEREN`, `MORGEN`: tijd; tussenbox- of VP-slot.
+- `GISTEREN`, `MORGEN`: tijd; hostbox VP/S.
 - `VAAK`, `SOMS`, `ALTIJD`: frequentie; VP-slot.
 - `NIET`: NEG / V-nabij slot.
 - `SNEL`, `HARD`, `ZACHTJES`: wijze; V-nabij.
-- `MISSCHIEN`, `WAARSCHIJNLIJK`, `HELAAS`: hoog S/VP-slot of S-left.
+- `MISSCHIEN`, `WAARSCHIJNLIJK`, `HELAAS`: hoog S/VP-HOST-slot of S-left.
 - `ALLEEN`, `OOK`, `ZELFS`: focus-slot bij de gefocuste phrase.
 - `HEEL`, `ERG`, `ZEER`: AP/AdvP/NP-intern.
 

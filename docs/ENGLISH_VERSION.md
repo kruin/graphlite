@@ -33,7 +33,7 @@ Current axes:
 
 ## LEX placement rules
 
-For main clauses, the LEX axis shows local exchanges. The first phrase can move to slot 1 and the finite verb to slot 2. Old base positions remain visible as traces. Insertions such as GISTEREN are represented as insertion boxes on the LEX axis, not as direct new nodes in the central tree.
+For main clauses, the LEX axis shows local exchanges. The first phrase can move to slot 1 and the finite verb to slot 2. Old base positions remain visible as traces. Insertions such as GISTEREN are represented as insertion boxes above syntax boxes, not as direct new nodes in the central tree.
 
 
 
@@ -53,13 +53,13 @@ Keep the OSV warning translated in every English release: OSV-! is not a base al
 
 Free LEX insertions for adverbs are now documented as slot types with different scope. The base rule remains: reserve slots between visible LEX boxes and place the slot on vertical overlap when such overlap exists. The adverb type then determines the precise placement.
 
-- Time: `GISTEREN`, `MORGEN` - usually `VP-BETWEEN`, optionally `S-LEFT` when fronted.
-- Frequency: `VAAK`, `SOMS`, `ALTIJD` - `VP-BETWEEN`.
-- Negation: `NIET` - separate `NEG`/`V-NEAR` slot.
-- Manner: `SNEL`, `HARD`, `ZACHTJES` - `V-NEAR` or `VP-RIGHT`.
-- Sentence adverb: `MISSCHIEN`, `WAARSCHIJNLIJK`, `HELAAS` - high `S/VP` or `S-LEFT`.
+- Time: `GISTEREN`, `MORGEN` - usually `VP-HOST`, optionally `S-HOST` when fronted.
+- Frequency: `VAAK`, `SOMS`, `ALTIJD` - `VP-HOST`.
+- Negation: `NIET` - separate `NEG`/`V-HOST` slot.
+- Manner: `SNEL`, `HARD`, `ZACHTJES` - `V-HOST` or `VP-RIGHT`.
+- Sentence adverb: `MISSCHIEN`, `WAARSCHIJNLIJK`, `HELAAS` - high `S/VP-HOST` or `S-HOST`.
 - Focus: `ALLEEN`, `OOK`, `ZELFS` - beside the focused phrase.
-- Degree: `HEEL`, `ERG`, `ZEER` - internal to `AP/AdvP/NP`, not a general between-box slot.
+- Degree: `HEEL`, `ERG`, `ZEER` - internal to `AP/AdvP/NP`, not a general host box above a syntax box.
 
 The central tree is not rewritten. In this phase, adverbs belong to the LEX render layer or to phrase-internal slots.
 
@@ -72,7 +72,7 @@ The Dutch linguistic test material remains Dutch. The lexicon now also records O
 
 ## v4535 - OSV-!, VSO-! and VOS-!
 
-`VSO` and `VOS` are now marked like `OSV`: `VSO-!` and `VOS-!`. The exclamation mark means that the box approach cannot produce the order as a base alternative. Correct rendering on the LEX axis requires an explicit movement rule. Existing trees and existing flip behaviour remain unchanged.
+`VSO` and `VOS` are now marked like `OSV`: `VSO-!` and `VOS-!`. The exclamation mark means that the box approach cannot produce the order as a base alternative. Correct rendering above syntax boxes requires an explicit movement rule. Existing trees and existing flip behaviour remain unchanged.
 
 
 

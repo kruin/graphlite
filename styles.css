@@ -3969,3 +3969,123 @@ body.help-screen-active .help-screen {
   border-color: var(--accent);
   color: var(--accent-contrast);
 }
+
+/* v4540: bijwoorden blijven op de LEX-as; hostbox is alleen hoogteanker. */
+.adverb-host-slot-layer {
+  pointer-events: none;
+}
+.adverb-host-box {
+  fill: rgba(255, 255, 255, 0.96);
+  stroke: #8f5b00;
+  stroke-width: 2.2;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.18));
+}
+.adverb-host-caption {
+  font-size: calc(12px * var(--og-font-scale, 1));
+  font-weight: 700;
+  text-anchor: middle;
+  fill: #8f5b00;
+}
+.adverb-host-label {
+  font-size: calc(17px * var(--og-font-scale, 1));
+  font-weight: 800;
+  text-anchor: middle;
+  fill: #392100;
+}
+/* v4536: takverlenging geldt niet meer voor bijwoordplaatsing; hostbox stuurt de plaats. */
+.lex-extension-field {
+  display: none !important;
+}
+
+.adverb-virtual-host-box {
+  fill: rgba(255, 251, 235, 0.92);
+  stroke: #8f5b00;
+  stroke-width: 1.8;
+  stroke-dasharray: 7 5;
+}
+.adverb-virtual-host-label {
+  font-size: calc(16px * var(--og-font-scale, 1));
+  font-weight: 900;
+  text-anchor: middle;
+  fill: #78350f;
+}
+
+/* v4540: tweede hoofdmenu naast ZIN: BIJWOORD. Bijwoord is een externe LEX-laag. */
+.main-adverb-field {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  min-width: 0;
+  flex: 0 1 auto;
+  font-weight: 900;
+  color: var(--muted);
+}
+.main-adverb-field select {
+  width: min(26rem, 34vw);
+  min-height: 2.35rem;
+  border: 1px solid var(--line);
+  border-radius: .72rem;
+  background: var(--panel);
+  color: var(--text);
+  padding: .25rem .65rem;
+  font-weight: 900;
+}
+.mobile-adverb-field {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: .42rem;
+  min-width: 0;
+  font-weight: 900;
+  color: var(--muted);
+  font-size: .76rem;
+}
+.mobile-adverb-field select {
+  width: 100%;
+  min-width: 0;
+  min-height: 2.35rem;
+  border: 1px solid var(--line);
+  border-radius: .72rem;
+  background: var(--panel);
+  color: var(--text);
+  padding: .25rem .65rem;
+  font-weight: 850;
+}
+@media (max-width: 760px) {
+  body.main-screen-active .main-adverb-field span {
+    font-size: .84rem !important;
+  }
+  body.main-screen-active .main-adverb-field select {
+    width: min(34vw, 18rem) !important;
+    min-height: 2.2rem !important;
+    font-size: .9rem !important;
+  }
+}
+
+/* v4540: bijwoorden zijn externe LEX-slots op de LEX-as, niet syntaxboomlabels. */
+.lex-adverb-axis-slot {
+  stroke-width: 2.5;
+}
+
+/* v4546: bijwoordslot zelf is klikbare knoop voor gemarkeerde/ongemarkeerde variant. */
+.lex-adverb-axis-slot-node.clickable {
+  cursor: pointer;
+}
+.lex-adverb-axis-slot-node.clickable .lex-adverb-axis-slot {
+  stroke-width: 2.5px;
+}
+.lex-adverb-axis-slot-node.marked .lex-adverb-axis-slot {
+  stroke-dasharray: 7 5;
+}
+.lex-adverb-toggle-marker {
+  font-size: 18px;
+  font-weight: 900;
+  text-anchor: middle;
+  dominant-baseline: middle;
+  pointer-events: none;
+}
+.lex-adverb-toggle-help {
+  font-size: 10px;
+  text-anchor: middle;
+  pointer-events: none;
+}

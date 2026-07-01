@@ -208,12 +208,12 @@ Op een telefoon staat het canvas bovenaan. Veeg horizontaal in het canvas om de 
 Naast west/LEX, oost/SYNTAX en zuid/LOGICAL is ook een NOORD-as mogelijk. Die is genoteerd als uitbreiding, maar nog niet gebruikt.
 
 
-Aanvulling v4504: LEX vrije slots zijn plaatsbare insertiepunten op de LEX-as voor later materiaal uit andere LEX-assen/bomen en anafora. Boom vrije rijen blijven apart.
+Aanvulling v4504: LEX vrije slots zijn bijwoordboxen boven syntactische categorieboxen voor later materiaal uit andere LEX-assen/bomen en anafora. Boom vrije rijen blijven apart.
 
 
 ## v4504 desktop LEX-insertie zichtbaar
 
-De rechter desktop-config toont nu dezelfde LEX-insertieconfig als mobiel: LEX vrije slots, LEX insertie-inhoud en takverlenging door insertie. De insertie blijft een aparte box op de LEX-as; de gekozen takken/boxgrenzen worden alleen layoutmatig verlengd.
+De rechter desktop-config toont nu dezelfde LEX-insertieconfig als mobiel: LEX vrije slots, LEX insertie-inhoud en takverlenging door insertie. De insertie blijft een box boven een syntactische categoriebox; de gekozen takken/boxgrenzen worden alleen layoutmatig verlengd.
 
 
 ## v4504 · hoofdbeeld en config-scherm
@@ -232,13 +232,13 @@ Voor een correcte zichtbare LEX-as moet altijd een expliciete verplaatsingsregel
 
 Vrije LEX-inserts voor bijwoorden zijn nu gedocumenteerd als slottypen met verschillende scope. De basisregel blijft: reserveer slots tussen zichtbare LEX-boxen en plaats het slot op verticale overlap als die bestaat. Daarna bepaalt het bijwoordtype de exacte plaatsing.
 
-- Tijd: `GISTEREN`, `MORGEN` - meestal `VP-BETWEEN`, eventueel `S-LEFT` bij vooropplaatsing.
-- Frequentie: `VAAK`, `SOMS`, `ALTIJD` - `VP-BETWEEN`.
-- Negatie: `NIET` - apart `NEG`/`V-NEAR` slot.
-- Wijze: `SNEL`, `HARD`, `ZACHTJES` - `V-NEAR` of `VP-RIGHT`.
-- Zinsbijwoord: `MISSCHIEN`, `WAARSCHIJNLIJK`, `HELAAS` - hoog `S/VP` of `S-LEFT`.
+- Tijd: `GISTEREN`, `MORGEN` - meestal `VP-HOST`, eventueel `S-HOST` bij vooropplaatsing.
+- Frequentie: `VAAK`, `SOMS`, `ALTIJD` - `VP-HOST`.
+- Negatie: `NIET` - apart `NEG`/`V-HOST` slot.
+- Wijze: `SNEL`, `HARD`, `ZACHTJES` - `V-HOST` of `VP-RIGHT`.
+- Zinsbijwoord: `MISSCHIEN`, `WAARSCHIJNLIJK`, `HELAAS` - hoog `S/VP-HOST` of `S-HOST`.
 - Focus: `ALLEEN`, `OOK`, `ZELFS` - bij de gefocuste phrase.
-- Graad: `HEEL`, `ERG`, `ZEER` - intern in `AP/AdvP/NP`, dus geen algemeen tussenbox-slot.
+- Graad: `HEEL`, `ERG`, `ZEER` - intern in `AP/AdvP/NP`, dus geen algemeen syntaxboomlabel; plaats als extern LEX-slot met AP/AdvP-hosthoogte.
 
 De centrale boom wordt niet herschreven. Bijwoorden horen in deze fase in de LEX-renderlaag of in phrase-interne slots.
 

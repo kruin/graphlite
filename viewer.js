@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'v4535';
+  const VERSION = 'v4546';
   const BASE_CELL = 74;
   const ROOT_SIDE_GAP = 1;
   const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -15,6 +15,8 @@
     desktopExampleSelect: document.getElementById('desktopExampleSelect'),
     mobileExampleSelect: document.getElementById('mobileExampleSelect'),
     mainExampleSelect: document.getElementById('mainExampleSelect'),
+    mainAdverbSelect: document.getElementById('mainAdverbSelect'),
+    mobileAdverbSelect: document.getElementById('mobileAdverbSelect'),
     openConfigButton: document.getElementById('openConfigButton'),
     closeConfigButton: document.getElementById('closeConfigButton'),
     openHelpButton: document.getElementById('openHelpButton'),
@@ -279,35 +281,41 @@
     { id: '8', label: 'LEX-slots: 8' }
   ];
 
+  const VALID_ADVERB_HOST_BOXES = new Set(['S', 'NP', 'VP', 'V', 'PP', 'AP']);
+
   const LEX_SLOT_PLACEMENTS = [
-    { id: 'after-lex', label: 'onder LEX-woorden', tip: 'Insertieboxen staan onder de huidige LEX-woorden. Veilig voor materiaal dat nog niet tussen bestaande posities hoeft te worden getoond.' },
-    { id: 'after-system', label: 'na slot 0/1/2', tip: 'Insertieboxen staan direct na Comp/TOPIC/V2 en vóór gewone basisposities.' },
-    { id: 'above-system', label: 'boven slot 0', tip: 'Vrije LEX-slots staan boven de bestaande LEX-asposities.' },
-    { id: 'after-surface-1', label: 'tussen positie 1/2', tip: 'Insertiebox op de grens tussen de eerste en tweede LEX-positie.' },
-    { id: 'after-surface-2', label: 'tussen positie 2/3', tip: 'Insertiebox op de grens tussen de tweede en derde LEX-positie.' },
-    { id: 'after-surface-3', label: 'tussen positie 3/4', tip: 'Insertiebox op de grens na de derde LEX-positie.' }
+    { id: 'above-selected-box', label: 'LEX-slot boven geselecteerde box', labelEn: 'LEX slot above selected box', host: 'selected', tip: 'Bijwoord komt als extern LEX-slot op de LEX-as, verticaal net boven de gekozen syntactische categoriebox. Geldig: S, NP, VP, V, PP, AP.' },
+    { id: 'above-s', label: 'LEX-slot boven S', labelEn: 'LEX slot above S', host: 'S', tip: 'Zinsbijwoord: extern LEX-slot op de LEX-as, net boven S. De S-ruimte wordt lager gezet waar nodig.' },
+    { id: 'above-np', label: 'LEX-slot boven NP', labelEn: 'LEX slot above NP', host: 'NP', tip: 'Phrase/focus-bijwoord: extern LEX-slot op de LEX-as, net boven een NP-box.' },
+    { id: 'above-vp', label: 'LEX-slot boven VP', labelEn: 'LEX slot above VP', host: 'VP', tip: 'VP-bijwoord: extern LEX-slot op de LEX-as, net boven de VP-box; de VP-subboom wordt lager gezet om ruimte te maken.' },
+    { id: 'above-v', label: 'LEX-slot boven V', labelEn: 'LEX slot above V', host: 'V', tip: 'Wijze/negatie: extern LEX-slot op de LEX-as, net boven de V-box.' },
+    { id: 'above-pp', label: 'LEX-slot boven PP', labelEn: 'LEX slot above PP', host: 'PP', tip: 'PP-gerelateerd bijwoord: extern LEX-slot op de LEX-as, net boven de PP-box.' },
+    { id: 'above-ap', label: 'LEX-slot boven AP', labelEn: 'LEX slot above AP', host: 'AP', tip: 'Graadwoord: extern LEX-slot op de LEX-as, net boven de AP-box.' }
   ];
 
   const LEX_INSERTION_CONTENTS = [
     { id: 'empty', label: 'slot leeg', text: 'INSERTIEPUNT', sub: 'gereserveerd · andere LEX-as', subEn: 'reserved · other LEX axis', caption: 'vrij slot', captionEn: 'free slot', tip: 'Leeg insertiepunt: reserveert alleen plaats op de LEX-as.', tipEn: 'Empty insertion point: reserves LEX-axis space only.' },
-    { id: 'gisteren', label: 'GISTEREN', text: 'GISTEREN', sub: 'tijd · VP/S-slot', subEn: 'time · VP/S slot', caption: 'extern bijwoord', captionEn: 'external adverb', tip: 'GISTEREN: tijdsbepaling. Gebruik een tussenbox-slot of S-links bij vooropplaatsing.', tipEn: 'GISTEREN: time adverb. Use a between-box slot or S-left when fronted.' },
-    { id: 'morgen', label: 'MORGEN', text: 'MORGEN', sub: 'tijd · VP/S-slot', subEn: 'time · VP/S slot', caption: 'extern bijwoord', captionEn: 'external adverb', tip: 'MORGEN: tijdsbepaling. Reserveer tussenbox-slots; bij vooropplaatsing is een LEX-verplaatsingsregel nodig.', tipEn: 'MORGEN: time adverb. Reserve between-box slots; fronting requires a LEX movement rule.' },
-    { id: 'vaak', label: 'VAAK', text: 'VAAK', sub: 'frequentie · VP-slot', subEn: 'frequency · VP slot', caption: 'extern bijwoord', captionEn: 'external adverb', tip: 'VAAK: frequentie. Voorkeur binnen VP: tussen subject en object in bijzinnen, of tussen V en object in hoofdzinnen.', tipEn: 'VAAK: frequency. Preferred inside VP: between subject and object in subordinate clauses, or between V and object in main clauses.' },
+    { id: 'gisteren', label: 'GISTEREN', text: 'GISTEREN', sub: 'tijd · VP/S-slot', subEn: 'time · VP/S slot', caption: 'extern bijwoord', captionEn: 'external adverb', tip: 'GISTEREN: tijdsbepaling. Plaats boven S of VP; bij vooropplaatsing boven S.', tipEn: 'GISTEREN: time adverb. Place above S or VP; when fronted, above S.' },
+    { id: 'morgen', label: 'MORGEN', text: 'MORGEN', sub: 'tijd · VP/S-slot', subEn: 'time · VP/S slot', caption: 'extern bijwoord', captionEn: 'external adverb', tip: 'MORGEN: tijdsbepaling. Plaats boven S of VP; bij vooropplaatsing is een LEX-verplaatsingsregel nodig.', tipEn: 'MORGEN: time adverb. Place above S or VP; fronting requires a LEX movement rule.' },
+    { id: 'daar', label: 'DAAR', text: 'DAAR', sub: 'plaats · VP/PP-slot', subEn: 'place · VP/PP slot', caption: 'plaats-slot', captionEn: 'place slot', tip: 'DAAR: plaatsbepaling. Default boven VP; bij expliciete PP-structuur boven PP.', tipEn: 'DAAR: place adverb. Default above VP; above PP when an explicit PP structure is present.' },
+    { id: 'daarom', label: 'DAAROM', text: 'DAAROM', sub: 'reden/oorzaak · S-slot', subEn: 'cause/reason · S slot', caption: 'reden-slot', captionEn: 'cause slot', tip: 'DAAROM: reden/oorzaak. Default boven S; gemarkeerd kan het boven VP staan.', tipEn: 'DAAROM: cause/reason. Default above S; marked placement may attach above VP.' },
+    { id: 'anders', label: 'ANDERS', text: 'ANDERS', sub: 'voorwaarde/gevolg · S-slot', subEn: 'condition/result · S slot', caption: 'voorwaarde-slot', captionEn: 'condition slot', tip: 'ANDERS: voorwaarde/gevolg. Default boven S; gemarkeerd kan het lager geplaatst worden.', tipEn: 'ANDERS: condition/result. Default above S; marked placement may attach lower.' },
+    { id: 'vaak', label: 'VAAK', text: 'VAAK', sub: 'frequentie · VP-slot', subEn: 'frequency · VP slot', caption: 'extern bijwoord', captionEn: 'external adverb', tip: 'VAAK: frequentie. Voorkeur: boven VP; bij V-nabije lezing boven V.', tipEn: 'VAAK: frequency. Preferred: above VP; for a V-near reading above V.' },
     { id: 'soms', label: 'SOMS', text: 'SOMS', sub: 'frequentie · VP-slot', subEn: 'frequency · VP slot', caption: 'extern bijwoord', captionEn: 'external adverb', tip: 'SOMS: frequentie. Reserveer een VP-slot; hoger dan V-nabij, lager dan S-links.', tipEn: 'SOMS: frequency. Reserve a VP slot; higher than V-near, lower than S-left.' },
     { id: 'altijd', label: 'ALTIJD', text: 'ALTIJD', sub: 'frequentie · VP-slot', subEn: 'frequency · VP slot', caption: 'extern bijwoord', captionEn: 'external adverb', tip: 'ALTIJD: frequentie. Plaats bij voorkeur in het VP-domein; niet als NP/AP-intern slot.', tipEn: 'ALTIJD: frequency. Prefer the VP domain; not an NP/AP-internal slot.' },
-    { id: 'niet', label: 'NIET', text: 'NIET', sub: 'negatie · V-nabij', subEn: 'negation · V-near', caption: 'NEG-slot', captionEn: 'NEG slot', tip: 'NIET: negatie. Reserveer een apart V-nabij/NEG-slot, meestal tussen object en werkwoord of rechts van object.', tipEn: 'NIET: negation. Reserve a separate V-near/NEG slot, usually between object and verb or to the right of the object.' },
-    { id: 'snel', label: 'SNEL', text: 'SNEL', sub: 'wijze · V-nabij', subEn: 'manner · V-near', caption: 'wijze-slot', captionEn: 'manner slot', tip: 'SNEL: wijze. Plaats dicht bij V/predicaat; in perfectum vaak tussen object en participium.', tipEn: 'SNEL: manner. Place close to V/predicate; in perfect constructions often between object and participle.' },
-    { id: 'hard', label: 'HARD', text: 'HARD', sub: 'wijze · V-nabij', subEn: 'manner · V-near', caption: 'wijze-slot', captionEn: 'manner slot', tip: 'HARD: wijze. Gebruik een V-nabij slot of VP-rechts; niet als hoog S-bijwoord.', tipEn: 'HARD: manner. Use a V-near slot or VP-right; not as a high S adverb.' },
-    { id: 'zachtjes', label: 'ZACHTJES', text: 'ZACHTJES', sub: 'wijze · V-nabij', subEn: 'manner · V-near', caption: 'wijze-slot', captionEn: 'manner slot', tip: 'ZACHTJES: wijze. Reserveer een slot dicht bij V/predicaat.', tipEn: 'ZACHTJES: manner. Reserve a slot close to V/predicate.' },
-    { id: 'misschien', label: 'MISSCHIEN', text: 'MISSCHIEN', sub: 'zinsbijwoord · S/VP', subEn: 'sentence adverb · S/VP', caption: 'S/VP-slot', captionEn: 'S/VP slot', tip: 'MISSCHIEN: zinsbijwoord. Hoger slot: S-links bij vooropplaatsing of S/VP-overgang; niet V-nabij.', tipEn: 'MISSCHIEN: sentence adverb. Higher slot: S-left when fronted or S/VP transition; not V-near.' },
-    { id: 'waarschijnlijk', label: 'WAARSCHIJNLIJK', text: 'WAARSCHIJNLIJK', sub: 'zinsbijwoord · S/VP', subEn: 'sentence adverb · S/VP', caption: 'S/VP-slot', captionEn: 'S/VP slot', tip: 'WAARSCHIJNLIJK: zinsbijwoord. Reserveer een hoog S/VP-slot; scope is de hele propositie.', tipEn: 'WAARSCHIJNLIJK: sentence adverb. Reserve a high S/VP slot; scope is the whole proposition.' },
-    { id: 'helaas', label: 'HELAAS', text: 'HELAAS', sub: 'zinsbijwoord · S-links', subEn: 'sentence adverb · S-left', caption: 'S-links-slot', captionEn: 'S-left slot', tip: 'HELAAS: zinsbijwoord. Vaak S-links of hoog S-slot; vereist LEX-plaatsingsregel bij vooropplaatsing.', tipEn: 'HELAAS: sentence adverb. Often S-left or high S slot; fronting requires a LEX placement rule.' },
-    { id: 'alleen', label: 'ALLEEN', text: 'ALLEEN', sub: 'focus · phrase-intern', subEn: 'focus · phrase-internal', caption: 'focus-slot', captionEn: 'focus slot', tip: 'ALLEEN: focus. Plaats bij de gefocuste phrase: subject-NP, object-NP of VP; geen algemeen tussenbox-slot.', tipEn: 'ALLEEN: focus. Place with the focused phrase: subject NP, object NP or VP; not a general between-box slot.' },
-    { id: 'ook', label: 'OOK', text: 'OOK', sub: 'focus/partikel · phrase', subEn: 'focus/particle · phrase', caption: 'focus-slot', captionEn: 'focus slot', tip: 'OOK: focus/partikel. Plaats bij de phrase waarop ook scope heeft; meestal phrase-intern of VP/S-rechts.', tipEn: 'OOK: focus/particle. Place with the phrase it scopes over; usually phrase-internal or VP/S-right.' },
-    { id: 'zelfs', label: 'ZELFS', text: 'ZELFS', sub: 'focus · phrase-intern', subEn: 'focus · phrase-internal', caption: 'focus-slot', captionEn: 'focus slot', tip: 'ZELFS: focus. Plaats direct bij subject, object of VP waarop het focus legt.', tipEn: 'ZELFS: focus. Place directly with the subject, object or VP it focuses.' },
-    { id: 'heel', label: 'HEEL', text: 'HEEL', sub: 'graad · AP/AdvP-intern', subEn: 'degree · AP/AdvP-internal', caption: 'graadslot', captionEn: 'degree slot', tip: 'HEEL: graadwoord. Hoort intern in AP/AdvP/NP, bijvoorbeeld heel groot; geen algemeen LEX-as-tussenboxslot.', tipEn: 'HEEL: degree word. Belongs inside AP/AdvP/NP, e.g. heel groot; not a general LEX-axis between-box slot.' },
-    { id: 'erg', label: 'ERG', text: 'ERG', sub: 'graad · AP/AdvP-intern', subEn: 'degree · AP/AdvP-internal', caption: 'graadslot', captionEn: 'degree slot', tip: 'ERG: graadwoord. Plaats intern bij AP of wijze-bijwoord, bijvoorbeeld erg hard.', tipEn: 'ERG: degree word. Place internally with an AP or manner adverb, e.g. erg hard.' },
-    { id: 'zeer', label: 'ZEER', text: 'ZEER', sub: 'graad · AP/AdvP-intern', subEn: 'degree · AP/AdvP-internal', caption: 'graadslot', captionEn: 'degree slot', tip: 'ZEER: graadwoord. Phrase-intern bij AP/AdvP; niet op de algemene LEX-as-grens.', tipEn: 'ZEER: degree word. Phrase-internal with AP/AdvP; not on a general LEX-axis boundary.' },
+    { id: 'niet', label: 'NIET', text: 'NIET', sub: 'negatie · V-nabij', subEn: 'negation · V-near', caption: 'NEG-slot', captionEn: 'NEG slot', tip: 'NIET: negatie. Plaats boven V als V-nabije negatie; eventueel boven VP bij bredere scope.', tipEn: 'NIET: negation. Place above V for V-near negation; optionally above VP for broader scope.' },
+    { id: 'snel', label: 'SNEL', text: 'SNEL', sub: 'wijze · V-nabij', subEn: 'manner · V-near', caption: 'wijze-slot', captionEn: 'manner slot', tip: 'SNEL: wijze. Plaats dicht bij V/predicaat; in perfectum dicht bij het V-domein.', tipEn: 'SNEL: manner. Place close to V/predicate; in perfect constructions close to the V domain.' },
+    { id: 'hard', label: 'HARD', text: 'HARD', sub: 'wijze · V-nabij', subEn: 'manner · V-near', caption: 'wijze-slot', captionEn: 'manner slot', tip: 'HARD: wijze. Plaats boven V of VP; niet boven S als zinsbijwoord.', tipEn: 'HARD: manner. Place above V or VP; not above S as a sentence adverb.' },
+    { id: 'zachtjes', label: 'ZACHTJES', text: 'ZACHTJES', sub: 'wijze · V-nabij', subEn: 'manner · V-near', caption: 'wijze-slot', captionEn: 'manner slot', tip: 'ZACHTJES: wijze. Plaats boven V, dicht bij predicaat.', tipEn: 'ZACHTJES: manner. Place above V, close to the predicate.' },
+    { id: 'misschien', label: 'MISSCHIEN', text: 'MISSCHIEN', sub: 'zinsbijwoord · S/VP', subEn: 'sentence adverb · S/VP', caption: 'S/VP-slot', captionEn: 'S/VP slot', tip: 'MISSCHIEN: zinsbijwoord. Hoge host: boven S of VP; niet boven V.', tipEn: 'MISSCHIEN: sentence adverb. High host: above S or VP; not above V.' },
+    { id: 'waarschijnlijk', label: 'WAARSCHIJNLIJK', text: 'WAARSCHIJNLIJK', sub: 'zinsbijwoord · S/VP', subEn: 'sentence adverb · S/VP', caption: 'S/VP-slot', captionEn: 'S/VP slot', tip: 'WAARSCHIJNLIJK: zinsbijwoord. Plaats boven S of VP; scope is de hele propositie.', tipEn: 'WAARSCHIJNLIJK: sentence adverb. Place above S or VP; scope is the whole proposition.' },
+    { id: 'helaas', label: 'HELAAS', text: 'HELAAS', sub: 'zinsbijwoord · S-links', subEn: 'sentence adverb · S-left', caption: 'S-links-slot', captionEn: 'S-left slot', tip: 'HELAAS: zinsbijwoord. Vaak boven S; vooropplaatsing blijft een LEX-regel.', tipEn: 'HELAAS: sentence adverb. Often above S; fronting remains a LEX rule.' },
+    { id: 'alleen', label: 'ALLEEN', text: 'ALLEEN', sub: 'focus · phrase-intern', subEn: 'focus · phrase-internal', caption: 'focus-slot', captionEn: 'focus slot', tip: 'ALLEEN: focus. Plaats boven de gefocuste phrase: NP of VP; geen algemene tussenpositie.', tipEn: 'ALLEEN: focus. Place above the focused phrase: NP or VP; not a general between-position.' },
+    { id: 'ook', label: 'OOK', text: 'OOK', sub: 'focus/partikel · phrase', subEn: 'focus/particle · phrase', caption: 'focus-slot', captionEn: 'focus slot', tip: 'OOK: focus/partikel. Plaats boven de phrase waarop ook scope heeft; meestal NP of VP.', tipEn: 'OOK: focus/particle. Place above the phrase it scopes over; usually NP or VP.' },
+    { id: 'zelfs', label: 'ZELFS', text: 'ZELFS', sub: 'focus · phrase-intern', subEn: 'focus · phrase-internal', caption: 'focus-slot', captionEn: 'focus slot', tip: 'ZELFS: focus. Plaats boven NP of VP waarop het focus legt.', tipEn: 'ZELFS: focus. Place above the NP or VP it focuses.' },
+    { id: 'heel', label: 'HEEL', text: 'HEEL', sub: 'graad · AP/AdvP-intern', subEn: 'degree · AP/AdvP-internal', caption: 'graadslot', captionEn: 'degree slot', tip: 'HEEL: graadwoord. Plaats boven AP bij graadlezing, bijvoorbeeld heel groot.', tipEn: 'HEEL: degree word. Place above AP for degree readings, e.g. heel groot.' },
+    { id: 'erg', label: 'ERG', text: 'ERG', sub: 'graad · AP/AdvP-intern', subEn: 'degree · AP/AdvP-internal', caption: 'graadslot', captionEn: 'degree slot', tip: 'ERG: graadwoord. Plaats boven AP, of boven V als het een wijze-bijwoord versterkt.', tipEn: 'ERG: degree word. Place above AP, or above V when it strengthens a manner adverb.' },
+    { id: 'zeer', label: 'ZEER', text: 'ZEER', sub: 'graad · AP/AdvP-intern', subEn: 'degree · AP/AdvP-internal', caption: 'graadslot', captionEn: 'degree slot', tip: 'ZEER: graadwoord. Plaats boven AP; niet op een algemene LEX-asgrens.', tipEn: 'ZEER: degree word. Place above AP; not on a general LEX-axis boundary.' },
     { id: 'anafoor', label: 'anafoor', text: 'ANAFOOR', sub: 'verwijzing uit andere uiting', subEn: 'reference from another utterance', caption: 'anafoor', captionEn: 'anaphor', tip: 'Voor later: anaforisch element uit een andere zin/uiting.', tipEn: 'For later: anaphoric element from another sentence/utterance.' },
     { id: 'other-lex-axis', label: 'andere LEX-as', text: 'LEX-AS', sub: 'insertie uit andere boom', subEn: 'insertion from another tree', caption: 'andere LEX-as', captionEn: 'other LEX axis', tip: 'Voor later: materiaal uit de LEX-as van een andere boom.', tipEn: 'For later: material from the LEX axis of another tree.' }
   ];
@@ -379,6 +387,11 @@
   }
 
 
+
+  let ADVERB_OPTIONS = [
+    { id: 'none', label: 'Geen bijwoord', labelEn: 'No adverb', title: 'Geen bijwoord', adverb: null }
+  ];
+
   function baseStructureConfig() {
     return {
       syntaxRoot: 's',
@@ -439,8 +452,9 @@
     southLogicalMode: 'SOV',
     freeSlotCount: 2,
     lexFreeSlotCount: 0,
-    lexFreeSlotPlacement: 'after-surface-2',
+    lexFreeSlotPlacement: 'above-vp',
     lexInsertionContent: 'empty',
+    selectedAdverbId: 'none',
     lexInsertionExtensionTargets: ['vp-boundary'],
     portraitMenuSlots: 0,
     topMenusAbove: ['fit'],
@@ -477,6 +491,130 @@
     return String(value ?? '').replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
   }
 
+  function activeAdverbOption() {
+    return ADVERB_OPTIONS.find(option => option.id === state.selectedAdverbId) || ADVERB_OPTIONS[0];
+  }
+
+  function activeAdverbData() {
+    const selected = activeAdverbOption();
+    if (selected?.adverb) return selected.adverb;
+    return state.example?.adverb || null;
+  }
+
+  function activeAdverbIsFronted() {
+    const adv = activeAdverbData();
+    if (!adv?.word) return false;
+    const text = `${adv.position || ''} ${adv.placement || ''} ${adv.marking || ''} ${adv.sentence || ''}`.toLowerCase();
+    const explicitFronting = /fronted|voorop|slot1|v2/.test(text);
+    const host = String(adv.host || adv.defaultHost || '').trim().toUpperCase();
+    // v4545: in GraphLite betekent plaatsing "boven S" een extern
+    // LEX-slot vóór de hoofdzin. Dat is dus automatisch V2/inversie:
+    // BIJWOORD | PV | SUBJECT | OBJECT. Andere hostboxen blijven lokaal.
+    return explicitFronting || host === 'S' || validLexSlotPlacement(state.lexFreeSlotPlacement) === 'above-s';
+  }
+
+  function activeAdverbStatusLabel() {
+    const adv = activeAdverbData();
+    if (!adv?.word) return isEnglish() ? 'adverb=none' : 'bijwoord=geen';
+    if (activeAdverbIsFronted()) {
+      return isEnglish()
+        ? `adverb=${adv.word} fronted on LEX slot 1; finite verb remains V2`
+        : `bijwoord=${adv.word} voorop op LEX-slot 1; persoonsvorm blijft V2`;
+    }
+    const host = adv.host || adv.defaultHost || '?';
+    const marked = adv.placement === 'marked' ? (isEnglish() ? ', marked' : ', gemarkeerd') : '';
+    return isEnglish()
+      ? `adverb=${adv.word} on LEX above ${host}${marked}`
+      : `bijwoord=${adv.word} op LEX boven ${host}${marked}`;
+  }
+
+  function adverbOptionIsMarked(option) {
+    const adv = option?.adverb;
+    if (!adv?.word) return false;
+    return adv.placement === 'marked' || /marked|gemarkeerd|forced|geforceerd/i.test(String(adv.marking || ''));
+  }
+
+  function adverbSameLexicalItem(a, b) {
+    if (!a?.word || !b?.word) return false;
+    const sameWord = String(a.word).toUpperCase() === String(b.word).toUpperCase();
+    const ac = String(a.category || '').toLowerCase();
+    const bc = String(b.category || '').toLowerCase();
+    return sameWord && (!ac || !bc || ac === bc);
+  }
+
+  function findAdverbMarkedToggleTarget() {
+    const current = activeAdverbOption();
+    const currentAdv = current?.adverb;
+    if (!currentAdv?.word) return null;
+    const currentMarked = adverbOptionIsMarked(current);
+    const candidates = ADVERB_OPTIONS.filter(option => option?.adverb && option.id !== current.id && adverbSameLexicalItem(option.adverb, currentAdv));
+
+    if (!currentMarked) {
+      return candidates.find(adverbOptionIsMarked) || null;
+    }
+
+    const sameDefaultHost = candidates.filter(option => {
+      const adv = option.adverb;
+      return String(adv.defaultHost || '').toUpperCase() === String(currentAdv.defaultHost || '').toUpperCase();
+    });
+    return sameDefaultHost.find(option => !adverbOptionIsMarked(option) && String(option.adverb.host || '').toUpperCase() === String(option.adverb.defaultHost || '').toUpperCase())
+      || sameDefaultHost.find(option => !adverbOptionIsMarked(option))
+      || candidates.find(option => !adverbOptionIsMarked(option))
+      || null;
+  }
+
+  function adverbMarkedToggleLabel(target = findAdverbMarkedToggleTarget()) {
+    if (!target?.adverb) return '';
+    const adv = target.adverb;
+    const marked = adverbOptionIsMarked(target);
+    return isEnglish()
+      ? `click: show ${marked ? 'marked' : 'default'} version above ${adv.host || adv.defaultHost}`
+      : `klik: toon ${marked ? 'gemarkeerde' : 'ongemarkeerde'} versie boven ${adv.host || adv.defaultHost}`;
+  }
+
+  function toggleAdverbMarkedVariant() {
+    const target = findAdverbMarkedToggleTarget();
+    if (!target?.id) {
+      if (els.actionFeedback) {
+        els.actionFeedback.textContent = isEnglish()
+          ? 'No marked/default counterpart is available for this adverb.'
+          : 'Geen gemarkeerde/ongemarkeerde tegenhanger beschikbaar voor dit bijwoord.';
+        els.actionFeedback.className = 'action-feedback neutral';
+      }
+      return;
+    }
+    state.selectedAdverbId = target.id;
+    applyExampleAdverbDefaults();
+    resetManualViewBox();
+    if (els.actionFeedback) {
+      els.actionFeedback.textContent = isEnglish()
+        ? `Adverb variant: ${target.labelEn || target.label || target.id}`
+        : `Bijwoordvariant: ${target.label || target.id}`;
+      els.actionFeedback.className = 'action-feedback neutral';
+    }
+    render();
+  }
+
+  function predicateLabelForAdverbContext(ex = state.example || EXAMPLES[0]) {
+    const basePredicate = ex?.predicate || 'BIJT';
+    const adv = activeAdverbData();
+    if (!adv?.word || !activeAdverbIsFronted()) return basePredicate;
+
+    // v4545: GISTEREN voorop mag niet automatisch de foutieve LEX-as
+    // GISTEREN | BIJT | ... opleveren bij eenvoudige tegenwoordige-tijd-zinnen.
+    // De bijwoordkeuze blijft extern aan de basisboom, maar de LEX-as mag de
+    // passende persoonsvorm kiezen wanneer die in het mini-lexicon bekend is.
+    // Perfectum en bijzinnen worden hier niet aangepast.
+    const word = String(adv.word || '').toUpperCase();
+    if (word !== 'GISTEREN') return basePredicate;
+    if (String(ex?.lexRule || '').includes('bijzin')) return basePredicate;
+    if ((ex?.lexItems || []).some(item => String(item.source || '').toLowerCase() === 'pv')) return basePredicate;
+    const predicateItem = (ex?.lexItems || []).find(item => String(item.source || '').toLowerCase() === 'predicate' || String(item.role || '').toLowerCase() === 'predicate');
+    const lexeme = tokenLexemeId(predicateItem || { label: basePredicate });
+    const frame = SIMPLE_VERB_FRAMES[lexeme];
+    return frame?.imperfectum?.toUpperCase?.() || basePredicate;
+  }
+
   function roleLabels() {
     const ex = state.example || EXAMPLES[0];
     const subject = ex.subjectDefault || 'HOND';
@@ -484,7 +622,7 @@
     return {
       subject: state.roleSwap ? object : subject,
       object: state.roleSwap ? subject : object,
-      predicate: ex.predicate || 'BIJT'
+      predicate: predicateLabelForAdverbContext(ex)
     };
   }
 
@@ -511,8 +649,7 @@
 
   function activeSentenceHtml() {
     // v4427: preview follows the editable examples-input.html token list.
-    // <strong> marks subject; <em> marks object. This also supports new examples
-    // made in examples-editor.html instead of only the two hardcoded patterns.
+    // v4545: bijwoord is een aparte laag/dropdown; de LEX-preview blijft de gekozen basiszin.
     return activeLexItems().map(tokenHtml).join(' ');
   }
 
@@ -583,6 +720,20 @@
           thematicRole: token.dataset.thematicRole || null,
           lexeme: token.dataset.lexeme || null
         }));
+        const adverbWord = (card.dataset.adverbWord || card.dataset.adverb || '').trim();
+        const adverbHost = (card.dataset.adverbHost || card.dataset.adverbDefaultHost || '').trim().toUpperCase();
+        const adverbDefaultHost = (card.dataset.adverbDefaultHost || adverbHost || '').trim().toUpperCase();
+        const adverbMarked = String(card.dataset.adverbMarked || card.dataset.markedAdverb || '').toLowerCase() === 'true' || String(card.dataset.adverbPlacement || '').toLowerCase() === 'marked';
+        const adverb = adverbWord ? {
+          id: String(card.dataset.adverbId || adverbWord).toLowerCase(),
+          word: adverbWord.toUpperCase(),
+          category: (card.dataset.adverbCategory || '').trim(),
+          defaultHost: adverbDefaultHost,
+          host: adverbHost || adverbDefaultHost,
+          placement: adverbMarked ? 'marked' : 'default',
+          marking: card.dataset.adverbMarking || (adverbMarked ? 'functional:marked-host' : 'functional:default-host'),
+          scope: card.dataset.adverbScope || ''
+        } : null;
         return {
           id: card.dataset.id || `example-${idx + 1}`,
           title: (sentenceEl?.textContent || '').replace(/\s+/g, ' ').trim().toUpperCase(),
@@ -593,6 +744,7 @@
           subjectDefault: subject.toUpperCase(),
           objectDefault: object.toUpperCase(),
           predicate: (card.dataset.predicate || 'BIJT').toUpperCase(),
+          adverb,
           lexItems
         };
       }).filter(ex => ex.id && ex.lexItems.length);
@@ -617,6 +769,62 @@
       }
     } catch (err) {
       // Fetch kan mislukken via file://. De ingebouwde fallback blijft dan actief.
+    }
+  }
+
+  function makeAdverbOptionFromTableRow(row, index) {
+    const cells = [...row.querySelectorAll('td')];
+    if (cells.length < 6) return null;
+    const id = (cells[0].textContent || `adv-${index + 1}`).trim();
+    const sentence = (cells[1].textContent || '').replace(/\s+/g, ' ').trim().toUpperCase();
+    const category = (cells[2].textContent || '').trim();
+    const defaultHost = (cells[3].textContent || '').trim().toUpperCase();
+    const host = (cells[4].textContent || defaultHost).trim().toUpperCase();
+    const markingText = (cells[5].textContent || 'default').trim();
+    const parts = id.toLowerCase().split('-');
+    const word = ((parts[1] === 'marked' ? parts[2] : parts[2]) || '').toUpperCase();
+    if (!word || !VALID_ADVERB_HOST_BOXES.has(host || defaultHost)) return null;
+    const hostLabel = host || defaultHost;
+    const fronted = /fronted|voorop|slot\s*1|v2/i.test(markingText) || hostLabel === 'S';
+    const marked = !fronted && /marked|gemarkeerd|forced|geforceerd/i.test(markingText);
+    const placementLabel = fronted ? `boven ${hostLabel} · V2` : `boven ${hostLabel}${marked ? ' · !' : ''}`;
+    const placementLabelEn = fronted ? `above ${hostLabel} · V2` : `above ${hostLabel}${marked ? ' · !' : ''}`;
+    return {
+      id,
+      label: `${word} · ${category || 'BIJWOORD'} · ${placementLabel}`,
+      labelEn: `${word} · ${category || 'ADVERB'} · ${placementLabelEn}`,
+      title: sentence || word,
+      adverb: {
+        id: word.toLowerCase(),
+        word,
+        category,
+        defaultHost: defaultHost || host,
+        host: host || defaultHost,
+        position: fronted ? 'fronted' : 'hosted',
+        placement: fronted ? 'fronted-v2' : (marked ? 'marked' : 'default'),
+        marking: fronted ? 'functional:fronted-v2' : (marked ? 'functional:marked-host' : 'functional:default-host'),
+        sentence
+      }
+    };
+  }
+
+  async function loadAdverbOptionsFromHtml() {
+    try {
+      const response = await fetch(`examples-adverbs.html?${VERSION}`, { cache: 'no-store' });
+      if (!response.ok) return;
+      const html = await response.text();
+      const doc = new DOMParser().parseFromString(html, 'text/html');
+      const rows = [...doc.querySelectorAll('tbody tr')];
+      const parsed = rows.map(makeAdverbOptionFromTableRow).filter(Boolean);
+      if (parsed.length) {
+        ADVERB_OPTIONS = [
+          { id: 'none', label: 'Geen bijwoord', labelEn: 'No adverb', title: 'Geen bijwoord', adverb: null },
+          ...parsed
+        ];
+        if (!ADVERB_OPTIONS.some(option => option.id === state.selectedAdverbId)) state.selectedAdverbId = 'none';
+      }
+    } catch (err) {
+      // file:// of cache kan fetch blokkeren; de default geen-bijwoord blijft dan actief.
     }
   }
 
@@ -820,13 +1028,22 @@
   }
 
   function cloneLayout(layout) {
-    return {
+    const cloned = {
+      ...layout,
       node: layout.node,
       nodes: layout.nodes.map(n => ({ ...n })),
       edges: layout.edges.map(e => ({ ...e })),
       boxes: layout.boxes.map(b => ({ ...b })),
       box: { ...layout.box }
     };
+    if (Array.isArray(layout.lexAdverbAxisSlots)) {
+      cloned.lexAdverbAxisSlots = layout.lexAdverbAxisSlots.map(slot => ({ ...slot }));
+    }
+    if (layout.lexAdverbAxisSpace) cloned.lexAdverbAxisSpace = { ...layout.lexAdverbAxisSpace };
+    if (layout.topicalizationSlot) cloned.topicalizationSlot = { ...layout.topicalizationSlot };
+    if (layout.v2Slot) cloned.v2Slot = { ...layout.v2Slot };
+    if (layout.freeSlotReservation) cloned.freeSlotReservation = { ...layout.freeSlotReservation };
+    return cloned;
   }
 
   function shiftLayout(layout, dx, dy) {
@@ -856,6 +1073,12 @@
     if (layout.v2Slot) {
       layout.v2Slot.x += dx;
       layout.v2Slot.y += dy;
+    }
+    if (Array.isArray(layout.lexAdverbAxisSlots)) {
+      for (const slot of layout.lexAdverbAxisSlots) {
+        if (Number.isFinite(slot.x)) slot.x += dx;
+        if (Number.isFinite(slot.y)) slot.y += dy;
+      }
     }
     return layout;
   }
@@ -1173,8 +1396,27 @@
   }
 
   function validLexSlotPlacement(value = state.lexFreeSlotPlacement) {
-    const id = String(value || 'after-lex');
-    return LEX_SLOT_PLACEMENTS.some(option => option.id === id) ? id : 'after-lex';
+    const id = String(value || 'above-vp');
+    return LEX_SLOT_PLACEMENTS.some(option => option.id === id) ? id : 'above-vp';
+  }
+
+  function hostToLexPlacement(host) {
+    const h = String(host || '').trim().toLowerCase();
+    if (['s', 'np', 'vp', 'v', 'pp', 'ap'].includes(h)) return `above-${h}`;
+    return 'above-vp';
+  }
+
+  function applyExampleAdverbDefaults() {
+    const adv = activeAdverbData();
+    if (!adv?.word) {
+      state.lexFreeSlotCount = 0;
+      state.lexInsertionContent = 'empty';
+      state.lexFreeSlotPlacement = 'above-vp';
+      return;
+    }
+    state.lexFreeSlotCount = 1;
+    state.lexInsertionContent = validLexInsertionContent(adv.id || adv.word.toLowerCase());
+    state.lexFreeSlotPlacement = validLexSlotPlacement(hostToLexPlacement(adv.host || adv.defaultHost));
   }
 
   function lexSlotPlacementLabel(id = validLexSlotPlacement()) {
@@ -1226,7 +1468,12 @@
     return LEX_INSERTION_EXTENSION_TARGETS.find(option => option.id === id)?.tip || '';
   }
 
+  function lexPlacementIsSyntaxHost(value = validLexSlotPlacement()) {
+    return String(value || '').startsWith('above-');
+  }
+
   function insertionBranchExtensionRows() {
+    if (lexPlacementIsSyntaxHost()) return 0;
     return lexFreeSlotCount() > 0 ? Math.max(1, lexFreeSlotCount()) : 0;
   }
 
@@ -1237,15 +1484,16 @@
     return Array.from({ length: lexFreeSlotCount() }, (_, index) => ({
       id: `lex-insert-${index + 1}`,
       label: `LEX-insertie ${index + 1}`,
-      kind: 'lex-axis-insertion-box',
+      kind: lexPlacementIsSyntaxHost(placement) ? 'lex-axis-adverb-slot' : 'lex-axis-insertion-box',
       axis: 'LEX',
       placement,
+      host_box: lexPlacementIsSyntaxHost(placement) ? adverbHostLabelFromPlacement(placement, content) : null,
       content: content.id,
       text: content.text,
       sub: lexInsertionContentSub(content),
       extension_targets: extensionTargets,
       insertion_grips_tree: false,
-      effect: 'extends-selected-branches-or-box-boundaries',
+      effect: lexPlacementIsSyntaxHost(placement) ? 'external lexical insertion on LEX axis; host subtree is lowered to reserve vertical space' : 'extends-selected-branches-or-box-boundaries',
       accepts_future_sources: ['other-lex-axis', 'other-tree', 'anaphoric-element', 'adverbial-headless-clause']
     }));
   }
@@ -1342,6 +1590,50 @@
     return recomputeLayoutBox(layout);
   }
 
+
+  function applyLexAdverbAxisSlotSpace(layout) {
+    // v4545: "boven VP/S/etc." betekent niet: een bijwoordlabel boven de
+    // syntactische box. Het betekent: een extern LEX-slot op de LEX-as,
+    // verticaal net boven die box. Om die rij zichtbaar te maken wordt de
+    // gekozen host-subboom lager gezet; de insertie zelf komt niet uit de
+    // basisboom en wordt niet als boomprojectie getekend.
+    const count = lexFreeSlotCount();
+    const placement = validLexSlotPlacement();
+    if (!layout || count <= 0 || !lexPlacementIsSyntaxHost(placement)) return layout;
+    const content = lexInsertionContentDef();
+    const host = findAdverbHostNode(layout, placement, content);
+    if (!host) return layout;
+    const hostLabel = activeAdverbHostLabel(content, placement);
+    const dy = Math.max(1, count);
+    const beforeBox = hostBoxForNode(layout, host);
+    const oldSlotTopY = beforeBox ? beforeBox.minY : host.y;
+    shiftSubtreeY(layout, host.id, dy);
+    const shiftedHost = (layout.nodes || []).find(n => String(n.id) === String(host.id)) || host;
+    const shiftedBox = hostBoxForNode(layout, shiftedHost);
+    const slotY0 = shiftedBox ? shiftedBox.minY - dy : oldSlotTopY;
+    const slots = [];
+    for (let index = 0; index < dy; index += 1) {
+      slots.push({
+        id: `lex-adverb-axis-slot-${index + 1}`,
+        label: dy > 1 ? `LEX-slot boven ${hostLabel} ${index + 1}` : `LEX-slot boven ${hostLabel}`,
+        hostId: shiftedHost.id,
+        hostLabel,
+        x: shiftedHost.x,
+        y: slotY0 + index,
+        content: content.id,
+        text: content.text,
+        sub: lexInsertionContentSub(content),
+        marked: adverbOptionIsMarked(activeAdverbOption()),
+        marking: adverbOptionIsMarked(activeAdverbOption()) ? (activeAdverbData()?.marking || 'functional:marked-host') : (activeAdverbData()?.marking || 'functional:default-host'),
+        toggleTargetId: findAdverbMarkedToggleTarget()?.id || '',
+        toggleLabel: adverbMarkedToggleLabel()
+      });
+    }
+    layout.lexAdverbAxisSlots = slots;
+    layout.lexAdverbAxisSpace = { count: dy, hostId: shiftedHost.id, hostLabel, placement, axis: 'LEX', source: 'external-lexical-insertion' };
+    return recomputeLayoutBox(layout);
+  }
+
   function findLayoutNode(layout, target, mode = 'syntax') {
     if (!layout) return null;
     if (target === 'subject-branch') {
@@ -1394,7 +1686,8 @@
 
   function getSyntaxLayout() {
     const firstSide = layoutFirstSide();
-    return applyLexInsertionBranchExtensions(normalizeLayout(addOpnTopicalizationSlot(layoutTree(cloneTree(treeSpec()), 0, { firstSide, branchOrder: state.branchOrder, branchOverrides: state.branchOverrides }), STRUCTURE_CONFIG.syntaxRoot || 's')), 'syntax');
+    const base = addOpnTopicalizationSlot(layoutTree(cloneTree(treeSpec()), 0, { firstSide, branchOrder: state.branchOrder, branchOverrides: state.branchOverrides }), STRUCTURE_CONFIG.syntaxRoot || 's');
+    return applyLexInsertionBranchExtensions(normalizeLayout(applyLexAdverbAxisSlotSpace(base)), 'syntax');
   }
 
   function layoutFunctionalRoleTree(order = 'left-first') {
@@ -1566,7 +1859,8 @@
     // normal trees/flips untouched; use the stable base tree here and apply only
     // the local OSV visual marker below.
     const spec = mode === 'OSV' ? cloneTree(treeSpec()) : southAwareSyntaxSpec(mode);
-    const base = applyLexInsertionBranchExtensions(normalizeLayout(addOpnTopicalizationSlot(layoutTree(spec, 0, { firstSide, branchOrder: state.branchOrder, branchOverrides: state.branchOverrides }), STRUCTURE_CONFIG.syntaxRoot || 's')), 'syntax');
+    const base0 = addOpnTopicalizationSlot(layoutTree(spec, 0, { firstSide, branchOrder: state.branchOrder, branchOverrides: state.branchOverrides }), STRUCTURE_CONFIG.syntaxRoot || 's');
+    const base = applyLexInsertionBranchExtensions(normalizeLayout(applyLexAdverbAxisSlotSpace(base0)), 'syntax');
     return normalizeLayout(applySouthLogicalSyntaxGroupOrder(base, mode));
   }
 
@@ -1704,7 +1998,7 @@
   }
 
   function isPortraitMobileViewport() {
-    // v4535: grid-first and fit-height are no longer mobile-only.
+    // v4536: grid-first and fit-height are no longer mobile-only.
     // The canvas height is based on the actual viewBox on every platform.
     return true;
   }
@@ -1718,7 +2012,7 @@
   }
 
   function syncPortraitMenuSpace() {
-    // v4535: de oude numerieke onderruimte blijft op 0. De relevante instelling
+    // v4536: de oude numerieke onderruimte blijft op 0. De relevante instelling
     // is nu: welke benoemde menu's mogen boven het grid staan.
     document.documentElement?.style.setProperty('--portrait-menu-reserve', '0px');
     document.documentElement?.style.setProperty('--portrait-menu-slots', '0');
@@ -1942,7 +2236,7 @@
     syncPortraitStageMode();
     if (!els.canvasWrap) return;
     syncPortraitMenuSpace();
-    // v4535: het gridvenster wordt gemaximeerd op de actuele fit-box
+    // v4536: het gridvenster wordt gemaximeerd op de actuele fit-box
     // van boom + assen. Het canvas schaalt dus niet groter dan nodig.
     const fit = box || parseViewBox();
     const validFit = fit && Number.isFinite(fit.w) && fit.w > 0 && Number.isFinite(fit.h) && fit.h > 0;
@@ -2317,6 +2611,75 @@
     return group;
   }
 
+  function categoryLabelForNode(node) {
+    return String(node?.cat || node?.label || '').trim().toUpperCase();
+  }
+
+  function isValidAdverbHostNode(node) {
+    if (!node || node.kind === 'leaf' || node.kind === 'role' || node.kind === 'role-root') return false;
+    return VALID_ADVERB_HOST_BOXES.has(categoryLabelForNode(node));
+  }
+
+  function selectedAdverbHostNode(layout) {
+    if (!state.selectedNodeId) return null;
+    const node = (layout?.nodes || []).find(n => String(n.id) === String(state.selectedNodeId));
+    return isValidAdverbHostNode(node) ? node : null;
+  }
+
+  function preferredAdverbHostLabel(def = lexInsertionContentDef()) {
+    const id = String(def?.id || '');
+    if (['heel', 'erg', 'zeer'].includes(id)) return 'AP';
+    if (['niet', 'snel', 'hard', 'zachtjes'].includes(id)) return 'V';
+    if (['vaak', 'soms', 'altijd', 'ook', 'daar'].includes(id)) return 'VP';
+    if (['alleen', 'zelfs'].includes(id)) return 'NP';
+    if (['gisteren', 'morgen', 'misschien', 'waarschijnlijk', 'helaas', 'daarom', 'anders'].includes(id)) return 'S';
+    return 'VP';
+  }
+
+  function activeAdverbHostLabel(def = lexInsertionContentDef(), placement = validLexSlotPlacement()) {
+    // v4545: de host komt primair uit de gekozen BIJWOORD-optie.
+    // Dit voorkomt dat alle plaatsingen via een fallback opnieuw op S landen.
+    const adv = activeAdverbData();
+    const explicitHost = String(adv?.host || adv?.defaultHost || '').trim().toUpperCase();
+    if (VALID_ADVERB_HOST_BOXES.has(explicitHost)) return explicitHost;
+    const option = LEX_SLOT_PLACEMENTS.find(item => item.id === placement);
+    if (option?.host && VALID_ADVERB_HOST_BOXES.has(option.host)) return option.host;
+    return preferredAdverbHostLabel(def);
+  }
+
+  function adverbHostLabelFromPlacement(placement = validLexSlotPlacement(), def = lexInsertionContentDef()) {
+    return activeAdverbHostLabel(def, placement);
+  }
+
+  function hostBoxForNode(layout, node) {
+    if (!layout || !node) return null;
+    return (layout.boxes || []).find(box => String(box.nodeId) === String(node.id)) || null;
+  }
+
+  function findAdverbHostNode(layout, placement = validLexSlotPlacement(), def = lexInsertionContentDef()) {
+    if (!layout) return null;
+    const placementId = String(placement || '');
+    if (placementId === 'above-selected-box') {
+      const selected = selectedAdverbHostNode(layout);
+      if (selected) return selected;
+    }
+    const wanted = activeAdverbHostLabel(def, placement);
+    const fallback = preferredAdverbHostLabel(def);
+    const nodes = orderedTreeNodes(layout).map(item => item.node);
+    return nodes.find(node => isValidAdverbHostNode(node) && categoryLabelForNode(node) === wanted)
+      || nodes.find(node => isValidAdverbHostNode(node) && categoryLabelForNode(node) === fallback)
+      || nodes.find(isValidAdverbHostNode)
+      || null;
+  }
+
+  function drawHostedAdverbSlots(g, layout, origin, growthPlan = null) {
+    // v4545: bijwoord-inserts worden nergens meer boven/op de syntaxboom
+    // getekend. Alle zichtbare bijwoordplaatsingen staan op de LEX-as.
+    // De layout kan nog wel ruimte reserveren door de host-subboom lager te
+    // zetten; de externe insertie zelf wordt in drawLexAxis getekend.
+    return;
+  }
+
   function drawTreeNodes(g, layout, origin, selectable = true, growthPlan = null) {
     const ordered = orderedTreeNodes(layout).filter(({ node }) => visibleAt(growthPlan, nodeGrowthStep(growthPlan, node.id)));
     const shapeLayer = svgEl('g', { class: 'node-shape-layer' });
@@ -2360,6 +2723,7 @@
     drawTreeEdges(g, layout, origin, growthPlan);
     drawOpnTopicalizationSlot(g, layout, origin, growthPlan);
     drawTreeNodes(g, layout, origin, options.selectable === true, growthPlan);
+    drawHostedAdverbSlots(g, layout, origin, growthPlan);
     return layout;
   }
 
@@ -2377,6 +2741,10 @@
     if (layout.v2Slot) {
       const slot = layout.v2Slot;
       map.set('opn-v2-slot', { id: slot.id, label: slot.label, kind: 'opn-slot', x: slot.x, y: slot.y, px: px(slot.x, origin), py: py(slot.y, origin) });
+    }
+    if (Array.isArray(layout.lexAdverbAxisSlots) && layout.lexAdverbAxisSlots.length) {
+      const slots = layout.lexAdverbAxisSlots.map(slot => ({ ...slot, px: px(slot.x, origin), py: py(slot.y, origin) }));
+      map.set('__lexAdverbAxisSlots', { id: '__lexAdverbAxisSlots', kind: 'lex-adverb-axis-slots', slots });
     }
     return map;
   }
@@ -2423,35 +2791,101 @@
     return count;
   }
 
-  function lexConfiguredFreeSlots(y0, items = state.example?.lexItems || [], contextYs = []) {
+  function lexConfiguredFreeSlots(y0, items = state.example?.lexItems || [], contextYs = [], sourceMap = null) {
     const count = lexFreeSlotCount();
     if (!count) return [];
     const placement = validLexSlotPlacement();
-    const systemCount = lexSystemSlotCount(items);
-    const maxContextY = contextYs.filter(Number.isFinite).length ? Math.max(...contextYs.filter(Number.isFinite)) : y0 + Math.max(4, items.length + 1) * 64;
-    let startY;
-    if (placement === 'above-system') startY = y0 - count * 64;
-    else if (placement === 'after-system') startY = y0 + systemCount * 64;
-    else if (placement === 'after-surface-1') startY = y0 + (systemCount + 1) * 64;
-    else if (placement === 'after-surface-2') startY = y0 + (systemCount + 2) * 64;
-    else if (placement === 'after-surface-3') startY = y0 + (systemCount + 3) * 64;
-    else startY = maxContextY + 64;
-    return Array.from({ length: count }, (_, index) => ({
-      id: `lex-insert-${index + 1}`,
-      label: `LEX-insertie ${index + 1}`,
-      caption: lexInsertionContentCaption(lexInsertionContentDef()) || `extern ${index + 1}`,
-      content: lexInsertionContentDef(),
-      y: startY + index * 64,
-      placement
-    }));
+    const content = lexInsertionContentDef();
+    if (activeAdverbIsFronted() && isMainV2Rule()) {
+      const slotY = projectedFrontedAdverbSlotY(y0, sourceMap, items);
+      return [{
+        id: 'lex-adverb-fronted-slot-1',
+        y: slotY,
+        label: 'slot 1 · BIJWOORD voorop',
+        hostLabel: 'S/V2',
+        content,
+        marked: adverbOptionIsMarked(activeAdverbOption()),
+        marking: activeAdverbData()?.marking || 'functional:fronted-v2',
+        toggleTargetId: findAdverbMarkedToggleTarget()?.id || '',
+        toggleLabel: adverbMarkedToggleLabel(),
+        axis: 'LEX',
+        source: 'external-fronted-adverb'
+      }];
+    }
+    if (lexPlacementIsSyntaxHost(placement)) {
+      const stored = sourceMap?.get?.('__lexAdverbAxisSlots')?.slots || [];
+      if (stored.length) {
+        return stored.slice(0, count).map((slot, index) => ({
+          id: slot.id || `lex-adverb-axis-slot-${index + 1}`,
+          y: slot.py,
+          label: slot.label || `LEX-slot boven ${slot.hostLabel || adverbHostLabelFromPlacement(placement, content)}`,
+          hostLabel: slot.hostLabel || adverbHostLabelFromPlacement(placement, content),
+          content,
+          marked: !!slot.marked,
+          marking: slot.marking || 'functional:default-host',
+          toggleTargetId: slot.toggleTargetId || findAdverbMarkedToggleTarget()?.id || '',
+          toggleLabel: slot.toggleLabel || adverbMarkedToggleLabel(),
+          axis: 'LEX',
+          source: 'external'
+        }));
+      }
+      // Fallback voor LEX-only view zonder centrale boom: toon het slot op de
+      // LEX-as, maar zonder verticale hostuitlijning. In de assenweergave wordt
+      // sourceMap gevuld en is de plaats wél exact gekoppeld aan de hostbox.
+      const hostLabel = adverbHostLabelFromPlacement(placement, content);
+      return Array.from({ length: count }, (_unused, index) => ({
+        id: `lex-adverb-axis-slot-${index + 1}`,
+        y: y0 + 40 + index * 64,
+        label: `LEX-slot boven ${hostLabel}`,
+        hostLabel,
+        content,
+        marked: adverbOptionIsMarked(activeAdverbOption()),
+        marking: adverbOptionIsMarked(activeAdverbOption()) ? (activeAdverbData()?.marking || 'functional:marked-host') : (activeAdverbData()?.marking || 'functional:default-host'),
+        toggleTargetId: findAdverbMarkedToggleTarget()?.id || '',
+        toggleLabel: adverbMarkedToggleLabel(),
+        axis: 'LEX',
+        source: 'external'
+      }));
+    }
+    return [];
   }
 
   function drawLexConfiguredFreeSlot(g, x, slot) {
     const content = slot.content || lexInsertionContentDef();
-    g.appendChild(svgEl('rect', { x: x - 118, y: slot.y - 30, width: 236, height: 60, rx: 17, class: 'lex-free-slot lex-config-free-slot lex-insertion-box' }));
-    g.appendChild(svgEl('text', { x, y: slot.y - 38, class: 'slot-caption' }, slot.label));
-    g.appendChild(svgEl('text', { x, y: slot.y - 4, class: 'lex-local-label' }, content.text || 'INSERTIEPUNT'));
-    g.appendChild(svgEl('text', { x, y: slot.y + 15, class: 'lex-free-slot-sub' }, lexInsertionContentSub(content) || 'andere LEX-as / anafoor')); 
+    const marked = slot.marked ? (isEnglish() ? ' · marked' : ' · gemarkeerd') : '';
+    const toggleLabel = slot.toggleLabel || adverbMarkedToggleLabel();
+    const hasToggle = !!slot.toggleTargetId;
+    const sub = slot.hostLabel
+      ? `extern · LEX-as · boven ${slot.hostLabel}${marked}`
+      : (lexInsertionContentSub(content) || 'andere LEX-as / anafoor');
+    const group = svgEl('g', {
+      class: `lex-adverb-axis-slot-node${slot.marked ? ' marked' : ''}${hasToggle ? ' clickable' : ''}`,
+      tabindex: hasToggle ? 0 : null,
+      role: hasToggle ? 'button' : null,
+      'aria-label': hasToggle ? toggleLabel : null
+    });
+    if (hasToggle) {
+      group.addEventListener('click', event => {
+        event.stopPropagation();
+        toggleAdverbMarkedVariant();
+      });
+      group.addEventListener('keydown', event => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          toggleAdverbMarkedVariant();
+        }
+      });
+    }
+    group.appendChild(svgEl('title', {}, hasToggle ? toggleLabel : sub));
+    group.appendChild(svgEl('rect', { x: x - 122, y: slot.y - 30, width: 244, height: 60, rx: 17, class: 'lex-free-slot lex-config-free-slot lex-insertion-box lex-adverb-axis-slot' }));
+    group.appendChild(svgEl('text', { x, y: slot.y - 38, class: 'slot-caption' }, slot.label));
+    group.appendChild(svgEl('text', { x, y: slot.y - 4, class: 'lex-local-label' }, content.text || 'INSERTIEPUNT'));
+    group.appendChild(svgEl('text', { x, y: slot.y + 15, class: 'lex-free-slot-sub' }, sub));
+    if (hasToggle) {
+      group.appendChild(svgEl('text', { x: x + 94, y: slot.y - 10, class: 'lex-adverb-toggle-marker' }, slot.marked ? '!' : '↯'));
+      group.appendChild(svgEl('text', { x, y: slot.y + 31, class: 'lex-adverb-toggle-help' }, toggleLabel));
+    }
+    g.appendChild(group);
   }
 
   function drawLexTopicSlot(g, x, y) {
@@ -2483,6 +2917,7 @@
     // Dat geldt ook wanneer dat eerste zinsdeel het subject is. Het eerste
     // lexicale zinsdeel laat dus altijd een trace achter op de oude basispositie.
     if (!isMainV2Rule()) return null;
+    if (activeAdverbIsFronted()) return null;
     if (index !== 0 || !item?.source) return null;
     return { kind: 'topic', slot: 'topic', caption: 'Wissel TOPIC', trace: `t[${item.role || item.source}]` };
   }
@@ -2525,6 +2960,7 @@
   }
 
   function showTopicSlot(items = state.example?.lexItems || []) {
+    if (activeAdverbIsFronted() && isMainV2Rule()) return true;
     return items.findIndex((item, i) => movementForItem(item, i)?.slot === 'topic') >= 0;
   }
 
@@ -2552,10 +2988,23 @@
     return y0 + (hasCompItem(items) ? 64 : 0) + (showTopicSlot(items) ? 64 : 0);
   }
 
+  function postV2SlotY(y0, movement, items = state.example?.lexItems || []) {
+    const offset = Number(movement?.postV2Index || 0);
+    return v2SlotY(y0, items) + (offset + 1) * 64;
+  }
+
+  function frontedPostV2Index(item, index, items = activeLexItems()) {
+    const rest = (items || []).map((entry, i) => ({ entry, i }))
+      .filter(row => row.entry?.source && !isFiniteVerbForV2(row.entry));
+    const found = rest.findIndex(row => row.entry === item || row.i === index);
+    return found >= 0 ? found : Math.max(0, index);
+  }
+
   function lexMovementRank(movement) {
     if (!movement) return 99;
     if (movement.slot === 'topic') return 1;
     if (movement.slot === 'v2') return 2;
+    if (movement.slot === 'post-v2') return 3 + Number(movement.postV2Index || 0) / 10;
     if (movement.slot === 'comp') return 0;
     return 10;
   }
@@ -2585,7 +3034,7 @@
     return moveIndex >= 0 && moveIndex < options.executedMovementCount ? movement : null;
   }
 
-  function movementForItem(item, index) {
+  function movementForItem(item, index, items = activeLexItems()) {
     if (!item?.source) return null;
     // v4427: de voorbeeldzin bepaalt de gevulde LEX-slots. De boom wordt niet
     // omgebouwd naar die surface-volgorde; waar de voorbeeldzin een vrij slot
@@ -2596,6 +3045,10 @@
     if (topic) return topic;
     if (isMainV2Rule() && isFiniteVerbForV2(item)) {
       return { kind: 'v2', slot: 'v2', caption: 'Wissel V2', trace: item.source === 'pv' ? 't[pv]' : 't[V]' };
+    }
+    if (activeAdverbIsFronted() && isMainV2Rule()) {
+      const postV2Index = frontedPostV2Index(item, index, items);
+      return { kind: 'post-v2', slot: 'post-v2', postV2Index, caption: 'Wissel na V2', trace: `t[${item.role || item.source}]` };
     }
     return null;
   }
@@ -2647,6 +3100,7 @@
     const movement = appliedMovementForItem(item, index, items, options);
     if (movement?.slot === 'topic') return topicSlotY(y0, items);
     if (movement?.slot === 'v2') return v2SlotY(y0, items);
+    if (movement?.slot === 'post-v2') return postV2SlotY(y0, movement, items);
     return baseLexY(item, index, y0, sourceMap, items);
   }
 
@@ -2659,6 +3113,7 @@
     if (item.slot === 'comp') return '0';
     if (movement?.slot === 'topic') return '1';
     if (movement?.slot === 'v2') return '2';
+    if (movement?.slot === 'post-v2') return String(3 + Number(movement.postV2Index || 0));
     if (movement?.slot === 'local') return String(index + 1);
     if (item?.source) return `b${basisSourceIndex(item, index) + 1}`;
     const hasComp = items[0]?.slot === 'comp';
@@ -2705,7 +3160,7 @@
   }
 
   function projectedLexSystemY0(y0, sourceMap = null) {
-    // v4535: alleen slot 0 hoort boven S/CLAUSE. De lokale V2-slots
+    // v4536: alleen slot 0 hoort boven S/CLAUSE. De lokale V2-slots
     // 1 en 2 horen onder S/CLAUSE. De bronprojecties blijven exact
     // horizontaal op hun bronknoophoogte.
     const rootY = projectedLexRootY(sourceMap);
@@ -2722,10 +3177,23 @@
     return rootY === null ? topicSlotY(y0, items) : rootY + 64;
   }
 
+  function projectedFrontedAdverbSlotY(y0, sourceMap = null, items = state.example?.lexItems || []) {
+    const rootY = projectedLexRootY(sourceMap);
+    // v4545: "boven S" is letterlijk een LEX-slot net boven de S-box.
+    // Zonder centrale boom valt de lokale LEX-view terug op slot 1.
+    return rootY === null ? topicSlotY(y0, items) : rootY - 64;
+  }
+
   function projectedV2SlotY(y0, sourceMap = null, items = state.example?.lexItems || []) {
     const rootY = projectedLexRootY(sourceMap);
     if (rootY === null) return v2SlotY(y0, items);
+    if (activeAdverbIsFronted() && isMainV2Rule()) return rootY + 64;
     return rootY + (showTopicSlot(items) ? 128 : 64);
+  }
+
+  function projectedPostV2SlotY(y0, sourceMap = null, movement = null, items = state.example?.lexItems || []) {
+    const v2Y = projectedV2SlotY(y0, sourceMap, items);
+    return v2Y + (Number(movement?.postV2Index || 0) + 1) * 64;
   }
 
   function projectedLexItemY(item, index, y0, sourceMap = null, items = state.example?.lexItems || [], options = {}) {
@@ -2734,6 +3202,7 @@
     const movement = appliedMovementForItem(item, index, items, options);
     if (movement?.slot === 'topic') return projectedTopicSlotY(y0, sourceMap, items);
     if (movement?.slot === 'v2') return projectedV2SlotY(y0, sourceMap, items);
+    if (movement?.slot === 'post-v2') return projectedPostV2SlotY(y0, sourceMap, movement, items);
     return baseLexY(item, index, y0, sourceMap, items);
   }
 
@@ -2745,24 +3214,25 @@
     const itemYs = items.map((item, i) => projectedLexItemY(item, i, y0, sourceMap, items, options));
     const baseYs = items.map((item, i) => baseLexY(item, i, y0, sourceMap, items));
     const projectionYs = items.map((item, i) => projectionAnchorY(item, i, y0, sourceMap, items));
+    const frontedAdverb = activeAdverbIsFronted() && isMainV2Rule();
     const topicIndex = isMainV2Rule() ? items.findIndex((item, i) => movementForItem(item, i)?.slot === 'topic') : -1;
     const v2Index = isMainV2Rule() ? items.findIndex((item, i) => movementForItem(item, i)?.slot === 'v2') : -1;
-    const topicSlotY = topicIndex >= 0 ? projectedTopicSlotY(y0, sourceMap, items) : null;
+    const topicSlotY = (topicIndex >= 0 || frontedAdverb) ? projectedTopicSlotY(y0, sourceMap, items) : null;
     const v2SlotY = v2Index >= 0 ? projectedV2SlotY(y0, sourceMap, items) : null;
-    const configuredSlots = lexConfiguredFreeSlots(systemY0, items, [...itemYs, ...baseYs, ...projectionYs, ...(topicSlotY === null ? [] : [topicSlotY]), ...(v2SlotY === null ? [] : [v2SlotY])]);
+    const configuredSlots = lexConfiguredFreeSlots(systemY0, items, [...itemYs, ...baseYs, ...projectionYs, ...(topicSlotY === null ? [] : [topicSlotY]), ...(v2SlotY === null ? [] : [v2SlotY])], sourceMap);
     const axisYs = [...itemYs, ...baseYs, ...projectionYs, ...configuredSlots.map(slot => slot.y), ...(topicSlotY === null ? [] : [topicSlotY]), ...(v2SlotY === null ? [] : [v2SlotY]), systemY0 - 48, systemY0 + Math.max(4, items.length + 1) * 64 + 40];
     const axisMinY = Math.min(...axisYs) - 36;
     const axisMaxY = Math.max(...axisYs) + 44;
     g.appendChild(svgEl('line', { x1: x, y1: axisMinY, x2: x, y2: axisMaxY, class: 'lex-axis-line' }));
 
     const positions = new Map();
-    if (topicSlotY !== null && isMainV2Rule()) drawLexTopicSlot(g, x, topicSlotY);
+    if (topicSlotY !== null && isMainV2Rule() && !frontedAdverb) drawLexTopicSlot(g, x, topicSlotY);
     if (v2SlotY !== null) drawLexV2Slot(g, x, v2SlotY);
     configuredSlots.forEach(slot => drawLexConfiguredFreeSlot(g, x, slot));
 
     const ruleText = isMainV2Rule()
-      ? `Plaatsingsregel: basisprojectie + Wissels naar 0/1/2; configureerbare LEX-insertieboxen (${lexFreeSlotCount()} · ${lexSlotPlacementLabel()}) zijn LEX-as-inserties.`
-      : `Plaatsingsregel: resultaat = voorbeeldzin; Comp gebruikt slot 0; configureerbare LEX-insertieboxen (${lexFreeSlotCount()} · ${lexSlotPlacementLabel()}) blijven LEX-as-inserties.`;
+      ? `Plaatsingsregel: basisprojectie + Wissels naar 0/1/2; configureerbare bijwoordslots / voorop-bijwoord (${lexFreeSlotCount()} · ${lexSlotPlacementLabel()}) staan op de LEX-as; de gekozen hostbox wordt lager gezet om ruimte te maken.`
+      : `Plaatsingsregel: resultaat = voorbeeldzin; Comp gebruikt slot 0; configureerbare bijwoordslots / voorop-bijwoord (${lexFreeSlotCount()} · ${lexSlotPlacementLabel()}) staan op de LEX-as; de gekozen hostbox wordt lager gezet om ruimte te maken.`;
     drawCanvasGuideText(g, x + 150, axisMinY + 18, ruleText, 'wissel-label');
 
     // v4450: geen stippel- of verplaatsingslijnen vanuit de boom naar de LEX-as.
@@ -3103,13 +3573,14 @@
       .map(id => functionalNodes.find(n => n.id === id)?.label || id)
       .join(' + ') || 'role-boxen';
     if (options.showTitle !== false) drawAxisTitle(g, origin.x - 180, origin.y - 70, `OPN · functionele structuur · ${rootLabel} → ${roleNames} · ${state.functionalOrder}`);
-    drawAxisTitle(g, origin.x - 176, origin.y - 48, `v4535 · ${branchModeLabel()} · vrije plaatsing + LEX-bijwoordslots`);
+    drawAxisTitle(g, origin.x - 176, origin.y - 48, `v4546 · ${branchModeLabel()} · vrije plaatsing + LEX-bijwoordslots`);
     const growthPlan = growthPlanForLayout(layout);
     layout.__growthPlan = growthPlan;
     drawSubtreeBoxes(g, layout, origin, growthPlan);
     drawTreeEdges(g, layout, origin, growthPlan);
     drawOpnTopicalizationSlot(g, layout, origin, growthPlan);
     drawTreeNodes(g, layout, origin, options.selectable === true, growthPlan);
+    drawHostedAdverbSlots(g, layout, origin, growthPlan);
     return layout;
   }
 
@@ -3182,7 +3653,7 @@
     const g = baseSvg('source-view');
     if (state.centerMode === 'functional') {
       drawFunctional(g, { x: 760, y: 92 });
-      drawAxisTitle(g, 520, 70, `BRON · OPN-functioneel · vrije boomrijen + LEX-insertieslots + structure-config · ${state.functionalOrder}`);
+      drawAxisTitle(g, 520, 70, `BRON · OPN-functioneel · vrije boomrijen + LEX-bijwoordslots + structure-config · ${state.functionalOrder}`);
     } else {
       drawAxisTitle(g, 490, 58, 'BRON · OPN-syntax-tree · vrije HOR/VER-boxplaatsing + vrije-slotruimte');
       drawSyntaxTree(g, { x: 780, y: 82 });
@@ -3192,7 +3663,12 @@
 
   function drawLex() {
     const g = baseSvg('lex-view');
-    drawLexAxis(g, 560, 86, activeLexItems(), null);
+    // v4545: ook in de losse LEX-view moet het bijwoordslot aan de echte
+    // hostboxhoogte hangen. Daarvoor wordt de syntaxlayout hier alleen als
+    // onzichtbare ankerkaart gebruikt; er wordt niets vanuit de boom geprojecteerd.
+    const hiddenLayout = getSyntaxLayout();
+    const sourceMap = layoutNodeMap(hiddenLayout, { x: 560, y: 86 });
+    drawLexAxis(g, 560, 86, activeLexItems(), sourceMap);
     drawCanvasGuideText(g, 700, 70, state.example.lexRule === 'bijzin-omdat' ? 'Regel: bijzin met lokaal Comp-slot · geen V2' : 'Regel: hoofdzin met lokale V2-Wissel op de LEX-as', 'axis-title');
     els.svg.appendChild(g);
   }
@@ -3423,7 +3899,7 @@
     const svgLocalRight = Math.min(hostRect.width, svgRect.right - hostRect.left);
     const svgLocalBottom = Math.min(hostRect.height, svgRect.bottom - hostRect.top);
 
-    // v4535: HTML controls are children of the canvas/boomvenster, but the SVG
+    // v4536: HTML controls are children of the canvas/boomvenster, but the SVG
     // itself uses preserveAspectRatio=meet.  Therefore placement is clamped to
     // the actually drawn grid rectangle, not to the full letterboxed canvas.
     // All overlay coordinates are therefore clamped to the canvas rect, not to
@@ -3643,9 +4119,10 @@
     const functionalModeLabel = isEnglish() ? 'OPN functional structure' : 'OPN-functioneel';
     els.titleLine.textContent = `${activeSentenceText()} · ${state.projectionLabel || projectionLabel()} · ${state.centerMode === 'syntax' ? syntaxModeLabel : functionalModeLabel}`;
     const noticeText = state.example.notice ? ` · NOTICE=${state.example.notice}` : '';
+    const adverbText = activeAdverbStatusLabel();
     els.metaLine.textContent = isEnglish()
-      ? `${state.example.phase} · ${movementSummaryLabel()} · LEX=${activeSentenceText()} · HTML input=examples-input.html · lexicon=lexicon-config.html${noticeText}`
-      : `${state.example.phase} · ${movementSummaryLabel()} · LEX=${activeSentenceText()} · HTML-input=examples-input.html · lexicon=lexicon-config.html${noticeText}`;
+      ? `${state.example.phase} · ${movementSummaryLabel()} · ${adverbText} · LEX=${activeSentenceText()} · HTML input=examples-input.html · adverbs=examples-adverbs.html · lexicon=lexicon-config.html${noticeText}`
+      : `${state.example.phase} · ${movementSummaryLabel()} · ${adverbText} · LEX=${activeSentenceText()} · HTML-input=examples-input.html · bijwoorden=examples-adverbs.html · lexicon=lexicon-config.html${noticeText}`;
     if (els.sentencePreview) els.sentencePreview.innerHTML = activeSentenceHtml();
     const baseFeedback = isEnglish()
       ? (state.projection === 'source'
@@ -3687,7 +4164,7 @@
       return 'All: central OPN tree; west axis = LEX next to the tree; south axis = LOGICAL projection. The grid window is fitted to tree + axes; canvas panning is off.';
     }
     if (state.projection === 'source') return 'Bron: OPN-syntax en OPN-functioneel worden gelezen uit structure-config.html. Beide gebruiken dezelfde left/right layoutstrategie en reserveren configureerbare lege vrije-slotruimte onder de wortel.';
-    if (state.projection === 'lex') return 'LEX: plaatsingsregels per zinstype. Hoofdzin: eerste zinsdeel naar slot 1, persoonsvorm naar slot 2. De ruimte in de centrale boom is leeg; de vulling staat op de LEX-as.';
+    if (state.projection === 'lex') return 'LEX: plaatsingsregels per zinstype. Hoofdzin: eerste zinsdeel naar slot 1, persoonsvorm naar slot 2. Bijwoorden worden als externe LEX-slots op de LEX-as geplaatst, op de hoogte net boven een gekozen syntaxbox.';
     if (state.projection === 'synt') return 'SYNTAX-projectie: regels staan op boomhoogte; onder de boom staat nu ook de LOGICAL-projectie uit FT/LOG.';
     if (state.projection === 'log') return 'LOG/FT: functioneel = CLAUSE met aparte PRED-knoop en ARG-STRUCT-subtree; onderaan toont de FT-projectie de logische volgorde (bijv. SOV/SVO/OVS/OSV-!/VSO-!/VOS-!).';
     return 'Assen: centrale OPN-boom; west-as = LEX direct naast de boom; zuid-as = LOGICAL-projectie. Het grid staat standaard bovenaan; in portrait staat het rechter menu naast het grid. Sleep de duidelijke grens of kies de zichtbare instelling Rechterkolom bovenaan om grid/menu te verdelen. Het gridvenster past op boom + assen; canvas-panning staat uit.';
@@ -3734,10 +4211,10 @@
     freeSlotCountSelect: { 0: 'tree rows: 0', 1: 'tree rows: 1', 2: 'tree rows: 2', 3: 'tree rows: 3', 4: 'tree rows: 4', 5: 'tree rows: 5', 6: 'tree rows: 6' },
     lexFreeSlotCountSelect: { 0: 'LEX slots: 0', 1: 'LEX slots: 1', 2: 'LEX slots: 2', 3: 'LEX slots: 3', 4: 'LEX slots: 4', 5: 'LEX slots: 5', 6: 'LEX slots: 6', 7: 'LEX slots: 7', 8: 'LEX slots: 8' },
     mobileLexFreeSlotCountSelect: { 0: 'LEX slots: 0', 1: 'LEX slots: 1', 2: 'LEX slots: 2', 3: 'LEX slots: 3', 4: 'LEX slots: 4', 5: 'LEX slots: 5', 6: 'LEX slots: 6', 7: 'LEX slots: 7', 8: 'LEX slots: 8' },
-    lexFreeSlotPlacementSelect: { 'after-lex': 'below LEX words', 'after-system': 'after slot 0/1/2', 'above-system': 'above slot 0', 'after-surface-1': 'between position 1/2', 'after-surface-2': 'between position 2/3', 'after-surface-3': 'between position 3/4' },
-    mobileLexFreeSlotPlacementSelect: { 'after-lex': 'below LEX words', 'after-system': 'after slot 0/1/2', 'above-system': 'above slot 0', 'after-surface-1': 'between position 1/2', 'after-surface-2': 'between position 2/3', 'after-surface-3': 'between position 3/4' },
-    lexInsertionContentSelect: { empty: 'empty slot', gisteren: 'GISTEREN', morgen: 'MORGEN', vaak: 'VAAK', soms: 'SOMS', altijd: 'ALTIJD', niet: 'NIET', snel: 'SNEL', hard: 'HARD', zachtjes: 'ZACHTJES', misschien: 'MISSCHIEN', waarschijnlijk: 'WAARSCHIJNLIJK', helaas: 'HELAAS', alleen: 'ALLEEN', ook: 'OOK', zelfs: 'ZELFS', heel: 'HEEL', erg: 'ERG', zeer: 'ZEER', anafoor: 'anaphor', 'other-lex-axis': 'other LEX axis' },
-    mobileLexInsertionContentSelect: { empty: 'empty slot', gisteren: 'GISTEREN', morgen: 'MORGEN', vaak: 'VAAK', soms: 'SOMS', altijd: 'ALTIJD', niet: 'NIET', snel: 'SNEL', hard: 'HARD', zachtjes: 'ZACHTJES', misschien: 'MISSCHIEN', waarschijnlijk: 'WAARSCHIJNLIJK', helaas: 'HELAAS', alleen: 'ALLEEN', ook: 'OOK', zelfs: 'ZELFS', heel: 'HEEL', erg: 'ERG', zeer: 'ZEER', anafoor: 'anaphor', 'other-lex-axis': 'other LEX axis' },
+    lexFreeSlotPlacementSelect: { 'above-selected-box': 'above selected box', 'above-s': 'above S', 'above-np': 'above NP', 'above-vp': 'above VP', 'above-v': 'above V', 'above-pp': 'above PP', 'above-ap': 'above AP' },
+    mobileLexFreeSlotPlacementSelect: { 'above-selected-box': 'above selected box', 'above-s': 'above S', 'above-np': 'above NP', 'above-vp': 'above VP', 'above-v': 'above V', 'above-pp': 'above PP', 'above-ap': 'above AP' },
+    lexInsertionContentSelect: { empty: 'empty slot', gisteren: 'GISTEREN', morgen: 'MORGEN', daar: 'DAAR', daarom: 'DAAROM', anders: 'ANDERS', vaak: 'VAAK', soms: 'SOMS', altijd: 'ALTIJD', niet: 'NIET', snel: 'SNEL', hard: 'HARD', zachtjes: 'ZACHTJES', misschien: 'MISSCHIEN', waarschijnlijk: 'WAARSCHIJNLIJK', helaas: 'HELAAS', alleen: 'ALLEEN', ook: 'OOK', zelfs: 'ZELFS', heel: 'HEEL', erg: 'ERG', zeer: 'ZEER', anafoor: 'anaphor', 'other-lex-axis': 'other LEX axis' },
+    mobileLexInsertionContentSelect: { empty: 'empty slot', gisteren: 'GISTEREN', morgen: 'MORGEN', daar: 'DAAR', daarom: 'DAAROM', anders: 'ANDERS', vaak: 'VAAK', soms: 'SOMS', altijd: 'ALTIJD', niet: 'NIET', snel: 'SNEL', hard: 'HARD', zachtjes: 'ZACHTJES', misschien: 'MISSCHIEN', waarschijnlijk: 'WAARSCHIJNLIJK', helaas: 'HELAAS', alleen: 'ALLEEN', ook: 'OOK', zelfs: 'ZELFS', heel: 'HEEL', erg: 'ERG', zeer: 'ZEER', anafoor: 'anaphor', 'other-lex-axis': 'other LEX axis' },
     portraitMenuSlotsSelect: { 0: 'bottom space: 0 menus', 1: 'bottom space: 1 menu', 2: 'bottom space: 2 menus' },
     mobilePortraitMenuSlotsSelect: { 0: 'bottom space: 0 menus', 1: 'bottom space: 1 menu', 2: 'bottom space: 2 menus' },
     lexRuleSelect: { hoofdzininvariant: 'main clause V2: subject/topic - finite verb/predicate - object - exchange', 'bijzin-omdat': 'subordinate clause: Comp/(om)dat + subject + object + predicate - no V2', 'perfectum-heeft-vdw': 'perfect V2: subject/topic - finite verb - object - participle - exchange' }
@@ -3791,9 +4268,9 @@
     });
     const text = selected.size
       ? (isEnglish()
-        ? `Branch extension: ${[...selected].map(lexInsertionTargetLabel).join(' + ')}. Insertion attaches to the LEX axis; the tree only receives extra branch length/box space.`
-        : `Takverlenging: ${[...selected].map(lexInsertionTargetLabel).join(' + ')}. Insertie grijpt aan op de LEX-as; de boom krijgt alleen extra taklengte/boxruimte.`)
-      : (isEnglish() ? 'No branch extension: insertion remains visible only on the LEX axis.' : 'Geen takverlenging: insertie blijft alleen op de LEX-as zichtbaar.');
+        ? `Branch extension: ${[...selected].map(lexInsertionTargetLabel).join(' + ')}. Adverb placement uses LEX slots with host height; branch extension is not needed here.`
+        : `Takverlenging: ${[...selected].map(lexInsertionTargetLabel).join(' + ')}. Bijwoordplaatsing gebruikt LEX-slots met hosthoogte; takverlenging is hier niet nodig.`)
+      : (isEnglish() ? 'No branch extension: the adverb is rendered above the chosen syntax box.' : 'Geen takverlenging: bijwoord staat boven de gekozen syntaxbox.');
     document.querySelectorAll('[data-lex-extension-help]').forEach(node => {
       node.textContent = text;
       node.title = [...selected].map(lexInsertionTargetTip).join(' ');
@@ -3805,6 +4282,8 @@
     fillSelect(els.desktopExampleSelect, EXAMPLES, state.example.id);
     fillSelect(els.mobileExampleSelect, EXAMPLES, state.example.id);
     fillSelect(els.mainExampleSelect, EXAMPLES, state.example.id);
+    fillSelect(els.mainAdverbSelect, ADVERB_OPTIONS, state.selectedAdverbId);
+    fillSelect(els.mobileAdverbSelect, ADVERB_OPTIONS, state.selectedAdverbId);
     syncExampleSelectSizing();
     fillSelect(els.centralModeSelect, CENTER_MODES, state.centerMode);
     fillSelect(els.treeChoiceSelect, TREE_CHOICES, activeTreeChoice());
@@ -4045,11 +4524,17 @@
       `lex_free_slot_placement: ${validLexSlotPlacement()} (${lexSlotPlacementLabel()})`,
       `lex_insertion_content: ${validLexInsertionContent()} (${lexInsertionContentDef().label})`,
       `lex_insertion_extension_targets: ${validLexInsertionTargets().map(lexInsertionTargetLabel).join(', ') || 'geen'}`,
-      `lex_free_slots: configureerbare insertieboxen op de LEX-as; future_sources=other-lex-axis, other-tree, anaphor, adverbial-headless-clause`,
+      `lex_free_slots: configureerbare bijwoordboxen boven syntactische categorieboxen; geldige hosts=S, NP, VP, V, PP, AP`,
+      `adverb: ${activeAdverbData()?.word || 'geen'}`,
+      `adverb_category: ${activeAdverbData()?.category || 'geen'}`,
+      `adverb_host_default: ${activeAdverbData()?.defaultHost || 'geen'}`,
+      `adverb_host_actual: ${activeAdverbData()?.host || 'geen'}`,
+      `adverb_marking: ${activeAdverbData()?.placement === 'marked' ? (activeAdverbData().marking || 'functional:marked-host') : (activeAdverbData()?.word ? 'functional:default-host' : 'geen')}`,
+      `adverb_notation: ${activeAdverbData()?.word ? `LEX-ADV[word=${activeAdverbData().word}, class=${activeAdverbData().category || 'BIJWOORD'}, axis=LEX, defaultHost=${activeAdverbData().defaultHost || '?'}, host=${activeAdverbData().host || activeAdverbData().defaultHost || '?'}, source=external, marking=${activeAdverbData().placement === 'marked' ? (activeAdverbData().marking || 'functional:marked-host') : 'functional:default-host'}]` : 'geen'}`, 
       `top_menus_above_grid: ${normalizeTopMenusAbove().map(topMenuLabel).join(', ') || 'geen'}`,
       `right_menu_width: ${validRightMenuMode()} (${rightMenuLabel()})`,
       `canvas_pan: disabled; window fits tree + axes`,
-      `free_slots: boomrijen voor open OPN-plaatsing; LEX-inserties zijn aparte as-posities`,
+      `free_slots: boomrijen voor open OPN-plaatsing; bijwoord-inserts worden boven syntactische categorieboxen getekend`,
       `tree_choice: ${activeTreeChoice()}`,
       `movement_summary: ${movementSummaryLabel()}`,
       `functional_order: ${state.functionalOrder}`,
@@ -4331,6 +4816,7 @@
     state.lastSupportedGrowthStep = 0;
     state.roleSwap = false;
     state.selectedNodeId = null;
+    applyExampleAdverbDefaults();
     resetManualViewBox();
   }
 
@@ -4424,8 +4910,9 @@
 
   function applyConfigLanguageTexts(en) {
     setText('.main-sentence-field span, .desktop-sentence-field span, .mobile-sentence-field span, .toolbar .example-field span', en ? 'Sentence' : 'Zin');
+    setText('.main-adverb-field span, .mobile-adverb-field span', en ? 'With adverb' : 'Met bijwoord');
     setText('.config-topbar h2', en ? 'All settings' : 'Alle instellingen');
-    setText('.config-topbar p', en ? 'Configure LEX insertions, branch extension, layout, main-window fit, export and documentation here. Projection, sentence and Play/Grow live in Main.' : 'LEX-inserties, takverlenging, layout, hoofdvenster, export en documentatie staan hier. Projectie, zin en Play/Groei staan in Main.');
+    setText('.config-topbar p', en ? 'Configure adverb LEX slots, layout, main-window fit, export and documentation here. Projection, sentence and Play/Grow live in Main.' : 'Bijwoordslots op de LEX-as, layout, hoofdvenster, export en documentatie staan hier. Projectie, zin en Play/Groei staan in Main.');
     setPanelHeading(0, en ? 'Projection settings' : 'Projectie-instellingen');
     setPanelHeading(1, en ? 'LEX axis - utterance type' : 'LEX-as · uitingtype');
     setPanelHeading(2, en ? 'Relations / rules' : 'Relaties / regels');
@@ -4445,14 +4932,14 @@
     setLabelSpan('viewFitSelect', en ? 'Main window' : 'Hoofdvenster');
     setLabelSpan('mainViewFitSelectTop', en ? 'Main window' : 'Hoofdvenster');
     setLabelSpan('freeSlotCountSelect', en ? 'Free tree rows' : 'Boom vrije rijen');
-    setLabelSpan('lexFreeSlotCountSelect', en ? 'Number of slots' : 'Aantal slots');
-    setLabelSpan('lexFreeSlotPlacementSelect', en ? 'Slot position' : 'Slotpositie');
+    setLabelSpan('lexFreeSlotCountSelect', en ? 'Adverb boxes' : 'Bijwoordboxen');
+    setLabelSpan('lexFreeSlotPlacementSelect', en ? 'Host box' : 'Hostbox');
     setLabelSpan('lexInsertionContentSelect', en ? 'Adverb / content' : 'Bijwoord / inhoud');
-    document.querySelectorAll('.lex-adverb-insert-field legend').forEach(node => { node.textContent = en ? 'Adverb / LEX insert on LEX axis' : 'Bijwoord / LEX-insert op LEX-as'; });
-    document.querySelectorAll('.lex-adverb-insert-field .top-menu-choice-help').forEach(node => { node.textContent = en ? 'Choose the external LEX insert for free slots, for example GISTEREN, VAAK, NIET, SNEL or MISSCHIEN. This does not change the central tree.' : 'Kies hier de externe LEX-insert voor vrije slots, bijvoorbeeld GISTEREN, VAAK, NIET, SNEL of MISSCHIEN. Dit verandert de centrale boom niet.'; });
+    document.querySelectorAll('.lex-adverb-insert-field legend').forEach(node => { node.textContent = en ? 'Adverb LEX slot above syntax box' : 'Bijwoordslot op LEX-as'; });
+    document.querySelectorAll('.lex-adverb-insert-field .top-menu-choice-help').forEach(node => { node.textContent = en ? 'Choose the adverb and host box. The adverb is drawn as an external LEX slot on the LEX axis, vertically just above S, NP, VP, V, PP or AP; the host subtree is lowered to create space.' : 'Kies het bijwoord en de hostbox. Het bijwoord wordt als extern LEX-slot op de LEX-as getekend, verticaal net boven S, NP, VP, V, PP of AP; de host-subboom schuift lager om ruimte te maken.'; });
     setLabelSpan('lexRuleSelect', en ? 'Utterance-type rule' : 'Uitingtype-regel');
 
-    document.querySelectorAll('.lex-extension-field legend').forEach(node => { node.textContent = en ? 'Branch extension by insertion' : (node.closest('.mobile-sheet') ? 'Takverlenging' : 'Takverlenging door insertie'); });
+    document.querySelectorAll('.lex-extension-field legend').forEach(node => { node.textContent = en ? 'Branch extension (not for adverbs)' : (node.closest('.mobile-sheet') ? 'Takverlenging' : 'Takverlenging (niet voor bijwoorden)'); });
     document.querySelectorAll('.top-menu-choice-field:not(.lex-extension-field) legend').forEach(node => {
       const count = node.querySelector('[data-top-menu-count]')?.textContent || '0/4';
       node.textContent = en ? 'Menus above grid ' : 'Menu’s boven grid ';
@@ -4519,26 +5006,26 @@
 
     setText('.config-topbar .intro-kicker', 'Config');
     setText('.config-topbar h2', en ? 'All settings' : 'Alle instellingen');
-    setText('.config-topbar p', en ? 'LEX insertions, branch extension, layout, main-window fit, export and documentation are configured here. Projection, sentence and Play/Grow live in Main. The Back to main bar stays fixed while this page scrolls.' : 'LEX-inserties, takverlenging, layout, hoofdvenster, export en documentatie staan hier. Projectie, zin en Play/Groei staan in Main. De Terug-naar-main-balk blijft vast staan bij scrollen.');
+    setText('.config-topbar p', en ? 'Adverb slots on the LEX axis, layout, main-window fit, export and documentation are configured here. Projection, sentence and Play/Grow live in Main. The Back to main bar stays fixed while this page scrolls.' : 'Bijwoordslots op de LEX-as, layout, hoofdvenster, export en documentatie staan hier. Projectie, zin en Play/Groei staan in Main. De Terug-naar-main-balk blijft vast staan bij scrollen.');
     setText('.help-topbar .intro-kicker', 'Help');
     setText('.help-topbar h2', en ? 'Help' : 'Uitleg');
     setText('.help-topbar p', en ? 'Help contains textual explanation and usage notes.' : 'Help bevat tekstuitleg en gebruiksaanwijzingen.');
     setText('[data-help-boom-title]', en ? 'Tree first' : 'Boom eerst');
     setText('[data-help-boom-text]', en
-      ? 'Tree first is the didactic and notational sequence: start with the central open tree as the source; then project to LEX, SYNTAX and LOG/FT. LEX exchanges and insertions stay on the LEX axis. Dutch sample sentences remain language data.'
-      : 'Boom eerst is de didactische en notationele volgorde: begin met de centrale open boom als bron; projecteer daarna naar LEX, SYNTAX en LOG/FT. De LEX-wissels en inserties blijven op de LEX-as. De Nederlandse voorbeeldzinnen blijven taaldata.');
+      ? 'Tree first is the didactic and notational sequence: start with the central open tree as the source; then project to LEX, SYNTAX and LOG/FT. LEX exchanges stay on the LEX axis; adverbs are rendered on the LEX axis; fronted adverbs occupy LEX slot 1 and trigger V2. Dutch sample sentences remain language data.'
+      : 'Boom eerst is de didactische en notationele volgorde: begin met de centrale open boom als bron; projecteer daarna naar LEX, SYNTAX en LOG/FT. De LEX-wissels blijven op de LEX-as; bijwoorden staan ook op de LEX-as, als extern slot met hosthoogte. De Nederlandse voorbeeldzinnen blijven taaldata.');
     setText('[data-help-recursion-title]', en ? 'Recursion technique in the tree' : 'Recursie-techniek in de boom');
     setText('[data-help-recursion-text]', en
       ? 'Recursion is the technical drawing method: the viewer builds the layout bottom-up, from leaves to category nodes, subtrees and boxes. This is separate from the didactic step called tree first.'
       : 'Recursie is hier de technische tekenmethode: de viewer bouwt de layout bottom-up, van bladeren naar categorieknopen, subtrees en boxen. Dat is iets anders dan de didactische stap boom eerst.');
-    setText('[data-help-adverb-title]', en ? 'Adverb inserts on the LEX axis' : 'Bijwoord-inserts op de LEX-as');
+    setText('[data-help-adverb-title]', en ? 'Adverb slots on the LEX axis' : 'Bijwoordslots op de LEX-as');
     setHtml('[data-help-adverb-text]', en
-      ? '<strong>Adverb placement differs by scope.</strong> Time and frequency words such as GISTEREN, MORGEN, VAAK, SOMS and ALTIJD use between-box or VP slots; NIET uses a V-near/NEG slot; SNEL, HARD and ZACHTJES stay near V; MISSCHIEN, WAARSCHIJNLIJK and HELAAS use higher S/VP slots; ALLEEN, OOK and ZELFS are focus slots; HEEL, ERG and ZEER are AP/AdvP-internal.'
-      : '<strong>Bijwoordplaatsing verschilt per scope.</strong> Tijd/frequentie zoals GISTEREN, MORGEN, VAAK, SOMS en ALTIJD gebruikt tussenbox- of VP-slots; NIET gebruikt een V-nabij/NEG-slot; SNEL, HARD en ZACHTJES blijven V-nabij; MISSCHIEN, WAARSCHIJNLIJK en HELAAS gebruiken hoge S/VP-slots; ALLEEN, OOK en ZELFS zijn focus-slots; HEEL, ERG en ZEER zijn AP/AdvP-intern.');
+      ? '<strong>Adverb placement differs by scope.</strong> Adverbs are no longer placed between boxes. They are rendered above a valid syntactic category box: S, NP, VP, V, PP or AP. Time and modality usually use S/VP; negation and manner use V; degree uses AP; focus uses NP/VP.'
+      : '<strong>Bijwoordplaatsing verschilt per scope.</strong> Bijwoorden staan op de LEX-as. Hostplaatsing gebruikt een LEX-slot op hosthoogte; vooropplaatsing gebruikt LEX-slot 1 en activeert V2/inversie. Tijd/modaliteit meestal S/VP; negatie en wijze V; graad AP; focus NP/VP.');
     setText('[data-help-render-title]', en ? 'Render explanation' : 'Render-uitleg');
     setHtml('[data-help-render-text]', en
-      ? '<strong>Rendering</strong> means: first compute the central tree and boxes, then draw projections and the LEX axis. Free LEX inserts are placed in reserved slots; the central tree remains unchanged. OSV-!, VSO-! and VOS-! are not base trees: the box approach cannot produce these orders; the LEX axis then requires a movement rule.'
-      : '<strong>Renderen</strong> betekent: eerst de centrale boom en boxen berekenen, daarna projecties en LEX-as tekenen. Vrije LEX-inserts worden op gereserveerde slots geplaatst; de centrale boom blijft daarbij ongewijzigd. OSV-!, VSO-! en VOS-! zijn geen basisbomen: de box-aanpak kan deze volgordes niet opleveren; de LEX-as vraagt dan een verplaatsingsregel.');
+      ? '<strong>Rendering</strong> means: first compute the central tree and boxes, then draw projections and the LEX axis. Adverb inserts are rendered above valid syntax boxes; the central tree remains unchanged. OSV-!, VSO-! and VOS-! are not base trees: the box approach cannot produce these orders; the LEX axis then requires a movement rule.'
+      : '<strong>Renderen</strong> betekent: eerst de centrale boom en boxen berekenen, daarna projecties en LEX-as tekenen. Bijwoord-inserts worden als externe LEX-slots op de LEX-as geplaatst; de host-subboom schuift lager om ruimte te maken. OSV-!, VSO-! en VOS-! zijn geen basisbomen: de box-aanpak kan deze volgordes niet opleveren; de LEX-as vraagt dan een verplaatsingsregel.');
 
     setText('[data-projection="axes"], [data-main-projection="axes"]', en ? 'All' : 'Alle');
     setText('[data-projection="source"], [data-main-projection="source"], [data-mobile-projection="source"]', en ? 'Source' : 'Bron');
@@ -4622,6 +5109,14 @@
       resetForNewExample();
       render();
     });
+    const updateMainAdverb = event => {
+      state.selectedAdverbId = event.target.value || 'none';
+      applyExampleAdverbDefaults();
+      resetManualViewBox();
+      render();
+    };
+    els.mainAdverbSelect?.addEventListener('change', updateMainAdverb);
+    els.mobileAdverbSelect?.addEventListener('change', updateMainAdverb);
     document.getElementById('reloadExamplesButton')?.addEventListener('click', async () => {
       const before = EXAMPLES.length;
       await loadExamplesFromHtml();
@@ -4806,6 +5301,7 @@
     registerPaneSplitter();
     await loadStructureConfig();
     await loadExamplesFromHtml();
+    await loadAdverbOptionsFromHtml();
     render();
     applyLanguage();
     requestAnimationFrame(() => requestAnimationFrame(stabilizeInitialTreeView));

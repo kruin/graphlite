@@ -1,3 +1,8 @@
+
+## v4540 - Bijwoorden als externe LEX-slots
+
+Bijwoordplaatsing blijft volledig op de LEX-as. `Boven S/NP/VP/V/PP/AP` betekent: plaats een extern LEX-slot verticaal net boven de gekozen syntactische hostbox. Het bijwoord wordt niet op de syntaxboom getekend en is geen projectie uit de basisboom. De host-subboom wordt lager gezet om ruimte te maken. Notatie: `LEX-ADV[..., axis=LEX, source=external, host=...]`.
+
 # Design decisions v4430
 
 ## v4430 · projectie ≠ Wissel

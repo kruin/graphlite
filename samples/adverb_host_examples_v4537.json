@@ -1,0 +1,129 @@
+{
+  "format": "opengraph-lite-adverb-host-examples",
+  "format_version": 4537,
+  "rule": "adverbs render above a valid syntactic category host box, not between boxes",
+  "valid_hosts": [
+    "S",
+    "NP",
+    "VP",
+    "V",
+    "PP",
+    "AP"
+  ],
+  "marking_notation": {
+    "default": "functional:default-host",
+    "marked": "functional:marked-host"
+  },
+  "examples": [
+    {
+      "id": "adv-modal-waarschijnlijk-s",
+      "sentence": "HOND BIJT WAARSCHIJNLIJK MAN",
+      "adverb": "WAARSCHIJNLIJK",
+      "category": "MODALITEIT",
+      "default_host": "S",
+      "host": "S",
+      "placement": "default",
+      "marking": "functional:default-host"
+    },
+    {
+      "id": "adv-time-gisteren-s",
+      "sentence": "HOND BIJT GISTEREN MAN",
+      "adverb": "GISTEREN",
+      "category": "TIJD",
+      "default_host": "S",
+      "host": "S",
+      "placement": "default",
+      "marking": "functional:default-host"
+    },
+    {
+      "id": "adv-freq-vaak-vp",
+      "sentence": "HOND BIJT VAAK MAN",
+      "adverb": "VAAK",
+      "category": "FREQUENTIE",
+      "default_host": "VP",
+      "host": "VP",
+      "placement": "default",
+      "marking": "functional:default-host"
+    },
+    {
+      "id": "adv-place-daar-vp",
+      "sentence": "HOND BIJT DAAR MAN",
+      "adverb": "DAAR",
+      "category": "PLAATS",
+      "default_host": "VP",
+      "host": "VP",
+      "placement": "default",
+      "marking": "functional:default-host"
+    },
+    {
+      "id": "adv-neg-niet-v",
+      "sentence": "HOND BIJT NIET MAN",
+      "adverb": "NIET",
+      "category": "NEGATIE",
+      "default_host": "V",
+      "host": "V",
+      "placement": "default",
+      "marking": "functional:default-host"
+    },
+    {
+      "id": "adv-degree-heel-ap",
+      "sentence": "HOND IS HEEL MOOI",
+      "adverb": "HEEL",
+      "category": "GRAAD",
+      "default_host": "AP",
+      "host": "AP",
+      "placement": "default",
+      "marking": "functional:default-host"
+    },
+    {
+      "id": "adv-manner-hard-v",
+      "sentence": "VROUW BREIT HARD TRUI",
+      "adverb": "HARD",
+      "category": "WIJZE",
+      "default_host": "V",
+      "host": "V",
+      "placement": "default",
+      "marking": "functional:default-host"
+    },
+    {
+      "id": "adv-cause-daarom-s",
+      "sentence": "DAAROM BIJT HOND MAN",
+      "adverb": "DAAROM",
+      "category": "REDEN_OORZAAK",
+      "default_host": "S",
+      "host": "S",
+      "placement": "default",
+      "marking": "functional:default-host"
+    },
+    {
+      "id": "adv-cond-anders-s",
+      "sentence": "ANDERS BIJT HOND MAN",
+      "adverb": "ANDERS",
+      "category": "VOORWAARDE",
+      "default_host": "S",
+      "host": "S",
+      "placement": "default",
+      "marking": "functional:default-host"
+    },
+    {
+      "id": "adv-focus-alleen-np",
+      "sentence": "ALLEEN HOND BIJT MAN",
+      "adverb": "ALLEEN",
+      "category": "FOCUS",
+      "default_host": "NP",
+      "host": "NP",
+      "placement": "default",
+      "marking": "functional:default-host"
+    },
+    {
+      "id": "adv-marked-waarschijnlijk-v",
+      "sentence": "HOND BIJT WAARSCHIJNLIJK MAN",
+      "adverb": "WAARSCHIJNLIJK",
+      "category": "MODALITEIT",
+      "default_host": "S",
+      "host": "V",
+      "placement": "marked",
+      "marking": "functional:marked-host"
+    }
+  ]
+}

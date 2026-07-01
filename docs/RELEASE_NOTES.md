@@ -1,3 +1,35 @@
+# v4546
+
+- Literatuurcorrectie: initieel bijwoord in Nederlandse hoofdzinnen betekent V2/inversie, niet bijzinsvolgorde.
+- Toegevoegd: `functional:fronted-v2` voor bijwoordelijke vooropplaatsing op LEX-slot 1.
+- LEX-as: bij vooropplaatsing vult het bijwoord slot 1; de persoonsvorm blijft slot 2; het subject wordt niet ook naar slot 1 verplaatst.
+- Correctie: bij `GISTEREN` + eenvoudige tegenwoordige tijd kiest de LEX-as de bekende OVT-vorm (`BIJT`→`BEET`, `BREIT`→`BREIDE`) in plaats van de foutieve combinatie `GISTEREN BIJT ...`.
+
+# v4546
+
+- Fix: LEX-bijwoordslot wordt nu op de LEX-as verticaal gekoppeld aan de gekozen hostbox (`S`, `NP`, `VP`, `V`, `PP`, `AP`).
+- Oorzaak: `cloneLayout()` verloor `lexAdverbAxisSlots`, waardoor de LEX-as terugviel op de algemene S/root-positie.
+- Extra: `shiftLayout()` verschuift bewaarde bijwoordslots mee; de losse LEX-view gebruikt een onzichtbare syntax-ankerkaart.
+
+# v4541
+
+- Bijwoorden staan als externe LEX-slots op de LEX-as.
+- `boven S/NP/VP/V/PP/AP` betekent: LEX-slot op de LEX-as, verticaal net boven de gekozen hostbox.
+- De gekozen hostbox/subboom schuift lager om ruimte te maken.
+- Het bijwoord wordt niet op de syntaxboom getekend en is geen projectie vanuit de basisboom.
+- Notatie: `LEX-ADV[..., axis=LEX, source=external, host=...]`.
+
+---
+
+# v4538
+
+- Bijwoordplaatsing aangepast: bijwoorden worden niet langer tussen boxen of op losse tussenposities geplaatst.
+- Nieuwe hostregel: bijwoordbox boven geldige syntactische categoriebox. Geldig: `S`, `NP`, `VP`, `V`, `PP`, `AP`.
+- Oude LEX-tussenposities zijn vervangen door host-keuzes: boven geselecteerde box, boven S, boven NP, boven VP, boven V, boven PP, boven AP.
+- Centrale boom blijft ongemuteerd; de bijwoordbox is een zichtbare plaatsingslaag.
+
+---
+
 
 
 ## v4504 · Main-controls naast SYNTAX-as
@@ -336,33 +368,33 @@
 - Traces staan in een aparte lokale trace-zone onder de voorbeeldzin.
 
 
-## v4535
+## v4536
 
 - LEX-basisprojectie in Assen wordt niet meer gecomprimeerd: basisposities en traces blijven horizontaal gelijk aan de boomknopen.
 - Alleen de vrije slots 0/1/2 staan bovenaan als lokale LEX-slots.
 
 
-## v4535 update
+## v4536 update
 
 - `commit_and_push.bat` wordt vanaf deze versie standaard meegeleverd in de ZIP-root.
 - LOG/FT toont thematische rollen expliciet: `AGENS` voor subject/handelende deelnemer en `PATIENS` voor object/ondergaande deelnemer.
 - De syntaxrollen blijven `subject` en `object`; de functionele projectie benoemt dezelfde lexicale bronnen thematisch.
 
-## v4535
+## v4536
 
 - Groei-presentatie verfijnd: lexicale leaves verschijnen niet meer tegelijk.
 - Binnen dezelfde diepte/hoogte gebruikt Groei nu expliciete render-/presentatievolgorde: eerst bottom-up, bij gelijke hoogte boven-naar-beneden en daarna links-naar-rechts.
 - Voor `HOND BIJT MAN` verschijnen `HOND`, `MAN` en `BIJT` dus in aparte tussenstappen voordat categorieknopen, OPN-slot en LEX-regels volgen.
 
 
-## v4535 · stapsgewijze LEX-Wissels
+## v4536 · stapsgewijze LEX-Wissels
 
 - De boomgroei blijft deterministisch: binnen een groeilaag wordt gerenderd van boven naar beneden en daarna van links naar rechts.
 - Flip/layout wijzigt de berekende posities; daardoor kan de groeivolgorde indirect veranderen, maar de renderregel blijft ruimtelijk: boven → beneden, links → rechts.
 - In Assen verschijnt de LEX-as nu stapsgewijs: eerst de horizontale basisprojectie, daarna per stap één lokale Wissel met trace, daarna pas het volledige resultaat met projectiepanelen.
 - Verplaatsingen blijven lokaal op de LEX-as; er komen geen verplaatsingslijnen vanuit de boom.
 
-## v4535 · mobiele weergave
+## v4536 · mobiele weergave
 
 - Canvas staat op mobiel boven de bediening.
 - Toolbar wordt horizontaal scrollbaar in plaats van hoog gestapeld.
@@ -372,14 +404,14 @@
 - Bij resize/orientatie wissel rendert de viewer opnieuw.
 
 
-## v4535
+## v4536
 
 - Layout op alle platforms stage-first gemaakt.
 - Bovenaan: Projectie-window links, boom/canvas rechts.
 - Toolbar, status, uitleg en bewerkpanelen volgen onder de stage.
 
 
-## v4535 - beweeglijke boom/LEX-view
+## v4536 - beweeglijke boom/LEX-view
 
 - Boom en LEX-as zijn niet meer vast in het canvas.
 - Sleep in het SVG-canvas om de view te verplaatsen.
@@ -387,7 +419,7 @@
 - Shift + muiswiel pant horizontaal.
 - FIT herstelt de automatische view.
 
-## v4535 · boom links, projectie rechts
+## v4536 · boom links, projectie rechts
 
 - Boom/LEX-canvas staat nu links in de hoofd-stage.
 - Projectie-instellingen staan rechts naast de boom.
@@ -451,7 +483,7 @@ To render the visible LEX axis correctly, an explicit movement rule is always re
 
 ## v4506 - LEX adverb insertion slots
 
-Free LEX insertions for adverbs are now documented as slot types with different scope. The base rule remains: reserve slots between visible LEX boxes and place the slot on vertical overlap when such overlap exists. The adverb type then determines the precise placement.
+Adverb placement is now documented as host-box placement. The base rule is no longer to reserve slots between visible LEX boxes: choose a valid syntactic host box (`S`, `NP`, `VP`, `V`, `PP`, `AP`) and render the adverb above it.
 
 - Time: `GISTEREN`, `MORGEN` - usually `VP-BETWEEN`, optionally `S-LEFT` when fronted.
 - Frequency: `VAAK`, `SOMS`, `ALTIJD` - `VP-BETWEEN`.
@@ -459,13 +491,13 @@ Free LEX insertions for adverbs are now documented as slot types with different 
 - Manner: `SNEL`, `HARD`, `ZACHTJES` - `V-NEAR` or `VP-RIGHT`.
 - Sentence adverb: `MISSCHIEN`, `WAARSCHIJNLIJK`, `HELAAS` - high `S/VP` or `S-LEFT`.
 - Focus: `ALLEEN`, `OOK`, `ZELFS` - beside the focused phrase.
-- Degree: `HEEL`, `ERG`, `ZEER` - internal to `AP/AdvP/NP`, not a general between-box slot.
+- Degree: `HEEL`, `ERG`, `ZEER` - internal to `AP/AdvP/NP`, not a general hostless adverb position.
 
 The central tree is not rewritten. In this phase, adverbs belong to the LEX render layer or to phrase-internal slots.
 
 See also: `docs/LEX_ADVERB_INSERT_SLOTS_EN.md`.
 
-## v4535 - Config: zichtbare LEX-bijwoordinsert
+## v4536 - Config: zichtbare LEX-bijwoordinsert
 
 - De Config-weergave is hersteld: de velden in `Dynamische boomweergave` overlappen niet meer.
 - `LEX insertie` is apart en zichtbaar gemaakt als `Bijwoord / LEX-insert op LEX-as`.
@@ -477,28 +509,28 @@ See also: `docs/LEX_ADVERB_INSERT_SLOTS_EN.md`.
 - De Config-topbalk blijft sticky boven de scrollende instellingen.
 
 
-## v4535 - Uitleg uit Config, naar Help/docs
+## v4536 - Uitleg uit Config, naar Help/docs
 
 - Het blok `Uitleg` wordt niet meer getoond in Config.
 - Config blijft beperkt tot instellingen en beheer.
 - Help bevat nu kaarten voor:
   - Boom eerst
   - Recursie-techniek in de boom
-  - Bijwoord-inserts op de LEX-as
+  - Bijwoordboxen boven syntaxboxen
   - Render-uitleg
 - Documentatie toegevoegd:
   - `docs/RENDER_EXPLANATION.md`
   - `docs/RENDER_EXPLANATION_EN.md`
 - Engelse Help-tekst is mee bijgewerkt.
 
-## v4535 - Oude tijdsinsertingtest verwijderd
+## v4536 - Oude tijdsinsertingtest verwijderd
 
 - De eerdere vaste tijdsinsertingtest is uit de UI, Config, Help en documentatie verwijderd.
 - Standaard: `LEX-slots: 0` en insertinhoud `slot leeg`.
 - De nieuwere bijwoordplaatsingen blijven intact: tijd, frequentie, negatie, wijze, zinsbijwoord, focus en graad.
-- De structurele plaatsingsmechaniek blijft gelijk: tussenbox/overlap/domeinslot; alleen het oude concrete testwoord is verwijderd.
+- De structurele plaatsingsmechaniek blijft gelijk: hostbox boven S/NP/VP/V/PP/AP; alleen het oude concrete testwoord is verwijderd.
 
-## v4535 - VSO-! and VOS-! labels
+## v4536 - VSO-! and VOS-! labels
 
 VSO and VOS are now marked in the same way as OSV: `VSO-!` and `VOS-!`. The label means that the box approach cannot produce this order as a base alternative. Correct LEX rendering requires an explicit movement rule. Existing trees and existing flip behaviour remain untouched.
 
@@ -533,6 +565,55 @@ VSO and VOS are now marked in the same way as OSV: `VSO-!` and `VOS-!`. The labe
 - Oude opslagkeys blijven staan als veiligheidskopie en worden niet automatisch verwijderd bij bewaren.
 
 
-## v4535 - LEX slot 0 boven S
+## v4536 - LEX slot 0 boven S
 
 Slot 0 op de LEX-as staat in de gecombineerde Assen-weergave weer boven de centrale S/CLAUSE-root. Bronknopen blijven op hun eigen hoogte; alleen de lokale LEX-systeemslots starten hoger.
+
+
+## v4538 — bijwoordvoorbeeldset
+
+- Toegevoegd: `examples-adverbs.html`.
+- Toegevoegd: `docs/LEX_ADVERB_EXAMPLE_SET.md`.
+- Toegevoegd: `samples/adverb_host_examples_v4538.json`.
+- `examples-input.html` is hersteld als oorspronkelijke basisvoorbeeldset; de bijwoordtestset staat apart in `examples-adverbs.html`.
+- Eén bijwoord per voorbeeldzin.
+- Default-host per categorie: MODALITEIT→S, TIJD→S, FREQUENTIE→VP, PLAATS→VP, NEGATIE→V, GRAAD→AP, WIJZE→V, REDEN/OORZAAK→S, VOORWAARDE→S, FOCUS→NP.
+- Geforceerde afwijkingen krijgen notatie `functional:marked-host`.
+
+
+## v4538 — herstel eerste voorbeeldset
+
+- `examples-input.html` is teruggezet naar de oorspronkelijke basisvoorbeeldset.
+- Bijwoordvoorbeelden staan apart in `examples-adverbs.html`, `docs/LEX_ADVERB_EXAMPLE_SET.md` en `samples/adverb_host_examples_v4537.json`.
+- De eerste voorbeeldset bevat dus weer alleen de bestaande HOND/BIJT/MAN t/m VROUW/BREIT/TRUI voorbeelden.
+
+## v4539 — ZIN + Met bijwoord
+
+- Hoofdbeeld: naast de bestaande dropdown **Zin** staat nu een tweede dropdown **Met bijwoord**.
+- De eerste voorbeeldset in `examples-input.html` blijft intact.
+- De bijwoorddropdown leest `examples-adverbs.html` en projecteert het gekozen bijwoord als hosted bijwoordbox boven de geldige syntaxhost: `S`, `NP`, `VP`, `V`, `PP` of `AP`.
+- Keuze `Geen bijwoord` verwijdert de bijwoordbox.
+- Gemarkeerde plaatsingen blijven functioneel genoteerd als `functional:marked-host`; de syntactische boom wordt niet gemuteerd.
+
+## v4541 — bijwoorden op LEX-as, hostbox alleen als hoogteanker
+
+- `boven S/NP/VP/V/PP/AP` betekent nu: LEX-slot op de LEX-as, verticaal net boven die hostbox.
+- Bijwoorden worden niet meer op/boven de syntaxboom getekend.
+- De host-subboom schuift lager om visuele ruimte te maken.
+- De notatie gebruikt `LEX-ADV[..., axis=LEX, source=external, host=...]`.
+
+
+## v4546 — Boven S activeert V2/inversie
+
+- `host=S` / `LEX-slot boven S` betekent nu automatisch: extern bijwoord voorop op de LEX-as.
+- De persoonsvorm wordt naar `slot 2 · V2/PV` gezet.
+- Subject en object volgen na V2 op de LEX-as.
+- Het bijwoordslot staat letterlijk net boven de S-box; andere hosts blijven lokale LEX-slots boven hun hostbox.
+- Voorbeeld: `GISTEREN | BEET | HOND | MAN`, niet `HOND | BEET | GISTEREN | MAN`.
+
+## v4546 — klikbare gemarkeerde bijwoordvariant
+
+- Bijwoordslots op de LEX-as zijn nu klikbare knopen wanneer er een gemarkeerde/ongemarkeerde tegenhanger bestaat.
+- Klik op het bijwoordslot wisselt bijvoorbeeld `WAARSCHIJNLIJK` default naar `WAARSCHIJNLIJK · gemarkeerd boven V`.
+- Klik op de gemarkeerde variant wisselt terug naar de ongemarkeerde/defaultvariant.
+- De bijwoordplaatsing blijft extern, op de LEX-as. De SYNT-boom wordt niet gemuteerd.

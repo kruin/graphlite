@@ -1,3 +1,8 @@
+
+## v4540 - Bijwoorden als externe LEX-slots
+
+Bijwoordplaatsing blijft volledig op de LEX-as. `Boven S/NP/VP/V/PP/AP` betekent: plaats een extern LEX-slot verticaal net boven de gekozen syntactische hostbox. Het bijwoord wordt niet op de syntaxboom getekend en is geen projectie uit de basisboom. De host-subboom wordt lager gezet om ruimte te maken. Notatie: `LEX-ADV[..., axis=LEX, source=external, host=...]`.
+
 # Next steps v4430
 
 ## Na v4430
@@ -43,3 +48,14 @@
 - Vraagzin als echt voorbeeldtype toevoegen.
 - Per zinstype automatische validatie toevoegen: resultaat moet exact de voorbeeldzin zijn.
 - Visueel controleren dat de LEX-as niet comprimeert en dat traces op de oude basisplek blijven.
+
+
+## v4537 — bijwoordvoorbeeldset
+
+- Toegevoegd: `examples-adverbs.html`.
+- Toegevoegd: `docs/LEX_ADVERB_EXAMPLE_SET.md`.
+- Toegevoegd: `samples/adverb_host_examples_v4537.json`.
+- `examples-input.html` bevat nu een aparte bijwoordtestset naast HOND BIJT MAN / VROUW BREIT TRUI.
+- Eén bijwoord per voorbeeldzin.
+- Default-host per categorie: MODALITEIT→S, TIJD→S, FREQUENTIE→VP, PLAATS→VP, NEGATIE→V, GRAAD→AP, WIJZE→V, REDEN/OORZAAK→S, VOORWAARDE→S, FOCUS→NP.
+- Geforceerde afwijkingen krijgen notatie `functional:marked-host`.

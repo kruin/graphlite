@@ -233,7 +233,7 @@ resultaat = voorbeeldzin
 
 ## v4478 · configureerbare vrije LEX-slots
 
-Vrije slots zijn nu gesplitst in twee soorten. **Boom vrije rijen** reserveren lege ruimte onder de wortel van de centrale OPN-boom. **LEX vrije slots** zijn configureerbare, plaatsbare insertiepunten op de LEX-as. Ze zijn voorbereid op toekomstig gebruik: insertie van lexicale elementen uit andere LEX-assen/andere bomen, bijvoorbeeld bijwoordelijke onthoofde zinnen, en anaforische elementen uit andere zinnen of uitingen. De export noteert daarom `lex_free_slot_count`, `lex_free_slot_placement` en een schema voor toekomstige bronnen. De NOORD-as blijft als mogelijke toekomstige as genoteerd, maar is nog niet actief.
+Vrije slots zijn nu gesplitst in twee soorten. **Boom vrije rijen** reserveren lege ruimte onder de wortel van de centrale OPN-boom. **LEX vrije slots** zijn configureerbare, bijwoordboxen boven syntactische categorieboxen. Ze zijn voorbereid op toekomstig gebruik: insertie van lexicale elementen uit andere LEX-assen/andere bomen, bijvoorbeeld bijwoordelijke onthoofde zinnen, en anaforische elementen uit andere zinnen of uitingen. De export noteert daarom `lex_free_slot_count`, `lex_free_slot_placement` en een schema voor toekomstige bronnen. De NOORD-as blijft als mogelijke toekomstige as genoteerd, maar is nog niet actief.
 
 ## v4505 - OSV-! en LEX-rendering
 
@@ -247,13 +247,13 @@ Voor een correcte zichtbare LEX-as moet altijd een expliciete verplaatsingsregel
 
 Vrije LEX-inserts voor bijwoorden zijn nu gedocumenteerd als slottypen met verschillende scope. De basisregel blijft: reserveer slots tussen zichtbare LEX-boxen en plaats het slot op verticale overlap als die bestaat. Daarna bepaalt het bijwoordtype de exacte plaatsing.
 
-- Tijd: `GISTEREN`, `MORGEN` - meestal `VP-BETWEEN`, eventueel `S-LEFT` bij vooropplaatsing.
-- Frequentie: `VAAK`, `SOMS`, `ALTIJD` - `VP-BETWEEN`.
-- Negatie: `NIET` - apart `NEG`/`V-NEAR` slot.
-- Wijze: `SNEL`, `HARD`, `ZACHTJES` - `V-NEAR` of `VP-RIGHT`.
-- Zinsbijwoord: `MISSCHIEN`, `WAARSCHIJNLIJK`, `HELAAS` - hoog `S/VP` of `S-LEFT`.
+- Tijd: `GISTEREN`, `MORGEN` - meestal `VP-HOST`, eventueel `S-HOST` bij vooropplaatsing.
+- Frequentie: `VAAK`, `SOMS`, `ALTIJD` - `VP-HOST`.
+- Negatie: `NIET` - apart `NEG`/`V-HOST` slot.
+- Wijze: `SNEL`, `HARD`, `ZACHTJES` - `V-HOST` of `VP-RIGHT`.
+- Zinsbijwoord: `MISSCHIEN`, `WAARSCHIJNLIJK`, `HELAAS` - hoog `S/VP-HOST` of `S-HOST`.
 - Focus: `ALLEEN`, `OOK`, `ZELFS` - bij de gefocuste phrase.
-- Graad: `HEEL`, `ERG`, `ZEER` - intern in `AP/AdvP/NP`, dus geen algemeen tussenbox-slot.
+- Graad: `HEEL`, `ERG`, `ZEER` - intern in `AP/AdvP/NP`, dus geen algemeen syntaxboomlabel; plaats als extern LEX-slot met AP/AdvP-hosthoogte.
 
 De centrale boom wordt niet herschreven. Bijwoorden horen in deze fase in de LEX-renderlaag of in phrase-interne slots.
 

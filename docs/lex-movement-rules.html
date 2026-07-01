@@ -17,6 +17,8 @@
   </style>
 </head>
 <body>
+<section><h2>v4536 bijwoordhost</h2><p>Bijwoorden worden niet tussen boxen geplaatst. Zij staan boven een geldige syntactische categoriebox: S, NP, VP, V, PP of AP.</p></section>
+
   <nav class="topbar">
     <a href="../index.html?v4506">Viewer</a>
     <a href="docs-home.html?v4506">Docs</a>
@@ -235,7 +237,7 @@ resultaat = voorbeeldzin
   
 <section>
 <h2>v4506 · Configureerbare vrije LEX-slots</h2>
-<p><strong>Boom vrije rijen</strong> reserveren lege ruimte in de centrale boom. <strong>LEX vrije slots</strong> zijn aparte, plaatsbare insertiepunten op de LEX-as. Ze zijn bedoeld voor latere insertie van materiaal uit andere LEX-assen/andere bomen, zoals bijwoordelijke onthoofde zinnen, en voor anaforische elementen uit andere zinnen of uitingen. De NOORD-as blijft mogelijk, maar is nog niet actief.</p>
+<p><strong>Boom vrije rijen</strong> reserveren lege ruimte in de centrale boom. <strong>LEX vrije slots</strong> zijn bijwoordboxen boven syntactische categorieboxen. Ze zijn bedoeld voor latere insertie van materiaal uit andere LEX-assen/andere bomen, zoals bijwoordelijke onthoofde zinnen, en voor anaforische elementen uit andere zinnen of uitingen. De NOORD-as blijft mogelijk, maar is nog niet actief.</p>
 </section>
 
 <section>
@@ -248,10 +250,10 @@ resultaat = voorbeeldzin
 <h2>v4506 - LEX-bijwoordslots</h2>
 <p>Bijwoord-inserts krijgen niet één algemene plaats. De LEX-as reserveert vrije slots tussen boxen; bij verticale overlap komt het slot op de overlap. Daarna bepaalt de scope het domein.</p>
 <ul>
-<li><strong>Tijd/frequentie:</strong> GISTEREN, MORGEN, VAAK, SOMS, ALTIJD - tussenbox/VP-slot.</li>
+<li><strong>Tijd/frequentie:</strong> GISTEREN, MORGEN, VAAK, SOMS, ALTIJD - hostbox VP/S.</li>
 <li><strong>Negatie:</strong> NIET - apart NEG/V-nabij slot.</li>
 <li><strong>Wijze:</strong> SNEL, HARD, ZACHTJES - V-nabij of VP-rechts.</li>
-<li><strong>Zinsbijwoord:</strong> MISSCHIEN, WAARSCHIJNLIJK, HELAAS - hoog S/VP of S-links.</li>
+<li><strong>Zinsbijwoord:</strong> MISSCHIEN, WAARSCHIJNLIJK, HELAAS - hoog S/VP-HOST of S-links.</li>
 <li><strong>Focus:</strong> ALLEEN, OOK, ZELFS - bij de gefocuste phrase.</li>
 <li><strong>Graad:</strong> HEEL, ERG, ZEER - AP/AdvP-intern.</li>
 </ul>
