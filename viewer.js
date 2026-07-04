@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'v4546';
+  const VERSION = 'v4547';
   const BASE_CELL = 74;
   const ROOT_SIDE_GAP = 1;
   const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -518,14 +518,14 @@
     if (!adv?.word) return isEnglish() ? 'adverb=none' : 'bijwoord=geen';
     if (activeAdverbIsFronted()) {
       return isEnglish()
-        ? `adverb=${adv.word} fronted on LEX slot 1; finite verb remains V2`
-        : `bijwoord=${adv.word} voorop op LEX-slot 1; persoonsvorm blijft V2`;
+        ? `adverb=${adv.word} step 1: inserted on LEX slot 1 before movement; finite verb remains V2`
+        : `bijwoord=${adv.word} stap 1: ingevoegd op LEX-slot 1 vóór verplaatsingen; persoonsvorm blijft V2`;
     }
     const host = adv.host || adv.defaultHost || '?';
     const marked = adv.placement === 'marked' ? (isEnglish() ? ', marked' : ', gemarkeerd') : '';
     return isEnglish()
-      ? `adverb=${adv.word} on LEX above ${host}${marked}`
-      : `bijwoord=${adv.word} op LEX boven ${host}${marked}`;
+      ? `adverb=${adv.word} step 1: on LEX above ${host}${marked}, before movement rules`
+      : `bijwoord=${adv.word} stap 1: op LEX boven ${host}${marked}, vóór verplaatsingsregels`;
   }
 
   function adverbOptionIsMarked(option) {
@@ -1615,7 +1615,7 @@
     for (let index = 0; index < dy; index += 1) {
       slots.push({
         id: `lex-adverb-axis-slot-${index + 1}`,
-        label: dy > 1 ? `LEX-slot boven ${hostLabel} ${index + 1}` : `LEX-slot boven ${hostLabel}`,
+        label: dy > 1 ? `stap 1 · LEX-slot boven ${hostLabel} ${index + 1}` : `stap 1 · LEX-slot boven ${hostLabel}`,
         hostId: shiftedHost.id,
         hostLabel,
         x: shiftedHost.x,
@@ -2801,7 +2801,7 @@
       return [{
         id: 'lex-adverb-fronted-slot-1',
         y: slotY,
-        label: 'slot 1 · BIJWOORD voorop',
+        label: 'stap 1 · BIJWOORD voorop',
         hostLabel: 'S/V2',
         content,
         marked: adverbOptionIsMarked(activeAdverbOption()),
@@ -2818,7 +2818,7 @@
         return stored.slice(0, count).map((slot, index) => ({
           id: slot.id || `lex-adverb-axis-slot-${index + 1}`,
           y: slot.py,
-          label: slot.label || `LEX-slot boven ${slot.hostLabel || adverbHostLabelFromPlacement(placement, content)}`,
+          label: slot.label || `stap 1 · LEX-slot boven ${slot.hostLabel || adverbHostLabelFromPlacement(placement, content)}`,
           hostLabel: slot.hostLabel || adverbHostLabelFromPlacement(placement, content),
           content,
           marked: !!slot.marked,
@@ -2836,7 +2836,7 @@
       return Array.from({ length: count }, (_unused, index) => ({
         id: `lex-adverb-axis-slot-${index + 1}`,
         y: y0 + 40 + index * 64,
-        label: `LEX-slot boven ${hostLabel}`,
+        label: `stap 1 · LEX-slot boven ${hostLabel}`,
         hostLabel,
         content,
         marked: adverbOptionIsMarked(activeAdverbOption()),
@@ -2856,7 +2856,7 @@
     const toggleLabel = slot.toggleLabel || adverbMarkedToggleLabel();
     const hasToggle = !!slot.toggleTargetId;
     const sub = slot.hostLabel
-      ? `extern · LEX-as · boven ${slot.hostLabel}${marked}`
+      ? `extern · LEX-as · vóór Wissels · boven ${slot.hostLabel}${marked}`
       : (lexInsertionContentSub(content) || 'andere LEX-as / anafoor');
     const group = svgEl('g', {
       class: `lex-adverb-axis-slot-node${slot.marked ? ' marked' : ''}${hasToggle ? ' clickable' : ''}`,
@@ -3226,13 +3226,17 @@
     g.appendChild(svgEl('line', { x1: x, y1: axisMinY, x2: x, y2: axisMaxY, class: 'lex-axis-line' }));
 
     const positions = new Map();
+    // v4547: de afleidingsvolgorde op de LEX-as is expliciet:
+    // 1) externe bijwoordinserties op hun hosthoogte;
+    // 2) daarna pas LEX-Wissels/V2/topic. Daardoor kan een bijwoord
+    //    visueel achterblijven boven de trace van een later verplaatst item.
+    configuredSlots.forEach(slot => drawLexConfiguredFreeSlot(g, x, slot));
     if (topicSlotY !== null && isMainV2Rule() && !frontedAdverb) drawLexTopicSlot(g, x, topicSlotY);
     if (v2SlotY !== null) drawLexV2Slot(g, x, v2SlotY);
-    configuredSlots.forEach(slot => drawLexConfiguredFreeSlot(g, x, slot));
 
     const ruleText = isMainV2Rule()
-      ? `Plaatsingsregel: basisprojectie + Wissels naar 0/1/2; configureerbare bijwoordslots / voorop-bijwoord (${lexFreeSlotCount()} · ${lexSlotPlacementLabel()}) staan op de LEX-as; de gekozen hostbox wordt lager gezet om ruimte te maken.`
-      : `Plaatsingsregel: resultaat = voorbeeldzin; Comp gebruikt slot 0; configureerbare bijwoordslots / voorop-bijwoord (${lexFreeSlotCount()} · ${lexSlotPlacementLabel()}) staan op de LEX-as; de gekozen hostbox wordt lager gezet om ruimte te maken.`;
+      ? `Plaatsingsregel: eerst bijwoordinsertie op de LEX-as, daarna Wissels naar 0/1/2; configureerbare bijwoordslots / voorop-bijwoord (${lexFreeSlotCount()} · ${lexSlotPlacementLabel()}) staan op de LEX-as; de gekozen hostbox wordt lager gezet om ruimte te maken; bijwoord kan boven een latere trace achterblijven.`
+      : `Plaatsingsregel: eerst bijwoordinsertie op de LEX-as, daarna eventuele plaatsingsregels; Comp gebruikt slot 0; configureerbare bijwoordslots / voorop-bijwoord (${lexFreeSlotCount()} · ${lexSlotPlacementLabel()}) staan op de LEX-as; de gekozen hostbox wordt lager gezet om ruimte te maken; bijwoord kan boven een latere trace achterblijven.`;
     drawCanvasGuideText(g, x + 150, axisMinY + 18, ruleText, 'wissel-label');
 
     // v4450: geen stippel- of verplaatsingslijnen vanuit de boom naar de LEX-as.
@@ -3573,7 +3577,7 @@
       .map(id => functionalNodes.find(n => n.id === id)?.label || id)
       .join(' + ') || 'role-boxen';
     if (options.showTitle !== false) drawAxisTitle(g, origin.x - 180, origin.y - 70, `OPN · functionele structuur · ${rootLabel} → ${roleNames} · ${state.functionalOrder}`);
-    drawAxisTitle(g, origin.x - 176, origin.y - 48, `v4546 · ${branchModeLabel()} · vrije plaatsing + LEX-bijwoordslots`);
+    drawAxisTitle(g, origin.x - 176, origin.y - 48, `v4547 · ${branchModeLabel()} · vrije plaatsing + LEX-bijwoordslots`);
     const growthPlan = growthPlanForLayout(layout);
     layout.__growthPlan = growthPlan;
     drawSubtreeBoxes(g, layout, origin, growthPlan);
@@ -4270,7 +4274,7 @@
       ? (isEnglish()
         ? `Branch extension: ${[...selected].map(lexInsertionTargetLabel).join(' + ')}. Adverb placement uses LEX slots with host height; branch extension is not needed here.`
         : `Takverlenging: ${[...selected].map(lexInsertionTargetLabel).join(' + ')}. Bijwoordplaatsing gebruikt LEX-slots met hosthoogte; takverlenging is hier niet nodig.`)
-      : (isEnglish() ? 'No branch extension: the adverb is rendered above the chosen syntax box.' : 'Geen takverlenging: bijwoord staat boven de gekozen syntaxbox.');
+      : (isEnglish() ? 'No branch extension: the adverb slot is placed first on the LEX axis above its host; later exchanges can leave a trace below it.' : 'Geen takverlenging: bijwoordslot staat eerst op de LEX-as boven de host; latere Wissels kunnen er een trace onder achterlaten.');
     document.querySelectorAll('[data-lex-extension-help]').forEach(node => {
       node.textContent = text;
       node.title = [...selected].map(lexInsertionTargetTip).join(' ');

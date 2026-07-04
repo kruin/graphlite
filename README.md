@@ -1,10 +1,23 @@
-# OpenGraph Lite Viewer v4546
+# OpenGraph Lite Viewer v4547
 
-## v4546 - bijwoord voorop = V2
+
+## v4547 - bijwoord vóór verplaatsing
+
+Bijwoorden worden nu eerst als externe LEX-slots geplaatst. Daarna pas komen V2/topic/post-V2-Wissels aan de orde. Daardoor kan een bijwoord op zijn oorspronkelijke hosthoogte blijven staan, terwijl het bijbehorende zinsdeel later een trace achterlaat.
+
+Voorbeeldprincipe:
+
+```text
+1. LEX-ADV boven NP
+2. NP wisselt naar slot 1
+3. bijwoord blijft boven de oorspronkelijke NP/trace
+```
+
+## v4547 - bijwoord voorop = V2
 
 Bijwoordelijke vooropplaatsing is gecorrigeerd: `GISTEREN BEET HOND MAN` is hoofdzin-V2/inversie, niet bijzinsvolgorde. Het bijwoord is een externe LEX-insertie in slot 1; de persoonsvorm blijft slot 2. Bijzinsvolgorde blijft gekoppeld aan een bindterm/complementizer zoals `omdat`.
 
-## v4546 - LEX-bijwoordslot volgt echte hostbox
+## v4547 - LEX-bijwoordslot volgt echte hostbox
 
 Fix: bijwoordslots op de LEX-as gebruiken nu de bewaarde `lexAdverbAxisSlots` uit de syntaxlayout. Daardoor valt `boven VP/V/AP/NP` niet langer terug op de S-hoogte. Ook de losse LEX-view gebruikt een onzichtbare syntax-ankerkaart voor de correcte hostboxhoogte.
 
@@ -86,10 +99,10 @@ De bijwoordkeuze verandert de centrale syntactische boom niet.
 
 Met `boven S/NP/VP/V/PP/AP` wordt bedoeld: een LEX-slot op de LEX-as, verticaal net boven de gekozen syntactische box. Het bijwoord wordt nergens op de syntaxboom getekend en komt niet als projectie uit de basisboom. De gekozen host-subboom schuift lager om ruimte te maken.
 
-### v4546: Boven S = V2/inversie
+### v4547: Boven S = V2/inversie
 
 Bijwoordplaatsing `boven S` is nu geen gewone lokale hostplaatsing meer. In GraphLite betekent dit: het bijwoord vult een extern LEX-slot net boven de S-box en staat daarmee voorop. In een hoofdzin activeert dit V2/inversie: `BIJWOORD | PV | SUBJECT | OBJECT`.
 
-### v4546 — klikbare gemarkeerde bijwoordvariant
+### v4547 — klikbare gemarkeerde bijwoordvariant
 
 De bijwoordbox op de LEX-as is nu zelf een klikbare knoop als er een tegenhanger bestaat. Klik op een ongemarkeerde bijwoordbox om de gemarkeerde variant te tonen; klik op de gemarkeerde bijwoordbox om terug te gaan. Dit verandert alleen de LEX-host/markering, niet de centrale boom.

@@ -48,7 +48,7 @@ S, NP, VP, V, PP, AP
 ```
 
 
-## v4546 — vooropplaatsing van bijwoorden
+## v4547 — vooropplaatsing van bijwoorden
 
 Regel: een bijwoord dat als eerste zinsdeel wordt gekozen, activeert geen bijzinsvolgorde. Het vult een extern LEX-slot in het voorveld:
 
@@ -68,3 +68,21 @@ Bijzin blijft apart en vereist een bindterm/complementizer, bijvoorbeeld `omdat`
 ```text
 OMDAT | HOND | GISTEREN | MAN | BIJT
 ```
+
+## v4547 — bijwoorden vóór verplaatsingen
+
+De LEX-afleiding is nu expliciet geordend:
+
+1. Eerst wordt het externe bijwoordslot op de LEX-as geplaatst, met de gekozen hostbox alleen als hoogteanker.
+2. Daarna pas worden LEX-Wissels toegepast, zoals topic/V2/post-V2.
+
+Gevolg: een bijwoord kan blijven staan op de oorspronkelijke hosthoogte, terwijl het gehoste element later verplaatst wordt. De trace blijft dan zichtbaar onder/naast het oorspronkelijke punt; het bijwoord is niet mee verplaatst.
+
+Voorbeeldnotatie:
+
+```text
+LEX-ADV[word=ALLEEN, class=FOCUS, axis=LEX, defaultHost=NP, host=NP, source=external, order=before-movement]
+LEX-MOVE[source=subject, target=slot1, trace=t[subject], order=after-adverb]
+```
+
+Dit blijft een LEX/FUNC-regel. De SYNT-boom wordt niet gemuteerd.
