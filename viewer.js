@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'v4547';
+  const VERSION = 'v4550';
   const BASE_CELL = 74;
   const ROOT_SIDE_GAP = 1;
   const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -281,14 +281,29 @@
     { id: '8', label: 'LEX-slots: 8' }
   ];
 
-  const VALID_ADVERB_HOST_BOXES = new Set(['S', 'NP', 'VP', 'V', 'PP', 'AP']);
+  const VALID_ADVERB_HOST_BOXES = new Set(['S', 'NP', 'VP', 'V', 'V-CLUSTER', 'PP', 'AP']);
+
+  const ADVERB_PLACEMENT_RULES = [
+    {"category": "MODALITEIT", "examples": ["waarschijnlijk", "misschien", "zeker"], "defaultHost": "S", "defaultMarking": "functional:fronted-v2", "defaultMeaning": "zinsmodaal: scope over de hele propositie; in hoofdzin als vooropplaatsing met V2/PV in slot 2", "markedHosts": ["VP", "V"], "markedMarking": "functional:marked-host", "markedMeaning": "smallere/predicaatnabije lezing of contrastieve focus"},
+    {"category": "TIJD", "examples": ["gisteren", "morgen", "nu", "straks"], "defaultHost": "S", "defaultMarking": "functional:fronted-v2", "defaultMeaning": "tijdskader voor de hele zin; voorop op de LEX-as activeert V2/inversie", "markedHosts": ["VP", "V-CLUSTER"], "markedMarking": "functional:marked-host", "markedMeaning": "tijdskader lager in het predicaat-/VP-domein; geen automatische V2 wanneer niet in slot 1"},
+    {"category": "FREQUENTIE", "examples": ["vaak", "soms", "altijd", "zelden"], "defaultHost": "VP", "defaultMarking": "functional:default-host", "defaultMeaning": "frequentie van de VP/gebeurtenis", "markedHosts": ["S", "V"], "markedMarking": "functional:marked-host", "markedMeaning": "S = zinsbreed/focus; V = predicaatnabij of smaller bereik"},
+    {"category": "PLAATS", "examples": ["daar", "hier", "buiten", "ergens"], "defaultHost": "VP", "defaultMarking": "functional:default-host", "defaultMeaning": "plaats van gebeurtenis in het VP-domein", "markedHosts": ["PP", "S"], "markedMarking": "functional:marked-host", "markedMeaning": "PP = gekoppeld aan expliciete plaatsphrase; S = topicale/vooropgezette plaats"},
+    {"category": "NEGATIE", "examples": ["niet", "nooit", "nergens"], "defaultHost": "V", "defaultMarking": "functional:default-host", "defaultMeaning": "V-nabije negatie; bij perfectum boven V-CLUSTER, niet in de cluster", "markedHosts": ["VP", "S"], "markedMarking": "functional:marked-host", "markedMeaning": "bredere scope over VP of hele propositie"},
+    {"category": "GRAAD", "examples": ["heel", "erg", "zeer", "nogal"], "defaultHost": "AP", "defaultMarking": "functional:default-host", "defaultMeaning": "graadmodificatie van AP/kwaliteit", "markedHosts": ["V", "VP"], "markedMarking": "functional:marked-host", "markedMeaning": "gemarkeerde graad/intonatie of predicaatbrede intensivering"},
+    {"category": "WIJZE", "examples": ["hard", "snel", "zachtjes", "goed"], "defaultHost": "V", "defaultMarking": "functional:default-host", "defaultMeaning": "wijze van de handeling, predicaatnabij; bij perfectum boven V-CLUSTER", "markedHosts": ["VP", "S"], "markedMarking": "functional:marked-host", "markedMeaning": "VP = gebeurtenisbreed; S = sterk gemarkeerd/contrastief"},
+    {"category": "REDEN_OORZAAK", "examples": ["daarom", "daardoor", "zodoende"], "defaultHost": "S", "defaultMarking": "functional:fronted-v2", "defaultMeaning": "zinsverband/reden voor de hele propositie; voorop met V2", "markedHosts": ["VP"], "markedMarking": "functional:marked-host", "markedMeaning": "reden/oorzaak binnen het VP-domein of contrastief lager geplaatst"},
+    {"category": "VOORWAARDE", "examples": ["anders", "dan"], "defaultHost": "S", "defaultMarking": "functional:fronted-v2", "defaultMeaning": "zinsverband/voorwaarde; voorop met V2", "markedHosts": ["VP"], "markedMarking": "functional:marked-host", "markedMeaning": "voorwaardelijke lezing dichter bij predicaat/gebeurtenis"},
+    {"category": "FOCUS", "examples": ["alleen", "ook", "zelfs", "slechts"], "defaultHost": "NP", "defaultMarking": "functional:default-host", "defaultMeaning": "scope over de gefocuste phrase, meestal NP", "markedHosts": ["VP", "S"], "markedMarking": "functional:marked-host", "markedMeaning": "scope verschuift naar VP of hele zin; zichtbaar als functioneel gemarkeerd"}
+  ];
+
 
   const LEX_SLOT_PLACEMENTS = [
-    { id: 'above-selected-box', label: 'LEX-slot boven geselecteerde box', labelEn: 'LEX slot above selected box', host: 'selected', tip: 'Bijwoord komt als extern LEX-slot op de LEX-as, verticaal net boven de gekozen syntactische categoriebox. Geldig: S, NP, VP, V, PP, AP.' },
+    { id: 'above-selected-box', label: 'LEX-slot boven geselecteerde box', labelEn: 'LEX slot above selected box', host: 'selected', tip: 'Bijwoord komt als extern LEX-slot op de LEX-as, verticaal net boven de gekozen syntactische categoriebox. Geldig: S, NP, VP, V, V-CLUSTER, PP, AP.' },
     { id: 'above-s', label: 'LEX-slot boven S', labelEn: 'LEX slot above S', host: 'S', tip: 'Zinsbijwoord: extern LEX-slot op de LEX-as, net boven S. De S-ruimte wordt lager gezet waar nodig.' },
     { id: 'above-np', label: 'LEX-slot boven NP', labelEn: 'LEX slot above NP', host: 'NP', tip: 'Phrase/focus-bijwoord: extern LEX-slot op de LEX-as, net boven een NP-box.' },
     { id: 'above-vp', label: 'LEX-slot boven VP', labelEn: 'LEX slot above VP', host: 'VP', tip: 'VP-bijwoord: extern LEX-slot op de LEX-as, net boven de VP-box; de VP-subboom wordt lager gezet om ruimte te maken.' },
     { id: 'above-v', label: 'LEX-slot boven V', labelEn: 'LEX slot above V', host: 'V', tip: 'Wijze/negatie: extern LEX-slot op de LEX-as, net boven de V-box.' },
+    { id: 'above-vcluster', label: 'LEX-slot boven V-CLUSTER', labelEn: 'LEX slot above V-CLUSTER', host: 'V-CLUSTER', tip: 'V-cluster-bijwoord: extern LEX-slot op de LEX-as, boven de hele V-clusterbox, niet in de cluster.' },
     { id: 'above-pp', label: 'LEX-slot boven PP', labelEn: 'LEX slot above PP', host: 'PP', tip: 'PP-gerelateerd bijwoord: extern LEX-slot op de LEX-as, net boven de PP-box.' },
     { id: 'above-ap', label: 'LEX-slot boven AP', labelEn: 'LEX slot above AP', host: 'AP', tip: 'Graadwoord: extern LEX-slot op de LEX-as, net boven de AP-box.' }
   ];
@@ -1402,6 +1417,7 @@
 
   function hostToLexPlacement(host) {
     const h = String(host || '').trim().toLowerCase();
+    if (['vcluster', 'v-cluster', 'v_cluster'].includes(h)) return 'above-vcluster';
     if (['s', 'np', 'vp', 'v', 'pp', 'ap'].includes(h)) return `above-${h}`;
     return 'above-vp';
   }
@@ -1604,18 +1620,22 @@
     const host = findAdverbHostNode(layout, placement, content);
     if (!host) return layout;
     const hostLabel = activeAdverbHostLabel(content, placement);
-    const dy = Math.max(1, count);
+    const visibleSlotCount = Math.max(1, count);
+    // v4548: reserveer één extra gridrij. Het bijwoordslot ligt daardoor
+    // echt boven de hostbox (V-CLUSTER/NP/VP/etc.) en raakt/overlapt de
+    // box niet. De host wordt alleen als hoogteanker gebruikt.
+    const reserveRows = visibleSlotCount + 1;
     const beforeBox = hostBoxForNode(layout, host);
     const oldSlotTopY = beforeBox ? beforeBox.minY : host.y;
-    shiftSubtreeY(layout, host.id, dy);
+    shiftSubtreeY(layout, host.id, reserveRows);
     const shiftedHost = (layout.nodes || []).find(n => String(n.id) === String(host.id)) || host;
     const shiftedBox = hostBoxForNode(layout, shiftedHost);
-    const slotY0 = shiftedBox ? shiftedBox.minY - dy : oldSlotTopY;
+    const slotY0 = shiftedBox ? shiftedBox.minY - reserveRows : oldSlotTopY;
     const slots = [];
-    for (let index = 0; index < dy; index += 1) {
+    for (let index = 0; index < visibleSlotCount; index += 1) {
       slots.push({
         id: `lex-adverb-axis-slot-${index + 1}`,
-        label: dy > 1 ? `stap 1 · LEX-slot boven ${hostLabel} ${index + 1}` : `stap 1 · LEX-slot boven ${hostLabel}`,
+        label: visibleSlotCount > 1 ? `stap 1 · LEX-slot boven ${hostLabel} ${index + 1}` : `stap 1 · LEX-slot boven ${hostLabel}`,
         hostId: shiftedHost.id,
         hostLabel,
         x: shiftedHost.x,
@@ -1630,7 +1650,7 @@
       });
     }
     layout.lexAdverbAxisSlots = slots;
-    layout.lexAdverbAxisSpace = { count: dy, hostId: shiftedHost.id, hostLabel, placement, axis: 'LEX', source: 'external-lexical-insertion' };
+    layout.lexAdverbAxisSpace = { count: visibleSlotCount, reserveRows, hostId: shiftedHost.id, hostLabel, placement, axis: 'LEX', source: 'external-lexical-insertion' };
     return recomputeLayoutBox(layout);
   }
 
@@ -2612,6 +2632,8 @@
   }
 
   function categoryLabelForNode(node) {
+    const label = String(node?.label || '').trim().toUpperCase();
+    if (label === 'V-CLUSTER' || label === 'VCLUSTER') return 'V-CLUSTER';
     return String(node?.cat || node?.label || '').trim().toUpperCase();
   }
 
@@ -2626,8 +2648,16 @@
     return isValidAdverbHostNode(node) ? node : null;
   }
 
+  function adverbPlacementRuleForCategory(category) {
+    const key = String(category || '').trim().toUpperCase().replace(/[\s/-]+/g, '_');
+    return ADVERB_PLACEMENT_RULES.find(rule => rule.category === key) || null;
+  }
+
   function preferredAdverbHostLabel(def = lexInsertionContentDef()) {
-    const id = String(def?.id || '');
+    const adv = activeAdverbData();
+    const rule = adverbPlacementRuleForCategory(adv?.category || def?.category || '');
+    if (rule?.defaultHost && VALID_ADVERB_HOST_BOXES.has(rule.defaultHost)) return rule.defaultHost;
+    const id = String(def?.id || adv?.id || '').toLowerCase();
     if (['heel', 'erg', 'zeer'].includes(id)) return 'AP';
     if (['niet', 'snel', 'hard', 'zachtjes'].includes(id)) return 'V';
     if (['vaak', 'soms', 'altijd', 'ook', 'daar'].includes(id)) return 'VP';
@@ -2666,6 +2696,10 @@
     const wanted = activeAdverbHostLabel(def, placement);
     const fallback = preferredAdverbHostLabel(def);
     const nodes = orderedTreeNodes(layout).map(item => item.node);
+    const vCluster = nodes.find(node => isValidAdverbHostNode(node) && categoryLabelForNode(node) === 'V-CLUSTER');
+    // v4548: bij perfectum/werkwoordcluster betekent V-nabije plaatsing
+    // eerst: boven de hele V-CLUSTER-box. Niet in de cluster tussen AUX/VDW.
+    if (wanted === 'V' && vCluster) return vCluster;
     return nodes.find(node => isValidAdverbHostNode(node) && categoryLabelForNode(node) === wanted)
       || nodes.find(node => isValidAdverbHostNode(node) && categoryLabelForNode(node) === fallback)
       || nodes.find(isValidAdverbHostNode)

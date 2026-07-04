@@ -48,7 +48,7 @@ S, NP, VP, V, PP, AP
 ```
 
 
-## v4547 — vooropplaatsing van bijwoorden
+## v4548 — vooropplaatsing van bijwoorden
 
 Regel: een bijwoord dat als eerste zinsdeel wordt gekozen, activeert geen bijzinsvolgorde. Het vult een extern LEX-slot in het voorveld:
 
@@ -69,7 +69,7 @@ Bijzin blijft apart en vereist een bindterm/complementizer, bijvoorbeeld `omdat`
 OMDAT | HOND | GISTEREN | MAN | BIJT
 ```
 
-## v4547 — bijwoorden vóór verplaatsingen
+## v4548 — bijwoorden vóór verplaatsingen
 
 De LEX-afleiding is nu expliciet geordend:
 
@@ -86,3 +86,32 @@ LEX-MOVE[source=subject, target=slot1, trace=t[subject], order=after-adverb]
 ```
 
 Dit blijft een LEX/FUNC-regel. De SYNT-boom wordt niet gemuteerd.
+
+
+## v4548: boven betekent buiten de hostbox
+
+`boven NP`, `boven VP`, `boven V-CLUSTER`, enzovoort betekent: een extern LEX-slot op de LEX-as, op een rij vóór/boven de hostbox. Het slot wordt niet in de hostbox getekend. De hostbox/subboom wordt lager gezet om een vrije rij te maken.
+
+Notatie:
+
+```text
+LEX-ADV[word=HARD, class=WIJZE, axis=LEX, host=V-CLUSTER, placement=above-host, source=external, order=before-movement]
+```
+
+De host is alleen hoogteanker; de basisboom levert geen projectie voor het bijwoord.
+
+
+## v4550 — plaatsingsregels per bijwoordcategorie
+
+De app bevat nu een expliciete configtabel voor ongemarkeerde en gemarkeerde bijwoordplaatsing per categorie. Zie `docs/LEX_ADVERB_PLACEMENT_RULES.md` en `samples/adverb_placement_rules_v4550.json`.
+
+Kernregel:
+
+```text
+LEX-ADV eerst, LEX-Wissels daarna.
+host = defaultHost        -> functioneel ongemarkeerd
+host != defaultHost       -> functional:marked-host
+host=S in hoofdzin        -> functional:fronted-v2
+```
+
+Alle bijwoorden blijven externe inserties op de LEX-as. De hostbox is alleen hoogteanker; de basisboom wordt niet gemuteerd.

@@ -1,6 +1,6 @@
 <!doctype html>
-<!-- OPENGRAPH_ROOT_VIEWER_INDEX_v4543: this root index is the app, not docs. -->
-<html lang="nl" data-opengraph-app="viewer" data-version="v4543">
+<!-- OPENGRAPH_ROOT_VIEWER_INDEX_v4550: this root index is the app, not docs. -->
+<html lang="nl" data-opengraph-app="viewer" data-version="v4550">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
@@ -9,18 +9,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#0f172a">
   <meta name="description" content="OpenGraph Lite Viewer: vrije JAN-bronknopen, edits, LEX-plaatsingsregels en projecties.">
-  <title>OpenGraph Lite Viewer v4543</title>
+  <title>OpenGraph Lite Viewer v4550</title>
   <link rel="icon" href="favicon.ico" sizes="any">
   <link rel="icon" href="icons/icon-192.svg" type="image/svg+xml">
-  <!-- v4543: manifest disabled in local/dev build to avoid PWA/service-worker confusion. -->
+  <!-- v4550: manifest disabled in local/dev build to avoid PWA/service-worker confusion. -->
   <!-- <link rel="manifest" href="manifest.webmanifest"> -->
-  <link rel="stylesheet" href="styles.css?v4543">
+  <link rel="stylesheet" href="styles.css?v4550">
 </head>
 <body class="main-screen-active">
   <header class="app-header">
     <div>
       <div class="eyebrow">OpenGraph · JAN · Open Notation</div>
-      <h1>OpenGraph Lite Viewer <span class="version-tag">v4543</span></h1>
+      <h1>OpenGraph Lite Viewer <span class="version-tag">v4550</span></h1>
       <p class="header-subtitle">Redesign: eerst syntax-tree, daarna LEX-projectie, daarna lokale LEX-regel/Wissel (V2).</p>
     </div>
     <button id="installButton" class="ghost hidden" type="button">Installeer</button>
@@ -58,7 +58,7 @@
       <div>
         <div class="intro-kicker">Config</div>
         <h2>Alle instellingen</h2>
-        <p>Bijwoordslots op de LEX-as, layout, export en documentatie staan hier. Projectie, zin en Play/Groei staan in Main. Het hoofdbeeld blijft bewust leeg: grid + zin + Help + Config.</p>
+        <p>Bijwoordslots op de LEX-as, plaatsingsregels per bijwoordcategorie, layout, export en documentatie staan hier. Projectie, zin en Play/Groei staan in Main. Het hoofdbeeld blijft bewust leeg: grid + zin + Help + Config.</p>
       </div>
     </section>
 
@@ -85,7 +85,18 @@
         </article>
         <article class="help-doc-card">
           <h3 data-help-adverb-title>Bijwoordslots op de LEX-as</h3>
-          <p data-help-adverb-text><strong>Bijwoordplaatsing verschilt per scope.</strong> Bijwoorden staan niet tussen bestaande woordboxen en ook niet op de syntaxboom. Ze krijgen een extern LEX-slot op de LEX-as, verticaal net boven een geldige syntactische categoriebox. Geldige hosts: S, NP, VP, V, PP en AP. Tijd/modaliteit meestal boven S of VP; negatie en wijze boven V; graad boven AP; focus boven NP of VP.</p>
+          <p data-help-adverb-text><strong>Bijwoordplaatsing verschilt per scope.</strong> Bijwoorden staan niet tussen bestaande woordboxen en ook niet op de syntaxboom. Hostplaatsing krijgt een extern LEX-slot op de LEX-as, verticaal net boven S, NP, VP, V, PP of AP. Vooropplaatsing is apart: het bijwoord vult LEX-slot 1 en de persoonsvorm blijft V2 in slot 2; dit is hoofdzin-inversie, geen bijzinsvolgorde.</p>
+        </article>
+        <article class="help-doc-card">
+          <h3>Lexicale insertie: bijwoorden</h3>
+          <p><strong>Werking:</strong> een bijwoord komt niet uit de basisboom. GraphLite maakt eerst een extern <code>LEX-ADV</code>-slot op de LEX-as, boven de gekozen hostbox of trace. Daarna pas worden LEX-Wissels uitgevoerd. Daardoor kan het bijwoord achterblijven boven de oorspronkelijke positie, ook wanneer NP/VP/V later naar een ander LEX-slot wisselt.</p>
+          <ol>
+            <li><strong>Uitlezen:</strong> de dropdown levert <code>word</code>, <code>class</code>, <code>defaultHost</code>, <code>host</code> en <code>marking</code>.</li>
+            <li><strong>Default:</strong> <code>host = defaultHost</code> is ongemarkeerd, behalve <code>host=S</code> in een hoofdzin: dat is vooropplaatsing met V2.</li>
+            <li><strong>Gemarkeerd:</strong> <code>host != defaultHost</code> of expliciet <code>functional:marked-host</code>. De viewer toont dit met een klikbare gemarkeerde bijwoordknoop.</li>
+            <li><strong>Tekenen:</strong> de hostbox schuift lager om een vrije rij te maken; het bijwoordslot staat op de LEX-as boven die host, niet in de box.</li>
+          </ol>
+          <p><strong>Configregel:</strong> MODALITEIT/TIJD/REDEN/VOORWAARDE default boven <code>S</code>; FREQUENTIE/PLAATS boven <code>VP</code>; NEGATIE/WIJZE boven <code>V</code> of <code>V-CLUSTER</code>; GRAAD boven <code>AP</code>; FOCUS boven <code>NP</code>. Afwijkende host = functioneel gemarkeerd.</p>
         </article>
         <article class="help-doc-card">
           <h3 data-help-render-title>Render-uitleg</h3>
@@ -111,14 +122,15 @@
 
     <section class="toolbar" aria-label="Hoofdbediening">
       <div class="input-sentence-tools" aria-label="Zin-input">
-        <a class="button-link" href="examples-input.html?v4543" title="Open de HTML-inputfile met voorbeeldzinnen, subject vet en object cursief">HTML-input</a>
-        <a class="button-link" href="examples-adverbs.html?v4543" title="Voorbeeldset met één bijwoord per zin en default-host per categorie">Bijwoordvoorbeelden</a>
-        <a class="button-link" href="lexicon-config.html?v4543" title="Leesbare lexicon-config voor voorbeeldzinnen">Lexicon</a>
-        <a class="button-link" href="lexicon-editor.html?v4543" title="Lexicon én korte voorbeelduitingen beheren; exporteert lexicon-config.html en examples-input.html">Lexicon+uitingen-editor</a>
-        <a class="button-link" href="structure-editor.html?v4543" title="Bewerk eerst syntax-config en functional-config">Structure-editor</a>
-        <a class="button-link" href="docs/docs-home.html?v4543" title="Projectcontext, layoutspec en release notes">Docs</a>
-        <a class="button-link" href="lex-movement-rules.html?v4543" title="Simpele uitleg van de LEX-Wissels per zinstype">Plaatsingsregels</a>
-        <a class="button-link" href="reset-cache.html?v4543" title="Verwijder browsercache/service worker en open de viewer opnieuw">Reset cache</a>
+        <a class="button-link" href="examples-input.html?v4550" title="Open de HTML-inputfile met voorbeeldzinnen, subject vet en object cursief">HTML-input</a>
+        <a class="button-link" href="examples-adverbs.html?v4550" title="Voorbeeldset met één bijwoord per zin en default-host per categorie">Bijwoordvoorbeelden</a>
+        <a class="button-link" href="docs/LEX_ADVERB_PLACEMENT_RULES.md?v4550" title="Plaatsingsregels voor lexicale bijwoordinsertie: default en gemarkeerd">Bijwoordregels</a>
+        <a class="button-link" href="lexicon-config.html?v4550" title="Leesbare lexicon-config voor voorbeeldzinnen">Lexicon</a>
+        <a class="button-link" href="lexicon-editor.html?v4550" title="Lexicon én korte voorbeelduitingen beheren; exporteert lexicon-config.html en examples-input.html">Lexicon+uitingen-editor</a>
+        <a class="button-link" href="structure-editor.html?v4550" title="Bewerk eerst syntax-config en functional-config">Structure-editor</a>
+        <a class="button-link" href="docs/docs-home.html?v4550" title="Projectcontext, layoutspec en release notes">Docs</a>
+        <a class="button-link" href="lex-movement-rules.html?v4550" title="Simpele uitleg van de LEX-Wissels per zinstype">Plaatsingsregels</a>
+        <a class="button-link" href="reset-cache.html?v4550" title="Verwijder browsercache/service worker en open de viewer opnieuw">Reset cache</a>
       </div>
       <div class="button-row compact-actions">
         <button id="resetExampleButton" type="button" title="Herlaad het gekozen voorbeeld">Reset voorbeeld</button>
@@ -161,10 +173,32 @@
             <label class="field mini-field" title="Boom vrije rijen: lege ruimte onder de wortel in de centrale OPN-boom."><span>Boom vrije rijen</span><select id="freeSlotCountSelect"></select></label>
             <fieldset class="lex-adverb-insert-field" aria-label="Bijwoordslot op LEX-as">
               <legend>Bijwoordslot op LEX-as</legend>
-              <p class="top-menu-choice-help">Kies het bijwoord en de hostbox. Het bijwoord verschijnt als extern LEX-slot op de LEX-as, verticaal net boven S, NP, VP, V, PP of AP. De hostbox/subboom schuift lager om ruimte te maken.</p>
+              <p class="top-menu-choice-help">Kies het bijwoord en de hostbox. Het bijwoord verschijnt als extern LEX-slot op de LEX-as. Hostplaatsing staat net boven S, NP, VP, V, PP of AP; vooropplaatsing vult LEX-slot 1 en activeert V2/inversie.</p>
               <label class="field mini-field" title="Aantal bijwoordboxen boven een geldige syntactische categoriebox."><span>Aantal bijwoordboxen</span><select id="lexFreeSlotCountSelect"></select></label>
               <label class="field mini-field" title="Kies de hostbox: S, NP, VP, V, PP of AP."><span>Hostbox</span><select id="lexFreeSlotPlacementSelect"></select></label>
               <label class="field mini-field" title="Kies welk bijwoord boven de gekozen syntactische categoriebox verschijnt."><span>Bijwoord / inhoud</span><select id="lexInsertionContentSelect"></select></label>
+            <details class="adverb-placement-rules-config" open>
+              <summary>Bijwoordplaatsingsregels per categorie · default en gemarkeerd</summary>
+              <p class="top-menu-choice-help">Configuratieregel: bijwoorden zijn externe <code>LEX-ADV</code>-inserties. Ze worden eerst op de LEX-as geplaatst, net boven de hostbox/trace; daarna pas werken LEX-Wissels. <code>defaultHost</code> is ongemarkeerd. <code>host != defaultHost</code> of <code>marking=functional:fronted-v2</code> is functioneel gemarkeerd. De SYNT-boom muteert niet.</p>
+              <div class="adverb-rules-table-wrap">
+                <table class="adverb-rules-table">
+                  <thead><tr><th>Categorie</th><th>Voorbeelden</th><th>Ongemarkeerd/default</th><th>Gemarkeerd mogelijk</th><th>Werking</th></tr></thead>
+                  <tbody>
+                <tr><td><code>MODALITEIT</code></td><td>waarschijnlijk, misschien, zeker</td><td><code>S</code><br><small>functional:fronted-v2</small></td><td><code>VP, V</code><br><small>functional:marked-host</small></td><td>zinsmodaal: scope over de hele propositie; in hoofdzin als vooropplaatsing met V2/PV in slot 2<br><strong>Gemarkeerd:</strong> smallere/predicaatnabije lezing of contrastieve focus</td></tr>
+                <tr><td><code>TIJD</code></td><td>gisteren, morgen, nu, straks</td><td><code>S</code><br><small>functional:fronted-v2</small></td><td><code>VP, V-CLUSTER</code><br><small>functional:marked-host</small></td><td>tijdskader voor de hele zin; voorop op de LEX-as activeert V2/inversie<br><strong>Gemarkeerd:</strong> tijdskader lager in het predicaat-/VP-domein; geen automatische V2 wanneer niet in slot 1</td></tr>
+                <tr><td><code>FREQUENTIE</code></td><td>vaak, soms, altijd, zelden</td><td><code>VP</code><br><small>functional:default-host</small></td><td><code>S, V</code><br><small>functional:marked-host</small></td><td>frequentie van de VP/gebeurtenis<br><strong>Gemarkeerd:</strong> S = zinsbreed/focus; V = predicaatnabij of smaller bereik</td></tr>
+                <tr><td><code>PLAATS</code></td><td>daar, hier, buiten, ergens</td><td><code>VP</code><br><small>functional:default-host</small></td><td><code>PP, S</code><br><small>functional:marked-host</small></td><td>plaats van gebeurtenis in het VP-domein<br><strong>Gemarkeerd:</strong> PP = gekoppeld aan expliciete plaatsphrase; S = topicale/vooropgezette plaats</td></tr>
+                <tr><td><code>NEGATIE</code></td><td>niet, nooit, nergens</td><td><code>V</code><br><small>functional:default-host</small></td><td><code>VP, S</code><br><small>functional:marked-host</small></td><td>V-nabije negatie; bij perfectum boven V-CLUSTER, niet in de cluster<br><strong>Gemarkeerd:</strong> bredere scope over VP of hele propositie</td></tr>
+                <tr><td><code>GRAAD</code></td><td>heel, erg, zeer, nogal</td><td><code>AP</code><br><small>functional:default-host</small></td><td><code>V, VP</code><br><small>functional:marked-host</small></td><td>graadmodificatie van AP/kwaliteit<br><strong>Gemarkeerd:</strong> gemarkeerde graad/intonatie of predicaatbrede intensivering</td></tr>
+                <tr><td><code>WIJZE</code></td><td>hard, snel, zachtjes, goed</td><td><code>V</code><br><small>functional:default-host</small></td><td><code>VP, S</code><br><small>functional:marked-host</small></td><td>wijze van de handeling, predicaatnabij; bij perfectum boven V-CLUSTER<br><strong>Gemarkeerd:</strong> VP = gebeurtenisbreed; S = sterk gemarkeerd/contrastief</td></tr>
+                <tr><td><code>REDEN_OORZAAK</code></td><td>daarom, daardoor, zodoende</td><td><code>S</code><br><small>functional:fronted-v2</small></td><td><code>VP</code><br><small>functional:marked-host</small></td><td>zinsverband/reden voor de hele propositie; voorop met V2<br><strong>Gemarkeerd:</strong> reden/oorzaak binnen het VP-domein of contrastief lager geplaatst</td></tr>
+                <tr><td><code>VOORWAARDE</code></td><td>anders, dan</td><td><code>S</code><br><small>functional:fronted-v2</small></td><td><code>VP</code><br><small>functional:marked-host</small></td><td>zinsverband/voorwaarde; voorop met V2<br><strong>Gemarkeerd:</strong> voorwaardelijke lezing dichter bij predicaat/gebeurtenis</td></tr>
+                <tr><td><code>FOCUS</code></td><td>alleen, ook, zelfs, slechts</td><td><code>NP</code><br><small>functional:default-host</small></td><td><code>VP, S</code><br><small>functional:marked-host</small></td><td>scope over de gefocuste phrase, meestal NP<br><strong>Gemarkeerd:</strong> scope verschuift naar VP of hele zin; zichtbaar als functioneel gemarkeerd</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <p class="top-menu-choice-help"><strong>Notatie:</strong> <code>LEX-ADV[word=..., class=..., axis=LEX, source=external, defaultHost=..., host=..., placement=above-host, order=before-movement, marking=...]</code>. Klikbare gemarkeerde varianten wisselen alleen <code>host/marking</code>, niet de basisboom.</p>
+            </details>
             </fieldset>
             <fieldset class="lex-extension-field" aria-label="Takverlenging (niet voor bijwoorden)" title="Niet meer leidend voor bijwoorden: bijwoorden staan boven een syntactische categoriebox, niet tussen boxen.">
               <legend>Takverlenging (niet voor bijwoorden)</legend>
@@ -199,9 +233,10 @@
           <h2>Voorbeeldzinnen</h2>
           <p class="inline-help">Voeg voorbeeldzinnen toe via de editor. Start lokaal met <code>start-local-viewer.bat</code>; dan schrijft <strong>Opslaan</strong> direct naar <code>examples-input.html</code>. Daarna kun je hier de lijst herladen.</p>
           <div class="button-row">
-            <a class="button-link primary" href="examples-editor.html?v4543" title="Voorbeeldzinnen toevoegen en opslaan">Voorbeeldzinnen-editor</a>
-            <a class="button-link" href="examples-input.html?v4543" title="Leesbare HTML-input met voorbeeldzinnen">HTML-input</a>
-            <a class="button-link" href="examples-adverbs.html?v4543" title="Bijwoordvoorbeelden met default-host en gemarkeerde host">Bijwoordvoorbeelden</a>
+            <a class="button-link primary" href="examples-editor.html?v4550" title="Voorbeeldzinnen toevoegen en opslaan">Voorbeeldzinnen-editor</a>
+            <a class="button-link" href="examples-input.html?v4550" title="Leesbare HTML-input met voorbeeldzinnen">HTML-input</a>
+            <a class="button-link" href="examples-adverbs.html?v4550" title="Bijwoordvoorbeelden met default-host en gemarkeerde host">Bijwoordvoorbeelden</a>
+            <a class="button-link" href="docs/LEX_ADVERB_PLACEMENT_RULES.md?v4550" title="Plaatsingsregels voor lexicale bijwoordinsertie: default en gemarkeerd">Bijwoordregels</a>
             <button id="reloadExamplesButton" type="button" title="Herlees examples-input.html zonder de hele pagina opnieuw te openen">Herlaad zinnen</button>
           </div>
         </section>
@@ -312,15 +347,15 @@
         <label title="Functionele variant: verlengt de grens tussen predicaat en argumentstructuur."><input type="checkbox" data-lex-extension-target="clause-boundary"> CLAUSE-grens</label>
         <p class="top-menu-choice-help" data-lex-extension-help>Takverlenging wordt geladen.</p>
       </fieldset>
-      <p class="top-menu-choice-help">Bijwoordslots staan op de LEX-as, verticaal boven S, NP, VP, V, PP of AP. Zij voegen geen centrale boomknoop toe en komen niet uit de basisboom.</p>
+      <p class="top-menu-choice-help">Bijwoordslots staan op de LEX-as. Hostslots staan verticaal boven S, NP, VP, V, PP of AP; voorop-bijwoorden vullen slot 1 en laten de persoonsvorm naar slot 2 gaan. Zij voegen geen centrale boomknoop toe en komen niet uit de basisboom.</p>
     </div>
 
     <div class="mobile-sheet-section" aria-label="Documentatie">
       <h3>Documentatie</h3>
       <div class="mobile-link-grid">
-        <a href="docs/docs-home.html?v4543">Docs</a>
-        <a href="lex-movement-rules.html?v4543">Plaatsingsregels</a>
-        <a href="reset-cache.html?v4543">Reset cache</a>
+        <a href="docs/docs-home.html?v4550">Docs</a>
+        <a href="lex-movement-rules.html?v4550">Plaatsingsregels</a>
+        <a href="reset-cache.html?v4550">Reset cache</a>
       </div>
     </div>
 
@@ -329,7 +364,7 @@
 
 
   <script>
-    window.__opengraphBoot = { version: 'v4543', loaded: false, marker: 'viewer-index' };
+    window.__opengraphBoot = { version: 'v4550', loaded: false, marker: 'viewer-index' };
     function ogStatus(message) {
       var target = document.getElementById('actionFeedback') || document.body;
       if (target) target.textContent = message;
@@ -342,10 +377,10 @@
     });
     setTimeout(function() {
       if (!window.__opengraphBoot || !window.__opengraphBoot.loaded) {
-        ogStatus('Viewer start niet volledig. Gebruik Reset cache of open http://127.0.0.1:8088/reset-cache.html?v4543.');
+        ogStatus('Viewer start niet volledig. Gebruik Reset cache of open http://127.0.0.1:8088/reset-cache.html?v4550.');
       }
     }, 2500);
   </script>
-  <script src="viewer.js?v4543" defer></script>
+  <script src="viewer.js?v4550" defer></script>
 </body>
 </html>

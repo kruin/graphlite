@@ -1,0 +1,191 @@
+{
+  "version": "v4550",
+  "notation": "LEX-ADV",
+  "axis": "LEX",
+  "source": "external",
+  "order": "before-movement",
+  "validHosts": [
+    "S",
+    "NP",
+    "VP",
+    "V",
+    "V-CLUSTER",
+    "PP",
+    "AP"
+  ],
+  "rules": [
+    {
+      "category": "MODALITEIT",
+      "examples": [
+        "waarschijnlijk",
+        "misschien",
+        "zeker"
+      ],
+      "defaultHost": "S",
+      "defaultMarking": "functional:fronted-v2",
+      "defaultMeaning": "zinsmodaal: scope over de hele propositie; in hoofdzin als vooropplaatsing met V2/PV in slot 2",
+      "markedHosts": [
+        "VP",
+        "V"
+      ],
+      "markedMarking": "functional:marked-host",
+      "markedMeaning": "smallere/predicaatnabije lezing of contrastieve focus"
+    },
+    {
+      "category": "TIJD",
+      "examples": [
+        "gisteren",
+        "morgen",
+        "nu",
+        "straks"
+      ],
+      "defaultHost": "S",
+      "defaultMarking": "functional:fronted-v2",
+      "defaultMeaning": "tijdskader voor de hele zin; voorop op de LEX-as activeert V2/inversie",
+      "markedHosts": [
+        "VP",
+        "V-CLUSTER"
+      ],
+      "markedMarking": "functional:marked-host",
+      "markedMeaning": "tijdskader lager in het predicaat-/VP-domein; geen automatische V2 wanneer niet in slot 1"
+    },
+    {
+      "category": "FREQUENTIE",
+      "examples": [
+        "vaak",
+        "soms",
+        "altijd",
+        "zelden"
+      ],
+      "defaultHost": "VP",
+      "defaultMarking": "functional:default-host",
+      "defaultMeaning": "frequentie van de VP/gebeurtenis",
+      "markedHosts": [
+        "S",
+        "V"
+      ],
+      "markedMarking": "functional:marked-host",
+      "markedMeaning": "S = zinsbreed/focus; V = predicaatnabij of smaller bereik"
+    },
+    {
+      "category": "PLAATS",
+      "examples": [
+        "daar",
+        "hier",
+        "buiten",
+        "ergens"
+      ],
+      "defaultHost": "VP",
+      "defaultMarking": "functional:default-host",
+      "defaultMeaning": "plaats van gebeurtenis in het VP-domein",
+      "markedHosts": [
+        "PP",
+        "S"
+      ],
+      "markedMarking": "functional:marked-host",
+      "markedMeaning": "PP = gekoppeld aan expliciete plaatsphrase; S = topicale/vooropgezette plaats"
+    },
+    {
+      "category": "NEGATIE",
+      "examples": [
+        "niet",
+        "nooit",
+        "nergens"
+      ],
+      "defaultHost": "V",
+      "defaultMarking": "functional:default-host",
+      "defaultMeaning": "V-nabije negatie; bij perfectum boven V-CLUSTER, niet in de cluster",
+      "markedHosts": [
+        "VP",
+        "S"
+      ],
+      "markedMarking": "functional:marked-host",
+      "markedMeaning": "bredere scope over VP of hele propositie"
+    },
+    {
+      "category": "GRAAD",
+      "examples": [
+        "heel",
+        "erg",
+        "zeer",
+        "nogal"
+      ],
+      "defaultHost": "AP",
+      "defaultMarking": "functional:default-host",
+      "defaultMeaning": "graadmodificatie van AP/kwaliteit",
+      "markedHosts": [
+        "V",
+        "VP"
+      ],
+      "markedMarking": "functional:marked-host",
+      "markedMeaning": "gemarkeerde graad/intonatie of predicaatbrede intensivering"
+    },
+    {
+      "category": "WIJZE",
+      "examples": [
+        "hard",
+        "snel",
+        "zachtjes",
+        "goed"
+      ],
+      "defaultHost": "V",
+      "defaultMarking": "functional:default-host",
+      "defaultMeaning": "wijze van de handeling, predicaatnabij; bij perfectum boven V-CLUSTER",
+      "markedHosts": [
+        "VP",
+        "S"
+      ],
+      "markedMarking": "functional:marked-host",
+      "markedMeaning": "VP = gebeurtenisbreed; S = sterk gemarkeerd/contrastief"
+    },
+    {
+      "category": "REDEN_OORZAAK",
+      "examples": [
+        "daarom",
+        "daardoor",
+        "zodoende"
+      ],
+      "defaultHost": "S",
+      "defaultMarking": "functional:fronted-v2",
+      "defaultMeaning": "zinsverband/reden voor de hele propositie; voorop met V2",
+      "markedHosts": [
+        "VP"
+      ],
+      "markedMarking": "functional:marked-host",
+      "markedMeaning": "reden/oorzaak binnen het VP-domein of contrastief lager geplaatst"
+    },
+    {
+      "category": "VOORWAARDE",
+      "examples": [
+        "anders",
+        "dan"
+      ],
+      "defaultHost": "S",
+      "defaultMarking": "functional:fronted-v2",
+      "defaultMeaning": "zinsverband/voorwaarde; voorop met V2",
+      "markedHosts": [
+        "VP"
+      ],
+      "markedMarking": "functional:marked-host",
+      "markedMeaning": "voorwaardelijke lezing dichter bij predicaat/gebeurtenis"
+    },
+    {
+      "category": "FOCUS",
+      "examples": [
+        "alleen",
+        "ook",
+        "zelfs",
+        "slechts"
+      ],
+      "defaultHost": "NP",
+      "defaultMarking": "functional:default-host",
+      "defaultMeaning": "scope over de gefocuste phrase, meestal NP",
+      "markedHosts": [
+        "VP",
+        "S"
+      ],
+      "markedMarking": "functional:marked-host",
+      "markedMeaning": "scope verschuift naar VP of hele zin; zichtbaar als functioneel gemarkeerd"
+    }
+  ]
+}

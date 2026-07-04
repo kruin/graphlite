@@ -1,11 +1,19 @@
-# v4547
+
+
+## v4548 - Bijwoorden boven hostbox, niet erin
+
+- Corrigeert LEX-bijwoordslots die optisch in de hostbox vielen.
+- Reserveert een extra gridrij zodat de insertie duidelijk boven `NP`, `VP`, `V-CLUSTER`, `V`, `PP` of `AP` staat.
+- `V`-nabije plaatsing bij een perfectum gebruikt de hele `V-CLUSTER` als hoogteanker.
+
+# v4548
 
 - Literatuurcorrectie: initieel bijwoord in Nederlandse hoofdzinnen betekent V2/inversie, niet bijzinsvolgorde.
 - Toegevoegd: `functional:fronted-v2` voor bijwoordelijke vooropplaatsing op LEX-slot 1.
 - LEX-as: bij vooropplaatsing vult het bijwoord slot 1; de persoonsvorm blijft slot 2; het subject wordt niet ook naar slot 1 verplaatst.
 - Correctie: bij `GISTEREN` + eenvoudige tegenwoordige tijd kiest de LEX-as de bekende OVT-vorm (`BIJT`→`BEET`, `BREIT`→`BREIDE`) in plaats van de foutieve combinatie `GISTEREN BIJT ...`.
 
-# v4547
+# v4548
 
 - Fix: LEX-bijwoordslot wordt nu op de LEX-as verticaal gekoppeld aan de gekozen hostbox (`S`, `NP`, `VP`, `V`, `PP`, `AP`).
 - Oorzaak: `cloneLayout()` verloor `lexAdverbAxisSlots`, waardoor de LEX-as terugviel op de algemene S/root-positie.
@@ -603,7 +611,7 @@ Slot 0 op de LEX-as staat in de gecombineerde Assen-weergave weer boven de centr
 - De notatie gebruikt `LEX-ADV[..., axis=LEX, source=external, host=...]`.
 
 
-## v4547 — Boven S activeert V2/inversie
+## v4548 — Boven S activeert V2/inversie
 
 - `host=S` / `LEX-slot boven S` betekent nu automatisch: extern bijwoord voorop op de LEX-as.
 - De persoonsvorm wordt naar `slot 2 · V2/PV` gezet.
@@ -611,14 +619,14 @@ Slot 0 op de LEX-as staat in de gecombineerde Assen-weergave weer boven de centr
 - Het bijwoordslot staat letterlijk net boven de S-box; andere hosts blijven lokale LEX-slots boven hun hostbox.
 - Voorbeeld: `GISTEREN | BEET | HOND | MAN`, niet `HOND | BEET | GISTEREN | MAN`.
 
-## v4547 — klikbare gemarkeerde bijwoordvariant
+## v4548 — klikbare gemarkeerde bijwoordvariant
 
 - Bijwoordslots op de LEX-as zijn nu klikbare knopen wanneer er een gemarkeerde/ongemarkeerde tegenhanger bestaat.
 - Klik op het bijwoordslot wisselt bijvoorbeeld `WAARSCHIJNLIJK` default naar `WAARSCHIJNLIJK · gemarkeerd boven V`.
 - Klik op de gemarkeerde variant wisselt terug naar de ongemarkeerde/defaultvariant.
 - De bijwoordplaatsing blijft extern, op de LEX-as. De SYNT-boom wordt niet gemuteerd.
 
-## v4547 — bijwoorden vóór verplaatsingen
+## v4548 — bijwoorden vóór verplaatsingen
 
 De LEX-afleiding is nu expliciet geordend:
 
@@ -635,3 +643,21 @@ LEX-MOVE[source=subject, target=slot1, trace=t[subject], order=after-adverb]
 ```
 
 Dit blijft een LEX/FUNC-regel. De SYNT-boom wordt niet gemuteerd.
+
+## v4549 — bijwoordkeuze herstelt beeld
+
+- Fix voor runtime-fout bij elke BIJWOORD-keuze.
+- Oorzaak: de labelopbouw van het externe LEX-bijwoordslot gebruikte een niet-bestaande variabele `dy`.
+- Gevolg in v4548: zonder bijwoord werd de boom getekend; met bijwoord stopte de renderflow.
+- Correctie: het slotlabel gebruikt nu `visibleSlotCount`.
+- Model blijft gelijk: bijwoord = externe LEX-insertie, vóór Wissels, boven de hostbox/trace en niet in de hostbox.
+
+
+## v4550 — help/config voor lexicale bijwoordinsertie
+
+- Help uitgebreid met detailuitleg over lexicale insertie van bijwoorden.
+- Config uitgebreid met plaatsingsregels per bijwoordcategorie, telkens met ongemarkeerde/default-host en gemarkeerde host(s).
+- Nieuwe docs: `docs/LEX_ADVERB_PLACEMENT_RULES.md`.
+- Nieuwe machineleesbare config: `samples/adverb_placement_rules_v4550.json`.
+- `viewer.js` bevat nu `ADVERB_PLACEMENT_RULES` als expliciete regelconfig.
+- Model ongewijzigd: `LEX-ADV` is extern, staat op de LEX-as, wordt geplaatst vóór LEX-Wissels en muteert de SYNT-boom niet.
