@@ -1,4 +1,4 @@
-# OpenGraph Lite Viewer v4550
+# OpenGraph Lite Viewer v4551
 
 
 ## v4548 - bijwoord vóór verplaatsing
@@ -121,6 +121,14 @@ De bijwoordbox op de LEX-as is nu zelf een klikbare knoop als er een tegenhanger
 Bij elke gekozen bijwoordoptie kon v4548 stoppen met renderen. De oorzaak was een niet-bestaande variabele in het label van het LEX-bijwoordslot. In v4549 gebruikt dat label `visibleSlotCount`. Zonder bijwoord en met bijwoord renderen nu via dezelfde flow.
 
 
+## v4551 - Gecontroleerde bijwoordregels per woord
+
+- Bijwoordplaatsing gecontroleerd tegen Nederlandse grammaticale bronnen.
+- Nieuwe scheiding: `scopeHost` ≠ `linear`. S-scope is niet automatisch voorop; alleen `linear=fronted-v2` triggert V2.
+- `niet`, focuspartikels, graadwoorden, plaatsbijwoorden en polyfunctionele woorden krijgen eigen uitzonderingsregels.
+- Nieuwe config: `samples/adverb_placement_rules_v4551.json` en `samples/adverb_word_rules_v4551.json`.
+- Nieuwe documentatie: `docs/LEX_ADVERB_PLACEMENT_RULES_CHECKED.md`.
+
 ## v4550 - Help en Config voor lexicale bijwoordinsertie
 
 Toegevoegd:
@@ -131,3 +139,8 @@ Toegevoegd:
 - Configbestand `samples/adverb_placement_rules_v4550.json`.
 
 Kernregel: bijwoorden blijven externe inserties op de LEX-as. De hostbox is alleen hoogteanker. `host=defaultHost` is ongemarkeerd; `host!=defaultHost` is `functional:marked-host`; `host=S` in hoofdzin activeert `functional:fronted-v2`.
+
+
+## v4552 — NIET als eigen rechterveldslot
+
+Neutrale negatie gebruikt nu een eigen LEX-regel: `HOND | BIJT | MAN | NIET` en bij perfectum `HOND | HEEFT | MAN | NIET | GEBETEN`. `HOND | BIJT | NIET | MAN` blijft alleen een gemarkeerde contrastlezing (`niet de man maar ...`). Zie `docs/LEX_ADVERB_PLACEMENT_RULES_V4552.md` en `samples/adverb_word_rules_v4552.json`.

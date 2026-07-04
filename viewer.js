@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'v4550';
+  const VERSION = 'v4552';
   const BASE_CELL = 74;
   const ROOT_SIDE_GAP = 1;
   const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -284,16 +284,282 @@
   const VALID_ADVERB_HOST_BOXES = new Set(['S', 'NP', 'VP', 'V', 'V-CLUSTER', 'PP', 'AP']);
 
   const ADVERB_PLACEMENT_RULES = [
-    {"category": "MODALITEIT", "examples": ["waarschijnlijk", "misschien", "zeker"], "defaultHost": "S", "defaultMarking": "functional:fronted-v2", "defaultMeaning": "zinsmodaal: scope over de hele propositie; in hoofdzin als vooropplaatsing met V2/PV in slot 2", "markedHosts": ["VP", "V"], "markedMarking": "functional:marked-host", "markedMeaning": "smallere/predicaatnabije lezing of contrastieve focus"},
-    {"category": "TIJD", "examples": ["gisteren", "morgen", "nu", "straks"], "defaultHost": "S", "defaultMarking": "functional:fronted-v2", "defaultMeaning": "tijdskader voor de hele zin; voorop op de LEX-as activeert V2/inversie", "markedHosts": ["VP", "V-CLUSTER"], "markedMarking": "functional:marked-host", "markedMeaning": "tijdskader lager in het predicaat-/VP-domein; geen automatische V2 wanneer niet in slot 1"},
-    {"category": "FREQUENTIE", "examples": ["vaak", "soms", "altijd", "zelden"], "defaultHost": "VP", "defaultMarking": "functional:default-host", "defaultMeaning": "frequentie van de VP/gebeurtenis", "markedHosts": ["S", "V"], "markedMarking": "functional:marked-host", "markedMeaning": "S = zinsbreed/focus; V = predicaatnabij of smaller bereik"},
-    {"category": "PLAATS", "examples": ["daar", "hier", "buiten", "ergens"], "defaultHost": "VP", "defaultMarking": "functional:default-host", "defaultMeaning": "plaats van gebeurtenis in het VP-domein", "markedHosts": ["PP", "S"], "markedMarking": "functional:marked-host", "markedMeaning": "PP = gekoppeld aan expliciete plaatsphrase; S = topicale/vooropgezette plaats"},
-    {"category": "NEGATIE", "examples": ["niet", "nooit", "nergens"], "defaultHost": "V", "defaultMarking": "functional:default-host", "defaultMeaning": "V-nabije negatie; bij perfectum boven V-CLUSTER, niet in de cluster", "markedHosts": ["VP", "S"], "markedMarking": "functional:marked-host", "markedMeaning": "bredere scope over VP of hele propositie"},
-    {"category": "GRAAD", "examples": ["heel", "erg", "zeer", "nogal"], "defaultHost": "AP", "defaultMarking": "functional:default-host", "defaultMeaning": "graadmodificatie van AP/kwaliteit", "markedHosts": ["V", "VP"], "markedMarking": "functional:marked-host", "markedMeaning": "gemarkeerde graad/intonatie of predicaatbrede intensivering"},
-    {"category": "WIJZE", "examples": ["hard", "snel", "zachtjes", "goed"], "defaultHost": "V", "defaultMarking": "functional:default-host", "defaultMeaning": "wijze van de handeling, predicaatnabij; bij perfectum boven V-CLUSTER", "markedHosts": ["VP", "S"], "markedMarking": "functional:marked-host", "markedMeaning": "VP = gebeurtenisbreed; S = sterk gemarkeerd/contrastief"},
-    {"category": "REDEN_OORZAAK", "examples": ["daarom", "daardoor", "zodoende"], "defaultHost": "S", "defaultMarking": "functional:fronted-v2", "defaultMeaning": "zinsverband/reden voor de hele propositie; voorop met V2", "markedHosts": ["VP"], "markedMarking": "functional:marked-host", "markedMeaning": "reden/oorzaak binnen het VP-domein of contrastief lager geplaatst"},
-    {"category": "VOORWAARDE", "examples": ["anders", "dan"], "defaultHost": "S", "defaultMarking": "functional:fronted-v2", "defaultMeaning": "zinsverband/voorwaarde; voorop met V2", "markedHosts": ["VP"], "markedMarking": "functional:marked-host", "markedMeaning": "voorwaardelijke lezing dichter bij predicaat/gebeurtenis"},
-    {"category": "FOCUS", "examples": ["alleen", "ook", "zelfs", "slechts"], "defaultHost": "NP", "defaultMarking": "functional:default-host", "defaultMeaning": "scope over de gefocuste phrase, meestal NP", "markedHosts": ["VP", "S"], "markedMarking": "functional:marked-host", "markedMeaning": "scope verschuift naar VP of hele zin; zichtbaar als functioneel gemarkeerd"}
+      {
+          "category": "MODALITEIT",
+          "examples": [
+              "waarschijnlijk",
+              "misschien",
+              "zeker"
+          ],
+          "defaultHost": "S",
+          "defaultMarking": "functional:clause-scope-default",
+          "defaultMeaning": "zinsmodaal: scope over de propositie; lineair ongemarkeerd vaak in het middenveld na de persoonsvorm/het onderwerp, maar vooropplaatsing is ook gewoon mogelijk",
+          "defaultLinear": "middle-field-after-finite",
+          "frontedVariant": {
+              "host": "S",
+              "marking": "functional:fronted-v2",
+              "meaning": "eerste zinsplaats; hoofdzin met inversie/V2"
+          },
+          "markedHosts": [
+              "VP",
+              "V"
+          ],
+          "markedMarking": "functional:marked-host",
+          "markedMeaning": "nauwere/predicaatnabije of contrastieve lezing; niet gebruiken als neutrale default",
+          "exceptions": "zeker heeft ook kwantificerende/benaderende waarde ('zeker tien mensen'); classificeer dan niet als MODALITEIT maar als KWANTIFICEREND/FOCUS"
+      },
+      {
+          "category": "TIJD",
+          "examples": [
+              "gisteren",
+              "morgen",
+              "nu",
+              "straks"
+          ],
+          "defaultHost": "VP",
+          "defaultMarking": "functional:time-middle-default",
+          "defaultMeaning": "tijdskader van de gebeurtenis; in het middenveld normaal vóór plaats/wijze/frequentie volgens tendens tijd vóór andere bepalingen",
+          "defaultLinear": "middle-field-time-before-place-manner",
+          "frontedVariant": {
+              "host": "S",
+              "marking": "functional:fronted-v2",
+              "meaning": "kaderscheppend/topic; bij eerste zinsplaats V2/inversie"
+          },
+          "markedHosts": [
+              "S",
+              "V-CLUSTER"
+          ],
+          "markedMarking": "functional:marked-host",
+          "markedMeaning": "S = voorop/kader; V-CLUSTER = zeer predicaatnabij of bij meerwerkwoordconstructies",
+          "exceptions": "nu kan ook discourse-/modaliteitswaarde hebben; toen/dan kunnen temporeel of voegwoordelijk zijn"
+      },
+      {
+          "category": "FREQUENTIE",
+          "examples": [
+              "vaak",
+              "soms",
+              "altijd",
+              "zelden"
+          ],
+          "defaultHost": "VP",
+          "defaultMarking": "functional:frequency-default",
+          "defaultMeaning": "frequentie van gebeurtenis/VP; in middenveld, niet in AP/NP",
+          "defaultLinear": "middle-field-frequency",
+          "frontedVariant": {
+              "host": "S",
+              "marking": "functional:fronted-v2",
+              "meaning": "vooropplaatsing met contrast/kader; V2"
+          },
+          "markedHosts": [
+              "S",
+              "V"
+          ],
+          "markedMarking": "functional:marked-host",
+          "markedMeaning": "S = topicale/focusplaatsing; V = zeer predicaatnabij en daarom gemarkeerd",
+          "exceptions": "nooit is formeel ook frequentie, maar semantisch negatief; behandel nooit als NEG_FREQ wanneer scope belangrijk is"
+      },
+      {
+          "category": "PLAATS",
+          "examples": [
+              "daar",
+              "hier",
+              "buiten",
+              "ergens"
+          ],
+          "defaultHost": "VP",
+          "defaultMarking": "functional:place-default",
+          "defaultMeaning": "plaats van gebeurtenis; hier/daar staan in het middenveld vaak vroeg, vóór andere bepalingen maar na pronominale elementen",
+          "defaultLinear": "early-middle-field-after-pronominals",
+          "frontedVariant": {
+              "host": "S",
+              "marking": "functional:fronted-v2",
+              "meaning": "plaats als kader/topic; V2"
+          },
+          "markedHosts": [
+              "S",
+              "PP"
+          ],
+          "markedMarking": "functional:marked-host",
+          "markedMeaning": "S = voorop/kader; PP = gekoppeld aan expliciete plaatsgroep of gesplitst voornaamwoordelijk bijwoord",
+          "exceptions": "daar/hier kunnen ook deel zijn van voornaamwoordelijke bijwoorden (daarmee, hierop); buiten kan plaatsbepaling, partikel of predicatief zijn"
+      },
+      {
+          "category": "NEGATIE",
+          "examples": [
+              "niet",
+              "nooit",
+              "nergens"
+          ],
+          "defaultHost": "VP",
+          "defaultMarking": "functional:neg-scope-default",
+          "defaultMeaning": "neutrale zins-/predicaatsnegatie: na object in eenvoudige transitieve hoofdzinnen; vóór eindwerkwoord/V-cluster in meerwerkwoordconstructies. Voor het object is contrastief/partieel.",
+          "defaultLinear": "post-object-pre-vcluster",
+          "frontedVariant": {
+              "host": "S",
+              "marking": "functional:marked-fronted-negation",
+              "meaning": "alleen voor partiële/contrastieve negatie zoals 'Niet de man...'"
+          },
+          "markedHosts": [
+              "NP",
+              "AP",
+              "V",
+              "V-CLUSTER",
+              "S"
+          ],
+          "markedMarking": "functional:scope-marked",
+          "markedMeaning": "NP/AP/V = partiële negatie; S = zinsbreed/contrastief; V-CLUSTER = vóór eindwerkwoord in meerwerkwoordconstructies",
+          "exceptions": "NIET heeft een eigen lineaire regel. 'HOND BIJT MAN NIET' is neutraal; 'HOND BIJT NIET MAN' is contrastief/partieel (niet de man maar ...). nooit/nergens hebben eigen negatieve bijwoordklasse"
+      },
+      {
+          "category": "GRAAD",
+          "examples": [
+              "heel",
+              "erg",
+              "zeer",
+              "nogal"
+          ],
+          "defaultHost": "AP",
+          "defaultMarking": "functional:degree-default",
+          "defaultMeaning": "graadwoord hoort direct bij het gewijzigde AP of bij een ander bijwoord; het is meestal geen zelfstandig zinsdeel",
+          "defaultLinear": "immediately-before-modified-AP-or-ADV",
+          "frontedVariant": {
+              "host": "S",
+              "marking": "invalid-or-quoted",
+              "meaning": "niet als gewone fronting gebruiken, tenzij het hele AP/AdvP voorop staat"
+          },
+          "markedHosts": [
+              "V",
+              "VP"
+          ],
+          "markedMarking": "functional:reclassified-or-marked-host",
+          "markedMeaning": "alleen als het woord een andere functie krijgt, bijvoorbeeld erg als adjectief/predicaat of intensivering van predicaat",
+          "exceptions": "heel/erg kunnen een ander bijwoord modificeren ('heel hard'); GraphLite heeft daarom later een ADV-MOD-host nodig naast AP"
+      },
+      {
+          "category": "WIJZE",
+          "examples": [
+              "hard",
+              "snel",
+              "zachtjes",
+              "goed"
+          ],
+          "defaultHost": "VP",
+          "defaultMarking": "functional:manner-default",
+          "defaultMeaning": "wijze van de handeling/gebeurtenis; in perfectum typisch bij het eindwerkwoord/V-cluster, niet in het cluster",
+          "defaultLinear": "after-objects-before-final-verb-where-available",
+          "frontedVariant": {
+              "host": "S",
+              "marking": "functional:fronted-v2-marked",
+              "meaning": "voorop als contrastieve/kaderscheppende wijze; V2"
+          },
+          "markedHosts": [
+              "V",
+              "V-CLUSTER",
+              "S"
+          ],
+          "markedMarking": "functional:marked-host",
+          "markedMeaning": "V/V-CLUSTER = predicaatnabij; S = sterk gemarkeerde vooropplaatsing",
+          "exceptions": "hard/snel/goed kunnen ook adjectief zijn; classificeer alleen als WIJZE wanneer ze een werkwoordelijke handeling modificeren"
+      },
+      {
+          "category": "REDEN_OORZAAK",
+          "examples": [
+              "daarom",
+              "daardoor",
+              "zodoende"
+          ],
+          "defaultHost": "S",
+          "defaultMarking": "functional:fronted-v2-or-connective",
+          "defaultMeaning": "verband tussen zinnen of reden/oorzaak voor propositie; vaak voorop met V2, maar daardoor kan ook VP-intern oorzaaksmiddel zijn",
+          "defaultLinear": "fronted-v2-for-daarom-zodoende; middle-or-front-for-daardoor",
+          "frontedVariant": {
+              "host": "S",
+              "marking": "functional:fronted-v2",
+              "meaning": "voegwoordelijk/reden-kader; V2"
+          },
+          "markedHosts": [
+              "VP"
+          ],
+          "markedMarking": "functional:marked-host",
+          "markedMeaning": "oorzaak binnen gebeurtenis/VP",
+          "exceptions": "daarom is vooral reden/argumentatief; daardoor is oorzaak/middel en kan dichter bij VP staan; zodoende is formeler en vaak connector"
+      },
+      {
+          "category": "VOORWAARDE_GEVOLG",
+          "examples": [
+              "anders",
+              "dan"
+          ],
+          "defaultHost": "S",
+          "defaultMarking": "functional:fronted-v2-or-connective",
+          "defaultMeaning": "voorwaarde/gevolg of discourse-verbinding; voorop vaak V2",
+          "defaultLinear": "fronted-v2-when-conditional-connector",
+          "frontedVariant": {
+              "host": "S",
+              "marking": "functional:fronted-v2",
+              "meaning": "anders/dan als connector op eerste zinsplaats; V2"
+          },
+          "markedHosts": [
+              "VP",
+              "AP"
+          ],
+          "markedMarking": "functional:reclassified-or-marked-host",
+          "markedMeaning": "anders kan wijze/adjectief zijn; dan kan temporeel of vergelijkend zijn",
+          "exceptions": "anders en dan zijn polyfunctioneel. Splits: ANDERS_COND, ANDERS_MANNER, DAN_TEMP, DAN_COND, DAN_COMPARATIVE"
+      },
+      {
+          "category": "FOCUSPARTIKEL",
+          "examples": [
+              "alleen",
+              "ook",
+              "zelfs",
+              "slechts"
+          ],
+          "defaultHost": "FOCUS_TARGET",
+          "defaultMarking": "functional:focus-default",
+          "defaultMeaning": "focuspartikel is onderdeel van de gefocuste constituent; niet automatisch zelfstandig zinsdeel. Host is de concrete focusdrager: NP, VP, AP, PP of S",
+          "defaultLinear": "directly-before-or-within-focus-constituent",
+          "frontedVariant": {
+              "host": "S",
+              "marking": "functional:fronted-v2-if-whole-focus-is-fronted",
+              "meaning": "alleen wanneer de hele gefocuste constituent op eerste zinsplaats staat"
+          },
+          "markedHosts": [
+              "NP",
+              "VP",
+              "AP",
+              "PP",
+              "S"
+          ],
+          "markedMarking": "functional:focus-retargeted",
+          "markedMeaning": "scope/focus verschuift naar andere constituent",
+          "exceptions": "alleen kan ook bijwoord van modaliteit/slechts zijn; ook/zelfs/al/nog/pas hebben complexe scope en moeten later per target worden gespecificeerd"
+      },
+      {
+          "category": "SCHAKEERPARTIKEL",
+          "examples": [
+              "toch",
+              "maar",
+              "nou",
+              "eens",
+              "even"
+          ],
+          "defaultHost": "S",
+          "defaultMarking": "functional:particle-middle-field",
+          "defaultMeaning": "oordeelspartikel/schakeringspartikel; meestal onbeklemtoond in middenveld en niet zelfstandig op eerste zinsplaats",
+          "defaultLinear": "middle-field-particle-cluster",
+          "frontedVariant": {
+              "host": "S",
+              "marking": "not-allowed-as-independent-fronted-slot",
+              "meaning": "niet als losse vooropplaatsing renderen"
+          },
+          "markedHosts": [
+              "VP"
+          ],
+          "markedMarking": "functional:marked-particle-scope",
+          "markedMeaning": "lokale schakering bij predicaat/gebeurtenis",
+          "exceptions": "deze klasse stond nog niet in v4550 maar is nodig voor spreektaal"
+      }
   ];
 
 
@@ -535,6 +801,11 @@
       return isEnglish()
         ? `adverb=${adv.word} step 1: inserted on LEX slot 1 before movement; finite verb remains V2`
         : `bijwoord=${adv.word} stap 1: ingevoegd op LEX-slot 1 vóór verplaatsingen; persoonsvorm blijft V2`;
+    }
+    if (activeAdverbIsNeutralNiet()) {
+      return isEnglish()
+        ? `adverb=NIET step 1: external LEX insertion after object / before final verb cluster`
+        : `bijwoord=NIET stap 1: externe LEX-insertie na object / vóór eindwerkwoordcluster`;
     }
     const host = adv.host || adv.defaultHost || '?';
     const marked = adv.placement === 'marked' ? (isEnglish() ? ', marked' : ', gemarkeerd') : '';
@@ -800,10 +1071,13 @@
     const word = ((parts[1] === 'marked' ? parts[2] : parts[2]) || '').toUpperCase();
     if (!word || !VALID_ADVERB_HOST_BOXES.has(host || defaultHost)) return null;
     const hostLabel = host || defaultHost;
-    const fronted = /fronted|voorop|slot\s*1|v2/i.test(markingText) || hostLabel === 'S';
-    const marked = !fronted && /marked|gemarkeerd|forced|geforceerd/i.test(markingText);
-    const placementLabel = fronted ? `boven ${hostLabel} · V2` : `boven ${hostLabel}${marked ? ' · !' : ''}`;
-    const placementLabelEn = fronted ? `above ${hostLabel} · V2` : `above ${hostLabel}${marked ? ' · !' : ''}`;
+    const isNeutralNegation = /^NIET$/i.test(word) && /NEG/i.test(category) && /neg-scope-default|post-object|MAN\s+NIET/i.test(`${markingText} ${sentence}`);
+    const fronted = !isNeutralNegation && (/fronted|voorop|slot\s*1|v2/i.test(markingText) || hostLabel === 'S');
+    const marked = !fronted && !isNeutralNegation && /marked|gemarkeerd|forced|geforceerd|scope-marked/i.test(markingText);
+    const effectiveMarking = markingText || (fronted ? 'functional:fronted-v2' : (marked ? 'functional:marked-host' : 'functional:default-host'));
+    const linear = isNeutralNegation ? 'post-object-pre-vcluster' : '';
+    const placementLabel = isNeutralNegation ? 'na object / vóór V-cluster' : (fronted ? `boven ${hostLabel} · V2` : `boven ${hostLabel}${marked ? ' · !' : ''}`);
+    const placementLabelEn = isNeutralNegation ? 'after object / before V cluster' : (fronted ? `above ${hostLabel} · V2` : `above ${hostLabel}${marked ? ' · !' : ''}`);
     return {
       id,
       label: `${word} · ${category || 'BIJWOORD'} · ${placementLabel}`,
@@ -815,9 +1089,10 @@
         category,
         defaultHost: defaultHost || host,
         host: host || defaultHost,
-        position: fronted ? 'fronted' : 'hosted',
-        placement: fronted ? 'fronted-v2' : (marked ? 'marked' : 'default'),
-        marking: fronted ? 'functional:fronted-v2' : (marked ? 'functional:marked-host' : 'functional:default-host'),
+        position: fronted ? 'fronted' : (isNeutralNegation ? 'linear-slot' : 'hosted'),
+        placement: fronted ? 'fronted-v2' : (marked ? 'marked' : (isNeutralNegation ? 'post-object-pre-vcluster' : 'default')),
+        marking: effectiveMarking,
+        linear,
         sentence
       }
     };
@@ -2825,11 +3100,77 @@
     return count;
   }
 
+  function activeAdverbLinearRule() {
+    const adv = activeAdverbData();
+    return String(adv?.linear || adv?.linearSlot || adv?.placementRule || '').trim().toLowerCase();
+  }
+
+  function activeAdverbIsNeutralNiet() {
+    const adv = activeAdverbData();
+    const word = String(adv?.word || adv?.id || '').trim().toUpperCase();
+    const category = String(adv?.category || '').trim().toUpperCase();
+    const marking = String(adv?.marking || '').trim().toLowerCase();
+    const linear = activeAdverbLinearRule();
+    return (word === 'NIET' || adv?.id === 'niet')
+      && category.includes('NEG')
+      && !adverbOptionIsMarked(activeAdverbOption())
+      && (linear === 'post-object-pre-vcluster' || marking.includes('neg-scope-default'));
+  }
+
+  function lexItemRoleName(item) {
+    return String(item?.role || item?.source || item?.id || '').trim().toLowerCase();
+  }
+
+  function findObjectLexItem(items = state.example?.lexItems || []) {
+    return (items || []).find(item => ['object', 'obj', 'patiens', 'patient'].includes(lexItemRoleName(item)))
+      || (items || []).find(item => String(item?.source || '').toLowerCase().includes('object'))
+      || null;
+  }
+
+  function findFinalVerbLexItem(items = state.example?.lexItems || []) {
+    return (items || []).find(item => ['vdw', 'participle'].includes(lexItemRoleName(item)))
+      || (items || []).find(item => String(item?.source || '').toLowerCase() === 'vdw')
+      || null;
+  }
+
+  function lexPostObjectNegationSlotY(y0, sourceMap = null, items = state.example?.lexItems || []) {
+    // v4552: neutraal NIET is geen gewone hostplaatsing boven VP.
+    // Het is een eigen LEX-insertieregel: na object en vóór eindwerkwoord/V-cluster.
+    const obj = findObjectLexItem(items);
+    const objIndex = obj ? items.findIndex(item => item === obj) : -1;
+    const objY = obj && objIndex >= 0
+      ? projectedLexItemY(obj, objIndex, y0, sourceMap, items)
+      : y0 + Math.max(1, lexSlotBaseOffset(items) + 2) * 64;
+    const finalVerb = findFinalVerbLexItem(items);
+    if (finalVerb) {
+      const finalIndex = items.findIndex(item => item === finalVerb);
+      const finalY = projectedLexItemY(finalVerb, finalIndex, y0, sourceMap, items);
+      if (Number.isFinite(finalY) && finalY > objY + 32) return Math.round((objY + finalY) / 2);
+    }
+    return objY + 64;
+  }
+
   function lexConfiguredFreeSlots(y0, items = state.example?.lexItems || [], contextYs = [], sourceMap = null) {
     const count = lexFreeSlotCount();
     if (!count) return [];
     const placement = validLexSlotPlacement();
     const content = lexInsertionContentDef();
+    if (activeAdverbIsNeutralNiet()) {
+      const slotY = lexPostObjectNegationSlotY(y0, sourceMap, items);
+      return [{
+        id: 'lex-adverb-negation-slot-1',
+        y: slotY,
+        label: 'stap 1 · NIET na object / vóór V-cluster',
+        hostLabel: 'VP · negatiescope',
+        content,
+        marked: false,
+        marking: activeAdverbData()?.marking || 'functional:neg-scope-default',
+        toggleTargetId: findAdverbMarkedToggleTarget()?.id || '',
+        toggleLabel: adverbMarkedToggleLabel(),
+        axis: 'LEX',
+        source: 'external-negation'
+      }];
+    }
     if (activeAdverbIsFronted() && isMainV2Rule()) {
       const slotY = projectedFrontedAdverbSlotY(y0, sourceMap, items);
       return [{

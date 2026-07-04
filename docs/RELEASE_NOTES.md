@@ -1,4 +1,14 @@
 
+## v4551 — gecontroleerde bijwoordplaatsing
+
+- Bestaande bijwoordregels gecontroleerd per woord en per categorie.
+- Belangrijkste correctie: `host=S` betekent niet automatisch `fronted-v2`; scope en lineaire plaats zijn gescheiden in de nieuwe config.
+- `niet` is scope-gevoelig en krijgt geen vaste V-default meer.
+- Focuspartikels krijgen `FOCUS_TARGET` in plaats van vaste NP-default.
+- Graadwoorden krijgen `AP|ADV-MOD` als target; zij zijn meestal geen zelfstandig LEX-slot.
+- Nieuwe bestanden: `docs/LEX_ADVERB_PLACEMENT_RULES_CHECKED.md`, `samples/adverb_placement_rules_v4551.json`, `samples/adverb_word_rules_v4551.json`.
+
+
 
 ## v4548 - Bijwoorden boven hostbox, niet erin
 
@@ -661,3 +671,11 @@ Dit blijft een LEX/FUNC-regel. De SYNT-boom wordt niet gemuteerd.
 - Nieuwe machineleesbare config: `samples/adverb_placement_rules_v4550.json`.
 - `viewer.js` bevat nu `ADVERB_PLACEMENT_RULES` als expliciete regelconfig.
 - Model ongewijzigd: `LEX-ADV` is extern, staat op de LEX-as, wordt geplaatst vóór LEX-Wissels en muteert de SYNT-boom niet.
+
+
+## v4552 — NIET / neutrale negatie
+
+- `NIET` krijgt een eigen lineaire LEX-regel: `post-object-pre-vcluster`.
+- De dropdownregel `HOND BIJT MAN NIET` rendert nu als extern LEX-slot na het object.
+- `HOND BIJT NIET MAN` is niet verwijderd, maar herclassificeerd als gemarkeerde contrastnegatie.
+- Nieuwe configbestanden: `samples/adverb_placement_rules_v4552.json`, `samples/adverb_word_rules_v4552.json`.

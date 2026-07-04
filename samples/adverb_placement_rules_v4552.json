@@ -1,6 +1,6 @@
 {
-  "version": "v4551",
-  "basis": "checked against descriptive Dutch grammar sources; separates scope host from linear placement",
+  "version": "v4552",
+  "basis": "checked Dutch adverb rules; v4552 adds a separate neutral-NIET linear slot after object / before V-cluster",
   "notation": "LEX-ADV",
   "axis": "LEX",
   "source": "external",
@@ -125,8 +125,8 @@
       ],
       "defaultHost": "VP",
       "defaultMarking": "functional:neg-scope-default",
-      "defaultMeaning": "negatie wordt niet standaard boven V gezet; plaats wordt bepaald door bereik/scope. Zinsnegatie staat in eenvoudige transitieve zinnen vaak na object; in perfectum vóór eindwerkwoord/V-cluster",
-      "defaultLinear": "scope-before-negated-domain-or-right-field",
+      "defaultMeaning": "neutrale zins-/predicaatsnegatie: na object in eenvoudige transitieve hoofdzinnen; vóór eindwerkwoord/V-cluster in meerwerkwoordconstructies; niet vóór het object tenzij contrastief",
+      "defaultLinear": "post-object-pre-vcluster",
       "frontedVariant": {
         "host": "S",
         "marking": "functional:marked-fronted-negation",
@@ -141,7 +141,8 @@
       ],
       "markedMarking": "functional:scope-marked",
       "markedMeaning": "NP/AP/V = partiële negatie; S = zinsbreed/contrastief; V-CLUSTER = vóór eindwerkwoord in meerwerkwoordconstructies",
-      "exceptions": "niet is scope-gevoelig; 'HOND BIJT NIET MAN' is geen neutrale Nederlandse volgorde. Gebruik 'HOND BIJT MAN NIET' of in perfectum 'HOND HEEFT MAN NIET GEBETEN'. nooit/nergens hebben eigen negatieve bijwoordklasse"
+      "exceptions": "NIET heeft een eigen lineaire regel. 'HOND BIJT MAN NIET' is neutraal; 'HOND BIJT NIET MAN' is alleen contrastief/partieel ('niet de man maar ...').",
+      "defaultNotation": "LEX-ADV[word=NIET, class=NEGATIE, axis=LEX, defaultHost=VP, host=VP, linear=post-object-pre-vcluster, source=external, marking=functional:neg-scope-default]"
     },
     {
       "category": "GRAAD",

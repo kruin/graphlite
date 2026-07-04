@@ -1,0 +1,714 @@
+{
+  "version": "v4552",
+  "rules": [
+    {
+      "word": "waarschijnlijk",
+      "category": "MODALITEIT",
+      "default": {
+        "host": "S",
+        "linear": "middle-field-after-finite",
+        "marking": "functional:clause-scope-default",
+        "example": "HOND BIJT MAN WAARSCHIJNLIJK / HOND BIJT WAARSCHIJNLIJK MAN (modelvarianten)"
+      },
+      "marked": [
+        {
+          "host": "S",
+          "linear": "fronted-v2",
+          "example": "WAARSCHIJNLIJK BIJT HOND MAN"
+        },
+        {
+          "host": "VP|V",
+          "linear": "hosted",
+          "example": "HOND BIJT WAARSCHIJNLIJK MAN",
+          "note": "predicaatnabij/contrastief"
+        }
+      ],
+      "exception": "niet automatisch fronted maken alleen omdat scope=S"
+    },
+    {
+      "word": "misschien",
+      "category": "MODALITEIT",
+      "default": {
+        "host": "S",
+        "linear": "middle-field-after-finite",
+        "marking": "functional:clause-scope-default",
+        "example": "HOND BIJT MISSCHIEN MAN"
+      },
+      "marked": [
+        {
+          "host": "S",
+          "linear": "fronted-v2",
+          "example": "MISSCHIEN BIJT HOND MAN"
+        },
+        {
+          "host": "VP",
+          "linear": "hosted",
+          "example": "HOND BIJT MISSCHIEN MAN"
+        }
+      ],
+      "exception": "spreektaal vaak middenveld; fronting mogelijk"
+    },
+    {
+      "word": "zeker",
+      "category": "MODALITEIT|KWANTIFICEREND",
+      "default": {
+        "host": "S",
+        "linear": "middle-field",
+        "marking": "functional:clause-scope-default",
+        "example": "HOND BIJT ZEKER MAN"
+      },
+      "marked": [
+        {
+          "host": "NP",
+          "linear": "before-quantified-NP",
+          "example": "ZEKER DRIE HONDEN"
+        }
+      ],
+      "exception": "zeker kan modaliteit of kwantificerend/benaderend zijn"
+    },
+    {
+      "word": "gisteren",
+      "category": "TIJD",
+      "default": {
+        "host": "VP",
+        "linear": "middle-field-time",
+        "marking": "functional:time-default",
+        "example": "HOND BEET GISTEREN MAN / HOND HEEFT GISTEREN MAN GEBETEN"
+      },
+      "marked": [
+        {
+          "host": "S",
+          "linear": "fronted-v2",
+          "example": "GISTEREN BEET HOND MAN"
+        },
+        {
+          "host": "V-CLUSTER",
+          "linear": "before-final-verb",
+          "example": "HOND HEEFT MAN GISTEREN GEBETEN",
+          "note": "gemarkeerd"
+        }
+      ],
+      "exception": "fronting is normaal, maar niet de enige default"
+    },
+    {
+      "word": "morgen",
+      "category": "TIJD",
+      "default": {
+        "host": "VP",
+        "linear": "middle-field-time",
+        "marking": "functional:time-default",
+        "example": "HOND BIJT MORGEN MAN"
+      },
+      "marked": [
+        {
+          "host": "S",
+          "linear": "fronted-v2",
+          "example": "MORGEN BIJT HOND MAN"
+        }
+      ],
+      "exception": "toekomstige tijd wijzigt werkwoord niet automatisch"
+    },
+    {
+      "word": "nu",
+      "category": "TIJD|DISCOURSE",
+      "default": {
+        "host": "VP",
+        "linear": "early-middle-field",
+        "marking": "functional:time-default",
+        "example": "HOND BIJT NU MAN"
+      },
+      "marked": [
+        {
+          "host": "S",
+          "linear": "fronted-v2",
+          "example": "NU BIJT HOND MAN"
+        }
+      ],
+      "exception": "nu kan ook discoursepartikel zijn; dan andere regel"
+    },
+    {
+      "word": "straks",
+      "category": "TIJD",
+      "default": {
+        "host": "VP",
+        "linear": "middle-field-time",
+        "marking": "functional:time-default",
+        "example": "HOND BIJT STRAKS MAN"
+      },
+      "marked": [
+        {
+          "host": "S",
+          "linear": "fronted-v2",
+          "example": "STRAKS BIJT HOND MAN"
+        }
+      ],
+      "exception": "geen OVT-trigger"
+    },
+    {
+      "word": "vaak",
+      "category": "FREQUENTIE",
+      "default": {
+        "host": "VP",
+        "linear": "middle-field-frequency",
+        "marking": "functional:frequency-default",
+        "example": "HOND BIJT VAAK MAN"
+      },
+      "marked": [
+        {
+          "host": "S",
+          "linear": "fronted-v2",
+          "example": "VAAK BIJT HOND MAN"
+        },
+        {
+          "host": "V",
+          "linear": "hosted",
+          "example": "HOND BIJT VAAK MAN",
+          "note": "nauwer predicaatbereik"
+        }
+      ],
+      "exception": "niet boven AP/NP"
+    },
+    {
+      "word": "soms",
+      "category": "FREQUENTIE",
+      "default": {
+        "host": "VP",
+        "linear": "middle-field-frequency",
+        "marking": "functional:frequency-default",
+        "example": "HOND BIJT SOMS MAN"
+      },
+      "marked": [
+        {
+          "host": "S",
+          "linear": "fronted-v2",
+          "example": "SOMS BIJT HOND MAN"
+        }
+      ],
+      "exception": "kan discourse-kader zijn"
+    },
+    {
+      "word": "altijd",
+      "category": "FREQUENTIE",
+      "default": {
+        "host": "VP",
+        "linear": "middle-field-frequency",
+        "marking": "functional:frequency-default",
+        "example": "HOND BIJT ALTIJD MAN"
+      },
+      "marked": [
+        {
+          "host": "S",
+          "linear": "fronted-v2",
+          "example": "ALTIJD BIJT HOND MAN"
+        }
+      ],
+      "exception": "kan in interactie met negatie scopeproblemen geven"
+    },
+    {
+      "word": "zelden",
+      "category": "FREQUENTIE",
+      "default": {
+        "host": "VP",
+        "linear": "middle-field-frequency",
+        "marking": "functional:frequency-default",
+        "example": "HOND BIJT ZELDEN MAN"
+      },
+      "marked": [
+        {
+          "host": "S",
+          "linear": "fronted-v2",
+          "example": "ZELDEN BIJT HOND MAN"
+        }
+      ],
+      "exception": "negatief-polaire nuance; behandel als NEG_FREQ waar nodig"
+    },
+    {
+      "word": "daar",
+      "category": "PLAATS|R-ADV",
+      "default": {
+        "host": "VP",
+        "linear": "early-middle-field-after-pronouns",
+        "marking": "functional:place-default",
+        "example": "HOND BIJT DAAR MAN"
+      },
+      "marked": [
+        {
+          "host": "S",
+          "linear": "fronted-v2",
+          "example": "DAAR BIJT HOND MAN"
+        },
+        {
+          "host": "PP",
+          "linear": "split-r-pronoun",
+          "example": "DAAR ... MEE/OP"
+        }
+      ],
+      "exception": "daar kan voornaamwoordelijk bijwoord vormen; dan apart behandelen"
+    },
+    {
+      "word": "hier",
+      "category": "PLAATS|R-ADV",
+      "default": {
+        "host": "VP",
+        "linear": "early-middle-field-after-pronouns",
+        "marking": "functional:place-default",
+        "example": "HOND BIJT HIER MAN"
+      },
+      "marked": [
+        {
+          "host": "S",
+          "linear": "fronted-v2",
+          "example": "HIER BIJT HOND MAN"
+        },
+        {
+          "host": "PP",
+          "linear": "split-r-pronoun"
+        }
+      ],
+      "exception": "zelfde R-bijwoordprobleem als daar"
+    },
+    {
+      "word": "buiten",
+      "category": "PLAATS|PREDICATIVE|PARTICLE",
+      "default": {
+        "host": "VP",
+        "linear": "middle-field-place",
+        "marking": "functional:place-default",
+        "example": "HOND BIJT BUITEN MAN"
+      },
+      "marked": [
+        {
+          "host": "S",
+          "linear": "fronted-v2",
+          "example": "BUITEN BIJT HOND MAN"
+        },
+        {
+          "host": "V",
+          "linear": "predicate-particle",
+          "example": "DE FILM IS UIT/BUITEN?"
+        }
+      ],
+      "exception": "kan predicatief/partikelachtig zijn; niet altijd gewone plaats"
+    },
+    {
+      "word": "ergens",
+      "category": "PLAATS_ONBEPAALD",
+      "default": {
+        "host": "VP",
+        "linear": "middle-field-place",
+        "marking": "functional:place-default",
+        "example": "HOND BIJT ERGENS MAN"
+      },
+      "marked": [
+        {
+          "host": "S",
+          "linear": "fronted-v2",
+          "example": "ERGENS BIJT HOND MAN"
+        }
+      ],
+      "exception": "minder deiktisch dan hier/daar; geen PP-splitsing tenzij R-constructie"
+    },
+    {
+      "word": "niet",
+      "category": "NEGATIE",
+      "default": {
+        "host": "VP",
+        "linear": "post-object-pre-vcluster",
+        "marking": "functional:neg-scope-default",
+        "example": "HOND BIJT MAN NIET / HOND HEEFT MAN NIET GEBETEN",
+        "notation": "LEX-ADV[word=NIET, class=NEGATIE, axis=LEX, defaultHost=VP, host=VP, linear=post-object-pre-vcluster, source=external, marking=functional:neg-scope-default]"
+      },
+      "marked": [
+        {
+          "host": "NP",
+          "linear": "pre-focus-target",
+          "marking": "functional:scope-marked",
+          "example": "HOND BIJT NIET MAN MAAR VROUW",
+          "note": "partiële/contrastieve objectnegatie"
+        },
+        {
+          "host": "AP",
+          "linear": "pre-AP",
+          "marking": "functional:scope-marked",
+          "example": "HOND IS NIET MOOI",
+          "note": "negatie over predicatief AP"
+        },
+        {
+          "host": "ADV-MOD|V",
+          "linear": "pre-modifier-or-predicate",
+          "marking": "functional:scope-marked",
+          "example": "HOND BIJT NIET HARD",
+          "note": "negatie over wijze/graad/predicaat"
+        }
+      ],
+      "exception": "Neutraal NIET is geen gewone 'boven V' of 'boven VP'-hostplaatsing, maar een eigen LEX-rechterveldslot na object / vóór V-cluster."
+    },
+    {
+      "word": "nooit",
+      "category": "NEG_FREQ",
+      "default": {
+        "host": "VP",
+        "linear": "early-middle-field-before-place",
+        "marking": "functional:negative-frequency-default",
+        "example": "HOND BIJT NOOIT MAN"
+      },
+      "marked": [
+        {
+          "host": "S",
+          "linear": "fronted-v2",
+          "example": "NOOIT BIJT HOND MAN"
+        }
+      ],
+      "exception": "niet behandelen als gewone 'niet'-negatie"
+    },
+    {
+      "word": "nergens",
+      "category": "NEG_PLACE",
+      "default": {
+        "host": "VP",
+        "linear": "place-slot-negative",
+        "marking": "functional:negative-place-default",
+        "example": "HOND BIJT NERGENS MAN"
+      },
+      "marked": [
+        {
+          "host": "S",
+          "linear": "fronted-v2",
+          "example": "NERGENS BIJT HOND MAN"
+        }
+      ],
+      "exception": "negatief plaatsbijwoord; geen extra niet erbij"
+    },
+    {
+      "word": "heel",
+      "category": "GRAAD",
+      "default": {
+        "host": "AP|ADV-MOD",
+        "linear": "immediately-before-modified-word",
+        "marking": "functional:degree-default",
+        "example": "HOND IS HEEL MOOI / VROUW BREIT HEEL HARD"
+      },
+      "marked": [
+        {
+          "host": "VP",
+          "linear": "reclassified",
+          "example": "heel wat werken",
+          "note": "andere constructie"
+        }
+      ],
+      "exception": "vereist expliciet target AP of ander bijwoord; niet zelfstandig boven S/VP"
+    },
+    {
+      "word": "erg",
+      "category": "GRAAD|ADJECTIVE",
+      "default": {
+        "host": "AP|ADV-MOD",
+        "linear": "immediately-before-modified-word",
+        "marking": "functional:degree-default",
+        "example": "HOND IS ERG MOOI"
+      },
+      "marked": [
+        {
+          "host": "AP",
+          "linear": "predicate-adjective",
+          "example": "DAT IS ERG",
+          "note": "erg is hier geen graadbijwoord"
+        }
+      ],
+      "exception": "kan adjectief/predicaat zijn"
+    },
+    {
+      "word": "zeer",
+      "category": "GRAAD",
+      "default": {
+        "host": "AP",
+        "linear": "immediately-before-AP",
+        "marking": "functional:degree-default",
+        "example": "HOND IS ZEER MOOI"
+      },
+      "marked": [
+        {
+          "host": "S",
+          "linear": "formal-marked",
+          "example": "ZEER waarschijnlijk...",
+          "note": "modificeert modaliteit/adverbium"
+        }
+      ],
+      "exception": "formal register; meestal AP/AdvP"
+    },
+    {
+      "word": "nogal",
+      "category": "GRAAD|MODAL",
+      "default": {
+        "host": "AP|ADV-MOD",
+        "linear": "immediately-before-modified-word",
+        "marking": "functional:degree-default",
+        "example": "HOND IS NOGAL MOOI"
+      },
+      "marked": [
+        {
+          "host": "S",
+          "linear": "speaker-stance",
+          "example": "NOGAL wiedes...",
+          "note": "andere constructie"
+        }
+      ],
+      "exception": "kan sprekerhouding bevatten; target nodig"
+    },
+    {
+      "word": "hard",
+      "category": "WIJZE|ADJECTIVE",
+      "default": {
+        "host": "VP|V-CLUSTER",
+        "linear": "after-object-before-final-verb",
+        "marking": "functional:manner-default",
+        "example": "VROUW HEEFT TRUI HARD GEBREID"
+      },
+      "marked": [
+        {
+          "host": "V",
+          "linear": "predicative-near",
+          "example": "VROUW BREIT HARD TRUI",
+          "note": "demo/marked"
+        },
+        {
+          "host": "AP",
+          "linear": "adjective",
+          "example": "HARDE TRUI?"
+        }
+      ],
+      "exception": "hard kan adjectief zijn; lineaire positie afhankelijk van object/werkwoordcluster"
+    },
+    {
+      "word": "snel",
+      "category": "WIJZE|ADJECTIVE",
+      "default": {
+        "host": "VP|V-CLUSTER",
+        "linear": "manner-near-final-verb",
+        "marking": "functional:manner-default",
+        "example": "VROUW HEEFT TRUI SNEL GEBREID"
+      },
+      "marked": [
+        {
+          "host": "S",
+          "linear": "fronted-v2",
+          "example": "SNEL BREIDE VROUW TRUI"
+        }
+      ],
+      "exception": "kan adjectief zijn; fronting gemarkeerd"
+    },
+    {
+      "word": "zachtjes",
+      "category": "WIJZE",
+      "default": {
+        "host": "VP|V-CLUSTER",
+        "linear": "manner-near-final-verb",
+        "marking": "functional:manner-default",
+        "example": "VROUW HEEFT TRUI ZACHTJES GEBREID"
+      },
+      "marked": [
+        {
+          "host": "S",
+          "linear": "fronted-v2",
+          "example": "ZACHTJES BREIDE VROUW TRUI"
+        }
+      ],
+      "exception": "sterk manner; meestal niet S-default"
+    },
+    {
+      "word": "goed",
+      "category": "WIJZE|ADJECTIVE",
+      "default": {
+        "host": "VP|V-CLUSTER",
+        "linear": "manner-or-result",
+        "marking": "functional:manner-default",
+        "example": "VROUW HEEFT TRUI GOED GEBREID"
+      },
+      "marked": [
+        {
+          "host": "AP",
+          "linear": "adjective-predicate",
+          "example": "TRUI IS GOED"
+        }
+      ],
+      "exception": "kan resultaat/adjectief zijn"
+    },
+    {
+      "word": "daarom",
+      "category": "REDEN_CONNECTOR",
+      "default": {
+        "host": "S",
+        "linear": "fronted-v2",
+        "marking": "functional:fronted-v2",
+        "example": "DAAROM BIJT HOND MAN"
+      },
+      "marked": [
+        {
+          "host": "VP",
+          "linear": "hosted",
+          "example": "HOND BIJT DAAROM MAN",
+          "note": "contrastief/retorisch; minder neutraal"
+        }
+      ],
+      "exception": "vooral connector; default S is verdedigbaar"
+    },
+    {
+      "word": "daardoor",
+      "category": "OORZAAK|MIDDEL",
+      "default": {
+        "host": "VP",
+        "linear": "cause-middle-field",
+        "marking": "functional:cause-default",
+        "example": "HOND BIJT DAARDOOR MAN"
+      },
+      "marked": [
+        {
+          "host": "S",
+          "linear": "fronted-v2",
+          "example": "DAARDOOR BIJT HOND MAN"
+        }
+      ],
+      "exception": "niet hetzelfde als daarom; VP-default beter dan S-default"
+    },
+    {
+      "word": "zodoende",
+      "category": "GEVOLG_CONNECTOR",
+      "default": {
+        "host": "S",
+        "linear": "fronted-v2",
+        "marking": "functional:fronted-v2",
+        "example": "ZODOENDE BIJT HOND MAN"
+      },
+      "marked": [
+        {
+          "host": "VP",
+          "linear": "hosted",
+          "example": "HOND BIJT ZODOENDE MAN",
+          "note": "formeel/gemarkeerd"
+        }
+      ],
+      "exception": "formeel; vaak zinsconnector"
+    },
+    {
+      "word": "anders",
+      "category": "VOORWAARDE|WIJZE|ADJECTIVE",
+      "default": {
+        "host": "S",
+        "linear": "fronted-v2-when-conditional",
+        "marking": "functional:fronted-v2",
+        "example": "ANDERS BIJT HOND MAN"
+      },
+      "marked": [
+        {
+          "host": "VP",
+          "linear": "manner",
+          "example": "HOND BIJT ANDERS",
+          "note": "anders = op een andere manier"
+        },
+        {
+          "host": "AP",
+          "linear": "adjective",
+          "example": "DAT IS ANDERS"
+        }
+      ],
+      "exception": "splits conditioneel anders en wijze/adjectief anders"
+    },
+    {
+      "word": "dan",
+      "category": "DAN_TEMP|DAN_COND|COMPARATIVE",
+      "default": {
+        "host": "S|VP",
+        "linear": "depends-on-function",
+        "marking": "functional:polyfunctional",
+        "example": "DAN BIJT HOND MAN / HOND BIJT DAN MAN"
+      },
+      "marked": [
+        {
+          "host": "AP",
+          "linear": "comparison",
+          "example": "GROTER DAN ..."
+        }
+      ],
+      "exception": "niet één bijwoordregel; altijd functie kiezen"
+    },
+    {
+      "word": "alleen",
+      "category": "FOCUSPARTIKEL|MODAL",
+      "default": {
+        "host": "FOCUS_TARGET",
+        "linear": "before-focus-target",
+        "marking": "functional:focus-default",
+        "example": "ALLEEN HOND BIJT MAN / HOND BIJT ALLEEN MAN"
+      },
+      "marked": [
+        {
+          "host": "VP",
+          "linear": "scope-over-VP",
+          "example": "HOND KAN ALLEEN BIJTEN"
+        },
+        {
+          "host": "S",
+          "linear": "fronted-if-whole-focus-fronted",
+          "example": "ALLEEN BIJT HOND MAN?",
+          "note": "gemarkeerd/elliptisch"
+        }
+      ],
+      "exception": "host NP is alleen default als de focusdrager NP is"
+    },
+    {
+      "word": "ook",
+      "category": "FOCUSPARTIKEL|VOEGWOORDELIJK_BIJWOORD",
+      "default": {
+        "host": "FOCUS_TARGET",
+        "linear": "before-or-near-focus-target",
+        "marking": "functional:focus-default",
+        "example": "OOK HOND BIJT MAN / HOND BIJT OOK MAN"
+      },
+      "marked": [
+        {
+          "host": "S",
+          "linear": "connective",
+          "example": "OOK BIJT HOND MAN",
+          "note": "sterk gemarkeerd, vaak alleen bij subjectfocus"
+        }
+      ],
+      "exception": "kan focuspartikel én voegwoordelijk bijwoord zijn"
+    },
+    {
+      "word": "zelfs",
+      "category": "FOCUSPARTIKEL",
+      "default": {
+        "host": "FOCUS_TARGET",
+        "linear": "before-focus-target",
+        "marking": "functional:focus-default",
+        "example": "ZELFS HOND BIJT MAN"
+      },
+      "marked": [
+        {
+          "host": "VP",
+          "linear": "focus-over-VP",
+          "example": "HOND ZOU ZELFS BIJTEN"
+        }
+      ],
+      "exception": "geen gewone S/VP-default zonder focusdoel"
+    },
+    {
+      "word": "slechts",
+      "category": "FOCUSPARTIKEL|FORMAL",
+      "default": {
+        "host": "FOCUS_TARGET",
+        "linear": "before-focus-target",
+        "marking": "functional:focus-default",
+        "example": "SLECHTS HOND BIJT MAN"
+      },
+      "marked": [
+        {
+          "host": "VP",
+          "linear": "formal-focus",
+          "example": "HOND KAN SLECHTS BIJTEN"
+        }
+      ],
+      "exception": "formeel register; target verplicht"
+    }
+  ]
+}

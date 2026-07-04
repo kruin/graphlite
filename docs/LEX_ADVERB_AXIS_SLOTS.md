@@ -101,9 +101,9 @@ LEX-ADV[word=HARD, class=WIJZE, axis=LEX, host=V-CLUSTER, placement=above-host, 
 De host is alleen hoogteanker; de basisboom levert geen projectie voor het bijwoord.
 
 
-## v4550 — plaatsingsregels per bijwoordcategorie
+## v4551 — plaatsingsregels per bijwoordcategorie
 
-De app bevat nu een expliciete configtabel voor ongemarkeerde en gemarkeerde bijwoordplaatsing per categorie. Zie `docs/LEX_ADVERB_PLACEMENT_RULES.md` en `samples/adverb_placement_rules_v4550.json`.
+De app bevat nu een expliciete configtabel voor ongemarkeerde en gemarkeerde bijwoordplaatsing per categorie. Zie `docs/LEX_ADVERB_PLACEMENT_RULES.md` en `samples/adverb_placement_rules_v4551.json`.
 
 Kernregel:
 
@@ -115,3 +115,8 @@ host=S in hoofdzin        -> functional:fronted-v2
 ```
 
 Alle bijwoorden blijven externe inserties op de LEX-as. De hostbox is alleen hoogteanker; de basisboom wordt niet gemuteerd.
+
+
+### v4552-notitie: NIET
+
+`NIET` als neutrale negatie gebruikt `linear=post-object-pre-vcluster`: `HOND BIJT MAN NIET`, `HOND HEEFT MAN NIET GEBETEN`. Vóór het object is gemarkeerd/contrastief.

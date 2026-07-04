@@ -139,7 +139,48 @@ ADV-MOD: heel hard, erg snel, zeer waarschijnlijk
 - https://thedutchonlineacademy.com/grammar/woordvolgorde-in-een-notendop
 - https://zichtbaarnederlands.nl/nl/zinsbouw/tijd_hoe_plaats
 
+## v4552-correctie: `NIET` als eigen LEX-rechterveldslot
 
-### v4552-notitie: NIET
+De neutrale zin is:
 
-`NIET` als neutrale negatie gebruikt `linear=post-object-pre-vcluster`: `HOND BIJT MAN NIET`, `HOND HEEFT MAN NIET GEBETEN`. Vóór het object is gemarkeerd/contrastief.
+```text
+HOND | BIJT | MAN | NIET
+```
+
+Niet:
+
+```text
+HOND | BIJT | NIET | MAN
+```
+
+Daarom krijgt `NIET` niet alleen een hostbox, maar een eigen lineaire regel:
+
+```text
+LEX-ADV[
+  word=NIET,
+  class=NEGATIE,
+  axis=LEX,
+  source=external,
+  defaultHost=VP,
+  host=VP,
+  linear=post-object-pre-vcluster,
+  placement=right-field-negation,
+  order=before-movement,
+  marking=functional:neg-scope-default
+]
+```
+
+Werking:
+
+1. `NIET` wordt eerst extern ingevoegd op de LEX-as.
+2. De insertie staat na het object in een eenvoudige transitieve hoofdzin.
+3. In een meerwerkwoordconstructie staat de insertie vóór het eindwerkwoord of de V-cluster.
+4. Daarna worden pas LEX-Wissels/V2/topicregels gelezen.
+5. `HOND BIJT NIET MAN` blijft mogelijk, maar alleen als gemarkeerde contrastnegatie: `niet de man maar ...`.
+
+Machineleesbaar:
+
+```text
+samples/adverb_placement_rules_v4552.json
+samples/adverb_word_rules_v4552.json
+```
