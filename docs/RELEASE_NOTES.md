@@ -706,7 +706,7 @@ Dit blijft een LEX/FUNC-regel. De SYNT-boom wordt niet gemuteerd.
 - De centrale Play-balk behoudt `←`, `Play`, `→`, `Groei` en `Reset`.
 
 
-## v4562 — Hoofdvenster: volledige boom zichtbaar als standaard
+## v4566 — Hoofdvenster: volledige boom zichtbaar als standaard
 
 - De opties onder `Hoofdvenster` zijn hernoemd en herordend rond één default: `volledige boom zichtbaar`.
 - Desktop en mobiel starten op deze veilige fit-modus.

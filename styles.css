@@ -4447,7 +4447,7 @@ body.main-screen-active .main-grid-controls #mainSouthNextButton {
 }
 
 
-/* v4562: Hoofdvenster-opties herontworpen. Default = volledige boom zichtbaar. */
+/* v4567: Hoofdvenster-opties herontworpen. Default = volledige boom zichtbaar. */
 body.main-screen-active .main-window-fit-menu {
   flex: 0 1 auto !important;
 }
@@ -4470,5 +4470,141 @@ body.main-screen-active.main-window-auto #graphSvg {
   body.main-screen-active .main-window-fit-field:first-child select {
     max-width: 9.8rem !important;
     min-width: 8.2rem !important;
+  }
+}
+
+
+/* v4567: smallere keuze-boxen; popup/optiontekst blijft volledig als option-title aanwezig. */
+body.main-screen-active .main-topbar {
+  gap: .22rem !important;
+  padding: .2rem .3rem !important;
+}
+body.main-screen-active .main-sentence-field,
+body.main-screen-active .main-adverb-field,
+body.main-screen-active .main-window-fit-field {
+  gap: .18rem !important;
+}
+body.main-screen-active .main-sentence-field {
+  max-width: 12.2rem !important;
+}
+body.main-screen-active .main-sentence-field select {
+  width: clamp(7.8rem, 13vw, 10.2rem) !important;
+  max-width: 10.2rem !important;
+}
+body.main-screen-active .main-adverb-field select {
+  width: clamp(7.4rem, 12vw, 9.8rem) !important;
+  max-width: 9.8rem !important;
+}
+body.main-screen-active .main-window-fit-menu {
+  gap: .2rem !important;
+}
+body.main-screen-active .main-window-fit-field:first-child select {
+  width: clamp(7.2rem, 11vw, 9.6rem) !important;
+  min-width: 0 !important;
+  max-width: 9.6rem !important;
+}
+body.main-screen-active .main-window-fit-field:last-child select,
+body.main-screen-active .main-window-fit-field select {
+  width: clamp(7rem, 10vw, 8.9rem) !important;
+  min-width: 0 !important;
+  max-width: 8.9rem !important;
+}
+body.main-screen-active .main-sentence-field select,
+body.main-screen-active .main-adverb-field select,
+body.main-screen-active .main-window-fit-field select {
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  min-height: 2rem !important;
+  padding: .12rem .38rem !important;
+  font-size: .76rem !important;
+}
+body.main-screen-active .main-sentence-field span,
+body.main-screen-active .main-adverb-field span,
+body.main-screen-active .main-window-fit-field span {
+  font-size: .68rem !important;
+}
+@media (max-width: 900px) {
+  body.main-screen-active .main-topbar { gap: .18rem !important; }
+  body.main-screen-active .main-sentence-field select { width: 7.4rem !important; max-width: 7.4rem !important; }
+  body.main-screen-active .main-adverb-field select { width: 7.1rem !important; max-width: 7.1rem !important; }
+  body.main-screen-active .main-window-fit-field:first-child select { width: 7.8rem !important; max-width: 7.8rem !important; }
+  body.main-screen-active .main-window-fit-field:last-child select,
+  body.main-screen-active .main-window-fit-field select { width: 7.2rem !important; max-width: 7.2rem !important; }
+}
+
+
+/* v4567: mobile/Pages mag niet automatisch donker worden door systeem-dark-mode.
+   Het viewer-hoofdscherm blijft licht en configureerbaar via deze variabelen. */
+body.main-screen-active {
+  color-scheme: light !important;
+  --bg: #f8fafc;
+  --panel: #ffffff;
+  --panel-2: #f1f5f9;
+  --text: #0f172a;
+  --muted: #475569;
+  --line: #cbd5e1;
+  --grid: #e2e8f0;
+  --grid-major: #cbd5e1;
+  --accent: #0f172a;
+  --accent-contrast: #ffffff;
+  --node: #ffffff;
+  --node-line: #0f172a;
+  --edge: #334155;
+  --lex: #2563eb;
+  --synt: #16a34a;
+  --log: #7c3aed;
+  --shadow: rgba(15, 23, 42, 0.16);
+}
+@media (max-width: 900px) {
+  html:has(body.main-screen-active),
+  body.main-screen-active,
+  body.main-screen-active .app-shell,
+  body.main-screen-active .workspace,
+  body.main-screen-active .canvas-wrap,
+  body.main-screen-active #graphSvg {
+    background: #f8fafc !important;
+  }
+  body.main-screen-active .main-topbar,
+  body.main-screen-active .main-play-reset-bar {
+    background: #ffffff !important;
+  }
+}
+
+
+/* v4567: projectieknoppenbox staat rechts van de SYNT-as; de marker staat binnen de box, niet over de as. */
+@media (orientation: landscape) {
+  body.main-screen-active .canvas-wrap .main-grid-controls::before,
+  body.main-screen-active .main-grid-controls::before {
+    left: 0 !important;
+    transform: translateX(-7px) !important;
+  }
+}
+
+/* v4567: mobile hoofdscherm blijft expliciet licht, ook op browsers zonder :has(). */
+@media (max-width: 900px) {
+  html,
+  body,
+  body.main-screen-active {
+    color-scheme: light !important;
+    background: #f8fafc !important;
+  }
+  body.main-screen-active .canvas-wrap,
+  body.main-screen-active #graphSvg {
+    background-color: #f8fafc !important;
+  }
+}
+
+
+/* v4567: projectiebox niet over de SYNT-as. De SVG-as blijft de enige verticale as;
+   de oude HTML-separator kon visueel als overlap met de SYNT-as worden gelezen. */
+@media (orientation: landscape) {
+  body.main-screen-active .main-grid-controls::before,
+  body.main-screen-active .canvas-wrap .main-grid-controls::before {
+    display: none !important;
+    content: none !important;
+  }
+  body.main-screen-active .canvas-wrap .main-grid-controls {
+    margin-left: 0 !important;
   }
 }

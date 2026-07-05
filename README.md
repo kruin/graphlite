@@ -1,4 +1,4 @@
-# OpenGraph Lite Viewer v4562
+# OpenGraph Lite Viewer v4567
 
 
 ## v4548 - bijwoord vóór verplaatsing
@@ -175,29 +175,60 @@ Neutrale negatie gebruikt nu een eigen LEX-regel: `HOND | BIJT | MAN | NIET` en 
 - De SOV/SVO/OVS/OSV/VSO/VOS-bediening staat nu als eigen ruime box rechts onder de LOG/FT-projectie.
 
 
-## v4562
+## v4567
 - SOV/SVO/OVS/OSV/VSO/VOS-bediening verplaatst naar de projectieknoppenkolom.
 - De volgordebox staat nu direct onder `LOG/FT`, met eigen ruime LOG-box en tussenruimte.
 - `←`, `→`, `Groei` en `Reset` blijven rond de centrale Play-balk.
 
 
-## v4562 - GitHub Pages versieconsistentie
+## v4567 - GitHub Pages versieconsistentie
 
-- Alle entry-versies gelijkgezet naar `v4562`: `index.html`, `viewer.html`, `viewer.js`, `styles.css`, `reset-cache.html` en `sw.js`.
+- Alle entry-versies gelijkgezet naar `v4567`: `index.html`, `viewer.html`, `viewer.js`, `styles.css`, `reset-cache.html` en `sw.js`.
 - Zichtbare header-versie gecorrigeerd; geen achterblijvende `v4558` in de hoofdviewer.
-- Na commit/deploy: open eerst `reset-cache.html?v4562` en daarna `index.html?ogv=v4562&nocache=<tijd>`.
+- Na commit/deploy: open eerst `reset-cache.html?v4567` en daarna `index.html?ogv=v4567&nocache=<tijd>`.
 
 
-## v4562 - fitbox en SYNT-as
+## v4567 - fitbox en SYNT-as
 
 - De automatische fitbox krijgt meer ondermarge; de onderste box valt niet meer uit beeld.
 - De SYNT-as wordt niet meer op een vaste x-positie getekend, maar rechts van de echte boomrand geplaatst.
 - Stabiele groei-viewboxes zijn verruimd zodat groei/Play dezelfde volledige tekening tonen.
 
 
-## v4562 — Hoofdvenster: volledige boom zichtbaar als standaard
+## v4567 — Hoofdvenster: volledige boom zichtbaar als standaard
 
 - De opties onder `Hoofdvenster` zijn hernoemd en herordend rond één default: `volledige boom zichtbaar`.
 - Desktop en mobiel starten op deze veilige fit-modus.
 - De fitbox krijgt extra ondermarge voor LOG/FT en extra rechterruimte voor de SYNT-as.
 - `strak`, `scroll` en `vast/debug` blijven beschikbaar als secundaire opties.
+
+
+## v4567
+- Keuze-boxen in de bovenbalk smaller gemaakt en dichter op elkaar gezet.
+- De select-opties behouden hun volledige tekst in de option-title; de gesloten box mag smaller zijn.
+- Raster volgt in Main de inhoud strakker dan de volledige aspect-viewBox: minder leeg grid links van LEX en rechts van projectie/SOV.
+- Extra fitmarge teruggebracht zonder de volledige boom uit beeld te laten vallen.
+
+
+## v4567
+- Projectieboxen staan rechts naast de SYNT/LOG-as, niet meer gecentreerd over de as.
+- SYNT/LOG-as sluit aan op de echte boomrechterrand met kleine marge; niet overlappend en niet ver weg.
+- Gelijke regel voor `Assen`, `SYNTAX`, `LOG/FT` en groeiweergave.
+
+
+## v4567
+- Projectieknoppenbox hard rechts van de SYNT/projectie-as geplaatst.
+- Geen terugklemmen naar links bij krappe vensters; daardoor overschrijft de box de SYNT-as niet meer.
+- Extra rechterruimte in beide volledige-boom-modi zodat de box zichtbaar blijft naast de as.
+- Mobile/light-background-regel versterkt voor browsers zonder `:has()`.
+
+
+## v4567
+- Projectiebox in landscape verder rechts van de echte SYNT/LOG-as gezet met een vaste veilige marge.
+- De pseudo-separator naast de HTML-projectiebox is uitgeschakeld; alleen de SVG-as blijft zichtbaar.
+- Extra rechter viewBox-ruimte toegevoegd voor `volledige boom zichtbaar` en `volledige boom strak`, zodat de box niet terug over de as wordt gedrukt.
+
+
+## v4568
+- projectiebox verder naar rechts verschoven zodat deze de SYNT-as niet overschrijft
+- extra rechter fitmarge voor volledige-boom modi

@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'v4562';
+  const VERSION = 'v4567';
   const BASE_CELL = 74;
   const ROOT_SIDE_GAP = 1;
   const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -2600,8 +2600,9 @@
 
   function sizeDynamicGridToBox(box) {
     if (!els.svg || !box) return;
+    const gridBox = (isMainScreenActive() && state.lastGridBox) ? state.lastGridBox : box;
     els.svg.querySelectorAll('.grid[data-dynamic-grid="true"]').forEach(grid => {
-      populateGridLines(grid, box);
+      populateGridLines(grid, gridBox);
     });
   }
 
@@ -3721,10 +3722,16 @@
     if (!rows.length) return;
     const maxText = rows.reduce((max, row) => Math.max(max, row.text.length), 0);
     const width = Math.max(mode === 'functional' ? 250 : 210, Math.min(380, maxText * 8.2 + 34));
+    // v4567: de projectie-as is een echte rechter-as. De regelboxen
+    // staan rechts van de as, met een kleine vaste marge. Ze overschrijven
+    // de SYNT/LOG-as dus niet meer, maar blijven wel direct aangesloten.
+    const axisBoxGap = Number.isFinite(options.axisBoxGap) ? options.axisBoxGap : 22;
+    const boxLeft = x + axisBoxGap;
+    const boxCenter = boxLeft + width / 2;
     const topY = Math.max(28, (rows[0]?.y || 92) - 56);
     const axisTop = Math.max(24, Math.min(...rows.map(row => row.y)) - 46);
     const axisBottom = Math.max(...rows.map(row => row.y)) + 46;
-    drawCanvasGuideText(g, x - width / 2, topY, title, 'axis-title');
+    drawCanvasGuideText(g, boxLeft, topY, title, 'axis-title');
     g.appendChild(svgEl('line', {
       x1: x,
       y1: axisTop,
@@ -3736,12 +3743,12 @@
       g.appendChild(svgEl('line', {
         x1: row.x0 + 58,
         y1: row.y,
-        x2: x - width / 2,
+        x2: boxLeft,
         y2: row.y,
         class: `projection-line ${cls} orthogonal projected-rule-line`
       }));
-      g.appendChild(svgEl('rect', { x: x - width / 2, y: row.y - 26, width, height: 52, rx: 14, class: boxClass }));
-      g.appendChild(svgEl('text', { x, y: row.y + 5, class: ruleClass }, row.text));
+      g.appendChild(svgEl('rect', { x: boxLeft, y: row.y - 26, width, height: 52, rx: 14, class: boxClass }));
+      g.appendChild(svgEl('text', { x: boxCenter, y: row.y + 5, class: ruleClass }, row.text));
     });
   }
 
@@ -3917,13 +3924,16 @@
       });
       return;
     }
-    drawAxisTitle(g, x, y - 60, 'SYNTAX-projectie · regels');
+    const axisBoxGap = 22;
+    drawAxisTitle(g, x + axisBoxGap, y - 60, 'SYNTAX-projectie · regels');
     const rules = syntaxRules();
     rules.forEach((rule, i) => {
       const yy = y + i * 66;
       const width = Math.max(210, Math.min(340, rule.length * 8.2 + 34));
-      g.appendChild(svgEl('rect', { x: x - width / 2, y: yy - 26, width, height: 52, rx: 14, class: 'syntax-rule-box projected-rule-box' }));
-      g.appendChild(svgEl('text', { x, y: yy + 5, class: 'rule-label projected-rule-label' }, rule));
+      const boxLeft = x + axisBoxGap;
+      const boxCenter = boxLeft + width / 2;
+      g.appendChild(svgEl('rect', { x: boxLeft, y: yy - 26, width, height: 52, rx: 14, class: 'syntax-rule-box projected-rule-box' }));
+      g.appendChild(svgEl('text', { x: boxCenter, y: yy + 5, class: 'rule-label projected-rule-label' }, rule));
     });
   }
 
@@ -3936,12 +3946,15 @@
       });
       return;
     }
-    drawAxisTitle(g, x, 40, 'LOG/FT-projectie · regels/rollen');
+    const axisBoxGap = 22;
+    drawAxisTitle(g, x + axisBoxGap, 40, 'LOG/FT-projectie · regels/rollen');
     functionalRules().forEach((rule, i) => {
       const yy = 86 + i * 66;
       const width = Math.max(250, Math.min(380, rule.length * 8.2 + 34));
-      g.appendChild(svgEl('rect', { x: x - width / 2, y: yy - 26, width, height: 52, rx: 14, class: 'syntax-rule-box projected-rule-box projected-functional-rule-box' }));
-      g.appendChild(svgEl('text', { x, y: yy + 5, class: 'rule-label projected-rule-label projected-functional-rule-label' }, rule));
+      const boxLeft = x + axisBoxGap;
+      const boxCenter = boxLeft + width / 2;
+      g.appendChild(svgEl('rect', { x: boxLeft, y: yy - 26, width, height: 52, rx: 14, class: 'syntax-rule-box projected-rule-box projected-functional-rule-box' }));
+      g.appendChild(svgEl('text', { x: boxCenter, y: yy + 5, class: 'rule-label projected-rule-label projected-functional-rule-label' }, rule));
     });
   }
 
@@ -3994,10 +4007,10 @@
     const southAxisY = py((centralLayout?.box?.maxY || 0) + 2.1, origin);
     const southAxisX1 = px((centralLayout?.box?.minX || 0) - 0.75, origin);
     const southAxisX2 = px((centralLayout?.box?.maxX || 0) + 0.75, origin);
-    // v4562: SYNT-as niet meer op een vaste x die over de boom kan vallen.
-    // Plaats hem rechts van de werkelijke boom/subtree met ruime tussenruimte.
+    // v4567: projectie-as sluit rechts aan op de boom: niet over de boom,
+    // maar ook niet ver zwevend. De regelboxen staan rechts van deze as.
     const centralTreeRightPx = px((centralLayout?.box?.maxX || 0), origin);
-    const eastAxisX = Math.max(1240, centralTreeRightPx + 260);
+    const eastAxisX = centralTreeRightPx + 118;
 
     const growthPlan = centralLayout?.__growthPlan;
     const showLexBaseStep = !growthPlan?.active || visibleAt(growthPlan, growthPlan.lexBaseStep);
@@ -4070,10 +4083,10 @@
     const origin = { x: 430, y: 92 };
     const layout = drawSyntaxTree(g, origin);
     const treeRightPx = px((layout?.box?.maxX || 0), origin);
-    const syntAxisX = Math.max(1040, treeRightPx + 250);
+    const syntAxisX = treeRightPx + 118;
     const functionalLayout = getFunctionalLayout();
     drawSyntaxRules(g, syntAxisX, 86, layout, origin, layout?.__growthPlan || null);
-    drawLogicalProjection(g, 300, Math.max(1110, syntAxisX + 70), 642, functionalLayout, {
+    drawLogicalProjection(g, 300, Math.max(1000, syntAxisX + 330), 642, functionalLayout, {
       cls: 'log',
       title: 'LOGICAL-projectie onder de syntaxboom',
       subtitle: 'De logische volgorde komt uit FT/LOG; syntax- en LEX-regels blijven aparte projecties.'
@@ -4087,9 +4100,9 @@
     const origin = { x: 430, y: 92 };
     const layout = drawFunctional(g, origin);
     const treeRightPx = px((layout?.box?.maxX || 0), origin);
-    const logRulesX = Math.max(1060, treeRightPx + 250);
+    const logRulesX = treeRightPx + 118;
     drawFunctionalRules(g, logRulesX, layout, origin, layout?.__growthPlan || null);
-    drawLogicalProjection(g, 310, Math.max(1120, logRulesX + 70), 666, layout, {
+    drawLogicalProjection(g, 310, Math.max(1010, logRulesX + 330), 666, layout, {
       cls: 'log',
       title: 'FT-projectie · logische volgorde',
       subtitle: 'Flip/layout in FT kan basisvolgorden tonen zoals SOV en SVO. OSV-!, VSO-! en VOS-! zijn geen basis-alternatieven: de box-aanpak kan deze volgordes niet opleveren; de LEX-as vraagt dan een verplaatsingsregel.'
@@ -4116,11 +4129,11 @@
     // v4451: tijdens groei niet opnieuw inzoomen op de paar zichtbare
     // elementen. Anders wordt stap 1 extreem groot weergegeven. Gebruik een
     // stabiel podium totdat de gebruiker zelf pant/zoomt.
-    // v4562: stabiele groei-viewbox ruimer maken. De onderste LOG/FT-box
+    // v4567: stabiele groei-viewbox ruimer maken. De onderste LOG/FT-box
     // en de naar rechts verplaatste SYNT-as moeten ook tijdens groei in beeld blijven.
-    if (state.projection === 'axes') return { x: -110, y: -165, w: 1960, h: 1180 };
-    if (state.projection === 'source') return { x: 120, y: -155, w: 1460, h: 1050 };
-    if (state.projection === 'log') return { x: 60, y: -155, w: 1540, h: 1060 };
+    if (state.projection === 'axes') return { x: -50, y: -150, w: 1780, h: 1120 };
+    if (state.projection === 'source') return { x: 150, y: -145, w: 1320, h: 1010 };
+    if (state.projection === 'log') return { x: 90, y: -145, w: 1500, h: 1010 };
     return null;
   }
 
@@ -4349,17 +4362,19 @@
     const controlsRect = controls.getBoundingClientRect();
     const xClient = anchor ? svgXToClient(anchor.x, viewBox) : null;
     const yClient = anchor ? svgYToClient(anchor.y, viewBox) : null;
-    const gap = 20;
-    const inset = 14;
-    const outsideGap = 14;
+    // v4567: harde no-overlap-regel. De HTML-projectiebox begint pas rechts
+    // van de werkelijke SVG SYNT/LOG-as. De marge is bewust groter dan de rand,
+    // schaduw en touch-hitbox van de HTML-box, zodat de as zichtbaar vrij blijft.
+    const axisBoxGapPx = 96;
+    const inset = 10;
     const controlW = Math.max(100, controlsRect.width || 104);
     const controlH = Math.max(180, controlsRect.height || 220);
     const windowMinLeft = Math.max(inset, 0 + inset);
     const windowMaxLeft = Math.max(windowMinLeft, hostRect.width - controlW - inset);
-    const anchorLeft = Number.isFinite(xClient) ? (xClient - hostRect.left + gap) : windowMaxLeft;
-    const afterGridLeft = svgLocalRight + outsideGap;
-    const preferredLeft = Math.max(anchorLeft, afterGridLeft);
-    const left = Math.round(Math.max(windowMinLeft, Math.min(windowMaxLeft, preferredLeft)));
+    const axisSafeLeft = Number.isFinite(xClient) ? (xClient - hostRect.left + axisBoxGapPx) : windowMaxLeft;
+    const left = Math.round(Number.isFinite(xClient)
+      ? Math.max(windowMinLeft, axisSafeLeft)
+      : Math.max(windowMinLeft, Math.min(windowMaxLeft, axisSafeLeft)));
     const minTop = Math.max(8, svgLocalTop + 8);
     const maxTop = Math.max(minTop, svgLocalBottom - controlH - 10);
     const rawTop = Number.isFinite(yClient) ? (yClient - hostRect.top + 8) : minTop;
@@ -4399,27 +4414,33 @@
     const extra = { right: 0, bottom: 0, left: 0, top: 0 };
 
     if (mode === 'window') {
-      // v4562: Hoofdvenster = volledige boom zichtbaar. Deze rand hoort bij
+      // v4567: Hoofdvenster = volledige boom zichtbaar. Deze rand hoort bij
       // de standaardfit en geldt voor desktop én mobiel. Hij voorkomt dat de
       // onderste LOG/FT-box of de verplaatste SYNT-as net buiten de viewBox valt.
-      extra.left = Math.max(fit.w * 0.035, 34 * unitX);
-      extra.top = Math.max(fit.h * 0.045, 38 * unitY);
+      // v4567: minder lege gridruimte links van LEX en rechts van
+      // projectie/SOV-box. De bbox zelf blijft volledig binnen beeld; alleen de
+      // extra bedieningsmarge is teruggebracht.
+      extra.left = Math.max(fit.w * 0.018, 18 * unitX);
+      extra.top = Math.max(fit.h * 0.034, 30 * unitY);
       if (portrait) {
-        const bottomPx = Math.max(174, (controlsRect?.height || 96) + (southRect?.height || 0) + 58);
-        extra.right = Math.max(fit.w * 0.075, 54 * unitX);
-        extra.bottom = Math.max(fit.h * 0.24, bottomPx * unitY);
+        const bottomPx = Math.max(148, (controlsRect?.height || 92) + (southRect?.height || 0) + 42);
+        extra.right = Math.max(fit.w * 0.045, 34 * unitX);
+        extra.bottom = Math.max(fit.h * 0.20, bottomPx * unitY);
       } else {
-        const rightPx = Math.max(270, (controlsRect?.width || 120) + 132);
-        const bottomPx = Math.max(142, (southRect?.height || 0) + 86);
-        extra.right = Math.max(fit.w * 0.22, rightPx * unitX);
-        extra.bottom = Math.max(fit.h * 0.18, bottomPx * unitY);
+        // v4567: extra rechterruimte reserveren zodat de projectieknoppenbox
+        // rechts van de SYNT-as kan blijven zonder over de as terug te schuiven.
+        const rightPx = Math.max(380, (controlsRect?.width || 112) + 300);
+        const bottomPx = Math.max(116, (southRect?.height || 0) + 64);
+        extra.right = Math.max(fit.w * 0.18, rightPx * unitX);
+        extra.bottom = Math.max(fit.h * 0.14, bottomPx * unitY);
       }
     } else {
       // Strakke fit: wel compleet, maar minder rand. Deze optie is niet default.
-      extra.left = Math.max(fit.w * 0.018, 18 * unitX);
-      extra.top = Math.max(fit.h * 0.022, 22 * unitY);
-      extra.right = Math.max(fit.w * 0.08, 80 * unitX);
-      extra.bottom = Math.max(fit.h * 0.08, 64 * unitY);
+      extra.left = Math.max(fit.w * 0.010, 10 * unitX);
+      extra.top = Math.max(fit.h * 0.016, 16 * unitY);
+      // Ook in 'volledige boom strak' voldoende ruimte rechts van de SYNT-as.
+      extra.right = Math.max(fit.w * 0.18, 250 * unitX);
+      extra.bottom = Math.max(fit.h * 0.055, 46 * unitY);
     }
 
     const expanded = {
@@ -4447,7 +4468,7 @@
       }
       const main = isMainScreenActive();
       const base = Math.max(bbox.width, bbox.height);
-      // v4562: hoofdvenster kreeg te weinig fit-marge; bij meet-scaling kon de
+      // v4567: hoofdvenster kreeg te weinig fit-marge; bij meet-scaling kon de
       // onderste box net buiten beeld vallen. Gebruik ook in Main een echte
       // randmarge rondom de volledige SVG-bounding-box.
       const margin = main
@@ -4460,6 +4481,18 @@
         y: bbox.y - margin,
         w: bbox.width + margin * 2,
         h: bbox.height + margin * 2
+      };
+      // v4567: raster volgt de inhoud strakker dan de aspect-viewBox.
+      // Daardoor verdwijnt overbodig raster links van LEX en rechts van de
+      // projectie/SOV-bediening, terwijl de viewBox nog genoeg ruimte houdt.
+      const gridMargin = main
+        ? Math.max(18, Math.min(42, base * 0.018))
+        : margin;
+      state.lastGridBox = {
+        x: bbox.x - gridMargin,
+        y: bbox.y - gridMargin,
+        w: bbox.width + gridMargin * 2,
+        h: bbox.height + gridMargin * 2
       };
       // Hoofdvenster gebruikt standaard 'volledige boom zichtbaar'.
       // Niet-Main schermen blijven de gewone aspect-fit gebruiken.
@@ -4503,6 +4536,7 @@
 
   function baseSvg(className) {
     els.svg.replaceChildren();
+    state.lastGridBox = null;
     setSvgPresentationVars();
     setViewBox(fallbackViewBox(), false);
     els.svg.classList.toggle('no-grid', !state.showGrid);
@@ -4680,8 +4714,12 @@
     for (const opt of options) {
       const el = document.createElement('option');
       el.value = opt.id;
-      el.textContent = localizedOptionLabel(select, opt);
+      const fullLabel = localizedOptionLabel(select, opt);
+      el.textContent = fullLabel;
+      el.title = fullLabel;
+      el.dataset.fullLabel = fullLabel;
       if (opt.id === selected) el.selected = true;
+      select.title = selected === opt.id ? fullLabel : (select.title || '');
       select.appendChild(el);
     }
   }
