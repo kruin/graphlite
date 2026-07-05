@@ -6,7 +6,7 @@ Dutch-specific linguistic material remains unchanged. Example sentences such as 
 
 ## Interface language
 
-Use the UI language button in the top bar to switch the visible interface, configuration screen and help text. The button states the current UI language: `Taal: Nederlands` in Dutch mode and `UI: English` in English mode.
+Use the UI language button in the top bar to switch the visible interface, configuration screen and help text. The button states the current UI language: `Nederlands` in Dutch mode and `English` in English mode.
 
 
 ## Main view

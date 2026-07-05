@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'v4552';
+  const VERSION = 'v4555';
   const BASE_CELL = 74;
   const ROOT_SIDE_GAP = 1;
   const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -4154,13 +4154,21 @@
     const main = document.body?.classList.contains('main-screen-active');
     if (!main) return;
     const bar = document.querySelector('.main-topbar');
+    const playBar = document.querySelector('.main-play-reset-bar');
     const root = document.documentElement;
     if (!bar || !root) return;
     const rect = bar.getBoundingClientRect();
-    const gap = 6;
-    const top = Math.max(0, Math.ceil(rect.bottom + gap));
-    root.style.setProperty('--main-grid-top', `${top}px`);
-    root.style.setProperty('--main-grid-height', `calc(100dvh - ${top}px)`);
+    const topGap = 4;
+    const gridGap = 5;
+    const playTop = Math.max(0, Math.ceil(rect.bottom + topGap));
+    let gridTop = Math.max(0, Math.ceil(rect.bottom + 6));
+    if (playBar) {
+      root.style.setProperty('--main-playbar-top', `${playTop}px`);
+      const playHeight = Math.max(0, Math.ceil(playBar.getBoundingClientRect().height || playBar.offsetHeight || 0));
+      gridTop = Math.max(gridTop, playTop + playHeight + gridGap);
+    }
+    root.style.setProperty('--main-grid-top', `${gridTop}px`);
+    root.style.setProperty('--main-grid-height', `calc(100dvh - ${gridTop}px)`);
   }
 
   function canvasAspectRatio() {
@@ -5369,7 +5377,7 @@
     document.body.classList.toggle('lang-nl', !en);
     applyConfigLanguageTexts(en);
     document.querySelectorAll('[data-language-toggle]').forEach(button => {
-      button.textContent = en ? 'UI: English' : 'Taal: Nederlands';
+      button.textContent = en ? 'English' : 'Nederlands';
       button.setAttribute('aria-pressed', String(en));
       button.title = en ? 'Click to switch UI/help back to Dutch.' : 'Klik om UI/help naar Engels te wisselen.';
       button.setAttribute('aria-label', button.title);

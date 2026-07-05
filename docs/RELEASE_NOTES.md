@@ -673,9 +673,21 @@ Dit blijft een LEX/FUNC-regel. De SYNT-boom wordt niet gemuteerd.
 - Model ongewijzigd: `LEX-ADV` is extern, staat op de LEX-as, wordt geplaatst vóór LEX-Wissels en muteert de SYNT-boom niet.
 
 
+## v4554 — Play/Reset naast taalkeuze
+
+- `Play` en `Reset` verplaatst naar de hoofdtoolbar, direct rechts van de taal/UI-knop.
+- Taalbutton toont nu alleen `Nederlands` of `English`; `Taal:` en `UI:` zijn verwijderd.
+
 ## v4552 — NIET / neutrale negatie
 
 - `NIET` krijgt een eigen lineaire LEX-regel: `post-object-pre-vcluster`.
 - De dropdownregel `HOND BIJT MAN NIET` rendert nu als extern LEX-slot na het object.
 - `HOND BIJT NIET MAN` is niet verwijderd, maar herclassificeerd als gemarkeerde contrastnegatie.
 - Nieuwe configbestanden: `samples/adverb_placement_rules_v4552.json`, `samples/adverb_word_rules_v4552.json`.
+
+## v4555 — Play/Reset op eigen centrale balk
+
+- `Play` en `Reset` verplaatst uit de hoofdactieregel naast de taal/UI-knop.
+- Nieuwe centrale balk direct boven het grid.
+- Styling prominenter gemaakt met grotere knoppen en eigen achtergrond.
+- `syncMainTopbarLayout()` houdt nu rekening met de play/reset-balk bij het berekenen van `--main-grid-top`.

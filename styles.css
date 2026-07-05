@@ -4138,3 +4138,143 @@ body.help-screen-active .help-screen {
   color: var(--muted);
   line-height: 1.5;
 }
+
+/* v4556: compactere topbar zodat alle knoppen passen; label Bijwoord; selects smaller than longest option. */
+body.main-screen-active .main-topbar {
+  gap: .38rem !important;
+  padding: .24rem .38rem !important;
+  flex-wrap: nowrap !important;
+}
+body.main-screen-active .main-sentence-field,
+body.main-screen-active .main-adverb-field,
+body.main-screen-active .main-window-fit-menu,
+body.main-screen-active .main-topbar-actions {
+  min-width: 0 !important;
+}
+body.main-screen-active .main-sentence-field {
+  gap: .28rem !important;
+  max-width: min(26vw, 24rem) !important;
+}
+body.main-screen-active .main-sentence-field span,
+body.main-screen-active .main-adverb-field span,
+body.main-screen-active .main-window-fit-field span {
+  font-size: .72rem !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+}
+body.main-screen-active .main-sentence-field select {
+  width: clamp(10.5rem, 20vw, 15rem) !important;
+  min-height: 2.15rem !important;
+  padding: .18rem .52rem !important;
+  font-size: .82rem !important;
+}
+body.main-screen-active .main-adverb-field {
+  gap: .28rem !important;
+}
+body.main-screen-active .main-adverb-field select {
+  width: clamp(9.5rem, 18vw, 13rem) !important;
+  min-height: 2.15rem !important;
+  padding: .18rem .52rem !important;
+  font-size: .82rem !important;
+}
+body.main-screen-active .main-window-fit-menu {
+  gap: .28rem !important;
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  max-width: none !important;
+}
+body.main-screen-active .main-window-fit-field {
+  gap: .24rem !important;
+  font-size: .72rem !important;
+}
+body.main-screen-active .main-window-fit-field select {
+  min-height: 2.1rem !important;
+  max-width: 12.75rem !important;
+  padding: .14rem .45rem !important;
+  font-size: .76rem !important;
+}
+body.main-screen-active .main-topbar-actions {
+  gap: .26rem !important;
+}
+body.main-screen-active .language-toggle-button,
+body.main-screen-active .help-open-button,
+body.main-screen-active .config-open-button {
+  min-height: 2.08rem !important;
+  padding: .22rem .62rem !important;
+  font-size: .78rem !important;
+  border-radius: .72rem !important;
+}
+@media (max-width: 1500px) {
+  body.main-screen-active .main-sentence-field select { width: clamp(9rem, 17vw, 13rem) !important; }
+  body.main-screen-active .main-adverb-field select { width: clamp(8.4rem, 15vw, 11rem) !important; }
+  body.main-screen-active .main-window-fit-field select { max-width: 10.5rem !important; font-size: .72rem !important; }
+  body.main-screen-active .language-toggle-button,
+  body.main-screen-active .help-open-button,
+  body.main-screen-active .config-open-button { padding-inline: .52rem !important; font-size: .74rem !important; }
+}
+
+/* v4555: Play/Reset op een eigen centrale balk direct boven het grid. */
+.main-play-reset-bar {
+  display: none;
+}
+body.main-screen-active .main-play-reset-bar {
+  position: fixed !important;
+  left: 0 !important;
+  right: 0 !important;
+  top: var(--main-playbar-top, 3.55rem) !important;
+  z-index: 139 !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  box-sizing: border-box !important;
+  padding: .28rem max(.55rem, env(safe-area-inset-right)) .3rem max(.55rem, env(safe-area-inset-left)) !important;
+  background: color-mix(in srgb, var(--panel), var(--bg) 1%) !important;
+  border-bottom: 1px solid var(--line) !important;
+  box-shadow: 0 .2rem .72rem rgba(15, 23, 42, .12) !important;
+}
+body.main-screen-active .main-play-reset-controls {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: .55rem !important;
+  padding: .18rem .32rem !important;
+  border: 1px solid color-mix(in srgb, var(--accent), var(--line) 48%) !important;
+  border-radius: 999px !important;
+  background: color-mix(in srgb, var(--accent), var(--panel) 88%) !important;
+  box-shadow: 0 .24rem .8rem rgba(15, 23, 42, .16) !important;
+}
+body.main-screen-active .main-play-reset-controls button {
+  min-height: 2.55rem !important;
+  min-width: 5.15rem !important;
+  padding-inline: 1.15rem !important;
+  border: 1px solid color-mix(in srgb, var(--accent), var(--line) 35%) !important;
+  border-radius: 999px !important;
+  background: color-mix(in srgb, var(--panel), white 6%) !important;
+  color: var(--text) !important;
+  font-weight: 1000 !important;
+  letter-spacing: .015em !important;
+  cursor: pointer !important;
+}
+body.main-screen-active .main-play-reset-controls button:disabled {
+  opacity: .52 !important;
+  cursor: not-allowed !important;
+}
+body.config-screen-active .main-play-reset-bar,
+body.help-screen-active .main-play-reset-bar {
+  display: none !important;
+}
+@media (max-width: 760px) {
+  body.main-screen-active .main-play-reset-bar {
+    padding-block: .22rem !important;
+  }
+  body.main-screen-active .main-play-reset-controls {
+    gap: .38rem !important;
+    padding: .14rem .24rem !important;
+  }
+  body.main-screen-active .main-play-reset-controls button {
+    min-height: 2.22rem !important;
+    min-width: 4.35rem !important;
+    padding-inline: .8rem !important;
+    font-size: .9rem !important;
+  }
+}
