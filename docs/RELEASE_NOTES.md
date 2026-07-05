@@ -685,9 +685,15 @@ Dit blijft een LEX/FUNC-regel. De SYNT-boom wordt niet gemuteerd.
 - `HOND BIJT NIET MAN` is niet verwijderd, maar herclassificeerd als gemarkeerde contrastnegatie.
 - Nieuwe configbestanden: `samples/adverb_placement_rules_v4552.json`, `samples/adverb_word_rules_v4552.json`.
 
-## v4555 — Play/Reset op eigen centrale balk
+## v4557 — Play/Reset op eigen centrale balk
 
 - `Play` en `Reset` verplaatst uit de hoofdactieregel naast de taal/UI-knop.
 - Nieuwe centrale balk direct boven het grid.
 - Styling prominenter gemaakt met grotere knoppen en eigen achtergrond.
 - `syncMainTopbarLayout()` houdt nu rekening met de play/reset-balk bij het berekenen van `--main-grid-top`.
+
+
+## v4557 — mobiel/desktop cacheherstel
+- Oude service-workers en caches worden bij laden éénmalig opgeruimd.
+- `sw.js` is cleanup-only; de viewer gebruikt geen PWA-cache in deze lokale/dev-build.
+- Alle top-level links en asset-queries zijn naar v4557 gezet.

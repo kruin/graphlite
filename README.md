@@ -150,14 +150,21 @@ De hoofdtoolbar is compacter: `Play` en `Reset` staan direct rechts naast de taa
 
 Neutrale negatie gebruikt nu een eigen LEX-regel: `HOND | BIJT | MAN | NIET` en bij perfectum `HOND | HEEFT | MAN | NIET | GEBETEN`. `HOND | BIJT | NIET | MAN` blijft alleen een gemarkeerde contrastlezing (`niet de man maar ...`). Zie `docs/LEX_ADVERB_PLACEMENT_RULES_V4552.md` en `samples/adverb_word_rules_v4552.json`.
 
-## v4555 — Play/Reset op eigen centrale balk
+## v4557 — Play/Reset op eigen centrale balk
 
 - `Play` en `Reset` staan niet meer in de taal/UI-actieregel.
 - Toegevoegd: vaste `main-play-reset-bar`, centraal, direct boven het grid.
 - De grid-start wordt dynamisch lager gezet op basis van topbar + playbalk, zodat canvas en bedieningsbalk niet overlappen.
 
 
-## v4556
+## v4557
 - Bovenbalk compacter gemaakt zodat alle knoppen passen.
 - Label `Met bijwoord` hernoemd naar `Bijwoord`.
 - Selectknoppen voor Zin/Bijwoord mogen smaller zijn dan hun langste optie; de native uitklaplijst kan wel de volle optiebreedte tonen.
+
+
+## v4557
+- Cache/service-worker cleanup toegevoegd voor verschil tussen desktop en mobiel.
+- Alle entry assets naar `v4557` gecachebust.
+- `reset-cache.html` verwijdert oude service-workers/caches en opent daarna `index.html?ogv=v4557`.
+- `sw.js` is nu cleanup-only: geen asset-cache meer in lokale/dev builds.

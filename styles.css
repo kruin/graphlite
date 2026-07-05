@@ -4139,7 +4139,7 @@ body.help-screen-active .help-screen {
   line-height: 1.5;
 }
 
-/* v4556: compactere topbar zodat alle knoppen passen; label Bijwoord; selects smaller than longest option. */
+/* v4557: compactere topbar zodat alle knoppen passen; label Bijwoord; selects smaller than longest option. */
 body.main-screen-active .main-topbar {
   gap: .38rem !important;
   padding: .24rem .38rem !important;
@@ -4213,7 +4213,7 @@ body.main-screen-active .config-open-button {
   body.main-screen-active .config-open-button { padding-inline: .52rem !important; font-size: .74rem !important; }
 }
 
-/* v4555: Play/Reset op een eigen centrale balk direct boven het grid. */
+/* v4557: Play/Reset op een eigen centrale balk direct boven het grid. */
 .main-play-reset-bar {
   display: none;
 }
