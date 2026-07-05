@@ -4372,7 +4372,7 @@ body.main-screen-active #mainSouthModeButton {
 }
 
 
-/* v4559: SOV/VSO/enz.-box staat direct onder de projectiestrip, dus onder LOG/FT. */
+/* v4560: SOV/VSO/enz.-box staat direct onder de projectiestrip, dus onder LOG/FT. */
 body.main-screen-active .main-grid-controls .main-south-control {
   position: static !important;
   left: auto !important;

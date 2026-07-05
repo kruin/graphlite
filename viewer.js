@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'v4559';
+  const VERSION = 'v4560';
   const BASE_CELL = 74;
   const ROOT_SIDE_GAP = 1;
   const SVG_NS = 'http://www.w3.org/2000/svg';

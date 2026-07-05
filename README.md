@@ -1,4 +1,4 @@
-# OpenGraph Lite Viewer v4551
+# OpenGraph Lite Viewer v4560
 
 
 ## v4548 - bijwoord vóór verplaatsing
@@ -175,7 +175,14 @@ Neutrale negatie gebruikt nu een eigen LEX-regel: `HOND | BIJT | MAN | NIET` en 
 - De SOV/SVO/OVS/OSV/VSO/VOS-bediening staat nu als eigen ruime box rechts onder de LOG/FT-projectie.
 
 
-## v4559
+## v4560
 - SOV/SVO/OVS/OSV/VSO/VOS-bediening verplaatst naar de projectieknoppenkolom.
 - De volgordebox staat nu direct onder `LOG/FT`, met eigen ruime LOG-box en tussenruimte.
 - `←`, `→`, `Groei` en `Reset` blijven rond de centrale Play-balk.
+
+
+## v4560 - GitHub Pages versieconsistentie
+
+- Alle entry-versies gelijkgezet naar `v4560`: `index.html`, `viewer.html`, `viewer.js`, `styles.css`, `reset-cache.html` en `sw.js`.
+- Zichtbare header-versie gecorrigeerd; geen achterblijvende `v4558` in de hoofdviewer.
+- Na commit/deploy: open eerst `reset-cache.html?v4560` en daarna `index.html?ogv=v4560&nocache=<tijd>`.

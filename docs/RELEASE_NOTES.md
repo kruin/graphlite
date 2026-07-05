@@ -699,7 +699,7 @@ Dit blijft een LEX/FUNC-regel. De SYNT-boom wordt niet gemuteerd.
 - Alle top-level links en asset-queries zijn naar v4558 gezet.
 
 
-## v4559 — SOV-box onder LOG/FT
+## v4560 — SOV-box onder LOG/FT
 
 - De SOV/SVO/OVS/OSV/VSO/VOS-bediening staat nu onder de verticale projectiereeks, direct onder `LOG/FT`.
 - De box is een eigen LOG-bediening met tussenruimte, niet langer een zwevende badge onder de LOG-projectie.
