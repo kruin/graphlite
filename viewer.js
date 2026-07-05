@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'v4557';
+  const VERSION = 'v4559';
   const BASE_CELL = 74;
   const ROOT_SIDE_GAP = 1;
   const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -3807,10 +3807,14 @@
     const badgeWidth = Math.max(176, 26 + badgeText.length * 10.2);
     const badgeHeight = options.interactive ? 48 : 38;
     const badgeGap = options.interactive ? 54 : 24;
-    const badgeY = y - badgeGap - badgeHeight;
+    const badgeY = options.badgeAlign === 'right-below'
+      ? y + 76
+      : y - badgeGap - badgeHeight;
     const badgeX = options.badgeAlign === 'center'
       ? ((x1 + x2) / 2) - badgeWidth / 2
-      : x1 - badgeWidth - 16;
+      : (options.badgeAlign === 'right-below'
+        ? x2 - badgeWidth
+        : x1 - badgeWidth - 16);
     drawCanvasGuideText(g, x1, y - 110, `${title} · ${orderCode}`, 'axis-title');
     drawCanvasGuideText(g, x1, y - 86, subtitle, 'rule-label');
     const badgeGroup = svgEl('g', {
@@ -4002,7 +4006,7 @@
         items: southItems,
         interactive: true,
         tipText: 'tip: SOV → SVO → OVS → OSV-! → VSO-! → VOS-!',
-        badgeAlign: 'center'
+        badgeAlign: 'right-below'
       });
     } else if (showLexBaseStep) {
       const executedMovementCount = growthPlan?.active
@@ -4019,7 +4023,7 @@
         items: southItems,
         interactive: true,
         tipText: 'tip: SOV → SVO → OVS → OSV-! → VSO-! → VOS-!',
-        badgeAlign: 'center'
+        badgeAlign: 'right-below'
       });
     } else {
       drawAxisTitle(g, westAxisX - 45, 116, `Groei-presentatie · ${growthLabel()}`);

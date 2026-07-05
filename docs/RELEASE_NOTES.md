@@ -685,7 +685,7 @@ Dit blijft een LEX/FUNC-regel. De SYNT-boom wordt niet gemuteerd.
 - `HOND BIJT NIET MAN` is niet verwijderd, maar herclassificeerd als gemarkeerde contrastnegatie.
 - Nieuwe configbestanden: `samples/adverb_placement_rules_v4552.json`, `samples/adverb_word_rules_v4552.json`.
 
-## v4557 — Play/Reset op eigen centrale balk
+## v4558 — Play/Reset op eigen centrale balk
 
 - `Play` en `Reset` verplaatst uit de hoofdactieregel naast de taal/UI-knop.
 - Nieuwe centrale balk direct boven het grid.
@@ -693,7 +693,14 @@ Dit blijft een LEX/FUNC-regel. De SYNT-boom wordt niet gemuteerd.
 - `syncMainTopbarLayout()` houdt nu rekening met de play/reset-balk bij het berekenen van `--main-grid-top`.
 
 
-## v4557 — mobiel/desktop cacheherstel
+## v4558 — mobiel/desktop cacheherstel
 - Oude service-workers en caches worden bij laden éénmalig opgeruimd.
 - `sw.js` is cleanup-only; de viewer gebruikt geen PWA-cache in deze lokale/dev-build.
-- Alle top-level links en asset-queries zijn naar v4557 gezet.
+- Alle top-level links en asset-queries zijn naar v4558 gezet.
+
+
+## v4559 — SOV-box onder LOG/FT
+
+- De SOV/SVO/OVS/OSV/VSO/VOS-bediening staat nu onder de verticale projectiereeks, direct onder `LOG/FT`.
+- De box is een eigen LOG-bediening met tussenruimte, niet langer een zwevende badge onder de LOG-projectie.
+- De centrale Play-balk behoudt `←`, `Play`, `→`, `Groei` en `Reset`.
