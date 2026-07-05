@@ -4445,3 +4445,30 @@ body.main-screen-active .main-grid-controls #mainSouthNextButton {
     flex: 0 0 2.3rem !important;
   }
 }
+
+
+/* v4562: Hoofdvenster-opties herontworpen. Default = volledige boom zichtbaar. */
+body.main-screen-active .main-window-fit-menu {
+  flex: 0 1 auto !important;
+}
+body.main-screen-active .main-window-fit-field:first-child select {
+  max-width: 13.5rem !important;
+  min-width: 9.5rem !important;
+  font-weight: 950 !important;
+}
+body.main-screen-active.main-window-window .canvas-wrap {
+  overflow: hidden !important;
+}
+body.main-screen-active.main-window-auto .canvas-wrap {
+  overflow: hidden !important;
+}
+body.main-screen-active.main-window-window #graphSvg,
+body.main-screen-active.main-window-auto #graphSvg {
+  display: block !important;
+}
+@media (max-width: 760px) {
+  body.main-screen-active .main-window-fit-field:first-child select {
+    max-width: 9.8rem !important;
+    min-width: 8.2rem !important;
+  }
+}

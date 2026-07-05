@@ -704,3 +704,11 @@ Dit blijft een LEX/FUNC-regel. De SYNT-boom wordt niet gemuteerd.
 - De SOV/SVO/OVS/OSV/VSO/VOS-bediening staat nu onder de verticale projectiereeks, direct onder `LOG/FT`.
 - De box is een eigen LOG-bediening met tussenruimte, niet langer een zwevende badge onder de LOG-projectie.
 - De centrale Play-balk behoudt `←`, `Play`, `→`, `Groei` en `Reset`.
+
+
+## v4562 — Hoofdvenster: volledige boom zichtbaar als standaard
+
+- De opties onder `Hoofdvenster` zijn hernoemd en herordend rond één default: `volledige boom zichtbaar`.
+- Desktop en mobiel starten op deze veilige fit-modus.
+- De fitbox krijgt extra ondermarge voor LOG/FT en extra rechterruimte voor de SYNT-as.
+- `strak`, `scroll` en `vast/debug` blijven beschikbaar als secundaire opties.

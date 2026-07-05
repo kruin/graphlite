@@ -1,4 +1,4 @@
-# OpenGraph Lite Viewer v4560
+# OpenGraph Lite Viewer v4562
 
 
 ## v4548 - bijwoord vóór verplaatsing
@@ -175,14 +175,29 @@ Neutrale negatie gebruikt nu een eigen LEX-regel: `HOND | BIJT | MAN | NIET` en 
 - De SOV/SVO/OVS/OSV/VSO/VOS-bediening staat nu als eigen ruime box rechts onder de LOG/FT-projectie.
 
 
-## v4560
+## v4562
 - SOV/SVO/OVS/OSV/VSO/VOS-bediening verplaatst naar de projectieknoppenkolom.
 - De volgordebox staat nu direct onder `LOG/FT`, met eigen ruime LOG-box en tussenruimte.
 - `←`, `→`, `Groei` en `Reset` blijven rond de centrale Play-balk.
 
 
-## v4560 - GitHub Pages versieconsistentie
+## v4562 - GitHub Pages versieconsistentie
 
-- Alle entry-versies gelijkgezet naar `v4560`: `index.html`, `viewer.html`, `viewer.js`, `styles.css`, `reset-cache.html` en `sw.js`.
+- Alle entry-versies gelijkgezet naar `v4562`: `index.html`, `viewer.html`, `viewer.js`, `styles.css`, `reset-cache.html` en `sw.js`.
 - Zichtbare header-versie gecorrigeerd; geen achterblijvende `v4558` in de hoofdviewer.
-- Na commit/deploy: open eerst `reset-cache.html?v4560` en daarna `index.html?ogv=v4560&nocache=<tijd>`.
+- Na commit/deploy: open eerst `reset-cache.html?v4562` en daarna `index.html?ogv=v4562&nocache=<tijd>`.
+
+
+## v4562 - fitbox en SYNT-as
+
+- De automatische fitbox krijgt meer ondermarge; de onderste box valt niet meer uit beeld.
+- De SYNT-as wordt niet meer op een vaste x-positie getekend, maar rechts van de echte boomrand geplaatst.
+- Stabiele groei-viewboxes zijn verruimd zodat groei/Play dezelfde volledige tekening tonen.
+
+
+## v4562 — Hoofdvenster: volledige boom zichtbaar als standaard
+
+- De opties onder `Hoofdvenster` zijn hernoemd en herordend rond één default: `volledige boom zichtbaar`.
+- Desktop en mobiel starten op deze veilige fit-modus.
+- De fitbox krijgt extra ondermarge voor LOG/FT en extra rechterruimte voor de SYNT-as.
+- `strak`, `scroll` en `vast/debug` blijven beschikbaar als secundaire opties.

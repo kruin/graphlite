@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'v4560';
+  const VERSION = 'v4562';
   const BASE_CELL = 74;
   const ROOT_SIDE_GAP = 1;
   const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -243,10 +243,10 @@
   ];
 
   const VIEW_FIT_MODES = [
-    { id: 'window', label: 'hoofdvenster: passend (boom + assen + knoppen)' },
-    { id: 'auto', label: 'venster: alleen boom + assen passend' },
-    { id: 'scroll', label: 'venster: scroll toegestaan' },
-    { id: 'fixed', label: 'venster: vast 1500×900' }
+    { id: 'window', label: 'volledige boom zichtbaar · standaard' },
+    { id: 'auto', label: 'volledige boom strak · zonder extra rand' },
+    { id: 'scroll', label: 'scroll toegestaan · groot canvas' },
+    { id: 'fixed', label: 'vast 1500×900 · debug' }
   ];
 
   const RIGHT_MENU_WIDTHS = [
@@ -622,7 +622,7 @@
     { id: 'sentence', label: 'Voorbeeldzin', cssClass: 'top-menu-sentence', tip: 'Voorbeeldzin: kies snel HOND BIJT MAN en varianten. Nuttig voor contrast tussen zinnen.' },
     { id: 'play', label: 'Play/Groei', cssClass: 'top-menu-play', tip: 'Play/Groei: stap voor stap boom, LEX-as en projecties tonen. Nuttig voor didactische uitleg.' },
     { id: 'tools', label: 'Werkknoppen', cssClass: 'top-menu-tools', tip: 'Werkknoppen: FIT, reset, JSON, Docs en editors. Nuttig bij bouwen en testen.' },
-    { id: 'fit', label: 'Hoofdvenster', cssClass: 'top-menu-fit', tip: 'Hoofdvenster: kies Passend/Scroll en Boomruimte direct boven het grid.' }
+    { id: 'fit', label: 'Hoofdvenster', cssClass: 'top-menu-fit', tip: 'Hoofdvenster: standaard volledige boom zichtbaar; scroll/strak/vast zijn opties.' }
   ];
   const TOP_MENU_MAX = TOP_MENU_CHOICES.length;
 
@@ -2364,6 +2364,11 @@
     root.dataset.viewFitMode = mode;
   }
 
+  function viewFitLabel() {
+    const opt = VIEW_FIT_MODES.find(option => option.id === validViewFitMode());
+    return opt?.label || validViewFitMode();
+  }
+
   function rightMenuLabel() {
     return rightMenuProfile().label.replace(/^rechterkolom:\s*/i, '');
   }
@@ -3989,14 +3994,18 @@
     const southAxisY = py((centralLayout?.box?.maxY || 0) + 2.1, origin);
     const southAxisX1 = px((centralLayout?.box?.minX || 0) - 0.75, origin);
     const southAxisX2 = px((centralLayout?.box?.maxX || 0) + 0.75, origin);
+    // v4562: SYNT-as niet meer op een vaste x die over de boom kan vallen.
+    // Plaats hem rechts van de werkelijke boom/subtree met ruime tussenruimte.
+    const centralTreeRightPx = px((centralLayout?.box?.maxX || 0), origin);
+    const eastAxisX = Math.max(1240, centralTreeRightPx + 260);
 
     const growthPlan = centralLayout?.__growthPlan;
     const showLexBaseStep = !growthPlan?.active || visibleAt(growthPlan, growthPlan.lexBaseStep);
     const showProjectionPanels = !growthPlan?.active || visibleAt(growthPlan, growthPlan.projectionStep);
     if (showProjectionPanels) {
       drawLexAxis(g, westAxisX, 126, activeLexItems(), sourceMap);
-      if (state.centerMode === 'functional') drawFunctionalRules(g, 1240, centralLayout, origin, growthPlan);
-      else drawSyntaxRules(g, 1240, 126, centralLayout, origin, growthPlan);
+      if (state.centerMode === 'functional') drawFunctionalRules(g, eastAxisX, centralLayout, origin, growthPlan);
+      else drawSyntaxRules(g, eastAxisX, 126, centralLayout, origin, growthPlan);
       drawLogicalProjection(g, southAxisX1, southAxisX2, southAxisY, getFunctionalLayout(), {
         cls: 'log',
         title: 'LOG-as · LOGICAL-projectie',
@@ -4013,7 +4022,7 @@
         ? Math.max(0, Math.min(growthPlan.lexMovementCount, growthPlan.current - growthPlan.lexMovementStartStep + 1))
         : undefined;
       drawLexAxis(g, westAxisX, 126, activeLexItems(), sourceMap, { localOnly: true, executedMovementCount });
-      drawAxisTitle(g, 1210, 116, 'SYNTAX-projectie verschijnt in de laatste stap');
+      drawAxisTitle(g, eastAxisX, 116, 'SYNTAX-projectie verschijnt in de laatste stap');
       drawLogicalProjection(g, southAxisX1, southAxisX2, southAxisY, getFunctionalLayout(), {
         cls: 'log',
         title: 'LOG-as · LOGICAL-projectie',
@@ -4027,7 +4036,7 @@
       });
     } else {
       drawAxisTitle(g, westAxisX - 45, 116, `Groei-presentatie · ${growthLabel()}`);
-      drawAxisTitle(g, 1210, 116, 'SYNTAX-projectie verschijnt in de laatste stap');
+      drawAxisTitle(g, eastAxisX, 116, 'SYNTAX-projectie verschijnt in de laatste stap');
     }
     els.svg.appendChild(g);
   }
@@ -4060,9 +4069,11 @@
     const g = baseSvg('synt-view');
     const origin = { x: 430, y: 92 };
     const layout = drawSyntaxTree(g, origin);
+    const treeRightPx = px((layout?.box?.maxX || 0), origin);
+    const syntAxisX = Math.max(1040, treeRightPx + 250);
     const functionalLayout = getFunctionalLayout();
-    drawSyntaxRules(g, 1040, 86, layout, origin, layout?.__growthPlan || null);
-    drawLogicalProjection(g, 300, 1110, 642, functionalLayout, {
+    drawSyntaxRules(g, syntAxisX, 86, layout, origin, layout?.__growthPlan || null);
+    drawLogicalProjection(g, 300, Math.max(1110, syntAxisX + 70), 642, functionalLayout, {
       cls: 'log',
       title: 'LOGICAL-projectie onder de syntaxboom',
       subtitle: 'De logische volgorde komt uit FT/LOG; syntax- en LEX-regels blijven aparte projecties.'
@@ -4075,8 +4086,10 @@
     const g = baseSvg('log-view');
     const origin = { x: 430, y: 92 };
     const layout = drawFunctional(g, origin);
-    drawFunctionalRules(g, 1060, layout, origin, layout?.__growthPlan || null);
-    drawLogicalProjection(g, 310, 1120, 666, layout, {
+    const treeRightPx = px((layout?.box?.maxX || 0), origin);
+    const logRulesX = Math.max(1060, treeRightPx + 250);
+    drawFunctionalRules(g, logRulesX, layout, origin, layout?.__growthPlan || null);
+    drawLogicalProjection(g, 310, Math.max(1120, logRulesX + 70), 666, layout, {
       cls: 'log',
       title: 'FT-projectie · logische volgorde',
       subtitle: 'Flip/layout in FT kan basisvolgorden tonen zoals SOV en SVO. OSV-!, VSO-! en VOS-! zijn geen basis-alternatieven: de box-aanpak kan deze volgordes niet opleveren; de LEX-as vraagt dan een verplaatsingsregel.'
@@ -4103,9 +4116,11 @@
     // v4451: tijdens groei niet opnieuw inzoomen op de paar zichtbare
     // elementen. Anders wordt stap 1 extreem groot weergegeven. Gebruik een
     // stabiel podium totdat de gebruiker zelf pant/zoomt.
-    if (state.projection === 'axes') return { x: 30, y: -58, w: 1380, h: 760 };
-    if (state.projection === 'source') return { x: 330, y: -58, w: 980, h: 720 };
-    if (state.projection === 'log') return { x: 240, y: -58, w: 1040, h: 720 };
+    // v4562: stabiele groei-viewbox ruimer maken. De onderste LOG/FT-box
+    // en de naar rechts verplaatste SYNT-as moeten ook tijdens groei in beeld blijven.
+    if (state.projection === 'axes') return { x: -110, y: -165, w: 1960, h: 1180 };
+    if (state.projection === 'source') return { x: 120, y: -155, w: 1460, h: 1050 };
+    if (state.projection === 'log') return { x: 60, y: -155, w: 1540, h: 1060 };
     return null;
   }
 
@@ -4369,7 +4384,9 @@
   }
 
   function expandFitBoxForMainWindow(fit) {
-    if (!fit || !isMainScreenActive() || validViewFitMode() !== 'window') return fit;
+    if (!fit || !isMainScreenActive()) return fit;
+    const mode = validViewFitMode();
+    if (mode !== 'window' && mode !== 'auto') return fit;
     const controls = document.querySelector('.main-grid-controls');
     const south = document.querySelector('.main-south-control:not(.is-hidden)');
     const svgRect = els.svg?.getBoundingClientRect?.();
@@ -4380,20 +4397,40 @@
     const southRect = south?.getBoundingClientRect?.();
     const portrait = isPortraitGridFirstViewport();
     const extra = { right: 0, bottom: 0, left: 0, top: 0 };
-    if (portrait) {
-      const bottomPx = Math.max(110, (controlsRect?.height || 92) + (southRect?.height || 0) * 0.45 + 26);
-      extra.bottom = Math.max(fit.h * 0.11, bottomPx * unitY);
+
+    if (mode === 'window') {
+      // v4562: Hoofdvenster = volledige boom zichtbaar. Deze rand hoort bij
+      // de standaardfit en geldt voor desktop én mobiel. Hij voorkomt dat de
+      // onderste LOG/FT-box of de verplaatste SYNT-as net buiten de viewBox valt.
+      extra.left = Math.max(fit.w * 0.035, 34 * unitX);
+      extra.top = Math.max(fit.h * 0.045, 38 * unitY);
+      if (portrait) {
+        const bottomPx = Math.max(174, (controlsRect?.height || 96) + (southRect?.height || 0) + 58);
+        extra.right = Math.max(fit.w * 0.075, 54 * unitX);
+        extra.bottom = Math.max(fit.h * 0.24, bottomPx * unitY);
+      } else {
+        const rightPx = Math.max(270, (controlsRect?.width || 120) + 132);
+        const bottomPx = Math.max(142, (southRect?.height || 0) + 86);
+        extra.right = Math.max(fit.w * 0.22, rightPx * unitX);
+        extra.bottom = Math.max(fit.h * 0.18, bottomPx * unitY);
+      }
     } else {
-      const rightPx = Math.max(138, (controlsRect?.width || 112) + 34);
-      extra.right = Math.max(fit.w * 0.11, rightPx * unitX);
-      if (southRect?.height) extra.bottom = Math.max(0, southRect.height * unitY * 0.20);
+      // Strakke fit: wel compleet, maar minder rand. Deze optie is niet default.
+      extra.left = Math.max(fit.w * 0.018, 18 * unitX);
+      extra.top = Math.max(fit.h * 0.022, 22 * unitY);
+      extra.right = Math.max(fit.w * 0.08, 80 * unitX);
+      extra.bottom = Math.max(fit.h * 0.08, 64 * unitY);
     }
-    return {
+
+    const expanded = {
       x: fit.x - extra.left,
       y: fit.y - extra.top,
       w: fit.w + extra.left + extra.right,
       h: fit.h + extra.top + extra.bottom
     };
+    // Match de viewBox aan het actuele venster. Daardoor blijft de hele boom
+    // zichtbaar zonder clipping, ook als de toolbarhoogte of device-orientatie wijzigt.
+    return expandBoxToAspect(expanded, canvasAspectRatio());
   }
 
   function computeAutoFitBox() {
@@ -4410,8 +4447,11 @@
       }
       const main = isMainScreenActive();
       const base = Math.max(bbox.width, bbox.height);
+      // v4562: hoofdvenster kreeg te weinig fit-marge; bij meet-scaling kon de
+      // onderste box net buiten beeld vallen. Gebruik ook in Main een echte
+      // randmarge rondom de volledige SVG-bounding-box.
       const margin = main
-        ? Math.max(2, Math.min(8, base * 0.004))
+        ? Math.max(48, Math.min(96, base * 0.045))
         : (isMobileViewport()
           ? Math.max(18, Math.min(38, base * 0.024))
           : Math.max(24, Math.min(56, base * 0.028)));
@@ -4421,8 +4461,8 @@
         w: bbox.width + margin * 2,
         h: bbox.height + margin * 2
       };
-      // In hoofdvenster-passend wordt de fit-box uitgebreid met ruimte voor de
-      // vaste Main-knoppen: boom + assen + knoppen moeten samen in het venster passen.
+      // Hoofdvenster gebruikt standaard 'volledige boom zichtbaar'.
+      // Niet-Main schermen blijven de gewone aspect-fit gebruiken.
       return main ? expandFitBoxForMainWindow(fit) : expandBoxToAspect(fit, canvasAspectRatio());
     } catch (_err) {
       return fallbackViewBox();
@@ -4594,8 +4634,8 @@
     branchOtherSelect: { auto: 'auto', normal: 'normal', flip: 'flip' },
     layoutDensitySelect: { auto: 'tree spacing: auto-fit wide/lower', compact: 'tree spacing: compact/classic', flat: 'tree spacing: flatter / less high', wide: 'tree spacing: wide/lower', large: 'tree spacing: wide + larger font' },
     mainLayoutDensitySelectTop: { auto: 'tree spacing: auto-fit wide/lower', compact: 'tree spacing: compact/classic', flat: 'tree spacing: flatter / less high', wide: 'tree spacing: wide/lower', large: 'tree spacing: wide + larger font' },
-    viewFitSelect: { window: 'main window: fit tree + axes + buttons', auto: 'window: fit tree + axes only', scroll: 'window: scrolling allowed', fixed: 'window: fixed 1500x900' },
-    mainViewFitSelectTop: { window: 'main window: fit all', auto: 'tree + axes only', scroll: 'scroll allowed', fixed: 'fixed 1500x900' },
+    viewFitSelect: { window: 'full tree visible - default', auto: 'full tree tight', scroll: 'scroll allowed - large canvas', fixed: 'fixed 1500x900 - debug' },
+    mainViewFitSelectTop: { window: 'full tree visible', auto: 'tight full tree', scroll: 'scroll allowed', fixed: 'fixed/debug' },
     rightMenuWidthSelect: { auto: 'right column: auto/rest', wide: 'right column: wide', 'very-wide': 'right column: very wide', max: 'right column: maximum' },
     rightMenuWidthSelectTop: { auto: 'right column: auto/rest', wide: 'right column: wide', 'very-wide': 'right column: very wide', max: 'right column: maximum' },
     mobileRightMenuWidthSelect: { auto: 'right column: auto/rest', wide: 'right column: wide', 'very-wide': 'right column: very wide', max: 'right column: maximum' },
@@ -4616,7 +4656,7 @@
     sentence: ['Sample sentence', 'Sample sentence: quickly choose HOND BIJT MAN and variants. Useful for contrasts between sentences.'],
     play: ['Play/Grow', 'Play/Grow: show tree, LEX axis and projections step by step. Useful for explanation.'],
     tools: ['Work buttons', 'Work buttons: FIT, reset, JSON, Docs and editors. Useful for building and testing.'],
-    fit: ['Main window', 'Main window: place Fit/Scroll and Tree spacing directly above the grid.']
+    fit: ['Main window', 'Main window: default is full tree visible; tight/scroll/fixed are secondary options.']
   };
 
   const LEX_EXTENSION_LABELS_EN = {
@@ -4924,7 +4964,7 @@
       `adverb_notation: ${activeAdverbData()?.word ? `LEX-ADV[word=${activeAdverbData().word}, class=${activeAdverbData().category || 'BIJWOORD'}, axis=LEX, defaultHost=${activeAdverbData().defaultHost || '?'}, host=${activeAdverbData().host || activeAdverbData().defaultHost || '?'}, source=external, marking=${activeAdverbData().placement === 'marked' ? (activeAdverbData().marking || 'functional:marked-host') : 'functional:default-host'}]` : 'geen'}`, 
       `top_menus_above_grid: ${normalizeTopMenusAbove().map(topMenuLabel).join(', ') || 'geen'}`,
       `right_menu_width: ${validRightMenuMode()} (${rightMenuLabel()})`,
-      `canvas_pan: disabled; window fits tree + axes`,
+      `canvas_fit: ${viewFitLabel()}; default = volledige boom zichtbaar`,
       `free_slots: boomrijen voor open OPN-plaatsing; bijwoord-inserts worden boven syntactische categorieboxen getekend`,
       `tree_choice: ${activeTreeChoice()}`,
       `movement_summary: ${movementSummaryLabel()}`,
@@ -5301,7 +5341,7 @@
 
   function applyConfigLanguageTexts(en) {
     setText('.main-sentence-field span, .desktop-sentence-field span, .mobile-sentence-field span, .toolbar .example-field span', en ? 'Sentence' : 'Zin');
-    setText('.main-adverb-field span, .mobile-adverb-field span', en ? 'With adverb' : 'Met bijwoord');
+    setText('.main-adverb-field span, .mobile-adverb-field span', en ? 'Adverb' : 'Bijwoord');
     setText('.config-topbar h2', en ? 'All settings' : 'Alle instellingen');
     setText('.config-topbar p', en ? 'Configure adverb LEX slots, layout, main-window fit, export and documentation here. Projection, sentence and Play/Grow live in Main.' : 'Bijwoordslots op de LEX-as, layout, hoofdvenster, export en documentatie staan hier. Projectie, zin en Play/Groei staan in Main.');
     setPanelHeading(0, en ? 'Projection settings' : 'Projectie-instellingen');
