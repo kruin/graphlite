@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'v4567';
+  const VERSION = 'v4572';
   const BASE_CELL = 74;
   const ROOT_SIDE_GAP = 1;
   const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -38,6 +38,7 @@
     rightMenuWidthSelectTop: document.getElementById('rightMenuWidthSelectTop'),
     mobileRightMenuWidthSelect: document.getElementById('mobileRightMenuWidthSelect'),
     freeSlotCountSelect: document.getElementById('freeSlotCountSelect'),
+    southBoxDraggableInput: document.getElementById('southBoxDraggableInput'),
     lexFreeSlotCountSelect: document.getElementById('lexFreeSlotCountSelect'),
     lexFreeSlotPlacementSelect: document.getElementById('lexFreeSlotPlacementSelect'),
     lexInsertionContentSelect: document.getElementById('lexInsertionContentSelect'),
@@ -731,6 +732,10 @@
     growthEnabled: false,
     growthStep: 0,
     southLogicalMode: 'SOV',
+    southBoxDraggable: (function(){ try { return localStorage.getItem('opengraph_south_box_draggable') !== '0'; } catch (_err) { return true; } })(),
+    southBoxManual: (function(){ try { const raw = localStorage.getItem('opengraph_south_box_manual'); return raw ? JSON.parse(raw) : null; } catch (_err) { return null; } })(),
+    southBoxDrag: null,
+    southBoxClickSuppressed: false,
     freeSlotCount: 2,
     lexFreeSlotCount: 0,
     lexFreeSlotPlacement: 'above-vp',
@@ -3722,7 +3727,7 @@
     if (!rows.length) return;
     const maxText = rows.reduce((max, row) => Math.max(max, row.text.length), 0);
     const width = Math.max(mode === 'functional' ? 250 : 210, Math.min(380, maxText * 8.2 + 34));
-    // v4567: de projectie-as is een echte rechter-as. De regelboxen
+    // v4571: de projectie-as is een echte rechter-as. De regelboxen
     // staan rechts van de as, met een kleine vaste marge. Ze overschrijven
     // de SYNT/LOG-as dus niet meer, maar blijven wel direct aangesloten.
     const axisBoxGap = Number.isFinite(options.axisBoxGap) ? options.axisBoxGap : 22;
@@ -4007,7 +4012,7 @@
     const southAxisY = py((centralLayout?.box?.maxY || 0) + 2.1, origin);
     const southAxisX1 = px((centralLayout?.box?.minX || 0) - 0.75, origin);
     const southAxisX2 = px((centralLayout?.box?.maxX || 0) + 0.75, origin);
-    // v4567: projectie-as sluit rechts aan op de boom: niet over de boom,
+    // v4571: projectie-as sluit rechts aan op de boom: niet over de boom,
     // maar ook niet ver zwevend. De regelboxen staan rechts van deze as.
     const centralTreeRightPx = px((centralLayout?.box?.maxX || 0), origin);
     const eastAxisX = centralTreeRightPx + 118;
@@ -4129,7 +4134,7 @@
     // v4451: tijdens groei niet opnieuw inzoomen op de paar zichtbare
     // elementen. Anders wordt stap 1 extreem groot weergegeven. Gebruik een
     // stabiel podium totdat de gebruiker zelf pant/zoomt.
-    // v4567: stabiele groei-viewbox ruimer maken. De onderste LOG/FT-box
+    // v4571: stabiele groei-viewbox ruimer maken. De onderste LOG/FT-box
     // en de naar rechts verplaatste SYNT-as moeten ook tijdens groei in beeld blijven.
     if (state.projection === 'axes') return { x: -50, y: -150, w: 1780, h: 1120 };
     if (state.projection === 'source') return { x: 150, y: -145, w: 1320, h: 1010 };
@@ -4275,6 +4280,40 @@
     return null;
   }
 
+
+  function lexAxisAnchorBox() {
+    if (!els.svg) return null;
+    const candidates = [
+      '.axes-lex-rules .projection-axis-line.lex',
+      '.lex-rule-view .projection-axis-line.lex',
+      '.projection-axis-line.lex',
+      '.lex-rule-view',
+      '.axes-lex-rules'
+    ];
+    for (const selector of candidates) {
+      const node = els.svg.querySelector(selector);
+      if (!node) continue;
+      try {
+        if (node.tagName && node.tagName.toLowerCase() === 'line') {
+          const x1 = Number(node.getAttribute('x1'));
+          const x2 = Number(node.getAttribute('x2'));
+          const y1 = Number(node.getAttribute('y1'));
+          const y2 = Number(node.getAttribute('y2'));
+          if ([x1, x2, y1, y2].every(Number.isFinite)) {
+            return { x: Math.min(x1, x2), y: Math.max(y1, y2), h: Math.abs(y2 - y1), source: selector };
+          }
+        }
+        const b = node.getBBox?.();
+        if (b && Number.isFinite(b.x) && Number.isFinite(b.y) && b.width >= 0 && b.height >= 0) {
+          return { x: b.x + b.width / 2, y: b.y + b.height, h: b.height, source: selector };
+        }
+      } catch (_err) {
+        // Element may be temporarily unavailable during SVG replacement.
+      }
+    }
+    return null;
+  }
+
   function southLogicalBadgeAnchorBox() {
     if (!els.svg) return null;
     const candidates = [
@@ -4303,6 +4342,38 @@
     return null;
   }
 
+
+  function logicalAxisAnchorBox() {
+    if (!els.svg) return null;
+    const candidates = [
+      '.logical-axis',
+      '.logical-projection .logical-axis',
+      '.axes-log-rules .logical-axis'
+    ];
+    for (const selector of candidates) {
+      const node = els.svg.querySelector(selector);
+      if (!node) continue;
+      try {
+        if (node.tagName && node.tagName.toLowerCase() === 'line') {
+          const x1 = Number(node.getAttribute('x1'));
+          const x2 = Number(node.getAttribute('x2'));
+          const y1 = Number(node.getAttribute('y1'));
+          const y2 = Number(node.getAttribute('y2'));
+          if ([x1, x2, y1, y2].every(Number.isFinite)) {
+            return { x1: Math.min(x1, x2), x2: Math.max(x1, x2), y: (y1 + y2) / 2, source: selector };
+          }
+        }
+        const b = node.getBBox?.();
+        if (b && Number.isFinite(b.x) && Number.isFinite(b.y) && b.width >= 0 && b.height >= 0) {
+          return { x1: b.x, x2: b.x + b.width, y: b.y + b.height / 2, source: selector };
+        }
+      } catch (_err) {
+        // Element may be temporarily unavailable during SVG replacement.
+      }
+    }
+    return null;
+  }
+
   function syncMainOverlayControlPlacement() {
     const controls = document.querySelector('.main-grid-controls');
     const southControl = document.querySelector('.main-south-control');
@@ -4318,69 +4389,75 @@
     const svgLocalRight = Math.min(hostRect.width, svgRect.right - hostRect.left);
     const svgLocalBottom = Math.min(hostRect.height, svgRect.bottom - hostRect.top);
 
-    // v4536: HTML controls are children of the canvas/boomvenster, but the SVG
-    // itself uses preserveAspectRatio=meet.  Therefore placement is clamped to
-    // the actually drawn grid rectangle, not to the full letterboxed canvas.
-    // All overlay coordinates are therefore clamped to the canvas rect, not to
-    // the outer workspace. This keeps the right control strip inside the grid
-    // window, next to the SYNTAX axis like the LEX strip is inside on the left.
-    if (southControl && !southControl.classList.contains('is-hidden')) {
-      const southAnchor = southLogicalBadgeAnchorBox();
-      const sxClient = southAnchor ? svgXToClient(southAnchor.x, viewBox) : null;
-      const syClient = southAnchor ? svgYToClient(southAnchor.y, viewBox) : null;
-      const southRect = southControl.getBoundingClientRect();
-      if (Number.isFinite(sxClient) && Number.isFinite(syClient)) {
-        const halfW = Math.max(48, (southRect.width || 160) / 2);
-        const halfH = Math.max(22, (southRect.height || 48) / 2);
-        const minLeft = svgLocalLeft + halfW + 6;
-        const maxLeft = Math.max(minLeft, svgLocalRight - halfW - 6);
-        const minTop = svgLocalTop + halfH + 6;
-        const maxTop = Math.max(minTop, svgLocalBottom - halfH - 6);
-        const left = Math.round(Math.max(minLeft, Math.min(maxLeft, sxClient - hostRect.left)));
-        const top = Math.round(Math.max(minTop, Math.min(maxTop, syClient - hostRect.top)));
-        root.style.setProperty('--main-south-left', `${left}px`);
-        root.style.setProperty('--main-south-top', `${top}px`);
-      } else {
-        root.style.removeProperty('--main-south-left');
-        root.style.removeProperty('--main-south-top');
-      }
-    } else {
-      root.style.removeProperty('--main-south-left');
-      root.style.removeProperty('--main-south-top');
-    }
-
     if (!controls) return;
     const portrait = isPortraitGridFirstViewport();
     if (portrait) {
+      root.removeProperty?.('--main-controls-left');
       root.style.removeProperty('--main-controls-left');
       root.style.removeProperty('--main-controls-top');
+      root.style.removeProperty('--main-south-left');
+      root.style.removeProperty('--main-south-top');
       controls.style.removeProperty('--main-controls-left');
       controls.style.removeProperty('--main-controls-top');
       return;
     }
+
     const anchor = syntAxisAnchorBox();
     const controlsRect = controls.getBoundingClientRect();
     const xClient = anchor ? svgXToClient(anchor.x, viewBox) : null;
     const yClient = anchor ? svgYToClient(anchor.y, viewBox) : null;
-    // v4567: harde no-overlap-regel. De HTML-projectiebox begint pas rechts
-    // van de werkelijke SVG SYNT/LOG-as. De marge is bewust groter dan de rand,
-    // schaduw en touch-hitbox van de HTML-box, zodat de as zichtbaar vrij blijft.
     const axisBoxGapPx = 96;
     const inset = 10;
     const controlW = Math.max(100, controlsRect.width || 104);
     const controlH = Math.max(180, controlsRect.height || 220);
-    const windowMinLeft = Math.max(inset, 0 + inset);
+    const windowMinLeft = Math.max(inset, inset);
     const windowMaxLeft = Math.max(windowMinLeft, hostRect.width - controlW - inset);
     const axisSafeLeft = Number.isFinite(xClient) ? (xClient - hostRect.left + axisBoxGapPx) : windowMaxLeft;
-    const left = Math.round(Number.isFinite(xClient)
+    const controlsLeft = Math.round(Number.isFinite(xClient)
       ? Math.max(windowMinLeft, axisSafeLeft)
       : Math.max(windowMinLeft, Math.min(windowMaxLeft, axisSafeLeft)));
     const minTop = Math.max(8, svgLocalTop + 8);
     const maxTop = Math.max(minTop, svgLocalBottom - controlH - 10);
     const rawTop = Number.isFinite(yClient) ? (yClient - hostRect.top + 8) : minTop;
-    const top = Math.round(Math.max(minTop, Math.min(maxTop, rawTop)));
-    root.style.setProperty('--main-controls-left', `${left}px`);
-    root.style.setProperty('--main-controls-top', `${top}px`);
+    const controlsTop = Math.round(Math.max(minTop, Math.min(maxTop, rawTop)));
+    root.style.setProperty('--main-controls-left', `${controlsLeft}px`);
+    root.style.setProperty('--main-controls-top', `${controlsTop}px`);
+
+    if (southControl && !southControl.classList.contains('is-hidden')) {
+      const southRect = southControl.getBoundingClientRect();
+      const southW = Math.max(96, southRect.width || 120);
+      const southH = Math.max(84, southRect.height || 108);
+      const minSouthLeft = svgLocalLeft + 8;
+      const maxSouthLeft = Math.max(minSouthLeft, svgLocalRight - southW - 8);
+      const minSouthTop = svgLocalTop + 8;
+      const maxSouthTop = Math.max(minSouthTop, svgLocalBottom - southH - 8);
+      let southLeft = null;
+      let southTop = null;
+      if (state.southBoxManual && Number.isFinite(state.southBoxManual.left) && Number.isFinite(state.southBoxManual.top)) {
+        southLeft = state.southBoxManual.left;
+        southTop = state.southBoxManual.top;
+      } else {
+        const lexAnchor = lexAxisAnchorBox();
+        const logAnchor = logicalAxisAnchorBox();
+        const lxClient = lexAnchor ? svgXToClient(lexAnchor.x, viewBox) : null;
+        const lyClient = logAnchor ? svgYToClient(logAnchor.y, viewBox) : null;
+        const southCenterX = Number.isFinite(lxClient) ? (lxClient - hostRect.left) : (svgLocalLeft + southW / 2 + 10);
+        const southCenterY = Number.isFinite(lyClient) ? (lyClient - hostRect.top) : (svgLocalBottom - southH / 2 - 12);
+        southLeft = southCenterX - southW / 2;
+        southTop = southCenterY - southH / 2;
+      }
+      southLeft = Math.round(Math.max(minSouthLeft, Math.min(maxSouthLeft, southLeft)));
+      southTop = Math.round(Math.max(minSouthTop, Math.min(maxSouthTop, southTop)));
+      root.style.setProperty('--main-south-left', `${southLeft}px`);
+      root.style.setProperty('--main-south-top', `${southTop}px`);
+      southControl.classList.toggle('is-draggable', !!state.southBoxDraggable);
+      southControl.setAttribute('title', state.southBoxDraggable
+        ? (isEnglish() ? 'Drag this language action box. Default: LEX axis × LOG axis.' : 'Sleep deze taalactiebox. Default: kruising LEX-as × LOG-as.')
+        : (isEnglish() ? 'Language action box is fixed by Config.' : 'Taalactiebox is vastgezet via Config.'));
+    } else {
+      root.style.removeProperty('--main-south-left');
+      root.style.removeProperty('--main-south-top');
+    }
   }
 
   function expandBoxToAspect(box, aspect = null) {
@@ -4414,10 +4491,10 @@
     const extra = { right: 0, bottom: 0, left: 0, top: 0 };
 
     if (mode === 'window') {
-      // v4567: Hoofdvenster = volledige boom zichtbaar. Deze rand hoort bij
+      // v4571: Hoofdvenster = volledige boom zichtbaar. Deze rand hoort bij
       // de standaardfit en geldt voor desktop én mobiel. Hij voorkomt dat de
       // onderste LOG/FT-box of de verplaatste SYNT-as net buiten de viewBox valt.
-      // v4567: minder lege gridruimte links van LEX en rechts van
+      // v4571: minder lege gridruimte links van LEX en rechts van
       // projectie/SOV-box. De bbox zelf blijft volledig binnen beeld; alleen de
       // extra bedieningsmarge is teruggebracht.
       extra.left = Math.max(fit.w * 0.018, 18 * unitX);
@@ -4427,7 +4504,7 @@
         extra.right = Math.max(fit.w * 0.045, 34 * unitX);
         extra.bottom = Math.max(fit.h * 0.20, bottomPx * unitY);
       } else {
-        // v4567: extra rechterruimte reserveren zodat de projectieknoppenbox
+        // v4571: extra rechterruimte reserveren zodat de projectieknoppenbox
         // rechts van de SYNT-as kan blijven zonder over de as terug te schuiven.
         const rightPx = Math.max(380, (controlsRect?.width || 112) + 300);
         const bottomPx = Math.max(116, (southRect?.height || 0) + 64);
@@ -4468,7 +4545,7 @@
       }
       const main = isMainScreenActive();
       const base = Math.max(bbox.width, bbox.height);
-      // v4567: hoofdvenster kreeg te weinig fit-marge; bij meet-scaling kon de
+      // v4571: hoofdvenster kreeg te weinig fit-marge; bij meet-scaling kon de
       // onderste box net buiten beeld vallen. Gebruik ook in Main een echte
       // randmarge rondom de volledige SVG-bounding-box.
       const margin = main
@@ -4482,7 +4559,7 @@
         w: bbox.width + margin * 2,
         h: bbox.height + margin * 2
       };
-      // v4567: raster volgt de inhoud strakker dan de aspect-viewBox.
+      // v4571: raster volgt de inhoud strakker dan de aspect-viewBox.
       // Daardoor verdwijnt overbodig raster links van LEX en rechts van de
       // projectie/SOV-bediening, terwijl de viewBox nog genoeg ruimte houdt.
       const gridMargin = main
@@ -4788,6 +4865,7 @@
     if (els.showGridInput) els.showGridInput.checked = state.showGrid;
     if (els.showRelationsInput) els.showRelationsInput.checked = state.showRelations;
     if (els.showLabelsInput) els.showLabelsInput.checked = state.showLabels;
+    if (els.southBoxDraggableInput) els.southBoxDraggableInput.checked = !!state.southBoxDraggable;
     const growthSupported = growthSupportedProjection();
     const growthMax = growthSupported ? growthStepMax() : 0;
     if (growthSupported) {
@@ -5551,6 +5629,98 @@
     setAppScreen(open ? 'help' : 'main');
   }
 
+
+  function safeStoreSouthBoxManual(value) {
+    state.southBoxManual = value;
+    try {
+      if (value && Number.isFinite(value.left) && Number.isFinite(value.top)) {
+        localStorage.setItem('opengraph_south_box_manual', JSON.stringify({ left: Math.round(value.left), top: Math.round(value.top) }));
+      } else {
+        localStorage.removeItem('opengraph_south_box_manual');
+      }
+    } catch (_err) {}
+  }
+
+  function updateSouthBoxDraggable(enabled) {
+    state.southBoxDraggable = !!enabled;
+    try { localStorage.setItem('opengraph_south_box_draggable', state.southBoxDraggable ? '1' : '0'); } catch (_err) {}
+    if (els.southBoxDraggableInput) els.southBoxDraggableInput.checked = state.southBoxDraggable;
+    const box = document.querySelector('.main-south-control');
+    if (box) box.classList.toggle('is-draggable', state.southBoxDraggable);
+    syncMainOverlayControlPlacement();
+  }
+
+  function bindSouthBoxDrag() {
+    const box = document.querySelector('.main-south-control');
+    const host = els.canvasWrap || workspaceForStage();
+    if (!box || !host || box.dataset.dragBound === '1') return;
+    box.dataset.dragBound = '1';
+
+    box.addEventListener('dblclick', event => {
+      safeStoreSouthBoxManual(null);
+      state.southBoxDrag = null;
+      syncMainOverlayControlPlacement();
+      event.preventDefault();
+      event.stopPropagation();
+    });
+
+    box.addEventListener('pointerdown', event => {
+      if (!state.southBoxDraggable) return;
+      if (event.button !== undefined && event.button !== 0) return;
+      if (event.target?.closest?.('button,input,select,a,label')) return;
+      const rect = box.getBoundingClientRect();
+      const hostRect = host.getBoundingClientRect();
+      state.southBoxDrag = {
+        pointerId: event.pointerId,
+        startX: event.clientX,
+        startY: event.clientY,
+        startLeft: rect.left - hostRect.left,
+        startTop: rect.top - hostRect.top,
+        width: rect.width,
+        height: rect.height,
+        moved: false
+      };
+      box.setPointerCapture?.(event.pointerId);
+      box.classList.add('is-dragging');
+      event.preventDefault();
+      event.stopPropagation();
+    });
+
+    box.addEventListener('pointermove', event => {
+      const drag = state.southBoxDrag;
+      if (!drag || drag.pointerId !== event.pointerId) return;
+      const hostRect = host.getBoundingClientRect();
+      const dx = event.clientX - drag.startX;
+      const dy = event.clientY - drag.startY;
+      if (Math.abs(dx) + Math.abs(dy) > 3) drag.moved = true;
+      const minLeft = 8;
+      const minTop = 8;
+      const maxLeft = Math.max(minLeft, hostRect.width - drag.width - 8);
+      const maxTop = Math.max(minTop, hostRect.height - drag.height - 8);
+      const left = Math.round(Math.max(minLeft, Math.min(maxLeft, drag.startLeft + dx)));
+      const top = Math.round(Math.max(minTop, Math.min(maxTop, drag.startTop + dy)));
+      document.documentElement.style.setProperty('--main-south-left', `${left}px`);
+      document.documentElement.style.setProperty('--main-south-top', `${top}px`);
+      safeStoreSouthBoxManual({ left, top });
+      event.preventDefault();
+      event.stopPropagation();
+    });
+
+    const finish = event => {
+      const drag = state.southBoxDrag;
+      if (!drag || drag.pointerId !== event.pointerId) return;
+      if (drag.moved) state.southBoxClickSuppressed = true;
+      state.southBoxDrag = null;
+      box.classList.remove('is-dragging');
+      try { box.releasePointerCapture?.(event.pointerId); } catch (_err) {}
+      setTimeout(() => { state.southBoxClickSuppressed = false; }, 0);
+      event.preventDefault();
+      event.stopPropagation();
+    };
+    box.addEventListener('pointerup', finish);
+    box.addEventListener('pointercancel', finish);
+  }
+
   function registerEvents() {
     document.querySelectorAll('.projection-tab').forEach(tab => {
       tab.addEventListener('click', () => {
@@ -5644,6 +5814,7 @@
     els.rightMenuWidthSelectTop?.addEventListener('change', event => setRightMenuMode(event.target.value));
     els.mobileRightMenuWidthSelect?.addEventListener('change', event => setRightMenuMode(event.target.value));
     els.freeSlotCountSelect?.addEventListener('change', event => { state.freeSlotCount = Math.max(0, Math.min(6, Number(event.target.value) || 0)); resetManualViewBox(); render(); });
+    els.southBoxDraggableInput?.addEventListener('change', event => updateSouthBoxDraggable(event.target.checked));
     const updateLexFreeSlotCount = event => { state.lexFreeSlotCount = Math.max(0, Math.min(8, Number(event.target.value) || 0)); resetManualViewBox(); render(); };
     const updateLexFreeSlotPlacement = event => { state.lexFreeSlotPlacement = validLexSlotPlacement(event.target.value); resetManualViewBox(); render(); };
     els.lexFreeSlotCountSelect?.addEventListener('change', updateLexFreeSlotCount);
@@ -5696,6 +5867,7 @@
     els.mainSouthPrevButton?.addEventListener('click', () => { stopGrowthPlayback(); cycleSouthLogicalMode(-1); });
     els.mainSouthNextButton?.addEventListener('click', () => { stopGrowthPlayback(); cycleSouthLogicalMode(1); });
     els.mainSouthModeButton?.addEventListener('click', () => { stopGrowthPlayback(); cycleSouthLogicalMode(1); });
+    bindSouthBoxDrag();
     document.querySelectorAll('[data-main-projection]').forEach(button => {
       button.addEventListener('click', () => {
         setProjection(button.dataset.mainProjection || 'axes');
