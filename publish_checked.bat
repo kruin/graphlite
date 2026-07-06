@@ -5,7 +5,7 @@ cd /d "%~dp0"
 
 echo.
 echo ==============================
-echo Commit en push - checked
+echo OpenGraph publish - checked
 echo ==============================
 echo.
 
@@ -34,18 +34,18 @@ if /I not "%BRANCH%"=="main" (
 )
 echo.
 
-if not exist "index.html" (
-    echo FOUT: index.html ontbreekt in deze map.
-    exit /b 1
+for %%f in (index.html viewer.html viewer.js styles.css reset-cache.html) do (
+    if not exist "%%f" (
+        echo FOUT: %%f ontbreekt in deze map.
+        exit /b 1
+    )
 )
-if not exist "viewer.js" (
-    echo FOUT: viewer.js ontbreekt in deze map.
-    exit /b 1
-)
-if not exist "styles.css" (
-    echo FOUT: styles.css ontbreekt in deze map.
-    exit /b 1
-)
+
+set "APP_VERSION=v1.0"
+set "RELEASE_ZIP=OpenGraph_Lite_Viewer_v1.0.zip"
+echo App-versie: %APP_VERSION%
+echo Release-zip: %RELEASE_ZIP%
+echo.
 
 where node >nul 2>nul
 if errorlevel 1 (
@@ -60,14 +60,15 @@ if errorlevel 1 (
 )
 
 echo.
-echo Git status:
-git status --short
+echo Git status voor %APP_VERSION% - sitebestanden:
+echo Release-zips OpenGraph_Lite_Viewer_v*.zip worden hier genegeerd; die horen niet in de Pages-root.
+git status --short -- . ":(exclude)OpenGraph_Lite_Viewer_v*.zip"
 echo.
 
-git status --short | findstr /R "." >nul
+git status --short -- . ":(exclude)OpenGraph_Lite_Viewer_v*.zip" | findstr /R "." >nul
 if errorlevel 1 (
-    echo Geen wijzigingen om te committen.
-    exit /b 0
+    echo Geen wijzigingen om te committen voor %APP_VERSION%.
+    goto :after_push_info
 )
 
 set /p "COMMITMSG=Geef commit message: "
@@ -78,8 +79,8 @@ if "%COMMITMSG%"=="" (
 )
 
 echo.
-echo Staging wijzigingen...
-git add -A
+echo Staging wijzigingen voor %APP_VERSION%...
+git add -A -- . ":(exclude)OpenGraph_Lite_Viewer_v*.zip"
 if errorlevel 1 (
     echo FOUT: git add mislukt.
     exit /b 1
@@ -88,7 +89,7 @@ if errorlevel 1 (
 git diff --cached --quiet
 if not errorlevel 1 (
     echo Geen staged wijzigingen om te committen.
-    exit /b 0
+    goto :after_push_info
 )
 
 echo.
@@ -107,13 +108,28 @@ if errorlevel 1 (
     exit /b 1
 )
 
+:after_push_info
 echo.
 echo Klaar.
 echo Branch: %BRANCH%
-echo Commit : %COMMITMSG%
+if defined COMMITMSG echo Commit : %COMMITMSG%
 echo.
-echo Open na deploy eventueel:
-echo https://kruin.github.io/graphlite/reset-cache.html
+echo Reset-cache heeft zin als browser/PWA-cache nog oude assets toont.
+echo Het wist GEEN GitHub Pages deploy-cache op afstand; het opent alleen de client-resetpagina.
+echo Wacht na push meestal 30-90 seconden tot GitHub Pages klaar is.
+echo.
+set "RESET_URL=https://kruin.github.io/graphlite/reset-cache.html?ogv=%APP_VERSION%^&nocache=%RANDOM%%RANDOM%"
+set "INDEX_URL=https://kruin.github.io/graphlite/index.html?ogv=%APP_VERSION%^&nocache=%RANDOM%%RANDOM%"
+echo Reset-cache URL:
+echo %RESET_URL%
+echo.
+echo Daarna eventueel:
+echo %INDEX_URL%
+echo.
+choice /C JN /M "Reset-cache pagina nu openen"
+if errorlevel 2 goto :done
+start "" "%RESET_URL%"
 
+:done
 echo.
 endlocal

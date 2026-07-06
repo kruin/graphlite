@@ -230,35 +230,6 @@ resultaat = voorbeeldzin
 - In Assen verschijnt de LEX-as nu stapsgewijs: eerst de horizontale basisprojectie, daarna per stap één lokale Wissel met trace, daarna pas het volledige resultaat met projectiepanelen.
 - Verplaatsingen blijven lokaal op de LEX-as; er komen geen verplaatsingslijnen vanuit de boom.
 
-
-## v4478 · configureerbare vrije LEX-slots
-
-Vrije slots zijn nu gesplitst in twee soorten. **Boom vrije rijen** reserveren lege ruimte onder de wortel van de centrale OPN-boom. **LEX vrije slots** zijn configureerbare, bijwoordboxen boven syntactische categorieboxen. Ze zijn voorbereid op toekomstig gebruik: insertie van lexicale elementen uit andere LEX-assen/andere bomen, bijvoorbeeld bijwoordelijke onthoofde zinnen, en anaforische elementen uit andere zinnen of uitingen. De export noteert daarom `lex_free_slot_count`, `lex_free_slot_placement` en een schema voor toekomstige bronnen. De NOORD-as blijft als mogelijke toekomstige as genoteerd, maar is nog niet actief.
-
-## v4505 - OSV-! en LEX-rendering
-
-OSV-! is bewust gemarkeerd met een uitroepteken. De box-aanpak kan nooit OSV opleveren als basisalternatief: de VP blijft object en werkwoord als subtree groeperen. Een pure flip van boxen is dan onvoldoende.
-
-Voor een correcte zichtbare LEX-as moet altijd een expliciete verplaatsingsregel werken. OSV-! is dus geen basis-layout of taalkundig alternatief, maar een waarschuwing/testlabel bij een onmogelijke boxvariant. De andere volgordes en bestaande flips blijven hierdoor ongemoeid.
-
-
-
-## v4506 - LEX-bijwoordslots
-
-Vrije LEX-inserts voor bijwoorden zijn nu gedocumenteerd als slottypen met verschillende scope. De basisregel blijft: reserveer slots tussen zichtbare LEX-boxen en plaats het slot op verticale overlap als die bestaat. Daarna bepaalt het bijwoordtype de exacte plaatsing.
-
-- Tijd: `GISTEREN`, `MORGEN` - meestal `VP-HOST`, eventueel `S-HOST` bij vooropplaatsing.
-- Frequentie: `VAAK`, `SOMS`, `ALTIJD` - `VP-HOST`.
-- Negatie: `NIET` - apart `NEG`/`V-HOST` slot.
-- Wijze: `SNEL`, `HARD`, `ZACHTJES` - `V-HOST` of `VP-RIGHT`.
-- Zinsbijwoord: `MISSCHIEN`, `WAARSCHIJNLIJK`, `HELAAS` - hoog `S/VP-HOST` of `S-HOST`.
-- Focus: `ALLEEN`, `OOK`, `ZELFS` - bij de gefocuste phrase.
-- Graad: `HEEL`, `ERG`, `ZEER` - intern in `AP/AdvP/NP`, dus geen algemeen syntaxboomlabel; plaats als extern LEX-slot met AP/AdvP-hosthoogte.
-
-De centrale boom wordt niet herschreven. Bijwoorden horen in deze fase in de LEX-renderlaag of in phrase-interne slots.
-
-Zie ook: `docs/LEX_ADVERB_INSERT_SLOTS.md`.
-
 ## OVT / onvoltooid verleden tijd
 
 De OVT-vormen `BEET` en `BREIDE` zijn gewone predicate/PV-vormen op de LEX-as. Zij gebruiken dezelfde structurele bron als `BIJT` en `BREIT`; alleen het LEX-label verandert.
@@ -274,5 +245,4 @@ VDW blijft apart: `GEBETEN` en `GEBREID` horen bij het perfectumtype met `HEEFT`
 
 ## v4535 - OSV-!, VSO-! en VOS-!
 
-`VSO` en `VOS` worden nu net als `OSV` gemarkeerd: `VSO-!` en `VOS-!`. Het uitroepteken betekent dat de box-aanpak deze volgorde niet als basisalternatief kan opleveren. Voor correcte rendering op de LEX-as is een expliciete verplaatsingsregel nodig. Bestaande bomen en bestaande flips blijven ongemoeid.
-
+`VSO` en `VOS` worden nu net als `OSV` gemarkeerd: `VSO-!` en `VOS-!`. Het uitroepteken betekent dat de box-aanpak deze volgorde niet als basisalternatief kan opleveren. Voor correcte LEX-rendering is een expliciete verplaatsingsregel nodig. Bestaande bomen en bestaande flips blijven ongemoeid.

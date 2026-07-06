@@ -1,284 +1,110 @@
-# OpenGraph Lite Viewer v4571
+# OpenGraph Lite Viewer v1.0
 
-
-## v4548 - bijwoord vóór verplaatsing
-
-Bijwoorden worden nu eerst als externe LEX-slots geplaatst. Daarna pas komen V2/topic/post-V2-Wissels aan de orde. Daardoor kan een bijwoord op zijn oorspronkelijke hosthoogte blijven staan, terwijl het bijbehorende zinsdeel later een trace achterlaat.
-
-Voorbeeldprincipe:
+OpenGraph Lite Viewer is een demo/viewer voor **JAN / OPN / OpenGraph-taalbomen**.
+De viewer toont een vrije bronboom met zelfstandige projectie-assen:
 
 ```text
-1. LEX-ADV boven NP
-2. NP wisselt naar slot 1
-3. bijwoord blijft boven de oorspronkelijke NP/trace
+LEX links/west
+SYNT rechts/oost
+LOG/FT onder/zuid
 ```
 
-## v4548 - bijwoord voorop = V2
+## Start
 
-Bijwoordelijke vooropplaatsing is gecorrigeerd: `GISTEREN BEET HOND MAN` is hoofdzin-V2/inversie, niet bijzinsvolgorde. Het bijwoord is een externe LEX-insertie in slot 1; de persoonsvorm blijft slot 2. Bijzinsvolgorde blijft gekoppeld aan een bindterm/complementizer zoals `omdat`.
+Open lokaal:
 
-## v4548 - LEX-bijwoordslot volgt echte hostbox
+```text
+index.html
+```
 
-Fix: bijwoordslots op de LEX-as gebruiken nu de bewaarde `lexAdverbAxisSlots` uit de syntaxlayout. Daardoor valt `boven VP/V/AP/NP` niet langer terug op de S-hoogte. Ook de losse LEX-view gebruikt een onzichtbare syntax-ankerkaart voor de correcte hostboxhoogte.
+Of via een eenvoudige lokale server:
 
-## v4541 - correctie BIJWOORD-host
+```bat
+start-local-viewer.bat
+```
 
-De dropdown **Met bijwoord** plaatst niet meer alles boven S.
-De gekozen bijwoordoptie bepaalt de host:
+Voor GitHub Pages:
 
-- modaliteit/tijd/reden/voorwaarde → S
-- frequentie/plaats → VP
-- negatie/wijze → V
-- graad → AP
-- focus/restrictief → NP
+```text
+https://kruin.github.io/graphlite/index.html?ogv=v1.0
+```
 
-Alle plaatsingen blijven LEX-slots op de LEX-as. De hostbox is alleen hoogteanker.
+Bij oude browsercache:
 
+```text
+https://kruin.github.io/graphlite/reset-cache.html?ogv=v1.0
+```
 
-Deze build verwijdert de aparte beeldmodule volledig uit de viewer.
+## Leidende projectbestanden
 
-## Aanwezig
+Deze bestanden zijn de compacte actuele project-sources:
 
-- hoofdviewer
-- Help
-- Config
-- voorbeeldzinnen
-- lexicon- en structure-editors
-- docs
+```text
+PROJECT_STATE_CURRENT.md
+LAYOUT_RULES.md
+LINGUISTIC_ACTIONS.md
+DEPLOY_GITHUB_PAGES.md
+HANDOVER_FOR_COLLABORATORS.md
+LEX_MOVEMENT_RULES.md
+```
 
-## Verwijderd
+Dezelfde kernbestanden staan ook in `docs/`, zodat ze via de docs-map vindbaar blijven.
 
-- aparte beeldmap
-- bijbehorende knoppen
-- bijbehorende links
-- bijbehorend Config-blok
-- bijbehorende startscripts
+## Harde layoutregels
 
-## v4541
+- LEX-as links van de boom.
+- SYNT-as rechts van de boom.
+- LOG/FT-as onder de boom.
+- De LOG/FT-as behoudt zijn eigen SVG-hoogte.
+- HTML-overlays, inclusief de SOV-taalactiebox, mogen assen niet verplaatsen.
+- Projectieboxen staan rechts van de SYNT-as, niet eroverheen.
+- De standaardfit toont boom, assen, projecties en taalactiebox.
 
-Toegevoegd als voorbeeldzin in `examples-input.html` en als fallback in `viewer.js`:
+## Taalactiebox
 
-`OMDAT DE HOND DE MAN HEEFT GEBETEN`
+De eerste taalactiebox bevat:
 
-LEX-volgorde: `OMDAT · DE HOND · DE MAN · HEEFT · GEBETEN`.
+```text
+‹ SOV ›
+```
 
+Deze actie verandert alleen de LOG/FT-volgordeprojectie. De centrale boom, SYNT-projectie en lexicale inhoud blijven ongemoeid.
 
-## v4541
+## Referenties
 
-Bijwoordplaatsing: bijwoorden worden boven een geldige syntactische categoriebox getekend (`S`, `NP`, `VP`, `V`, `PP`, `AP`), niet tussen boxen.
+Achtergrondbronnen staan apart in:
 
+```text
+references/README_REFERENCES.md
+```
 
-## v4541 — bijwoordvoorbeeldset
+Deze zijn nuttig voor theorie en context, maar de actuele werkinstructies staan in de projectbestanden hierboven.
 
-- Toegevoegd: `examples-adverbs.html`.
-- Toegevoegd: `docs/LEX_ADVERB_EXAMPLE_SET.md`.
-- Toegevoegd: `samples/adverb_host_examples_v4537.json`.
-- `examples-input.html` is hersteld als oorspronkelijke basisvoorbeeldset; de bijwoordtestset staat apart in `examples-adverbs.html`.
-- Eén bijwoord per voorbeeldzin.
-- Default-host per categorie: MODALITEIT→S, TIJD→S, FREQUENTIE→VP, PLAATS→VP, NEGATIE→V, GRAAD→AP, WIJZE→V, REDEN/OORZAAK→S, VOORWAARDE→S, FOCUS→NP.
-- Geforceerde afwijkingen krijgen notatie `functional:marked-host`.
+## Publiceren
 
+Gebruik voor publicatie:
 
-## v4541 — herstel eerste voorbeeldset
+```text
+publish_checked.bat
+```
 
-- `examples-input.html` is teruggezet naar de oorspronkelijke basisvoorbeeldset.
-- Bijwoordvoorbeelden staan apart in `examples-adverbs.html`, `docs/LEX_ADVERB_EXAMPLE_SET.md` en `samples/adverb_host_examples_v4537.json`.
-- De viewer-link naar Bijwoordvoorbeelden blijft bestaan, maar de eerste voorbeeldset wordt niet meer vermengd met bijwoordtests.
+Deze controleert minimaal:
 
-### v4541
+```bat
+node --check viewer.js
+```
 
-Het hoofdbeeld heeft nu twee onafhankelijke dropdowns:
+en opent desgewenst de reset-cache-pagina na push.
 
-- **Zin**: kiest de basiszin uit `examples-input.html`.
-- **Met bijwoord**: kiest een bijwoord uit `examples-adverbs.html` en tekent het boven de ingestelde syntaxhost.
+## Controle vóór delen
 
-De bijwoordkeuze verandert de centrale syntactische boom niet.
+```bat
+node --check viewer.js
+```
 
+Daarna de zip-integriteit controleren.
 
-## v4541 - Bijwoorden als externe LEX-slots
+## Versie
 
-Met `boven S/NP/VP/V/PP/AP` wordt bedoeld: een LEX-slot op de LEX-as, verticaal net boven de gekozen syntactische box. Het bijwoord wordt nergens op de syntaxboom getekend en komt niet als projectie uit de basisboom. De gekozen host-subboom schuift lager om ruimte te maken.
-
-### v4548: Boven S = V2/inversie
-
-Bijwoordplaatsing `boven S` is nu geen gewone lokale hostplaatsing meer. In GraphLite betekent dit: het bijwoord vult een extern LEX-slot net boven de S-box en staat daarmee voorop. In een hoofdzin activeert dit V2/inversie: `BIJWOORD | PV | SUBJECT | OBJECT`.
-
-### v4548 — klikbare gemarkeerde bijwoordvariant
-
-De bijwoordbox op de LEX-as is nu zelf een klikbare knoop als er een tegenhanger bestaat. Klik op een ongemarkeerde bijwoordbox om de gemarkeerde variant te tonen; klik op de gemarkeerde bijwoordbox om terug te gaan. Dit verandert alleen de LEX-host/markering, niet de centrale boom.
-
-
-## v4548 - Bijwoorden boven hostbox, niet erin
-
-- Bijwoordslots blijven externe LEX-inserties op de LEX-as.
-- `boven NP/VP/V-CLUSTER/V/...` betekent nu: het slot ligt visueel boven de hostbox, met een extra gereserveerde gridrij.
-- Bij perfectum/werkwoordcluster kiest een V-nabije bijwoordplaatsing eerst de hele `V-CLUSTER`-box als hoogteanker, niet een interne AUX/VDW-positie.
-- De basisboom blijft ongemuteerd; de hostbox wordt alleen lager gezet om ruimte te maken.
-
-
-### v4549 — fix bijwoordkeuze zonder beeld
-
-Bij elke gekozen bijwoordoptie kon v4548 stoppen met renderen. De oorzaak was een niet-bestaande variabele in het label van het LEX-bijwoordslot. In v4549 gebruikt dat label `visibleSlotCount`. Zonder bijwoord en met bijwoord renderen nu via dezelfde flow.
-
-
-## v4551 - Gecontroleerde bijwoordregels per woord
-
-- Bijwoordplaatsing gecontroleerd tegen Nederlandse grammaticale bronnen.
-- Nieuwe scheiding: `scopeHost` ≠ `linear`. S-scope is niet automatisch voorop; alleen `linear=fronted-v2` triggert V2.
-- `niet`, focuspartikels, graadwoorden, plaatsbijwoorden en polyfunctionele woorden krijgen eigen uitzonderingsregels.
-- Nieuwe config: `samples/adverb_placement_rules_v4551.json` en `samples/adverb_word_rules_v4551.json`.
-- Nieuwe documentatie: `docs/LEX_ADVERB_PLACEMENT_RULES_CHECKED.md`.
-
-## v4550 - Help en Config voor lexicale bijwoordinsertie
-
-Toegevoegd:
-
-- Helpkaart **Lexicale insertie: bijwoorden** met de afleidingsvolgorde: eerst `LEX-ADV`, daarna LEX-Wissels/verplaatsingen.
-- Configblok **Bijwoordplaatsingsregels per categorie** met default en gemarkeerde host(s).
-- Documentatiebestand `docs/LEX_ADVERB_PLACEMENT_RULES.md`.
-- Configbestand `samples/adverb_placement_rules_v4550.json`.
-
-Kernregel: bijwoorden blijven externe inserties op de LEX-as. De hostbox is alleen hoogteanker. `host=defaultHost` is ongemarkeerd; `host!=defaultHost` is `functional:marked-host`; `host=S` in hoofdzin activeert `functional:fronted-v2`.
-
-
-
-## v4554 — Play/Reset naast taalkeuze
-
-De hoofdtoolbar is compacter: `Play` en `Reset` staan direct rechts naast de taal/UI-knop. De taalbutton toont alleen `Nederlands` of `English`; de prefixes `Taal:` en `UI:` zijn verwijderd.
-
-## v4552 — NIET als eigen rechterveldslot
-
-Neutrale negatie gebruikt nu een eigen LEX-regel: `HOND | BIJT | MAN | NIET` en bij perfectum `HOND | HEEFT | MAN | NIET | GEBETEN`. `HOND | BIJT | NIET | MAN` blijft alleen een gemarkeerde contrastlezing (`niet de man maar ...`). Zie `docs/LEX_ADVERB_PLACEMENT_RULES_V4552.md` en `samples/adverb_word_rules_v4552.json`.
-
-## v4558 — Play/Reset op eigen centrale balk
-
-- `Play` en `Reset` staan niet meer in de taal/UI-actieregel.
-- Toegevoegd: vaste `main-play-reset-bar`, centraal, direct boven het grid.
-- De grid-start wordt dynamisch lager gezet op basis van topbar + playbalk, zodat canvas en bedieningsbalk niet overlappen.
-
-
-## v4558
-- Bovenbalk compacter gemaakt zodat alle knoppen passen.
-- Label `Met bijwoord` hernoemd naar `Bijwoord`.
-- Selectknoppen voor Zin/Bijwoord mogen smaller zijn dan hun langste optie; de native uitklaplijst kan wel de volle optiebreedte tonen.
-
-
-## v4558
-- Cache/service-worker cleanup toegevoegd voor verschil tussen desktop en mobiel.
-- Alle entry assets naar `v4558` gecachebust.
-- `reset-cache.html` verwijdert oude service-workers/caches en opent daarna `index.html?ogv=v4558`.
-- `sw.js` is nu cleanup-only: geen asset-cache meer in lokale/dev builds.
-
-## v4558
-- Heen/terug-knoppen en groeistatus terug rond de centrale Play-knop gezet.
-- De canvas-playstrip is verwijderd; de projectiestrip blijft bij het grid.
-- De SOV/SVO/OVS/OSV/VSO/VOS-bediening staat nu als eigen ruime box rechts onder de LOG/FT-projectie.
-
-
-## v4571
-- SOV/SVO/OVS/OSV/VSO/VOS-bediening verplaatst naar de projectieknoppenkolom.
-- De volgordebox staat nu direct onder `LOG/FT`, met eigen ruime LOG-box en tussenruimte.
-- `←`, `→`, `Groei` en `Reset` blijven rond de centrale Play-balk.
-
-
-## v4571 - GitHub Pages versieconsistentie
-
-- Alle entry-versies gelijkgezet naar `v4571`: `index.html`, `viewer.html`, `viewer.js`, `styles.css`, `reset-cache.html` en `sw.js`.
-- Zichtbare header-versie gecorrigeerd; geen achterblijvende `v4558` in de hoofdviewer.
-- Na commit/deploy: open eerst `reset-cache.html?v4571` en daarna `index.html?ogv=v4571&nocache=<tijd>`.
-
-
-## v4571 - fitbox en SYNT-as
-
-- De automatische fitbox krijgt meer ondermarge; de onderste box valt niet meer uit beeld.
-- De SYNT-as wordt niet meer op een vaste x-positie getekend, maar rechts van de echte boomrand geplaatst.
-- Stabiele groei-viewboxes zijn verruimd zodat groei/Play dezelfde volledige tekening tonen.
-
-
-## v4571 — Hoofdvenster: volledige boom zichtbaar als standaard
-
-- De opties onder `Hoofdvenster` zijn hernoemd en herordend rond één default: `volledige boom zichtbaar`.
-- Desktop en mobiel starten op deze veilige fit-modus.
-- De fitbox krijgt extra ondermarge voor LOG/FT en extra rechterruimte voor de SYNT-as.
-- `strak`, `scroll` en `vast/debug` blijven beschikbaar als secundaire opties.
-
-
-## v4571
-- Keuze-boxen in de bovenbalk smaller gemaakt en dichter op elkaar gezet.
-- De select-opties behouden hun volledige tekst in de option-title; de gesloten box mag smaller zijn.
-- Raster volgt in Main de inhoud strakker dan de volledige aspect-viewBox: minder leeg grid links van LEX en rechts van projectie/SOV.
-- Extra fitmarge teruggebracht zonder de volledige boom uit beeld te laten vallen.
-
-
-## v4571
-- Projectieboxen staan rechts naast de SYNT/LOG-as, niet meer gecentreerd over de as.
-- SYNT/LOG-as sluit aan op de echte boomrechterrand met kleine marge; niet overlappend en niet ver weg.
-- Gelijke regel voor `Assen`, `SYNTAX`, `LOG/FT` en groeiweergave.
-
-
-## v4571
-- Projectieknoppenbox hard rechts van de SYNT/projectie-as geplaatst.
-- Geen terugklemmen naar links bij krappe vensters; daardoor overschrijft de box de SYNT-as niet meer.
-- Extra rechterruimte in beide volledige-boom-modi zodat de box zichtbaar blijft naast de as.
-- Mobile/light-background-regel versterkt voor browsers zonder `:has()`.
-
-
-## v4571
-- Projectiebox in landscape verder rechts van de echte SYNT/LOG-as gezet met een vaste veilige marge.
-- De pseudo-separator naast de HTML-projectiebox is uitgeschakeld; alleen de SVG-as blijft zichtbaar.
-- Extra rechter viewBox-ruimte toegevoegd voor `volledige boom zichtbaar` en `volledige boom strak`, zodat de box niet terug over de as wordt gedrukt.
-
-
-## v4568
-- projectiebox verder naar rechts verschoven zodat deze de SYNT-as niet overschrijft
-- extra rechter fitmarge voor volledige-boom modi
-
-
-## v4569
-- LOG/FT-projectiebalk losgekoppeld van de SOV-box
-- SOV/VSO-box staat nu los links naast de projectiebalk
-- verschuiving van de LOG/FT-balk door meebewegen met de SOV-box hersteld
-
-
-## v4570
-- SOV/VSO/etc-box verplaatst naar de linkerbenedenhoek van het grid
-- horizontaal in het verlengde van de LEX-as
-- verticaal laag gehouden, los van de LOG/FT-balk rechts
-
-
-## v4572
-- Runtime-fout bij start hersteld: ontbrekende drag-functies voor de taalactiebox toegevoegd.
-- App opent weer met gevulde zin-/bijwoordkeuzes en zichtbare boom.
-- Taalactiebox blijft verplaatsbaar; dubbelklik reset naar default.
-
-
-## v4573
-- Gecontroleerde commit/push-BAT opgenomen in de projectzip.
-- `commit_and_push.bat` is vervangen door de veilige versie met preflight-checks.
-- `commit_and_push_checked.bat` is ook apart toegevoegd.
-
-
-## v4575
-- Pijlen links en rechts naast SOV teruggezet.
-- LOG-label blijft verwijderd.
-- SOV-taalactiebox blijft compact en uitgelijnd op de kruising LEX-as × LOG/FT-as.
-- commit_and_push.bat en commit_and_push_checked.bat blijven opgenomen in de projectzip.
-
-
-## v4576
-- SOV-box startpositie gestabiliseerd; oude lokale drag-positie wordt genegeerd.
-- Pijlen links/rechts naast SOV blijven zichtbaar.
-- Knoppen kleiner, vet font; box iets ruimer en in LOG-as-stijl.
-
-
-## v4577
-- SOV-taalactiebox standaard links naast het begin van de LOG/FT-as geplaatst.
-- Verticale uitlijning gecentreerd op de LOG/FT-as.
-- Knoppen kleiner gemaakt; SOV-label blijft vet; buitenbox iets ruimer.
-- Nieuwe localStorage-sleutel gebruikt zodat oude foutieve dragposities niet terugkomen.
-
-
-## v4578
-- LOG/FT-as blijft op de oorspronkelijke SVG-hoogte.
-- SOV-taalactiebox wordt met de echte gerenderde hoogte gecentreerd op die LOG/FT-as.
-- Verouderde fallbackhoogte verwijderd; daardoor opent de knop niet meer boven de as.
+Dit is **OpenGraph Lite Viewer v1.0**.
+Oudere v45xx-builds zijn ontwikkelgeschiedenis; deze zip is bedoeld als gedeelde basisversie.

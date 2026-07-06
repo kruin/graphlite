@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'v4576';
+  const VERSION = 'v1.0';
   const BASE_CELL = 74;
   const ROOT_SIDE_GAP = 1;
   const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -5642,7 +5642,7 @@
       if (value && Number.isFinite(value.left) && Number.isFinite(value.top)) {
         localStorage.setItem('opengraph_south_box_manual_v4578', JSON.stringify({ left: Math.round(value.left), top: Math.round(value.top) }));
       } else {
-        localStorage.removeItem('opengraph_south_box_manual_v4576');
+        localStorage.removeItem('opengraph_south_box_manual_v1.0');
       }
     } catch (_err) {}
   }

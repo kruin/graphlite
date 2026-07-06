@@ -2,3 +2,6 @@ __pycache__/
 *.pyc
 .DS_Store
 Thumbs.db
+
+# Release artifacts: publish via GitHub Releases, niet via Pages-root.
+OpenGraph_Lite_Viewer_v*.zip
