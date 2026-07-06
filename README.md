@@ -250,3 +250,35 @@ Neutrale negatie gebruikt nu een eigen LEX-regel: `HOND | BIJT | MAN | NIET` en 
 - Runtime-fout bij start hersteld: ontbrekende drag-functies voor de taalactiebox toegevoegd.
 - App opent weer met gevulde zin-/bijwoordkeuzes en zichtbare boom.
 - Taalactiebox blijft verplaatsbaar; dubbelklik reset naar default.
+
+
+## v4573
+- Gecontroleerde commit/push-BAT opgenomen in de projectzip.
+- `commit_and_push.bat` is vervangen door de veilige versie met preflight-checks.
+- `commit_and_push_checked.bat` is ook apart toegevoegd.
+
+
+## v4575
+- Pijlen links en rechts naast SOV teruggezet.
+- LOG-label blijft verwijderd.
+- SOV-taalactiebox blijft compact en uitgelijnd op de kruising LEX-as × LOG/FT-as.
+- commit_and_push.bat en commit_and_push_checked.bat blijven opgenomen in de projectzip.
+
+
+## v4576
+- SOV-box startpositie gestabiliseerd; oude lokale drag-positie wordt genegeerd.
+- Pijlen links/rechts naast SOV blijven zichtbaar.
+- Knoppen kleiner, vet font; box iets ruimer en in LOG-as-stijl.
+
+
+## v4577
+- SOV-taalactiebox standaard links naast het begin van de LOG/FT-as geplaatst.
+- Verticale uitlijning gecentreerd op de LOG/FT-as.
+- Knoppen kleiner gemaakt; SOV-label blijft vet; buitenbox iets ruimer.
+- Nieuwe localStorage-sleutel gebruikt zodat oude foutieve dragposities niet terugkomen.
+
+
+## v4578
+- LOG/FT-as blijft op de oorspronkelijke SVG-hoogte.
+- SOV-taalactiebox wordt met de echte gerenderde hoogte gecentreerd op die LOG/FT-as.
+- Verouderde fallbackhoogte verwijderd; daardoor opent de knop niet meer boven de as.

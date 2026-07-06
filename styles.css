@@ -4736,3 +4736,219 @@ body.main-screen-active .main-south-control.language-action-box.is-dragging {
 body.main-screen-active .main-south-control.language-action-box button {
   cursor: pointer !important;
 }
+
+
+/* v4574: compacte SOV-box op kruising LEX-as × LOG/FT-as. */
+body.main-screen-active .main-south-control {
+  width: 4.25rem !important;
+  min-width: 4.25rem !important;
+  padding: .28rem !important;
+  border-radius: .82rem !important;
+  gap: 0 !important;
+  flex-wrap: nowrap !important;
+}
+body.main-screen-active .main-south-control::before {
+  content: none !important;
+  display: none !important;
+}
+body.main-screen-active .main-south-control button {
+  min-height: 1.9rem !important;
+}
+body.main-screen-active .main-south-control #mainSouthModeButton {
+  order: 1 !important;
+  flex: 1 1 auto !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  padding-inline: .2rem !important;
+  font-size: .82rem !important;
+}
+body.main-screen-active .main-south-control #mainSouthPrevButton,
+body.main-screen-active .main-south-control #mainSouthNextButton {
+  display: none !important;
+}
+@media (orientation: portrait) {
+  body.main-screen-active .main-south-control {
+    left: var(--main-south-left, 1rem) !important;
+    top: var(--main-south-top, 1rem) !important;
+    right: auto !important;
+    bottom: auto !important;
+    transform: none !important;
+    width: 4.25rem !important;
+    min-width: 4.25rem !important;
+    padding: .28rem !important;
+  }
+  body.main-screen-active .main-south-control #mainSouthModeButton {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+}
+
+
+/* v4575: compacte taalactiebox; pijlen links/rechts naast SOV; geen LOG-label. */
+body.main-screen-active .main-south-control.language-action-box {
+  width: 7.55rem !important;
+  min-width: 7.55rem !important;
+  max-width: 7.55rem !important;
+  padding: .24rem .28rem !important;
+  gap: .24rem !important;
+  display: grid !important;
+  grid-template-columns: 1.75rem 3.35rem 1.75rem !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: .86rem !important;
+}
+body.main-screen-active .main-south-control.language-action-box::before {
+  content: none !important;
+  display: none !important;
+}
+body.main-screen-active .main-south-control.language-action-box button {
+  min-height: 1.9rem !important;
+  height: 1.9rem !important;
+  padding: .12rem .18rem !important;
+  border-radius: .62rem !important;
+  font-size: .82rem !important;
+  line-height: 1 !important;
+}
+body.main-screen-active .main-south-control.language-action-box #mainSouthPrevButton {
+  display: inline-flex !important;
+  order: 1 !important;
+  grid-column: 1 !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 0 !important;
+  width: 100% !important;
+}
+body.main-screen-active .main-south-control.language-action-box #mainSouthModeButton {
+  display: inline-flex !important;
+  order: 2 !important;
+  grid-column: 2 !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  padding-inline: .18rem !important;
+  background: color-mix(in srgb, var(--log), var(--panel) 78%) !important;
+}
+body.main-screen-active .main-south-control.language-action-box #mainSouthNextButton {
+  display: inline-flex !important;
+  order: 3 !important;
+  grid-column: 3 !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 0 !important;
+  width: 100% !important;
+}
+@media (orientation: portrait) {
+  body.main-screen-active .main-south-control.language-action-box {
+    width: 7.55rem !important;
+    min-width: 7.55rem !important;
+    max-width: 7.55rem !important;
+    grid-template-columns: 1.75rem 3.35rem 1.75rem !important;
+    flex-wrap: nowrap !important;
+  }
+}
+
+
+/* v4576: SOV-box startpositie stabiel; pijlen klein naast SOV; stijl volgt LOG-as-boxen. */
+body.main-screen-active .main-south-control.language-action-box {
+  width: 6.45rem !important;
+  min-width: 6.45rem !important;
+  max-width: 6.45rem !important;
+  padding: .22rem .26rem !important;
+  gap: .18rem !important;
+  display: grid !important;
+  grid-template-columns: 1.28rem 3.05rem 1.28rem !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: .9rem !important;
+  border-width: 1.7px !important;
+}
+body.main-screen-active .main-south-control.language-action-box::before {
+  content: none !important;
+  display: none !important;
+}
+body.main-screen-active .main-south-control.language-action-box button {
+  min-height: 1.66rem !important;
+  height: 1.66rem !important;
+  padding: .08rem .12rem !important;
+  border-radius: .58rem !important;
+  font-size: .78rem !important;
+  line-height: 1 !important;
+  font-weight: 1000 !important;
+}
+body.main-screen-active .main-south-control.language-action-box #mainSouthPrevButton,
+body.main-screen-active .main-south-control.language-action-box #mainSouthNextButton {
+  display: inline-flex !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: color-mix(in srgb, var(--panel), white 7%) !important;
+}
+body.main-screen-active .main-south-control.language-action-box #mainSouthModeButton {
+  display: inline-flex !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding-inline: .14rem !important;
+  font-size: .82rem !important;
+  font-weight: 1000 !important;
+  background: color-mix(in srgb, var(--log), var(--panel) 76%) !important;
+}
+@media (orientation: portrait) {
+  body.main-screen-active .main-south-control.language-action-box {
+    width: 6.45rem !important;
+    min-width: 6.45rem !important;
+    max-width: 6.45rem !important;
+    grid-template-columns: 1.28rem 3.05rem 1.28rem !important;
+    padding: .22rem .26rem !important;
+    gap: .18rem !important;
+  }
+}
+
+
+/* v4578: SOV-box links van LOG-as, conform referentiebeeld; kleiner knopformaat, vet label. */
+body.main-screen-active .main-south-control.language-action-box {
+  width: 5.7rem !important;
+  min-width: 5.7rem !important;
+  max-width: 5.7rem !important;
+  padding: .24rem .28rem !important;
+  gap: .16rem !important;
+  grid-template-columns: 1.12rem 2.72rem 1.12rem !important;
+  border-radius: .92rem !important;
+  border-width: 1.7px !important;
+}
+body.main-screen-active .main-south-control.language-action-box button {
+  min-height: 1.54rem !important;
+  height: 1.54rem !important;
+  padding: .06rem .10rem !important;
+  border-radius: .52rem !important;
+  font-size: .72rem !important;
+  font-weight: 1000 !important;
+  line-height: 1 !important;
+}
+body.main-screen-active .main-south-control.language-action-box #mainSouthModeButton {
+  font-size: .84rem !important;
+  font-weight: 1000 !important;
+  letter-spacing: .01em !important;
+  background: color-mix(in srgb, var(--log), var(--panel) 74%) !important;
+}
+@media (orientation: portrait) {
+  body.main-screen-active .main-south-control.language-action-box {
+    width: 5.7rem !important;
+    min-width: 5.7rem !important;
+    max-width: 5.7rem !important;
+    grid-template-columns: 1.12rem 2.72rem 1.12rem !important;
+    padding: .24rem .28rem !important;
+    gap: .16rem !important;
+  }
+}
+
+
+/* v4578: SOV-box wordt met zijn werkelijke hoogte op de oorspronkelijke LOG/FT-as gecentreerd. */
+body.main-screen-active .main-south-control.language-action-box {
+  min-height: 0 !important;
+  height: auto !important;
+  align-content: center !important;
+}

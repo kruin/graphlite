@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'v4572';
+  const VERSION = 'v4576';
   const BASE_CELL = 74;
   const ROOT_SIDE_GAP = 1;
   const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -733,7 +733,7 @@
     growthStep: 0,
     southLogicalMode: 'SOV',
     southBoxDraggable: (function(){ try { return localStorage.getItem('opengraph_south_box_draggable') !== '0'; } catch (_err) { return true; } })(),
-    southBoxManual: (function(){ try { const raw = localStorage.getItem('opengraph_south_box_manual'); return raw ? JSON.parse(raw) : null; } catch (_err) { return null; } })(),
+    southBoxManual: (function(){ try { const raw = localStorage.getItem('opengraph_south_box_manual_v4578'); return raw ? JSON.parse(raw) : null; } catch (_err) { return null; } })(),
     southBoxDrag: null,
     southBoxClickSuppressed: false,
     freeSlotCount: 2,
@@ -4395,38 +4395,39 @@
       root.removeProperty?.('--main-controls-left');
       root.style.removeProperty('--main-controls-left');
       root.style.removeProperty('--main-controls-top');
-      root.style.removeProperty('--main-south-left');
-      root.style.removeProperty('--main-south-top');
       controls.style.removeProperty('--main-controls-left');
       controls.style.removeProperty('--main-controls-top');
-      return;
+    } else {
+      const anchor = syntAxisAnchorBox();
+      const controlsRect = controls.getBoundingClientRect();
+      const xClient = anchor ? svgXToClient(anchor.x, viewBox) : null;
+      const yClient = anchor ? svgYToClient(anchor.y, viewBox) : null;
+      const axisBoxGapPx = 96;
+      const inset = 10;
+      const controlW = Math.max(100, controlsRect.width || 104);
+      const controlH = Math.max(180, controlsRect.height || 220);
+      const windowMinLeft = Math.max(inset, inset);
+      const windowMaxLeft = Math.max(windowMinLeft, hostRect.width - controlW - inset);
+      const axisSafeLeft = Number.isFinite(xClient) ? (xClient - hostRect.left + axisBoxGapPx) : windowMaxLeft;
+      const controlsLeft = Math.round(Number.isFinite(xClient)
+        ? Math.max(windowMinLeft, axisSafeLeft)
+        : Math.max(windowMinLeft, Math.min(windowMaxLeft, axisSafeLeft)));
+      const minTop = Math.max(8, svgLocalTop + 8);
+      const maxTop = Math.max(minTop, svgLocalBottom - controlH - 10);
+      const rawTop = Number.isFinite(yClient) ? (yClient - hostRect.top + 8) : minTop;
+      const controlsTop = Math.round(Math.max(minTop, Math.min(maxTop, rawTop)));
+      root.style.setProperty('--main-controls-left', `${controlsLeft}px`);
+      root.style.setProperty('--main-controls-top', `${controlsTop}px`);
     }
-
-    const anchor = syntAxisAnchorBox();
-    const controlsRect = controls.getBoundingClientRect();
-    const xClient = anchor ? svgXToClient(anchor.x, viewBox) : null;
-    const yClient = anchor ? svgYToClient(anchor.y, viewBox) : null;
-    const axisBoxGapPx = 96;
-    const inset = 10;
-    const controlW = Math.max(100, controlsRect.width || 104);
-    const controlH = Math.max(180, controlsRect.height || 220);
-    const windowMinLeft = Math.max(inset, inset);
-    const windowMaxLeft = Math.max(windowMinLeft, hostRect.width - controlW - inset);
-    const axisSafeLeft = Number.isFinite(xClient) ? (xClient - hostRect.left + axisBoxGapPx) : windowMaxLeft;
-    const controlsLeft = Math.round(Number.isFinite(xClient)
-      ? Math.max(windowMinLeft, axisSafeLeft)
-      : Math.max(windowMinLeft, Math.min(windowMaxLeft, axisSafeLeft)));
-    const minTop = Math.max(8, svgLocalTop + 8);
-    const maxTop = Math.max(minTop, svgLocalBottom - controlH - 10);
-    const rawTop = Number.isFinite(yClient) ? (yClient - hostRect.top + 8) : minTop;
-    const controlsTop = Math.round(Math.max(minTop, Math.min(maxTop, rawTop)));
-    root.style.setProperty('--main-controls-left', `${controlsLeft}px`);
-    root.style.setProperty('--main-controls-top', `${controlsTop}px`);
 
     if (southControl && !southControl.classList.contains('is-hidden')) {
       const southRect = southControl.getBoundingClientRect();
-      const southW = Math.max(96, southRect.width || 120);
-      const southH = Math.max(84, southRect.height || 108);
+      // v4578: use the real rendered taalactiebox size. The old fallback
+      // (84px high) was much taller than the compact SOV box and placed the
+      // box visibly above the LOG-as on first load. The SVG LOG-as y remains
+      // the original southAxisY; only this HTML overlay is centered on it.
+      const southW = Math.max(58, southRect.width || 92);
+      const southH = Math.max(28, southRect.height || 34);
       const minSouthLeft = svgLocalLeft + 8;
       const maxSouthLeft = Math.max(minSouthLeft, svgLocalRight - southW - 8);
       const minSouthTop = svgLocalTop + 8;
@@ -4437,14 +4438,19 @@
         southLeft = state.southBoxManual.left;
         southTop = state.southBoxManual.top;
       } else {
-        const lexAnchor = lexAxisAnchorBox();
         const logAnchor = logicalAxisAnchorBox();
-        const lxClient = lexAnchor ? svgXToClient(lexAnchor.x, viewBox) : null;
-        const lyClient = logAnchor ? svgYToClient(logAnchor.y, viewBox) : null;
-        const southCenterX = Number.isFinite(lxClient) ? (lxClient - hostRect.left) : (svgLocalLeft + southW / 2 + 10);
-        const southCenterY = Number.isFinite(lyClient) ? (lyClient - hostRect.top) : (svgLocalBottom - southH / 2 - 12);
-        southLeft = southCenterX - southW / 2;
-        southTop = southCenterY - southH / 2;
+        const logStartClient = logAnchor ? svgXToClient(logAnchor.x1, viewBox) : null;
+        const logYClient = logAnchor ? svgYToClient(logAnchor.y, viewBox) : null;
+        // v4577: default as in the reference image: directly left of the LOG/FT axis,
+        // vertically centered on that axis. The action box does not sit on the crossing;
+        // it labels/controls the LOG-axis from its left edge.
+        const axisGap = 8;
+        southLeft = Number.isFinite(logStartClient)
+          ? (logStartClient - hostRect.left - southW - axisGap)
+          : (svgLocalLeft + 10);
+        southTop = Number.isFinite(logYClient)
+          ? (logYClient - hostRect.top - southH / 2)
+          : (svgLocalBottom - southH - 12);
       }
       southLeft = Math.round(Math.max(minSouthLeft, Math.min(maxSouthLeft, southLeft)));
       southTop = Math.round(Math.max(minSouthTop, Math.min(maxSouthTop, southTop)));
@@ -4452,7 +4458,7 @@
       root.style.setProperty('--main-south-top', `${southTop}px`);
       southControl.classList.toggle('is-draggable', !!state.southBoxDraggable);
       southControl.setAttribute('title', state.southBoxDraggable
-        ? (isEnglish() ? 'Drag this language action box. Default: LEX axis × LOG axis.' : 'Sleep deze taalactiebox. Default: kruising LEX-as × LOG-as.')
+        ? (isEnglish() ? 'Drag this language action box. Default: centered on the original LOG/FT axis height.' : 'Sleep deze taalactiebox. Default: op de oorspronkelijke hoogte van de LOG/FT-as.')
         : (isEnglish() ? 'Language action box is fixed by Config.' : 'Taalactiebox is vastgezet via Config.'));
     } else {
       root.style.removeProperty('--main-south-left');
@@ -5634,9 +5640,9 @@
     state.southBoxManual = value;
     try {
       if (value && Number.isFinite(value.left) && Number.isFinite(value.top)) {
-        localStorage.setItem('opengraph_south_box_manual', JSON.stringify({ left: Math.round(value.left), top: Math.round(value.top) }));
+        localStorage.setItem('opengraph_south_box_manual_v4578', JSON.stringify({ left: Math.round(value.left), top: Math.round(value.top) }));
       } else {
-        localStorage.removeItem('opengraph_south_box_manual');
+        localStorage.removeItem('opengraph_south_box_manual_v4576');
       }
     } catch (_err) {}
   }
@@ -5864,9 +5870,9 @@
     els.mainGrowthPrevButton?.addEventListener('click', () => { stopGrowthPlayback(); state.growthEnabled = true; setGrowthStep(state.growthStep - 1); });
     els.mainGrowthNextButton?.addEventListener('click', () => { stopGrowthPlayback(); state.growthEnabled = true; setGrowthStep(state.growthStep + 1); });
     els.mainResetButton?.addEventListener('click', () => { resetForNewExample(); render(); });
-    els.mainSouthPrevButton?.addEventListener('click', () => { stopGrowthPlayback(); cycleSouthLogicalMode(-1); });
-    els.mainSouthNextButton?.addEventListener('click', () => { stopGrowthPlayback(); cycleSouthLogicalMode(1); });
-    els.mainSouthModeButton?.addEventListener('click', () => { stopGrowthPlayback(); cycleSouthLogicalMode(1); });
+    els.mainSouthPrevButton?.addEventListener('click', () => { stopGrowthPlayback(); cycleSouthLogicalMode(-1); requestAnimationFrame(syncMainOverlayControlPlacement); });
+    els.mainSouthNextButton?.addEventListener('click', () => { stopGrowthPlayback(); cycleSouthLogicalMode(1); requestAnimationFrame(syncMainOverlayControlPlacement); });
+    els.mainSouthModeButton?.addEventListener('click', () => { stopGrowthPlayback(); cycleSouthLogicalMode(1); requestAnimationFrame(syncMainOverlayControlPlacement); });
     bindSouthBoxDrag();
     document.querySelectorAll('[data-main-projection]').forEach(button => {
       button.addEventListener('click', () => {
