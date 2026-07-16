@@ -116,3 +116,28 @@ node --check viewer.js
 ```
 
 Daarna zip-integriteit controleren.
+
+
+## JAN compact notation
+
+Lees `JAN_NOTATION_RULES.md` voordat je de SYNT-layout aanpast. Casing is niet alleen typografie: onderkast kan een korte tak betekenen en bovenkast een lange tak. De configoptie `JAN-casing` bepaalt of dit alleen zichtbaar is in regelboxen of ook layoutbepalend is.
+
+
+## v1.0 config-tabs en hoofdviews
+- Config is tabbed: Layout, LEX/bijwoord, Voorbeelden, Regels en Bestanden/docs.
+- Het oude projectieblok met LEX/SYNT/LOG-knoppen is uit het hoofdscherm gehaald.
+- Het hoofdscherm gebruikt een klein view-blok naast de SOV-box: `SYNT` of `FT`.
+- LEX, SYNT en LOG/FT blijven vaste assen rond de gekozen centrale view.
+
+## v1.0 config-reorganisatie
+
+- Config gebruikt meerdere tabs als hoofdstructuur.
+- Standaard wordt gewerkt met niet-uitgeklapte details: lange regelsets blijven gesloten totdat de gebruiker ze opent.
+- Bijwoordslots en takverlenging staan bij LEX / bijwoord; JAN-casing en SYNT-regels staan bij JAN / SYNT.
+
+## v1.0 config-isolatie hoofdscherm
+
+- `Hoofdscherm` is een geïsoleerde config-tab.
+- Hoofdscherm-opties staan niet meer in Layout of Projectie.
+- `Hoofdvenster` en `Taalactiebox verplaatsbaar` staan bij Hoofdscherm.
+- `Layout` bevat alleen ruimtelijke layout-keuzes zoals boomruimte en vrije rijen.

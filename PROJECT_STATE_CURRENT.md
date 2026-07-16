@@ -42,3 +42,36 @@ node --check viewer.js
 ```
 
 Daarna zip-integriteit controleren.
+
+
+## JAN-casing / SYNT-isolatie
+
+- `SYN` is hernoemd naar `SYNT`.
+- De SYNT-knop toont nu een geïsoleerde syntaxregelprojectie, zonder LEX- of LOG-laag.
+- Config bevat `JAN-casing`: uit / alleen regelnotatie / regelnotatie + taklengte.
+- In compacte JAN-notatie geldt: onderkast = korte tak, bovenkast = lange tak, regelvolgorde = links/rechts.
+
+
+## v1.0 config-tabs en hoofdviews
+- Config is tabbed: Layout, LEX/bijwoord, Voorbeelden, Regels en Bestanden/docs.
+- Het oude projectieblok met LEX/SYNT/LOG-knoppen is uit het hoofdscherm gehaald.
+- Het hoofdscherm gebruikt een klein view-blok naast de SOV-box: `SYNT` of `FT`.
+- LEX, SYNT en LOG/FT blijven vaste assen rond de gekozen centrale view.
+
+## v1.0 config-reorganisatie
+
+- Config gebruikt meerdere tabs als hoofdstructuur.
+- Standaard wordt gewerkt met niet-uitgeklapte details: lange regelsets blijven gesloten totdat de gebruiker ze opent.
+- Bijwoordslots en takverlenging staan bij LEX / bijwoord; JAN-casing en SYNT-regels staan bij JAN / SYNT.
+## Config-status
+
+- Config werkt met tabs.
+- Projectie-instellingen staan geïsoleerd in de tab `Projectie`.
+- `Hoofdscherm`, `Layout`, `JAN / SYNT`, `LEX / bijwoord`, `Voorbeelden`, `Regels` en `Bestanden / docs` tonen geen projectieblok meer.
+
+## v1.0 config-isolatie hoofdscherm
+
+- `Hoofdscherm` is een geïsoleerde config-tab.
+- Hoofdscherm-opties staan niet meer in Layout of Projectie.
+- `Hoofdvenster` en `Taalactiebox verplaatsbaar` staan bij Hoofdscherm.
+- `Layout` bevat alleen ruimtelijke layout-keuzes zoals boomruimte en vrije rijen.
