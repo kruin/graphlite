@@ -1,4 +1,4 @@
-# OpenGraph Lite Viewer v1.0
+# OpenGraph Lite Viewer v1.0.4
 
 OpenGraph Lite Viewer is een demo/viewer voor **JAN / OPN / OpenGraph-taalbomen**.
 De viewer toont een vrije bronboom met zelfstandige projectie-assen:
@@ -26,13 +26,13 @@ start-local-viewer.bat
 Voor GitHub Pages:
 
 ```text
-https://kruin.github.io/graphlite/index.html?ogv=v1.0
+https://kruin.github.io/graphlite/index.html?ogv=v1.0.4
 ```
 
 Bij oude browsercache:
 
 ```text
-https://kruin.github.io/graphlite/reset-cache.html?ogv=v1.0
+https://kruin.github.io/graphlite/reset-cache.html?ogv=v1.0.4
 ```
 
 ## Leidende projectbestanden
@@ -106,43 +106,39 @@ Daarna de zip-integriteit controleren.
 
 ## Versie
 
-Dit is **OpenGraph Lite Viewer v1.0**.
+Dit is **OpenGraph Lite Viewer v1.0.4**.
 Oudere v45xx-builds zijn ontwikkelgeschiedenis; deze zip is bedoeld als gedeelde basisversie.
 
+## v1.0.3 — mobile smaller, SYNT isolated, help split LOG/FT
 
-## JAN compact notation
+- Mobile main controls are narrower: sentence and adverb controls show only the pulldown.
+- `SYN` is renamed to `SYNT`.
+- The `SYNT` projection is isolated: it shows syntax rules on source height without drawing a second central tree.
+- `Boomruimte` and `Hoofdvenster` are configured under Config → Boom, not in the Main topbar.
+- Help text distinguishes LOG from FT:
+  - LOG = visible logical-order projection / flip context.
+  - FT = functional/thematic layer with roles such as agens, patiens and predicaat.
 
-Voor syntaxregels is v1.0 uitgebreid met optionele JAN-casing:
+## v1.0.3 — lokale mobile-test zonder publicatieprofielen
 
-```text
-onderkast = korte tak
-BOVENKAST = lange tak
-volgorde in de regel = links/rechts
-```
+Gecorrigeerd:
 
-Zie `JAN_NOTATION_RULES.md`. In Config staat `JAN-casing` met de modi `uit`, `alleen regelnotatie` en `regelnotatie + taklengte`. De knop `SYN` is hernoemd naar `SYNT`; die weergave toont nu geïsoleerd de syntaxregels op de SYNT-as.
+- Master/user-profiel verwijderd uit de viewer en uit Config.
+- `opengraph-runtime-config.js` verwijderd.
+- Config → Boom bevat geen `Versieprofiel` en geen `Testweergave` meer.
+- Mobile-test blijft mogelijk via lokale URL-parameter:
+  - `?viewport=mobile-portrait`
+  - `?viewport=mobile-landscape`
+  - `?viewport=desktop`
+- Lokaal wordt `local-mobile-test.js` geladen. Dit script voegt een kleine keuzeknop toe voor desktop/mobile-test.
+- `local-mobile-test.js` staat in `.gitignore` en wordt niet mee gepubliceerd naar GitHub Pages.
+- Publicatie blijft handmatig: bestanden kopiëren naar `https://github.com/kruin/graphlite`; gebruikersversie draait op `https://kruin.github.io/graphlite/`.
 
 
-## v1.0 config-tabs en hoofdviews
-- Config is tabbed: Layout, LEX/bijwoord, Voorbeelden, Regels en Bestanden/docs.
-- Het oude projectieblok met LEX/SYNT/LOG-knoppen is uit het hoofdscherm gehaald.
-- Het hoofdscherm gebruikt een klein view-blok naast de SOV-box: `SYNT` of `FT`.
-- LEX, SYNT en LOG/FT blijven vaste assen rond de gekozen centrale view.
+## v1.0.4 — publish staging fix
 
-## v1.0 config-reorganisatie
-
-- Config gebruikt meerdere tabs als hoofdstructuur.
-- Standaard wordt gewerkt met niet-uitgeklapte details: lange regelsets blijven gesloten totdat de gebruiker ze opent.
-- Bijwoordslots en takverlenging staan bij LEX / bijwoord; JAN-casing en SYNT-regels staan bij JAN / SYNT.
-## v1.0 config: Projectie als eigen tab
-
-- `Projectie-instellingen` staan niet meer in `Hoofdscherm`.
-- Config heeft een aparte tab `Projectie` voor `Centraal OPN`, `Boomkeuze` en `Layout order`.
-- Andere tabs tonen alleen hun eigen instellingen.
-
-## v1.0 config-isolatie hoofdscherm
-
-- `Hoofdscherm` is een geïsoleerde config-tab.
-- Hoofdscherm-opties staan niet meer in Layout of Projectie.
-- `Hoofdvenster` en `Taalactiebox verplaatsbaar` staan bij Hoofdscherm.
-- `Layout` bevat alleen ruimtelijke layout-keuzes zoals boomruimte en vrije rijen.
+- `publish_checked.bat` gebruikt geen brede `git add -A -- .` meer.
+- Tracked wijzigingen/verwijderingen worden gestaged met `git add -u`.
+- Nieuwe, niet-genegeerde bestanden worden daarna apart toegevoegd via `git ls-files --others --exclude-standard`.
+- Lokale mobile-testbestanden blijven genegeerd en blokkeren publicatie niet.
+- `.gitattributes` legt line-endings vast, zodat Windows-waarschuwingen over LF/CRLF minder snel terugkomen.

@@ -30,16 +30,22 @@ styles.css
 reset-cache.html
 ```
 
-Gebruik:
+Gebruik in de BAT geen brede `git add -A -- .` wanneer lokale genegeerde testbestanden in de map staan.
+
+Huidige aanpak:
 
 ```bat
-git add -A
+git add -u -- .
+git ls-files --others --exclude-standard
 ```
 
-Niet:
+Dat staged tracked wijzigingen/verwijderingen en daarna alleen nieuwe, niet-genegeerde bestanden.
+
+Niet gebruiken:
 
 ```bat
 git add .
+git add -A -- .
 ```
 
 ## Cache-reset
@@ -53,13 +59,13 @@ De BAT kan browsercache niet op afstand wissen. Wel zinvol:
 Voorbeeld:
 
 ```text
-https://kruin.github.io/graphlite/reset-cache.html?ogv=v1.0&nocache=TIMESTAMP
+https://kruin.github.io/graphlite/reset-cache.html?ogv=v1.0.4&nocache=TIMESTAMP
 ```
 
 Daarna:
 
 ```text
-https://kruin.github.io/graphlite/index.html?ogv=v1.0
+https://kruin.github.io/graphlite/index.html?ogv=v1.0.4
 ```
 
 ## GitHub Pages settings
@@ -75,3 +81,41 @@ Folder: /root
 ## .nojekyll
 
 Laat `.nojekyll` in de root staan zodat GitHub Pages alle bestanden direct serveert.
+
+## v1.0.4 publicatie
+
+Geen master/user-profiel in de viewer. Publicatie is handmatig:
+
+```text
+Repo:  https://github.com/kruin/graphlite
+Site:  https://kruin.github.io/graphlite/
+```
+
+Lokaal testen blijft lokaal:
+
+```text
+index.html?viewport=mobile-portrait
+index.html?viewport=mobile-landscape
+index.html?viewport=desktop
+```
+
+`local-mobile-test.js` voegt lokaal een keuzeknop toe, maar staat in `.gitignore` en hoort niet naar GitHub Pages.
+
+`publish_checked.bat` toont alleen de `github.io/graphlite` reset- en index-URL.
+
+
+## v1.0.4 staging-fix
+
+`publish_checked.bat` gebruikt nu:
+
+```bat
+git add -u -- .
+```
+
+Daarna worden nieuwe bestanden apart toegevoegd via:
+
+```bat
+git ls-files --others --exclude-standard
+```
+
+Hierdoor blokkeert een lokaal genegeerd bestand zoals `local-mobile-test.js` de publicatie niet meer. Release-zips en lokale testbestanden worden bovendien uit de Git-index verwijderd als ze eerder toch getrackt waren.

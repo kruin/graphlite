@@ -1,6 +1,6 @@
 # HANDOVER_FOR_COLLABORATORS
 
-Overdracht voor mensen die verder willen werken aan OpenGraph Lite Viewer v1.0.
+Overdracht voor mensen die verder willen werken aan OpenGraph Lite Viewer v1.0.4.
 
 ## Wat is dit?
 
@@ -18,7 +18,7 @@ LOG/FT logische, functionele of thematische projectie
 Werk altijd vanaf de nieuwste stabiele projectzip. Voor deze overdracht is dat:
 
 ```text
-OpenGraph_Lite_Viewer_v1.0.zip
+OpenGraph_Lite_Viewer_v1.0.4.zip
 ```
 
 Open:
@@ -45,7 +45,7 @@ Gebruik oude zips, screenshots en verouderde docs alleen als archief, niet als l
 Maak een nieuw ChatGPT-project en voeg minimaal deze bestanden toe:
 
 ```text
-OpenGraph_Lite_Viewer_v1.0.zip
+OpenGraph_Lite_Viewer_v1.0.4.zip
 PROJECT_STATE_CURRENT.md
 LAYOUT_RULES.md
 LINGUISTIC_ACTIONS.md
@@ -106,7 +106,7 @@ Deze doet preflight en publiceert naar GitHub wanneer de map een Git-repository 
 Na publicatie:
 
 ```text
-reset-cache.html?ogv=v1.0
+reset-cache.html?ogv=v1.0.4
 ```
 
 ## Test vóór nieuwe zip
@@ -117,27 +117,29 @@ node --check viewer.js
 
 Daarna zip-integriteit controleren.
 
+## v1.0.4 — lokale mobile-test
 
-## JAN compact notation
+Er is geen master/user-profiel meer in de viewer. Werk lokaal, test lokaal en kopieer daarna handmatig naar de repository.
 
-Lees `JAN_NOTATION_RULES.md` voordat je de SYNT-layout aanpast. Casing is niet alleen typografie: onderkast kan een korte tak betekenen en bovenkast een lange tak. De configoptie `JAN-casing` bepaalt of dit alleen zichtbaar is in regelboxen of ook layoutbepalend is.
+Lokaal is er een kleine keuzeknop voor desktop/mobile-test. Die wordt toegevoegd door:
 
+```text
+local-mobile-test.js
+```
 
-## v1.0 config-tabs en hoofdviews
-- Config is tabbed: Layout, LEX/bijwoord, Voorbeelden, Regels en Bestanden/docs.
-- Het oude projectieblok met LEX/SYNT/LOG-knoppen is uit het hoofdscherm gehaald.
-- Het hoofdscherm gebruikt een klein view-blok naast de SOV-box: `SYNT` of `FT`.
-- LEX, SYNT en LOG/FT blijven vaste assen rond de gekozen centrale view.
+Deze file staat in `.gitignore` en hoort niet mee naar GitHub Pages. Zonder die file blijft de gepubliceerde viewer schoon.
 
-## v1.0 config-reorganisatie
+Handmatig testen kan ook met:
 
-- Config gebruikt meerdere tabs als hoofdstructuur.
-- Standaard wordt gewerkt met niet-uitgeklapte details: lange regelsets blijven gesloten totdat de gebruiker ze opent.
-- Bijwoordslots en takverlenging staan bij LEX / bijwoord; JAN-casing en SYNT-regels staan bij JAN / SYNT.
+```text
+index.html?viewport=mobile-portrait
+index.html?viewport=mobile-landscape
+index.html?viewport=desktop
+```
 
-## v1.0 config-isolatie hoofdscherm
+Publicatiecontext:
 
-- `Hoofdscherm` is een geïsoleerde config-tab.
-- Hoofdscherm-opties staan niet meer in Layout of Projectie.
-- `Hoofdvenster` en `Taalactiebox verplaatsbaar` staan bij Hoofdscherm.
-- `Layout` bevat alleen ruimtelijke layout-keuzes zoals boomruimte en vrije rijen.
+```text
+Repo: https://github.com/kruin/graphlite
+Site: https://kruin.github.io/graphlite/
+```

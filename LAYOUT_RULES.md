@@ -59,27 +59,17 @@ projectiebox extreem ver rechts van de SYNT-as
 - Viewer blijft licht, ook als OS/browser in dark mode staat.
 - Mobile mag niet automatisch een oudere service-worker of oude asset-cache blijven tonen.
 
+## v1.0.3 UI-regels
 
-## JAN-casing / korte en lange takken
+- Main-topbar blijft smal: geen Boomruimte/Hoofdvenster boven het grid.
+- Boomruimte en Hoofdvenster staan onder Config → Boom.
+- Mobile toont zinnen en bijwoorden als pulldown-only.
+- SYNT-isolatie toont regels op bronhoogte; de boom is alleen hoogteanker en wordt niet als tweede boom getoond.
 
-- In `SYNT` kan compacte JAN-notatie worden getoond.
-- Onderkast betekent korte tak.
-- Bovenkast betekent lange tak.
-- De volgorde van tokens in de regel bepaalt links/rechts.
-- Voorbeeld: `S → np VP` = links korte `np`, rechts lange `VP`.
-- Voorbeeld: `S → NP vp` = links lange `NP`, rechts korte `vp`.
-- Config-optie `JAN-casing` bepaalt of dit alleen als regelnotatie zichtbaar is of ook de layout stuurt.
+## v1.0.3 mobile-test
 
-
-## v1.0 config-tabs en hoofdviews
-- Config is tabbed: Layout, LEX/bijwoord, Voorbeelden, Regels en Bestanden/docs.
-- Het oude projectieblok met LEX/SYNT/LOG-knoppen is uit het hoofdscherm gehaald.
-- Het hoofdscherm gebruikt een klein view-blok naast de SOV-box: `SYNT` of `FT`.
-- LEX, SYNT en LOG/FT blijven vaste assen rond de gekozen centrale view.
-
-## v1.0 config-isolatie hoofdscherm
-
-- `Hoofdscherm` is een geïsoleerde config-tab.
-- Hoofdscherm-opties staan niet meer in Layout of Projectie.
-- `Hoofdvenster` en `Taalactiebox verplaatsbaar` staan bij Hoofdscherm.
-- `Layout` bevat alleen ruimtelijke layout-keuzes zoals boomruimte en vrije rijen.
+- Mobile-weergaven moeten op desktop testbaar zijn zonder browser-devtools.
+- `mobile-portrait` gebruikt een telefoonframe van ongeveer 390×844.
+- `mobile-landscape` gebruikt een telefoonframe van ongeveer 844×390.
+- De testweergave mag alleen de viewport/layout emuleren; de boomdata, LEX, SYNT, LOG en FT blijven ongewijzigd.
+- Config → Boom is de plaats voor deze testweergave, niet het hoofdvenster.

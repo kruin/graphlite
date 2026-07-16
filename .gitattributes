@@ -1,0 +1,14 @@
+# Keep line endings stable across Windows, GitHub Pages and zip builds.
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.html text eol=lf
+*.css text eol=lf
+*.js text eol=lf
+*.json text eol=lf
+*.webmanifest text eol=lf
+*.md text eol=lf
+*.txt text eol=lf
+*.svg text eol=lf
+*.xml text eol=lf
+*.graph text eol=lf
+*.opn text eol=lf

@@ -26,15 +26,14 @@
 
     <section id="opengraph-syntax-config" data-root="s" aria-label="Syntax-config">
       <h2>Syntax-config</h2>
-      <p class="note"><strong>JAN-casing:</strong> <code>data-jan-children</code> gebruikt onderkast voor korte tak en bovenkast voor lange tak; de volgorde in deze notatie bepaalt links/rechts. </p>
       <p class="note">Actieve basisstructuur. Leaves zijn abstracte projectieposities: <code>subject</code>, <code>predicate</code>, <code>object</code>. Voor perfectum kan de structure-editor de VP-regelset vervangen door <code>VP → NP VP</code> en <code>VP → pv VDW</code>.</p>
-      <div class="node-config" data-id="s" data-label="S" data-cat="S" data-kind="cat" data-children="np-subj vp" data-jan-children="np VP">s:S → np-subj vp</div>
-      <div class="node-config" data-id="np-subj" data-label="NP" data-cat="NP" data-kind="cat" data-children="subj" data-jan-children="n">np-subj:NP → subj</div>
+      <div class="node-config" data-id="s" data-label="S" data-cat="S" data-kind="cat" data-children="np-subj vp">s:S → np-subj vp</div>
+      <div class="node-config" data-id="np-subj" data-label="NP" data-cat="NP" data-kind="cat" data-children="subj">np-subj:NP → subj</div>
       <div class="node-config" data-id="subj" data-label="{subject}" data-cat="N" data-kind="leaf" data-role="subject" data-source="subject">subj:{subject} [leaf role=subject source=subject cat=N]</div>
-      <div class="node-config" data-id="vp" data-label="VP" data-cat="VP" data-kind="cat" data-children="np-obj v" data-jan-children="np V">vp:VP → np-obj v</div>
-      <div class="node-config" data-id="np-obj" data-label="NP" data-cat="NP" data-kind="cat" data-children="obj" data-jan-children="n">np-obj:NP → obj</div>
+      <div class="node-config" data-id="vp" data-label="VP" data-cat="VP" data-kind="cat" data-children="np-obj v">vp:VP → np-obj v</div>
+      <div class="node-config" data-id="np-obj" data-label="NP" data-cat="NP" data-kind="cat" data-children="obj">np-obj:NP → obj</div>
       <div class="node-config" data-id="obj" data-label="{object}" data-cat="N" data-kind="leaf" data-role="object" data-source="object">obj:{object} [leaf role=object source=object cat=N]</div>
-      <div class="node-config" data-id="v" data-label="V" data-cat="V" data-kind="cat" data-children="pred" data-jan-children="v">v:V → pred</div>
+      <div class="node-config" data-id="v" data-label="V" data-cat="V" data-kind="cat" data-children="pred">v:V → pred</div>
       <div class="node-config" data-id="pred" data-label="{predicate}" data-cat="V" data-kind="leaf" data-role="predicate" data-source="predicate">pred:{predicate} [leaf role=predicate source=predicate cat=V]</div>
     </section>
 
@@ -52,10 +51,10 @@
     <section id="opengraph-functional-config" data-root="ft-clause" data-order="left-first" aria-label="Functional-config">
       <h2>Functional-config</h2>
       <p class="note">Functionele structuur scheidt het predicaat van de thematische argumentstructuur: <code>CLAUSE → PRED ARG-STRUCT</code>. Het predicaat staat in een eigen PRED-subtree; subject/object worden functioneel getoond als <code>AGENS</code> en <code>PATIENS</code> in de ARG-STRUCT-subtree. Daardoor kunnen PRED en ARG-STRUCT als vrije boxen apart geplaatst worden. Perfectum blijft vormelijk in syntax/LEX: <code>pv/vdw</code>. Lidwoorden zijn niet opgenomen in syntax, functional, lexicon of voorbeeldzinnen.</p>
-      <div class="node-config" data-id="ft-clause" data-label="CLAUSE" data-cat="CLAUSE" data-kind="role-root" data-role="top" data-children="ft-pred ft-argstruct" data-jan-children="PRED ARG-STRUCT">ft-clause:CLAUSE → ft-pred ft-argstruct</div>
+      <div class="node-config" data-id="ft-clause" data-label="CLAUSE" data-cat="CLAUSE" data-kind="role-root" data-role="top" data-children="ft-pred ft-argstruct">ft-clause:CLAUSE → ft-pred ft-argstruct</div>
       <div class="node-config" data-id="ft-pred" data-label="PRED" data-cat="PRED" data-kind="role" data-role="pred" data-children="f-root">ft-pred:PRED → f-root</div>
       <div class="node-config" data-id="f-root" data-label="{predicate}" data-cat="V" data-kind="leaf" data-role="predicate" data-source="predicate">f-root:{predicate} [leaf role=predicate source=predicate cat=V]</div>
-      <div class="node-config" data-id="ft-argstruct" data-label="ARG-STRUCT" data-cat="ARG-STRUCT" data-kind="role" data-role="arguments" data-children="ft-arg1 ft-arg2" data-jan-children="AGENS PATIENS">ft-argstruct:ARG-STRUCT → ft-arg1 ft-arg2</div>
+      <div class="node-config" data-id="ft-argstruct" data-label="ARG-STRUCT" data-cat="ARG-STRUCT" data-kind="role" data-role="arguments" data-children="ft-arg1 ft-arg2">ft-argstruct:ARG-STRUCT → ft-arg1 ft-arg2</div>
       <div class="node-config" data-id="ft-arg1" data-label="AGENS" data-cat="ROLE" data-kind="role" data-role="agens" data-children="f-subj-np">ft-arg1:AGENS → f-subj-np</div>
       <div class="node-config" data-id="f-subj-np" data-label="NP" data-cat="NP" data-kind="role" data-role="agens-np" data-children="f-subj">f-subj-np:NP → f-subj</div>
       <div class="node-config" data-id="f-subj" data-label="{subject}" data-cat="N" data-kind="leaf" data-role="agens" data-source="subject">f-subj:{subject} [leaf role=subject source=subject cat=N]</div>

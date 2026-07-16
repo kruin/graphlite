@@ -70,3 +70,9 @@ Een Wissel is een LEX-regel:
 - verandert woordvolgorde;
 - laat syntaxstructuur ongemoeid;
 - kan een trace/oude positie zichtbaar maken.
+
+## v1.0.3 LOG versus FT
+
+- LOG is de projectie van logische volgorde, inclusief SOV/SVO/VSO-flips.
+- FT is de functioneel-thematische laag met rollen zoals agens, patiens en predicaat.
+- Een flip verandert LOG, niet SYNT, LEX of de FT-bronrollen.
