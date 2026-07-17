@@ -59,13 +59,13 @@ De BAT kan browsercache niet op afstand wissen. Wel zinvol:
 Voorbeeld:
 
 ```text
-https://kruin.github.io/graphlite/reset-cache.html?ogv=v1.0.4&nocache=TIMESTAMP
+https://kruin.github.io/graphlite/reset-cache.html?ogv=v1.0.5&nocache=TIMESTAMP
 ```
 
 Daarna:
 
 ```text
-https://kruin.github.io/graphlite/index.html?ogv=v1.0.4
+https://kruin.github.io/graphlite/index.html?ogv=v1.0.5
 ```
 
 ## GitHub Pages settings
@@ -82,7 +82,7 @@ Folder: /root
 
 Laat `.nojekyll` in de root staan zodat GitHub Pages alle bestanden direct serveert.
 
-## v1.0.4 publicatie
+## v1.0.5 publicatie
 
 Geen master/user-profiel in de viewer. Publicatie is handmatig:
 
@@ -104,7 +104,7 @@ index.html?viewport=desktop
 `publish_checked.bat` toont alleen de `github.io/graphlite` reset- en index-URL.
 
 
-## v1.0.4 staging-fix
+## v1.0.5 staging-fix
 
 `publish_checked.bat` gebruikt nu:
 
@@ -119,3 +119,7 @@ git ls-files --others --exclude-standard
 ```
 
 Hierdoor blokkeert een lokaal genegeerd bestand zoals `local-mobile-test.js` de publicatie niet meer. Release-zips en lokale testbestanden worden bovendien uit de Git-index verwijderd als ze eerder toch getrackt waren.
+
+## v1.0.5 publicatie
+
+Publiceer handmatig naar `https://github.com/kruin/graphlite`; controleer daarna `https://kruin.github.io/graphlite/reset-cache.html?ogv=v1.0.5`. Lokale mobile-testbestanden blijven buiten GitHub.

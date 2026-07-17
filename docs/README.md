@@ -1,4 +1,4 @@
-# OpenGraph Lite Viewer v1.0.4
+# OpenGraph Lite Viewer v1.0.5
 
 OpenGraph Lite Viewer is een demo/viewer voor **JAN / OPN / OpenGraph-taalbomen**.
 De viewer toont een vrije bronboom met zelfstandige projectie-assen:
@@ -26,13 +26,13 @@ start-local-viewer.bat
 Voor GitHub Pages:
 
 ```text
-https://kruin.github.io/graphlite/index.html?ogv=v1.0.4
+https://kruin.github.io/graphlite/index.html?ogv=v1.0.5
 ```
 
 Bij oude browsercache:
 
 ```text
-https://kruin.github.io/graphlite/reset-cache.html?ogv=v1.0.4
+https://kruin.github.io/graphlite/reset-cache.html?ogv=v1.0.5
 ```
 
 ## Leidende projectbestanden
@@ -106,7 +106,7 @@ Daarna de zip-integriteit controleren.
 
 ## Versie
 
-Dit is **OpenGraph Lite Viewer v1.0.4**.
+Dit is **OpenGraph Lite Viewer v1.0.5**.
 Oudere v45xx-builds zijn ontwikkelgeschiedenis; deze zip is bedoeld als gedeelde basisversie.
 
 ## v1.0.3 — mobile smaller, SYNT isolated, help split LOG/FT
@@ -135,10 +135,16 @@ Gecorrigeerd:
 - Publicatie blijft handmatig: bestanden kopiëren naar `https://github.com/kruin/graphlite`; gebruikersversie draait op `https://kruin.github.io/graphlite/`.
 
 
-## v1.0.4 — publish staging fix
+## v1.0.5 — publish staging fix
 
 - `publish_checked.bat` gebruikt geen brede `git add -A -- .` meer.
 - Tracked wijzigingen/verwijderingen worden gestaged met `git add -u`.
 - Nieuwe, niet-genegeerde bestanden worden daarna apart toegevoegd via `git ls-files --others --exclude-standard`.
 - Lokale mobile-testbestanden blijven genegeerd en blokkeren publicatie niet.
 - `.gitattributes` legt line-endings vast, zodat Windows-waarschuwingen over LF/CRLF minder snel terugkomen.
+
+## v1.0.5 — mobile zoom / portrait freeze fix
+
+- Canvas pan/zoom standaard actief.
+- Oude pinch/touch-state wordt leeggemaakt bij resize, orientationchange, blur en tabwissel.
+- Lokale mobile-test emuleert portrait expliciet via body-class, niet alleen via browser-mediaquery.

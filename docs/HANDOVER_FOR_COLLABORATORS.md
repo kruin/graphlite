@@ -1,6 +1,6 @@
 # HANDOVER_FOR_COLLABORATORS
 
-Overdracht voor mensen die verder willen werken aan OpenGraph Lite Viewer v1.0.4.
+Overdracht voor mensen die verder willen werken aan OpenGraph Lite Viewer v1.0.5.
 
 ## Wat is dit?
 
@@ -18,7 +18,7 @@ LOG/FT logische, functionele of thematische projectie
 Werk altijd vanaf de nieuwste stabiele projectzip. Voor deze overdracht is dat:
 
 ```text
-OpenGraph_Lite_Viewer_v1.0.4.zip
+OpenGraph_Lite_Viewer_v1.0.5.zip
 ```
 
 Open:
@@ -45,7 +45,7 @@ Gebruik oude zips, screenshots en verouderde docs alleen als archief, niet als l
 Maak een nieuw ChatGPT-project en voeg minimaal deze bestanden toe:
 
 ```text
-OpenGraph_Lite_Viewer_v1.0.4.zip
+OpenGraph_Lite_Viewer_v1.0.5.zip
 PROJECT_STATE_CURRENT.md
 LAYOUT_RULES.md
 LINGUISTIC_ACTIONS.md
@@ -106,7 +106,7 @@ Deze doet preflight en publiceert naar GitHub wanneer de map een Git-repository 
 Na publicatie:
 
 ```text
-reset-cache.html?ogv=v1.0.4
+reset-cache.html?ogv=v1.0.5
 ```
 
 ## Test vóór nieuwe zip
@@ -117,7 +117,7 @@ node --check viewer.js
 
 Daarna zip-integriteit controleren.
 
-## v1.0.4 — lokale mobile-test
+## v1.0.5 — lokale mobile-test
 
 Er is geen master/user-profiel meer in de viewer. Werk lokaal, test lokaal en kopieer daarna handmatig naar de repository.
 

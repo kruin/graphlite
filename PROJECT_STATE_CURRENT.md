@@ -4,7 +4,7 @@ Actuele status van de OpenGraph / GraphLite viewer.
 
 ## Versie
 
-- Huidige stabiele release: v1.0.4.
+- Huidige stabiele release: v1.0.5.
 - Doel: demo/viewer voor JAN / OPN / OpenGraph-taalbomen.
 - Standaardweergave: hoofdscherm met volledige boom zichtbaar op desktop en mobiel.
 
@@ -43,7 +43,7 @@ node --check viewer.js
 
 Daarna zip-integriteit controleren.
 
-## v1.0.4 aanvulling
+## v1.0.5 aanvulling
 
 - Master/user-profiel is verwijderd. Er is één viewer-codebase.
 - Config → Boom bevat geen publicatieprofiel en geen mobile-testselectie.
@@ -52,3 +52,9 @@ Daarna zip-integriteit controleren.
 - `local-mobile-test.js` staat in `.gitignore` en hoort niet mee naar GitHub.
 - URL-test blijft beschikbaar: `?viewport=mobile-portrait`, `?viewport=mobile-landscape`, `?viewport=desktop`.
 - Publicatie blijft handmatig naar `https://github.com/kruin/graphlite`; de gebruikersversie staat op `https://kruin.github.io/graphlite/`.
+
+## v1.0.5 aanvulling
+
+- Mobile portrait/landscape test lokaal gestabiliseerd.
+- Zoom/pinch-state wordt gereset bij orientationchange zodat portrait niet bevriest na landscape-zoom.
+- Canvas pan/zoom staat standaard aan.

@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'v1.0.3';
+  const VERSION = 'v1.0.5';
   const BASE_CELL = 74;
   const ROOT_SIDE_GAP = 1;
   const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -764,7 +764,7 @@
     rightMenuWidth: null,
     viewportMode: initialViewportMode(),
     paneSplitDrag: null,
-    canvasPanEnabled: false
+    canvasPanEnabled: true
   };
 
   function svgEl(name, attrs = {}, text = '') {
@@ -4274,12 +4274,21 @@
     if (manual) state.manualViewBox = next;
   }
 
-  function resetManualViewBox() {
-    state.manualViewBox = null;
+  function clearViewportGestureState() {
+    // v1.0.5: bij wissel tussen landscape/portrait mogen oude touch-pointers
+    // en pinch-state niet blijven hangen. Anders lijkt portrait na zoom in
+    // landscape bevroren.
     state.viewDrag = null;
+    state.pinchGesture = null;
+    state.activePointers?.clear?.();
     state.viewClickSuppressed = false;
     els.svg?.classList.remove('is-panning');
     els.canvasWrap?.classList.remove('is-panning');
+  }
+
+  function resetManualViewBox() {
+    state.manualViewBox = null;
+    clearViewportGestureState();
   }
 
   function syncExampleSelectSizing() {
@@ -6075,10 +6084,16 @@
       render();
     });
     window.addEventListener('orientationchange', () => {
+      // v1.0.5: breek actieve pinch/pan expliciet af vóór herfit.
+      resetManualViewBox();
       requestAnimationFrame(() => {
         resetManualViewBox();
         render();
       });
+    });
+    window.addEventListener('blur', clearViewportGestureState);
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) clearViewportGestureState();
     });
     window.__opengraphBoot = { version: VERSION, loaded: true };
     // v4427: lokale ontwikkelviewer gebruikt geen PWA-cache meer.

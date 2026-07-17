@@ -73,3 +73,8 @@ projectiebox extreem ver rechts van de SYNT-as
 - `mobile-landscape` gebruikt een telefoonframe van ongeveer 844×390.
 - De testweergave mag alleen de viewport/layout emuleren; de boomdata, LEX, SYNT, LOG en FT blijven ongewijzigd.
 - Config → Boom is de plaats voor deze testweergave, niet het hoofdvenster.
+
+## v1.0.5 mobile-test
+
+- Lokale portrait-test gebruikt body-class `viewport-mobile-portrait-test`; dit vervangt niet de echte mobile mediaquery, maar emuleert die op desktop.
+- De onderbalk blijft binnen het telefoonframe; het SVG-zoomgebied krijgt de resterende hoogte.

@@ -5241,3 +5241,54 @@ body.viewport-mobile-test.main-screen-active .main-play-reset-bar {
   max-width: 100% !important;
   transform: none !important;
 }
+
+/* v1.0.5: lokale mobile-test. Portrait/landscape worden op desktop niet via
+   echte media queries bepaald, maar via body-classes uit local-mobile-test.js.
+   Maak portrait daarom expliciet zoom/pinch-veilig en zorg dat de onderbalk
+   binnen het telefoonframe blijft. */
+body.viewport-mobile-test.main-screen-active .canvas-wrap,
+body.viewport-mobile-test.main-screen-active #graphSvg {
+  touch-action: none !important;
+  overscroll-behavior: none !important;
+}
+body.viewport-mobile-portrait-test.main-screen-active .canvas-wrap {
+  --main-control-height: 7.6rem;
+}
+body.viewport-mobile-portrait-test.main-screen-active #graphSvg {
+  height: calc(100% - var(--main-control-height, 7.6rem)) !important;
+  min-height: calc(100% - var(--main-control-height, 7.6rem)) !important;
+  max-height: calc(100% - var(--main-control-height, 7.6rem)) !important;
+}
+body.viewport-mobile-portrait-test.main-screen-active .canvas-wrap .main-grid-controls,
+body.viewport-mobile-portrait-test.main-screen-active .main-grid-controls {
+  position: absolute !important;
+  left: 0 !important;
+  right: 0 !important;
+  top: auto !important;
+  bottom: 0 !important;
+  width: 100% !important;
+  min-height: var(--main-control-height, 7.6rem) !important;
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  grid-template-rows: auto auto !important;
+  align-content: center !important;
+  gap: .22rem !important;
+  padding: .34rem .42rem .38rem .42rem !important;
+  background: color-mix(in srgb, var(--bg), transparent 4%) !important;
+  border-top: 1px solid var(--line) !important;
+  z-index: 180 !important;
+}
+body.viewport-mobile-portrait-test.main-screen-active .main-projection-strip {
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  overflow-x: auto !important;
+  justify-content: flex-start !important;
+}
+body.viewport-mobile-portrait-test.main-screen-active .main-projection-strip button {
+  min-width: 4.05rem !important;
+}
+body.viewport-mobile-landscape-test.main-screen-active #graphSvg {
+  height: 100% !important;
+  min-height: 100% !important;
+  max-height: 100% !important;
+}
