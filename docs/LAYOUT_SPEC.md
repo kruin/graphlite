@@ -305,8 +305,8 @@ Naast west/LEX, oost/SYNTAX en zuid/LOGICAL is ook een NOORD-as mogelijk. Die is
 
 - Main behoudt een vaste topbalk met alleen Zin en Config.
 - De ZUID-volgorde staat nu als zichtbare pijlbediening onder in het boomvenster.
-- In portrait staat de Play-balk onder het grid met Reset direct ernaast; de Assen/LOG/FT-balk sluit daaronder aan.
-- In landscape staat Play verticaal rechts in het boomvenster, met Reset en Assen/LOG/FT eronder.
+- In portrait staat de Play-balk onder het grid met Reset direct ernaast; de Assen/LOG-balk sluit daaronder aan.
+- In landscape staat Play verticaal rechts in het boomvenster, met Reset en Assen/LOG eronder.
 
 ## v4505 - OSV-! en LEX-rendering
 

@@ -1,4 +1,4 @@
-# OpenGraph Lite Viewer v1.0.5
+# OpenGraph Lite Viewer v1.0.7
 
 OpenGraph Lite Viewer is een demo/viewer voor **JAN / OPN / OpenGraph-taalbomen**.
 De viewer toont een vrije bronboom met zelfstandige projectie-assen:
@@ -6,7 +6,7 @@ De viewer toont een vrije bronboom met zelfstandige projectie-assen:
 ```text
 LEX links/west
 SYNT rechts/oost
-LOG/FT onder/zuid
+LOG onder/zuid
 ```
 
 ## Start
@@ -26,13 +26,13 @@ start-local-viewer.bat
 Voor GitHub Pages:
 
 ```text
-https://kruin.github.io/graphlite/index.html?ogv=v1.0.5
+https://kruin.github.io/graphlite/index.html?ogv=v1.0.7
 ```
 
 Bij oude browsercache:
 
 ```text
-https://kruin.github.io/graphlite/reset-cache.html?ogv=v1.0.5
+https://kruin.github.io/graphlite/reset-cache.html?ogv=v1.0.7
 ```
 
 ## Leidende projectbestanden
@@ -54,8 +54,10 @@ Dezelfde kernbestanden staan ook in `docs/`, zodat ze via de docs-map vindbaar b
 
 - LEX-as links van de boom.
 - SYNT-as rechts van de boom.
-- LOG/FT-as onder de boom.
-- De LOG/FT-as behoudt zijn eigen SVG-hoogte.
+- LOG-as onder de boom.
+- Alleen LOG staat op de zuidas.
+- FT is geen aslaag; FT is de functionele view naast de standaard syntaxboom-view.
+- De LOG-as behoudt zijn eigen SVG-hoogte.
 - HTML-overlays, inclusief de SOV-taalactiebox, mogen assen niet verplaatsen.
 - Projectieboxen staan rechts van de SYNT-as, niet eroverheen.
 - De standaardfit toont boom, assen, projecties en taalactiebox.
@@ -68,7 +70,7 @@ De eerste taalactiebox bevat:
 ‹ SOV ›
 ```
 
-Deze actie verandert alleen de LOG/FT-volgordeprojectie. De centrale boom, SYNT-projectie en lexicale inhoud blijven ongemoeid.
+Deze actie verandert alleen de LOG-volgordeprojectie. De centrale boom, SYNT-projectie, FT-view en lexicale inhoud blijven ongemoeid.
 
 ## Referenties
 
@@ -106,10 +108,10 @@ Daarna de zip-integriteit controleren.
 
 ## Versie
 
-Dit is **OpenGraph Lite Viewer v1.0.5**.
+Dit is **OpenGraph Lite Viewer v1.0.7**.
 Oudere v45xx-builds zijn ontwikkelgeschiedenis; deze zip is bedoeld als gedeelde basisversie.
 
-## v1.0.3 — mobile smaller, SYNT isolated, help split LOG/FT
+## v1.0.3 — mobile smaller, SYNT isolated, help split LOG
 
 - Mobile main controls are narrower: sentence and adverb controls show only the pulldown.
 - `SYN` is renamed to `SYNT`.
@@ -135,7 +137,7 @@ Gecorrigeerd:
 - Publicatie blijft handmatig: bestanden kopiëren naar `https://github.com/kruin/graphlite`; gebruikersversie draait op `https://kruin.github.io/graphlite/`.
 
 
-## v1.0.5 — publish staging fix
+## v1.0.7 — publish staging fix
 
 - `publish_checked.bat` gebruikt geen brede `git add -A -- .` meer.
 - Tracked wijzigingen/verwijderingen worden gestaged met `git add -u`.
@@ -143,8 +145,25 @@ Gecorrigeerd:
 - Lokale mobile-testbestanden blijven genegeerd en blokkeren publicatie niet.
 - `.gitattributes` legt line-endings vast, zodat Windows-waarschuwingen over LF/CRLF minder snel terugkomen.
 
-## v1.0.5 — mobile zoom / portrait freeze fix
+## v1.0.7 — mobile zoom / portrait freeze fix
 
 - Canvas pan/zoom standaard actief.
 - Oude pinch/touch-state wordt leeggemaakt bij resize, orientationchange, blur en tabwissel.
 - Lokale mobile-test emuleert portrait expliciet via body-class, niet alleen via browser-mediaquery.
+
+
+## v1.0.7 — LOG-as gescheiden van FT-view
+
+- Oude gecombineerde LOG+FT-labels verwijderd uit UI-tekst en documentatie.
+- Projectieknop heet nu `LOG`.
+- De zuidas is alleen LOG: logische S-O-V-projectie.
+- FT is geen onderdeel van de zuidas; FT is de functionele view naast de standaard syntaxboom-view.
+- De geïsoleerde LOG-view toont geen FT-regel-as meer.
+
+## v1.0.7 — View-keuze syntaxboom / functional structure
+
+- Hoofdmenu krijgt een compacte `View`-keuze.
+- Standaard: syntax tree / syntaxboom.
+- Alternatief: functional structure met `CLAUSE`, `PRED`, `AGENS` en `PATIENS`.
+- FT blijft een view naast de syntaxboom-view, niet een onderdeel van de LOG-zuidas.
+- LOG blijft de zuidas voor de logische S-O-V-projectie.

@@ -9,7 +9,7 @@ Config is voor instellingen. Lange uitlegblokken mogen daar niet tussen actieve 
 ## Render-volgorde
 
 1. Bereken eerst de centrale boom en de boxen.
-2. Teken daarna de projectie-assen: LEX, SYNTAX en LOG/FT.
+2. Teken daarna de projectie-assen: LEX, SYNTAX en LOG.
 3. Projecteer eindknopen naar de LEX-as.
 4. Plaats vrije LEX-inserts in gereserveerde slots.
 5. Teken eventuele LEX-verplaatsingsregels of wissels.

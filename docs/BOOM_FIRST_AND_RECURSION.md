@@ -6,7 +6,7 @@
 
 - LEX links/west: woordvolgorde, plaatsingsregels en LEX-inserties.
 - SYNTAX rechts/oost: syntactische regels op boomhoogte.
-- LOG/FT onder/zuid: logische/functionele volgorde.
+- LOG onder/zuid: logische/functionele volgorde.
 
 De centrale boom hoeft dus niet zelf alle oppervlaktevolgorde of alle verplaatsingen te dragen. LEX-wissels, traces en inserties blijven zichtbaar op de LEX-as.
 
@@ -26,7 +26,7 @@ Dit is iets anders dan de didactische keuze **boom eerst**. Boom eerst zegt welk
 
 ### Tree first
 
-**Tree first** is the didactic and notational sequence in OpenGraph/JAN. The central open tree is the source. Projections are then drawn to the axes: LEX west, SYNTAX east and LOG/FT south. LEX exchanges, traces and insertions remain visible on the LEX axis.
+**Tree first** is the didactic and notational sequence in OpenGraph/JAN. The central open tree is the source. Projections are then drawn to the axes: LEX west, SYNTAX east and LOG south. LEX exchanges, traces and insertions remain visible on the LEX axis.
 
 ### Recursion technique in the tree
 

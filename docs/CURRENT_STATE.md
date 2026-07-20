@@ -29,7 +29,7 @@ De LEX-as is de plaats waar de woordvolgorde van de voorbeeldzin wordt gerealise
 
 ## v4430 · dynamische pasvorm
 
-Assen, Bron en LOG/FT gebruiken nu een dynamische presentatielaag voor de boomweergave. De layout blijft logisch hetzelfde, maar de projectie naar pixels is configureerbaar:
+Assen, Bron en LOG gebruiken nu een dynamische presentatielaag voor de boomweergave. De layout blijft logisch hetzelfde, maar de projectie naar pixels is configureerbaar:
 
 ```text
 compact        = gelijke HOR/VER-afstand
@@ -168,7 +168,7 @@ Belangrijk:
 
 ## Correctie v4430
 
-Bij wisselen van `Groei` naar de niet-ondersteunde `LEX`-projectie werd de groeistap in v4407 naar 0 geclamped. Daardoor bleven `Assen`, `Bron` en `LOG/FT` daarna leeg zolang groei actief was.
+Bij wisselen van `Groei` naar de niet-ondersteunde `LEX`-projectie werd de groeistap in v4407 naar 0 geclamped. Daardoor bleven `Assen`, `Bron` en `LOG` daarna leeg zolang groei actief was.
 
 Vanaf v4430 geldt:
 
@@ -288,7 +288,7 @@ Beschreven zinstypen: hoofdzin, bijzin met OMDAT, topicalisatie, perfectum en vo
 ## v4536 update
 
 - `commit_and_push.bat` wordt vanaf deze versie standaard meegeleverd in de ZIP-root.
-- LOG/FT toont thematische rollen expliciet: `AGENS` voor subject/handelende deelnemer en `PATIENS` voor object/ondergaande deelnemer.
+- LOG toont thematische rollen expliciet: `AGENS` voor subject/handelende deelnemer en `PATIENS` voor object/ondergaande deelnemer.
 - De syntaxrollen blijven `subject` en `object`; de functionele projectie benoemt dezelfde lexicale bronnen thematisch.
 
 ## v4536 · mobiel
@@ -339,17 +339,17 @@ Het hoofdbeeld is opnieuw ontworpen als grid-only view: boven het grid staan all
 
 - Main behoudt een vaste topbalk met alleen Zin en Config.
 - De ZUID-volgorde staat nu als zichtbare pijlbediening onder in het boomvenster.
-- In portrait staat de Play-balk onder het grid met Reset direct ernaast; de Assen/LOG/FT-balk sluit daaronder aan.
-- In landscape staat Play verticaal rechts in het boomvenster, met Reset en Assen/LOG/FT eronder.
+- In portrait staat de Play-balk onder het grid met Reset direct ernaast; de Assen/LOG-balk sluit daaronder aan.
+- In landscape staat Play verticaal rechts in het boomvenster, met Reset en Assen/LOG eronder.
 
 
 ## v4504 · Main-controls naast SYNTAX-as
 
-Main toont alle projectiekeuzes (Assen, Bron, LEX, SYN, LOG/FT). In landscape staat de vensterbalk rechts naast de SYNTAX-as. `portrait-test.html` biedt een lokaal portrait-testvenster op desktop/laptop.
+Main toont alle projectiekeuzes (Assen, Bron, LEX, SYN, LOG). In landscape staat de vensterbalk rechts naast de SYNTAX-as. `portrait-test.html` biedt een lokaal portrait-testvenster op desktop/laptop.
 
 ## v4504 · Main-controls in venster
 
-De rechter Main-balk staat in het boomvenster, rechts naast de SYNTAX-as. De projectiereeks bevat Assen, Bron, LEX, SYN en LOG/FT. De nieuwe ZUID/SOV-box met pijlen staat op de oude ZUID-badgeplek; de oude badge wordt niet meer zichtbaar getoond.
+De rechter Main-balk staat in het boomvenster, rechts naast de SYNTAX-as. De projectiereeks bevat Assen, Bron, LEX, SYN en LOG. De nieuwe ZUID/SOV-box met pijlen staat op de oude ZUID-badgeplek; de oude badge wordt niet meer zichtbaar getoond.
 
 
 ## v4504 - Config topbar en documentatie

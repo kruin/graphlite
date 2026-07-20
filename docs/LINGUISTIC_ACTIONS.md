@@ -14,9 +14,17 @@ Voor nu bevat de taalactiebox alleen:
 
 Later kunnen hier meer acties bijkomen.
 
+## LOG en FT
+
+- LOG is de zuidas.
+- LOG toont de logische S-O-V-volgordeprojectie.
+- FT is géén onderdeel van de zuidas.
+- FT is de functionele view naast de standaard syntaxboom-view.
+- Een flip verandert LOG, niet SYNT, LEX of de FT-bronrollen.
+
 ## SOV/VSO/etc
 
-De SOV/VSO/etc-keuze verandert de LOG/FT-volgordeprojectie.
+De SOV/VSO/etc-keuze verandert de LOG-volgordeprojectie.
 
 Mogelijke modi:
 
@@ -37,9 +45,10 @@ De SOV/VSO/etc-actie verandert niet:
 
 - de centrale boomstructuur;
 - de SYNT-projectie;
-- de lexicale inhoud.
+- de lexicale inhoud;
+- de FT-view als functionele rolbron.
 
-Ze beïnvloedt alleen de logische/functionele volgordeprojectie.
+Ze beïnvloedt alleen de LOG-volgordeprojectie.
 
 ## Later uitbreidbaar
 
@@ -71,8 +80,10 @@ Een Wissel is een LEX-regel:
 - laat syntaxstructuur ongemoeid;
 - kan een trace/oude positie zichtbaar maken.
 
-## v1.0.3 LOG versus FT
+## v1.0.7 — View-keuze syntaxboom / functional structure
 
-- LOG is de projectie van logische volgorde, inclusief SOV/SVO/VSO-flips.
-- FT is de functioneel-thematische laag met rollen zoals agens, patiens en predicaat.
-- Een flip verandert LOG, niet SYNT, LEX of de FT-bronrollen.
+- Hoofdmenu krijgt een compacte `View`-keuze.
+- Standaard: syntax tree / syntaxboom.
+- Alternatief: functional structure met `CLAUSE`, `PRED`, `AGENS` en `PATIENS`.
+- FT blijft een view naast de syntaxboom-view, niet een onderdeel van de LOG-zuidas.
+- LOG blijft de zuidas voor de logische S-O-V-projectie.

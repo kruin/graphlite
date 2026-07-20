@@ -19,7 +19,7 @@ The main view stays minimal:
 - English/Nederlands language toggle
 - projection grid
 
-The right-hand in-window control strip contains the projection choices: All, Source, LEX, SYN and LOG/FT. The SOV/SVO/OVS/OSV-!/VSO-!/VOS-! order button is visible only in the All view.
+The right-hand in-window control strip contains the projection choices: All, Source, LEX, SYN and LOG. The SOV/SVO/OVS/OSV-!/VSO-!/VOS-! order button is visible only in the All view.
 
 ## JAN Open Notation
 
@@ -29,7 +29,8 @@ Current axes:
 
 - LEX: west axis, surface order and local placement rules
 - SYNTAX: east axis, syntax rules projected at source-node height
-- LOGICAL / FT: south axis, logical or functional order
+- LOG: south axis, logical S-O-V order projection
+- FT: functional/thematic view next to the standard syntax-tree view
 
 ## LEX placement rules
 

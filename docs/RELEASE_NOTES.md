@@ -52,7 +52,7 @@
 
 ## v4504 · Main-controls naast SYNTAX-as
 
-- De Main-projectiebalk toont nu de volledige reeks: Assen, Bron, LEX, SYN en LOG/FT.
+- De Main-projectiebalk toont nu de volledige reeks: Assen, Bron, LEX, SYN en LOG.
 - In landscape wordt de rechter vensterbalk naast de SYNTAX-as geplaatst met een kleine tussenruimte.
 - `portrait-test.html` toegevoegd voor lokale desktop/laptop-tests met een portrait-venster.
 
@@ -154,7 +154,7 @@
 
 ## v4430 · dynamische boomruimte + auto-fit
 
-- Bomen in Assen, Bron en LOG/FT krijgen een configureerbare weergave: `Boomruimte`.
+- Bomen in Assen, Bron en LOG krijgen een configureerbare weergave: `Boomruimte`.
 - `auto` en `breed/lager` maken de HOR-afstand groter en de VER-afstand kleiner; daardoor past de boom beter in het venster zonder de onderliggende gridcoördinaten te wijzigen.
 - `breed + groter font` verhoogt tegelijk de labelgrootte.
 - `Venster: automatisch passend` berekent na elke render de echte SVG-bounding-box en zet de viewBox daarop.
@@ -395,7 +395,7 @@
 ## v4536 update
 
 - `commit_and_push.bat` wordt vanaf deze versie standaard meegeleverd in de ZIP-root.
-- LOG/FT toont thematische rollen expliciet: `AGENS` voor subject/handelende deelnemer en `PATIENS` voor object/ondergaande deelnemer.
+- LOG toont thematische rollen expliciet: `AGENS` voor subject/handelende deelnemer en `PATIENS` voor object/ondergaande deelnemer.
 - De syntaxrollen blijven `subject` en `object`; de functionele projectie benoemt dezelfde lexicale bronnen thematisch.
 
 ## v4536
@@ -468,13 +468,13 @@ Het hoofdbeeld is opnieuw ontworpen als grid-only view: boven het grid staan all
 
 - Main behoudt een vaste topbalk met alleen Zin en Config.
 - De ZUID-volgorde staat nu als zichtbare pijlbediening onder in het boomvenster.
-- In portrait staat de Play-balk onder het grid met Reset direct ernaast; de Assen/LOG/FT-balk sluit daaronder aan.
-- In landscape staat Play verticaal rechts in het boomvenster, met Reset en Assen/LOG/FT eronder.
+- In portrait staat de Play-balk onder het grid met Reset direct ernaast; de Assen/LOG-balk sluit daaronder aan.
+- In landscape staat Play verticaal rechts in het boomvenster, met Reset en Assen/LOG eronder.
 
 ## v4504 · Main-controls in het boomvenster
 
 - Rechter vensterbalk blijft in het boomvenster en wordt rechts naast de SYNTAX-as gepositioneerd.
-- Projectiereeks in Main is volledig: Assen, Bron, LEX, SYN en LOG/FT.
+- Projectiereeks in Main is volledig: Assen, Bron, LEX, SYN en LOG.
 - De nieuwe ZUID/SOV-bediening met pijlen vervangt de oude SVG-ZUID-badge visueel en wordt op dezelfde positie geplaatst.
 - De oude ZUID-badge blijft alleen onzichtbaar als positioneringsanker bestaan.
 
@@ -699,9 +699,9 @@ Dit blijft een LEX/FUNC-regel. De SYNT-boom wordt niet gemuteerd.
 - Alle top-level links en asset-queries zijn naar v4558 gezet.
 
 
-## v4560 — SOV-box onder LOG/FT
+## v4560 — SOV-box onder LOG
 
-- De SOV/SVO/OVS/OSV/VSO/VOS-bediening staat nu onder de verticale projectiereeks, direct onder `LOG/FT`.
+- De SOV/SVO/OVS/OSV/VSO/VOS-bediening staat nu onder de verticale projectiereeks, direct onder `LOG`.
 - De box is een eigen LOG-bediening met tussenruimte, niet langer een zwevende badge onder de LOG-projectie.
 - De centrale Play-balk behoudt `←`, `Play`, `→`, `Groei` en `Reset`.
 
@@ -710,5 +710,5 @@ Dit blijft een LEX/FUNC-regel. De SYNT-boom wordt niet gemuteerd.
 
 - De opties onder `Hoofdvenster` zijn hernoemd en herordend rond één default: `volledige boom zichtbaar`.
 - Desktop en mobiel starten op deze veilige fit-modus.
-- De fitbox krijgt extra ondermarge voor LOG/FT en extra rechterruimte voor de SYNT-as.
+- De fitbox krijgt extra ondermarge voor LOG en extra rechterruimte voor de SYNT-as.
 - `strak`, `scroll` en `vast/debug` blijven beschikbaar als secundaire opties.

@@ -3300,7 +3300,7 @@ body.main-screen-active #graphSvg {
 
 /* v4504: main placement redesign.
    Main keeps a fixed topbar; the projection grid is the primary view.
-   SOV/SVO controls live inside the boomvenster.  Play/Reset and Assen/LOG/FT
+   SOV/SVO controls live inside the boomvenster.  Play/Reset and Assen/LOG
    move out of Config and become always visible in Main. */
 body.main-screen-active .canvas-wrap {
   touch-action: manipulation !important;
@@ -3378,7 +3378,7 @@ body.main-screen-active .main-projection-strip button[aria-pressed="true"] {
   border-color: color-mix(in srgb, var(--synt), var(--line) 35%) !important;
 }
 
-/* Portrait: playbar below the grid; reset directly next to it; Assen/LOG/FT attached below. */
+/* Portrait: playbar below the grid; reset directly next to it; Assen/LOG attached below. */
 @media (orientation: portrait) {
   body.main-screen-active .workspace {
     --main-control-height: clamp(6.8rem, 12dvh, 8.8rem);
@@ -3429,7 +3429,7 @@ body.main-screen-active .main-projection-strip button[aria-pressed="true"] {
   }
 }
 
-/* Landscape: vertical playbar on the right side of the syntax-axis zone; reset below; Assen/LOG/FT attached below it. */
+/* Landscape: vertical playbar on the right side of the syntax-axis zone; reset below; Assen/LOG attached below it. */
 @media (orientation: landscape) {
   body.main-screen-active .canvas-wrap {
     inset: 0 !important;
@@ -4318,7 +4318,7 @@ body.main-screen-active .main-play-growth-label {
   text-align: center !important;
 }
 
-/* v4558: de SOV/VSO/enz.-bediening is een eigen ruime LOG/FT-box rechts onder de LOG-projectie. */
+/* v4558: de SOV/VSO/enz.-bediening is een eigen ruime LOG-box rechts onder de LOG-projectie. */
 body.main-screen-active .main-south-control {
   gap: .42rem !important;
   padding: .48rem .58rem !important;
@@ -4372,7 +4372,7 @@ body.main-screen-active #mainSouthModeButton {
 }
 
 
-/* v4560: SOV/VSO/enz.-box staat direct onder de projectiestrip, dus onder LOG/FT. */
+/* v4560: SOV/VSO/enz.-box staat direct onder de projectiestrip, dus onder LOG. */
 body.main-screen-active .main-grid-controls .main-south-control {
   position: static !important;
   left: auto !important;
@@ -4610,7 +4610,7 @@ body.main-screen-active {
 }
 
 
-/* v4569: LOG/FT-balk blijft zelfstandig rechts van de SYNT-as; SOV-box staat los links naast die balk. */
+/* v4569: LOG-balk blijft zelfstandig rechts van de SYNT-as; SOV-box staat los links naast die balk. */
 body.main-screen-active .main-grid-controls {
   display: block !important;
   width: 6.9rem !important;
@@ -4738,7 +4738,7 @@ body.main-screen-active .main-south-control.language-action-box button {
 }
 
 
-/* v4574: compacte SOV-box op kruising LEX-as × LOG/FT-as. */
+/* v4574: compacte SOV-box op kruising LEX-as × LOG-as. */
 body.main-screen-active .main-south-control {
   width: 4.25rem !important;
   min-width: 4.25rem !important;
@@ -4946,7 +4946,7 @@ body.main-screen-active .main-south-control.language-action-box #mainSouthModeBu
 }
 
 
-/* v4578: SOV-box wordt met zijn werkelijke hoogte op de oorspronkelijke LOG/FT-as gecentreerd. */
+/* v4578: SOV-box wordt met zijn werkelijke hoogte op de oorspronkelijke LOG-as gecentreerd. */
 body.main-screen-active .main-south-control.language-action-box {
   min-height: 0 !important;
   height: auto !important;
@@ -5242,7 +5242,7 @@ body.viewport-mobile-test.main-screen-active .main-play-reset-bar {
   transform: none !important;
 }
 
-/* v1.0.5: lokale mobile-test. Portrait/landscape worden op desktop niet via
+/* v1.0.7: lokale mobile-test. Portrait/landscape worden op desktop niet via
    echte media queries bepaald, maar via body-classes uit local-mobile-test.js.
    Maak portrait daarom expliciet zoom/pinch-veilig en zorg dat de onderbalk
    binnen het telefoonframe blijft. */
@@ -5291,4 +5291,71 @@ body.viewport-mobile-landscape-test.main-screen-active #graphSvg {
   height: 100% !important;
   min-height: 100% !important;
   max-height: 100% !important;
+}
+
+/* v1.0.7: View-keuze in hoofdmenu: standaard syntax tree, alternatief functional structure. */
+.main-view-field {
+  display: flex;
+  align-items: center;
+  gap: .28rem;
+  min-width: 0;
+  flex: 0 0 auto;
+  font-weight: 900;
+  color: var(--muted);
+}
+.main-view-field select {
+  min-height: 2.15rem;
+  width: clamp(6.4rem, 10vw, 8.6rem);
+  max-width: 8.6rem;
+  border: 1px solid var(--line);
+  border-radius: .72rem;
+  background: var(--panel);
+  color: var(--text);
+  padding: .14rem .42rem;
+  font-size: .76rem;
+  font-weight: 900;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+body.main-screen-active .main-view-field {
+  gap: .18rem !important;
+  max-width: 8.8rem !important;
+}
+body.main-screen-active .main-view-field span {
+  font-size: .68rem !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+}
+body.main-screen-active .main-view-field select {
+  width: clamp(5.8rem, 9vw, 7.6rem) !important;
+  max-width: 7.6rem !important;
+  min-height: 2rem !important;
+  padding: .12rem .34rem !important;
+  font-size: .74rem !important;
+}
+@media (max-width: 900px) {
+  body.main-screen-active .main-view-field select {
+    width: 5.7rem !important;
+    max-width: 5.7rem !important;
+  }
+}
+body.viewport-mobile-test.main-screen-active .main-view-field span {
+  display: none !important;
+}
+body.viewport-mobile-test.main-screen-active .main-view-field {
+  flex: 0 0 4.9rem !important;
+  min-width: 0 !important;
+  gap: 0 !important;
+}
+body.viewport-mobile-test.main-screen-active .main-view-field select {
+  width: 100% !important;
+  min-height: 2.05rem !important;
+  max-width: none !important;
+  padding: .2rem .30rem !important;
+  font-size: .72rem !important;
+  border-radius: .65rem !important;
+}
+body.viewport-mobile-landscape-test.main-screen-active .main-view-field {
+  flex-basis: 5.8rem !important;
 }

@@ -9,7 +9,7 @@ Config is for settings. Long explanation blocks must not interrupt active config
 ## Render order
 
 1. First compute the central tree and its boxes.
-2. Then draw the projection axes: LEX, SYNTAX and LOG/FT.
+2. Then draw the projection axes: LEX, SYNTAX and LOG.
 3. Project terminal nodes to the LEX axis.
 4. Place free LEX inserts in reserved slots.
 5. Draw any LEX movement rules or exchanges.

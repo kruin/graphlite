@@ -94,5 +94,5 @@ f-obj:{object} [leaf role=object source=object cat=N]
 ## v4535 update
 
 - `commit_and_push.bat` wordt vanaf deze versie standaard meegeleverd in de ZIP-root.
-- LOG/FT toont thematische rollen expliciet: `AGENS` voor subject/handelende deelnemer en `PATIENS` voor object/ondergaande deelnemer.
+- LOG toont thematische rollen expliciet: `AGENS` voor subject/handelende deelnemer en `PATIENS` voor object/ondergaande deelnemer.
 - De syntaxrollen blijven `subject` en `object`; de functionele projectie benoemt dezelfde lexicale bronnen thematisch.

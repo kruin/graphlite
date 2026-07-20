@@ -1,24 +1,27 @@
 # HANDOVER_FOR_COLLABORATORS
 
-Overdracht voor mensen die verder willen werken aan OpenGraph Lite Viewer v1.0.5.
+Overdracht voor mensen die verder willen werken aan OpenGraph Lite Viewer v1.0.7.
 
 ## Wat is dit?
 
 OpenGraph Lite Viewer is een viewer/demo voor JAN / OPN / OpenGraph-taalbomen.
-De kern is een vrije bronboom met zelfstandige projecties:
+De kern is een vrije bronboom met zelfstandige views/projecties:
 
 ```text
 LEX    zichtbare volgorde / lexicale plaatsing
-SYNT   syntactische categorieprojectie
-LOG/FT logische, functionele of thematische projectie
+SYNT   syntactische categorieprojectie en syntaxregels
+LOG    zuidas: logische S-O-V-volgordeprojectie
+FT     functionele view naast de standaard syntaxboom-view
 ```
+
+Belangrijk: FT is geen onderdeel van de LOG-as. Op de zuidas staat alleen LOG.
 
 ## Beginpunt
 
 Werk altijd vanaf de nieuwste stabiele projectzip. Voor deze overdracht is dat:
 
 ```text
-OpenGraph_Lite_Viewer_v1.0.5.zip
+OpenGraph_Lite_Viewer_v1.0.7.zip
 ```
 
 Open:
@@ -45,7 +48,7 @@ Gebruik oude zips, screenshots en verouderde docs alleen als archief, niet als l
 Maak een nieuw ChatGPT-project en voeg minimaal deze bestanden toe:
 
 ```text
-OpenGraph_Lite_Viewer_v1.0.5.zip
+OpenGraph_Lite_Viewer_v1.0.7.zip
 PROJECT_STATE_CURRENT.md
 LAYOUT_RULES.md
 LINGUISTIC_ACTIONS.md
@@ -69,10 +72,12 @@ Bij codewijzigingen: wijzig bestanden, test met node --check viewer.js en zip op
 
 - LEX-as links.
 - SYNT-as rechts.
-- LOG/FT-as onder.
-- LOG/FT-as behoudt eigen SVG-hoogte.
+- LOG-as onder.
+- Alleen LOG staat op de zuidas.
+- FT is functionele view, niet LOG-as.
+- LOG-as behoudt eigen SVG-hoogte.
 - HTML-overlays mogen assen niet verplaatsen.
-- SOV-taalactiebox staat default links naast het begin van de LOG/FT-as.
+- SOV-taalactiebox staat default links naast het begin van de LOG-as.
 - SOV-box bevat `‹ SOV ›` en geen LOG-label.
 - Projectiebox staat rechts naast de SYNT-as, niet eroverheen.
 
@@ -80,7 +85,8 @@ Bij codewijzigingen: wijzig bestanden, test met node --check viewer.js en zip op
 
 - Bijwoorden zijn LEX-inserties, geen syntaxmutaties.
 - Wissel is een LEX-regel.
-- SOV/VSO/etc verandert alleen LOG/FT-projectie, niet SYNT of LEX.
+- SOV/VSO/etc verandert alleen LOG-projectie, niet SYNT of LEX.
+- FT-bronrollen blijven apart van de LOG-flip.
 - Lexicale insertie, negatiebereik, focus/contrast en V2/PV-plaatsing kunnen later in dezelfde taalactiebox worden ondergebracht.
 
 ## Referenties
@@ -106,40 +112,13 @@ Deze doet preflight en publiceert naar GitHub wanneer de map een Git-repository 
 Na publicatie:
 
 ```text
-reset-cache.html?ogv=v1.0.5
+reset-cache.html?ogv=v1.0.7
 ```
 
-## Test vóór nieuwe zip
+## v1.0.7 — View-keuze syntaxboom / functional structure
 
-```bat
-node --check viewer.js
-```
-
-Daarna zip-integriteit controleren.
-
-## v1.0.5 — lokale mobile-test
-
-Er is geen master/user-profiel meer in de viewer. Werk lokaal, test lokaal en kopieer daarna handmatig naar de repository.
-
-Lokaal is er een kleine keuzeknop voor desktop/mobile-test. Die wordt toegevoegd door:
-
-```text
-local-mobile-test.js
-```
-
-Deze file staat in `.gitignore` en hoort niet mee naar GitHub Pages. Zonder die file blijft de gepubliceerde viewer schoon.
-
-Handmatig testen kan ook met:
-
-```text
-index.html?viewport=mobile-portrait
-index.html?viewport=mobile-landscape
-index.html?viewport=desktop
-```
-
-Publicatiecontext:
-
-```text
-Repo: https://github.com/kruin/graphlite
-Site: https://kruin.github.io/graphlite/
-```
+- Hoofdmenu krijgt een compacte `View`-keuze.
+- Standaard: syntax tree / syntaxboom.
+- Alternatief: functional structure met `CLAUSE`, `PRED`, `AGENS` en `PATIENS`.
+- FT blijft een view naast de syntaxboom-view, niet een onderdeel van de LOG-zuidas.
+- LOG blijft de zuidas voor de logische S-O-V-projectie.

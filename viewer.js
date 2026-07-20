@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'v1.0.5';
+  const VERSION = 'v1.0.7';
   const BASE_CELL = 74;
   const ROOT_SIDE_GAP = 1;
   const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -16,6 +16,8 @@
     mobileExampleSelect: document.getElementById('mobileExampleSelect'),
     mainExampleSelect: document.getElementById('mainExampleSelect'),
     mainAdverbSelect: document.getElementById('mainAdverbSelect'),
+    mainViewSelect: document.getElementById('mainViewSelect'),
+    mobileViewSelect: document.getElementById('mobileViewSelect'),
     mobileAdverbSelect: document.getElementById('mobileAdverbSelect'),
     openConfigButton: document.getElementById('openConfigButton'),
     closeConfigButton: document.getElementById('closeConfigButton'),
@@ -207,8 +209,8 @@
   ];
 
   const CENTER_MODES = [
-    { id: 'syntax', label: 'OPN · syntaxboom' },
-    { id: 'functional', label: 'OPN · functionele structuur' }
+    { id: 'syntax', label: 'Syntax tree' },
+    { id: 'functional', label: 'Functional structure · CLAUSE' }
   ];
 
   const TREE_CHOICES = [
@@ -627,7 +629,7 @@
   ];
 
   const TOP_MENU_CHOICES = [
-    { id: 'projection', label: 'Projectiekeuze', cssClass: 'top-menu-projection', tip: 'Projectiekeuze: Assen, Bron, LEX, SYNT en LOG/FT. Nuttig voor vergelijken van projecties.' },
+    { id: 'projection', label: 'Projectiekeuze', cssClass: 'top-menu-projection', tip: 'Projectiekeuze: Assen, Bron, LEX, SYNT en LOG. Nuttig voor vergelijken van projecties.' },
     { id: 'sentence', label: 'Voorbeeldzin', cssClass: 'top-menu-sentence', tip: 'Voorbeeldzin: kies snel HOND BIJT MAN en varianten. Nuttig voor contrast tussen zinnen.' },
     { id: 'play', label: 'Play/Groei', cssClass: 'top-menu-play', tip: 'Play/Groei: stap voor stap boom, LEX-as en projecties tonen. Nuttig voor didactische uitleg.' },
     { id: 'tools', label: 'Werkknoppen', cssClass: 'top-menu-tools', tip: 'Werkknoppen: FIT, reset, JSON, Docs en editors. Nuttig bij bouwen en testen.' }
@@ -2714,7 +2716,7 @@
   }
 
   function activeCentralSpec() {
-    if (state.centerMode === 'functional' || state.projection === 'log') return functionalSpec();
+    if (state.centerMode === 'functional') return functionalSpec();
     return treeSpec();
   }
 
@@ -3784,7 +3786,7 @@
   function drawProjectedRules(g, x, layout, origin, spec, options = {}) {
     if (!layout || !origin || !spec) return;
     const mode = options.mode || 'syntax';
-    const title = options.title || (mode === 'functional' ? 'FT-projectie · functionele regels/rollen' : 'SYNT-projectie · regels');
+    const title = options.title || (mode === 'functional' ? 'FT-view · functionele regels/rollen' : 'SYNT-projectie · regels');
     const cls = mode === 'functional' ? 'log' : 'synt';
     const boxClass = mode === 'functional' ? 'syntax-rule-box projected-rule-box projected-functional-rule-box' : 'syntax-rule-box projected-rule-box';
     const ruleClass = mode === 'functional' ? 'rule-label projected-rule-label projected-functional-rule-label' : 'rule-label projected-rule-label';
@@ -3885,7 +3887,7 @@
     const items = Array.isArray(options.items) && options.items.length ? options.items : logicalProjectionItemsFromLayout(layout, requestedOrder);
     if (!items.length) return;
     const cls = options.cls || 'log';
-    const title = options.title || 'LOGICAL-projectie';
+    const title = options.title || 'LOG-projectie';
     const subtitle = options.subtitle || 'De logische volgorde wordt uit de FT-layout geprojecteerd.';
     const orderCode = logicalOrderCode(items);
     const badgeText = options.badgeText || `LOG · ${orderCode}`;
@@ -4014,13 +4016,13 @@
     if (layout && origin) {
       drawProjectedRules(g, x, layout, origin, functionalSpec(), {
         mode: 'functional',
-        title: 'FT-projectie · regels op boomhoogte',
+        title: 'FT-view · regels op boomhoogte',
         growthPlan
       });
       return;
     }
     const axisBoxGap = 22;
-    drawAxisTitle(g, x + axisBoxGap, 40, 'FT-projectie · functionele regels/rollen');
+    drawAxisTitle(g, x + axisBoxGap, 40, 'FT-view · functionele regels/rollen');
     functionalRules().forEach((rule, i) => {
       const yy = 86 + i * 66;
       const width = Math.max(250, Math.min(380, rule.length * 8.2 + 34));
@@ -4032,8 +4034,16 @@
   }
 
   function activeRelationRows() {
-    const useFunctional = state.projection === 'log' || state.centerMode === 'functional';
-    const title = useFunctional ? 'FT · functionele relaties / LOG · volgorde apart' : 'SYNT · syntaxregels';
+    if (state.projection === 'log') {
+      const order = southLogicalOrder().join('-');
+      return [
+        `LOG · zuidas · ${southLogicalModeLabel(state.southLogicalMode || 'SOV')}`,
+        `LOG → ${order}`,
+        'FT is geen aslaag; FT staat als functionele view naast de syntaxboom-view.'
+      ];
+    }
+    const useFunctional = state.centerMode === 'functional';
+    const title = useFunctional ? 'FT · functionele view / rollen' : 'SYNT · syntaxregels';
     const rows = useFunctional ? functionalRules() : syntaxRules();
     return [title, ...rows];
   }
@@ -4094,7 +4104,7 @@
       else drawSyntaxRules(g, eastAxisX, 126, centralLayout, origin, growthPlan);
       drawLogicalProjection(g, southAxisX1, southAxisX2, southAxisY, getFunctionalLayout(), {
         cls: 'log',
-        title: 'LOG-as · LOGICAL-projectie',
+        title: 'LOG-as · LOG-projectie',
         subtitle: `Logische volgorde onder de boom; west-as blijft LEX. Gebruik de volgordeknop om alleen de LOG-volgorde onder de boom te wijzigen.${southModeWarningText()}`,
         badgeText: southLogicalModeLabel(state.southLogicalMode || 'SOV'),
         order: southLogicalOrder(),
@@ -4111,7 +4121,7 @@
       drawAxisTitle(g, eastAxisX, 116, 'SYNT-projectie verschijnt in de laatste stap');
       drawLogicalProjection(g, southAxisX1, southAxisX2, southAxisY, getFunctionalLayout(), {
         cls: 'log',
-        title: 'LOG-as · LOGICAL-projectie',
+        title: 'LOG-as · LOG-projectie',
         subtitle: `LOG-projectie wordt mee zichtbaar in de eindfase. Gebruik de volgordeknop om alleen de LOG-volgorde onder de boom te wijzigen.${southModeWarningText()}`,
         badgeText: southLogicalModeLabel(state.southLogicalMode || 'SOV'),
         order: southLogicalOrder(),
@@ -4203,16 +4213,17 @@
   }
 
   function drawLog() {
-    const g = baseSvg('log-view');
-    const origin = { x: 430, y: 92 };
-    const layout = drawFunctional(g, origin);
-    const treeRightPx = px((layout?.box?.maxX || 0), origin);
-    const logRulesX = treeRightPx + 118;
-    drawFunctionalRules(g, logRulesX, layout, origin, layout?.__growthPlan || null);
-    drawLogicalProjection(g, 310, Math.max(1010, logRulesX + 330), 666, layout, {
+    const g = baseSvg('log-view log-only-view');
+    const layout = getFunctionalLayout();
+    drawLogicalProjection(g, 260, 1040, 330, layout, {
       cls: 'log',
-      title: 'FT-projectie · logische volgorde',
-      subtitle: 'Flip/layout in FT kan basisvolgorden tonen zoals SOV en SVO. OSV-!, VSO-! en VOS-! zijn geen basis-alternatieven: de box-aanpak kan deze volgordes niet opleveren; de LEX-as vraagt dan een verplaatsingsregel.'
+      title: 'LOG-as · logische S-O-V-projectie',
+      subtitle: 'Alleen LOG staat op de zuidas. FT is geen aslaag: FT is de functionele view naast de standaard syntaxboom-view.',
+      badgeText: southLogicalModeLabel(state.southLogicalMode || 'SOV'),
+      order: southLogicalOrder(),
+      interactive: true,
+      tipText: 'tip: SOV → SVO → OVS → OSV-! → VSO-! → VOS-!',
+      badgeAlign: 'center'
     });
     els.svg.appendChild(g);
   }
@@ -4236,7 +4247,7 @@
     // v4451: tijdens groei niet opnieuw inzoomen op de paar zichtbare
     // elementen. Anders wordt stap 1 extreem groot weergegeven. Gebruik een
     // stabiel podium totdat de gebruiker zelf pant/zoomt.
-    // v4571: stabiele groei-viewbox ruimer maken. De onderste LOG/FT-box
+    // v4571: stabiele groei-viewbox ruimer maken. De onderste LOG-box
     // en de naar rechts verplaatste SYNT-as moeten ook tijdens groei in beeld blijven.
     if (state.projection === 'axes') return { x: -50, y: -150, w: 1780, h: 1120 };
     if (state.projection === 'source') return { x: 150, y: -145, w: 1320, h: 1010 };
@@ -4275,7 +4286,7 @@
   }
 
   function clearViewportGestureState() {
-    // v1.0.5: bij wissel tussen landscape/portrait mogen oude touch-pointers
+    // v1.0.7: bij wissel tussen landscape/portrait mogen oude touch-pointers
     // en pinch-state niet blijven hangen. Anders lijkt portrait na zoom in
     // landscape bevroren.
     state.viewDrag = null;
@@ -4552,7 +4563,7 @@
         const logAnchor = logicalAxisAnchorBox();
         const logStartClient = logAnchor ? svgXToClient(logAnchor.x1, viewBox) : null;
         const logYClient = logAnchor ? svgYToClient(logAnchor.y, viewBox) : null;
-        // v4577: default as in the reference image: directly left of the LOG/FT axis,
+        // v4577: default as in the reference image: directly left of the LOG axis,
         // vertically centered on that axis. The action box does not sit on the crossing;
         // it labels/controls the LOG-axis from its left edge.
         const axisGap = 8;
@@ -4569,7 +4580,7 @@
       root.style.setProperty('--main-south-top', `${southTop}px`);
       southControl.classList.toggle('is-draggable', !!state.southBoxDraggable);
       southControl.setAttribute('title', state.southBoxDraggable
-        ? (isEnglish() ? 'Drag this language action box. Default: centered on the original LOG/FT axis height.' : 'Sleep deze taalactiebox. Default: op de oorspronkelijke hoogte van de LOG/FT-as.')
+        ? (isEnglish() ? 'Drag this language action box. Default: centered on the original LOG axis height.' : 'Sleep deze taalactiebox. Default: op de oorspronkelijke hoogte van de LOG-as.')
         : (isEnglish() ? 'Language action box is fixed by Config.' : 'Taalactiebox is vastgezet via Config.'));
     } else {
       root.style.removeProperty('--main-south-left');
@@ -4610,7 +4621,7 @@
     if (mode === 'window') {
       // v4571: Hoofdvenster = volledige boom zichtbaar. Deze rand hoort bij
       // de standaardfit en geldt voor desktop én mobiel. Hij voorkomt dat de
-      // onderste LOG/FT-box of de verplaatste SYNT-as net buiten de viewBox valt.
+      // onderste LOG-box of de verplaatste SYNT-as net buiten de viewBox valt.
       // v4571: minder lege gridruimte links van LEX en rechts van
       // projectie/SOV-box. De bbox zelf blijft volledig binnen beeld; alleen de
       // extra bedieningsmarge is teruggebracht.
@@ -4785,10 +4796,10 @@
     if (els.sentencePreview) els.sentencePreview.innerHTML = activeSentenceHtml();
     const baseFeedback = isEnglish()
       ? (state.projection === 'source'
-        ? 'Source shows the selected OPN source from structure-config.html. Syntax and functional views use bottom-up recursive box layout; left/right controls both layouts; branch order can be global, compact-auto or align-auto.'
+        ? 'Source shows the selected OPN source from structure-config.html. The View menu switches between the standard syntax tree and the functional structure (CLAUSE roles). Syntax and functional views use bottom-up recursive box layout; left/right controls both layouts; branch order can be global, compact-auto or align-auto.'
         : 'Phase view: first the structure config, then sample sentences projected to those sources, then the local LEX placement rule.')
       : (state.projection === 'source'
-        ? 'Bron toont de gekozen OPN-bron uit structure-config.html. Syntax en functioneel gebruiken bottom-up recursieve box-layout; left/right stuurt beide layouts; takvolgorde kan globaal, compact-auto of align-auto zijn.'
+        ? 'Bron toont de gekozen OPN-bron uit structure-config.html. Het View-menu wisselt tussen de standaard syntaxboom en de functionele structuur (CLAUSE/rollen). Syntax en functioneel gebruiken bottom-up recursieve box-layout; left/right stuurt beide layouts; takvolgorde kan globaal, compact-auto of align-auto zijn.'
         : 'Faseversie: eerst structure-config, dan voorbeeldzinnen die naar die sources projecteren, dan lokale LEX-regel.');
     const validationMsg = state.exampleValidationMessages?.length ? ` · ${state.exampleValidationMessages[0]}` : '';
     const noticeMsg = state.example.notice ? ` · ${state.example.notice}` : '';
@@ -4809,8 +4820,8 @@
 
   function projectionLabel() {
     const labels = isEnglish()
-      ? { axes: 'All axes', source: 'Source', lex: 'LEX', synt: 'SYNT projection', log: 'LOG/FT' }
-      : { axes: 'OPN/assen', source: 'Bron', lex: 'LEX', synt: 'SYNT-projectie', log: 'LOG/FT' };
+      ? { axes: 'All axes', source: 'Source', lex: 'LEX', synt: 'SYNT projection', log: 'LOG' }
+      : { axes: 'OPN/assen', source: 'Bron', lex: 'LEX', synt: 'SYNT-projectie', log: 'LOG' };
     return labels[state.projection] || state.projection;
   }
 
@@ -4819,14 +4830,14 @@
       if (state.projection === 'source') return 'Source: OPN syntax and OPN functional structures are read from structure-config.html. Both use the same left/right layout strategy and reserve configurable empty free-slot space under the root.';
       if (state.projection === 'lex') return 'LEX: placement rules per sentence type. Main clause: first phrase to slot 1, finite verb to slot 2. The central tree keeps empty space; the filled positions are shown on the LEX axis.';
       if (state.projection === 'synt') return 'SYNT: isolated syntax-rule set. Rules are placed at their source height; the central tree is only used as a hidden height anchor.';
-      if (state.projection === 'log') return 'LOG: logical order projection. FT: functional/thematic view = CLAUSE with separate PRED node and ARG-STRUCT subtree; the lower FT projection shows logical order, for example SOV/SVO/OVS/OSV-!/VSO-!/VOS-!.';
-      return 'All: central OPN tree; west axis = LEX next to the tree; south axis = LOGICAL projection. The grid window is fitted to tree + axes; canvas panning is off.';
+      if (state.projection === 'log') return 'LOG: logical S-O-V order projection on the south axis. FT is not part of this axis; FT is the functional/thematic view next to the standard syntax-tree view.';
+      return 'All: central view selected by the View menu; default = syntax tree, alternative = functional structure with CLAUSE roles. West axis = LEX; south axis = LOG projection.';
     }
     if (state.projection === 'source') return 'Bron: OPN-syntax en OPN-functioneel worden gelezen uit structure-config.html. Beide gebruiken dezelfde left/right layoutstrategie en reserveren configureerbare lege vrije-slotruimte onder de wortel.';
     if (state.projection === 'lex') return 'LEX: plaatsingsregels per zinstype. Hoofdzin: eerste zinsdeel naar slot 1, persoonsvorm naar slot 2. Bijwoorden worden als externe LEX-slots op de LEX-as geplaatst, op de hoogte net boven een gekozen syntaxbox.';
     if (state.projection === 'synt') return 'SYNT: geïsoleerde syntax-regelset. Regels staan op bronhoogte; de centrale boom dient alleen als verborgen hoogteanker.';
-    if (state.projection === 'log') return 'LOG: logische volgordeprojectie. FT: functioneel-thematisch = CLAUSE met aparte PRED-knoop en ARG-STRUCT-subtree; onderaan toont de FT-projectie de logische volgorde (bijv. SOV/SVO/OVS/OSV-!/VSO-!/VOS-!).';
-    return 'Assen: centrale OPN-boom; west-as = LEX direct naast de boom; zuid-as = LOGICAL-projectie. Het grid staat standaard bovenaan; in portrait staat het rechter menu naast het grid. Sleep de duidelijke grens of kies de zichtbare instelling Rechterkolom bovenaan om grid/menu te verdelen. Het gridvenster past op boom + assen; canvas-panning staat uit.';
+    if (state.projection === 'log') return 'LOG: logische S-O-V-volgordeprojectie op de zuidas. FT is geen onderdeel van deze as; FT is de functionele view naast de standaard syntaxboom-view.';
+    return 'Assen: centrale view via View-menu; standaard = syntaxboom, alternatief = functionele structuur met CLAUSE/rollen. West-as = LEX; zuid-as = LOG-projectie. Het gridvenster past op boom + assen.';
   }
 
   function renderSideLists() {
@@ -4853,7 +4864,9 @@
   }
 
   const SELECT_OPTION_LABELS_EN = {
-    centralModeSelect: { syntax: 'OPN syntax tree', functional: 'OPN functional structure' },
+    centralModeSelect: { syntax: 'Syntax tree', functional: 'Functional structure - CLAUSE' },
+    mainViewSelect: { syntax: 'Syntax', functional: 'Functional' },
+    mobileViewSelect: { syntax: 'Syntax tree', functional: 'Functional structure' },
     treeChoiceSelect: { 'auto-min': 'tree choice: auto per sample type', 'structure-config': 'tree choice: structure-config base tree' },
     functionalOrderSelect: { 'left-first': 'layout: left-first', 'right-first': 'layout: right-first' },
     branchOrderSelect: { normal: 'default: grammatical order', 'auto-compact': 'goal: compact - auto per branch', 'auto-align': 'goal: align subject/agent + object/patient', 'flip-all': 'global: flip all branches' },
@@ -4880,7 +4893,7 @@
   };
 
   const TOP_MENU_LABELS_EN = {
-    projection: ['Projection choice', 'Projection choice: All, Source, LEX, SYNT and LOG/FT. Useful for comparing projections.'],
+    projection: ['Projection choice', 'Projection choice: All, Source, LEX, SYNT and LOG. Useful for comparing projections.'],
     sentence: ['Sample sentence', 'Sample sentence: quickly choose HOND BIJT MAN and variants. Useful for contrasts between sentences.'],
     play: ['Play/Grow', 'Play/Grow: show tree, LEX axis and projections step by step. Useful for explanation.'],
     tools: ['Work buttons', 'Work buttons: FIT, reset, JSON, Docs and editors. Useful for building and testing.']
@@ -4948,6 +4961,8 @@
     fillSelect(els.mobileAdverbSelect, ADVERB_OPTIONS, state.selectedAdverbId);
     syncExampleSelectSizing();
     fillSelect(els.centralModeSelect, CENTER_MODES, state.centerMode);
+    fillSelect(els.mainViewSelect, CENTER_MODES, state.centerMode);
+    fillSelect(els.mobileViewSelect, CENTER_MODES, state.centerMode);
     fillSelect(els.treeChoiceSelect, TREE_CHOICES, activeTreeChoice());
     fillSelect(els.functionalOrderSelect, FUNCTIONAL_ORDERS, state.functionalOrder);
     fillSelect(els.branchOrderSelect, BRANCH_ORDERS, state.branchOrder);
@@ -5577,6 +5592,7 @@
     setText('.main-sentence-field span, .desktop-sentence-field span, .toolbar .example-field span', en ? 'Sentence' : 'Zin');
     setText('.mobile-sentence-field span', en ? 'Sentences' : 'Zinnen');
     setText('.main-adverb-field span', en ? 'Adverb' : 'Bijwoord');
+    setText('.main-view-field span', 'View');
     setText('.mobile-adverb-field span', en ? 'Adverbs' : 'Bijwoorden');
     setText('.config-topbar h2', en ? 'All settings' : 'Alle instellingen');
     setText('.config-topbar p', en ? 'Tree spacing and Main window live under Config → Tree. Adverb LEX slots, rules, export and documentation are also here. Main stays narrow: sentences, adverb, Help and Config.' : 'Boomruimte en Hoofdvenster staan onder Config → Boom. Bijwoordslots, plaatsingsregels, export en documentatie staan ook hier. Main blijft smal: zinnen, bijwoord, Help en Config.');
@@ -5587,7 +5603,9 @@
     setText('.side-panel .panel-card:first-child > .sticky-note', en ? 'Tree settings. Tree spacing and Main window are configured here, not above the grid.' : 'Boominstellingen. Boomruimte en Hoofdvenster staan hier, niet meer boven het grid.');
 
     setLabelSpan('rightMenuWidthSelectTop', en ? 'Right column visible' : 'Rechterkolom zichtbaar');
-    setLabelSpan('centralModeSelect', en ? 'Central OPN' : 'Centraal OPN');
+    setLabelSpan('centralModeSelect', 'View', en ? 'Choose central view: syntax tree or functional structure.' : 'Kies de centrale view: syntaxboom of functionele structuur.');
+    setLabelSpan('mainViewSelect', 'View', en ? 'Choose central view: syntax tree or functional structure.' : 'Kies de centrale view: syntaxboom of functionele structuur.');
+    setLabelSpan('mobileViewSelect', 'View', en ? 'Choose central view: syntax tree or functional structure.' : 'Kies de centrale view: syntaxboom of functionele structuur.');
     setLabelSpan('treeChoiceSelect', en ? 'Tree choice' : 'Boomkeuze');
     setLabelSpan('functionalOrderSelect', en ? 'Layout order' : 'Layout order');
     setLabelSpan('branchOrderSelect', en ? 'Branch order' : 'Takvolgorde');
@@ -5621,7 +5639,7 @@
     setInputLabelText('#showRelationsInput', en ? 'Branches' : 'Taklijnen');
     setInputLabelText('#showLabelsInput', en ? 'Tree labels' : 'Boomlabels');
     setText('#applyLexRuleButton', en ? 'Apply rule' : 'Pas regel toe');
-    setText('#relationHelp', en ? 'No separate relation editor. This list follows the active structure: syntax rules for SYNT/all, LOG order separately, and FT functional roles separately.' : 'Geen losse editor-relaties. Deze lijst volgt de actieve structuur: syntaxregels bij SYNT/assen, LOG-volgorde apart en FT-functionele rollen apart.');
+    setText('#relationHelp', en ? 'No separate relation editor. This list follows the active view: SYNT rules, LOG south-axis order, or FT functional-view roles.' : 'Geen losse editor-relaties. Deze lijst volgt de actieve view: SYNT-regels, LOG-volgorde op de zuidas of FT-rollen in de functionele view.');
 
     setText('.mobile-sheet-header .intro-kicker', en ? 'Mobile viewer' : 'Mobiele viewer');
     setText('#mobileCloseButton', en ? 'Close' : 'Sluit');
@@ -5680,24 +5698,24 @@
     setText('.help-topbar p', en ? 'Help contains textual explanation and usage notes.' : 'Help bevat tekstuitleg en gebruiksaanwijzingen.');
     setText('[data-help-boom-title]', en ? 'Tree first' : 'Boom eerst');
     setText('[data-help-boom-text]', en
-      ? 'Tree first is the didactic and notational sequence: start with the central open tree as the source; then project to LEX, SYNT, LOG and FT. LEX exchanges stay on the LEX axis; adverbs are rendered on the LEX axis; fronted adverbs occupy LEX slot 1 and trigger V2. Dutch sample sentences remain language data.'
-      : 'Boom eerst is de didactische en notationele volgorde: begin met de centrale open boom als bron; projecteer daarna naar LEX, SYNT, LOG en FT. De LEX-wissels blijven op de LEX-as; bijwoorden staan ook op de LEX-as, als extern slot met hosthoogte. De Nederlandse voorbeeldzinnen blijven taaldata.');
+      ? 'Tree first is the didactic and notational sequence: start with the central open tree as the source; then project to LEX, SYNT and LOG. FT is not an axis layer; FT is the functional view next to the standard syntax-tree view. LEX exchanges stay on the LEX axis; adverbs are rendered on the LEX axis; fronted adverbs occupy LEX slot 1 and trigger V2. Dutch sample sentences remain language data.'
+      : 'Boom eerst is de didactische en notationele volgorde: begin met de centrale open boom als bron; projecteer daarna naar LEX, SYNT en LOG. FT is geen aslaag; FT is de functionele view naast de standaard syntaxboom-view. De LEX-wissels blijven op de LEX-as; bijwoorden staan ook op de LEX-as, als extern slot met hosthoogte. De Nederlandse voorbeeldzinnen blijven taaldata.');
     setText('[data-help-recursion-title]', en ? 'Recursion technique in the tree' : 'Recursie-techniek in de boom');
     setText('[data-help-recursion-text]', en
       ? 'Recursion is the technical drawing method: the viewer builds the layout bottom-up, from leaves to category nodes, subtrees and boxes. This is separate from the didactic step called tree first.'
       : 'Recursie is hier de technische tekenmethode: de viewer bouwt de layout bottom-up, van bladeren naar categorieknopen, subtrees en boxen. Dat is iets anders dan de didactische stap boom eerst.');
-    setText('[data-help-logft-title]', en ? 'LOG and FT separated' : 'LOG en FT apart');
+    setText('[data-help-logft-title]', en ? 'LOG axis and FT view separated' : 'LOG-as en FT-view apart');
     setHtml('[data-help-logft-text]', en
-      ? '<strong>LOG</strong> is the visible logical-order projection below the tree, for example SOV/SVO/VSO. <strong>FT</strong> is the functional/thematic layer with roles such as agent, patient and predicate. The flip changes LOG; FT, SYNT and LEX remain separate.'
-      : '<strong>LOG</strong> is de zichtbare logische-volgordeprojectie onder de boom, bijvoorbeeld SOV/SVO/VSO. <strong>FT</strong> is de functioneel-thematische laag met rollen zoals agens, patiens en predicaat. De flip verandert LOG; FT, SYNT en LEX blijven gescheiden.');
+      ? '<strong>LOG</strong> is the only south axis: the visible logical S-O-V order projection below the tree. <strong>FT</strong> is not part of that axis; FT is the functional/thematic view next to the standard syntax-tree view. The flip changes LOG; FT, SYNT and LEX remain separate.'
+      : '<strong>LOG</strong> is de enige zuidas: de zichtbare logische S-O-V-volgordeprojectie onder de boom. <strong>FT</strong> is geen onderdeel van die as; FT is de functionele view naast de standaard syntaxboom-view. De flip verandert LOG; FT, SYNT en LEX blijven gescheiden.');
     setText('[data-help-adverb-title]', en ? 'Adverb slots on the LEX axis' : 'Bijwoordslots op de LEX-as');
     setHtml('[data-help-adverb-text]', en
       ? '<strong>Adverb placement differs by scope.</strong> Adverbs are no longer placed between boxes. They are rendered above a valid syntactic category box: S, NP, VP, V, PP or AP. Time and modality usually use S/VP; negation and manner use V; degree uses AP; focus uses NP/VP.'
       : '<strong>Bijwoordplaatsing verschilt per scope.</strong> Bijwoorden staan op de LEX-as. Hostplaatsing gebruikt een LEX-slot op hosthoogte; vooropplaatsing gebruikt LEX-slot 1 en activeert V2/inversie. Tijd/modaliteit meestal S/VP; negatie en wijze V; graad AP; focus NP/VP.');
     setText('[data-help-render-title]', en ? 'Render explanation' : 'Render-uitleg');
     setHtml('[data-help-render-text]', en
-      ? '<strong>Rendering</strong> means: first compute the central tree and boxes, then draw projections and the LEX axis. LOG is the visible logical-order projection; FT is the functional/thematic layer that supplies roles such as agent, patient and predicate. Adverb inserts are rendered above valid syntax boxes; the central tree remains unchanged. OSV-!, VSO-! and VOS-! are not base trees: the box approach cannot produce these orders; the LEX axis then requires a movement rule.'
-      : '<strong>Renderen</strong> betekent: eerst de centrale boom en boxen berekenen, daarna projecties en LEX-as tekenen. LOG is de zichtbare logische-volgordeprojectie; FT is de functioneel-thematische laag met rollen zoals agens, patiens en predicaat. Bijwoord-inserts worden als externe LEX-slots op de LEX-as geplaatst; de host-subboom schuift lager om ruimte te maken. OSV-!, VSO-! en VOS-! zijn geen basisbomen: de box-aanpak kan deze volgordes niet opleveren; de LEX-as vraagt dan een verplaatsingsregel.');
+      ? '<strong>Rendering</strong> means: first compute the central tree and boxes, then draw projections and the LEX axis. LOG is the visible logical S-O-V order projection on the south axis; FT is a separate functional/thematic view, not an axis layer. Adverb inserts are rendered above valid syntax boxes; the central tree remains unchanged. OSV-!, VSO-! and VOS-! are not base trees: the box approach cannot produce these orders; the LEX axis then requires a movement rule.'
+      : '<strong>Renderen</strong> betekent: eerst de centrale boom en boxen berekenen, daarna projecties en LEX-as tekenen. LOG is de zichtbare logische S-O-V-volgordeprojectie op de zuidas; FT is een aparte functioneel-thematische view, geen aslaag. Bijwoord-inserts worden als externe LEX-slots op de LEX-as geplaatst; de host-subboom schuift lager om ruimte te maken. OSV-!, VSO-! en VOS-! zijn geen basisbomen: de box-aanpak kan deze volgordes niet opleveren; de LEX-as vraagt dan een verplaatsingsregel.');
 
     setText('[data-projection="axes"], [data-main-projection="axes"]', en ? 'All' : 'Alle');
     setText('[data-projection="source"], [data-main-projection="source"], [data-mobile-projection="source"]', en ? 'Source' : 'Bron');
@@ -5904,11 +5922,14 @@
     window.addEventListener('keydown', event => {
       if (event.key === 'Escape' && (document.body.classList.contains('config-screen-active') || document.body.classList.contains('help-screen-active'))) setAppScreen('main');
     });
-    els.centralModeSelect?.addEventListener('change', event => {
-      state.centerMode = event.target.value;
+    const setCenterModeFromViewSelect = value => {
+      state.centerMode = value === 'functional' ? 'functional' : 'syntax';
       resetManualViewBox();
       render();
-    });
+    };
+    els.centralModeSelect?.addEventListener('change', event => setCenterModeFromViewSelect(event.target.value));
+    els.mainViewSelect?.addEventListener('change', event => setCenterModeFromViewSelect(event.target.value));
+    els.mobileViewSelect?.addEventListener('change', event => setCenterModeFromViewSelect(event.target.value));
     els.functionalOrderSelect?.addEventListener('change', event => {
       state.functionalOrder = event.target.value === 'right-first' ? 'right-first' : 'left-first';
       resetManualViewBox();
@@ -6084,7 +6105,7 @@
       render();
     });
     window.addEventListener('orientationchange', () => {
-      // v1.0.5: breek actieve pinch/pan expliciet af vóór herfit.
+      // v1.0.7: breek actieve pinch/pan expliciet af vóór herfit.
       resetManualViewBox();
       requestAnimationFrame(() => {
         resetManualViewBox();
