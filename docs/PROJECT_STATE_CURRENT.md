@@ -4,77 +4,83 @@ Actuele status van de OpenGraph / GraphLite viewer.
 
 ## Versie
 
-- Huidige stabiele release: v1.0.9.
-- Doel: demo/viewer voor JAN / OPN / OpenGraph-taalbomen.
-- Standaardweergave: Syntax tree.
-- Standaard alternatieve weergave: Functional structure.
+- Huidige releasekandidaat: v2.0.0-rc.4.
+- Volledige functionele bronbasis: v1.0.16.
+- Doel: demo/viewer voor JAN / OPN / OpenGraph-taalstructuren.
+- Eerste centrale view: Syntax.
+- Tweede centrale view: FT.
+
+## Vaste scheiding
+
+```text
+CENTRALE VIEWS   Syntax | FT
+NAMED PROJECTIONS LEX | SYNT | LOG
+```
+
+- FT is de functionele boomview met onder meer CLAUSE, PRED, AGENS en PATIENS.
+- FT staat als tweede optie in het View-menu, direct na Syntax.
+- LOG is geen centrale view.
+- LOG is uitsluitend de named projection op de zuidas.
+- De SOV/SVO/etc-actie wijzigt alleen de LOG-volgorde.
 
 ## Open Graph Notation
 
-Open Graph Notation tekent taalstructuren op een open raster.
+Open Graph Notation staat op zichzelf. De kern bestaat uit de gridregel, het projectiemechanisme, volgordelijk schrijven en projectiemerkers. Elke bronknoop heeft een eigen kruispunt. De bronknoop blijft staan wanneer een projectie naar een as wordt geschreven.
 
-Tree notation is een toepassing van die notatie: in de syntaxboom staat elke knoop op een eigen kruispunt van horizontale en verticale gridlijnen.
-
-## Views
+## Named projections
 
 ```text
-Syntax tree              centrale syntactische boom
-Functional structure     functionele structuur met CLAUSE, AGENS, PRED, PATIENS
+LEX    west: lexicale items, plaatsingsslots en projectiemerkers
+SYNT   oost: syntactische categorieën en regels
+LOG    zuid: selectie en volgorde van S, O en V
 ```
 
-## Projectie-assen
-
-```text
-LEX    links/west: zichtbare woordvolgorde en lexicale plaatsing
-SYNT   rechts/oost: syntactische regels en categorieprojectie
-LOG    onder/zuid: logische S-O-V-projectie
-```
+LEX blijft blauw. SYNT en LOG hebben instelbare projectiekleuren.
 
 ## Hoofdregels
 
-- De LOG-as behoudt zijn eigen SVG-hoogte.
-- De SOV/VSO/etc-taalactiebox mag de LOG-as niet verplaatsen.
-- Projectieboxen staan rechts van de SYNT-as, nooit eroverheen.
-- De standaardfit toont de volledige boom, inclusief LEX, SYNT, LOG, projectieboxen en taalactiebox.
-- Syntax tree en Functional structure zijn views op dezelfde voorbeeldzin.
+- LEX-as staat links/west.
+- SYNT-as staat rechts/oost.
+- LOG-as staat onder/zuid.
+- FT is een centrale view naast Syntax, niet een as en niet een LOG-laag.
+- De LOG-as behoudt zijn eigen oorspronkelijke SVG-hoogte.
+- De SOV-box past zich aan de LOG-as aan en mag de as niet verplaatsen.
+- Projectieboxen staan rechts van de SYNT-as.
+- De standaardfit toont de volledige actieve centrale view, assen en zichtbare bedieningsboxen.
+- Wisselen tussen Syntax en FT verandert de voorbeeldzin niet.
+- Wisselen tussen projecties muteert de centrale graph niet.
 
 ## UI-status
 
-- Hoofdmenu bevat een View-keuze.
-- Play-balk bevat stap terug, Play, stap vooruit, Groei aan/uit en Reset.
-- Bovenbalk gebruikt compacte keuzevelden.
-- Mobile gebruikt lichte viewerachtergrond.
-- Cache-reset verloopt via `reset-cache.html` en cache-bust-query.
+- Het View-menu bevat exact twee centrale keuzes in deze volgorde: `Syntax`, `FT`.
+- De Projecties-box bevat `Alle`, `Bron`, `LEX`, `SYNT`, `LOG`.
+- `Alle` toont de actieve centrale view met alle named projections.
+- `Bron` toont alleen de actieve centrale view.
+- `LEX`, `SYNT` en `LOG` tonen elk hun eigen named projection.
+- Play-balk bevat stap terug, Play, stap vooruit en Reset.
+- Projecties-box en taalactiebox zijn verplaatsbaar wanneer Config dit toestaat.
+- Mobile gebruikt een lichte viewerachtergrond.
+- Cache-reset verloopt via `reset-cache.html` en een versiequery.
 
-## Taalactiebox
+## Compatibiliteit
 
-- De SOV/VSO/etc-knopgroep is de eerste taalactiebox.
-- De box is verplaatsbaar wanneer Config dit toestaat.
-- Defaultpositie: links naast het begin van de LOG-as, uitgelijnd op de oorspronkelijke LOG-hoogte.
-- De box bevat `‹ SOV ›`.
-
-## Mobile-test
-
-- Mobile-test op desktop loopt lokaal via `local-mobile-test.js`, niet via Config.
-- `local-mobile-test.js` wordt lokaal geladen op `localhost`, `127.0.0.1` of `file:`.
-- `local-mobile-test.js` staat in `.gitignore` en hoort niet mee naar GitHub.
-- URL-test blijft beschikbaar: `?viewport=mobile-portrait`, `?viewport=mobile-landscape`, `?viewport=desktop`.
-- Publicatie blijft handmatig naar `https://github.com/kruin/graphlite`; de gebruikersversie staat op `https://kruin.github.io/graphlite/`.
-
-## Documentatie
-
-- Projectdocumentatie beschrijft de actuele werking.
-- Help gebruikt een boomnavigatie: links de onderwerpboom, rechts één geopend onderwerp.
-- Help reserveert een carouselruimte voor Open Graph Notation en tree notation als toepassing.
-- Historiek, changelog en ontwerpstappen horen niet in helpteksten of leidende projectdocumentatie.
-- Zie `DOCUMENTATION_RULES.md`.
+- Nieuwe opgeslagen configuraties gebruiken `central_opn: "ft"`.
+- Oude configuraties met `central_opn: "functional"` worden als FT ingelezen.
 
 ## Standaardcontrole
 
-Voor iedere projectzip:
-
 ```bat
-node --check viewer.js
+check_release.bat
 ```
 
-Daarna zip-integriteit controleren.
+Deze controle omvat minimaal `node --check viewer.js`, versieconsistentie, lokale links en de scheiding Syntax/FT tegenover LOG.
+
+
+## Stabiele projectie-viewport (v2.0.0-rc.4)
+
+- `Alle`, `Bron`, `LEX`, `SYNT` en `LOG` delen één identieke viewBox.
+- Een projectiewissel mag de centrale boom niet horizontaal of verticaal verplaatsen.
+- Een projectiewissel mag de schaal niet wijzigen.
+- De vaste viewBox is gebaseerd op de unie van de Syntax- en FT-layout.
+- De wissel `Syntax ↔ FT` behoudt dezelfde viewport en handmatige pan/zoom.
+- Groei mag geen afzonderlijke projectiespecifieke viewBox gebruiken.

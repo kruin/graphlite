@@ -6,13 +6,49 @@ Regels voor projectdocumentatie, helpteksten en overdrachtsteksten.
 
 Documentatie beschrijft de actuele werking van OpenGraph Lite Viewer.
 
-Gebruik formuleringen die direct uitleggen wat het systeem is en doet. Vermijd uitleg vanuit eerdere versies of eerdere ontwerpstappen.
+Gebruik geen projecthistoriek, herstelverhaal of ontwikkelpad in gewone documentatie.
 
-## Geen projecthistoriek in gewone documentatie
+## Kernvolgorde
 
-Helpteksten, README, overdrachtsteksten en leidende projectdocumenten bevatten geen changelog, herstelverhaal of ontwikkelpad.
+Leg begrippen in deze volgorde uit:
 
-Vermijd formuleringen zoals:
+```text
+Open Graph Notation
+Gridregel
+Projectiemechanisme
+Volgordelijk schrijven
+Projectiemerkers
+West-as
+Zuid-as
+Named projections
+Tree notation
+Views
+Taalacties
+```
+
+Open Graph Notation staat op zichzelf. Tree notation is een toepassing, niet de definitie van Open Graph Notation.
+
+## Termen
+
+Gebruik deze termen consequent.
+
+```text
+source node              bronknoop
+projection line          projectielijn
+projection marker        projectiemerker
+assumed west axis        veronderstelde west-as
+assumed south axis       veronderstelde zuid-as
+named projection         named projection
+Syntax tree              Syntax tree
+Functional structure     Functional structure
+LEX                      LEX
+SYNT                     SYNT
+LOG                      LOG
+```
+
+## Geen historieformuleringen
+
+Vermijd:
 
 ```text
 nieuw
@@ -23,27 +59,9 @@ niet langer
 voorheen
 ```
 
-Gebruik in plaats daarvan de huidige begrippen:
+Gebruik de actuele formulering.
 
-```text
-Syntax tree              standaardweergave
-Functional structure     standaard alternatieve weergave
-LEX                       woordvolgorde en lexicale plaatsing
-SYNT                      syntactische regels
-LOG                       logische S-O-V-projectie
-```
-
-## Helpstructuur
-
-Help gebruikt een boomnavigatie. De gebruiker kiest links een onderwerp; rechts staat alleen de tekst bij dat onderwerp.
-
-Gebruik geen lang overzicht waarin alle helpcontent tegelijk onder elkaar staat.
-
-Reserveer in Help ruimte voor een carousel die Open Graph Notation en tree notation als toepassing documenteert.
-
-## Views en assen
-
-Beschrijf views en assen als zelfstandige onderdelen.
+## Views en named projections
 
 Views:
 
@@ -52,7 +70,7 @@ Syntax tree
 Functional structure
 ```
 
-Projectie-assen:
+Named projections:
 
 ```text
 LEX
@@ -60,12 +78,42 @@ SYNT
 LOG
 ```
 
-## Versies
+## LEX-verplaatsingen
 
-Versienummers mogen in technische bestandsnamen, cache-links en publicatie-instructies staan.
+Beschrijf LEX-verplaatsingen als derde stap:
 
-Publieksgerichte tekst beschrijft de werking van de huidige versie, niet de weg ernaartoe.
+```text
+centrale knopen geplaatst
+projectiemerkers geschreven
+as-verplaatsingen naar lege plekken
+```
 
-## Archiefmateriaal
+Beschrijf lege plekken expliciet:
 
-Release notes, oude screenshots en eerdere zips kunnen als archief bestaan, maar zijn geen leidende projectdocumentatie.
+```text
+Comp
+vooropplaatsing/topic
+V2/PV
+bijwoordslot
+trace
+```
+
+Noem waar ruimte vandaan komt:
+
+```text
+vrije rij
+verlengde tak
+host-subboom lager
+```
+
+## Config en help
+
+- Beschrijf Config als directe instelling met lokale opslagoptie.
+- Gebruik `Ja · bewaar config`, `Nee · herstel laatst bewaarde config` en `Download lokaal config-log` als interface-termen.
+- Help gebruikt links een onderwerpboom en rechts één tekstpaneel. Onder elk onderwerp staat een gereserveerde carouselruimte voor een later in te voegen itembeeld.
+- Beschrijf `Alle` in Projecties als centrale view met alle named projections. `Bron` is de keuze zonder projectie-assen; terug naar `Alle` toont de projectie-assen opnieuw.
+- Leg uit dat LEX, SYNT en LOG als afzonderlijke keuze op dezelfde vaste projectiepositie verschijnen als in de canonieke projectielayout.
+
+## Terminologie voor view-stabiliteit
+
+Beschrijf projectiekeuze als overlaykeuze rond dezelfde centrale graph. Vermeld niet dat eerdere versies anders werkten.

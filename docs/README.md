@@ -1,150 +1,62 @@
-# OpenGraph Lite Viewer v1.0.9
+# OpenGraph Lite Viewer v2.0.0-rc.4
 
-OpenGraph Lite Viewer is een demo/viewer voor **JAN / OPN / OpenGraph-taalbomen**.
-De viewer toont Open Graph Notation als rastergebaseerde taalnotatie.
-
-Tree notation is daarin een toepassing: de syntaxboom wordt getekend op een geordend grid waarin elke knoop zijn eigen horizontale én verticale gridlijn heeft. Daardoor staat elke knoop op een eigen kruispunt en blijft er ruimte voor zelfstandige projecties en views.
+OpenGraph Lite Viewer is een demo/viewer voor JAN / OPN / OpenGraph-taalstructuren. Deze versie gebruikt de volledige v1.0.16-bronset als basis.
 
 ## Start
-
-Open lokaal:
 
 ```text
 index.html
 ```
 
-Of via een eenvoudige lokale server:
+Of:
 
 ```bat
 start-local-viewer.bat
 ```
 
-Voor GitHub Pages:
+GitHub Pages:
 
 ```text
-https://kruin.github.io/graphlite/index.html?ogv=v1.0.9
+https://kruin.github.io/graphlite/index.html?ogv=v2.0.0-rc.4
 ```
 
-Bij browsercache:
+Cache-reset:
 
 ```text
-https://kruin.github.io/graphlite/reset-cache.html?ogv=v1.0.9
+https://kruin.github.io/graphlite/reset-cache.html?ogv=v2.0.0-rc.4
 ```
 
-## Views
-
-De viewer heeft twee hoofdviews:
+## Centrale views
 
 ```text
-Syntax tree              standaardweergave
-Functional structure     standaard alternatieve weergave
+1. Syntax
+2. FT
 ```
 
-De **Syntax tree** toont de centrale syntactische boom.
+Syntax toont de syntactische boom. FT is de tweede centrale view en toont de functionele structuur met onder meer CLAUSE, PRED, AGENS en PATIENS.
 
-De **Functional structure** toont de functionele structuur van de zin, bijvoorbeeld:
+## Named projections
 
 ```text
-CLAUSE
-AGENS
-PRED
-PATIENS
+LEX    westas
+SYNT   oostas
+LOG    zuidas
 ```
 
-## Projectie-assen
+LOG is geen centrale view. De SOV/SVO/etc-actie wijzigt alleen de LOG-projectie.
 
-De zelfstandige projectie-assen zijn:
+## Projecties en plaatsing
 
-```text
-LEX    links/west: zichtbare woordvolgorde en lexicale plaatsing
-SYNT   rechts/oost: syntactische regels en categorieprojectie
-LOG    onder/zuid: logische S-O-V-projectie
-```
+Na Play verschijnt de Projecties-box met `Alle`, `Bron`, `LEX`, `SYNT`, `LOG`. Deze keuzes wijzigen de zichtbare overlay rond de actieve Syntax- of FT-view; de centrale graph transformeert niet.
 
-## Taalactiebox
+LEX-Wissels en bijwoordinserties gebeuren op de LEX-as en muteren Syntax en FT niet.
 
-De eerste taalactiebox bevat:
+## Versiebron
 
-```text
-‹ SOV ›
-```
+`VERSION.txt` is leidend voor HTML, JavaScript, service worker, cachequery, publicatiescript en zipnaam.
 
-Deze actie verandert alleen de LOG-volgordeprojectie. De centrale boom, SYNT-projectie, Functional structure en lexicale inhoud blijven gelijk.
-
-## Mobile-test lokaal
-
-Voor lokale desktoptest van mobile-layouts wordt `local-mobile-test.js` geladen op:
-
-```text
-localhost
-127.0.0.1
-file:
-```
-
-Dit script geeft lokaal een kleine keuzeknop voor:
-
-```text
-auto
-desktop
-mobile staand
-mobile liggend
-```
-
-Het bestand staat in `.gitignore` en hoort niet mee naar GitHub Pages.
-
-## Leidende projectbestanden
-
-Deze bestanden zijn de compacte actuele project-sources:
-
-```text
-README.md
-PROJECT_STATE_CURRENT.md
-LAYOUT_RULES.md
-LINGUISTIC_ACTIONS.md
-DEPLOY_GITHUB_PAGES.md
-DOCUMENTATION_RULES.md
-HANDOVER_FOR_COLLABORATORS.md
-PROJECT_FILES_TO_ADD_UPDATE.md
-LEX_MOVEMENT_RULES.md
-```
-
-Dezelfde kernbestanden staan ook in `docs/`, zodat ze via de docs-map vindbaar blijven.
-
-## Referenties
-
-Achtergrondbronnen staan apart in:
-
-```text
-references/README_REFERENCES.md
-```
-
-Deze zijn nuttig voor theorie en context. De actuele werkinstructies staan in de projectbestanden hierboven.
-
-## Publiceren
-
-Gebruik voor publicatie:
-
-```text
-publish_checked.bat
-```
-
-Deze controleert minimaal:
+## Controle
 
 ```bat
-node --check viewer.js
+check_release.bat
 ```
-
-en gebruikt daarna Git voor staging, commit en push.
-
-## Controle vóór delen
-
-```bat
-node --check viewer.js
-```
-
-Daarna de zip-integriteit controleren.
-
-
-## Help
-
-Help is opgezet als boomnavigatie. Links staat de onderwerpboom; rechts opent één onderwerp tegelijk. In Help is ruimte gereserveerd voor een carousel over Open Graph Notation en tree notation als toepassing.

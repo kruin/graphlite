@@ -1,150 +1,114 @@
-# OpenGraph Lite Viewer v1.0.9
+# OpenGraph Lite Viewer v2.0.0-rc.4
 
-OpenGraph Lite Viewer is een demo/viewer voor **JAN / OPN / OpenGraph-taalbomen**.
-De viewer toont Open Graph Notation als rastergebaseerde taalnotatie.
+OpenGraph Lite Viewer is een demo/viewer voor **JAN / OPN / OpenGraph-taalstructuren**.
 
-Tree notation is daarin een toepassing: de syntaxboom wordt getekend op een geordend grid waarin elke knoop zijn eigen horizontale én verticale gridlijn heeft. Daardoor staat elke knoop op een eigen kruispunt en blijft er ruimte voor zelfstandige projecties en views.
+Open Graph Notation staat op zichzelf. De notatie beschrijft bronknopen op een open grid en projecties vanuit die bronknopen naar veronderstelde assen. Toepassingen, zoals een taalboom, gebruiken dit algemene mechanisme.
 
 ## Start
 
-Open lokaal:
+Lokaal:
 
 ```text
 index.html
 ```
 
-Of via een eenvoudige lokale server:
+Of met lokale server:
 
 ```bat
 start-local-viewer.bat
 ```
 
-Voor GitHub Pages:
+GitHub Pages:
 
 ```text
-https://kruin.github.io/graphlite/index.html?ogv=v1.0.9
+https://kruin.github.io/graphlite/index.html?ogv=v2.0.0-rc.4
 ```
 
-Bij browsercache:
+Cache-reset:
 
 ```text
-https://kruin.github.io/graphlite/reset-cache.html?ogv=v1.0.9
+https://kruin.github.io/graphlite/reset-cache.html?ogv=v2.0.0-rc.4
 ```
+
+## Open Graph Notation
+
+Kernbegrippen:
+
+```text
+Gridregel
+Projectiemechanisme
+Volgordelijk schrijven
+Projectiemerker
+```
+
+De **Gridregel** geeft elke bronknoop een eigen kruispunt. In de strikte boomtoepassing staat elke knoop als enige op zijn horizontale én verticale gridlijn.
+
+Het **projectiemechanisme** verbindt een bronknoop met een positie op een veronderstelde as. De bronknoop blijft staan. De positie op de as heet een **projectiemerker**.
+
+```text
+west-as   horizontale projectie naar links
+zuid-as   zuidelijke projectie onder het grid
+```
+
+In de algemene notatie zijn die assen nog niet taalkundig ingevuld.
+
+Open Graph Notation is volgordelijk te lezen: bronknopen verschijnen één voor één; zodra een bronknoop beschikbaar is, kan zijn projectie worden geschreven. Bij boomtoepassingen is de layout tweepass: eerst worden boxen bottom-up uitgerekend, daarna top-down gerenderd. Het resultaat is statisch: de centrale graph transformeert niet door projecties of as-verplaatsingen.
+
+## Named projections in de taaltoepassing
+
+```text
+LEX    westelijke named projection: lexicale items, plaatsingsslots en projectiemerkers
+SYNT   named projection voor syntactische categorieën en regels
+LOG    zuidelijke named projection: selectie van S, O en V
+```
+
+LEX en de LEX-projectielijnen blijven blauw. SYNT en LOG hebben eigen instelbare projectiekleuren in Config. LOG-kleurwijzigingen werken direct; met Ja · bewaar config wordt een lokale snapshot opgeslagen.
 
 ## Views
-
-De viewer heeft twee hoofdviews:
 
 ```text
 Syntax tree              standaardweergave
 Functional structure     standaard alternatieve weergave
 ```
 
-De **Syntax tree** toont de centrale syntactische boom.
+De **Syntax tree** toont categorieën zoals S, NP, VP, V en N.
 
-De **Functional structure** toont de functionele structuur van de zin, bijvoorbeeld:
+De **Functional structure** toont rollen zoals CLAUSE, AGENS, PRED en PATIENS.
 
-```text
-CLAUSE
-AGENS
-PRED
-PATIENS
-```
+## LEX-verplaatsingen
 
-## Projectie-assen
-
-De zelfstandige projectie-assen zijn:
+Verplaatsingen op assen worden pas actief nadat alle centrale bronknopen zijn geplaatst. Voor LEX gebruiken ze vooraf aangebrachte lege plekken:
 
 ```text
-LEX    links/west: zichtbare woordvolgorde en lexicale plaatsing
-SYNT   rechts/oost: syntactische regels en categorieprojectie
-LOG    onder/zuid: logische S-O-V-projectie
+Comp-slot                voegwoord / complementizer, bijvoorbeeld OMDAT
+vooropplaatsing/topic    eerste zinsdeel
+V2/PV-slot               persoonsvormpositie
+bijwoordslot             externe LEX-insertie boven een hostbox
+trace                    oude basispositie na wissel
 ```
 
-## Taalactiebox
+Ruimte voor zulke plekken kan ontstaan door een vrije rij, een verlengde tak of door de host-subboom lager te plaatsen.
 
-De eerste taalactiebox bevat:
+## Projecties en config
 
-```text
-‹ SOV ›
-```
+Na afgeronde Play verschijnt de box **Projecties**. `Alle` toont de centrale view met alle named projections. `Bron` toont de centrale bronview zonder projectie-assen. LEX, SYNT en LOG tonen elk één afzonderlijke named projection op dezelfde canonieke aspositie die zij in `Alle` gebruiken. De Projecties-box en taalactiebox zijn verplaatsbaar; dubbelklik op lege ruimte reset de positie.
 
-Deze actie verandert alleen de LOG-volgordeprojectie. De centrale boom, SYNT-projectie, Functional structure en lexicale inhoud blijven gelijk.
-
-## Mobile-test lokaal
-
-Voor lokale desktoptest van mobile-layouts wordt `local-mobile-test.js` geladen op:
-
-```text
-localhost
-127.0.0.1
-file:
-```
-
-Dit script geeft lokaal een kleine keuzeknop voor:
-
-```text
-auto
-desktop
-mobile staand
-mobile liggend
-```
-
-Het bestand staat in `.gitignore` en hoort niet mee naar GitHub Pages.
-
-## Leidende projectbestanden
-
-Deze bestanden zijn de compacte actuele project-sources:
-
-```text
-README.md
-PROJECT_STATE_CURRENT.md
-LAYOUT_RULES.md
-LINGUISTIC_ACTIONS.md
-DEPLOY_GITHUB_PAGES.md
-DOCUMENTATION_RULES.md
-HANDOVER_FOR_COLLABORATORS.md
-PROJECT_FILES_TO_ADD_UPDATE.md
-LEX_MOVEMENT_RULES.md
-```
-
-Dezelfde kernbestanden staan ook in `docs/`, zodat ze via de docs-map vindbaar blijven.
-
-## Referenties
-
-Achtergrondbronnen staan apart in:
-
-```text
-references/README_REFERENCES.md
-```
-
-Deze zijn nuttig voor theorie en context. De actuele werkinstructies staan in de projectbestanden hierboven.
+Config-wijzigingen worden direct toegepast. Gebruik **Ja · bewaar config** voor een lokale snapshot, **Nee** om de laatst bewaarde snapshot te herstellen en **Download lokaal config-log** om de lokale wijzigingen als tekstbestand te bewaren.
 
 ## Publiceren
 
-Gebruik voor publicatie:
+Gebruik:
 
-```text
+```bat
 publish_checked.bat
 ```
 
-Deze controleert minimaal:
+Deze voert minimaal uit:
 
 ```bat
 node --check viewer.js
 ```
 
-en gebruikt daarna Git voor staging, commit en push.
+## Projectieweergave
 
-## Controle vóór delen
-
-```bat
-node --check viewer.js
-```
-
-Daarna de zip-integriteit controleren.
-
-
-## Help
-
-Help is opgezet als boomnavigatie. Links staat de onderwerpboom; rechts opent één onderwerp tegelijk. In Help is ruimte gereserveerd voor een carousel over Open Graph Notation en tree notation als toepassing.
+`Bron`, `Alle`, `LEX`, `SYNT` en `LOG` tonen dezelfde centrale graph met dezelfde schaal en positie. Alleen de projectie-overlay wisselt.

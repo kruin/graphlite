@@ -1,0 +1,21 @@
+OpenGraph Lite Viewer
+Version: v2.0.0-rc.4
+Source base: complete v1.0.16 stable central tree views package
+
+Central view contract:
+1. Syntax
+2. FT
+
+Projection contract:
+LEX west / SYNT east / LOG south
+LOG is not a central view.
+Old central_opn=functional input is accepted and migrated to ft.
+
+All original source files retained where possible.
+Added: check_release.bat, tools/check_release.py, RELEASE_MANIFEST.txt, SOURCE_BASE.md, SOURCE_CHANGES_V2.0.0-rc.4.md.
+
+Stable viewport contract:
+- Alle / Bron / LEX / SYNT / LOG use one identical viewBox.
+- Syntax / FT use the same union frame.
+- Projection switching preserves pan and zoom.
+- Play bar height is fixed; disabling Growth cannot move the grid.

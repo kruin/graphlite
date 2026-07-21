@@ -9,26 +9,28 @@ Syntax tree              standaardweergave
 Functional structure     standaard alternatieve weergave
 ```
 
-Functional structure toont functionele rollen zoals:
+## Named projections
 
 ```text
-CLAUSE
-AGENS
-PRED
-PATIENS
-```
-
-## Projectie-assen
-
-```text
-LEX    zichtbare woordvolgorde en lexicale plaatsing
+LEX    zichtbare woordvolgorde, lexicale plaatsing en projectiemerkers
 SYNT   syntactische regels en categorieprojectie
 LOG    logische S-O-V-volgordeprojectie
 ```
 
-## Principe
+Elke named projection heeft eigen selectieregels.
 
-Taalkundige acties worden verzameld in een taalactiebox.
+## Projectiemerkers
+
+De punten op named projections heten projectiemerkers.
+
+```text
+source node → projection line → projection marker
+bronknoop   → projectielijn     → projectiemerker
+```
+
+Een projectiemerker is geen nieuwe centrale knoop.
+
+## Taalactiebox
 
 Voor nu bevat de taalactiebox:
 
@@ -36,11 +38,7 @@ Voor nu bevat de taalactiebox:
 ‹ SOV ›
 ```
 
-## SOV/VSO/etc
-
 De SOV/VSO/etc-keuze verandert de LOG-volgordeprojectie.
-
-Mogelijke modi:
 
 ```text
 SOV
@@ -64,17 +62,33 @@ De SOV/VSO/etc-actie verandert niet:
 
 Ze beïnvloedt alleen de LOG-volgordeprojectie.
 
-## Later uitbreidbaar
+## LEX-stappen
 
-Kandidaten voor latere taalacties:
+```text
+1. Centrale bronknopen plaatsen.
+2. LEX-projectiemerkers schrijven.
+3. LEX-Wissels toepassen op gereserveerde lege plekken.
+```
 
-- lexicale insertie;
-- bijwoordplaatsing;
-- LEX-wissel;
-- focus/contrast;
-- negatiebereik;
-- V2/PV-plaatsing;
-- topicalisatie.
+Verplaatsingen op de as worden pas actief nadat alle centrale knopen zijn geplaatst.
+
+## Lege plekken op LEX
+
+```text
+Comp-slot                bijvoorbeeld OMDAT / DAT
+vooropplaatsing/topic    eerste zinsdeel
+V2/PV-slot               persoonsvormpositie
+bijwoordslot             externe LEX-insertie
+trace                    oude basispositie na Wissel
+```
+
+Ruimte kan worden gemaakt door:
+
+```text
+vrije rij
+verlengde tak
+host-subboom lager plaatsen
+```
 
 ## Bijwoordplaatsing
 
@@ -92,4 +106,4 @@ Een Wissel is een LEX-regel:
 - zichtbaar op de LEX-as;
 - verandert woordvolgorde;
 - laat syntaxstructuur ongemoeid;
-- kan een tracepositie zichtbaar maken.
+- kan een trace/oude positie zichtbaar maken.

@@ -1,3 +1,9 @@
+# Actuele contractlaag · v2.0.0-rc.4
+
+De leidende actuele indeling is: `Syntax → FT` in het View-menu en `LEX / SYNT / LOG` als named projections. FT is de tweede centrale view; LOG is uitsluitend de zuidas. Onderstaande tekst bevat historische ontwikkelnotities en is niet normatief waar zij hiermee botst.
+
+---
+
 # OpenGraph Lite Viewer — app-context v4430
 
 ## v4430 · bronpositie blijft zichtbaar op de LEX-as

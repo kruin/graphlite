@@ -5,91 +5,41 @@ Ontwerpnotities voor taalkundige acties in GraphLite.
 ## Views
 
 ```text
-Syntax tree              standaardweergave
-Functional structure     standaard alternatieve weergave
+Syntax    eerste centrale view
+FT        tweede centrale view; functionele boomstructuur
 ```
 
-Functional structure toont functionele rollen zoals:
+FT en Syntax zijn views. LEX, SYNT en LOG zijn named projections.
 
-```text
-CLAUSE
-AGENS
-PRED
-PATIENS
-```
-
-## Projectie-assen
+## Named projections
 
 ```text
 LEX    zichtbare woordvolgorde en lexicale plaatsing
 SYNT   syntactische regels en categorieprojectie
-LOG    logische S-O-V-volgordeprojectie
+LOG    logische S-O-V-volgorde op de zuidas
 ```
 
-## Principe
+## Taalactiebox
 
-Taalkundige acties worden verzameld in een taalactiebox.
+De taalactiebox bevat voorlopig `‹ SOV ›`. De cyclus kan SOV, SVO, OVS, OSV-!, VSO-! en VOS-! tonen. `!` markeert een gemarkeerde variant.
 
-Voor nu bevat de taalactiebox:
+## Geen mutatie van de centrale views
 
-```text
-‹ SOV ›
-```
+De SOV/SVO/etc-actie verandert niet:
 
-## SOV/VSO/etc
-
-De SOV/VSO/etc-keuze verandert de LOG-volgordeprojectie.
-
-Mogelijke modi:
-
-```text
-SOV
-SVO
-OVS
-OSV-!
-VSO-!
-VOS-!
-```
-
-`!` markeert een niet-neutrale of gemarkeerde variant.
-
-## Geen syntaxmutatie
-
-De SOV/VSO/etc-actie verandert niet:
-
-- de centrale boomstructuur;
+- de Syntax-view;
+- de FT-view;
 - de SYNT-projectie;
-- de lexicale inhoud;
-- de Functional structure-view.
+- de lexicale inhoud.
 
-Ze beïnvloedt alleen de LOG-volgordeprojectie.
+De actie verandert alleen LOG.
 
-## Later uitbreidbaar
+## LEX-stappen
 
-Kandidaten voor latere taalacties:
+```text
+1. Centrale bronknopen plaatsen in Syntax of FT.
+2. LEX-projectiemerkers schrijven.
+3. LEX-Wissels toepassen op gereserveerde lege plekken.
+```
 
-- lexicale insertie;
-- bijwoordplaatsing;
-- LEX-wissel;
-- focus/contrast;
-- negatiebereik;
-- V2/PV-plaatsing;
-- topicalisatie.
-
-## Bijwoordplaatsing
-
-Bijwoorden zijn LEX-inserties:
-
-- extern toegevoegd;
-- niet uit de syntaxboom geprojecteerd;
-- geplaatst op de LEX-as;
-- syntaxbox is hoogstens anker, geen bron.
-
-## Wissel
-
-Een Wissel is een LEX-regel:
-
-- zichtbaar op de LEX-as;
-- verandert woordvolgorde;
-- laat syntaxstructuur ongemoeid;
-- kan een tracepositie zichtbaar maken.
+Bijwoorden zijn externe LEX-inserties. Een Wissel verandert de zichtbare woordvolgorde op LEX en laat de centrale Syntax- en FT-structuren ongemoeid.

@@ -72,13 +72,13 @@ De BAT kan browsercache niet op afstand wissen. Wel zinvol:
 Voorbeeld:
 
 ```text
-https://kruin.github.io/graphlite/reset-cache.html?ogv=v1.0.9&nocache=TIMESTAMP
+https://kruin.github.io/graphlite/reset-cache.html?ogv=v2.0.0-rc.4&nocache=TIMESTAMP
 ```
 
 Daarna:
 
 ```text
-https://kruin.github.io/graphlite/index.html?ogv=v1.0.9
+https://kruin.github.io/graphlite/index.html?ogv=v2.0.0-rc.4
 ```
 
 ## GitHub Pages settings
@@ -98,3 +98,22 @@ Laat `.nojekyll` in de root staan zodat GitHub Pages alle bestanden direct serve
 ## Line endings
 
 `.gitattributes` legt line-endings vast voor Windows, GitHub Pages en zip-builds.
+
+
+## .gitignore
+
+Deze bestanden blijven lokaal of buiten de Pages-root:
+
+```text
+OpenGraph_Lite_Viewer_v*.zip
+local-mobile-test.js
+local-mobile-test.html
+opengraph-local-config-log-*.txt
+local-config-log*.txt
+```
+
+Reden:
+
+- release-zips zijn downloadartefacten, geen sitebestanden;
+- `local-mobile-test.*` is alleen voor lokale mobile-test op desktop;
+- config-logbestanden zijn lokale werksessie-logs.

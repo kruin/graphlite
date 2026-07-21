@@ -41,22 +41,25 @@ for %%f in (index.html viewer.html viewer.js styles.css reset-cache.html) do (
     )
 )
 
-set "APP_VERSION=v1.0.9"
-set "RELEASE_ZIP=OpenGraph_Lite_Viewer_v1.0.9_help_tree_carousel_space.zip"
+set "APP_VERSION="
+if not exist "VERSION.txt" (
+    echo FOUT: VERSION.txt ontbreekt.
+    exit /b 1
+)
+set /p APP_VERSION=<VERSION.txt
+if "%APP_VERSION%"=="" (
+    echo FOUT: VERSION.txt is leeg.
+    exit /b 1
+)
+set "RELEASE_ZIP=OpenGraph_Lite_Viewer_v2.0.0-rc.4_full_source.zip"
 echo App-versie: %APP_VERSION%
 echo Release-zip: %RELEASE_ZIP%
 echo.
 
-where node >nul 2>nul
+call check_release.bat
 if errorlevel 1 (
-    echo WAARSCHUWING: node is niet gevonden; JavaScript syntax-check wordt overgeslagen.
-) else (
-    echo Controle: node --check viewer.js
-    node --check "viewer.js"
-    if errorlevel 1 (
-        echo FOUT: viewer.js bevat een JavaScript syntaxfout. Niet committen.
-        exit /b 1
-    )
+    echo FOUT: releasecontrole mislukt.
+    exit /b 1
 )
 
 echo.

@@ -9,3 +9,5 @@ OpenGraph_Lite_Viewer_v*.zip
 # Lokale testhulp: niet publiceren naar GitHub Pages.
 local-mobile-test.js
 local-mobile-test.html
+opengraph-local-config-log-*.txt
+local-config-log*.txt

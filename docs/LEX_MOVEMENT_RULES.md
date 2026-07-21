@@ -1,35 +1,52 @@
-# LEX-plaatsingsregels — simpel overzicht
+# LEX-plaatsingsregels
 
-Deze viewer gebruikt de LEX-as om de woordvolgorde van de voorbeeldzin te maken.
+De viewer gebruikt de LEX-as om de zichtbare woordvolgorde van de voorbeeldzin te maken.
 
-De boom zelf blijft de basisstructuur. Verplaatsingen worden niet vanuit de boom getekend. Ze staan alleen lokaal op de LEX-as.
+De centrale graph blijft staan. LEX-projectie en LEX-verplaatsing zijn asbewerkingen.
+
+## Projectiemerkers
+
+Eerst projecteren lexicale bronknopen horizontaal naar de LEX-as. De positie op de LEX-as heet een projectiemerker.
+
+```text
+bronknoop → projectielijn → projectiemerker
+```
+
+LEX en de LEX-projectielijnen zijn blauw.
 
 ## Hoofdregel
 
 ```text
-1. Bouw eerst de syntaxboom.
-2. Projecteer de lexicale knopen horizontaal naar de LEX-as.
-3. Pas daarna lokale plaatsingsregels toe op de LEX-as.
-4. Verplaats alleen naar een vrij slot.
-5. Een verplaatste knoop laat op de oude basisplek een trace achter.
-6. Lees de voorbeeldzin door de gevulde woorden te lezen; traces lees je niet mee.
+1. Plaats alle centrale bronknopen.
+2. Projecteer lexicale bronknopen naar LEX-projectiemerkers.
+3. Activeer daarna LEX-verplaatsingen.
+4. Verplaats alleen naar een gereserveerde lege plek.
+5. Een verplaatste projectiemerker laat op de oude basisplek een trace achter.
+6. Lees de zichtbare woorden; traces lees je niet mee.
 ```
 
-## Vrije slots
-
-Voorlopig zijn er drie vrije slots:
+## Lege plekken
 
 ```text
-slot 0 = Comp / voegwoord, bijvoorbeeld OMDAT
-slot 1 = eerste zinsdeel / topic
+slot 0 = Comp / voegwoord, bijvoorbeeld OMDAT of DAT
+slot 1 = vooropplaatsing / topic / eerste zinsdeel
 slot 2 = V2 / persoonsvorm
+slot 3+ = post-V2 of extra LEX-posities
+bijwoordslot = extern slot boven hostbox
+trace = oude basisplek na Wissel
 ```
 
-Een gewone NP of V mag dus niet zomaar ergens heen. Er is alleen een Wissel als een van deze slots gevuld moet worden.
+## Ruimte maken
 
----
+Lege plekken kunnen ontstaan door:
 
-## 1. Hoofdzin
+```text
+vrije rij                         extra gridruimte
+verlengde tak                     langere tak naar een subboom of grens
+host-subboom lager plaatsen       ruimte boven S, NP, VP, V, PP of AP
+```
+
+## Hoofdzin
 
 Voorbeeld:
 
@@ -37,14 +54,7 @@ Voorbeeld:
 HOND BIJT MAN
 ```
 
-Basisboom:
-
-```text
-S → NP VP
-VP → NP V
-```
-
-Basisvolgorde op de LEX-as:
+Basisprojectie:
 
 ```text
 HOND  MAN  BIJT
@@ -53,9 +63,9 @@ HOND  MAN  BIJT
 Plaatsingsregels:
 
 ```text
-HOND  → slot 1  eerste zinsdeel
+HOND  → slot 1  vooropplaatsing/topic
 BIJT  → slot 2  V2 / persoonsvorm
-MAN   blijft op de basisplek
+MAN   blijft op de basisprojectiemerker
 ```
 
 Resultaat:
@@ -71,178 +81,26 @@ t[subject] blijft op de oude HOND-basisplek
 t[V]       blijft op de oude BIJT/V-basisplek
 ```
 
----
-
-## 2. Bijzin met OMDAT
+## Bijzin met OMDAT
 
 Voorbeeld:
 
 ```text
-OMDAT HOND MAN BIJT
+OMDAT DE HOND DE MAN HEEFT GEBETEN
 ```
-
-Basisboom:
 
 ```text
-S → NP VP
-VP → NP V
+OMDAT → slot 0 / Comp
+subject, object en werkwoordcluster blijven in de bijzinvolgorde
+geen V2-wissel
 ```
 
-Plaatsingsregels:
+## Bijwoorden
+
+Bijwoorden zijn externe LEX-inserties. Het lege bijwoordslot wordt eerst aangebracht op hosthoogte. Daarna pas werken LEX-Wissels.
 
 ```text
-OMDAT → slot 0  Comp
-HOND  blijft op basisplek
-MAN   blijft op basisplek
-BIJT  blijft op basisplek
+bijwoordslot boven S / NP / VP / V / PP / AP
+hostbox of host-subboom maakt ruimte
+syntaxstructuur blijft gelijk
 ```
-
-Resultaat:
-
-```text
-OMDAT HOND MAN BIJT
-```
-
-Geen V2-Wissel. Geen extra traces.
-
----
-
-## 3. Topicalisatie
-
-Voorbeeld:
-
-```text
-TRUI BREIT VROUW
-```
-
-De thematische rollen blijven hetzelfde:
-
-```text
-VROUW = agens / subject
-TRUI  = patiens / object
-```
-
-Basisvolgorde:
-
-```text
-VROUW  TRUI  BREIT
-```
-
-Plaatsingsregels:
-
-```text
-TRUI  → slot 1  eerste zinsdeel / topic
-BREIT → slot 2  V2 / persoonsvorm
-VROUW blijft op basisplek
-```
-
-Resultaat:
-
-```text
-TRUI BREIT VROUW
-```
-
-Traces:
-
-```text
-t[object] blijft op de oude TRUI/object-basisplek
-t[V]      blijft op de oude BREIT/V-basisplek
-```
-
----
-
-## 4. Perfectum
-
-Voorbeeld:
-
-```text
-HOND HEEFT MAN GEBETEN
-```
-
-Plaatsingsregels:
-
-```text
-HOND  → slot 1  eerste zinsdeel
-HEEFT → slot 2  V2 / persoonsvorm
-MAN   blijft op basisplek
-GEBETEN blijft op basisplek
-```
-
-Resultaat:
-
-```text
-HOND HEEFT MAN GEBETEN
-```
-
-Traces:
-
-```text
-t[subject] blijft op de oude HOND-basisplek
-t[pv]      blijft op de oude HEEFT/PV-basisplek
-```
-
----
-
-## 5. Vraagzin
-
-Nog niet volledig uitgewerkt in de voorbeelden.
-
-Eenvoudige voorlopige regel voor een ja/nee-vraag:
-
-```text
-persoonsvorm → eerste verbale vrije positie
-subject en object blijven op basisplekken, tenzij een aparte topicregel geldt
-```
-
-Voorbeeld later:
-
-```text
-BIJT HOND MAN?
-```
-
-Daarvoor moet de viewer nog een apart vraagzin-type krijgen. Tot die tijd wordt vraagzin niet als volwaardig zinstype gevalideerd.
-
----
-
-## Wat niet mag
-
-```text
-Niet: woorden automatisch naar gewone woordrijen schuiven.
-Niet: MAN verplaatsen alleen omdat MAN visueel hoger/lager staat.
-Niet: Wissellijnen vanuit de boom tekenen.
-Niet: LEX-as comprimeren zodat basisplekken hun horizontale hoogte verliezen.
-```
-
-## Korte formule
-
-```text
-basisprojectie blijft staan
-vrije slots worden gevuld
-oude plek wordt trace
-resultaat = voorbeeldzin
-```
-
-
-## v4535 · stapsgewijze LEX-Wissels
-
-- De boomgroei blijft deterministisch: binnen een groeilaag wordt gerenderd van boven naar beneden en daarna van links naar rechts.
-- Flip/layout wijzigt de berekende posities; daardoor kan de groeivolgorde indirect veranderen, maar de renderregel blijft ruimtelijk: boven → beneden, links → rechts.
-- In Assen verschijnt de LEX-as nu stapsgewijs: eerst de horizontale basisprojectie, daarna per stap één lokale Wissel met trace, daarna pas het volledige resultaat met projectiepanelen.
-- Verplaatsingen blijven lokaal op de LEX-as; er komen geen verplaatsingslijnen vanuit de boom.
-
-## OVT / onvoltooid verleden tijd
-
-De OVT-vormen `BEET` en `BREIDE` zijn gewone predicate/PV-vormen op de LEX-as. Zij gebruiken dezelfde structurele bron als `BIJT` en `BREIT`; alleen het LEX-label verandert.
-
-```text
-HOND BEET MAN
-OMDAT HOND MAN BEET
-VROUW BREIDE TRUI
-OMDAT VROUW TRUI BREIDE
-```
-
-VDW blijft apart: `GEBETEN` en `GEBREID` horen bij het perfectumtype met `HEEFT`.
-
-## v4535 - OSV-!, VSO-! en VOS-!
-
-`VSO` en `VOS` worden nu net als `OSV` gemarkeerd: `VSO-!` en `VOS-!`. Het uitroepteken betekent dat de box-aanpak deze volgorde niet als basisalternatief kan opleveren. Voor correcte LEX-rendering is een expliciete verplaatsingsregel nodig. Bestaande bomen en bestaande flips blijven ongemoeid.

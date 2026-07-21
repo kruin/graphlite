@@ -1,11 +1,13 @@
 (() => {
   'use strict';
 
-  const VERSION = 'v1.0.9';
+  const VERSION = 'v2.0.0-rc.4';
   const BASE_CELL = 74;
   const ROOT_SIDE_GAP = 1;
   const SVG_NS = 'http://www.w3.org/2000/svg';
   const CANVAS_GUIDE_TEXT_VISIBLE = false;
+  const CONFIG_STORAGE_KEY = 'opengraph_saved_config_v1013';
+  const CONFIG_LOG_KEY = 'opengraph_local_config_log_v1013';
 
   const els = {
     svg: document.getElementById('graphSvg'),
@@ -38,9 +40,17 @@
     mainLayoutDensitySelectTop: document.getElementById('mainLayoutDensitySelectTop'),
     rightMenuWidthSelect: document.getElementById('rightMenuWidthSelect'),
     rightMenuWidthSelectTop: document.getElementById('rightMenuWidthSelectTop'),
+    lexProjectionColorSelect: document.getElementById('lexProjectionColorSelect'),
     mobileRightMenuWidthSelect: document.getElementById('mobileRightMenuWidthSelect'),
+    syntProjectionColorSelect: document.getElementById('syntProjectionColorSelect'),
+    logProjectionColorSelect: document.getElementById('logProjectionColorSelect'),
     freeSlotCountSelect: document.getElementById('freeSlotCountSelect'),
+    projectionBoxDraggableInput: document.getElementById('projectionBoxDraggableInput'),
     southBoxDraggableInput: document.getElementById('southBoxDraggableInput'),
+    saveConfigButton: document.getElementById('saveConfigButton'),
+    discardConfigButton: document.getElementById('discardConfigButton'),
+    downloadConfigLogButton: document.getElementById('downloadConfigLogButton'),
+    configSaveStatus: document.getElementById('configSaveStatus'),
     lexFreeSlotCountSelect: document.getElementById('lexFreeSlotCountSelect'),
     lexFreeSlotPlacementSelect: document.getElementById('lexFreeSlotPlacementSelect'),
     lexInsertionContentSelect: document.getElementById('lexInsertionContentSelect'),
@@ -209,8 +219,8 @@
   ];
 
   const CENTER_MODES = [
-    { id: 'syntax', label: 'Syntax tree' },
-    { id: 'functional', label: 'Functional structure · CLAUSE' }
+    { id: 'syntax', label: 'Syntax' },
+    { id: 'ft', label: 'FT' }
   ];
 
   const TREE_CHOICES = [
@@ -628,8 +638,23 @@
     { id: '2', label: 'onderruimte: 2 menu’s' }
   ];
 
+  const PROJECTION_COLOR_OPTIONS = [
+    { id: 'green', label: 'groen', labelEn: 'green', css: '#16a34a' },
+    { id: 'purple', label: 'paars', labelEn: 'purple', css: '#7c3aed' },
+    { id: 'orange', label: 'oranje', labelEn: 'orange', css: '#f97316' },
+    { id: 'teal', label: 'teal', labelEn: 'teal', css: '#0d9488' },
+    { id: 'red', label: 'rood', labelEn: 'red', css: '#dc2626' },
+    { id: 'slate', label: 'grijsblauw', labelEn: 'slate', css: '#475569' }
+  ];
+
+  function projectionColorCss(id, fallback = 'green') {
+    return (PROJECTION_COLOR_OPTIONS.find(option => option.id === id)
+      || PROJECTION_COLOR_OPTIONS.find(option => option.id === fallback)
+      || PROJECTION_COLOR_OPTIONS[0]).css;
+  }
+
   const TOP_MENU_CHOICES = [
-    { id: 'projection', label: 'Projectiekeuze', cssClass: 'top-menu-projection', tip: 'Projectiekeuze: Assen, Bron, LEX, SYNT en LOG. Nuttig voor vergelijken van projecties.' },
+    { id: 'projection', label: 'Projecties', cssClass: 'top-menu-projection', tip: 'Projecties: Alle, Bron, LEX, SYNT en LOG. Nuttig voor vergelijken van named projections.' },
     { id: 'sentence', label: 'Voorbeeldzin', cssClass: 'top-menu-sentence', tip: 'Voorbeeldzin: kies snel HOND BIJT MAN en varianten. Nuttig voor contrast tussen zinnen.' },
     { id: 'play', label: 'Play/Groei', cssClass: 'top-menu-play', tip: 'Play/Groei: stap voor stap boom, LEX-as en projecties tonen. Nuttig voor didactische uitleg.' },
     { id: 'tools', label: 'Werkknoppen', cssClass: 'top-menu-tools', tip: 'Werkknoppen: FIT, reset, JSON, Docs en editors. Nuttig bij bouwen en testen.' }
@@ -726,6 +751,12 @@
     example: EXAMPLES[0],
     language: (function(){ try { return localStorage.getItem('opengraph_language') === 'en' ? 'en' : 'nl'; } catch (_err) { return 'nl'; } })(),
     projection: 'axes',
+    projectionBlockUnlocked: false,
+    projectionBoxDraggable: (function(){ try { return localStorage.getItem('opengraph_projection_box_draggable') !== '0'; } catch (_err) { return true; } })(),
+    projectionBoxManual: (function(){ try { const raw = localStorage.getItem('opengraph_projection_box_manual_v1013'); return raw ? JSON.parse(raw) : null; } catch (_err) { return null; } })(),
+    projectionBoxDrag: null,
+    syntProjectionColor: (function(){ try { return localStorage.getItem('opengraph_projection_color_synt') || 'green'; } catch (_err) { return 'green'; } })(),
+    logProjectionColor: (function(){ try { return localStorage.getItem('opengraph_projection_color_log') || 'purple'; } catch (_err) { return 'purple'; } })(),
     centerMode: 'syntax',
     treeChoice: 'auto-min',
     functionalOrder: 'left-first',
@@ -2636,12 +2667,10 @@
     if (mode === 'flat') return { cellX: BASE_CELL * 1.48, cellY: BASE_CELL * 0.72, fontScale: 1.04, label: 'platter' };
     if (mode === 'wide') return { cellX: BASE_CELL * 1.34, cellY: BASE_CELL * 0.86, fontScale: 1.08, label: 'breed/lager' };
     if (mode === 'large') return { cellX: BASE_CELL * 1.46, cellY: BASE_CELL * 0.82, fontScale: 1.16, label: 'breed + groter font' };
-    // Auto: Assen/Bron/LOG krijgen meer horizontale ruimte en minder verticale
-    // hoogte; LEX/SYNT blijven rustiger omdat zij geen diepe boom tonen.
-    if (['axes', 'source', 'log'].includes(state.projection)) {
-      return { cellX: BASE_CELL * 1.26, cellY: BASE_CELL * 0.87, fontScale: 1.08, label: 'auto breed/lager' };
-    }
-    return { cellX: BASE_CELL, cellY: BASE_CELL, fontScale: 1.00, label: 'auto compact' };
+    // Auto: alle centrale views en named-projection views gebruiken exact
+    // dezelfde celmaten. LEX, SYNT en LOG mogen de centrale boom niet laten
+    // verspringen of herschalen wanneer alleen de projectie-overlay wisselt.
+    return { cellX: BASE_CELL * 1.26, cellY: BASE_CELL * 0.87, fontScale: 1.08, label: 'auto stabiele centrale boom' };
   }
 
   function cellX() { return layoutVisualProfile().cellX; }
@@ -2701,11 +2730,17 @@
 
   function setProjection(projection) {
     const next = projection || 'axes';
-    if (next !== state.projection) resetManualViewBox();
+    // v2.0.0-rc.4: alle named-projection views delen exact dezelfde
+    // viewport. Een projectiewissel mag daarom een handmatige pan/zoom niet
+    // wissen en mag de centrale boom horizontaal noch verticaal verplaatsen.
     if (growthSupportedProjection(state.projection) && state.growthStep > 0) {
       state.lastSupportedGrowthStep = state.growthStep;
     }
     state.projection = next;
+    if (next === 'axes' && state.projectionBlockUnlocked && !state.growthTimer) {
+      state.growthEnabled = false;
+      state.growthStep = 0;
+    }
     if (!growthSupportedProjection(next)) {
       stopGrowthPlayback();
       return;
@@ -2716,7 +2751,7 @@
   }
 
   function activeCentralSpec() {
-    if (state.centerMode === 'functional') return functionalSpec();
+    if (state.centerMode === 'ft') return functionalSpec();
     return treeSpec();
   }
 
@@ -2771,8 +2806,11 @@
       return;
     }
     state.growthStep = clampGrowthStep(value);
+    const maxStep = growthStepMax();
     if (state.growthStep > 0) state.lastSupportedGrowthStep = state.growthStep;
-    if (state.growthStep >= growthStepMax()) stopGrowthPlayback();
+    if (state.growthStep >= maxStep && maxStep > 0) state.projectionBlockUnlocked = true;
+    if (state.growthStep <= 0) state.projectionBlockUnlocked = false;
+    if (state.growthStep >= maxStep) stopGrowthPlayback();
     if (rerender) render();
   }
 
@@ -2791,6 +2829,7 @@
       return;
     }
     if (state.growthStep >= max) state.growthStep = 0;
+    state.projectionBlockUnlocked = false;
     render();
     state.growthTimer = window.setInterval(() => {
       const currentMax = growthStepMax();
@@ -2800,6 +2839,7 @@
         return;
       }
       if (state.growthStep >= currentMax) {
+        if (currentMax > 0) state.projectionBlockUnlocked = true;
         stopGrowthPlayback();
         render();
         return;
@@ -2882,7 +2922,7 @@
   }
 
   function growthLabel() {
-    if (!growthSupportedProjection()) return 'Groei: niet actief in deze projectie';
+    if (!growthSupportedProjection()) return 'Groei n.v.t.';
     const max = growthStepMax();
     const step = clampGrowthStep(state.growthStep);
     if (!state.growthEnabled) return `Groei uit · max ${max}`;
@@ -3519,7 +3559,7 @@
   }
 
   function baseLexY(item, index, y0, sourceMap = null, items = state.example?.lexItems || []) {
-    // v4450: de basisprojectie wordt niet gecomprimeerd. In Assen blijft de
+    // v4450: de basisprojectie wordt niet gecomprimeerd. In Alle blijft de
     // LEX-basisplek exact horizontaal gelijk aan de bronknoop in de boom.
     // Alleen zonder centrale boom/sourceMap valt de LEX-only view terug op
     // een eenvoudige, leesbare rijafstand.
@@ -3665,7 +3705,7 @@
   function drawLexAxis(g, x, y0, items, sourceMap = null, options = {}) {
     const horizontalProjectionMode = !!sourceMap && !options.localOnly;
     const systemY0 = sourceMap ? projectedLexSystemY0(y0, sourceMap) : y0;
-    drawAxisTitle(g, x - 98, systemY0 - 70, horizontalProjectionMode ? 'LEX-projectie · Wisselregels' : 'LEX-as · lokale plaatsingsregels');
+    drawAxisTitle(g, x - 98, systemY0 - 70, horizontalProjectionMode ? 'LEX-projectie · projectiemerkers + Wisselregels' : 'LEX-as · lokale plaatsingsregels');
 
     const itemYs = items.map((item, i) => projectedLexItemY(item, i, y0, sourceMap, items, options));
     const baseYs = items.map((item, i) => baseLexY(item, i, y0, sourceMap, items));
@@ -3691,14 +3731,13 @@
     if (v2SlotY !== null) drawLexV2Slot(g, x, v2SlotY);
 
     const ruleText = isMainV2Rule()
-      ? `Plaatsingsregel: eerst bijwoordinsertie op de LEX-as, daarna Wissels naar 0/1/2; configureerbare bijwoordslots / voorop-bijwoord (${lexFreeSlotCount()} · ${lexSlotPlacementLabel()}) staan op de LEX-as; de gekozen hostbox wordt lager gezet om ruimte te maken; bijwoord kan boven een latere trace achterblijven.`
-      : `Plaatsingsregel: eerst bijwoordinsertie op de LEX-as, daarna eventuele plaatsingsregels; Comp gebruikt slot 0; configureerbare bijwoordslots / voorop-bijwoord (${lexFreeSlotCount()} · ${lexSlotPlacementLabel()}) staan op de LEX-as; de gekozen hostbox wordt lager gezet om ruimte te maken; bijwoord kan boven een latere trace achterblijven.`;
+      ? `Projectie: bronknopen → blauwe projectiemerkers. Daarna Wissels naar lege plekken 0/1/2; bijwoordslots (${lexFreeSlotCount()} · ${lexSlotPlacementLabel()}) staan eerst op de LEX-as; de hostbox wordt lager gezet om ruimte te maken.`
+      : `Projectie: bronknopen → blauwe projectiemerkers. Daarna plaatsingsregels; Comp gebruikt slot 0; bijwoordslots (${lexFreeSlotCount()} · ${lexSlotPlacementLabel()}) staan eerst op de LEX-as; de hostbox wordt lager gezet om ruimte te maken.`;
     drawCanvasGuideText(g, x + 150, axisMinY + 18, ruleText, 'wissel-label');
 
-    // v4450: geen stippel- of verplaatsingslijnen vanuit de boom naar de LEX-as.
-    // De boom levert alleen de basisstructuur; alle zichtbare Wissels en traces
-    // worden lokaal op de LEX-as getekend.  Dit voorkomt dat projectielijnen
-    // opnieuw als verplaatsingen vanuit de boom gelezen worden.
+    // Projectie naar LEX: de bronknoop projecteert horizontaal naar de west-as.
+    // Deze projectielijn eindigt op de basisprojectiemerker. Eventuele latere
+    // LEX-Wissels gebeuren pas daarna, lokaal op de as, vanuit lege plekken.
 
     items.forEach((item, i) => {
       const p = item.source && sourceMap ? sourceMap.get(item.source) : null;
@@ -3706,6 +3745,19 @@
       const oldY = baseLexY(item, i, y0, sourceMap, items);
       const movement = localAxisMovement(item, i, oldY, y, items, options);
       positions.set(item.id, { x, y, baseY: oldY, item, sourcePoint: p || null });
+
+      if (horizontalProjectionMode && options.showProjectionLines !== false && p && Number.isFinite(p.px) && Number.isFinite(p.py) && item.source) {
+        const startX = p.px - 62;
+        const endX = x + 62;
+        g.appendChild(svgEl('line', {
+          x1: startX,
+          y1: p.py,
+          x2: endX,
+          y2: oldY,
+          class: 'projection-line lex lex-source-projection-line',
+          'data-axis-marker': 'projection-marker'
+        }));
+      }
 
       if (movement && item.source) {
         drawLexTrace(g, x, oldY, movement.trace, 'trace · basisprojectie');
@@ -3786,7 +3838,7 @@
   function drawProjectedRules(g, x, layout, origin, spec, options = {}) {
     if (!layout || !origin || !spec) return;
     const mode = options.mode || 'syntax';
-    const title = options.title || (mode === 'functional' ? 'FT-view · functionele regels/rollen' : 'SYNT-projectie · regels');
+    const title = options.title || (mode === 'functional' ? 'FT · functionele regels/rollen' : 'SYNT-projectie · regels');
     const cls = mode === 'functional' ? 'log' : 'synt';
     const boxClass = mode === 'functional' ? 'syntax-rule-box projected-rule-box projected-functional-rule-box' : 'syntax-rule-box projected-rule-box';
     const ruleClass = mode === 'functional' ? 'rule-label projected-rule-label projected-functional-rule-label' : 'rule-label projected-rule-label';
@@ -3888,7 +3940,7 @@
     if (!items.length) return;
     const cls = options.cls || 'log';
     const title = options.title || 'LOG-projectie';
-    const subtitle = options.subtitle || 'De logische volgorde wordt uit de FT-layout geprojecteerd.';
+    const subtitle = options.subtitle || 'De logische volgorde wordt uit de geselecteerde bronstructuur geprojecteerd.';
     const orderCode = logicalOrderCode(items);
     const badgeText = options.badgeText || `LOG · ${orderCode}`;
     const badgeWidth = Math.max(176, 26 + badgeText.length * 10.2);
@@ -4016,13 +4068,13 @@
     if (layout && origin) {
       drawProjectedRules(g, x, layout, origin, functionalSpec(), {
         mode: 'functional',
-        title: 'FT-view · regels op boomhoogte',
+        title: 'FT · functionele regels op bronhoogte',
         growthPlan
       });
       return;
     }
     const axisBoxGap = 22;
-    drawAxisTitle(g, x + axisBoxGap, 40, 'FT-view · functionele regels/rollen');
+    drawAxisTitle(g, x + axisBoxGap, 40, 'FT · functionele regels/rollen');
     functionalRules().forEach((rule, i) => {
       const yy = 86 + i * 66;
       const width = Math.max(250, Math.min(380, rule.length * 8.2 + 34));
@@ -4039,11 +4091,11 @@
       return [
         `LOG · zuidas · ${southLogicalModeLabel(state.southLogicalMode || 'SOV')}`,
         `LOG → ${order}`,
-        'FT is geen aslaag; FT staat als functionele view naast de syntaxboom-view.'
+        'LOG selecteert S, O en V voor de logische volgordeprojectie.'
       ];
     }
-    const useFunctional = state.centerMode === 'functional';
-    const title = useFunctional ? 'FT · functionele view / rollen' : 'SYNT · syntaxregels';
+    const useFunctional = state.centerMode === 'ft';
+    const title = useFunctional ? 'FT · functionele rollen' : 'SYNT · syntaxregels';
     const rows = useFunctional ? functionalRules() : syntaxRules();
     return [title, ...rows];
   }
@@ -4056,7 +4108,7 @@
     const roleNames = (rootDef?.children || [])
       .map(id => functionalNodes.find(n => n.id === id)?.label || id)
       .join(' + ') || 'role-boxen';
-    if (options.showTitle !== false) drawAxisTitle(g, origin.x - 180, origin.y - 70, `OPN · functionele structuur · ${rootLabel} → ${roleNames} · ${state.functionalOrder}`);
+    if (options.showTitle !== false) drawAxisTitle(g, origin.x - 180, origin.y - 70, `FT · functionele structuur · ${rootLabel} → ${roleNames} · ${state.functionalOrder}`);
     drawAxisTitle(g, origin.x - 176, origin.y - 48, `v4547 · ${branchModeLabel()} · vrije plaatsing + LEX-bijwoordslots`);
     const growthPlan = growthPlanForLayout(layout);
     layout.__growthPlan = growthPlan;
@@ -4068,44 +4120,155 @@
     return layout;
   }
 
-  function drawAxes() {
-    const g = baseSvg('axes-view');
-    const origin = { x: 760, y: 72 };
-    drawAxisTitle(g, origin.x - 170, origin.y - 76, state.centerMode === 'functional' ? `CENTRAAL · OPN-functioneel · structure-config · ${state.functionalOrder}` : `CENTRAAL · OPN-syntaxboom · ${movementSummaryLabel()}`);
 
+  function canonicalProjectionContext(g, options = {}) {
+    const origin = stableCentralViewOrigin();
+    const drawCentral = options.drawCentral !== false;
     let sourceMap = null;
     let centralLayout = null;
-    const centralKind = state.centerMode === 'functional' ? 'functional' : 'syntax';
-    if (state.centerMode === 'functional') {
-      centralLayout = drawFunctional(g, origin, { showTitle: false, layout: getSouthAwareFunctionalLayout() });
+    const centralKind = state.centerMode === 'ft' ? 'functional' : 'syntax';
+    if (state.centerMode === 'ft') {
+      centralLayout = drawCentral
+        ? drawFunctional(g, origin, { showTitle: false, layout: getSouthAwareFunctionalLayout() })
+        : getSouthAwareFunctionalLayout();
       sourceMap = layoutNodeMap(centralLayout, origin);
     } else {
-      centralLayout = drawSyntaxTree(g, origin, { layout: getSouthAwareSyntaxLayout() });
+      centralLayout = drawCentral
+        ? drawSyntaxTree(g, origin, { layout: getSouthAwareSyntaxLayout() })
+        : getSouthAwareSyntaxLayout();
       sourceMap = layoutNodeMap(centralLayout, origin);
     }
     const southItems = southLogicalItemsFromCentralLayout(centralLayout, origin, centralKind, southLogicalOrder());
-
     const leftTreePx = px((centralLayout?.box?.minX || 0) - 0.9, origin);
     const westAxisX = Math.max(120, leftTreePx - 168);
     const southAxisY = py((centralLayout?.box?.maxY || 0) + 2.1, origin);
     const southAxisX1 = px((centralLayout?.box?.minX || 0) - 0.75, origin);
     const southAxisX2 = px((centralLayout?.box?.maxX || 0) + 0.75, origin);
-    // v4571: projectie-as sluit rechts aan op de boom: niet over de boom,
-    // maar ook niet ver zwevend. De regelboxen staan rechts van deze as.
     const centralTreeRightPx = px((centralLayout?.box?.maxX || 0), origin);
     const eastAxisX = centralTreeRightPx + 118;
+    return { origin, sourceMap, centralLayout, centralKind, southItems, westAxisX, eastAxisX, southAxisX1, southAxisX2, southAxisY };
+  }
+
+  function stableCentralViewOrigin() {
+    return { x: 760, y: 72 };
+  }
+
+  function projectionStableFrameBox() {
+    // v2.0.0-rc.4: één gezamenlijk frame voor beide centrale views én alle
+    // projectiekeuzes. Het frame is de unie van Syntax en FT. Daardoor blijven
+    // schaal, x-positie en y-positie identiek bij Alle/Bron/LEX/SYNT/LOG en
+    // ook wanneer de centrale view tussen Syntax en FT wisselt.
+    const origin = stableCentralViewOrigin();
+    const layouts = [getSouthAwareSyntaxLayout(), getSouthAwareFunctionalLayout()];
+    const boxes = layouts.map(layout => layout?.box).filter(Boolean);
+    const union = boxes.length ? {
+      minX: Math.min(...boxes.map(box => Number(box.minX || 0))),
+      minY: Math.min(...boxes.map(box => Number(box.minY || 0))),
+      maxX: Math.max(...boxes.map(box => Number(box.maxX || 0))),
+      maxY: Math.max(...boxes.map(box => Number(box.maxY || 0)))
+    } : { minX: -3, minY: 0, maxX: 4, maxY: 6 };
+    const leftTreePx = px(union.minX - 0.9, origin);
+    const rightTreePx = px(union.maxX + 0.9, origin);
+    const topTreePx = py(union.minY - 1.6, origin);
+    const bottomTreePx = py(union.maxY + 2.1, origin);
+    const westAxisX = Math.max(120, leftTreePx - 168);
+    const eastAxisX = rightTreePx + 118;
+    const southAxisY = py(union.maxY + 2.1, origin);
+    const left = Math.min(-120, westAxisX - 260, leftTreePx - 300);
+    const top = Math.min(-180, topTreePx - 120);
+    const right = Math.max(2180, eastAxisX + 650, rightTreePx + 760);
+    const bottom = Math.max(1120, southAxisY + 340, bottomTreePx + 360);
+    return { x: left, y: top, w: right - left, h: bottom - top };
+  }
+
+  function stableProjectionViewBox() {
+    // Het viewport is expres onafhankelijk van de zichtbare overlay. Gebruik
+    // vaste marges voor de Projecties-box en LOG-actiebox, zodat DOM-metingen
+    // van verborgen knoppen geen verticale of horizontale sprong veroorzaken.
+    const frame = projectionStableFrameBox();
+    const base = Math.max(frame.w, frame.h);
+    const margin = Math.max(48, Math.min(96, base * 0.045));
+    const portrait = isPortraitGridFirstViewport();
+    const fit = {
+      x: frame.x - margin,
+      y: frame.y - margin,
+      w: frame.w + margin * 2,
+      h: frame.h + margin * 2
+    };
+    const extra = portrait
+      ? { left: fit.w * 0.018, top: fit.h * 0.034, right: fit.w * 0.045, bottom: fit.h * 0.20 }
+      : { left: fit.w * 0.018, top: fit.h * 0.034, right: fit.w * 0.18, bottom: fit.h * 0.14 };
+    const expanded = {
+      x: fit.x - extra.left,
+      y: fit.y - extra.top,
+      w: fit.w + extra.left + extra.right,
+      h: fit.h + extra.top + extra.bottom
+    };
+    // Geen tweede aanpassing aan de actuele canvas-aspectratio: die ratio kan
+    // tijdens het omschakelen kort verschillen door de rechterkolom. De SVG
+    // schaalt dit vaste viewBox zelf passend in het beschikbare venster.
+    return expanded;
+  }
+
+  function appendStableProjectionFitFrame(g) {
+    if (!g) return;
+    const b = projectionStableFrameBox();
+    g.appendChild(svgEl('rect', {
+      x: b.x,
+      y: b.y,
+      width: b.w,
+      height: b.h,
+      class: 'projection-stability-frame',
+      fill: 'transparent',
+      opacity: '0',
+      'pointer-events': 'none',
+      'aria-hidden': 'true'
+    }));
+  }
+
+  function drawSingleProjection(kind) {
+    const g = baseSvg(`${kind}-projection-view selected-projection-view`);
+    const ctx = canonicalProjectionContext(g, { drawCentral: true });
+    if (kind === 'lex') {
+      drawAxisTitle(g, ctx.westAxisX - 40, 40, 'LEX · geselecteerde named projection op vaste west-aspositie');
+      drawLexAxis(g, ctx.westAxisX, 126, activeLexItems(), ctx.sourceMap);
+    } else if (kind === 'synt') {
+      if (state.centerMode === 'ft') drawFunctionalRules(g, ctx.eastAxisX, ctx.centralLayout, ctx.origin, null);
+      else drawSyntaxRules(g, ctx.eastAxisX, 126, ctx.centralLayout, ctx.origin, null);
+    } else if (kind === 'log') {
+      drawLogicalProjection(g, ctx.southAxisX1, ctx.southAxisX2, ctx.southAxisY, getFunctionalLayout(), {
+        cls: 'log',
+        title: 'LOG · geselecteerde named projection op vaste zuidaspositie',
+        subtitle: `LOG selecteert S, O en V voor de logische volgorde. De centrale graph blijft staan.${southModeWarningText()}`,
+        badgeText: southLogicalModeLabel(state.southLogicalMode || 'SOV'),
+        order: southLogicalOrder(),
+        items: ctx.southItems,
+        interactive: true,
+        tipText: 'tip: SOV → SVO → OVS → OSV-! → VSO-! → VOS-!',
+        badgeAlign: 'right-below'
+      });
+    }
+    appendStableProjectionFitFrame(g);
+    els.svg.appendChild(g);
+  }
+
+  function drawAxes() {
+    const g = baseSvg('axes-view');
+    const origin = { x: 760, y: 72 };
+    drawAxisTitle(g, origin.x - 170, origin.y - 76, state.centerMode === 'ft' ? `CENTRAAL · FT · functionele structuur · ${state.functionalOrder}` : `CENTRAAL · OPN-syntaxboom · ${movementSummaryLabel()}`);
+
+    const ctx = canonicalProjectionContext(g, { drawCentral: true });
+    const { sourceMap, centralLayout, southItems, westAxisX, eastAxisX, southAxisX1, southAxisX2, southAxisY } = ctx;
 
     const growthPlan = centralLayout?.__growthPlan;
-    const showLexBaseStep = !growthPlan?.active || visibleAt(growthPlan, growthPlan.lexBaseStep);
-    const showProjectionPanels = !growthPlan?.active || visibleAt(growthPlan, growthPlan.projectionStep);
-    if (showProjectionPanels) {
+    const drawAllNamedProjections = (plan = null) => {
       drawLexAxis(g, westAxisX, 126, activeLexItems(), sourceMap);
-      if (state.centerMode === 'functional') drawFunctionalRules(g, eastAxisX, centralLayout, origin, growthPlan);
-      else drawSyntaxRules(g, eastAxisX, 126, centralLayout, origin, growthPlan);
+      if (state.centerMode === 'ft') drawFunctionalRules(g, eastAxisX, centralLayout, origin, plan);
+      else drawSyntaxRules(g, eastAxisX, 126, centralLayout, origin, plan);
       drawLogicalProjection(g, southAxisX1, southAxisX2, southAxisY, getFunctionalLayout(), {
         cls: 'log',
-        title: 'LOG-as · LOG-projectie',
-        subtitle: `Logische volgorde onder de boom; west-as blijft LEX. Gebruik de volgordeknop om alleen de LOG-volgorde onder de boom te wijzigen.${southModeWarningText()}`,
+        title: 'LOG · zuidas',
+        subtitle: `Named projection op de zuidas: selectie van S, O en V. De volgordeknop wijzigt alleen LOG.${southModeWarningText()}`,
         badgeText: southLogicalModeLabel(state.southLogicalMode || 'SOV'),
         order: southLogicalOrder(),
         items: southItems,
@@ -4113,6 +4276,19 @@
         tipText: 'tip: SOV → SVO → OVS → OSV-! → VSO-! → VOS-!',
         badgeAlign: 'right-below'
       });
+    };
+    if (!growthPlan?.active || state.projectionBlockUnlocked) {
+      // Projecties > Alle betekent: centrale view met alle named projections.
+      // Bron blijft de centrale bronview zonder projectie-assen.
+      drawAllNamedProjections(growthPlan?.active ? growthPlan : null);
+      appendStableProjectionFitFrame(g);
+      els.svg.appendChild(g);
+      return;
+    }
+    const showLexBaseStep = !growthPlan?.active || visibleAt(growthPlan, growthPlan.lexBaseStep);
+    const showProjectionPanels = !growthPlan?.active || visibleAt(growthPlan, growthPlan.projectionStep);
+    if (showProjectionPanels) {
+      drawAllNamedProjections(growthPlan);
     } else if (showLexBaseStep) {
       const executedMovementCount = growthPlan?.active
         ? Math.max(0, Math.min(growthPlan.lexMovementCount, growthPlan.current - growthPlan.lexMovementStartStep + 1))
@@ -4121,8 +4297,8 @@
       drawAxisTitle(g, eastAxisX, 116, 'SYNT-projectie verschijnt in de laatste stap');
       drawLogicalProjection(g, southAxisX1, southAxisX2, southAxisY, getFunctionalLayout(), {
         cls: 'log',
-        title: 'LOG-as · LOG-projectie',
-        subtitle: `LOG-projectie wordt mee zichtbaar in de eindfase. Gebruik de volgordeknop om alleen de LOG-volgorde onder de boom te wijzigen.${southModeWarningText()}`,
+        title: 'LOG · zuidas',
+        subtitle: `LOG-projectie wordt mee zichtbaar in de eindfase. De volgordeknop wijzigt alleen LOG.${southModeWarningText()}`,
         badgeText: southLogicalModeLabel(state.southLogicalMode || 'SOV'),
         order: southLogicalOrder(),
         items: southItems,
@@ -4134,31 +4310,25 @@
       drawAxisTitle(g, westAxisX - 45, 116, `Groei-presentatie · ${growthLabel()}`);
       drawAxisTitle(g, eastAxisX, 116, 'SYNT-projectie verschijnt in de laatste stap');
     }
+    appendStableProjectionFitFrame(g);
     els.svg.appendChild(g);
   }
 
   function drawSource() {
     const g = baseSvg('source-view');
-    if (state.centerMode === 'functional') {
-      drawFunctional(g, { x: 760, y: 92 });
-      drawAxisTitle(g, 520, 70, `BRON · OPN-functioneel · vrije boomrijen + LEX-bijwoordslots + structure-config · ${state.functionalOrder}`);
+    const ctx = canonicalProjectionContext(g, { drawCentral: true });
+    const origin = ctx.origin || stableCentralViewOrigin();
+    if (state.centerMode === 'ft') {
+      drawAxisTitle(g, origin.x - 240, origin.y - 78, `BRON · OPN-functioneel · structure-config · ${state.functionalOrder}`);
     } else {
-      drawAxisTitle(g, 490, 58, 'BRON · OPN-syntax-tree · vrije HOR/VER-boxplaatsing + vrije-slotruimte');
-      drawSyntaxTree(g, { x: 780, y: 82 });
+      drawAxisTitle(g, origin.x - 270, origin.y - 78, 'BRON · OPN-syntax-tree · vrije HOR/VER-boxplaatsing + vrije-slotruimte');
     }
+    appendStableProjectionFitFrame(g);
     els.svg.appendChild(g);
   }
 
   function drawLex() {
-    const g = baseSvg('lex-view');
-    // v4545: ook in de losse LEX-view moet het bijwoordslot aan de echte
-    // hostboxhoogte hangen. Daarvoor wordt de syntaxlayout hier alleen als
-    // onzichtbare ankerkaart gebruikt; er wordt niets vanuit de boom geprojecteerd.
-    const hiddenLayout = getSyntaxLayout();
-    const sourceMap = layoutNodeMap(hiddenLayout, { x: 560, y: 86 });
-    drawLexAxis(g, 560, 86, activeLexItems(), sourceMap);
-    drawCanvasGuideText(g, 700, 70, state.example.lexRule === 'bijzin-omdat' ? 'Regel: bijzin met lokaal Comp-slot · geen V2' : 'Regel: hoofdzin met lokale V2-Wissel op de LEX-as', 'axis-title');
-    els.svg.appendChild(g);
+    drawSingleProjection('lex');
   }
 
   function drawIsolatedSyntaxRules(g) {
@@ -4207,25 +4377,18 @@
   }
 
   function drawSynt() {
-    const g = baseSvg('synt-rule-view synt-isolated-view');
-    drawIsolatedSyntaxRules(g);
-    els.svg.appendChild(g);
+    drawSingleProjection('synt');
   }
 
   function drawLog() {
-    const g = baseSvg('log-view log-only-view');
-    const layout = getFunctionalLayout();
-    drawLogicalProjection(g, 260, 1040, 330, layout, {
-      cls: 'log',
-      title: 'LOG-as · logische S-O-V-projectie',
-      subtitle: 'Alleen LOG staat op de zuidas. FT is geen aslaag: FT is de functionele view naast de standaard syntaxboom-view.',
-      badgeText: southLogicalModeLabel(state.southLogicalMode || 'SOV'),
-      order: southLogicalOrder(),
-      interactive: true,
-      tipText: 'tip: SOV → SVO → OVS → OSV-! → VSO-! → VOS-!',
-      badgeAlign: 'center'
-    });
-    els.svg.appendChild(g);
+    drawSingleProjection('log');
+  }
+
+  function applyProjectionColors() {
+    const root = document.documentElement;
+    root.style.setProperty('--lex', '#2563eb');
+    root.style.setProperty('--synt', projectionColorCss(state.syntProjectionColor, 'green'));
+    root.style.setProperty('--log', projectionColorCss(state.logProjectionColor, 'purple'));
   }
 
   function setSvgPresentationVars() {
@@ -4244,15 +4407,10 @@
 
   function stableGrowthViewBox() {
     if (!growthActive()) return null;
-    // v4451: tijdens groei niet opnieuw inzoomen op de paar zichtbare
-    // elementen. Anders wordt stap 1 extreem groot weergegeven. Gebruik een
-    // stabiel podium totdat de gebruiker zelf pant/zoomt.
-    // v4571: stabiele groei-viewbox ruimer maken. De onderste LOG-box
-    // en de naar rechts verplaatste SYNT-as moeten ook tijdens groei in beeld blijven.
-    if (state.projection === 'axes') return { x: -50, y: -150, w: 1780, h: 1120 };
-    if (state.projection === 'source') return { x: 150, y: -145, w: 1320, h: 1010 };
-    if (state.projection === 'log') return { x: 90, y: -145, w: 1500, h: 1010 };
-    return null;
+    // v2.0.0-rc.4: Groei gebruikt hetzelfde frame als de gewone projectie-
+    // views. Voorheen hadden Alle/Bron/LOG eigen hard-coded viewBoxes, terwijl
+    // LEX/SYNT auto-fit gebruikten; dat veroorzaakte de zichtbare sprong.
+    return stableProjectionViewBox();
   }
 
   function parseViewBox() {
@@ -4286,7 +4444,7 @@
   }
 
   function clearViewportGestureState() {
-    // v1.0.9: bij wissel tussen landscape/portrait mogen oude touch-pointers
+    // v2.0.0-rc.4: bij wissel tussen landscape/portrait mogen oude touch-pointers
     // en pinch-state niet blijven hangen. Anders lijkt portrait na zoom in
     // landscape bevroren.
     state.viewDrag = null;
@@ -4496,6 +4654,12 @@
     return null;
   }
 
+
+  function mainProjectionBlockVisible() {
+    const max = growthStepMax();
+    return !!state.projectionBlockUnlocked || (!!state.growthEnabled && !state.growthTimer && max > 0 && state.growthStep >= max);
+  }
+
   function syncMainOverlayControlPlacement() {
     const controls = document.querySelector('.main-grid-controls');
     const southControl = document.querySelector('.main-south-control');
@@ -4512,34 +4676,49 @@
     const svgLocalBottom = Math.min(hostRect.height, svgRect.bottom - hostRect.top);
 
     if (!controls) return;
+    const showProjectionBlock = mainProjectionBlockVisible();
+    controls.classList.toggle('is-hidden', !showProjectionBlock);
+    controls.setAttribute('aria-hidden', String(!showProjectionBlock));
     const portrait = isPortraitGridFirstViewport();
-    if (portrait) {
+    if (!showProjectionBlock) {
+      root.removeProperty?.('--main-controls-left');
+      root.style.removeProperty('--main-controls-left');
+      root.style.removeProperty('--main-controls-top');
+      controls.style.removeProperty('--main-controls-left');
+      controls.style.removeProperty('--main-controls-top');
+    } else if (portrait) {
       root.removeProperty?.('--main-controls-left');
       root.style.removeProperty('--main-controls-left');
       root.style.removeProperty('--main-controls-top');
       controls.style.removeProperty('--main-controls-left');
       controls.style.removeProperty('--main-controls-top');
     } else {
-      const anchor = syntAxisAnchorBox();
       const controlsRect = controls.getBoundingClientRect();
-      const xClient = anchor ? svgXToClient(anchor.x, viewBox) : null;
-      const yClient = anchor ? svgYToClient(anchor.y, viewBox) : null;
-      const axisBoxGapPx = 96;
-      const inset = 10;
-      const controlW = Math.max(100, controlsRect.width || 104);
+      const controlW = Math.max(118, controlsRect.width || 116);
       const controlH = Math.max(180, controlsRect.height || 220);
-      const windowMinLeft = Math.max(inset, inset);
-      const windowMaxLeft = Math.max(windowMinLeft, hostRect.width - controlW - inset);
-      const axisSafeLeft = Number.isFinite(xClient) ? (xClient - hostRect.left + axisBoxGapPx) : windowMaxLeft;
-      const controlsLeft = Math.round(Number.isFinite(xClient)
-        ? Math.max(windowMinLeft, axisSafeLeft)
-        : Math.max(windowMinLeft, Math.min(windowMaxLeft, axisSafeLeft)));
-      const minTop = Math.max(8, svgLocalTop + 8);
+      const minLeft = Math.max(8, svgLocalLeft + 8);
+      const maxLeft = Math.max(minLeft, svgLocalRight - controlW - 10);
+      const minTop = Math.max(8, svgLocalTop + 10);
       const maxTop = Math.max(minTop, svgLocalBottom - controlH - 10);
-      const rawTop = Number.isFinite(yClient) ? (yClient - hostRect.top + 8) : minTop;
-      const controlsTop = Math.round(Math.max(minTop, Math.min(maxTop, rawTop)));
+      let controlsLeft = null;
+      let controlsTop = null;
+      if (state.projectionBoxManual && Number.isFinite(state.projectionBoxManual.left) && Number.isFinite(state.projectionBoxManual.top)) {
+        controlsLeft = state.projectionBoxManual.left;
+        controlsTop = state.projectionBoxManual.top;
+      } else {
+        // v2.0.0-rc.4: Projecties-box heeft een stabiele schermpositie.
+        // Niet meer ankeren aan een wisselende SYNT-as; alleen handmatig slepen verplaatst de box.
+        controlsLeft = maxLeft;
+        controlsTop = minTop;
+      }
+      controlsLeft = Math.round(Math.max(minLeft, Math.min(maxLeft, controlsLeft)));
+      controlsTop = Math.round(Math.max(minTop, Math.min(maxTop, controlsTop)));
       root.style.setProperty('--main-controls-left', `${controlsLeft}px`);
       root.style.setProperty('--main-controls-top', `${controlsTop}px`);
+      controls.classList.toggle('is-draggable', !!state.projectionBoxDraggable);
+      controls.setAttribute('title', state.projectionBoxDraggable
+        ? (isEnglish() ? 'Drag this Projections box. Double-click empty space to reset its position.' : 'Sleep deze Projecties-box. Dubbelklik op lege ruimte om de positie te resetten.')
+        : (isEnglish() ? 'Projections box is fixed by Config.' : 'Projecties-box is vastgezet via Config.'));
     }
 
     if (southControl && !southControl.classList.contains('is-hidden')) {
@@ -4661,10 +4840,24 @@
 
   function computeAutoFitBox() {
     if (!els.svg) return fallbackViewBox();
+    // v2.0.0-rc.4: alle projectie-views gebruiken één geometrisch viewport,
+    // onafhankelijk van welke overlay zichtbaar is. Dit sluit auto-fit-
+    // verschillen uit en voorkomt elke horizontale of verticale verspringing.
+    if (isMainScreenActive() && ['axes', 'source', 'lex', 'synt', 'log'].includes(state.projection)) {
+      const frame = projectionStableFrameBox();
+      const gridMargin = Math.max(18, Math.min(42, Math.max(frame.w, frame.h) * 0.018));
+      state.lastGridBox = {
+        x: frame.x - gridMargin,
+        y: frame.y - gridMargin,
+        w: frame.w + gridMargin * 2,
+        h: frame.h + gridMargin * 2
+      };
+      return stableProjectionViewBox();
+    }
     const ignored = [...els.svg.querySelectorAll('.grid, .view-pan-hint')];
     const oldDisplays = ignored.map(node => node.style.display);
     try {
-      // FIT volgt uitsluitend boom + projectie-assen. Raster en hulplabels
+      // FIT volgt uitsluitend boom + named projections. Raster en hulplabels
       // mogen de fit-box niet breder of hoger maken.
       ignored.forEach(node => { node.style.display = 'none'; });
       const bbox = els.svg.getBBox();
@@ -4712,13 +4905,14 @@
   function applyViewBoxFit(force = false) {
     if (!els.svg) return;
     if (force) resetManualViewBox();
-    const growthBox = stableGrowthViewBox();
-    if (growthBox && !force && !state.manualViewBox) {
-      setViewBox(growthBox, false);
-      return;
-    }
+    // Handmatige pan/zoom blijft bij een projectie- of viewwissel exact staan.
     if (!force && state.manualViewBox) {
       setViewBox(state.manualViewBox, false);
+      return;
+    }
+    const growthBox = stableGrowthViewBox();
+    if (growthBox && !force) {
+      setViewBox(growthBox, false);
       return;
     }
     const viewMode = validViewFitMode();
@@ -4747,25 +4941,41 @@
     els.svg.classList.toggle('no-grid', !state.showGrid);
     const g = svgEl('g', { class: className });
     if (state.showGrid) drawGrid(g, 1800, 1000);
-    drawCanvasGuideText(g, 22, 28, 'grid past strak rond boom + assen · geen leeg raster rondom · Config opent instellingen', 'view-pan-hint');
+    drawCanvasGuideText(g, 22, 28, 'grid past strak rond centrale view/projecties · geen leeg raster rondom · Config opent instellingen', 'view-pan-hint');
     return g;
   }
 
   function render() {
-    syncPortraitStageMode();
-    syncMainTopbarLayout();
-    syncControls();
-    if (state.projection === 'source') drawSource();
-    else if (state.projection === 'lex') drawLex();
-    else if (state.projection === 'synt') drawSynt();
-    else if (state.projection === 'log') drawLog();
-    else drawAxes();
-    applyViewBoxFit(false);
-    syncMobileCanvasHeight(parseViewBox());
-    renderSideLists();
-    renderStatus();
-    renderSelection();
-    applyLanguage();
+    try {
+      applyProjectionColors();
+      syncPortraitStageMode();
+      syncMainTopbarLayout();
+      syncControls();
+      if (state.projection === 'source') drawSource();
+      else if (state.projection === 'lex') drawLex();
+      else if (state.projection === 'synt') drawSynt();
+      else if (state.projection === 'log') drawLog();
+      else drawAxes();
+      applyViewBoxFit(false);
+      syncMobileCanvasHeight(parseViewBox());
+      renderSideLists();
+      renderStatus();
+      renderSelection();
+      applyLanguage();
+    } catch (err) {
+      console.error('OpenGraph render failed', err);
+      try {
+        if (els.svg) {
+          const g = baseSvg('render-fallback-view');
+          drawAxisTitle(g, 120, 84, 'Render fallback · Syntax tree');
+          drawSyntaxTree(g, { x: 760, y: 92 });
+          els.svg.appendChild(g);
+          applyViewBoxFit(true);
+        }
+      } catch (fallbackErr) {
+        console.error('OpenGraph fallback render failed', fallbackErr);
+      }
+    }
   }
 
   function stabilizeInitialTreeView() {
@@ -4786,7 +4996,7 @@
 
   function renderStatus() {
     const syntaxModeLabel = isEnglish() ? 'OPN syntax tree' : 'OPN-syntaxboom';
-    const functionalModeLabel = isEnglish() ? 'OPN functional structure' : 'OPN-functioneel';
+    const functionalModeLabel = isEnglish() ? 'FT functional structure' : 'FT functionele structuur';
     els.titleLine.textContent = `${activeSentenceText()} · ${state.projectionLabel || projectionLabel()} · ${state.centerMode === 'syntax' ? syntaxModeLabel : functionalModeLabel}`;
     const noticeText = state.example.notice ? ` · NOTICE=${state.example.notice}` : '';
     const adverbText = activeAdverbStatusLabel();
@@ -4796,10 +5006,10 @@
     if (els.sentencePreview) els.sentencePreview.innerHTML = activeSentenceHtml();
     const baseFeedback = isEnglish()
       ? (state.projection === 'source'
-        ? 'Source shows the selected OPN source from structure-config.html. The View menu switches between the standard syntax tree and the functional structure (CLAUSE roles). Syntax and functional views use bottom-up recursive box layout; left/right controls both layouts; branch order can be global, compact-auto or align-auto.'
+        ? 'Source shows the selected OPN source from structure-config.html. The View menu switches between the Syntax view and the FT view (functional CLAUSE roles). Syntax and FT views use bottom-up recursive box layout; left/right controls both layouts; branch order can be global, compact-auto or align-auto.'
         : 'Phase view: first the structure config, then sample sentences projected to those sources, then the local LEX placement rule.')
       : (state.projection === 'source'
-        ? 'Bron toont de gekozen OPN-bron uit structure-config.html. Het View-menu wisselt tussen de standaard syntaxboom en de functionele structuur (CLAUSE/rollen). Syntax en functioneel gebruiken bottom-up recursieve box-layout; left/right stuurt beide layouts; takvolgorde kan globaal, compact-auto of align-auto zijn.'
+        ? 'Bron toont de gekozen OPN-bron uit structure-config.html. Het View-menu wisselt tussen de Syntax-view en de FT-view (functionele CLAUSE/rollen). Syntax en FT gebruiken bottom-up recursieve box-layout; left/right stuurt beide layouts; takvolgorde kan globaal, compact-auto of align-auto zijn.'
         : 'Faseversie: eerst structure-config, dan voorbeeldzinnen die naar die sources projecteren, dan lokale LEX-regel.');
     const validationMsg = state.exampleValidationMessages?.length ? ` · ${state.exampleValidationMessages[0]}` : '';
     const noticeMsg = state.example.notice ? ` · ${state.example.notice}` : '';
@@ -4820,24 +5030,24 @@
 
   function projectionLabel() {
     const labels = isEnglish()
-      ? { axes: 'All axes', source: 'Source', lex: 'LEX', synt: 'SYNT projection', log: 'LOG' }
-      : { axes: 'OPN/assen', source: 'Bron', lex: 'LEX', synt: 'SYNT-projectie', log: 'LOG' };
+      ? { axes: 'All', source: 'Source', lex: 'LEX', synt: 'SYNT', log: 'LOG' }
+      : { axes: 'Alle', source: 'Bron', lex: 'LEX', synt: 'SYNT', log: 'LOG' };
     return labels[state.projection] || state.projection;
   }
 
   function helpText() {
     if (isEnglish()) {
-      if (state.projection === 'source') return 'Source: OPN syntax and OPN functional structures are read from structure-config.html. Both use the same left/right layout strategy and reserve configurable empty free-slot space under the root.';
-      if (state.projection === 'lex') return 'LEX: placement rules per sentence type. Main clause: first phrase to slot 1, finite verb to slot 2. The central tree keeps empty space; the filled positions are shown on the LEX axis.';
+      if (state.projection === 'source') return 'Source: the Syntax and FT structures are read from structure-config.html. Both use the same left/right layout strategy and reserve configurable empty free-slot space under the root.';
+      if (state.projection === 'lex') return 'LEX: west named projection. Source nodes project to blue projection markers first; after all central nodes are placed, LEX exchanges may fill reserved empty positions.';
       if (state.projection === 'synt') return 'SYNT: isolated syntax-rule set. Rules are placed at their source height; the central tree is only used as a hidden height anchor.';
-      if (state.projection === 'log') return 'LOG: logical S-O-V order projection on the south axis. FT is not part of this axis; FT is the functional/thematic view next to the standard syntax-tree view.';
-      return 'All: central view selected by the View menu; default = syntax tree, alternative = functional structure with CLAUSE roles. West axis = LEX; south axis = LOG projection.';
+      if (state.projection === 'log') return 'LOG: named projection on the south axis. It selects S, O and V for the logical order projection.';
+      return 'All: central view selected by the View menu. LEX, SYNT and LOG use named projections with their own projection markers and selection rules.';
     }
-    if (state.projection === 'source') return 'Bron: OPN-syntax en OPN-functioneel worden gelezen uit structure-config.html. Beide gebruiken dezelfde left/right layoutstrategie en reserveren configureerbare lege vrije-slotruimte onder de wortel.';
-    if (state.projection === 'lex') return 'LEX: plaatsingsregels per zinstype. Hoofdzin: eerste zinsdeel naar slot 1, persoonsvorm naar slot 2. Bijwoorden worden als externe LEX-slots op de LEX-as geplaatst, op de hoogte net boven een gekozen syntaxbox.';
+    if (state.projection === 'source') return 'Bron: de Syntax- en FT-structuren worden gelezen uit structure-config.html. Beide gebruiken dezelfde left/right layoutstrategie en reserveren configureerbare lege vrije-slotruimte onder de wortel.';
+    if (state.projection === 'lex') return 'LEX: westelijke named projection. Bronknopen projecteren eerst naar blauwe projectiemerkers; pas na plaatsing van alle centrale knopen kunnen LEX-Wissels gereserveerde lege plekken vullen.';
     if (state.projection === 'synt') return 'SYNT: geïsoleerde syntax-regelset. Regels staan op bronhoogte; de centrale boom dient alleen als verborgen hoogteanker.';
-    if (state.projection === 'log') return 'LOG: logische S-O-V-volgordeprojectie op de zuidas. FT is geen onderdeel van deze as; FT is de functionele view naast de standaard syntaxboom-view.';
-    return 'Assen: centrale view via View-menu; standaard = syntaxboom, alternatief = functionele structuur met CLAUSE/rollen. West-as = LEX; zuid-as = LOG-projectie. Het gridvenster past op boom + assen.';
+    if (state.projection === 'log') return 'LOG: named projection op de zuidas. LOG selecteert S, O en V voor de logische volgordeprojectie.';
+    return 'Alle: centrale view via View-menu. LEX, SYNT en LOG gebruiken named projections met eigen projectiemerkers en selectieregels.';
   }
 
   function renderSideLists() {
@@ -4864,9 +5074,9 @@
   }
 
   const SELECT_OPTION_LABELS_EN = {
-    centralModeSelect: { syntax: 'Syntax tree', functional: 'Functional structure - CLAUSE' },
-    mainViewSelect: { syntax: 'Syntax', functional: 'Functional' },
-    mobileViewSelect: { syntax: 'Syntax tree', functional: 'Functional structure' },
+    centralModeSelect: { syntax: 'Syntax tree', ft: 'FT · functional structure (CLAUSE)' },
+    mainViewSelect: { syntax: 'Syntax', ft: 'FT' },
+    mobileViewSelect: { syntax: 'Syntax tree', ft: 'FT · functional structure' },
     treeChoiceSelect: { 'auto-min': 'tree choice: auto per sample type', 'structure-config': 'tree choice: structure-config base tree' },
     functionalOrderSelect: { 'left-first': 'layout: left-first', 'right-first': 'layout: right-first' },
     branchOrderSelect: { normal: 'default: grammatical order', 'auto-compact': 'goal: compact - auto per branch', 'auto-align': 'goal: align subject/agent + object/patient', 'flip-all': 'global: flip all branches' },
@@ -4880,6 +5090,8 @@
     rightMenuWidthSelect: { auto: 'right column: auto/rest', wide: 'right column: wide', 'very-wide': 'right column: very wide', max: 'right column: maximum' },
     rightMenuWidthSelectTop: { auto: 'right column: auto/rest', wide: 'right column: wide', 'very-wide': 'right column: very wide', max: 'right column: maximum' },
     mobileRightMenuWidthSelect: { auto: 'right column: auto/rest', wide: 'right column: wide', 'very-wide': 'right column: very wide', max: 'right column: maximum' },
+    syntProjectionColorSelect: { green: 'green', purple: 'purple', orange: 'orange', teal: 'teal', red: 'red', slate: 'slate' },
+    logProjectionColorSelect: { green: 'green', purple: 'purple', orange: 'orange', teal: 'teal', red: 'red', slate: 'slate' },
     freeSlotCountSelect: { 0: 'tree rows: 0', 1: 'tree rows: 1', 2: 'tree rows: 2', 3: 'tree rows: 3', 4: 'tree rows: 4', 5: 'tree rows: 5', 6: 'tree rows: 6' },
     lexFreeSlotCountSelect: { 0: 'LEX slots: 0', 1: 'LEX slots: 1', 2: 'LEX slots: 2', 3: 'LEX slots: 3', 4: 'LEX slots: 4', 5: 'LEX slots: 5', 6: 'LEX slots: 6', 7: 'LEX slots: 7', 8: 'LEX slots: 8' },
     mobileLexFreeSlotCountSelect: { 0: 'LEX slots: 0', 1: 'LEX slots: 1', 2: 'LEX slots: 2', 3: 'LEX slots: 3', 4: 'LEX slots: 4', 5: 'LEX slots: 5', 6: 'LEX slots: 6', 7: 'LEX slots: 7', 8: 'LEX slots: 8' },
@@ -4979,6 +5191,8 @@
     fillSelect(els.rightMenuWidthSelect, RIGHT_MENU_WIDTHS, validRightMenuMode());
     fillSelect(els.rightMenuWidthSelectTop, RIGHT_MENU_WIDTHS, validRightMenuMode());
     fillSelect(els.mobileRightMenuWidthSelect, RIGHT_MENU_WIDTHS, validRightMenuMode());
+    fillSelect(els.syntProjectionColorSelect, PROJECTION_COLOR_OPTIONS, state.syntProjectionColor);
+    fillSelect(els.logProjectionColorSelect, PROJECTION_COLOR_OPTIONS, state.logProjectionColor);
     fillSelect(els.freeSlotCountSelect, FREE_SLOT_COUNTS, String(reservedFreeSlotCount()));
     fillSelect(els.lexFreeSlotCountSelect, LEX_FREE_SLOT_COUNTS, String(lexFreeSlotCount()));
     fillSelect(els.mobileLexFreeSlotCountSelect, LEX_FREE_SLOT_COUNTS, String(lexFreeSlotCount()));
@@ -4998,6 +5212,7 @@
     if (els.showGridInput) els.showGridInput.checked = state.showGrid;
     if (els.showRelationsInput) els.showRelationsInput.checked = state.showRelations;
     if (els.showLabelsInput) els.showLabelsInput.checked = state.showLabels;
+    if (els.projectionBoxDraggableInput) els.projectionBoxDraggableInput.checked = !!state.projectionBoxDraggable;
     if (els.southBoxDraggableInput) els.southBoxDraggableInput.checked = !!state.southBoxDraggable;
     const growthSupported = growthSupportedProjection();
     const growthMax = growthSupported ? growthStepMax() : 0;
@@ -5087,7 +5302,7 @@
   }
 
   function renderSelection() {
-    const layout = state.centerMode === 'functional' ? getFunctionalLayout() : getSyntaxLayout();
+    const layout = state.centerMode === 'ft' ? getFunctionalLayout() : getSyntaxLayout();
     const node = layout.nodes.find(n => n.id === state.selectedNodeId);
     if (!node) {
       els.selectionEmpty?.classList.remove('hidden');
@@ -5156,7 +5371,8 @@
         const payload = JSON.parse(String(reader.result || '{}'));
         const nextExample = EXAMPLES.find(example => example.id === payload.example);
         if (nextExample) state.example = nextExample;
-        if (payload.central_opn === 'syntax' || payload.central_opn === 'functional') state.centerMode = payload.central_opn;
+        if (payload.central_opn === 'syntax') state.centerMode = 'syntax';
+        else if (payload.central_opn === 'ft' || payload.central_opn === 'functional') state.centerMode = 'ft';
         if (payload.tree_choice && TREE_CHOICES.some(choice => choice.id === payload.tree_choice)) state.treeChoice = payload.tree_choice;
         if (payload.functional_order === 'left-first' || payload.functional_order === 'right-first') state.functionalOrder = payload.functional_order;
         if (payload.branch_order && BRANCH_ORDERS.some(order => order.id === payload.branch_order)) state.branchOrder = payload.branch_order;
@@ -5492,6 +5708,7 @@
     stopGrowthPlayback();
     state.growthEnabled = false;
     state.growthStep = 0;
+    state.projectionBlockUnlocked = false;
     state.southLogicalMode = 'SOV';
     state.lastSupportedGrowthStep = 0;
     state.roleSwap = false;
@@ -5599,13 +5816,13 @@
     setPanelHeading(0, en ? 'Tree' : 'Boom');
     setPanelHeading(1, en ? 'LEX axis - utterance type' : 'LEX-as · uitingtype');
     setPanelHeading(2, en ? 'Relations / rules' : 'Relaties / regels');
-    setText('.right-menu-width-callout .inline-help', en ? 'Set the width of the right menu directly. The grid uses only the space needed for tree + axes; the remaining space goes to this column.' : 'Kies hier direct de breedte van het rechter menu. Het grid gebruikt alleen de benodigde ruimte voor boom + assen; de rest gaat naar deze kolom.');
+    setText('.right-menu-width-callout .inline-help', en ? 'Set the width of the right menu directly. The grid uses only the space needed for the active view; the remaining space goes to this column.' : 'Kies hier direct de breedte van het rechter menu. Het grid gebruikt alleen de benodigde ruimte voor de actieve view; de rest gaat naar deze kolom.');
     setText('.side-panel .panel-card:first-child > .sticky-note', en ? 'Tree settings. Tree spacing and Main window are configured here, not above the grid.' : 'Boominstellingen. Boomruimte en Hoofdvenster staan hier, niet meer boven het grid.');
 
     setLabelSpan('rightMenuWidthSelectTop', en ? 'Right column visible' : 'Rechterkolom zichtbaar');
-    setLabelSpan('centralModeSelect', 'View', en ? 'Choose central view: syntax tree or functional structure.' : 'Kies de centrale view: syntaxboom of functionele structuur.');
-    setLabelSpan('mainViewSelect', 'View', en ? 'Choose central view: syntax tree or functional structure.' : 'Kies de centrale view: syntaxboom of functionele structuur.');
-    setLabelSpan('mobileViewSelect', 'View', en ? 'Choose central view: syntax tree or functional structure.' : 'Kies de centrale view: syntaxboom of functionele structuur.');
+    setLabelSpan('centralModeSelect', 'View', en ? 'Choose central view: Syntax or FT (functional structure).' : 'Kies de centrale view: Syntax of FT (functionele structuur).');
+    setLabelSpan('mainViewSelect', 'View', en ? 'Choose central view: Syntax or FT (functional structure).' : 'Kies de centrale view: Syntax of FT (functionele structuur).');
+    setLabelSpan('mobileViewSelect', 'View', en ? 'Choose central view: Syntax or FT (functional structure).' : 'Kies de centrale view: Syntax of FT (functionele structuur).');
     setLabelSpan('treeChoiceSelect', en ? 'Tree choice' : 'Boomkeuze');
     setLabelSpan('functionalOrderSelect', en ? 'Layout order' : 'Layout order');
     setLabelSpan('branchOrderSelect', en ? 'Branch order' : 'Takvolgorde');
@@ -5617,9 +5834,27 @@
     setLabelSpan('viewFitSelect', en ? 'Main window' : 'Hoofdvenster');
     setLabelSpan('mainViewFitSelectTop', en ? 'Main window' : 'Hoofdvenster');
     setLabelSpan('freeSlotCountSelect', en ? 'Free tree rows' : 'Boom vrije rijen');
+    setLabelSpan('lexProjectionColorSelect', en ? 'LEX color' : 'LEX-kleur');
+    if (els.lexProjectionColorSelect?.options?.[0]) els.lexProjectionColorSelect.options[0].textContent = en ? 'blue' : 'blauw';
+    setLabelSpan('syntProjectionColorSelect', en ? 'SYNT color' : 'SYNT-kleur');
+    setLabelSpan('logProjectionColorSelect', en ? 'LOG color' : 'LOG-kleur');
+    setInputLabelText('#projectionBoxDraggableInput', en ? 'draggable' : 'verplaatsbaar');
+    setInputLabelText('#southBoxDraggableInput', en ? 'draggable' : 'verplaatsbaar');
+    setLabelSpan('projectionBoxDraggableInput', en ? 'Projections box' : 'Projecties-box');
+    setLabelSpan('southBoxDraggableInput', en ? 'Language-action box' : 'Taalactiebox');
+    document.querySelectorAll('.config-save-field legend').forEach(node => { node.textContent = en ? 'Save config' : 'Config opslaan'; });
+    setText('#saveConfigButton', en ? 'Yes · save config' : 'Ja · bewaar config');
+    setText('#discardConfigButton', en ? 'No · restore last saved config' : 'Nee · herstel laatst bewaarde config');
+    setText('#downloadConfigLogButton', en ? 'Download local config log' : 'Download lokaal config-log');
+    const projBoxOuter = els.projectionBoxDraggableInput?.closest?.('label.inline-checkbox')?.parentElement;
+    if (projBoxOuter?.querySelector?.('span')) projBoxOuter.querySelector('span').textContent = en ? 'Projections box' : 'Projecties-box';
+    const southBoxOuter = els.southBoxDraggableInput?.closest?.('label.inline-checkbox')?.parentElement;
+    if (southBoxOuter?.querySelector?.('span')) southBoxOuter.querySelector('span').textContent = en ? 'Language-action box' : 'Taalactiebox';
     setLabelSpan('lexFreeSlotCountSelect', en ? 'Adverb boxes' : 'Bijwoordboxen');
     setLabelSpan('lexFreeSlotPlacementSelect', en ? 'Host box' : 'Hostbox');
     setLabelSpan('lexInsertionContentSelect', en ? 'Adverb / content' : 'Bijwoord / inhoud');
+    document.querySelectorAll('.projection-color-field legend').forEach(node => { node.textContent = en ? 'Projection colors' : 'Projectiekleuren'; });
+    document.querySelectorAll('.projection-color-field .top-menu-choice-help').forEach(node => { node.textContent = en ? 'LEX and LEX projection lines stay blue. Choose colors for the other named projections here.' : 'LEX en de LEX-projectielijnen blijven blauw. Kies hier de kleuren voor de andere named projections.'; });
     document.querySelectorAll('.lex-adverb-insert-field legend').forEach(node => { node.textContent = en ? 'Adverb LEX slot above syntax box' : 'Bijwoordslot op LEX-as'; });
     document.querySelectorAll('.lex-adverb-insert-field .top-menu-choice-help').forEach(node => { node.textContent = en ? 'Choose the adverb and host box. The adverb is drawn as an external LEX slot on the LEX axis, vertically just above S, NP, VP, V, PP or AP; the host subtree is lowered to create space.' : 'Kies het bijwoord en de hostbox. Het bijwoord wordt als extern LEX-slot op de LEX-as getekend, verticaal net boven S, NP, VP, V, PP of AP; de host-subboom schuift lager om ruimte te maken.'; });
     setLabelSpan('lexRuleSelect', en ? 'Utterance-type rule' : 'Uitingtype-regel');
@@ -5639,11 +5874,11 @@
     setInputLabelText('#showRelationsInput', en ? 'Branches' : 'Taklijnen');
     setInputLabelText('#showLabelsInput', en ? 'Tree labels' : 'Boomlabels');
     setText('#applyLexRuleButton', en ? 'Apply rule' : 'Pas regel toe');
-    setText('#relationHelp', en ? 'No separate relation editor. This list follows the active view: SYNT rules, LOG south-axis order, or FT functional-view roles.' : 'Geen losse editor-relaties. Deze lijst volgt de actieve view: SYNT-regels, LOG-volgorde op de zuidas of FT-rollen in de functionele view.');
+    setText('#relationHelp', en ? 'No separate relation editor. This list follows the active view: SYNT rules, FT roles, or LOG south-axis order.' : 'Geen losse editor-relaties. Deze lijst volgt de actieve view: SYNT-regels, FT-rollen of LOG-volgorde op de zuidas.');
 
     setText('.mobile-sheet-header .intro-kicker', en ? 'Mobile viewer' : 'Mobiele viewer');
     setText('#mobileCloseButton', en ? 'Close' : 'Sluit');
-    setText('.mobile-sheet-section[aria-label="Projecties"] h3', en ? 'Projection' : 'Projectie');
+    setText('.mobile-sheet-section[aria-label="Projecties"] h3', en ? 'Projections' : 'Projecties');
     setText('.mobile-sheet-section[aria-label="Snelle acties"] h3', en ? 'Actions' : 'Acties');
     setText('.mobile-sheet-section[aria-label="Menu\'s boven grid"] h3', en ? 'Menus above grid' : 'Menu’s boven grid');
     setText('.mobile-sheet-section[aria-label="LEX vrije slots"] h3', en ? 'LEX free slots' : 'LEX vrije slots');
@@ -5655,7 +5890,7 @@
     setText('#mobileResetButton', en ? 'Reset sample' : 'Reset voorbeeld');
     setText('label[for="mobileFileInput"]', en ? 'Load JSON' : 'JSON laden');
     setText('#mobileDownloadJsonButton', en ? 'Download JSON' : 'Download JSON');
-    setText('.mobile-sheet-note', en ? 'Main grid panning is disabled. Use FIT to frame the tree and projection axes.' : 'Sleep met één vinger om te pannen. Knijp met twee vingers om te zoomen. FIT zet de boom en projectie-assen terug passend in beeld.');
+    setText('.mobile-sheet-note', en ? 'Drag with one finger to pan. Pinch with two fingers to zoom. FIT frames the active view.' : 'Sleep met één vinger om te pannen. Knijp met twee vingers om te zoomen. FIT zet de actieve view passend in beeld.');
 
     document.querySelectorAll('.text-panel summary').forEach((node, index) => {
       if (index === 0) node.textContent = en ? 'What is included in this Lite version?' : 'Wat zit in deze eerste Lite-versie?';
@@ -5663,7 +5898,7 @@
     });
     const details = document.querySelectorAll('.text-panel details');
     if (details[0]) details[0].querySelectorAll('p').forEach((p, i) => {
-      if (i === 0) p.textContent = en ? 'This version is a viewer/demo: choose a sample sentence, choose a projection, show growth, load/download JSON and open documentation. Separate node and relation editing has been removed.' : 'Deze versie is een viewer/demo: voorbeeldzin kiezen, projectie kiezen, groei tonen, canvas pannen/zoomen, JSON laden/downloaden en documentatie openen. Losse knoop- en relatie-editing is verwijderd.';
+      if (i === 0) p.textContent = en ? 'The viewer shows Open Graph Notation with grid rule, projection mechanism, views and named projections. You can choose sample sentences, use Play, inspect projections, pan/zoom the canvas, load/download JSON and open documentation.' : 'De viewer toont Open Graph Notation met gridregel, projectiemechanisme, views en named projections. Je kunt voorbeeldzinnen kiezen, Play gebruiken, projecties bekijken, canvas pannen/zoomen, JSON laden/downloaden en documentatie openen.';
       if (i === 1) p.textContent = en ? 'Not carried over from the Java app: classical graph algorithms such as planarity, Dijkstra, MST, biconnectivity and canonical ordering. They are outside this first JAN language-tree layer.' : 'Niet overgenomen uit de Java-app: klassieke graph-algoritmen zoals planarity, Dijkstra, MST, biconnectivity en canonical ordering. Die horen niet bij deze eerste JAN-taalboomlaag.';
     });
   }
@@ -5695,9 +5930,10 @@
     setText('.config-topbar p', en ? 'Tree spacing and Main window live under Config → Tree. Adverb LEX slots, rules, export and documentation are also here. Main stays narrow: sentences, adverb, Help and Config. The Back to main bar stays fixed while this page scrolls.' : 'Boomruimte en Hoofdvenster staan onder Config → Boom. Bijwoordslots, plaatsingsregels, export en documentatie staan ook hier. Main blijft smal: zinnen, bijwoord, Help en Config. De Terug-naar-main-balk blijft vast staan bij scrollen.');
     setText('.help-topbar .intro-kicker', 'Help');
     setText('.help-topbar h2', en ? 'Help' : 'Uitleg');
-    setText('.help-topbar p', en ? 'Choose a topic in the help tree. Each topic opens separately; the carousel area is reserved inside Help.' : 'Kies een onderwerp in de helpboom. Elk onderwerp opent apart; de carouselruimte is in Help gereserveerd.');
+    setText('.help-topbar p', en ? 'Items on the left, text on the right. Each topic has a reserved carousel-image area below the text.' : 'Links staan de items; rechts staat de tekst. Onder elk item is ruimte voor een carousel-image.');
 
     setText('[data-projection="axes"], [data-main-projection="axes"]', en ? 'All' : 'Alle');
+    setText('.main-projection-title', en ? 'Projections' : 'Projecties');
     setText('[data-projection="source"], [data-main-projection="source"], [data-mobile-projection="source"]', en ? 'Source' : 'Bron');
     setText('[data-projection="synt"]', en ? 'SYNT projection' : 'SYNT-projectie');
     setText('[data-main-projection="synt"]', 'SYNT');
@@ -5751,6 +5987,152 @@
     setHelpTopic('opengraph');
   }
 
+  function currentConfigSnapshot() {
+    return {
+      version: VERSION,
+      language: state.language,
+      centerMode: state.centerMode,
+      treeChoice: state.treeChoice,
+      functionalOrder: state.functionalOrder,
+      branchOrder: state.branchOrder,
+      layoutDensity: state.layoutDensity,
+      viewFitMode: state.viewFitMode,
+      showGrid: !!state.showGrid,
+      showRelations: !!state.showRelations,
+      showLabels: !!state.showLabels,
+      syntProjectionColor: state.syntProjectionColor,
+      logProjectionColor: state.logProjectionColor,
+      projectionBoxDraggable: !!state.projectionBoxDraggable,
+      projectionBoxManual: state.projectionBoxManual || null,
+      southBoxDraggable: !!state.southBoxDraggable,
+      southBoxManual: state.southBoxManual || null,
+      freeSlotCount: state.freeSlotCount,
+      lexFreeSlotCount: state.lexFreeSlotCount,
+      lexFreeSlotPlacement: state.lexFreeSlotPlacement,
+      lexInsertionContent: state.lexInsertionContent,
+      topMenuChoices: Array.isArray(state.topMenuChoices) ? state.topMenuChoices.slice() : []
+    };
+  }
+
+  function appendConfigLog(action, details = {}) {
+    const entry = { time: new Date().toISOString(), version: VERSION, action, details };
+    try {
+      const raw = localStorage.getItem(CONFIG_LOG_KEY);
+      const list = raw ? JSON.parse(raw) : [];
+      list.push(entry);
+      while (list.length > 120) list.shift();
+      localStorage.setItem(CONFIG_LOG_KEY, JSON.stringify(list));
+    } catch (_err) {}
+    return entry;
+  }
+
+  function syncConfigSaveStatus(saved = null) {
+    if (!els.configSaveStatus) return;
+    if (saved === true) {
+      els.configSaveStatus.textContent = isEnglish()
+        ? 'Config saved locally. Changes are also written to the local config log.'
+        : 'Config lokaal bewaard. Wijzigingen staan ook in het lokale config-log.';
+      return;
+    }
+    if (saved === false) {
+      els.configSaveStatus.textContent = isEnglish()
+        ? 'Config restored from the last saved local snapshot.'
+        : 'Config hersteld uit de laatst lokaal bewaarde snapshot.';
+      return;
+    }
+    els.configSaveStatus.textContent = isEnglish()
+      ? 'Config changes are applied immediately. Use Save to store a local snapshot; use No to restore the last saved snapshot.'
+      : 'Configwijzigingen worden direct toegepast. Gebruik Ja om lokaal te bewaren; gebruik Nee om de laatst bewaarde snapshot te herstellen.';
+  }
+
+  function markConfigDirty(label = '') {
+    if (!els.configSaveStatus) return;
+    const suffix = label ? ` · ${label}` : '';
+    els.configSaveStatus.textContent = isEnglish()
+      ? `Unstored config change${suffix}. Use Save or No.`
+      : `Niet-bewaarde configwijziging${suffix}. Kies Ja of Nee.`;
+  }
+
+  function applyConfigSnapshot(snapshot = {}) {
+    if (!snapshot || typeof snapshot !== 'object') return false;
+    if (typeof snapshot.language === 'string') state.language = snapshot.language === 'en' ? 'en' : 'nl';
+    if (typeof snapshot.centerMode === 'string') state.centerMode = (snapshot.centerMode === 'ft' || snapshot.centerMode === 'functional') ? 'ft' : 'syntax';
+    if (typeof snapshot.treeChoice === 'string') state.treeChoice = snapshot.treeChoice;
+    if (typeof snapshot.functionalOrder === 'string') state.functionalOrder = snapshot.functionalOrder;
+    if (typeof snapshot.branchOrder === 'string') state.branchOrder = snapshot.branchOrder;
+    if (typeof snapshot.layoutDensity === 'string') state.layoutDensity = snapshot.layoutDensity;
+    if (typeof snapshot.viewFitMode === 'string') state.viewFitMode = snapshot.viewFitMode;
+    if (typeof snapshot.syntProjectionColor === 'string') state.syntProjectionColor = snapshot.syntProjectionColor;
+    if (typeof snapshot.logProjectionColor === 'string') state.logProjectionColor = snapshot.logProjectionColor;
+    if (typeof snapshot.projectionBoxDraggable === 'boolean') state.projectionBoxDraggable = snapshot.projectionBoxDraggable;
+    if (snapshot.projectionBoxManual && Number.isFinite(snapshot.projectionBoxManual.left) && Number.isFinite(snapshot.projectionBoxManual.top)) state.projectionBoxManual = snapshot.projectionBoxManual;
+    else if ('projectionBoxManual' in snapshot) state.projectionBoxManual = null;
+    if (typeof snapshot.southBoxDraggable === 'boolean') state.southBoxDraggable = snapshot.southBoxDraggable;
+    if (snapshot.southBoxManual && Number.isFinite(snapshot.southBoxManual.left) && Number.isFinite(snapshot.southBoxManual.top)) state.southBoxManual = snapshot.southBoxManual;
+    else if ('southBoxManual' in snapshot) state.southBoxManual = null;
+    if (typeof snapshot.showGrid === 'boolean') state.showGrid = snapshot.showGrid;
+    if (typeof snapshot.showRelations === 'boolean') state.showRelations = snapshot.showRelations;
+    if (typeof snapshot.showLabels === 'boolean') state.showLabels = snapshot.showLabels;
+    if (Number.isFinite(Number(snapshot.freeSlotCount))) state.freeSlotCount = Math.max(0, Math.min(6, Number(snapshot.freeSlotCount)));
+    if (Number.isFinite(Number(snapshot.lexFreeSlotCount))) state.lexFreeSlotCount = Math.max(0, Math.min(8, Number(snapshot.lexFreeSlotCount)));
+    if (typeof snapshot.lexFreeSlotPlacement === 'string') state.lexFreeSlotPlacement = snapshot.lexFreeSlotPlacement;
+    if (typeof snapshot.lexInsertionContent === 'string') state.lexInsertionContent = snapshot.lexInsertionContent;
+    if (Array.isArray(snapshot.topMenuChoices)) state.topMenuChoices = snapshot.topMenuChoices.slice(0, TOP_MENU_MAX);
+    try {
+      localStorage.setItem('opengraph_projection_color_synt', state.syntProjectionColor);
+      localStorage.setItem('opengraph_projection_color_log', state.logProjectionColor);
+      localStorage.setItem('opengraph_projection_box_draggable', state.projectionBoxDraggable ? '1' : '0');
+      localStorage.setItem('opengraph_south_box_draggable', state.southBoxDraggable ? '1' : '0');
+      if (state.projectionBoxManual) localStorage.setItem('opengraph_projection_box_manual_v1013', JSON.stringify(state.projectionBoxManual));
+      else localStorage.removeItem('opengraph_projection_box_manual_v1013');
+      if (state.southBoxManual) localStorage.setItem('opengraph_south_box_manual_v4578', JSON.stringify(state.southBoxManual));
+      else localStorage.removeItem('opengraph_south_box_manual_v4578');
+    } catch (_err) {}
+    resetManualViewBox();
+    return true;
+  }
+
+  function loadSavedConfigSnapshot() {
+    try {
+      const raw = localStorage.getItem(CONFIG_STORAGE_KEY);
+      if (!raw) return false;
+      return applyConfigSnapshot(JSON.parse(raw));
+    } catch (_err) { return false; }
+  }
+
+  function saveConfigSnapshot() {
+    const snapshot = currentConfigSnapshot();
+    try { localStorage.setItem(CONFIG_STORAGE_KEY, JSON.stringify(snapshot)); } catch (_err) {}
+    appendConfigLog('save-config', snapshot);
+    syncConfigSaveStatus(true);
+  }
+
+  function discardConfigChanges() {
+    let ok = false;
+    try {
+      const raw = localStorage.getItem(CONFIG_STORAGE_KEY);
+      if (raw) ok = applyConfigSnapshot(JSON.parse(raw));
+    } catch (_err) {}
+    appendConfigLog(ok ? 'restore-config' : 'restore-config-missing', currentConfigSnapshot());
+    syncConfigSaveStatus(ok ? false : null);
+    syncControls();
+    applyLanguage();
+    render();
+  }
+
+  function downloadConfigLog() {
+    let list = [];
+    try { list = JSON.parse(localStorage.getItem(CONFIG_LOG_KEY) || '[]'); } catch (_err) { list = []; }
+    const lines = [
+      `OpenGraph local config log`,
+      `version=${VERSION}`,
+      `downloaded=${new Date().toISOString()}`,
+      '',
+      ...list.map(entry => `${entry.time || ''}\t${entry.action || ''}\t${JSON.stringify(entry.details || {})}`)
+    ];
+    download(`opengraph-local-config-log-${VERSION}.txt`, lines.join('\n'), 'text/plain');
+  }
+
   function setAppScreen(screen = 'main') {
     const next = ['main', 'config', 'help'].includes(screen) ? screen : 'main';
     const isMain = next === 'main';
@@ -5781,6 +6163,101 @@
     setAppScreen(open ? 'help' : 'main');
   }
 
+
+  function safeStoreProjectionBoxManual(value) {
+    state.projectionBoxManual = value;
+    try {
+      if (value && Number.isFinite(value.left) && Number.isFinite(value.top)) {
+        localStorage.setItem('opengraph_projection_box_manual_v1013', JSON.stringify({ left: Math.round(value.left), top: Math.round(value.top) }));
+      } else {
+        localStorage.removeItem('opengraph_projection_box_manual_v1013');
+      }
+    } catch (_err) {}
+  }
+
+  function updateProjectionBoxDraggable(enabled) {
+    state.projectionBoxDraggable = !!enabled;
+    try { localStorage.setItem('opengraph_projection_box_draggable', state.projectionBoxDraggable ? '1' : '0'); } catch (_err) {}
+    if (els.projectionBoxDraggableInput) els.projectionBoxDraggableInput.checked = state.projectionBoxDraggable;
+    const box = document.querySelector('.main-grid-controls');
+    if (box) box.classList.toggle('is-draggable', state.projectionBoxDraggable);
+    syncMainOverlayControlPlacement();
+  }
+
+  function bindProjectionBoxDrag() {
+    const box = document.querySelector('.main-grid-controls');
+    const host = els.canvasWrap || workspaceForStage();
+    if (!box || !host || box.dataset.dragBound === '1') return;
+    box.dataset.dragBound = '1';
+
+    box.addEventListener('dblclick', event => {
+      if (event.target?.closest?.('button,input,select,a,label')) return;
+      safeStoreProjectionBoxManual(null);
+      state.projectionBoxDrag = null;
+      syncMainOverlayControlPlacement();
+      markConfigDirty('Projecties-box');
+      event.preventDefault();
+      event.stopPropagation();
+    });
+
+    box.addEventListener('pointerdown', event => {
+      if (!state.projectionBoxDraggable) return;
+      if (event.button !== undefined && event.button !== 0) return;
+      if (event.target?.closest?.('button,input,select,a,label')) return;
+      const rect = box.getBoundingClientRect();
+      const hostRect = host.getBoundingClientRect();
+      state.projectionBoxDrag = {
+        pointerId: event.pointerId,
+        startX: event.clientX,
+        startY: event.clientY,
+        startLeft: rect.left - hostRect.left,
+        startTop: rect.top - hostRect.top,
+        width: rect.width,
+        height: rect.height,
+        moved: false
+      };
+      box.setPointerCapture?.(event.pointerId);
+      box.classList.add('is-dragging');
+      event.preventDefault();
+      event.stopPropagation();
+    });
+
+    box.addEventListener('pointermove', event => {
+      const drag = state.projectionBoxDrag;
+      if (!drag || drag.pointerId !== event.pointerId) return;
+      const hostRect = host.getBoundingClientRect();
+      const dx = event.clientX - drag.startX;
+      const dy = event.clientY - drag.startY;
+      if (Math.abs(dx) + Math.abs(dy) > 3) drag.moved = true;
+      const minLeft = 8;
+      const minTop = 8;
+      const maxLeft = Math.max(minLeft, hostRect.width - drag.width - 8);
+      const maxTop = Math.max(minTop, hostRect.height - drag.height - 8);
+      const left = Math.round(Math.max(minLeft, Math.min(maxLeft, drag.startLeft + dx)));
+      const top = Math.round(Math.max(minTop, Math.min(maxTop, drag.startTop + dy)));
+      document.documentElement.style.setProperty('--main-controls-left', `${left}px`);
+      document.documentElement.style.setProperty('--main-controls-top', `${top}px`);
+      safeStoreProjectionBoxManual({ left, top });
+      event.preventDefault();
+      event.stopPropagation();
+    });
+
+    const finish = event => {
+      const drag = state.projectionBoxDrag;
+      if (!drag || drag.pointerId !== event.pointerId) return;
+      if (drag.moved) {
+        markConfigDirty('Projecties-box positie');
+        appendConfigLog('move-projection-box', state.projectionBoxManual || {});
+      }
+      state.projectionBoxDrag = null;
+      box.classList.remove('is-dragging');
+      try { box.releasePointerCapture?.(event.pointerId); } catch (_err) {}
+      event.preventDefault();
+      event.stopPropagation();
+    };
+    box.addEventListener('pointerup', finish);
+    box.addEventListener('pointercancel', finish);
+  }
 
   function safeStoreSouthBoxManual(value) {
     state.southBoxManual = value;
@@ -5861,7 +6338,11 @@
     const finish = event => {
       const drag = state.southBoxDrag;
       if (!drag || drag.pointerId !== event.pointerId) return;
-      if (drag.moved) state.southBoxClickSuppressed = true;
+      if (drag.moved) {
+        state.southBoxClickSuppressed = true;
+        markConfigDirty('Taalactiebox positie');
+        appendConfigLog('move-south-box', state.southBoxManual || {});
+      }
       state.southBoxDrag = null;
       box.classList.remove('is-dragging');
       try { box.releasePointerCapture?.(event.pointerId); } catch (_err) {}
@@ -5933,8 +6414,9 @@
       if (event.key === 'Escape' && (document.body.classList.contains('config-screen-active') || document.body.classList.contains('help-screen-active'))) setAppScreen('main');
     });
     const setCenterModeFromViewSelect = value => {
-      state.centerMode = value === 'functional' ? 'functional' : 'syntax';
-      resetManualViewBox();
+      state.centerMode = (value === 'ft' || value === 'functional') ? 'ft' : 'syntax';
+      // Syntax en FT zijn twee centrale views in hetzelfde vaste viewport.
+      // Geen reset: ook deze wissel mag niet horizontaal of verticaal springen.
       render();
     };
     els.centralModeSelect?.addEventListener('change', event => setCenterModeFromViewSelect(event.target.value));
@@ -5970,7 +6452,10 @@
     els.rightMenuWidthSelectTop?.addEventListener('change', event => setRightMenuMode(event.target.value));
     els.mobileRightMenuWidthSelect?.addEventListener('change', event => setRightMenuMode(event.target.value));
     els.freeSlotCountSelect?.addEventListener('change', event => { state.freeSlotCount = Math.max(0, Math.min(6, Number(event.target.value) || 0)); resetManualViewBox(); render(); });
-    els.southBoxDraggableInput?.addEventListener('change', event => updateSouthBoxDraggable(event.target.checked));
+    els.syntProjectionColorSelect?.addEventListener('change', event => { state.syntProjectionColor = event.target.value || 'green'; try { localStorage.setItem('opengraph_projection_color_synt', state.syntProjectionColor); } catch (_err) {} appendConfigLog('change-synt-color', { syntProjectionColor: state.syntProjectionColor }); markConfigDirty('SYNT-kleur'); render(); });
+    els.logProjectionColorSelect?.addEventListener('change', event => { state.logProjectionColor = event.target.value || 'purple'; try { localStorage.setItem('opengraph_projection_color_log', state.logProjectionColor); } catch (_err) {} appendConfigLog('change-log-color', { logProjectionColor: state.logProjectionColor }); markConfigDirty('LOG-kleur'); render(); });
+    els.projectionBoxDraggableInput?.addEventListener('change', event => { updateProjectionBoxDraggable(event.target.checked); appendConfigLog('change-projection-box-draggable', { enabled: !!event.target.checked }); markConfigDirty('Projecties-box'); });
+    els.southBoxDraggableInput?.addEventListener('change', event => { updateSouthBoxDraggable(event.target.checked); appendConfigLog('change-south-box-draggable', { enabled: !!event.target.checked }); markConfigDirty('Taalactiebox'); });
     const updateLexFreeSlotCount = event => { state.lexFreeSlotCount = Math.max(0, Math.min(8, Number(event.target.value) || 0)); resetManualViewBox(); render(); };
     const updateLexFreeSlotPlacement = event => { state.lexFreeSlotPlacement = validLexSlotPlacement(event.target.value); resetManualViewBox(); render(); };
     els.lexFreeSlotCountSelect?.addEventListener('change', updateLexFreeSlotCount);
@@ -6014,7 +6499,7 @@
     els.growthStepInput?.addEventListener('input', event => setGrowthStep(event.target.value));
     els.growthPrevButton?.addEventListener('click', () => { stopGrowthPlayback(); state.growthEnabled = true; setGrowthStep(state.growthStep - 1); });
     els.growthNextButton?.addEventListener('click', () => { stopGrowthPlayback(); state.growthEnabled = true; setGrowthStep(state.growthStep + 1); });
-    els.growthResetButton?.addEventListener('click', () => { state.growthEnabled = true; stopGrowthPlayback(); setGrowthStep(0); });
+    els.growthResetButton?.addEventListener('click', () => { state.growthEnabled = true; state.projectionBlockUnlocked = false; stopGrowthPlayback(); setGrowthStep(0); });
     els.growthPlayButton?.addEventListener('click', toggleGrowthPlayback);
     els.mainGrowthPlayButton?.addEventListener('click', toggleGrowthPlayback);
     els.mainGrowthPrevButton?.addEventListener('click', () => { stopGrowthPlayback(); state.growthEnabled = true; setGrowthStep(state.growthStep - 1); });
@@ -6023,6 +6508,7 @@
     els.mainSouthPrevButton?.addEventListener('click', () => { stopGrowthPlayback(); cycleSouthLogicalMode(-1); requestAnimationFrame(syncMainOverlayControlPlacement); });
     els.mainSouthNextButton?.addEventListener('click', () => { stopGrowthPlayback(); cycleSouthLogicalMode(1); requestAnimationFrame(syncMainOverlayControlPlacement); });
     els.mainSouthModeButton?.addEventListener('click', () => { stopGrowthPlayback(); cycleSouthLogicalMode(1); requestAnimationFrame(syncMainOverlayControlPlacement); });
+    bindProjectionBoxDrag();
     bindSouthBoxDrag();
     document.querySelectorAll('[data-main-projection]').forEach(button => {
       button.addEventListener('click', () => {
@@ -6055,6 +6541,12 @@
         setMobileSheet(false);
         event.preventDefault();
       }
+    });
+    els.saveConfigButton?.addEventListener('click', saveConfigSnapshot);
+    els.discardConfigButton?.addEventListener('click', discardConfigChanges);
+    els.downloadConfigLogButton?.addEventListener('click', downloadConfigLog);
+    document.getElementById('configScreen')?.addEventListener('change', event => {
+      if (event.target?.id && !['syntProjectionColorSelect','logProjectionColorSelect','projectionBoxDraggableInput','southBoxDraggableInput'].includes(event.target.id)) markConfigDirty(event.target.id);
     });
     els.downloadJsonButton?.addEventListener('click', downloadJson);
     els.downloadOpnButton?.addEventListener('click', downloadOpn);
@@ -6089,18 +6581,44 @@
     });
   }
 
+
+  function ensureHelpTopicCarouselSlots() {
+    const panels = Array.from(document.querySelectorAll('.help-topic-panel'));
+    panels.forEach(panel => {
+      if (!panel || panel.querySelector('.help-topic-carousel-slot, .help-carousel-reserved')) return;
+      const topic = panel.getAttribute('data-help-topic') || 'help-topic';
+      const titleNode = panel.querySelector('h3');
+      const title = (titleNode?.textContent || topic).trim();
+      const slot = document.createElement('div');
+      slot.className = 'help-topic-carousel-slot';
+      slot.setAttribute('role', 'group');
+      slot.setAttribute('aria-label', `Carouselruimte: ${title}`);
+      slot.setAttribute('data-carousel-topic', title);
+      slot.innerHTML = `
+        <div class="help-carousel-frame">
+          <strong>${title}</strong>
+          <span class="help-lang-nl">Gereserveerde carousel-image voor dit help-item.</span>
+          <span class="help-lang-en">Reserved carousel image for this help item.</span>
+        </div>`;
+      panel.appendChild(slot);
+    });
+  }
+
   async function init() {
     document.body.classList.add('main-screen-active');
     document.body.classList.remove('config-screen-active');
     document.body.classList.remove('help-screen-active');
     syncViewportTestClasses();
     syncPortraitStageMode();
+    ensureHelpTopicCarouselSlots();
     registerEvents();
     registerCanvasPan();
     registerPaneSplitter();
     await loadStructureConfig();
     await loadExamplesFromHtml();
     await loadAdverbOptionsFromHtml();
+    loadSavedConfigSnapshot();
+    syncConfigSaveStatus();
     render();
     applyLanguage();
     requestAnimationFrame(() => requestAnimationFrame(stabilizeInitialTreeView));
@@ -6115,7 +6633,7 @@
       render();
     });
     window.addEventListener('orientationchange', () => {
-      // v1.0.9: breek actieve pinch/pan expliciet af vóór herfit.
+      // v2.0.0-rc.4: breek actieve pinch/pan expliciet af vóór herfit.
       resetManualViewBox();
       requestAnimationFrame(() => {
         resetManualViewBox();

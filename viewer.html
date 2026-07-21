@@ -1,6 +1,6 @@
 <!doctype html>
-<!-- OPENGRAPH_ROOT_VIEWER_INDEX_v1.0.9: this root index is the app, not docs. -->
-<html lang="nl" data-opengraph-app="viewer" data-version="v1.0.9">
+<!-- OPENGRAPH_ROOT_VIEWER_INDEX_v2.0.0-rc.4: this root index is the app, not docs. -->
+<html lang="nl" data-opengraph-app="viewer" data-version="v2.0.0-rc.4">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
@@ -9,10 +9,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#0f172a">
   <meta name="description" content="OpenGraph Lite Viewer: vrije JAN-bronknopen, edits, LEX-plaatsingsregels en projecties.">
-  <title>OpenGraph Lite Viewer v1.0.9</title>
+  <title>OpenGraph Lite Viewer v2.0.0-rc.4</title>
   <script>
     (function() {
-      var VERSION = 'v1.0.9';
+      var VERSION = 'v2.0.0-rc.4';
       window.__OPENGRAPH_EXPECTED_VERSION__ = VERSION;
       function runCacheCleanupOnce() {
         var flag = 'opengraph-cache-cleaned-' + VERSION;
@@ -52,13 +52,13 @@
   <link rel="icon" href="icons/icon-192.svg" type="image/svg+xml">
   <!-- v4552: manifest disabled in local/dev build to avoid PWA/service-worker confusion. -->
   <!-- <link rel="manifest" href="manifest.webmanifest"> -->
-  <link rel="stylesheet" href="styles.css?v1.0.9">
+  <link rel="stylesheet" href="styles.css?v2.0.0-rc.4">
 </head>
 <body class="main-screen-active">
   <header class="app-header">
     <div>
       <div class="eyebrow">OpenGraph · JAN · Open Notation</div>
-      <h1>OpenGraph Lite Viewer <span class="version-tag">v1.0.9</span></h1>
+      <h1>OpenGraph Lite Viewer <span class="version-tag">v2.0.0-rc.4</span></h1>
       <p class="header-subtitle">Redesign: View-menu voor syntaxboom of functionele structuur; daarna LEX-projectie en LOG-volgorde.</p>
     </div>
     <button id="installButton" class="ghost hidden" type="button">Installeer</button>
@@ -117,7 +117,7 @@
       <div>
         <div class="intro-kicker">Help</div>
         <h2>Uitleg</h2>
-        <p>Help bevat tekstuitleg en gebruiksaanwijzingen.</p>
+        <p>Links staan de items; rechts staat de tekst. Onder elk item is ruimte voor een carousel-image.</p>
       </div>
     </section>
 
@@ -135,29 +135,33 @@
                 <span class="help-lang-en">Open Graph Notation</span>
               </button>
               <ul>
-                <li><button class="help-topic-button" type="button" data-help-topic-button="tree-notation"><span class="help-lang-nl">Tree notation</span><span class="help-lang-en">Tree notation</span></button></li>
                 <li><button class="help-topic-button" type="button" data-help-topic-button="grid-rule"><span class="help-lang-nl">Gridregel</span><span class="help-lang-en">Grid rule</span></button></li>
+                <li><button class="help-topic-button" type="button" data-help-topic-button="projection-mechanism"><span class="help-lang-nl">Projectiemechanisme</span><span class="help-lang-en">Projection mechanism</span></button></li>
+                <li><button class="help-topic-button" type="button" data-help-topic-button="sequential-drawing"><span class="help-lang-nl">Volgordelijk schrijven</span><span class="help-lang-en">Sequential writing</span></button></li>
+                <li><button class="help-topic-button" type="button" data-help-topic-button="west-axis"><span class="help-lang-nl">West-as</span><span class="help-lang-en">West axis</span></button></li>
+                <li><button class="help-topic-button" type="button" data-help-topic-button="south-axis"><span class="help-lang-nl">Zuid-as</span><span class="help-lang-en">South axis</span></button></li>
               </ul>
             </li>
             <li>
-              <button class="help-topic-button" type="button" data-help-topic-button="views">
-                <span class="help-lang-nl">Views</span>
-                <span class="help-lang-en">Views</span>
-              </button>
-              <ul>
-                <li><button class="help-topic-button" type="button" data-help-topic-button="syntax-view"><span class="help-lang-nl">Syntax tree</span><span class="help-lang-en">Syntax tree</span></button></li>
-                <li><button class="help-topic-button" type="button" data-help-topic-button="functional-view"><span class="help-lang-nl">Functional structure</span><span class="help-lang-en">Functional structure</span></button></li>
-              </ul>
-            </li>
-            <li>
-              <button class="help-topic-button" type="button" data-help-topic-button="axes">
-                <span class="help-lang-nl">Projectie-assen</span>
-                <span class="help-lang-en">Projection axes</span>
+              <button class="help-topic-button" type="button" data-help-topic-button="named-projections">
+                <span class="help-lang-nl">Named projections</span>
+                <span class="help-lang-en">Named projections</span>
               </button>
               <ul>
                 <li><button class="help-topic-button" type="button" data-help-topic-button="lex-axis"><span>LEX</span></button></li>
                 <li><button class="help-topic-button" type="button" data-help-topic-button="synt-axis"><span>SYNT</span></button></li>
                 <li><button class="help-topic-button" type="button" data-help-topic-button="log-axis"><span>LOG</span></button></li>
+              </ul>
+            </li>
+            <li>
+              <button class="help-topic-button" type="button" data-help-topic-button="tree-notation">
+                <span class="help-lang-nl">Tree notation</span>
+                <span class="help-lang-en">Tree notation</span>
+              </button>
+              <ul>
+                <li><button class="help-topic-button" type="button" data-help-topic-button="views"><span class="help-lang-nl">Views</span><span class="help-lang-en">Views</span></button></li>
+                <li><button class="help-topic-button" type="button" data-help-topic-button="syntax-view"><span class="help-lang-nl">Syntax tree</span><span class="help-lang-en">Syntax tree</span></button></li>
+                <li><button class="help-topic-button" type="button" data-help-topic-button="functional-view"><span class="help-lang-nl">Functional structure</span><span class="help-lang-en">Functional structure</span></button></li>
               </ul>
             </li>
             <li>
@@ -169,6 +173,13 @@
                 <li><button class="help-topic-button" type="button" data-help-topic-button="lex-movement"><span class="help-lang-nl">LEX-wissels</span><span class="help-lang-en">LEX exchanges</span></button></li>
                 <li><button class="help-topic-button" type="button" data-help-topic-button="adverbs"><span class="help-lang-nl">Bijwoorden</span><span class="help-lang-en">Adverbs</span></button></li>
               </ul>
+            </li>
+
+            <li>
+              <button class="help-topic-button" type="button" data-help-topic-button="gitignore">
+                <span class="help-lang-nl">Gitignore</span>
+                <span class="help-lang-en">Gitignore</span>
+              </button>
             </li>
             <li>
               <button class="help-topic-button" type="button" data-help-topic-button="carousel">
@@ -184,46 +195,128 @@
         <article class="help-topic-panel is-active" data-help-topic="opengraph">
           <div class="help-lang-nl">
             <h3>Open Graph Notation</h3>
-            <p>Open Graph Notation tekent taalstructuren op een open raster. De notatie vertrekt van knopen met een eigen positie en maakt daarna afzonderlijke views en projecties mogelijk.</p>
-            <p>De kern is scheiding: structuur, woordvolgorde, syntactische regels en logische volgorde hoeven niet in één beeld te worden samengeperst.</p>
+            <p>Open Graph Notation staat op zichzelf. De notatie beschrijft knopen op een open grid en projecties vanuit die knopen naar veronderstelde assen.</p>
+            <p>De kern bestaat uit de <strong>Gridregel</strong>, het <strong>projectiemechanisme</strong> en een volgordelijke schrijfwijze: knopen verschijnen één voor één, met hun projectie zodra die knoop beschikbaar is.</p>
           </div>
           <div class="help-lang-en">
             <h3>Open Graph Notation</h3>
-            <p>Open Graph Notation draws linguistic structures on an open grid. It starts from positioned nodes and then allows separate views and projections.</p>
-            <p>The core idea is separation: structure, word order, syntactic rules and logical order do not have to be compressed into one image.</p>
+            <p>Open Graph Notation stands on its own. It describes nodes on an open grid and projections from those nodes to assumed axes.</p>
+            <p>Its core consists of the <strong>Grid rule</strong>, the <strong>projection mechanism</strong> and sequential writing: nodes appear one by one, with their projection as soon as the node is available.</p>
           </div>
           <div class="help-carousel-reserved" aria-label="Gereserveerde carouselruimte">
             <div class="help-carousel-frame">
               <strong><span class="help-lang-nl">Carouselruimte</span><span class="help-lang-en">Carousel space</span></strong>
-              <span class="help-lang-nl">Hier komt een reeks schermen voor Open Graph Notation en de tree-toepassing.</span>
-              <span class="help-lang-en">Reserved for a sequence documenting Open Graph Notation and the tree application.</span>
+              <span class="help-lang-nl">Gereserveerd voor een visuele uitleg van gridregel en projectiemechanisme.</span>
+              <span class="help-lang-en">Reserved for a visual explanation of the grid rule and projection mechanism.</span>
             </div>
-          </div>
-        </article>
-
-        <article class="help-topic-panel" data-help-topic="tree-notation">
-          <div class="help-lang-nl">
-            <h3>Tree notation als toepassing</h3>
-            <p>Tree notation is een toepassing van Open Graph Notation. In deze toepassing worden knopen zo geplaatst dat zij samen een herkenbare syntaxboom vormen.</p>
-            <p>De syntaxboom blijft de standaardweergave. Andere views en projecties gebruiken dezelfde voorbeeldzin, maar leggen een andere laag zichtbaar neer.</p>
-          </div>
-          <div class="help-lang-en">
-            <h3>Tree notation as application</h3>
-            <p>Tree notation is an application of Open Graph Notation. In this application, nodes are positioned so they form a recognizable syntax tree.</p>
-            <p>The syntax tree remains the standard view. Other views and projections use the same sample sentence but display a different layer.</p>
           </div>
         </article>
 
         <article class="help-topic-panel" data-help-topic="grid-rule">
           <div class="help-lang-nl">
             <h3>Gridregel</h3>
-            <p>In de tree-toepassing staat elke knoop op een eigen kruispunt: één knoop per horizontale gridlijn en één knoop per verticale gridlijn.</p>
-            <p>Die regel houdt de boom leesbaar en maakt ruimte voor projecties op vaste assen.</p>
+            <p>Een knoop staat op een eigen kruispunt van het grid. In de strikte boomweergave is elke knoop de enige knoop op zijn horizontale gridlijn en de enige knoop op zijn verticale gridlijn.</p>
+            <p>Die regel maakt de plaats van een knoop ondubbelzinnig. Projectielijnen kunnen daardoor helder naar een west-as of zuid-as worden getrokken.</p>
           </div>
           <div class="help-lang-en">
             <h3>Grid rule</h3>
-            <p>In the tree application, each node occupies its own grid intersection: one node per horizontal grid line and one node per vertical grid line.</p>
-            <p>This rule keeps the tree readable and leaves room for projections on fixed axes.</p>
+            <p>A node occupies its own grid intersection. In the strict tree display, each node is the only node on its horizontal grid line and the only node on its vertical grid line.</p>
+            <p>This makes the node position unambiguous. Projection lines can then be drawn clearly to a west axis or south axis.</p>
+          </div>
+        </article>
+
+        <article class="help-topic-panel" data-help-topic="projection-mechanism">
+          <div class="help-lang-nl">
+            <h3>Projectiemechanisme</h3>
+            <p>Een projectie verbindt een bronknoop met een positie op een veronderstelde as. De bronknoop blijft staan; de projectie toont een andere lezing of ordening.</p>
+            <p>Horizontale projecties lopen naar een west-as. Verticale of zuidelijke projecties lopen naar een zuid-as. In de algemene notatie zijn die assen nog niet ingevuld met namen of taalkundige inhoud.</p>
+            <p>De punten op de assen heten <strong>projectiemerkers</strong>. Zij zijn geen nieuwe bronknopen, maar asposities die door projectie ontstaan.</p>
+          </div>
+          <div class="help-lang-en">
+            <h3>Projection mechanism</h3>
+            <p>A projection connects a source node to a position on an assumed axis. The source node remains in place; the projection shows another reading or ordering.</p>
+            <p>Horizontal projections run to a west axis. Vertical or southern projections run to a south axis. In the general notation, these axes are not yet filled with names or linguistic content.</p>
+            <p>The points on the axes are called <strong>projection markers</strong>. They are not new source nodes, but axis positions created by projection.</p>
+          </div>
+        </article>
+
+        <article class="help-topic-panel" data-help-topic="sequential-drawing">
+          <div class="help-lang-nl">
+            <h3>Volgordelijke notatie</h3>
+            <p>Open Graph Notation kan als schrijfproces worden gelezen. Eerst verschijnen centrale bronknopen één voor één. Zodra een bronknoop beschikbaar is, kan de bijbehorende projectie naar een as worden geschreven.</p>
+            <p>Voor boomtoepassingen is de layout tweepass: eerst worden boxen bottom-up uitgerekend; daarna wordt top-down gerenderd. Het resultaat is statisch: de centrale graph transformeert niet door projecties of as-verplaatsingen.</p>
+          </div>
+          <div class="help-lang-en">
+            <h3>Sequential notation</h3>
+            <p>Open Graph Notation can be read as a writing process. Central source nodes appear one by one. As soon as a source node is available, its projection to an axis can be written.</p>
+            <p>For tree applications the layout is two-pass: boxes are computed bottom-up first; rendering then runs top-down. The result is static: the central graph is not transformed by projections or axis movements.</p>
+          </div>
+        </article>
+
+        <article class="help-topic-panel" data-help-topic="west-axis">
+          <div class="help-lang-nl">
+            <h3>West-as</h3>
+            <p>De west-as is de veronderstelde as links van het centrale grid. Een knoop kan horizontaal naar deze as projecteren.</p>
+            <p>De projectiemerker op de west-as behoudt de hoogte van zijn bronknoop, tenzij een named projection later eigen plaatsingsregels activeert.</p>
+          </div>
+          <div class="help-lang-en">
+            <h3>West axis</h3>
+            <p>The west axis is the assumed axis to the left of the central grid. A node can project horizontally to this axis.</p>
+            <p>The projection marker on the west axis keeps the source-node height unless a named projection later activates its own placement rules.</p>
+          </div>
+        </article>
+
+        <article class="help-topic-panel" data-help-topic="south-axis">
+          <div class="help-lang-nl">
+            <h3>Zuid-as</h3>
+            <p>De zuid-as is de veronderstelde as onder het centrale grid. Een knoop of geselecteerde waarde kan naar deze as projecteren wanneer een zuidelijke ordening nodig is.</p>
+            <p>De zuid-as beschrijft in de algemene notatie alleen de projectierichting en de projectiemerkers. De naam en selectie horen bij een named projection.</p>
+          </div>
+          <div class="help-lang-en">
+            <h3>South axis</h3>
+            <p>The south axis is the assumed axis below the central grid. A node or selected value can project to this axis when a southern ordering is needed.</p>
+            <p>In the general notation, the south axis only describes projection direction and projection markers. The name and selection belong to a named projection.</p>
+          </div>
+        </article>
+
+        <article class="help-topic-panel" data-help-topic="named-projections">
+          <div class="help-lang-nl">
+            <h3>Named projections</h3>
+            <p>Een named projection geeft een projectie een naam en eigen selectieregels.</p>
+            <ul><li><strong>LEX</strong>: selecteert lexicale items en plaatsingsslots; de projectie en projectiemerkers zijn blauw.</li><li><strong>SYNT</strong>: selecteert syntactische categorieën en regels.</li><li><strong>LOG</strong>: selecteert S, O en V voor de logische volgordeprojectie.</li></ul>
+          </div>
+          <div class="help-lang-en">
+            <h3>Named projections</h3>
+            <p>A named projection gives a projection a name and its own selection rules.</p>
+            <ul><li><strong>LEX</strong>: selects lexical items and placement slots; its projection and projection markers are blue.</li><li><strong>SYNT</strong>: selects syntactic categories and rules.</li><li><strong>LOG</strong>: selects S, O and V for the logical order projection.</li></ul>
+          </div>
+        </article>
+
+        <article class="help-topic-panel" data-help-topic="lex-axis">
+          <div class="help-lang-nl"><h3>LEX</h3><p>LEX is de named projection voor zichtbare woordvolgorde, lexicale plaatsing, LEX-wissels en bijwoordinserties.</p><p>De bronknopen projecteren eerst naar blauwe projectiemerkers op de LEX-as. Daarna kunnen LEX-Wissels gereserveerde lege plekken vullen.</p></div>
+          <div class="help-lang-en"><h3>LEX</h3><p>LEX is the named projection for visible word order, lexical placement, LEX exchanges and adverb insertions.</p><p>Source nodes first project to blue projection markers on the LEX axis. LEX exchanges may then fill reserved empty positions.</p></div>
+        </article>
+
+        <article class="help-topic-panel" data-help-topic="synt-axis">
+          <div class="help-lang-nl"><h3>SYNT</h3><p>SYNT is de named projection voor syntactische regels. Regels worden op bronhoogte getoond, bijvoorbeeld <code>S → NP VP</code> en <code>VP → V NP</code>.</p></div>
+          <div class="help-lang-en"><h3>SYNT</h3><p>SYNT is the named projection for syntactic rules. Rules are shown at source height, for example <code>S → NP VP</code> and <code>VP → V NP</code>.</p></div>
+        </article>
+
+        <article class="help-topic-panel" data-help-topic="log-axis">
+          <div class="help-lang-nl"><h3>LOG</h3><p>LOG is de named projection op de zuidas. Deze projectie selecteert S, O en V en toont de logische volgorde, bijvoorbeeld SOV, SVO of VSO.</p></div>
+          <div class="help-lang-en"><h3>LOG</h3><p>LOG is the named projection on the south axis. This projection selects S, O and V and shows the logical order, for example SOV, SVO or VSO.</p></div>
+        </article>
+
+        <article class="help-topic-panel" data-help-topic="tree-notation">
+          <div class="help-lang-nl">
+            <h3>Tree notation</h3>
+            <p>Tree notation gebruikt het grid om een herkenbare boom te tekenen. De gridregel houdt de knopen van elkaar gescheiden en maakt projecties leesbaar.</p>
+            <p>De taalboomweergave kan als Syntax tree of als Functional structure worden bekeken.</p>
+          </div>
+          <div class="help-lang-en">
+            <h3>Tree notation</h3>
+            <p>Tree notation uses the grid to draw a recognizable tree. The grid rule keeps nodes separated and makes projections readable.</p>
+            <p>The linguistic tree display can be viewed as Syntax tree or as Functional structure.</p>
           </div>
         </article>
 
@@ -231,12 +324,12 @@
           <div class="help-lang-nl">
             <h3>Views</h3>
             <p>Het View-menu kiest het centrale beeld. De standaardkeuze is <strong>Syntax tree</strong>. De alternatieve keuze is <strong>Functional structure</strong>.</p>
-            <p>Een view is het hoofdbeeld in de boomruimte. Projectie-assen staan daar omheen.</p>
+            <p>Een view is het hoofdbeeld in de boomruimte. Named projections staan daar omheen.</p>
           </div>
           <div class="help-lang-en">
             <h3>Views</h3>
             <p>The View menu chooses the central image. The standard choice is <strong>Syntax tree</strong>. The alternative choice is <strong>Functional structure</strong>.</p>
-            <p>A view is the main image in the tree area. Projection axes are placed around it.</p>
+            <p>A view is the main image in the tree area. Named projections are placed around it.</p>
           </div>
         </article>
 
@@ -244,12 +337,12 @@
           <div class="help-lang-nl">
             <h3>Syntax tree</h3>
             <p>Syntax tree toont de syntactische boom met categorieën zoals S, NP, VP, V en N.</p>
-            <p>De boom is de centrale structuur waarop de SYNT-regels en de andere projecties kunnen aansluiten.</p>
+            <p>SYNT kan de bijbehorende syntactische regels apart tonen.</p>
           </div>
           <div class="help-lang-en">
             <h3>Syntax tree</h3>
             <p>Syntax tree shows the syntactic tree with categories such as S, NP, VP, V and N.</p>
-            <p>The tree is the central structure to which the SYNT rules and other projections can connect.</p>
+            <p>SYNT can show the corresponding syntactic rules separately.</p>
           </div>
         </article>
 
@@ -257,41 +350,13 @@
           <div class="help-lang-nl">
             <h3>Functional structure</h3>
             <p>Functional structure toont de functionele opbouw van de zin, bijvoorbeeld CLAUSE, AGENS, PRED en PATIENS.</p>
-            <p>Deze view maakt rollen zichtbaar zonder de syntaxboom als vorm te hoeven gebruiken.</p>
+            <p>Deze view maakt rollen zichtbaar zonder de syntaxboom als vorm te gebruiken.</p>
           </div>
           <div class="help-lang-en">
             <h3>Functional structure</h3>
             <p>Functional structure shows the functional composition of the sentence, for example CLAUSE, AGENS, PRED and PATIENS.</p>
-            <p>This view shows roles without needing the syntax-tree shape.</p>
+            <p>This view shows roles without using the syntax-tree shape.</p>
           </div>
-        </article>
-
-        <article class="help-topic-panel" data-help-topic="axes">
-          <div class="help-lang-nl">
-            <h3>Projectie-assen</h3>
-            <p>Projectie-assen tonen afgeleide informatie naast het centrale beeld.</p>
-            <ul><li><strong>LEX</strong>: zichtbare woordvolgorde en lexicale plaatsing.</li><li><strong>SYNT</strong>: syntactische regels.</li><li><strong>LOG</strong>: logische S-O-V-projectie.</li></ul>
-          </div>
-          <div class="help-lang-en">
-            <h3>Projection axes</h3>
-            <p>Projection axes show derived information next to the central image.</p>
-            <ul><li><strong>LEX</strong>: visible word order and lexical placement.</li><li><strong>SYNT</strong>: syntactic rules.</li><li><strong>LOG</strong>: logical S-O-V projection.</li></ul>
-          </div>
-        </article>
-
-        <article class="help-topic-panel" data-help-topic="lex-axis">
-          <div class="help-lang-nl"><h3>LEX</h3><p>LEX toont de zichtbare volgorde van woorden en lexicale inserties. Wissels en bijwoordslots worden op deze as zichtbaar gemaakt.</p></div>
-          <div class="help-lang-en"><h3>LEX</h3><p>LEX shows the visible order of words and lexical insertions. Exchanges and adverb slots are shown on this axis.</p></div>
-        </article>
-
-        <article class="help-topic-panel" data-help-topic="synt-axis">
-          <div class="help-lang-nl"><h3>SYNT</h3><p>SYNT toont syntactische regels op de hoogte van de corresponderende categorieën, bijvoorbeeld <code>S → NP VP</code> en <code>VP → V NP</code>.</p></div>
-          <div class="help-lang-en"><h3>SYNT</h3><p>SYNT shows syntactic rules at the height of the corresponding categories, for example <code>S → NP VP</code> and <code>VP → V NP</code>.</p></div>
-        </article>
-
-        <article class="help-topic-panel" data-help-topic="log-axis">
-          <div class="help-lang-nl"><h3>LOG</h3><p>LOG is de zuidas. Deze as toont de logische S-O-V-projectie en de volgordemodi zoals SOV, SVO en VSO.</p></div>
-          <div class="help-lang-en"><h3>LOG</h3><p>LOG is the south axis. It shows the logical S-O-V projection and order modes such as SOV, SVO and VSO.</p></div>
         </article>
 
         <article class="help-topic-panel" data-help-topic="language-actions">
@@ -300,27 +365,50 @@
         </article>
 
         <article class="help-topic-panel" data-help-topic="lex-movement">
-          <div class="help-lang-nl"><h3>LEX-wissels</h3><p>Een LEX-wissel verandert de zichtbare woordvolgorde op de LEX-as. Bronposities kunnen als trace zichtbaar blijven.</p></div>
-          <div class="help-lang-en"><h3>LEX exchanges</h3><p>A LEX exchange changes visible word order on the LEX axis. Source positions may remain visible as traces.</p></div>
+          <div class="help-lang-nl"><h3>LEX-wissels</h3><p>Een LEX-wissel verandert de zichtbare woordvolgorde op de LEX-projectie. De centrale graph transformeert niet.</p><p>Wissels worden pas actief nadat alle centrale knopen zijn geplaatst. Zij gebruiken vooraf gereserveerde lege plekken, zoals Comp, vooropplaatsing/topic, V2/PV en bijwoordslots. Ruimte kan ontstaan door een vrije rij, een verlengde tak of door een host-subboom lager te plaatsen.</p></div>
+          <div class="help-lang-en"><h3>LEX exchanges</h3><p>A LEX exchange changes visible word order on the LEX projection. The central graph does not transform.</p><p>Exchanges become active only after all central nodes have been placed. They use reserved empty positions such as Comp, fronting/topic, V2/finite verb and adverb slots. Space may be created by a free row, an extended branch, or lowering the host subtree.</p></div>
         </article>
 
         <article class="help-topic-panel" data-help-topic="adverbs">
-          <div class="help-lang-nl"><h3>Bijwoorden</h3><p>Bijwoorden zijn lexicale inserties. Een bijwoord krijgt een extern LEX-slot op hosthoogte of vult bij vooropplaatsing slot 1.</p></div>
-          <div class="help-lang-en"><h3>Adverbs</h3><p>Adverbs are lexical insertions. An adverb receives an external LEX slot at host height or fills slot 1 when fronted.</p></div>
+          <div class="help-lang-nl"><h3>Bijwoorden</h3><p>Bijwoorden zijn lexicale inserties. Een bijwoord krijgt een extern LEX-slot op hosthoogte of vult bij vooropplaatsing slot 1.</p><p>Het lege bijwoordslot wordt vóór de wissels aangebracht. De hostbox of host-subboom maakt ruimte, bijvoorbeeld door lager te worden gezet.</p></div>
+          <div class="help-lang-en"><h3>Adverbs</h3><p>Adverbs are lexical insertions. An adverb receives an external LEX slot at host height or fills slot 1 when fronted.</p><p>The empty adverb slot is created before exchanges. The host box or host subtree creates space, for example by moving lower.</p></div>
         </article>
 
+
+        <article class="help-topic-panel" data-help-topic="gitignore">
+          <div class="help-lang-nl">
+            <h3>Gitignore</h3>
+            <p><code>.gitignore</code> bepaalt welke lokale bestanden niet naar GitHub Pages worden meegenomen.</p>
+            <ul>
+              <li><code>OpenGraph_Lite_Viewer_v*.zip</code>: release-zips horen als downloadbaar archief naast het project, niet als sitebestand in de Pages-root.</li>
+              <li><code>local-mobile-test.js</code> en <code>local-mobile-test.html</code>: lokale desktopknop voor mobile portrait/landscape-test. Deze hoort niet op <code>github.io</code>.</li>
+              <li><code>opengraph-local-config-log-*.txt</code> en <code>local-config-log*.txt</code>: lokale config-logbestanden. Die bevatten test- en sessie-informatie van de eigen werkmap.</li>
+            </ul>
+            <p>De publicatie-BAT gebruikt alleen niet-genegeerde sitebestanden. Lokale testbestanden blijven daardoor lokaal.</p>
+          </div>
+          <div class="help-lang-en">
+            <h3>Gitignore</h3>
+            <p><code>.gitignore</code> decides which local files are not published to GitHub Pages.</p>
+            <ul>
+              <li><code>OpenGraph_Lite_Viewer_v*.zip</code>: release zips belong next to the project as downloadable archives, not in the Pages root as site files.</li>
+              <li><code>local-mobile-test.js</code> and <code>local-mobile-test.html</code>: local desktop control for testing mobile portrait/landscape. It should not be uploaded to <code>github.io</code>.</li>
+              <li><code>opengraph-local-config-log-*.txt</code> and <code>local-config-log*.txt</code>: local config logs with work-session information from the local folder.</li>
+            </ul>
+            <p>The publish BAT stages only non-ignored site files, so local test files stay local.</p>
+          </div>
+        </article>
         <article class="help-topic-panel" data-help-topic="carousel">
           <div class="help-lang-nl">
             <h3>Carouselruimte</h3>
-            <p>Deze ruimte is gereserveerd voor een documenterende carousel: eerst Open Graph Notation, daarna tree notation als toepassing.</p>
+            <p>Deze ruimte is gereserveerd voor een documenterende carousel over de gridregel, het projectiemechanisme en de taalboomweergave.</p>
           </div>
           <div class="help-lang-en">
             <h3>Carousel space</h3>
-            <p>This space is reserved for a documentation carousel: first Open Graph Notation, then tree notation as an application.</p>
+            <p>This space is reserved for a documentation carousel about the grid rule, the projection mechanism and the linguistic tree display.</p>
           </div>
           <div class="help-carousel-reserved help-carousel-large" aria-label="Gereserveerde carouselruimte">
             <div class="help-carousel-frame">
-              <strong>Open Graph → Tree notation</strong>
+              <strong>Grid → projectie → taalboom</strong>
               <span class="help-lang-nl">Gereserveerd 16:9 vlak voor carouselbeeld, korte tekst en stapnavigatie.</span>
               <span class="help-lang-en">Reserved 16:9 area for carousel image, short text and step navigation.</span>
             </div>
@@ -328,7 +416,6 @@
         </article>
       </section>
     </section>
-
 
     <section class="mobile-sentence-bar" aria-label="Mobiele voorbeeldzin-keuze">
       <label class="mobile-sentence-field" for="mobileExampleSelect">
@@ -345,21 +432,21 @@
 
     <section class="toolbar" aria-label="Hoofdbediening">
       <div class="input-sentence-tools" aria-label="Zin-input">
-        <a class="button-link" href="examples-input.html?v1.0.9" title="Open de HTML-inputfile met voorbeeldzinnen, subject vet en object cursief">HTML-input</a>
-        <a class="button-link" href="examples-adverbs.html?v1.0.9" title="Voorbeeldset met één bijwoord per zin en default-host per categorie">Bijwoordvoorbeelden</a>
-        <a class="button-link" href="docs/LEX_ADVERB_PLACEMENT_RULES_CHECKED.md?v1.0.9" title="Plaatsingsregels voor lexicale bijwoordinsertie: default en gemarkeerd">Bijwoordregels</a>
-            <a class="button-link" href="examples-adverb-rules-v4552.html?v1.0.9" title="Controle per bijwoord: uitzonderingen en eigen regels">Bijwoordcheck</a>
-        <a class="button-link" href="examples-adverb-rules-v4552.html?v1.0.9" title="Controle per bijwoord: uitzonderingen en eigen regels">Bijwoordcheck</a>
-        <a class="button-link" href="lexicon-config.html?v1.0.9" title="Leesbare lexicon-config voor voorbeeldzinnen">Lexicon</a>
-        <a class="button-link" href="lexicon-editor.html?v1.0.9" title="Lexicon én korte voorbeelduitingen beheren; exporteert lexicon-config.html en examples-input.html">Lexicon+uitingen-editor</a>
-        <a class="button-link" href="structure-editor.html?v1.0.9" title="Bewerk eerst syntax-config en functional-config">Structure-editor</a>
-        <a class="button-link" href="docs/docs-home.html?v1.0.9" title="Projectcontext, layoutspec en release notes">Docs</a>
-        <a class="button-link" href="lex-movement-rules.html?v1.0.9" title="Simpele uitleg van de LEX-Wissels per zinstype">Plaatsingsregels</a>
-        <a class="button-link" href="reset-cache.html?v1.0.9" title="Verwijder browsercache/service worker en open de viewer opnieuw">Reset cache</a>
+        <a class="button-link" href="examples-input.html?v2.0.0-rc.4" title="Open de HTML-inputfile met voorbeeldzinnen, subject vet en object cursief">HTML-input</a>
+        <a class="button-link" href="examples-adverbs.html?v2.0.0-rc.4" title="Voorbeeldset met één bijwoord per zin en default-host per categorie">Bijwoordvoorbeelden</a>
+        <a class="button-link" href="docs/LEX_ADVERB_PLACEMENT_RULES_CHECKED.md?v2.0.0-rc.4" title="Plaatsingsregels voor lexicale bijwoordinsertie: default en gemarkeerd">Bijwoordregels</a>
+            <a class="button-link" href="examples-adverb-rules-v4552.html?v2.0.0-rc.4" title="Controle per bijwoord: uitzonderingen en eigen regels">Bijwoordcheck</a>
+        <a class="button-link" href="examples-adverb-rules-v4552.html?v2.0.0-rc.4" title="Controle per bijwoord: uitzonderingen en eigen regels">Bijwoordcheck</a>
+        <a class="button-link" href="lexicon-config.html?v2.0.0-rc.4" title="Leesbare lexicon-config voor voorbeeldzinnen">Lexicon</a>
+        <a class="button-link" href="lexicon-editor.html?v2.0.0-rc.4" title="Lexicon én korte voorbeelduitingen beheren; exporteert lexicon-config.html en examples-input.html">Lexicon+uitingen-editor</a>
+        <a class="button-link" href="structure-editor.html?v2.0.0-rc.4" title="Bewerk eerst syntax-config en functional-config">Structure-editor</a>
+        <a class="button-link" href="docs/docs-home.html?v2.0.0-rc.4" title="Projectcontext, layoutspec en release notes">Docs</a>
+        <a class="button-link" href="lex-movement-rules.html?v2.0.0-rc.4" title="Simpele uitleg van de LEX-Wissels per zinstype">Plaatsingsregels</a>
+        <a class="button-link" href="reset-cache.html?v2.0.0-rc.4" title="Verwijder browsercache/service worker en open de viewer opnieuw">Reset cache</a>
       </div>
       <div class="button-row compact-actions">
         <button id="resetExampleButton" type="button" title="Herlaad het gekozen voorbeeld">Reset voorbeeld</button>
-        <button id="fitButton" type="button" title="FIT: pas boom en projectie-assen passend in beeld; verandert de boom niet.">FIT</button>
+        <button id="fitButton" type="button" title="FIT: pas boom en named projections passend in beeld; verandert de boom niet.">FIT</button>
       </div>
       <div class="button-row compact-actions">
         <label class="file-label" title="OpenGraph Lite JSON laden">
@@ -395,6 +482,7 @@
           <div class="view-config-grid" aria-label="Dynamische boomweergave">
             <label class="field mini-field"><span>Boomruimte</span><select id="layoutDensitySelect"></select></label>
             <label class="field mini-field"><span>Hoofdvenster</span><select id="viewFitSelect"></select></label>
+            <label class="field mini-field checkbox-mini-field" title="Maak de Projecties-box op het grid verplaatsbaar met de muis. Default: ja."><span>Projecties-box</span><label class="inline-checkbox"><input id="projectionBoxDraggableInput" type="checkbox" checked> verplaatsbaar</label></label>
             <label class="field mini-field checkbox-mini-field" title="Maak de taalactiebox op het grid verplaatsbaar met de muis. Default: ja."><span>Taalactiebox</span><label class="inline-checkbox"><input id="southBoxDraggableInput" type="checkbox" checked> verplaatsbaar</label></label>
             <label class="field mini-field" title="Boom vrije rijen: lege ruimte onder de wortel in de centrale OPN-boom."><span>Boom vrije rijen</span><select id="freeSlotCountSelect"></select></label>
             <fieldset class="lex-adverb-insert-field" aria-label="Bijwoordslot op LEX-as">
@@ -440,14 +528,30 @@
             </fieldset>
             <fieldset class="top-menu-choice-field" aria-label="Menu's boven grid" title="Kies maximaal vier menu's die boven het grid mogen staan. Niet gekozen menu's staan onder het grid.">
               <legend>Menu’s boven grid <span class="top-menu-choice-count" data-top-menu-count>0/4</span></legend>
-              <label title="Projectiekeuze: Assen, Bron, LEX, SYNT en LOG. Nuttig als je vaak tussen projecties vergelijkt."><input type="checkbox" data-top-menu-choice="projection"> Projectiekeuze</label>
+              <label title="Projectiekeuze: Alle, Bron, LEX, SYNT en LOG. Nuttig als je tussen centrale view en named projections vergelijkt."><input type="checkbox" data-top-menu-choice="projection"> Projectiekeuze</label>
               <label title="Voorbeeldzin: kies snel HOND BIJT MAN en varianten. Nuttig bij contrasten tussen zinnen."><input type="checkbox" data-top-menu-choice="sentence"> Voorbeeldzin</label>
               <label title="Play/Groei: groei-presentatie, stapknoppen en afspelen. Nuttig voor didactische demonstratie."><input type="checkbox" data-top-menu-choice="play"> Play/Groei</label>
               <label title="Werkknoppen: FIT, reset, JSON, Docs en editors. Nuttig bij bouwen/testen, minder bij uitleg."><input type="checkbox" data-top-menu-choice="tools"> Werkknoppen</label>
               <p class="top-menu-choice-help" data-top-menu-help>Geen menu boven het grid. Maximaal vier keuzes; overige menu’s staan onder het grid.</p>
             </fieldset>
           </div>
-          <p id="projectionHelp" class="inline-help">OPN/Assen: centrale OPN-weergave; LEX links, SYNT rechts, LOG onder. FT staat niet op de zuidas; FT is de aparte functionele view naast de standaard syntaxboom-view. Boomkeuze auto per voorbeeldtype houdt de basisboom vast; de LEX-as volgt de voorbeeldzin met Wissels. Boomruimte kan breed/lager worden gezet; FIT past de viewBox aan de echte tekening aan.</p>
+          <p id="projectionHelp" class="inline-help">Open Graph: gridregel en projectiemechanisme. In de taalweergave gebruiken LEX, SYNT en LOG eigen selectieregels. Bronknopen projecteren eerst naar projectiemerkers; as-verplaatsingen komen daarna.</p>
+          <fieldset class="projection-color-field" aria-label="Projectiekleuren">
+            <legend>Projectiekleuren</legend>
+            <p class="top-menu-choice-help">LEX en de LEX-projectielijnen blijven blauw. Kies hier de kleuren voor de andere named projections.</p>
+            <label class="field mini-field" title="LEX blijft blauw, inclusief projectielijnen en projectiemerkers."><span>LEX-kleur</span><select id="lexProjectionColorSelect" disabled><option value="blue">blauw</option></select></label>
+            <label class="field mini-field"><span>SYNT-kleur</span><select id="syntProjectionColorSelect"></select></label>
+            <label class="field mini-field"><span>LOG-kleur</span><select id="logProjectionColorSelect"></select></label>
+          </fieldset>
+          <fieldset class="config-save-field" aria-label="Config opslaan">
+            <legend>Config opslaan</legend>
+            <p id="configSaveStatus" class="top-menu-choice-help">Configwijzigingen worden direct toegepast. Kies Ja om lokaal te bewaren of Nee om de laatst bewaarde snapshot te herstellen.</p>
+            <div class="button-row config-save-row">
+              <button id="saveConfigButton" type="button">Ja · bewaar config</button>
+              <button id="discardConfigButton" type="button">Nee · herstel laatst bewaarde config</button>
+              <button id="downloadConfigLogButton" type="button">Download lokaal config-log</button>
+            </div>
+          </fieldset>
           <div class="check-grid">
             <label><input id="showGridInput" type="checkbox" checked> Raster</label>
             <label><input id="showRelationsInput" type="checkbox" checked> Taklijnen</label>
@@ -459,12 +563,12 @@
           <h2>Voorbeeldzinnen</h2>
           <p class="inline-help">Voeg voorbeeldzinnen toe via de editor. Start lokaal met <code>start-local-viewer.bat</code>; dan schrijft <strong>Opslaan</strong> direct naar <code>examples-input.html</code>. Daarna kun je hier de lijst herladen.</p>
           <div class="button-row">
-            <a class="button-link primary" href="examples-editor.html?v1.0.9" title="Voorbeeldzinnen toevoegen en opslaan">Voorbeeldzinnen-editor</a>
-            <a class="button-link" href="examples-input.html?v1.0.9" title="Leesbare HTML-input met voorbeeldzinnen">HTML-input</a>
-            <a class="button-link" href="examples-adverbs.html?v1.0.9" title="Bijwoordvoorbeelden met default-host en gemarkeerde host">Bijwoordvoorbeelden</a>
-            <a class="button-link" href="docs/LEX_ADVERB_PLACEMENT_RULES_CHECKED.md?v1.0.9" title="Plaatsingsregels voor lexicale bijwoordinsertie: default en gemarkeerd">Bijwoordregels</a>
-            <a class="button-link" href="examples-adverb-rules-v4552.html?v1.0.9" title="Controle per bijwoord: uitzonderingen en eigen regels">Bijwoordcheck</a>
-        <a class="button-link" href="examples-adverb-rules-v4552.html?v1.0.9" title="Controle per bijwoord: uitzonderingen en eigen regels">Bijwoordcheck</a>
+            <a class="button-link primary" href="examples-editor.html?v2.0.0-rc.4" title="Voorbeeldzinnen toevoegen en opslaan">Voorbeeldzinnen-editor</a>
+            <a class="button-link" href="examples-input.html?v2.0.0-rc.4" title="Leesbare HTML-input met voorbeeldzinnen">HTML-input</a>
+            <a class="button-link" href="examples-adverbs.html?v2.0.0-rc.4" title="Bijwoordvoorbeelden met default-host en gemarkeerde host">Bijwoordvoorbeelden</a>
+            <a class="button-link" href="docs/LEX_ADVERB_PLACEMENT_RULES_CHECKED.md?v2.0.0-rc.4" title="Plaatsingsregels voor lexicale bijwoordinsertie: default en gemarkeerd">Bijwoordregels</a>
+            <a class="button-link" href="examples-adverb-rules-v4552.html?v2.0.0-rc.4" title="Controle per bijwoord: uitzonderingen en eigen regels">Bijwoordcheck</a>
+        <a class="button-link" href="examples-adverb-rules-v4552.html?v2.0.0-rc.4" title="Controle per bijwoord: uitzonderingen en eigen regels">Bijwoordcheck</a>
             <button id="reloadExamplesButton" type="button" title="Herlees examples-input.html zonder de hele pagina opnieuw te openen">Herlaad zinnen</button>
           </div>
         </section>
@@ -483,16 +587,17 @@
 
         <section class="panel-card relation-card">
           <h2>Relaties / regels</h2>
-          <p id="relationHelp" class="inline-help">Geen losse editor-relaties. Deze lijst volgt de actieve structuur: syntaxregels bij SYNT/assen, LOG-volgorde apart en FT-functionele rollen apart.</p>
+          <p id="relationHelp" class="inline-help">Geen losse editor-relaties. Deze lijst volgt de actieve structuur: syntaxregels, functional-structure-regels of LOG-volgorde.</p>
           <div id="edgeList" class="edge-list" aria-label="Structuurregels"></div>
         </section>
       </aside>
 
       <section id="canvasWrap" class="canvas-wrap" aria-label="OpenGraph canvas">
         <svg id="graphSvg" role="img" aria-label="OpenGraph projectie" tabindex="0" title="Grid is vastgezet; bediening staat in het boomvenster." xmlns="http://www.w3.org/2000/svg"></svg>
-        <nav class="main-grid-controls" aria-label="Hoofdbeeld: projectie">
-        <div class="main-projection-strip" aria-label="Projectiereeks: Alle, Bron, LEX, SYNT en LOG">
-          <button id="mainProjectionAxesButton" data-main-projection="axes" type="button" title="Toon Alle / alle assen">Alle</button>
+        <nav class="main-grid-controls is-hidden" aria-label="Projecties" data-projecties-block>
+        <div class="main-projection-title">Projecties</div>
+        <div class="main-projection-strip" aria-label="Projecties: Alle met alle projecties, Bron, LEX, SYNT en LOG">
+          <button id="mainProjectionAxesButton" data-main-projection="axes" type="button" title="Toon Alle: centrale view met alle named projections">Alle</button>
           <button id="mainProjectionSourceButton" data-main-projection="source" type="button" title="Toon Bron / centrale OPN">Bron</button>
           <button id="mainProjectionLexButton" data-main-projection="lex" type="button" title="Toon LEX-projectie">LEX</button>
           <button id="mainProjectionSyntButton" data-main-projection="synt" type="button" title="Toon geïsoleerde SYNT-regels">SYNT</button>
@@ -512,13 +617,12 @@
       <h2 id="explainHeading">Uitleg</h2>
       <p id="explainText">De viewer is geladen.</p>
       <details open>
-        <summary>Wat zit in deze eerste Lite-versie?</summary>
-        <p>Deze versie is een viewer/demo: voorbeeldzin kiezen, projectie kiezen, groei tonen, canvas pannen/zoomen, JSON laden/downloaden en documentatie openen. Losse knoop- en relatie-editing is verwijderd.</p>
-        <p>Niet overgenomen uit de Java-app: klassieke graph-algoritmen zoals planarity, Dijkstra, MST, biconnectivity en canonical ordering. Die horen niet bij deze eerste JAN-taalboomlaag.</p>
+        <summary>Viewerfunctie</summary>
+        <p>De viewer toont Open Graph Notation met gridregel, projectiemechanisme, projectiemerkers, views en named projections. Je kunt voorbeeldzinnen kiezen, Play gebruiken, projecties bekijken, canvas pannen/zoomen, JSON laden/downloaden en documentatie openen.</p>
       </details>
       <details>
         <summary>Bediening</summary>
-        <p><strong>OPN/Assen</strong>: kies bovenaan via <strong>View</strong> tussen de standaard syntaxboom en de functionele structuur met CLAUSE/rollen. De syntaxboom wordt uit <code>structure-config.html</code> gelezen en bottom-up berekend: eerst leaf/subtree-boxen, daarna plaatsing, daarna renderen. Projecties worden naar hun eigen view getekend: SYNT rechts, LOG als enige zuidas onder de boom. FT staat niet op de zuidas; FT is de functionele view naast de standaard syntaxboom-view. <strong>Boomruimte</strong> maakt de HOR-afstand groter en de VER-afstand kleiner; <strong>Vrije slots</strong> bepaalt hoeveel lege rijen onder de wortel worden gereserveerd; <strong>Venster auto</strong> past de viewBox dynamisch aan; <strong>FIT</strong> zet handmatig steeds een passend kader rond de actuele inhoud. <strong>Groei</strong> presenteert dezelfde berekende layout stapsgewijs: eerst leaves, dan hogere categorieën/boxen, daarna LEX-basisprojectie en LEX-wissels. De functionele structuur gebruikt dezelfde recursieve werkwijze, is n-ary, heeft ook een eigen LEX-projectie, reserveert configureerbare vrije-slotruimte onder de wortel; standaard slot 1 voor vooropplaatsing/topicalisatie en slot 2 voor V2/PV; en heeft configkeuzes <strong>left-first</strong>/<strong>right-first</strong> en <strong>flipdoel compact/align en flip-config per vertakking</strong>. <strong>Voorbeeld-input</strong>: <code>examples-input.html</code> bevat de zinnen met <strong>subject vet</strong> en <em>object cursief</em>. <strong>LEX</strong>: gebruik de orderlijst of plaatsingsregel.</p>
+        <p><strong>Open Graph</strong>: de gridregel geeft elke bronknoop een eigen kruispunt. Het projectiemechanisme trekt projectielijnen naar projectiemerkers op veronderstelde assen. In de taalweergave krijgen die projecties namen en selectieregels: <strong>LEX</strong> voor lexicale plaatsing, <strong>SYNT</strong> voor syntaxregels en <strong>LOG</strong> voor S-O-V-volgorde. <strong>Play</strong> presenteert de volgordelijke opbouw. Bij boomtoepassingen worden boxen bottom-up berekend en top-down gerenderd; de centrale graph blijft statisch. Na Play verschijnt <strong>Projecties</strong>. <strong>Alle</strong> toont de centrale view met alle named projections. <strong>Bron</strong> toont de centrale bronview zonder projectie-assen. Reset of nieuwe Play verbergt dat blok.</p>
       </details>
     </section>
   </main>
@@ -528,7 +632,7 @@
 
   <nav class="mobile-bottom-nav" aria-label="Mobiele viewerbediening">
     <button id="mobilePrevButton" type="button" title="Vorige voorbeeldzin">← Zin</button>
-    <button id="mobileFitButton" type="button" title="FIT: pas boom en projectie-assen passend in beeld; verandert de boom niet.">FIT</button>
+    <button id="mobileFitButton" type="button" title="FIT: pas boom en named projections passend in beeld; verandert de boom niet.">FIT</button>
     <button id="mobileNextButton" type="button" title="Volgende voorbeeldzin">Zin →</button>
     <button id="mobileMenuButton" type="button" aria-controls="mobileSheet" aria-expanded="false" title="Meer opties">Meer</button>
   </nav>
@@ -581,18 +685,18 @@
     <div class="mobile-sheet-section" aria-label="Documentatie">
       <h3>Documentatie</h3>
       <div class="mobile-link-grid">
-        <a href="docs/docs-home.html?v1.0.9">Docs</a>
-        <a href="lex-movement-rules.html?v1.0.9">Plaatsingsregels</a>
-        <a href="reset-cache.html?v1.0.9">Reset cache</a>
+        <a href="docs/docs-home.html?v2.0.0-rc.4">Docs</a>
+        <a href="lex-movement-rules.html?v2.0.0-rc.4">Plaatsingsregels</a>
+        <a href="reset-cache.html?v2.0.0-rc.4">Reset cache</a>
       </div>
     </div>
 
-    <p class="mobile-sheet-note">Sleep met één vinger om te pannen. Knijp met twee vingers om te zoomen. FIT past het zichtvenster aan de huidige boom en projectie-assen aan; de boom zelf verandert niet.</p>
+    <p class="mobile-sheet-note">Sleep met één vinger om te pannen. Knijp met twee vingers om te zoomen. FIT past het zichtvenster aan de huidige boom en named projections aan; de boom zelf verandert niet.</p>
   </section>
 
 
   <script>
-    window.__opengraphBoot = { version: 'v1.0.9', loaded: false, marker: 'viewer-index' };
+    window.__opengraphBoot = { version: 'v2.0.0-rc.4', loaded: false, marker: 'viewer-index' };
     function ogStatus(message) {
       var target = document.getElementById('actionFeedback') || document.body;
       if (target) target.textContent = message;
@@ -605,7 +709,7 @@
     });
     setTimeout(function() {
       if (!window.__opengraphBoot || !window.__opengraphBoot.loaded) {
-        ogStatus('Viewer start niet volledig. Gebruik Reset cache of open http://127.0.0.1:8088/reset-cache.html?v1.0.9.');
+        ogStatus('Viewer start niet volledig. Gebruik Reset cache of open http://127.0.0.1:8088/reset-cache.html?v2.0.0-rc.4.');
       }
     }, 2500);
   </script>
@@ -615,11 +719,11 @@
       var isLocal = window.location.protocol === 'file:' || !host || host === 'localhost' || host === '127.0.0.1';
       if (!isLocal) return;
       var script = document.createElement('script');
-      script.src = 'local-mobile-test.js?v1.0.9';
+      script.src = 'local-mobile-test.js?v2.0.0-rc.4';
       script.defer = true;
       document.head.appendChild(script);
     })();
   </script>
-  <script src="viewer.js?v1.0.9&amp;cb=11" defer></script>
+  <script src="viewer.js?v2.0.0-rc.4&amp;cb=4" defer></script>
 </body>
 </html>

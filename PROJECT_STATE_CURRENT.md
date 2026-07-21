@@ -4,54 +4,86 @@ Actuele status van de OpenGraph / GraphLite viewer.
 
 ## Versie
 
-- Huidige stabiele release: v1.0.9.
-- Doel: demo/viewer voor JAN / OPN / OpenGraph-taalbomen.
+- Huidige release candidate: v2.0.0-rc.4.
+- Doel: demo/viewer voor JAN / OPN / OpenGraph-taalstructuren.
 - Standaardweergave: Syntax tree.
 - Standaard alternatieve weergave: Functional structure.
 
 ## Open Graph Notation
 
-Open Graph Notation tekent taalstructuren op een open raster.
+Open Graph Notation staat op zichzelf.
 
-Tree notation is een toepassing van die notatie: in de syntaxboom staat elke knoop op een eigen kruispunt van horizontale en verticale gridlijnen.
-
-## Views
+Kern:
 
 ```text
-Syntax tree              centrale syntactische boom
-Functional structure     functionele structuur met CLAUSE, AGENS, PRED, PATIENS
+Gridregel
+Projectiemechanisme
+Volgordelijk schrijven
+Projectiemerkers
 ```
 
-## Projectie-assen
+De gridregel geeft elke bronknoop een eigen kruispunt. In de strikte boomtoepassing staat elke knoop als enige op zijn horizontale én verticale gridlijn.
+
+Het projectiemechanisme verbindt bronknopen met projectiemerkers op veronderstelde assen. In de algemene notatie zijn west-as en zuid-as nog niet taalkundig ingevuld.
+
+Open Graph kan volgordelijk worden getoond: bronknopen verschijnen één voor één en projecties kunnen direct worden geschreven zodra hun bronknoop beschikbaar is. Voor boomtoepassingen is de layout tweepass: boxen bottom-up berekenen, daarna top-down renderen. Het resultaat blijft statisch: de centrale graph transformeert niet.
+
+## Named projections
 
 ```text
-LEX    links/west: zichtbare woordvolgorde en lexicale plaatsing
-SYNT   rechts/oost: syntactische regels en categorieprojectie
-LOG    onder/zuid: logische S-O-V-projectie
+LEX    westelijke named projection: lexicale items, plaatsingsslots, projectiemerkers
+SYNT   named projection voor syntactische categorieën en regels
+LOG    zuidelijke named projection: selectie van S, O en V
 ```
+
+LEX en de LEX-projectie blijven blauw. SYNT en LOG hebben instelbare projectiekleuren in Config.
 
 ## Hoofdregels
 
+- Projectielijnen zijn visueel belangrijker dan raster- en boomlijnen.
+- Raster- en boomlijnen blijven minimaal.
 - De LOG-as behoudt zijn eigen SVG-hoogte.
 - De SOV/VSO/etc-taalactiebox mag de LOG-as niet verplaatsen.
 - Projectieboxen staan rechts van de SYNT-as, nooit eroverheen.
-- De standaardfit toont de volledige boom, inclusief LEX, SYNT, LOG, projectieboxen en taalactiebox.
+- De standaardfit toont de volledige actieve view en de zichtbare bedieningsboxen.
 - Syntax tree en Functional structure zijn views op dezelfde voorbeeldzin.
 
 ## UI-status
 
 - Hoofdmenu bevat een View-keuze.
-- Play-balk bevat stap terug, Play, stap vooruit, Groei aan/uit en Reset.
-- Bovenbalk gebruikt compacte keuzevelden.
+- Play-balk bevat stap terug, Play, stap vooruit en Reset.
+- Het blok **Projecties** verschijnt na afgeronde Play.
+- Reset of een nieuwe Play verbergt **Projecties**.
+- In **Projecties** staat `Alle` als eerste keuze; `Alle` toont de centrale view met alle named projections.
+- `Bron` toont de centrale bronview zonder projectie-assen; terug naar `Alle` toont alle projectie-assen opnieuw.
+- LEX, SYNT en LOG tonen elk één named projection op dezelfde vaste aspositie als de canonieke projectielayout.
+- Projecties-box en taalactiebox zijn verplaatsbaar; dubbelklik op lege ruimte reset de positie.
+- Config bevat projectiekleuren: LEX blijft blauw; SYNT en LOG zijn instelbaar.
+- Config heeft Ja/Nee voor lokaal bewaren of herstellen van configuratie en een downloadbaar lokaal config-log.
 - Mobile gebruikt lichte viewerachtergrond.
 - Cache-reset verloopt via `reset-cache.html` en cache-bust-query.
 
-## Taalactiebox
+## As-verplaatsingen
 
-- De SOV/VSO/etc-knopgroep is de eerste taalactiebox.
-- De box is verplaatsbaar wanneer Config dit toestaat.
-- Defaultpositie: links naast het begin van de LOG-as, uitgelijnd op de oorspronkelijke LOG-hoogte.
-- De box bevat `‹ SOV ›`.
+As-verplaatsingen zijn een derde stap.
+
+```text
+1. Centrale bronknopen plaatsen.
+2. Projectiemerkers op named projections schrijven.
+3. As-verplaatsingen toepassen op gereserveerde lege plekken.
+```
+
+Voor LEX zijn relevante lege plekken:
+
+```text
+Comp
+vooropplaatsing/topic
+V2/PV
+bijwoordslot
+trace
+```
+
+Ruimte kan ontstaan door vrije rijen, verlengde takken of het lager plaatsen van een host-subboom.
 
 ## Mobile-test
 
@@ -59,22 +91,25 @@ LOG    onder/zuid: logische S-O-V-projectie
 - `local-mobile-test.js` wordt lokaal geladen op `localhost`, `127.0.0.1` of `file:`.
 - `local-mobile-test.js` staat in `.gitignore` en hoort niet mee naar GitHub.
 - URL-test blijft beschikbaar: `?viewport=mobile-portrait`, `?viewport=mobile-landscape`, `?viewport=desktop`.
-- Publicatie blijft handmatig naar `https://github.com/kruin/graphlite`; de gebruikersversie staat op `https://kruin.github.io/graphlite/`.
-
-## Documentatie
-
-- Projectdocumentatie beschrijft de actuele werking.
-- Help gebruikt een boomnavigatie: links de onderwerpboom, rechts één geopend onderwerp.
-- Help reserveert een carouselruimte voor Open Graph Notation en tree notation als toepassing.
-- Historiek, changelog en ontwerpstappen horen niet in helpteksten of leidende projectdocumentatie.
-- Zie `DOCUMENTATION_RULES.md`.
 
 ## Standaardcontrole
-
-Voor iedere projectzip:
 
 ```bat
 node --check viewer.js
 ```
 
-Daarna zip-integriteit controleren.
+## View-stabiliteit
+
+- `Bron`, `Alle`, `LEX`, `SYNT` en `LOG` gebruiken dezelfde dimensies voor de centrale boom.
+- Projectiekeuze wisselt alleen de zichtbare projectie-overlay.
+- De centrale graph transformeert niet door de projectiekeuze.
+
+
+## Stabiele projectie-viewport (v2.0.0-rc.4)
+
+- `Alle`, `Bron`, `LEX`, `SYNT` en `LOG` delen één identieke viewBox.
+- Een projectiewissel mag de centrale boom niet horizontaal of verticaal verplaatsen.
+- Een projectiewissel mag de schaal niet wijzigen.
+- De vaste viewBox is gebaseerd op de unie van de Syntax- en FT-layout.
+- De wissel `Syntax ↔ FT` behoudt dezelfde viewport en handmatige pan/zoom.
+- Groei mag geen afzonderlijke projectiespecifieke viewBox gebruiken.

@@ -558,12 +558,12 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
   letter-spacing: .04em;
 }
 .lex-axis-line {
-  stroke: #2563eb;
+  stroke: var(--lex);
   stroke-width: 4;
   vector-effect: non-scaling-stroke;
 }
 .projection-line.lex {
-  stroke: #2563eb;
+  stroke: var(--lex);
   stroke-width: 2;
   stroke-dasharray: 8 5;
   vector-effect: non-scaling-stroke;
@@ -5242,7 +5242,7 @@ body.viewport-mobile-test.main-screen-active .main-play-reset-bar {
   transform: none !important;
 }
 
-/* v1.0.9: lokale mobile-test. Portrait/landscape worden op desktop niet via
+/* v1.0.16: lokale mobile-test. Portrait/landscape worden op desktop niet via
    echte media queries bepaald, maar via body-classes uit local-mobile-test.js.
    Maak portrait daarom expliciet zoom/pinch-veilig en zorg dat de onderbalk
    binnen het telefoonframe blijft. */
@@ -5293,7 +5293,7 @@ body.viewport-mobile-landscape-test.main-screen-active #graphSvg {
   max-height: 100% !important;
 }
 
-/* v1.0.9: View-keuze in hoofdmenu: standaard syntax tree, alternatief functional structure. */
+/* v2.0.0-rc.4: View-menu bevat Syntax als eerste view en FT als tweede view; LOG blijft de zuidas. */
 .main-view-field {
   display: flex;
   align-items: center;
@@ -5361,7 +5361,7 @@ body.viewport-mobile-landscape-test.main-screen-active .main-view-field {
 }
 
 
-/* v1.0.9: Help als boomnavigatie; één onderwerp tegelijk; ruimte voor documentatiecarousel. */
+/* v1.0.16: Help als boomnavigatie; één onderwerp tegelijk; ruimte voor documentatiecarousel. */
 .help-tree-screen {
   display: grid !important;
   grid-template-columns: minmax(14rem, 18rem) minmax(0, 1fr);
@@ -5497,5 +5497,319 @@ body.lang-en .help-topic-panel > .help-lang-en { display: block !important; }
   }
   .help-carousel-reserved {
     min-height: 12rem;
+  }
+}
+
+/* v1.0.16: minimale belijning; projectielijnen dragen de nadruk. */
+:root {
+  --grid: color-mix(in srgb, #e2e8f0, transparent 55%);
+  --grid-major: color-mix(in srgb, #cbd5e1, transparent 46%);
+}
+body.main-screen-active .main-grid-controls.is-hidden,
+body.main-screen-active .canvas-wrap .main-grid-controls.is-hidden {
+  display: none !important;
+  pointer-events: none !important;
+}
+body.main-screen-active .main-grid-controls {
+  align-items: stretch !important;
+}
+body.main-screen-active .main-projection-title {
+  display: block !important;
+  padding: .18rem .32rem .02rem !important;
+  color: var(--muted) !important;
+  font-size: .72rem !important;
+  font-weight: 950 !important;
+  letter-spacing: .08em !important;
+  text-transform: uppercase !important;
+  text-align: center !important;
+}
+body.main-screen-active .grid-line {
+  stroke-width: .65 !important;
+  opacity: .24 !important;
+}
+body.main-screen-active .grid-line.major {
+  stroke-width: .8 !important;
+  opacity: .32 !important;
+}
+body.main-screen-active .tree-edge,
+body.main-screen-active .syntax-tree-edge,
+body.main-screen-active .relation-edge,
+body.main-screen-active .log-edge,
+body.main-screen-active .tree-subbox,
+body.main-screen-active .jan-subtree-box {
+  opacity: .46 !important;
+  stroke-width: 1.15 !important;
+}
+body.main-screen-active .projection-line,
+body.main-screen-active .projection-line.horizontal,
+body.main-screen-active .projection-line.orthogonal,
+body.main-screen-active .logical-projection-line {
+  opacity: .9 !important;
+  stroke-width: 2.15 !important;
+  stroke-dasharray: 9 5 !important;
+}
+body.main-screen-active .projection-axis-line,
+body.main-screen-active .logical-axis,
+body.main-screen-active .lex-axis-line {
+  opacity: .92 !important;
+  stroke-width: 2.35 !important;
+}
+@media (orientation: landscape) {
+  body.main-screen-active .main-grid-controls {
+    gap: .18rem !important;
+    background: color-mix(in srgb, var(--panel), transparent 12%) !important;
+    border: 1px solid color-mix(in srgb, var(--line), transparent 28%) !important;
+    border-radius: .9rem !important;
+    padding: .22rem !important;
+  }
+}
+@media (orientation: portrait) {
+  body.main-screen-active .main-grid-controls {
+    gap: .18rem !important;
+  }
+}
+
+
+/* v1.0.16: named projection colors and LEX projection markers. */
+.projection-color-field {
+  border: 1px dashed color-mix(in srgb, var(--line), transparent 22%);
+  border-radius: .9rem;
+  padding: .55rem;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(7rem, 1fr));
+  gap: .5rem;
+  margin: .45rem 0;
+}
+.projection-color-field legend {
+  font-weight: 950;
+  color: var(--muted);
+  padding-inline: .25rem;
+}
+.projection-color-field .top-menu-choice-help {
+  grid-column: 1 / -1;
+}
+.projection-line.lex-source-projection-line {
+  stroke: var(--lex) !important;
+  stroke-width: 2.35 !important;
+  stroke-dasharray: 8 5 !important;
+  opacity: .94 !important;
+}
+.lex-slot-box.lex-projection-slot,
+.lex-local-slot,
+.lex-free-slot {
+  stroke: var(--lex) !important;
+}
+.projection-axis-line.synt,
+.projection-line.synt,
+.syntax-rule-box {
+  stroke: var(--synt);
+}
+.logical-axis.log,
+.projection-line.log,
+.logical-order-box {
+  stroke: var(--log);
+}
+body.main-screen-active .grid-line { opacity: .18 !important; }
+body.main-screen-active .grid-line.major { opacity: .24 !important; }
+body.main-screen-active .tree-edge,
+body.main-screen-active .syntax-tree-edge,
+body.main-screen-active .relation-edge,
+body.main-screen-active .tree-subbox,
+body.main-screen-active .jan-subtree-box {
+  opacity: .34 !important;
+  stroke-width: .95 !important;
+}
+@media (max-width: 720px) {
+  .projection-color-field { grid-template-columns: 1fr; }
+}
+
+/* v1.0.16: Projecties-box stabiel en sleepbaar; LOG-kleur hard via CSS-var. */
+body.main-screen-active .main-grid-controls.is-draggable {
+  cursor: move !important;
+}
+body.main-screen-active .main-grid-controls.is-dragging {
+  cursor: grabbing !important;
+  user-select: none !important;
+}
+body.main-screen-active .main-grid-controls.is-draggable .main-projection-title {
+  cursor: move !important;
+}
+body.main-screen-active .logical-axis.log,
+body.main-screen-active .projection-line.log,
+body.main-screen-active .logical-source-line,
+body.main-screen-active .logical-projection-line,
+body.main-screen-active .logical-order-box,
+body.main-screen-active .logical-order-badge,
+body.main-screen-active .logical-order-badge-interactive {
+  stroke: var(--log) !important;
+}
+body.main-screen-active .logical-order-badge,
+body.main-screen-active .logical-order-badge-interactive,
+body.main-screen-active .logical-order-box {
+  background: color-mix(in srgb, var(--panel), var(--log) 8%) !important;
+}
+.config-save-field {
+  border: 1px dashed color-mix(in srgb, var(--line), transparent 20%);
+  border-radius: .9rem;
+  padding: .55rem;
+  margin: .45rem 0;
+}
+.config-save-field legend {
+  font-weight: 950;
+  color: var(--muted);
+  padding-inline: .25rem;
+}
+.config-save-row {
+  flex-wrap: wrap;
+  gap: .4rem;
+}
+@media (max-width: 860px) {
+  .help-tree-screen {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: .55rem !important;
+    padding: .5rem !important;
+    overflow: auto !important;
+  }
+  .help-tree-nav {
+    max-height: 38dvh !important;
+    padding: .55rem !important;
+    border-radius: .85rem !important;
+  }
+  .help-topic-tree li ul {
+    margin-left: .35rem !important;
+    padding-left: .5rem !important;
+  }
+  .help-topic-button {
+    padding: .36rem .42rem !important;
+    font-size: .92rem !important;
+  }
+  .help-topic-stage {
+    min-height: 42dvh !important;
+    max-height: none !important;
+    padding: .75rem !important;
+    border-radius: .85rem !important;
+  }
+  .help-topic-panel p,
+  .help-topic-panel ul {
+    font-size: .94rem !important;
+    line-height: 1.45 !important;
+  }
+  .help-carousel-reserved {
+    min-height: 10rem !important;
+    aspect-ratio: 16 / 10 !important;
+  }
+}
+body.main-screen-active .logical-order-badge,
+body.main-screen-active .logical-order-badge-interactive,
+body.main-screen-active .logical-order-box {
+  fill: color-mix(in srgb, var(--panel), var(--log) 8%) !important;
+}
+
+/* v1.0.16: Help links/rechts, tekst rechts, carouselruimte per item onder de tekst. */
+body.help-screen-active .help-screen {
+  overflow: hidden !important;
+}
+.help-tree-screen {
+  grid-template-columns: minmax(13rem, 17rem) minmax(0, 1fr) !important;
+  min-height: 0 !important;
+}
+.help-tree-nav {
+  max-height: none !important;
+  height: 100% !important;
+  min-height: 0 !important;
+}
+.help-topic-stage {
+  display: block !important;
+  min-height: 0 !important;
+  height: 100% !important;
+  max-height: none !important;
+  overflow: auto !important;
+}
+.help-topic-panel.is-active {
+  display: block !important;
+}
+.help-topic-carousel-slot,
+.help-carousel-reserved {
+  margin-top: 1.1rem !important;
+}
+.help-topic-carousel-slot::before {
+  content: attr(data-carousel-topic);
+  display: block;
+  margin-bottom: .45rem;
+  color: var(--muted);
+  font-size: .78rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: .055em;
+}
+@media (max-width: 860px) {
+  body.help-screen-active .help-screen {
+    overflow: hidden !important;
+  }
+  .help-tree-screen {
+    grid-template-columns: minmax(8.5rem, 36vw) minmax(0, 1fr) !important;
+    gap: .45rem !important;
+    padding: .45rem !important;
+    overflow: hidden !important;
+  }
+  .help-tree-nav {
+    height: calc(100dvh - 6.6rem) !important;
+    max-height: calc(100dvh - 6.6rem) !important;
+    overflow: auto !important;
+  }
+  .help-tree-nav h3 {
+    font-size: .72rem !important;
+  }
+  .help-topic-button {
+    padding: .32rem .34rem !important;
+    font-size: .78rem !important;
+    line-height: 1.15 !important;
+  }
+  .help-topic-stage {
+    height: calc(100dvh - 6.6rem) !important;
+    min-height: 0 !important;
+    overflow: auto !important;
+    padding: .62rem !important;
+  }
+  .help-topic-panel h3 {
+    font-size: 1.05rem !important;
+  }
+  .help-topic-panel p,
+  .help-topic-panel ul {
+    font-size: .86rem !important;
+  }
+  .help-topic-carousel-slot,
+  .help-carousel-reserved {
+    min-height: 8.5rem !important;
+    aspect-ratio: 4 / 3 !important;
+  }
+}
+
+/* v2.0.0-rc.4: vaste Play-balkhoogte voor alle projectie-views.
+   LEX/SYNT schakelen Groei uit; de langere statustekst mag de balk en dus het
+   grid nooit lager zetten. */
+body.main-screen-active .main-play-growth-label {
+  box-sizing: border-box !important;
+  width: 7.4rem !important;
+  min-width: 7.4rem !important;
+  max-width: 7.4rem !important;
+  height: 2.05rem !important;
+  min-height: 2.05rem !important;
+  max-height: 2.05rem !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  flex: 0 0 7.4rem !important;
+}
+@media (max-width: 760px) {
+  body.main-screen-active .main-play-growth-label {
+    width: 5.2rem !important;
+    min-width: 5.2rem !important;
+    max-width: 5.2rem !important;
+    height: 1.88rem !important;
+    min-height: 1.88rem !important;
+    max-height: 1.88rem !important;
+    flex-basis: 5.2rem !important;
   }
 }
