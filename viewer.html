@@ -1,6 +1,6 @@
 <!doctype html>
-<!-- OPENGRAPH_ROOT_VIEWER_INDEX_v1.0.7: this root index is the app, not docs. -->
-<html lang="nl" data-opengraph-app="viewer" data-version="v1.0.7">
+<!-- OPENGRAPH_ROOT_VIEWER_INDEX_v1.0.9: this root index is the app, not docs. -->
+<html lang="nl" data-opengraph-app="viewer" data-version="v1.0.9">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
@@ -9,10 +9,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#0f172a">
   <meta name="description" content="OpenGraph Lite Viewer: vrije JAN-bronknopen, edits, LEX-plaatsingsregels en projecties.">
-  <title>OpenGraph Lite Viewer v1.0.7</title>
+  <title>OpenGraph Lite Viewer v1.0.9</title>
   <script>
     (function() {
-      var VERSION = 'v1.0.7';
+      var VERSION = 'v1.0.9';
       window.__OPENGRAPH_EXPECTED_VERSION__ = VERSION;
       function runCacheCleanupOnce() {
         var flag = 'opengraph-cache-cleaned-' + VERSION;
@@ -52,13 +52,13 @@
   <link rel="icon" href="icons/icon-192.svg" type="image/svg+xml">
   <!-- v4552: manifest disabled in local/dev build to avoid PWA/service-worker confusion. -->
   <!-- <link rel="manifest" href="manifest.webmanifest"> -->
-  <link rel="stylesheet" href="styles.css?v1.0.7">
+  <link rel="stylesheet" href="styles.css?v1.0.9">
 </head>
 <body class="main-screen-active">
   <header class="app-header">
     <div>
       <div class="eyebrow">OpenGraph · JAN · Open Notation</div>
-      <h1>OpenGraph Lite Viewer <span class="version-tag">v1.0.7</span></h1>
+      <h1>OpenGraph Lite Viewer <span class="version-tag">v1.0.9</span></h1>
       <p class="header-subtitle">Redesign: View-menu voor syntaxboom of functionele structuur; daarna LEX-projectie en LOG-volgorde.</p>
     </div>
     <button id="installButton" class="ghost hidden" type="button">Installeer</button>
@@ -121,43 +121,213 @@
       </div>
     </section>
 
-    <section id="helpScreen" class="help-screen" aria-label="Help en uitleg">
+    <section id="helpScreen" class="help-screen help-tree-screen" aria-label="Help en uitleg">
+      <aside class="help-tree-nav" aria-label="Help onderwerpen">
+        <h3>
+          <span class="help-lang-nl">Helpboom</span>
+          <span class="help-lang-en">Help tree</span>
+        </h3>
+        <nav class="help-topic-tree" aria-label="Helpboom navigatie">
+          <ul>
+            <li>
+              <button class="help-topic-button is-active" type="button" data-help-topic-button="opengraph">
+                <span class="help-lang-nl">Open Graph Notation</span>
+                <span class="help-lang-en">Open Graph Notation</span>
+              </button>
+              <ul>
+                <li><button class="help-topic-button" type="button" data-help-topic-button="tree-notation"><span class="help-lang-nl">Tree notation</span><span class="help-lang-en">Tree notation</span></button></li>
+                <li><button class="help-topic-button" type="button" data-help-topic-button="grid-rule"><span class="help-lang-nl">Gridregel</span><span class="help-lang-en">Grid rule</span></button></li>
+              </ul>
+            </li>
+            <li>
+              <button class="help-topic-button" type="button" data-help-topic-button="views">
+                <span class="help-lang-nl">Views</span>
+                <span class="help-lang-en">Views</span>
+              </button>
+              <ul>
+                <li><button class="help-topic-button" type="button" data-help-topic-button="syntax-view"><span class="help-lang-nl">Syntax tree</span><span class="help-lang-en">Syntax tree</span></button></li>
+                <li><button class="help-topic-button" type="button" data-help-topic-button="functional-view"><span class="help-lang-nl">Functional structure</span><span class="help-lang-en">Functional structure</span></button></li>
+              </ul>
+            </li>
+            <li>
+              <button class="help-topic-button" type="button" data-help-topic-button="axes">
+                <span class="help-lang-nl">Projectie-assen</span>
+                <span class="help-lang-en">Projection axes</span>
+              </button>
+              <ul>
+                <li><button class="help-topic-button" type="button" data-help-topic-button="lex-axis"><span>LEX</span></button></li>
+                <li><button class="help-topic-button" type="button" data-help-topic-button="synt-axis"><span>SYNT</span></button></li>
+                <li><button class="help-topic-button" type="button" data-help-topic-button="log-axis"><span>LOG</span></button></li>
+              </ul>
+            </li>
+            <li>
+              <button class="help-topic-button" type="button" data-help-topic-button="language-actions">
+                <span class="help-lang-nl">Taalacties</span>
+                <span class="help-lang-en">Language actions</span>
+              </button>
+              <ul>
+                <li><button class="help-topic-button" type="button" data-help-topic-button="lex-movement"><span class="help-lang-nl">LEX-wissels</span><span class="help-lang-en">LEX exchanges</span></button></li>
+                <li><button class="help-topic-button" type="button" data-help-topic-button="adverbs"><span class="help-lang-nl">Bijwoorden</span><span class="help-lang-en">Adverbs</span></button></li>
+              </ul>
+            </li>
+            <li>
+              <button class="help-topic-button" type="button" data-help-topic-button="carousel">
+                <span class="help-lang-nl">Carouselruimte</span>
+                <span class="help-lang-en">Carousel space</span>
+              </button>
+            </li>
+          </ul>
+        </nav>
+      </aside>
 
-      <section class="help-doc-summary" aria-label="Boom eerst en recursieve boomtechniek">
-        <article class="help-doc-card">
-          <h3 data-help-boom-title>Boom eerst</h3>
-          <p data-help-boom-text><strong>Boom eerst</strong> is de didactische en notationele volgorde: begin met de centrale open boom als bron. Het View-menu kiest standaard de syntaxboom of alternatief de functionele structuur; projecteer daarna naar LEX, SYNT en LOG. De FT-view is geen aslaag, maar een aparte functionele view naast de standaard syntaxboom-view. De LEX-wissels blijven op de LEX-as; bijwoorden blijven ook op de LEX-as, als extern slot net boven een gekozen syntaxbox. De Nederlandse voorbeeldzinnen blijven taaldata.</p>
+      <section class="help-topic-stage" aria-live="polite">
+        <article class="help-topic-panel is-active" data-help-topic="opengraph">
+          <div class="help-lang-nl">
+            <h3>Open Graph Notation</h3>
+            <p>Open Graph Notation tekent taalstructuren op een open raster. De notatie vertrekt van knopen met een eigen positie en maakt daarna afzonderlijke views en projecties mogelijk.</p>
+            <p>De kern is scheiding: structuur, woordvolgorde, syntactische regels en logische volgorde hoeven niet in één beeld te worden samengeperst.</p>
+          </div>
+          <div class="help-lang-en">
+            <h3>Open Graph Notation</h3>
+            <p>Open Graph Notation draws linguistic structures on an open grid. It starts from positioned nodes and then allows separate views and projections.</p>
+            <p>The core idea is separation: structure, word order, syntactic rules and logical order do not have to be compressed into one image.</p>
+          </div>
+          <div class="help-carousel-reserved" aria-label="Gereserveerde carouselruimte">
+            <div class="help-carousel-frame">
+              <strong><span class="help-lang-nl">Carouselruimte</span><span class="help-lang-en">Carousel space</span></strong>
+              <span class="help-lang-nl">Hier komt een reeks schermen voor Open Graph Notation en de tree-toepassing.</span>
+              <span class="help-lang-en">Reserved for a sequence documenting Open Graph Notation and the tree application.</span>
+            </div>
+          </div>
         </article>
-        <article class="help-doc-card">
-          <h3 data-help-recursion-title>Recursie-techniek in de boom</h3>
-          <p data-help-recursion-text><strong>Recursie</strong> is hier de technische tekenmethode: de viewer bouwt de layout bottom-up, van bladeren naar categorieknopen, subtrees en boxen. Dat is iets anders dan de didactische stap “boom eerst”.</p>
+
+        <article class="help-topic-panel" data-help-topic="tree-notation">
+          <div class="help-lang-nl">
+            <h3>Tree notation als toepassing</h3>
+            <p>Tree notation is een toepassing van Open Graph Notation. In deze toepassing worden knopen zo geplaatst dat zij samen een herkenbare syntaxboom vormen.</p>
+            <p>De syntaxboom blijft de standaardweergave. Andere views en projecties gebruiken dezelfde voorbeeldzin, maar leggen een andere laag zichtbaar neer.</p>
+          </div>
+          <div class="help-lang-en">
+            <h3>Tree notation as application</h3>
+            <p>Tree notation is an application of Open Graph Notation. In this application, nodes are positioned so they form a recognizable syntax tree.</p>
+            <p>The syntax tree remains the standard view. Other views and projections use the same sample sentence but display a different layer.</p>
+          </div>
         </article>
-        <article class="help-doc-card">
-          <h3 data-help-logft-title>LOG en FT apart</h3>
-          <p data-help-logft-text><strong>LOG</strong> is de enige zuidas: de zichtbare logische-volgordeprojectie onder de boom, bijvoorbeeld S-O-V, S-V-O of V-S-O. <strong>FT</strong> is géén onderdeel van die as; FT is de functionele view naast de standaard syntaxboom-view, met rollen zoals agens, patiens en predicaat. De flip verandert LOG; FT, SYNT en LEX blijven gescheiden.</p>
+
+        <article class="help-topic-panel" data-help-topic="grid-rule">
+          <div class="help-lang-nl">
+            <h3>Gridregel</h3>
+            <p>In de tree-toepassing staat elke knoop op een eigen kruispunt: één knoop per horizontale gridlijn en één knoop per verticale gridlijn.</p>
+            <p>Die regel houdt de boom leesbaar en maakt ruimte voor projecties op vaste assen.</p>
+          </div>
+          <div class="help-lang-en">
+            <h3>Grid rule</h3>
+            <p>In the tree application, each node occupies its own grid intersection: one node per horizontal grid line and one node per vertical grid line.</p>
+            <p>This rule keeps the tree readable and leaves room for projections on fixed axes.</p>
+          </div>
         </article>
-        <article class="help-doc-card">
-          <h3 data-help-adverb-title>Bijwoordslots op de LEX-as</h3>
-          <p data-help-adverb-text><strong>Bijwoordplaatsing verschilt per scope.</strong> Bijwoorden staan niet tussen bestaande woordboxen en ook niet op de syntaxboom. Hostplaatsing krijgt een extern LEX-slot op de LEX-as, verticaal net boven S, NP, VP, V, PP of AP. Vooropplaatsing is apart: het bijwoord vult LEX-slot 1 en de persoonsvorm blijft V2 in slot 2; dit is hoofdzin-inversie, geen bijzinsvolgorde.</p>
+
+        <article class="help-topic-panel" data-help-topic="views">
+          <div class="help-lang-nl">
+            <h3>Views</h3>
+            <p>Het View-menu kiest het centrale beeld. De standaardkeuze is <strong>Syntax tree</strong>. De alternatieve keuze is <strong>Functional structure</strong>.</p>
+            <p>Een view is het hoofdbeeld in de boomruimte. Projectie-assen staan daar omheen.</p>
+          </div>
+          <div class="help-lang-en">
+            <h3>Views</h3>
+            <p>The View menu chooses the central image. The standard choice is <strong>Syntax tree</strong>. The alternative choice is <strong>Functional structure</strong>.</p>
+            <p>A view is the main image in the tree area. Projection axes are placed around it.</p>
+          </div>
         </article>
-        <article class="help-doc-card">
-          <h3>Lexicale insertie: bijwoorden</h3>
-          <p><strong>Werking:</strong> een bijwoord komt niet uit de basisboom. GraphLite maakt eerst een extern <code>LEX-ADV</code>-slot op de LEX-as, boven de gekozen hostbox of trace. Daarna pas worden LEX-Wissels uitgevoerd. Daardoor kan het bijwoord achterblijven boven de oorspronkelijke positie, ook wanneer NP/VP/V later naar een ander LEX-slot wisselt.</p>
-          <ol>
-            <li><strong>Uitlezen:</strong> de dropdown levert <code>word</code>, <code>class</code>, <code>defaultHost</code>, <code>host</code> en <code>marking</code>.</li>
-            <li><strong>Default:</strong> <code>host = defaultHost</code> is ongemarkeerd, behalve <code>host=S</code> in een hoofdzin: dat is vooropplaatsing met V2.</li>
-            <li><strong>Gemarkeerd:</strong> <code>host != defaultHost</code> of expliciet <code>functional:marked-host</code>. De viewer toont dit met een klikbare gemarkeerde bijwoordknoop.</li>
-            <li><strong>Tekenen:</strong> de hostbox schuift lager om een vrije rij te maken; het bijwoordslot staat op de LEX-as boven die host, niet in de box.</li>
-          </ol>
-          <p><strong>Configregel:</strong> MODALITEIT/TIJD/REDEN/VOORWAARDE default boven <code>S</code>; FREQUENTIE/PLAATS boven <code>VP</code>; NEGATIE/WIJZE boven <code>V</code> of <code>V-CLUSTER</code>; GRAAD boven <code>AP</code>; FOCUS boven <code>NP</code>. Afwijkende host = functioneel gemarkeerd.</p>
+
+        <article class="help-topic-panel" data-help-topic="syntax-view">
+          <div class="help-lang-nl">
+            <h3>Syntax tree</h3>
+            <p>Syntax tree toont de syntactische boom met categorieën zoals S, NP, VP, V en N.</p>
+            <p>De boom is de centrale structuur waarop de SYNT-regels en de andere projecties kunnen aansluiten.</p>
+          </div>
+          <div class="help-lang-en">
+            <h3>Syntax tree</h3>
+            <p>Syntax tree shows the syntactic tree with categories such as S, NP, VP, V and N.</p>
+            <p>The tree is the central structure to which the SYNT rules and other projections can connect.</p>
+          </div>
         </article>
-        <article class="help-doc-card">
-          <h3 data-help-render-title>Render-uitleg</h3>
-          <p data-help-render-text><strong>Renderen</strong> betekent: eerst de centrale boom en boxen berekenen, daarna projecties en LEX-as tekenen. Bijwoord-inserts worden als externe LEX-slots op de LEX-as geplaatst; de gekozen host-subboom schuift lager om ruimte te maken. De insertie komt niet als projectie uit de basisboom. OSV-!, VSO-! en VOS-! zijn geen basisbomen: de box-aanpak kan deze volgordes niet opleveren; de LEX-as vraagt dan een verplaatsingsregel.</p>
+
+        <article class="help-topic-panel" data-help-topic="functional-view">
+          <div class="help-lang-nl">
+            <h3>Functional structure</h3>
+            <p>Functional structure toont de functionele opbouw van de zin, bijvoorbeeld CLAUSE, AGENS, PRED en PATIENS.</p>
+            <p>Deze view maakt rollen zichtbaar zonder de syntaxboom als vorm te hoeven gebruiken.</p>
+          </div>
+          <div class="help-lang-en">
+            <h3>Functional structure</h3>
+            <p>Functional structure shows the functional composition of the sentence, for example CLAUSE, AGENS, PRED and PATIENS.</p>
+            <p>This view shows roles without needing the syntax-tree shape.</p>
+          </div>
+        </article>
+
+        <article class="help-topic-panel" data-help-topic="axes">
+          <div class="help-lang-nl">
+            <h3>Projectie-assen</h3>
+            <p>Projectie-assen tonen afgeleide informatie naast het centrale beeld.</p>
+            <ul><li><strong>LEX</strong>: zichtbare woordvolgorde en lexicale plaatsing.</li><li><strong>SYNT</strong>: syntactische regels.</li><li><strong>LOG</strong>: logische S-O-V-projectie.</li></ul>
+          </div>
+          <div class="help-lang-en">
+            <h3>Projection axes</h3>
+            <p>Projection axes show derived information next to the central image.</p>
+            <ul><li><strong>LEX</strong>: visible word order and lexical placement.</li><li><strong>SYNT</strong>: syntactic rules.</li><li><strong>LOG</strong>: logical S-O-V projection.</li></ul>
+          </div>
+        </article>
+
+        <article class="help-topic-panel" data-help-topic="lex-axis">
+          <div class="help-lang-nl"><h3>LEX</h3><p>LEX toont de zichtbare volgorde van woorden en lexicale inserties. Wissels en bijwoordslots worden op deze as zichtbaar gemaakt.</p></div>
+          <div class="help-lang-en"><h3>LEX</h3><p>LEX shows the visible order of words and lexical insertions. Exchanges and adverb slots are shown on this axis.</p></div>
+        </article>
+
+        <article class="help-topic-panel" data-help-topic="synt-axis">
+          <div class="help-lang-nl"><h3>SYNT</h3><p>SYNT toont syntactische regels op de hoogte van de corresponderende categorieën, bijvoorbeeld <code>S → NP VP</code> en <code>VP → V NP</code>.</p></div>
+          <div class="help-lang-en"><h3>SYNT</h3><p>SYNT shows syntactic rules at the height of the corresponding categories, for example <code>S → NP VP</code> and <code>VP → V NP</code>.</p></div>
+        </article>
+
+        <article class="help-topic-panel" data-help-topic="log-axis">
+          <div class="help-lang-nl"><h3>LOG</h3><p>LOG is de zuidas. Deze as toont de logische S-O-V-projectie en de volgordemodi zoals SOV, SVO en VSO.</p></div>
+          <div class="help-lang-en"><h3>LOG</h3><p>LOG is the south axis. It shows the logical S-O-V projection and order modes such as SOV, SVO and VSO.</p></div>
+        </article>
+
+        <article class="help-topic-panel" data-help-topic="language-actions">
+          <div class="help-lang-nl"><h3>Taalacties</h3><p>Taalacties wijzigen een projectie of plaatsingslaag. Zij muteren niet automatisch de centrale syntaxboom.</p></div>
+          <div class="help-lang-en"><h3>Language actions</h3><p>Language actions change a projection or placement layer. They do not automatically mutate the central syntax tree.</p></div>
+        </article>
+
+        <article class="help-topic-panel" data-help-topic="lex-movement">
+          <div class="help-lang-nl"><h3>LEX-wissels</h3><p>Een LEX-wissel verandert de zichtbare woordvolgorde op de LEX-as. Bronposities kunnen als trace zichtbaar blijven.</p></div>
+          <div class="help-lang-en"><h3>LEX exchanges</h3><p>A LEX exchange changes visible word order on the LEX axis. Source positions may remain visible as traces.</p></div>
+        </article>
+
+        <article class="help-topic-panel" data-help-topic="adverbs">
+          <div class="help-lang-nl"><h3>Bijwoorden</h3><p>Bijwoorden zijn lexicale inserties. Een bijwoord krijgt een extern LEX-slot op hosthoogte of vult bij vooropplaatsing slot 1.</p></div>
+          <div class="help-lang-en"><h3>Adverbs</h3><p>Adverbs are lexical insertions. An adverb receives an external LEX slot at host height or fills slot 1 when fronted.</p></div>
+        </article>
+
+        <article class="help-topic-panel" data-help-topic="carousel">
+          <div class="help-lang-nl">
+            <h3>Carouselruimte</h3>
+            <p>Deze ruimte is gereserveerd voor een documenterende carousel: eerst Open Graph Notation, daarna tree notation als toepassing.</p>
+          </div>
+          <div class="help-lang-en">
+            <h3>Carousel space</h3>
+            <p>This space is reserved for a documentation carousel: first Open Graph Notation, then tree notation as an application.</p>
+          </div>
+          <div class="help-carousel-reserved help-carousel-large" aria-label="Gereserveerde carouselruimte">
+            <div class="help-carousel-frame">
+              <strong>Open Graph → Tree notation</strong>
+              <span class="help-lang-nl">Gereserveerd 16:9 vlak voor carouselbeeld, korte tekst en stapnavigatie.</span>
+              <span class="help-lang-en">Reserved 16:9 area for carousel image, short text and step navigation.</span>
+            </div>
+          </div>
         </article>
       </section>
     </section>
-
 
 
     <section class="mobile-sentence-bar" aria-label="Mobiele voorbeeldzin-keuze">
@@ -175,17 +345,17 @@
 
     <section class="toolbar" aria-label="Hoofdbediening">
       <div class="input-sentence-tools" aria-label="Zin-input">
-        <a class="button-link" href="examples-input.html?v1.0.7" title="Open de HTML-inputfile met voorbeeldzinnen, subject vet en object cursief">HTML-input</a>
-        <a class="button-link" href="examples-adverbs.html?v1.0.7" title="Voorbeeldset met één bijwoord per zin en default-host per categorie">Bijwoordvoorbeelden</a>
-        <a class="button-link" href="docs/LEX_ADVERB_PLACEMENT_RULES_CHECKED.md?v1.0.7" title="Plaatsingsregels voor lexicale bijwoordinsertie: default en gemarkeerd">Bijwoordregels</a>
-            <a class="button-link" href="examples-adverb-rules-v4552.html?v1.0.7" title="Controle per bijwoord: uitzonderingen en eigen regels">Bijwoordcheck</a>
-        <a class="button-link" href="examples-adverb-rules-v4552.html?v1.0.7" title="Controle per bijwoord: uitzonderingen en eigen regels">Bijwoordcheck</a>
-        <a class="button-link" href="lexicon-config.html?v1.0.7" title="Leesbare lexicon-config voor voorbeeldzinnen">Lexicon</a>
-        <a class="button-link" href="lexicon-editor.html?v1.0.7" title="Lexicon én korte voorbeelduitingen beheren; exporteert lexicon-config.html en examples-input.html">Lexicon+uitingen-editor</a>
-        <a class="button-link" href="structure-editor.html?v1.0.7" title="Bewerk eerst syntax-config en functional-config">Structure-editor</a>
-        <a class="button-link" href="docs/docs-home.html?v1.0.7" title="Projectcontext, layoutspec en release notes">Docs</a>
-        <a class="button-link" href="lex-movement-rules.html?v1.0.7" title="Simpele uitleg van de LEX-Wissels per zinstype">Plaatsingsregels</a>
-        <a class="button-link" href="reset-cache.html?v1.0.7" title="Verwijder browsercache/service worker en open de viewer opnieuw">Reset cache</a>
+        <a class="button-link" href="examples-input.html?v1.0.9" title="Open de HTML-inputfile met voorbeeldzinnen, subject vet en object cursief">HTML-input</a>
+        <a class="button-link" href="examples-adverbs.html?v1.0.9" title="Voorbeeldset met één bijwoord per zin en default-host per categorie">Bijwoordvoorbeelden</a>
+        <a class="button-link" href="docs/LEX_ADVERB_PLACEMENT_RULES_CHECKED.md?v1.0.9" title="Plaatsingsregels voor lexicale bijwoordinsertie: default en gemarkeerd">Bijwoordregels</a>
+            <a class="button-link" href="examples-adverb-rules-v4552.html?v1.0.9" title="Controle per bijwoord: uitzonderingen en eigen regels">Bijwoordcheck</a>
+        <a class="button-link" href="examples-adverb-rules-v4552.html?v1.0.9" title="Controle per bijwoord: uitzonderingen en eigen regels">Bijwoordcheck</a>
+        <a class="button-link" href="lexicon-config.html?v1.0.9" title="Leesbare lexicon-config voor voorbeeldzinnen">Lexicon</a>
+        <a class="button-link" href="lexicon-editor.html?v1.0.9" title="Lexicon én korte voorbeelduitingen beheren; exporteert lexicon-config.html en examples-input.html">Lexicon+uitingen-editor</a>
+        <a class="button-link" href="structure-editor.html?v1.0.9" title="Bewerk eerst syntax-config en functional-config">Structure-editor</a>
+        <a class="button-link" href="docs/docs-home.html?v1.0.9" title="Projectcontext, layoutspec en release notes">Docs</a>
+        <a class="button-link" href="lex-movement-rules.html?v1.0.9" title="Simpele uitleg van de LEX-Wissels per zinstype">Plaatsingsregels</a>
+        <a class="button-link" href="reset-cache.html?v1.0.9" title="Verwijder browsercache/service worker en open de viewer opnieuw">Reset cache</a>
       </div>
       <div class="button-row compact-actions">
         <button id="resetExampleButton" type="button" title="Herlaad het gekozen voorbeeld">Reset voorbeeld</button>
@@ -289,12 +459,12 @@
           <h2>Voorbeeldzinnen</h2>
           <p class="inline-help">Voeg voorbeeldzinnen toe via de editor. Start lokaal met <code>start-local-viewer.bat</code>; dan schrijft <strong>Opslaan</strong> direct naar <code>examples-input.html</code>. Daarna kun je hier de lijst herladen.</p>
           <div class="button-row">
-            <a class="button-link primary" href="examples-editor.html?v1.0.7" title="Voorbeeldzinnen toevoegen en opslaan">Voorbeeldzinnen-editor</a>
-            <a class="button-link" href="examples-input.html?v1.0.7" title="Leesbare HTML-input met voorbeeldzinnen">HTML-input</a>
-            <a class="button-link" href="examples-adverbs.html?v1.0.7" title="Bijwoordvoorbeelden met default-host en gemarkeerde host">Bijwoordvoorbeelden</a>
-            <a class="button-link" href="docs/LEX_ADVERB_PLACEMENT_RULES_CHECKED.md?v1.0.7" title="Plaatsingsregels voor lexicale bijwoordinsertie: default en gemarkeerd">Bijwoordregels</a>
-            <a class="button-link" href="examples-adverb-rules-v4552.html?v1.0.7" title="Controle per bijwoord: uitzonderingen en eigen regels">Bijwoordcheck</a>
-        <a class="button-link" href="examples-adverb-rules-v4552.html?v1.0.7" title="Controle per bijwoord: uitzonderingen en eigen regels">Bijwoordcheck</a>
+            <a class="button-link primary" href="examples-editor.html?v1.0.9" title="Voorbeeldzinnen toevoegen en opslaan">Voorbeeldzinnen-editor</a>
+            <a class="button-link" href="examples-input.html?v1.0.9" title="Leesbare HTML-input met voorbeeldzinnen">HTML-input</a>
+            <a class="button-link" href="examples-adverbs.html?v1.0.9" title="Bijwoordvoorbeelden met default-host en gemarkeerde host">Bijwoordvoorbeelden</a>
+            <a class="button-link" href="docs/LEX_ADVERB_PLACEMENT_RULES_CHECKED.md?v1.0.9" title="Plaatsingsregels voor lexicale bijwoordinsertie: default en gemarkeerd">Bijwoordregels</a>
+            <a class="button-link" href="examples-adverb-rules-v4552.html?v1.0.9" title="Controle per bijwoord: uitzonderingen en eigen regels">Bijwoordcheck</a>
+        <a class="button-link" href="examples-adverb-rules-v4552.html?v1.0.9" title="Controle per bijwoord: uitzonderingen en eigen regels">Bijwoordcheck</a>
             <button id="reloadExamplesButton" type="button" title="Herlees examples-input.html zonder de hele pagina opnieuw te openen">Herlaad zinnen</button>
           </div>
         </section>
@@ -411,9 +581,9 @@
     <div class="mobile-sheet-section" aria-label="Documentatie">
       <h3>Documentatie</h3>
       <div class="mobile-link-grid">
-        <a href="docs/docs-home.html?v1.0.7">Docs</a>
-        <a href="lex-movement-rules.html?v1.0.7">Plaatsingsregels</a>
-        <a href="reset-cache.html?v1.0.7">Reset cache</a>
+        <a href="docs/docs-home.html?v1.0.9">Docs</a>
+        <a href="lex-movement-rules.html?v1.0.9">Plaatsingsregels</a>
+        <a href="reset-cache.html?v1.0.9">Reset cache</a>
       </div>
     </div>
 
@@ -422,7 +592,7 @@
 
 
   <script>
-    window.__opengraphBoot = { version: 'v1.0.7', loaded: false, marker: 'viewer-index' };
+    window.__opengraphBoot = { version: 'v1.0.9', loaded: false, marker: 'viewer-index' };
     function ogStatus(message) {
       var target = document.getElementById('actionFeedback') || document.body;
       if (target) target.textContent = message;
@@ -435,7 +605,7 @@
     });
     setTimeout(function() {
       if (!window.__opengraphBoot || !window.__opengraphBoot.loaded) {
-        ogStatus('Viewer start niet volledig. Gebruik Reset cache of open http://127.0.0.1:8088/reset-cache.html?v1.0.7.');
+        ogStatus('Viewer start niet volledig. Gebruik Reset cache of open http://127.0.0.1:8088/reset-cache.html?v1.0.9.');
       }
     }, 2500);
   </script>
@@ -445,11 +615,11 @@
       var isLocal = window.location.protocol === 'file:' || !host || host === 'localhost' || host === '127.0.0.1';
       if (!isLocal) return;
       var script = document.createElement('script');
-      script.src = 'local-mobile-test.js?v1.0.7';
+      script.src = 'local-mobile-test.js?v1.0.9';
       script.defer = true;
       document.head.appendChild(script);
     })();
   </script>
-  <script src="viewer.js?v1.0.7&amp;cb=11" defer></script>
+  <script src="viewer.js?v1.0.9&amp;cb=11" defer></script>
 </body>
 </html>

@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'v1.0.7';
+  const VERSION = 'v1.0.9';
   const BASE_CELL = 74;
   const ROOT_SIDE_GAP = 1;
   const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -4286,7 +4286,7 @@
   }
 
   function clearViewportGestureState() {
-    // v1.0.7: bij wissel tussen landscape/portrait mogen oude touch-pointers
+    // v1.0.9: bij wissel tussen landscape/portrait mogen oude touch-pointers
     // en pinch-state niet blijven hangen. Anders lijkt portrait na zoom in
     // landscape bevroren.
     state.viewDrag = null;
@@ -5695,27 +5695,7 @@
     setText('.config-topbar p', en ? 'Tree spacing and Main window live under Config → Tree. Adverb LEX slots, rules, export and documentation are also here. Main stays narrow: sentences, adverb, Help and Config. The Back to main bar stays fixed while this page scrolls.' : 'Boomruimte en Hoofdvenster staan onder Config → Boom. Bijwoordslots, plaatsingsregels, export en documentatie staan ook hier. Main blijft smal: zinnen, bijwoord, Help en Config. De Terug-naar-main-balk blijft vast staan bij scrollen.');
     setText('.help-topbar .intro-kicker', 'Help');
     setText('.help-topbar h2', en ? 'Help' : 'Uitleg');
-    setText('.help-topbar p', en ? 'Help contains textual explanation and usage notes.' : 'Help bevat tekstuitleg en gebruiksaanwijzingen.');
-    setText('[data-help-boom-title]', en ? 'Tree first' : 'Boom eerst');
-    setText('[data-help-boom-text]', en
-      ? 'Tree first is the didactic and notational sequence: start with the central open tree as the source; then project to LEX, SYNT and LOG. FT is not an axis layer; FT is the functional view next to the standard syntax-tree view. LEX exchanges stay on the LEX axis; adverbs are rendered on the LEX axis; fronted adverbs occupy LEX slot 1 and trigger V2. Dutch sample sentences remain language data.'
-      : 'Boom eerst is de didactische en notationele volgorde: begin met de centrale open boom als bron; projecteer daarna naar LEX, SYNT en LOG. FT is geen aslaag; FT is de functionele view naast de standaard syntaxboom-view. De LEX-wissels blijven op de LEX-as; bijwoorden staan ook op de LEX-as, als extern slot met hosthoogte. De Nederlandse voorbeeldzinnen blijven taaldata.');
-    setText('[data-help-recursion-title]', en ? 'Recursion technique in the tree' : 'Recursie-techniek in de boom');
-    setText('[data-help-recursion-text]', en
-      ? 'Recursion is the technical drawing method: the viewer builds the layout bottom-up, from leaves to category nodes, subtrees and boxes. This is separate from the didactic step called tree first.'
-      : 'Recursie is hier de technische tekenmethode: de viewer bouwt de layout bottom-up, van bladeren naar categorieknopen, subtrees en boxen. Dat is iets anders dan de didactische stap boom eerst.');
-    setText('[data-help-logft-title]', en ? 'LOG axis and FT view separated' : 'LOG-as en FT-view apart');
-    setHtml('[data-help-logft-text]', en
-      ? '<strong>LOG</strong> is the only south axis: the visible logical S-O-V order projection below the tree. <strong>FT</strong> is not part of that axis; FT is the functional/thematic view next to the standard syntax-tree view. The flip changes LOG; FT, SYNT and LEX remain separate.'
-      : '<strong>LOG</strong> is de enige zuidas: de zichtbare logische S-O-V-volgordeprojectie onder de boom. <strong>FT</strong> is geen onderdeel van die as; FT is de functionele view naast de standaard syntaxboom-view. De flip verandert LOG; FT, SYNT en LEX blijven gescheiden.');
-    setText('[data-help-adverb-title]', en ? 'Adverb slots on the LEX axis' : 'Bijwoordslots op de LEX-as');
-    setHtml('[data-help-adverb-text]', en
-      ? '<strong>Adverb placement differs by scope.</strong> Adverbs are no longer placed between boxes. They are rendered above a valid syntactic category box: S, NP, VP, V, PP or AP. Time and modality usually use S/VP; negation and manner use V; degree uses AP; focus uses NP/VP.'
-      : '<strong>Bijwoordplaatsing verschilt per scope.</strong> Bijwoorden staan op de LEX-as. Hostplaatsing gebruikt een LEX-slot op hosthoogte; vooropplaatsing gebruikt LEX-slot 1 en activeert V2/inversie. Tijd/modaliteit meestal S/VP; negatie en wijze V; graad AP; focus NP/VP.');
-    setText('[data-help-render-title]', en ? 'Render explanation' : 'Render-uitleg');
-    setHtml('[data-help-render-text]', en
-      ? '<strong>Rendering</strong> means: first compute the central tree and boxes, then draw projections and the LEX axis. LOG is the visible logical S-O-V order projection on the south axis; FT is a separate functional/thematic view, not an axis layer. Adverb inserts are rendered above valid syntax boxes; the central tree remains unchanged. OSV-!, VSO-! and VOS-! are not base trees: the box approach cannot produce these orders; the LEX axis then requires a movement rule.'
-      : '<strong>Renderen</strong> betekent: eerst de centrale boom en boxen berekenen, daarna projecties en LEX-as tekenen. LOG is de zichtbare logische S-O-V-volgordeprojectie op de zuidas; FT is een aparte functioneel-thematische view, geen aslaag. Bijwoord-inserts worden als externe LEX-slots op de LEX-as geplaatst; de host-subboom schuift lager om ruimte te maken. OSV-!, VSO-! en VOS-! zijn geen basisbomen: de box-aanpak kan deze volgordes niet opleveren; de LEX-as vraagt dan een verplaatsingsregel.');
+    setText('.help-topbar p', en ? 'Choose a topic in the help tree. Each topic opens separately; the carousel area is reserved inside Help.' : 'Kies een onderwerp in de helpboom. Elk onderwerp opent apart; de carouselruimte is in Help gereserveerd.');
 
     setText('[data-projection="axes"], [data-main-projection="axes"]', en ? 'All' : 'Alle');
     setText('[data-projection="source"], [data-main-projection="source"], [data-mobile-projection="source"]', en ? 'Source' : 'Bron');
@@ -5740,6 +5720,35 @@
 
   function toggleLanguage() {
     setLanguage(isEnglish() ? 'nl' : 'en');
+  }
+
+
+
+  function setHelpTopic(topicId = 'opengraph') {
+    const panels = Array.from(document.querySelectorAll('[data-help-topic]'));
+    const buttons = Array.from(document.querySelectorAll('[data-help-topic-button]'));
+    const validIds = new Set(panels.map(panel => panel.getAttribute('data-help-topic')));
+    const next = validIds.has(topicId) ? topicId : 'opengraph';
+    panels.forEach(panel => {
+      const active = panel.getAttribute('data-help-topic') === next;
+      panel.classList.toggle('is-active', active);
+      panel.hidden = !active;
+    });
+    buttons.forEach(button => {
+      const active = button.getAttribute('data-help-topic-button') === next;
+      button.classList.toggle('is-active', active);
+      button.setAttribute('aria-current', active ? 'page' : 'false');
+      button.setAttribute('aria-expanded', active ? 'true' : 'false');
+    });
+  }
+
+  function registerHelpTopicTree() {
+    document.querySelectorAll('[data-help-topic-button]').forEach(button => {
+      if (button.dataset.helpBound === '1') return;
+      button.dataset.helpBound = '1';
+      button.addEventListener('click', () => setHelpTopic(button.getAttribute('data-help-topic-button') || 'opengraph'));
+    });
+    setHelpTopic('opengraph');
   }
 
   function setAppScreen(screen = 'main') {
@@ -5916,6 +5925,7 @@
     els.openHelpButton?.addEventListener('click', () => setHelpScreen(true));
     els.openHelpFromConfigButton?.addEventListener('click', () => setHelpScreen(true));
     els.closeHelpButton?.addEventListener('click', () => setHelpScreen(false));
+    registerHelpTopicTree();
     document.querySelectorAll('[data-language-toggle]').forEach(button => {
       button.addEventListener('click', toggleLanguage);
     });
@@ -6105,7 +6115,7 @@
       render();
     });
     window.addEventListener('orientationchange', () => {
-      // v1.0.7: breek actieve pinch/pan expliciet af vóór herfit.
+      // v1.0.9: breek actieve pinch/pan expliciet af vóór herfit.
       resetManualViewBox();
       requestAnimationFrame(() => {
         resetManualViewBox();

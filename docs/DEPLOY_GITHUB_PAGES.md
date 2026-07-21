@@ -10,11 +10,16 @@ Gebruik één gecontroleerde publicatie-BAT:
 publish_checked.bat
 ```
 
-Niet meerdere bijna gelijke BAT-bestanden naast elkaar gebruiken.
+Publicatiepad:
+
+```text
+https://github.com/kruin/graphlite
+https://kruin.github.io/graphlite/
+```
 
 ## Preflight
 
-Voor push moet de BAT controleren:
+Voor push controleert de BAT minimaal:
 
 ```bat
 node --check viewer.js
@@ -30,23 +35,31 @@ styles.css
 reset-cache.html
 ```
 
-Gebruik in de BAT geen brede `git add -A -- .` wanneer lokale genegeerde testbestanden in de map staan.
+## Staging
 
-Huidige aanpak:
+De BAT staged tracked wijzigingen met:
 
 ```bat
 git add -u -- .
+```
+
+Daarna voegt hij alleen nieuwe, niet-genegeerde bestanden toe via:
+
+```bat
 git ls-files --others --exclude-standard
 ```
 
-Dat staged tracked wijzigingen/verwijderingen en daarna alleen nieuwe, niet-genegeerde bestanden.
+Genegeerde bestanden blokkeren de publicatie niet.
 
-Niet gebruiken:
+## Niet publiceren naar Pages-root
 
-```bat
-git add .
-git add -A -- .
+```text
+OpenGraph_Lite_Viewer_v*.zip
+local-mobile-test.js
+local-mobile-test.html
 ```
+
+Deze staan in `.gitignore`.
 
 ## Cache-reset
 
@@ -59,13 +72,13 @@ De BAT kan browsercache niet op afstand wissen. Wel zinvol:
 Voorbeeld:
 
 ```text
-https://kruin.github.io/graphlite/reset-cache.html?ogv=v1.0.7&nocache=TIMESTAMP
+https://kruin.github.io/graphlite/reset-cache.html?ogv=v1.0.9&nocache=TIMESTAMP
 ```
 
 Daarna:
 
 ```text
-https://kruin.github.io/graphlite/index.html?ogv=v1.0.7
+https://kruin.github.io/graphlite/index.html?ogv=v1.0.9
 ```
 
 ## GitHub Pages settings
@@ -82,44 +95,6 @@ Folder: /root
 
 Laat `.nojekyll` in de root staan zodat GitHub Pages alle bestanden direct serveert.
 
-## v1.0.7 publicatie
+## Line endings
 
-Geen master/user-profiel in de viewer. Publicatie is handmatig:
-
-```text
-Repo:  https://github.com/kruin/graphlite
-Site:  https://kruin.github.io/graphlite/
-```
-
-Lokaal testen blijft lokaal:
-
-```text
-index.html?viewport=mobile-portrait
-index.html?viewport=mobile-landscape
-index.html?viewport=desktop
-```
-
-`local-mobile-test.js` voegt lokaal een keuzeknop toe, maar staat in `.gitignore` en hoort niet naar GitHub Pages.
-
-`publish_checked.bat` toont alleen de `github.io/graphlite` reset- en index-URL.
-
-
-## v1.0.7 staging-fix
-
-`publish_checked.bat` gebruikt nu:
-
-```bat
-git add -u -- .
-```
-
-Daarna worden nieuwe bestanden apart toegevoegd via:
-
-```bat
-git ls-files --others --exclude-standard
-```
-
-Hierdoor blokkeert een lokaal genegeerd bestand zoals `local-mobile-test.js` de publicatie niet meer. Release-zips en lokale testbestanden worden bovendien uit de Git-index verwijderd als ze eerder toch getrackt waren.
-
-## v1.0.7 publicatie
-
-Publiceer handmatig naar `https://github.com/kruin/graphlite`; controleer daarna `https://kruin.github.io/graphlite/reset-cache.html?ogv=v1.0.7`. Lokale mobile-testbestanden blijven buiten GitHub.
+`.gitattributes` legt line-endings vast voor Windows, GitHub Pages en zip-builds.

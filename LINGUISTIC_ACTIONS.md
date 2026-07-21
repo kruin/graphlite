@@ -2,25 +2,39 @@
 
 Ontwerpnotities voor taalkundige acties in GraphLite.
 
+## Views
+
+```text
+Syntax tree              standaardweergave
+Functional structure     standaard alternatieve weergave
+```
+
+Functional structure toont functionele rollen zoals:
+
+```text
+CLAUSE
+AGENS
+PRED
+PATIENS
+```
+
+## Projectie-assen
+
+```text
+LEX    zichtbare woordvolgorde en lexicale plaatsing
+SYNT   syntactische regels en categorieprojectie
+LOG    logische S-O-V-volgordeprojectie
+```
+
 ## Principe
 
-Taalkundige acties horen niet als willekeurige UI-knoppen door het scherm te zweven. Ze worden verzameld in een taalactiebox.
+Taalkundige acties worden verzameld in een taalactiebox.
 
-Voor nu bevat de taalactiebox alleen:
+Voor nu bevat de taalactiebox:
 
 ```text
 ‹ SOV ›
 ```
-
-Later kunnen hier meer acties bijkomen.
-
-## LOG en FT
-
-- LOG is de zuidas.
-- LOG toont de logische S-O-V-volgordeprojectie.
-- FT is géén onderdeel van de zuidas.
-- FT is de functionele view naast de standaard syntaxboom-view.
-- Een flip verandert LOG, niet SYNT, LEX of de FT-bronrollen.
 
 ## SOV/VSO/etc
 
@@ -46,7 +60,7 @@ De SOV/VSO/etc-actie verandert niet:
 - de centrale boomstructuur;
 - de SYNT-projectie;
 - de lexicale inhoud;
-- de FT-view als functionele rolbron.
+- de Functional structure-view.
 
 Ze beïnvloedt alleen de LOG-volgordeprojectie.
 
@@ -78,12 +92,4 @@ Een Wissel is een LEX-regel:
 - zichtbaar op de LEX-as;
 - verandert woordvolgorde;
 - laat syntaxstructuur ongemoeid;
-- kan een trace/oude positie zichtbaar maken.
-
-## v1.0.7 — View-keuze syntaxboom / functional structure
-
-- Hoofdmenu krijgt een compacte `View`-keuze.
-- Standaard: syntax tree / syntaxboom.
-- Alternatief: functional structure met `CLAUSE`, `PRED`, `AGENS` en `PATIENS`.
-- FT blijft een view naast de syntaxboom-view, niet een onderdeel van de LOG-zuidas.
-- LOG blijft de zuidas voor de logische S-O-V-projectie.
+- kan een tracepositie zichtbaar maken.

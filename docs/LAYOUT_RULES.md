@@ -2,28 +2,48 @@
 
 Harde layoutregels voor OpenGraph / GraphLite.
 
+## Grid
+
+- Tree notation is een toepassing van Open Graph Notation.
+- In de syntaxboom staat elke knoop op een eigen horizontale gridlijn.
+- In de syntaxboom staat elke knoop op een eigen verticale gridlijn.
+- Elke knoop heeft daardoor een eigen kruispunt.
+- Het grid blijft bruikbaar voor projecties en views naast de boom.
+
 ## Assen
 
-- LEX-as: links van de boom.
-- SYNT-as: rechts van de boom.
-- LOG-as: onder de boom.
-- De zuidas is alleen LOG.
-- FT is geen as en mag niet als gecombineerd zuidaslabel worden getekend.
-- Assen zijn layout-ankers, geen bijproduct van HTML-overlayknoppen.
+```text
+LEX    links van de boom
+SYNT   rechts van de boom
+LOG    onder de boom
+```
+
+Assen zijn layout-ankers, geen bijproduct van HTML-overlayknoppen.
 
 ## LOG-as
 
 - De LOG-as heeft een oorspronkelijke SVG-hoogte.
-- Die hoogte mag niet veranderen door plaatsing van de SOV-box of andere HTML-overlays.
-- HTML-overlays moeten zich aan de as aanpassen, niet andersom.
+- Die hoogte blijft stabiel bij plaatsing van de SOV-box en andere HTML-overlays.
+- HTML-overlays passen zich aan de as aan.
 - LOG toont de logische projectie met S-O-V / S-V-O / V-S-O enzovoort.
 
-## FT-view
+## Views
 
-- FT is de functionele view naast de standaard syntaxboom-view.
-- FT toont rollen zoals AGENS, PATIENS en PRED.
-- FT mag LOG voeden als rolbron, maar wordt niet als onderdeel van de LOG-as getoond.
-- In LOG-view mag geen FT-regel-as naast of boven de zuidas verschijnen.
+```text
+Syntax tree              standaardweergave
+Functional structure     standaard alternatieve weergave
+```
+
+De Syntax tree gebruikt de centrale boomruimte.
+
+De Functional structure toont de functionele structuur met rollen zoals:
+
+```text
+CLAUSE
+AGENS
+PRED
+PATIENS
+```
 
 ## Projectiebox rechts
 
@@ -45,7 +65,6 @@ projectiebox extreem ver rechts van de SYNT-as
 - Staat default links naast het begin van de LOG-as.
 - Is verticaal gecentreerd op de oorspronkelijke LOG-as-hoogte.
 - Bevat `‹ SOV ›`.
-- Heeft geen `LOG`-kop.
 - Is compacter dan de projectieboxen, maar met voldoende padding rond de knoppen.
 - Mag verplaatsbaar zijn via Config.
 - Drag-positie mag nooit de berekening van de LOG-as beïnvloeden.
@@ -67,16 +86,7 @@ projectiebox extreem ver rechts van de SYNT-as
 ## Mobile
 
 - Viewer blijft licht, ook als OS/browser in dark mode staat.
-- Mobile mag niet automatisch een oudere service-worker of oude asset-cache blijven tonen.
 - Mobile-test is lokaal bereikbaar via `local-mobile-test.js`, niet via Config.
-- De testweergave mag alleen de viewport/layout emuleren; boomdata, LEX, SYNT, LOG en FT blijven ongewijzigd.
-- Lokale portrait-test gebruikt body-class `viewport-mobile-portrait-test`; dit vervangt niet de echte mobile mediaquery, maar emuleert die op desktop.
+- De testweergave emuleert alleen viewport/layout; boomdata, LEX, SYNT, LOG en views blijven gelijk.
+- Lokale portrait-test gebruikt body-class `viewport-mobile-portrait-test`.
 - De onderbalk blijft binnen het telefoonframe; het SVG-zoomgebied krijgt de resterende hoogte.
-
-## v1.0.7 — View-keuze syntaxboom / functional structure
-
-- Hoofdmenu krijgt een compacte `View`-keuze.
-- Standaard: syntax tree / syntaxboom.
-- Alternatief: functional structure met `CLAUSE`, `PRED`, `AGENS` en `PATIENS`.
-- FT blijft een view naast de syntaxboom-view, niet een onderdeel van de LOG-zuidas.
-- LOG blijft de zuidas voor de logische S-O-V-projectie.

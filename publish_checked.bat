@@ -41,8 +41,8 @@ for %%f in (index.html viewer.html viewer.js styles.css reset-cache.html) do (
     )
 )
 
-set "APP_VERSION=v1.0.7"
-set "RELEASE_ZIP=OpenGraph_Lite_Viewer_v1.0.7.zip"
+set "APP_VERSION=v1.0.9"
+set "RELEASE_ZIP=OpenGraph_Lite_Viewer_v1.0.9_help_tree_carousel_space.zip"
 echo App-versie: %APP_VERSION%
 echo Release-zip: %RELEASE_ZIP%
 echo.

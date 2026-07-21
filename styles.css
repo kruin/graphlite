@@ -5242,7 +5242,7 @@ body.viewport-mobile-test.main-screen-active .main-play-reset-bar {
   transform: none !important;
 }
 
-/* v1.0.7: lokale mobile-test. Portrait/landscape worden op desktop niet via
+/* v1.0.9: lokale mobile-test. Portrait/landscape worden op desktop niet via
    echte media queries bepaald, maar via body-classes uit local-mobile-test.js.
    Maak portrait daarom expliciet zoom/pinch-veilig en zorg dat de onderbalk
    binnen het telefoonframe blijft. */
@@ -5293,7 +5293,7 @@ body.viewport-mobile-landscape-test.main-screen-active #graphSvg {
   max-height: 100% !important;
 }
 
-/* v1.0.7: View-keuze in hoofdmenu: standaard syntax tree, alternatief functional structure. */
+/* v1.0.9: View-keuze in hoofdmenu: standaard syntax tree, alternatief functional structure. */
 .main-view-field {
   display: flex;
   align-items: center;
@@ -5358,4 +5358,144 @@ body.viewport-mobile-test.main-screen-active .main-view-field select {
 }
 body.viewport-mobile-landscape-test.main-screen-active .main-view-field {
   flex-basis: 5.8rem !important;
+}
+
+
+/* v1.0.9: Help als boomnavigatie; één onderwerp tegelijk; ruimte voor documentatiecarousel. */
+.help-tree-screen {
+  display: grid !important;
+  grid-template-columns: minmax(14rem, 18rem) minmax(0, 1fr);
+  gap: .85rem;
+  padding: .85rem !important;
+  align-items: stretch;
+  background: color-mix(in srgb, var(--bg), var(--panel) 20%);
+}
+.help-tree-nav,
+.help-topic-stage {
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  background: color-mix(in srgb, var(--panel), #fff 6%);
+  box-shadow: 0 16px 38px rgba(15, 23, 42, .08);
+}
+.help-tree-nav {
+  padding: .8rem;
+  overflow: auto;
+  max-height: calc(100vh - 9.5rem);
+}
+.help-tree-nav h3 {
+  margin: 0 0 .55rem;
+  font-size: .95rem;
+  letter-spacing: .02em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.help-topic-tree ul {
+  list-style: none;
+  margin: 0;
+  padding-left: 0;
+}
+.help-topic-tree li {
+  position: relative;
+  margin: .12rem 0;
+}
+.help-topic-tree li ul {
+  margin-left: .75rem;
+  padding-left: .75rem;
+  border-left: 1px solid color-mix(in srgb, var(--line), var(--accent) 15%);
+}
+.help-topic-button {
+  width: 100%;
+  border: 0;
+  border-radius: .65rem;
+  background: transparent;
+  color: var(--text);
+  padding: .42rem .5rem;
+  text-align: left;
+  font-weight: 750;
+  cursor: pointer;
+}
+.help-topic-button:hover,
+.help-topic-button:focus-visible {
+  background: color-mix(in srgb, var(--accent), transparent 88%);
+  outline: none;
+}
+.help-topic-button.is-active {
+  background: color-mix(in srgb, var(--accent), transparent 82%);
+  color: var(--accent);
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+.help-topic-stage {
+  min-height: min(60vh, 42rem);
+  padding: clamp(.9rem, 2vw, 1.35rem);
+  overflow: auto;
+}
+.help-topic-panel {
+  display: none;
+  max-width: 64rem;
+}
+.help-topic-panel.is-active {
+  display: block;
+}
+.help-topic-panel h3 {
+  margin: 0 0 .6rem;
+  font-size: clamp(1.2rem, 2vw, 1.65rem);
+}
+.help-topic-panel p {
+  max-width: 55rem;
+  color: var(--muted);
+  line-height: 1.55;
+  font-size: 1rem;
+}
+.help-topic-panel ul {
+  color: var(--muted);
+  line-height: 1.55;
+}
+.help-carousel-reserved {
+  margin-top: 1rem;
+  width: min(100%, 54rem);
+  aspect-ratio: 16 / 9;
+  min-height: 15rem;
+  border: 2px dashed color-mix(in srgb, var(--accent), var(--line) 60%);
+  border-radius: 1.1rem;
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--accent), transparent 92%), transparent 55%),
+    color-mix(in srgb, var(--panel), var(--bg) 18%);
+  display: grid;
+  place-items: center;
+}
+.help-carousel-large {
+  width: min(100%, 62rem);
+  min-height: 20rem;
+}
+.help-carousel-frame {
+  display: grid;
+  gap: .45rem;
+  text-align: center;
+  padding: 1rem;
+  color: var(--muted);
+}
+.help-carousel-frame strong {
+  color: var(--text);
+  font-size: 1.1rem;
+}
+.help-lang-en { display: none !important; }
+body.lang-en .help-lang-nl { display: none !important; }
+body.lang-en span.help-lang-en { display: inline !important; }
+body.lang-en div.help-lang-en { display: block !important; }
+body.lang-en .help-carousel-frame .help-lang-en { display: inline !important; }
+body.lang-en .help-topic-panel > .help-lang-en { display: block !important; }
+@media (max-width: 860px) {
+  .help-tree-screen {
+    grid-template-columns: 1fr;
+    padding: .65rem !important;
+  }
+  .help-tree-nav {
+    max-height: 14rem;
+  }
+  .help-topic-stage {
+    min-height: 24rem;
+  }
+  .help-carousel-reserved {
+    min-height: 12rem;
+  }
 }
