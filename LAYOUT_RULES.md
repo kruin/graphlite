@@ -77,17 +77,28 @@ Syntax tree              standaardweergave
 Functional structure     standaard alternatieve weergave
 ```
 
-## Projecties-blok
+## Compacte bovenbalk
 
-- Het blok heet `Projecties`.
-- Het blok verschijnt na afgeronde Play.
-- Reset of een nieuwe Play verbergt het blok.
-- In het blok staat `Alle` als eerste keuze.
+- De bovenbalk blijft één vaste rij en wordt niet hoger door projectie- of askeuzes.
+- Direct zichtbaar: Zin, Bijwoord, View en Projectie.
+- `Assen` verschijnt alleen wanneer `Bron` actief is.
+- Taal, Help en Config staan in een tijdelijk `Menu` met volledige, leesbare knopnamen.
+- Op smallere schermen mogen vaste veldlabels verdwijnen; de geselecteerde waarden en toegankelijke labels blijven aanwezig.
+- Selects mogen tekst met ellipsis inkorten, maar de volledige opties blijven in de pulldown beschikbaar.
+- Openen of sluiten van `Assen` of `Menu` mag de canvasmaat, viewBox, schaal of boompositie niet wijzigen.
+
+## Projectiekeuze en Bronassen
+
+- De projectiekeuze staat in de bovenbalk, buiten het SVG-canvas.
+- De keuzevolgorde is `Alle → Bron → LEX → SYNT → LOG`.
 - `Alle` toont de centrale view met alle named projections.
-- `Bron` toont de centrale bronview zonder projectie-assen; terug naar `Alle` toont alle projectie-assen opnieuw.
 - `LEX`, `SYNT` en `LOG` tonen afzonderlijk één named projection op de vaste canonieke aspositie.
-- De Projecties-box heeft een stabiele schermpositie en is verplaatsbaar wanneer Config dit toestaat.
-- De taalactiebox is verplaatsbaar wanneer Config dit toestaat.
+- `Bron` toont de centrale view en kan nul, één, twee of drie gekozen assen tonen.
+- Bij Bron zijn LEX, SYNT en LOG onafhankelijk combineerbaar.
+- De Bronassen-keuze staat in een tijdelijke compacte popover; er is geen permanente projectiebox in het canvas.
+- Openen of sluiten van de popover verandert de canvasmaat niet.
+- De taalactiebox verschijnt alleen wanneer LOG zichtbaar is.
+- De taalactiebox mag de LOG-as niet verplaatsen.
 
 Volgorde:
 
@@ -110,7 +121,7 @@ Alle → Bron → LEX → SYNT → LOG
 - Projecties worden als overlays toegevoegd op vaste posities rond dezelfde centrale graph.
 
 
-## Stabiele projectie-viewport (v2.0.0-rc.4)
+## Stabiele projectie-viewport (v2.0.0-rc.6)
 
 - `Alle`, `Bron`, `LEX`, `SYNT` en `LOG` delen één identieke viewBox.
 - Een projectiewissel mag de centrale boom niet horizontaal of verticaal verplaatsen.
@@ -118,3 +129,4 @@ Alle → Bron → LEX → SYNT → LOG
 - De vaste viewBox is gebaseerd op de unie van de Syntax- en FT-layout.
 - De wissel `Syntax ↔ FT` behoudt dezelfde viewport en handmatige pan/zoom.
 - Groei mag geen afzonderlijke projectiespecifieke viewBox gebruiken.
+- De tijdelijke Bronassen-popover sluit bij klik buiten het menu of met Escape.

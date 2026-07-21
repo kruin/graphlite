@@ -29,7 +29,7 @@ if "{ id: 'functional', label:" in js: errors.append('oude centrale view-id func
 if "state.centerMode === 'functional'" in js: errors.append('oude centerMode functional is nog actief')
 if "central_opn === 'ft' || payload.central_opn === 'functional'" not in js: errors.append('compatibiliteitsmigratie functional naar ft ontbreekt')
 
-# v2.0.0-rc.4: projectie- en centrale viewwissels mogen de viewport niet resetten.
+# v2.0.0-rc.6: projectie- en centrale viewwissels mogen de viewport niet resetten.
 required_js_fragments = [
     'function stableProjectionViewBox()',
     "['axes', 'source', 'lex', 'synt', 'log'].includes(state.projection)",
@@ -54,6 +54,51 @@ if "state.centerMode = (value === 'ft' || value === 'functional') ? 'ft' : 'synt
 css = (ROOT/'styles.css').read_text(encoding='utf-8',errors='ignore')
 for fragment in ('width: 7.4rem !important;', 'height: 2.05rem !important;', 'white-space: nowrap !important;'):
     if fragment not in css: errors.append(f'vaste Play-balkhoogte mist {fragment!r}')
+
+
+# v2.0.0-rc.6: projectiekeuze staat buiten canvas en Bron ondersteunt gecombineerde assen.
+for fragment in (
+    'id="mainProjectionSelect"',
+    'id="sourceAxisMenu"',
+    'id="sourceAxisSummaryState"',
+    'id="mainActionsMenu"',
+    'data-source-axis="lex"',
+    'data-source-axis="synt"',
+    'data-source-axis="log"'
+):
+    if fragment not in index: errors.append(f'bronassen-UI mist {fragment!r}')
+if 'class="main-grid-controls' in index:
+    errors.append('oude permanente Projecties-box staat nog in het canvas')
+for fragment in (
+    "const SOURCE_AXIS_IDS = ['lex', 'synt', 'log'];",
+    'function setSourceAxes(',
+    "source_axes: normalizedSourceAxes()",
+    "state.projection === 'source' && sourceAxisSet().has('log')"
+):
+    if fragment not in js: errors.append(f'bronassen-code mist {fragment!r}')
+if 'body.main-screen-active .main-grid-controls {\n  display: none !important;' not in css:
+    errors.append('oude projectiebox is niet hard uitgeschakeld in CSS')
+if "mode === 'functional' ? 'log'" in js:
+    errors.append('FT-rechterprojectie gebruikt opnieuw de LOG-klasse')
+if "mode === 'functional' ? 'synt functional'" not in js:
+    errors.append('FT-rechterprojectie mist eigen functionele SYNT-klasse')
+
+# v2.0.0-rc.6: compacte bovenbalk zonder verlies van leesbare functies.
+for fragment in (
+    'body.main-screen-active .main-topbar {',
+    'min-height: 2.08rem !important;',
+    '.main-actions-menu > summary',
+    'body.main-screen-active .main-actions-menu .main-topbar-actions',
+    '.source-axis-menu[hidden]',
+    'body.main-screen-active .source-axis-summary-state { display: none !important;'
+):
+    if fragment not in css: errors.append(f'compacte-bovenbalkcontrole mist {fragment!r}')
+for fragment in (
+    "els.sourceAxisMenu.hidden = state.projection !== 'source';",
+    "button.closest('.main-topbar') ? (en ? 'EN' : 'NL')",
+    "els.mainActionsMenu.open = false"
+):
+    if fragment not in js: errors.append(f'compacte-bovenbalkcode mist {fragment!r}')
 
 for forbidden in ('LOG' + '/' + 'FT','FT' + '/' + 'LOG'):
     for p in ROOT.rglob('*'):

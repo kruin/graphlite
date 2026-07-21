@@ -51,7 +51,7 @@ if "%APP_VERSION%"=="" (
     echo FOUT: VERSION.txt is leeg.
     exit /b 1
 )
-set "RELEASE_ZIP=OpenGraph_Lite_Viewer_v2.0.0-rc.4_full_source.zip"
+set "RELEASE_ZIP=OpenGraph_Lite_Viewer_v2.0.0-rc.6_full_source.zip"
 echo App-versie: %APP_VERSION%
 echo Release-zip: %RELEASE_ZIP%
 echo.

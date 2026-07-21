@@ -1,6 +1,6 @@
 # HANDOVER_FOR_COLLABORATORS
 
-Overdracht voor OpenGraph Lite Viewer v2.0.0-rc.4.
+Overdracht voor OpenGraph Lite Viewer v2.0.0-rc.6.
 
 ## Bronbasis
 
@@ -10,11 +10,13 @@ Deze release neemt de volledige bronset van v1.0.16 over en corrigeert de centra
 
 ```text
 View-menu:       Syntax → FT
-Projecties-box:  Alle → Bron → LEX → SYNT → LOG
+Projectiekeuze:  Alle → Bron → LEX → SYNT → LOG
 Assen:           LEX west, SYNT oost, LOG zuid
 ```
 
 FT is de tweede centrale view. LOG is uitsluitend de zuidas.
+
+Bronassen: LEX, SYNT en LOG zijn bij Bron onafhankelijk combineerbaar. De bediening staat buiten het canvas.
 
 ## Compatibiliteit
 

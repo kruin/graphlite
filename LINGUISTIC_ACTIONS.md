@@ -107,3 +107,12 @@ Een Wissel is een LEX-regel:
 - verandert woordvolgorde;
 - laat syntaxstructuur ongemoeid;
 - kan een trace/oude positie zichtbaar maken.
+
+
+## Assen bij Bron (v2.0.0-rc.6)
+
+- `Bron` is de centrale Syntax- of FT-view zonder verplichte named projection.
+- De gebruiker kan bij Bron afzonderlijk LEX, SYNT en LOG activeren.
+- De assen zijn onafhankelijk combineerbaar.
+- De centrale bronstructuur muteert niet door deze keuze.
+- De LOG-volgordeactie blijft uitsluitend gekoppeld aan een zichtbare LOG-as.
