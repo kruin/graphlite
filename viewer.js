@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'v2.0.0-rc.6';
+  const VERSION = 'v2.0.0-rc.9';
   const BASE_CELL = 74;
   const ROOT_SIDE_GAP = 1;
   const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -23,8 +23,21 @@
     sourceAxisMenu: document.getElementById('sourceAxisMenu'),
     sourceAxisSummary: document.getElementById('sourceAxisSummary'),
     sourceAxisSummaryLabel: document.getElementById('sourceAxisSummaryLabel'),
-    sourceAxisSummaryState: document.getElementById('sourceAxisSummaryState'),
+    mainSentenceMenu: document.getElementById('mainSentenceMenu'),
+    mainSentenceSummary: document.getElementById('mainSentenceSummary'),
+    mainSentenceOptions: document.getElementById('mainSentenceOptions'),
+    mainAdverbMenu: document.getElementById('mainAdverbMenu'),
+    mainAdverbSummary: document.getElementById('mainAdverbSummary'),
+    mainAdverbOptions: document.getElementById('mainAdverbOptions'),
+    mainViewMenu: document.getElementById('mainViewMenu'),
+    mainViewSummary: document.getElementById('mainViewSummary'),
+    mainViewOptions: document.getElementById('mainViewOptions'),
     mainActionsMenu: document.getElementById('mainActionsMenu'),
+    mainActionsSummary: document.getElementById('mainActionsSummary'),
+    mainExtraMenu: document.getElementById('mainExtraMenu'),
+    mainExtraSummary: document.getElementById('mainExtraSummary'),
+    mainSouthHeading: document.getElementById('mainSouthHeading'),
+    mainSouthExplanation: document.getElementById('mainSouthExplanation'),
     mobileViewSelect: document.getElementById('mobileViewSelect'),
     mobileAdverbSelect: document.getElementById('mobileAdverbSelect'),
     openConfigButton: document.getElementById('openConfigButton'),
@@ -768,10 +781,12 @@
     projection: 'axes',
     sourceAxes: (function(){
       try {
-        const raw = localStorage.getItem('opengraph_source_axes_v200rc6');
-        const parsed = raw ? JSON.parse(raw) : [];
-        return Array.isArray(parsed) ? parsed.filter(id => ['lex','synt','log'].includes(id)) : [];
-      } catch (_err) { return []; }
+        const raw = localStorage.getItem('opengraph_source_axes_v200rc9');
+        const parsed = raw ? JSON.parse(raw) : SOURCE_AXIS_IDS;
+        return Array.isArray(parsed)
+          ? SOURCE_AXIS_IDS.filter(id => parsed.includes(id))
+          : SOURCE_AXIS_IDS.slice();
+      } catch (_err) { return SOURCE_AXIS_IDS.slice(); }
     })(),
     projectionBlockUnlocked: false,
     projectionBoxDraggable: (function(){ try { return localStorage.getItem('opengraph_projection_box_draggable') !== '0'; } catch (_err) { return true; } })(),
@@ -2751,6 +2766,12 @@
     return new Set(normalizedSourceAxes());
   }
 
+  function activeProjectionAxisSet() {
+    if (state.projection === 'axes') return new Set(SOURCE_AXIS_IDS);
+    if (SOURCE_AXIS_IDS.includes(state.projection)) return new Set([state.projection]);
+    return sourceAxisSet();
+  }
+
   function sourceAxesShortLabel() {
     const selected = normalizedSourceAxes().map(id => id === 'synt' ? 'SYNT' : id.toUpperCase());
     if (!selected.length) return isEnglish() ? 'none' : 'geen';
@@ -2760,15 +2781,24 @@
 
   function setSourceAxes(next, options = {}) {
     state.sourceAxes = normalizedSourceAxes(next);
-    try { localStorage.setItem('opengraph_source_axes_v200rc6', JSON.stringify(state.sourceAxes)); } catch (_err) {}
+    try { localStorage.setItem('opengraph_source_axes_v200rc9', JSON.stringify(state.sourceAxes)); } catch (_err) {}
     if (options.activateSource !== false) state.projection = 'source';
+  }
+
+  function applyProjectionAxes(next) {
+    const normalized = normalizedSourceAxes(next);
+    setSourceAxes(normalized, { activateSource: false });
+    if (!normalized.length) setProjection('source');
+    else if (normalized.length === SOURCE_AXIS_IDS.length) setProjection('axes');
+    else if (normalized.length === 1) setProjection(normalized[0]);
+    else setProjection('source');
   }
 
   function toggleSourceAxis(id) {
     if (!SOURCE_AXIS_IDS.includes(id)) return;
-    const selected = sourceAxisSet();
+    const selected = activeProjectionAxisSet();
     if (selected.has(id)) selected.delete(id); else selected.add(id);
-    setSourceAxes([...selected]);
+    applyProjectionAxes([...selected]);
   }
 
   function growthSupportedProjection(projection = state.projection) {
@@ -2781,7 +2811,7 @@
 
   function setProjection(projection) {
     const next = projection || 'axes';
-    // v2.0.0-rc.6: alle named-projection views delen exact dezelfde
+    // v2.0.0-rc.9: alle named-projection views delen exact dezelfde
     // viewport. Een projectiewissel mag daarom een handmatige pan/zoom niet
     // wissen en mag de centrale boom horizontaal noch verticaal verplaatsen.
     if (growthSupportedProjection(state.projection) && state.growthStep > 0) {
@@ -4205,7 +4235,7 @@
   }
 
   function projectionStableFrameBox() {
-    // v2.0.0-rc.6: één gezamenlijk frame voor beide centrale views én alle
+    // v2.0.0-rc.9: één gezamenlijk frame voor beide centrale views én alle
     // projectiekeuzes. Het frame is de unie van Syntax en FT. Daardoor blijven
     // schaal, x-positie en y-positie identiek bij Alle/Bron/LEX/SYNT/LOG en
     // ook wanneer de centrale view tussen Syntax en FT wisselt.
@@ -4480,7 +4510,7 @@
 
   function stableGrowthViewBox() {
     if (!growthActive()) return null;
-    // v2.0.0-rc.6: Groei gebruikt hetzelfde frame als de gewone projectie-
+    // v2.0.0-rc.9: Groei gebruikt hetzelfde frame als de gewone projectie-
     // views. Voorheen hadden Alle/Bron/LOG eigen hard-coded viewBoxes, terwijl
     // LEX/SYNT auto-fit gebruikten; dat veroorzaakte de zichtbare sprong.
     return stableProjectionViewBox();
@@ -4517,7 +4547,7 @@
   }
 
   function clearViewportGestureState() {
-    // v2.0.0-rc.6: bij wissel tussen landscape/portrait mogen oude touch-pointers
+    // v2.0.0-rc.9: bij wissel tussen landscape/portrait mogen oude touch-pointers
     // en pinch-state niet blijven hangen. Anders lijkt portrait na zoom in
     // landscape bevroren.
     state.viewDrag = null;
@@ -4779,7 +4809,7 @@
         controlsLeft = state.projectionBoxManual.left;
         controlsTop = state.projectionBoxManual.top;
       } else {
-        // v2.0.0-rc.6: Projecties-box heeft een stabiele schermpositie.
+        // v2.0.0-rc.9: Projecties-box heeft een stabiele schermpositie.
         // Niet meer ankeren aan een wisselende SYNT-as; alleen handmatig slepen verplaatst de box.
         controlsLeft = maxLeft;
         controlsTop = minTop;
@@ -4914,7 +4944,7 @@
 
   function computeAutoFitBox() {
     if (!els.svg) return fallbackViewBox();
-    // v2.0.0-rc.6: alle projectie-views gebruiken één geometrisch viewport,
+    // v2.0.0-rc.9: alle projectie-views gebruiken één geometrisch viewport,
     // onafhankelijk van welke overlay zichtbaar is. Dit sluit auto-fit-
     // verschillen uit en voorkomt elke horizontale of verticale verspringing.
     if (isMainScreenActive() && ['axes', 'source', 'lex', 'synt', 'log'].includes(state.projection)) {
@@ -5220,6 +5250,81 @@
     }
   }
 
+  function fillCompactChoiceMenu(container, options, selected, hiddenSelect, onChoose) {
+    if (!container) return;
+    container.replaceChildren();
+    for (const opt of options) {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'compact-choice-option';
+      const label = localizedOptionLabel(hiddenSelect, opt);
+      button.textContent = label;
+      const active = opt.id === selected;
+      button.classList.toggle('active', active);
+      button.setAttribute('role', 'option');
+      button.setAttribute('aria-selected', String(active));
+      button.title = label;
+      button.addEventListener('click', () => onChoose(opt.id));
+      container.appendChild(button);
+    }
+  }
+
+  function closeMainChoiceMenus(except = null) {
+    [els.mainSentenceMenu, els.mainAdverbMenu, els.mainViewMenu, els.sourceAxisMenu, els.mainActionsMenu].forEach(menu => {
+      if (menu && menu !== except) menu.open = false;
+    });
+  }
+
+  function renderMainChoiceMenus() {
+    if (els.mainSentenceSummary) {
+      els.mainSentenceSummary.textContent = isEnglish() ? 'Sentence' : 'Zin';
+      els.mainSentenceSummary.title = isEnglish() ? 'Choose the sample sentence' : 'Kies de voorbeeldzin';
+    }
+    if (els.mainAdverbSummary) {
+      els.mainAdverbSummary.textContent = isEnglish() ? 'Adverb' : 'Bijwoord';
+      els.mainAdverbSummary.title = isEnglish() ? 'Choose an adverb' : 'Kies een bijwoord';
+    }
+    if (els.mainViewSummary) {
+      els.mainViewSummary.textContent = state.centerMode === 'ft' ? 'FT' : 'Syntax';
+      els.mainViewSummary.title = isEnglish() ? 'Choose Syntax or FT' : 'Kies Syntax of FT';
+    }
+    if (els.sourceAxisSummaryLabel) {
+      els.sourceAxisSummaryLabel.textContent = isEnglish() ? 'Projections' : 'Projecties';
+    }
+    if (els.mainActionsSummary) {
+      els.mainActionsSummary.textContent = 'Menu';
+      els.mainActionsSummary.title = isEnglish() ? 'Open Extra, language, Help and Config' : 'Open Extra, taal, Help en Config';
+    }
+    if (els.mainExtraSummary) {
+      els.mainExtraSummary.textContent = 'Extra';
+      els.mainExtraSummary.title = isEnglish() ? 'Open extra language actions' : 'Open extra taalacties';
+    }
+    if (els.mainSouthHeading) els.mainSouthHeading.textContent = isEnglish() ? 'LOG order' : 'LOG-volgorde';
+    if (els.mainSouthExplanation) {
+      els.mainSouthExplanation.textContent = isEnglish()
+        ? 'Changes only the LOG projection; Syntax, FT and LEX remain unchanged.'
+        : 'Wijzigt alleen de LOG-projectie; Syntax, FT en LEX blijven gelijk.';
+    }
+    fillCompactChoiceMenu(els.mainSentenceOptions, EXAMPLES, state.example.id, els.mainExampleSelect, id => {
+      state.example = EXAMPLES.find(e => e.id === id) || EXAMPLES[0];
+      resetForNewExample();
+      closeMainChoiceMenus();
+      render();
+    });
+    fillCompactChoiceMenu(els.mainAdverbOptions, ADVERB_OPTIONS, state.selectedAdverbId, els.mainAdverbSelect, id => {
+      state.selectedAdverbId = id || 'none';
+      applyExampleAdverbDefaults();
+      resetManualViewBox();
+      closeMainChoiceMenus();
+      render();
+    });
+    fillCompactChoiceMenu(els.mainViewOptions, CENTER_MODES, state.centerMode, els.mainViewSelect, id => {
+      state.centerMode = (id === 'ft' || id === 'functional') ? 'ft' : 'syntax';
+      closeMainChoiceMenus();
+      render();
+    });
+  }
+
   function renderLexInsertionTargetControls() {
     const selected = new Set(validLexInsertionTargets());
     document.querySelectorAll('[data-lex-extension-target]').forEach(input => {
@@ -5254,14 +5359,9 @@
     fillSelect(els.mainViewSelect, CENTER_MODES, state.centerMode);
     fillSelect(els.mobileViewSelect, CENTER_MODES, state.centerMode);
     fillSelect(els.mainProjectionSelect, PROJECTION_OPTIONS, state.projection);
-    if (els.sourceAxisSummaryLabel) els.sourceAxisSummaryLabel.textContent = isEnglish() ? 'Axes' : 'Assen';
-    if (els.sourceAxisSummaryState) els.sourceAxisSummaryState.textContent = sourceAxesShortLabel();
-    if (els.sourceAxisMenu) {
-      els.sourceAxisMenu.hidden = state.projection !== 'source';
-      if (els.sourceAxisMenu.hidden) els.sourceAxisMenu.open = false;
-    }
+    renderMainChoiceMenus();
     document.querySelectorAll('[data-source-axis]').forEach(button => {
-      const active = sourceAxisSet().has(button.dataset.sourceAxis);
+      const active = activeProjectionAxisSet().has(button.dataset.sourceAxis);
       button.classList.toggle('active', active);
       button.setAttribute('aria-pressed', String(active));
     });
@@ -5348,13 +5448,10 @@
     }
     if (els.mainSouthPrevButton) els.mainSouthPrevButton.title = isEnglish() ? 'Previous LOG order' : 'Vorige LOG-volgorde';
     if (els.mainSouthNextButton) els.mainSouthNextButton.title = isEnglish() ? 'Next LOG order' : 'Volgende LOG-volgorde';
-    const mainSouthControl = document.querySelector('.main-south-control');
-    const mainSouthVisible = state.projection === 'axes'
-      || state.projection === 'log'
-      || (state.projection === 'source' && sourceAxisSet().has('log'));
+    const mainSouthControl = document.querySelector('[data-south-logical-control]');
     if (mainSouthControl) {
-      mainSouthControl.classList.toggle('is-hidden', !mainSouthVisible);
-      mainSouthControl.setAttribute('aria-hidden', String(!mainSouthVisible));
+      mainSouthControl.classList.remove('is-hidden');
+      mainSouthControl.setAttribute('aria-hidden', 'false');
     }
     document.querySelectorAll('[data-main-projection]').forEach(button => {
       const active = button.dataset.mainProjection === state.projection;
@@ -6033,12 +6130,12 @@
     document.querySelectorAll('[data-source-axis-action="all"]').forEach(node => { node.textContent = en ? 'All' : 'Alle'; });
     document.querySelectorAll('[data-source-axis-action="none"]').forEach(node => { node.textContent = en ? 'None' : 'Geen'; });
     document.querySelectorAll('.source-axis-popover p').forEach(node => { node.textContent = en
-      ? 'This choice applies only to Source. The fixed viewport prevents horizontal or vertical jumps.'
-      : 'Deze keuze geldt alleen voor Bron. De vaste viewport voorkomt horizontale of verticale verspringing.'; });
+      ? 'All axes are shown by default. Turn LEX, SYNT and LOG on or off independently; None shows only the source.'
+      : 'Standaard zijn alle assen zichtbaar. Zet LEX, SYNT en LOG onafhankelijk aan of uit; Geen toont alleen de bron.'; });
     setText('.main-projection-title', en ? 'Projections' : 'Projecties');
     setText('[data-projection="source"], [data-main-projection="source"], [data-mobile-projection="source"]', en ? 'Source' : 'Bron');
-    if (els.sourceAxisSummaryLabel) els.sourceAxisSummaryLabel.textContent = en ? 'Axes' : 'Assen';
-    if (els.sourceAxisSummaryState) els.sourceAxisSummaryState.textContent = sourceAxesShortLabel();
+    if (els.sourceAxisSummaryLabel) els.sourceAxisSummaryLabel.textContent = en ? 'Projections' : 'Projecties';
+    renderMainChoiceMenus();
     setText('[data-projection="synt"]', en ? 'SYNT projection' : 'SYNT-projectie');
     setText('[data-main-projection="synt"]', 'SYNT');
     setText('#mainResetButton, #growthResetButton, #mobileGrowthResetButton', en ? 'Reset' : 'Reset');
@@ -6161,10 +6258,16 @@
 
   function applyConfigSnapshot(snapshot = {}) {
     if (!snapshot || typeof snapshot !== 'object') return false;
+    const currentVersionSnapshot = snapshot.version === VERSION;
     if (typeof snapshot.language === 'string') state.language = snapshot.language === 'en' ? 'en' : 'nl';
     if (typeof snapshot.centerMode === 'string') state.centerMode = (snapshot.centerMode === 'ft' || snapshot.centerMode === 'functional') ? 'ft' : 'syntax';
-    if (typeof snapshot.projection === 'string' && PROJECTION_OPTIONS.some(option => option.id === snapshot.projection)) state.projection = snapshot.projection;
-    if (Array.isArray(snapshot.sourceAxes)) setSourceAxes(snapshot.sourceAxes, { activateSource: false });
+    if (currentVersionSnapshot) {
+      if (typeof snapshot.projection === 'string' && PROJECTION_OPTIONS.some(option => option.id === snapshot.projection)) state.projection = snapshot.projection;
+      if (Array.isArray(snapshot.sourceAxes)) setSourceAxes(snapshot.sourceAxes, { activateSource: false });
+    } else {
+      state.projection = 'axes';
+      state.sourceAxes = SOURCE_AXIS_IDS.slice();
+    }
     if (typeof snapshot.treeChoice === 'string') state.treeChoice = snapshot.treeChoice;
     if (typeof snapshot.functionalOrder === 'string') state.functionalOrder = snapshot.functionalOrder;
     if (typeof snapshot.branchOrder === 'string') state.branchOrder = snapshot.branchOrder;
@@ -6191,7 +6294,7 @@
       localStorage.setItem('opengraph_projection_color_log', state.logProjectionColor);
       localStorage.setItem('opengraph_projection_box_draggable', state.projectionBoxDraggable ? '1' : '0');
       localStorage.setItem('opengraph_south_box_draggable', state.southBoxDraggable ? '1' : '0');
-      localStorage.setItem('opengraph_source_axes_v200rc6', JSON.stringify(normalizedSourceAxes()));
+      localStorage.setItem('opengraph_source_axes_v200rc9', JSON.stringify(normalizedSourceAxes()));
       if (state.projectionBoxManual) localStorage.setItem('opengraph_projection_box_manual_v1013', JSON.stringify(state.projectionBoxManual));
       else localStorage.removeItem('opengraph_projection_box_manual_v1013');
       if (state.southBoxManual) localStorage.setItem('opengraph_south_box_manual_v4578', JSON.stringify(state.southBoxManual));
@@ -6509,10 +6612,10 @@
         els.actionFeedback.className = 'action-feedback neutral';
       }
     });
-    els.openConfigButton?.addEventListener('click', () => { if (els.mainActionsMenu) els.mainActionsMenu.open = false; setConfigScreen(true); });
+    els.openConfigButton?.addEventListener('click', () => { if (els.mainExtraMenu) els.mainExtraMenu.open = false; if (els.mainActionsMenu) els.mainActionsMenu.open = false; setConfigScreen(true); });
     els.closeConfigButton?.addEventListener('click', () => setConfigScreen(false));
     els.openConfigFromHelpButton?.addEventListener('click', () => setConfigScreen(true));
-    els.openHelpButton?.addEventListener('click', () => { if (els.mainActionsMenu) els.mainActionsMenu.open = false; setHelpScreen(true); });
+    els.openHelpButton?.addEventListener('click', () => { if (els.mainExtraMenu) els.mainExtraMenu.open = false; if (els.mainActionsMenu) els.mainActionsMenu.open = false; setHelpScreen(true); });
     els.openHelpFromConfigButton?.addEventListener('click', () => setHelpScreen(true));
     els.closeHelpButton?.addEventListener('click', () => setHelpScreen(false));
     registerHelpTopicTree();
@@ -6613,15 +6716,18 @@
     els.mainGrowthPlayButton?.addEventListener('click', toggleGrowthPlayback);
     els.mainGrowthPrevButton?.addEventListener('click', () => { stopGrowthPlayback(); state.growthEnabled = true; setGrowthStep(state.growthStep - 1); });
     els.mainGrowthNextButton?.addEventListener('click', () => { stopGrowthPlayback(); state.growthEnabled = true; setGrowthStep(state.growthStep + 1); });
-    els.mainResetButton?.addEventListener('click', () => { resetForNewExample(); render(); });
-    els.mainSouthPrevButton?.addEventListener('click', () => { stopGrowthPlayback(); cycleSouthLogicalMode(-1); requestAnimationFrame(syncMainOverlayControlPlacement); });
-    els.mainSouthNextButton?.addEventListener('click', () => { stopGrowthPlayback(); cycleSouthLogicalMode(1); requestAnimationFrame(syncMainOverlayControlPlacement); });
-    els.mainSouthModeButton?.addEventListener('click', () => { stopGrowthPlayback(); cycleSouthLogicalMode(1); requestAnimationFrame(syncMainOverlayControlPlacement); });
+    els.mainResetButton?.addEventListener('click', () => { applyProjectionAxes(SOURCE_AXIS_IDS); resetForNewExample(); render(); });
+    els.mainSouthPrevButton?.addEventListener('click', () => { stopGrowthPlayback(); cycleSouthLogicalMode(-1); });
+    els.mainSouthNextButton?.addEventListener('click', () => { stopGrowthPlayback(); cycleSouthLogicalMode(1); });
+    els.mainSouthModeButton?.addEventListener('click', () => { stopGrowthPlayback(); cycleSouthLogicalMode(1); });
     bindProjectionBoxDrag();
     bindSouthBoxDrag();
     els.mainProjectionSelect?.addEventListener('change', event => {
       setProjection(event.target.value || 'axes');
       render();
+    });
+    [els.mainSentenceMenu, els.mainAdverbMenu, els.mainViewMenu, els.sourceAxisMenu, els.mainActionsMenu].forEach(menu => {
+      menu?.addEventListener('toggle', () => { if (menu.open) closeMainChoiceMenus(menu); });
     });
     document.querySelectorAll('[data-source-axis]').forEach(button => {
       button.addEventListener('click', () => {
@@ -6632,14 +6738,15 @@
     document.querySelectorAll('[data-source-axis-action]').forEach(button => {
       button.addEventListener('click', () => {
         const action = button.dataset.sourceAxisAction;
-        setSourceAxes(action === 'all' ? SOURCE_AXIS_IDS : []);
+        applyProjectionAxes(action === 'all' ? SOURCE_AXIS_IDS : []);
         if (els.sourceAxisMenu) els.sourceAxisMenu.open = false;
         render();
       });
     });
     document.addEventListener('pointerdown', event => {
-      if (els.sourceAxisMenu?.open && !els.sourceAxisMenu.contains(event.target)) els.sourceAxisMenu.open = false;
-      if (els.mainActionsMenu?.open && !els.mainActionsMenu.contains(event.target)) els.mainActionsMenu.open = false;
+      [els.mainSentenceMenu, els.mainAdverbMenu, els.mainViewMenu, els.sourceAxisMenu, els.mainActionsMenu].forEach(menu => {
+        if (menu?.open && !menu.contains(event.target)) menu.open = false;
+      });
     });
     document.querySelectorAll('[data-main-projection]').forEach(button => {
       button.addEventListener('click', () => {
@@ -6651,7 +6758,7 @@
     els.mobileGrowthPrevButton?.addEventListener('click', () => { stopGrowthPlayback(); state.growthEnabled = true; setGrowthStep(state.growthStep - 1); });
     els.mobileGrowthNextButton?.addEventListener('click', () => { stopGrowthPlayback(); state.growthEnabled = true; setGrowthStep(state.growthStep + 1); });
     els.mobileGrowthResetButton?.addEventListener('click', () => { state.growthEnabled = true; stopGrowthPlayback(); setGrowthStep(0); });
-    els.resetExampleButton?.addEventListener('click', () => { resetForNewExample(); render(); });
+    els.resetExampleButton?.addEventListener('click', () => { applyProjectionAxes(SOURCE_AXIS_IDS); resetForNewExample(); render(); });
     els.fitButton?.addEventListener('click', runFit);
     els.mobileFitButton?.addEventListener('click', runFit);
     els.mobilePrevButton?.addEventListener('click', () => cycleExample(-1));
@@ -6660,7 +6767,7 @@
     els.mobileCloseButton?.addEventListener('click', () => setMobileSheet(false));
     els.mobileSheetBackdrop?.addEventListener('click', () => setMobileSheet(false));
     els.mobileGrowthButton?.addEventListener('click', toggleMobileGrowth);
-    els.mobileResetButton?.addEventListener('click', () => { resetForNewExample(); setMobileSheet(false); render(); });
+    els.mobileResetButton?.addEventListener('click', () => { applyProjectionAxes(SOURCE_AXIS_IDS); resetForNewExample(); setMobileSheet(false); render(); });
     els.mobileDownloadJsonButton?.addEventListener('click', () => { setMobileSheet(false); downloadJson(); });
     els.fileInput?.addEventListener('change', () => loadJsonFile(els.fileInput));
     els.mobileFileInput?.addEventListener('change', () => loadJsonFile(els.mobileFileInput));
@@ -6677,8 +6784,13 @@
           event.preventDefault();
           return;
         }
-        if (key === 'a') { setSourceAxes(SOURCE_AXIS_IDS); render(); event.preventDefault(); return; }
-        if (key === '0') { setSourceAxes([]); render(); event.preventDefault(); return; }
+        if (key === 'a') { applyProjectionAxes(SOURCE_AXIS_IDS); render(); event.preventDefault(); return; }
+        if (key === '0') { applyProjectionAxes([]); render(); event.preventDefault(); return; }
+      }
+      if (event.key === 'Escape' && els.mainExtraMenu?.open) {
+        els.mainExtraMenu.open = false;
+        event.preventDefault();
+        return;
       }
       if (event.key === 'Escape' && els.mainActionsMenu?.open) {
         els.mainActionsMenu.open = false;
@@ -6786,7 +6898,7 @@
       render();
     });
     window.addEventListener('orientationchange', () => {
-      // v2.0.0-rc.6: breek actieve pinch/pan expliciet af vóór herfit.
+      // v2.0.0-rc.9: breek actieve pinch/pan expliciet af vóór herfit.
       resetManualViewBox();
       requestAnimationFrame(() => {
         resetManualViewBox();

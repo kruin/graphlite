@@ -1,4 +1,4 @@
-# OpenGraph Lite Viewer v2.0.0-rc.6
+# OpenGraph Lite Viewer v2.0.0-rc.9
 
 OpenGraph Lite Viewer is een demo/viewer voor JAN / OPN / OpenGraph-taalstructuren. Deze versie gebruikt de volledige v1.0.16-bronset als basis.
 
@@ -17,13 +17,13 @@ start-local-viewer.bat
 GitHub Pages:
 
 ```text
-https://kruin.github.io/graphlite/index.html?ogv=v2.0.0-rc.6
+https://kruin.github.io/graphlite/index.html?ogv=v2.0.0-rc.9
 ```
 
 Cache-reset:
 
 ```text
-https://kruin.github.io/graphlite/reset-cache.html?ogv=v2.0.0-rc.6
+https://kruin.github.io/graphlite/reset-cache.html?ogv=v2.0.0-rc.9
 ```
 
 ## Centrale views
@@ -61,3 +61,8 @@ LEX-Wissels en bijwoordinserties gebeuren op de LEX-as en muteren Syntax en FT n
 ```bat
 check_release.bat
 ```
+
+
+## v2.0.0-rc.9
+
+De Main-bovenbalk gebruikt `Zin`, `Bijwoord`, `Syntax`/`FT` en `Projecties` als smalle koppen met brede uitklappen. Er is geen Bron-tabblad. Standaard zijn LEX, SYNT en LOG zichtbaar; `Geen` toont alleen de bron. SOV staat onder `Menu → Extra`.

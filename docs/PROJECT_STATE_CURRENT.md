@@ -4,117 +4,52 @@ Actuele status van de OpenGraph / GraphLite viewer.
 
 ## Versie
 
-- Huidige release candidate: v2.0.0-rc.6.
-- Doel: demo/viewer voor JAN / OPN / OpenGraph-taalstructuren.
-- Standaardweergave: Syntax tree.
-- Standaard alternatieve weergave: Functional structure.
+- Huidige releasekandidaat: `v2.0.0-rc.9`.
+- Bronbasis: volledige v1.0.16-bronset, doorontwikkeld via rc.3–rc.9.
 
-## Open Graph Notation
+## Centrale views
 
-Open Graph Notation staat op zichzelf.
+- `Syntax` is de eerste centrale view.
+- `FT` is de tweede centrale view op dezelfde voorbeeldzin.
+- `LOG` is geen centrale view; LOG is uitsluitend de zuidas/projectie.
+- Syntax ↔ FT behoudt viewport, schaal en handmatige pan/zoom.
 
-Kern:
+## Projecties
 
-```text
-Gridregel
-Projectiemechanisme
-Volgordelijk schrijven
-Projectiemerkers
-```
+- LEX staat links/west.
+- SYNT staat rechts/oost.
+- LOG staat onder/zuid.
+- De smalle kop `Projecties` opent een brede keuze voor LEX, SYNT en LOG.
+- **Standaard zijn alle drie assen zichtbaar.**
+- Iedere as kan onafhankelijk worden uitgezet.
+- `Geen` toont alleen de centrale bron; er is geen apart Bron-tabblad.
+- `Alle` en een expliciete Reset herstellen LEX + SYNT + LOG.
+- Iedere combinatie gebruikt exact dezelfde vaste viewBox; geen horizontale of verticale verspringing.
 
-De gridregel geeft elke bronknoop een eigen kruispunt. In de strikte boomtoepassing staat elke knoop als enige op zijn horizontale én verticale gridlijn.
+## Bovenbalk
 
-Het projectiemechanisme verbindt bronknopen met projectiemerkers op veronderstelde assen. In de algemene notatie zijn west-as en zuid-as nog niet taalkundig ingevuld.
+- Vier smalle koppen met brede uitklappen: `Zin`, `Bijwoord`, `Syntax`/`FT`, `Projecties`.
+- Engels: `Sentence`, `Adverb`, `Syntax`/`FT`, `Projections`.
+- Lange waarden staan in de brede uitklap, niet in de smalle kop.
+- Taal, Help en Config staan onder `Menu`.
 
-Open Graph kan volgordelijk worden getoond: bronknopen verschijnen één voor één en projecties kunnen direct worden geschreven zodra hun bronknoop beschikbaar is. Voor boomtoepassingen is de layout tweepass: boxen bottom-up berekenen, daarna top-down renderen. Het resultaat blijft statisch: de centrale graph transformeert niet.
+## SOV / LOG-volgorde
 
-## Named projections
+- Geen SOV-box in Main of in het canvas.
+- De LOG-volgordekeuze staat voorlopig onder `Menu → Extra`.
+- Zij wijzigt alleen LOG; Syntax, FT en LEX blijven gelijk.
+- Twee toekomstige notatieoplossingen staan in `SOV_NOTATION_OPTIONS.md`.
 
-```text
-LEX    westelijke named projection: lexicale items, plaatsingsslots, projectiemerkers
-SYNT   named projection voor syntactische categorieën en regels
-LOG    zuidelijke named projection: selectie van S, O en V
-```
+## Migratie en reset
 
-LEX en de LEX-projectie blijven blauw. SYNT en LOG hebben instelbare projectiekleuren in Config.
+- Een verse rc.9-start opent met alle assen.
+- Een oudere lokale config behoudt overige instellingen maar migreert bij de eerste rc.9-start naar alle assen.
+- Een in rc.9 opgeslagen config bewaart daarna de bewuste gebruikerskeuze.
+- Reset herstelt alle assen.
 
-## Hoofdregels
-
-- Projectielijnen zijn visueel belangrijker dan raster- en boomlijnen.
-- Raster- en boomlijnen blijven minimaal.
-- De LOG-as behoudt zijn eigen SVG-hoogte.
-- De SOV/VSO/etc-taalactiebox mag de LOG-as niet verplaatsen.
-- Projectiekeuze staat in de bovenbalk en bedekt de boom niet.
-- De standaardfit toont de volledige actieve view en de zichtbare bedieningsboxen.
-- Syntax tree en Functional structure zijn views op dezelfde voorbeeldzin.
-
-## UI-status
-
-- Hoofdmenu bevat een View-keuze met `Syntax` en `FT`.
-- Hoofdmenu bevat een Projectie-keuze met `Alle`, `Bron`, `LEX`, `SYNT` en `LOG`.
-- De bovenbalk is één compacte, vaste rij: Zin, Bijwoord, View, Projectie en—alleen bij Bron—Assen.
-- Taal, Help en Config staan leesbaar in één tijdelijk `Menu`; daardoor nemen zij geen permanente breedte in.
-- De compacte bovenbalk mag de centrale view, viewBox of Play-balk niet laten verspringen.
-- De projectiekeuze staat buiten het canvas; er is geen permanente Projecties-box boven de boom.
-- Play-balk bevat stap terug, Play, stap vooruit en Reset.
-- `Alle` toont de centrale view met alle named projections.
-- Bij `Bron` kunnen LEX, SYNT en LOG onafhankelijk en gelijktijdig worden aangezet.
-- Bron ondersteunt: geen as, één as, twee assen of alle drie assen.
-- LEX, SYNT en LOG tonen elk één named projection op dezelfde vaste aspositie als in `Alle`.
-- De LOG-taalactie verschijnt bij `Alle`, `LOG` en `Bron + LOG`.
-- Config bevat projectiekleuren: LEX blijft blauw; SYNT en LOG zijn instelbaar.
-- Config heeft Ja/Nee voor lokaal bewaren of herstellen van configuratie en een downloadbaar lokaal config-log.
-- Mobile gebruikt lichte viewerachtergrond.
-- Cache-reset verloopt via `reset-cache.html` en cache-bust-query.
-
-## As-verplaatsingen
-
-As-verplaatsingen zijn een derde stap.
-
-```text
-1. Centrale bronknopen plaatsen.
-2. Projectiemerkers op named projections schrijven.
-3. As-verplaatsingen toepassen op gereserveerde lege plekken.
-```
-
-Voor LEX zijn relevante lege plekken:
-
-```text
-Comp
-vooropplaatsing/topic
-V2/PV
-bijwoordslot
-trace
-```
-
-Ruimte kan ontstaan door vrije rijen, verlengde takken of het lager plaatsen van een host-subboom.
-
-## Mobile-test
-
-- Mobile-test op desktop loopt lokaal via `local-mobile-test.js`, niet via Config.
-- `local-mobile-test.js` wordt lokaal geladen op `localhost`, `127.0.0.1` of `file:`.
-- `local-mobile-test.js` staat in `.gitignore` en hoort niet mee naar GitHub.
-- URL-test blijft beschikbaar: `?viewport=mobile-portrait`, `?viewport=mobile-landscape`, `?viewport=desktop`.
-
-## Standaardcontrole
+## Controle
 
 ```bat
 node --check viewer.js
+check_release.bat
 ```
-
-## View-stabiliteit
-
-- `Bron`, `Alle`, `LEX`, `SYNT` en `LOG` gebruiken dezelfde dimensies voor de centrale boom.
-- Projectiekeuze wisselt alleen de zichtbare projectie-overlay.
-- De centrale graph transformeert niet door de projectiekeuze.
-
-
-## Stabiele projectie-viewport (v2.0.0-rc.6)
-
-- `Alle`, `Bron`, `LEX`, `SYNT` en `LOG` delen één identieke viewBox.
-- Een projectiewissel mag de centrale boom niet horizontaal of verticaal verplaatsen.
-- Een projectiewissel mag de schaal niet wijzigen.
-- De vaste viewBox is gebaseerd op de unie van de Syntax- en FT-layout.
-- De wissel `Syntax ↔ FT` behoudt dezelfde viewport en handmatige pan/zoom.
-- Groei mag geen afzonderlijke projectiespecifieke viewBox gebruiken.
-- De tijdelijke Bronassen-popover sluit bij klik buiten het menu of met Escape.

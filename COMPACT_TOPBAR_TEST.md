@@ -1,6 +1,6 @@
 # COMPACT_TOPBAR_TEST
 
-Release: `v2.0.0-rc.6`
+Release: `v2.0.0-rc.9`
 
 ## Gecontroleerd
 

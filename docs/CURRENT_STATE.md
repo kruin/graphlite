@@ -1,4 +1,4 @@
-# Actuele contractlaag · v2.0.0-rc.6
+# Actuele contractlaag · v2.0.0-rc.9
 
 De leidende actuele indeling is: `Syntax → FT` in het View-menu en `LEX / SYNT / LOG` als named projections. FT is de tweede centrale view; LOG is uitsluitend de zuidas. Onderstaande tekst bevat historische ontwikkelnotities en is niet normatief waar zij hiermee botst.
 

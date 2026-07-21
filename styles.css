@@ -5293,7 +5293,7 @@ body.viewport-mobile-landscape-test.main-screen-active #graphSvg {
   max-height: 100% !important;
 }
 
-/* v2.0.0-rc.6: View-menu bevat Syntax als eerste view en FT als tweede view; LOG blijft de zuidas. */
+/* v2.0.0-rc.9: View-menu bevat Syntax als eerste view en FT als tweede view; LOG blijft de zuidas. */
 .main-view-field {
   display: flex;
   align-items: center;
@@ -5786,7 +5786,7 @@ body.help-screen-active .help-screen {
   }
 }
 
-/* v2.0.0-rc.6: vaste Play-balkhoogte voor alle projectie-views.
+/* v2.0.0-rc.9: vaste Play-balkhoogte voor alle projectie-views.
    LEX/SYNT schakelen Groei uit; de langere statustekst mag de balk en dus het
    grid nooit lager zetten. */
 body.main-screen-active .main-play-growth-label {
@@ -5815,7 +5815,7 @@ body.main-screen-active .main-play-growth-label {
 }
 
 
-/* v2.0.0-rc.6: projectiekeuze buiten het canvas; Bron kan meerdere assen combineren. */
+/* v2.0.0-rc.9: projectiekeuze buiten het canvas; Bron kan meerdere assen combineren. */
 body.main-screen-active .main-grid-controls {
   display: none !important;
 }
@@ -5927,7 +5927,7 @@ body.main-screen-active .main-grid-controls {
   .source-axis-popover { left: auto; right: 0; }
 }
 
-/* v2.0.0-rc.6: gekozen Bronassen-oplossing en compacte, leesbare bovenbalk.
+/* v2.0.0-rc.9: gekozen Bronassen-oplossing en compacte, leesbare bovenbalk.
    Projectie en Bronassen blijven boven het canvas; taal/Help/Config staan in
    één Menu-popover. De topbar blijft één vaste rij en verandert de viewBox niet. */
 body.main-screen-active .main-topbar {
@@ -6122,4 +6122,104 @@ body.main-screen-active .main-actions-menu .config-open-button {
   body.main-screen-active .source-axis-summary-label { font-size: .66rem !important; }
   body.main-screen-active .source-axis-summary-state::before { content: none !important; }
   .main-actions-menu > summary { min-width: 2.8rem !important; }
+}
+
+
+/* v2.0.0-rc.9: smalle koppen, brede uitklappen; Projecties vervangt Bron. */
+.main-control-select-compat {
+  position: absolute !important; width: 1px !important; height: 1px !important;
+  overflow: hidden !important; clip: rect(0 0 0 0) !important;
+  clip-path: inset(50%) !important; white-space: nowrap !important;
+  opacity: 0 !important; pointer-events: none !important;
+}
+body.main-screen-active .main-topbar {
+  align-items: center !important; justify-content: flex-start !important;
+  gap: .16rem !important; min-height: 2.08rem !important;
+  padding: .12rem .22rem !important; overflow: visible !important;
+}
+.compact-choice-menu { position: relative; flex: 0 0 auto; z-index: 430; }
+.compact-choice-menu > summary {
+  list-style: none; box-sizing: border-box; min-height: 1.78rem; height: 1.78rem;
+  display: flex; align-items: center; justify-content: center;
+  padding: .08rem .38rem; border: 1px solid var(--line); border-radius: .54rem;
+  background: var(--panel); color: var(--text); font-size: .70rem; font-weight: 950;
+  white-space: nowrap; cursor: pointer; user-select: none;
+}
+.compact-choice-menu > summary::-webkit-details-marker { display: none; }
+.compact-choice-menu > summary::after { content: '▾'; margin-left: .24rem; color: var(--muted); font-size: .62rem; }
+.compact-choice-menu[open] > summary::after { content: '▴'; }
+.compact-choice-popover {
+  position: absolute; top: calc(100% + .28rem); left: 0; z-index: 520;
+  width: min(17rem, calc(100vw - .5rem)); box-sizing: border-box; padding: .42rem;
+  border: 1px solid var(--line); border-radius: .72rem;
+  background: color-mix(in srgb, var(--panel), #fff 4%);
+  box-shadow: 0 .7rem 2rem rgba(15,23,42,.22);
+}
+.compact-choice-popover-wide { width: min(28rem, calc(100vw - .5rem)); }
+.compact-choice-popover-small { width: min(10rem, calc(100vw - .5rem)); }
+.compact-choice-list { display: grid; gap: .24rem; max-height: min(26rem, 72vh); overflow: auto; }
+.compact-choice-option {
+  width: 100%; min-height: 2rem; padding: .30rem .48rem; text-align: left;
+  border: 1px solid var(--line); border-radius: .58rem; background: var(--panel-2);
+  color: var(--text); font-size: .76rem; line-height: 1.28; font-weight: 760; cursor: pointer;
+}
+.compact-choice-option.active { border-color: var(--accent); background: color-mix(in srgb,var(--accent),var(--panel) 84%); font-weight: 950; }
+.main-sentence-menu > summary { min-width: 3.0rem; }
+.main-adverb-menu > summary { min-width: 4.6rem; }
+.main-view-menu > summary { min-width: 4.2rem; }
+body.main-screen-active .source-axis-menu { display: block !important; flex: 0 0 auto !important; min-width: 6.3rem !important; }
+body.main-screen-active .source-axis-menu > summary { min-width: 6.3rem; }
+body.main-screen-active .source-axis-popover { width: min(18rem, calc(100vw - .5rem)) !important; }
+.source-axis-toggle-row,.source-axis-action-row { display:flex; gap:.34rem; }
+.source-axis-action-row { margin-top:.42rem; }
+.source-axis-popover button { min-height:1.9rem; flex:1 1 0; font-size:.72rem; }
+.source-axis-popover p { margin:.42rem .04rem 0; font-size:.69rem; line-height:1.35; color:var(--muted); }
+
+/* Menu > Extra: SOV/LOG order is outside the graph canvas. */
+body.main-screen-active .canvas-wrap > .main-south-control,
+body.main-screen-active .canvas-wrap > .language-action-box { display:none !important; }
+.main-actions-menu { position:relative; flex:0 0 auto; margin-left:auto; z-index:540; }
+.main-actions-menu > summary {
+  list-style:none; min-width:3.35rem; min-height:1.78rem; height:1.78rem;
+  display:flex; align-items:center; justify-content:center; padding:.08rem .34rem;
+  border:1px solid var(--line); border-radius:.54rem; background:var(--panel);
+  color:var(--text); font-size:.70rem; font-weight:950; cursor:pointer;
+}
+.main-actions-menu > summary::-webkit-details-marker { display:none; }
+.main-actions-menu > summary::after { content:'▾'; margin-left:.24rem; color:var(--muted); font-size:.62rem; }
+.main-actions-menu[open] > summary::after { content:'▴'; }
+body.main-screen-active .main-actions-menu .main-topbar-actions {
+  position:absolute !important; top:calc(100% + .28rem) !important; right:0 !important;
+  width:12.6rem !important; display:flex !important; flex-direction:column !important;
+  align-items:stretch !important; gap:.24rem !important; box-sizing:border-box !important;
+  padding:.38rem !important; border:1px solid var(--line) !important; border-radius:.72rem !important;
+  background:color-mix(in srgb,var(--panel),#fff 4%) !important;
+  box-shadow:0 .7rem 2rem rgba(15,23,42,.22) !important;
+}
+body.main-screen-active .main-actions-menu .language-toggle-button,
+body.main-screen-active .main-actions-menu .help-open-button,
+body.main-screen-active .main-actions-menu .config-open-button { width:100% !important; min-height:1.82rem !important; font-size:.72rem !important; }
+.main-extra-menu { position:relative; width:100%; }
+.main-extra-menu > summary {
+  list-style:none; cursor:pointer; min-height:2rem; display:flex; align-items:center;
+  justify-content:space-between; padding:.35rem .55rem; border:1px solid var(--line);
+  border-radius:.65rem; background:color-mix(in srgb,var(--panel),white 4%); font-size:.78rem; font-weight:900;
+}
+.main-extra-menu > summary::-webkit-details-marker { display:none; }
+.main-extra-menu > summary::after { content:'›'; transform:rotate(90deg); }
+.main-extra-menu[open] > summary::after { transform:rotate(-90deg); }
+.main-extra-popover { margin-top:.35rem; padding:.55rem; border:1px solid var(--line); border-radius:.75rem; background:var(--panel); }
+.extra-log-order-panel { display:grid; gap:.42rem; }
+.extra-log-order-panel > strong { font-size:.78rem; }
+.extra-log-order-panel > p { margin:0; font-size:.68rem; line-height:1.35; color:var(--muted); }
+.extra-south-control { display:grid; grid-template-columns:2rem minmax(4.1rem,1fr) 2rem; gap:.28rem; align-items:center; }
+.extra-south-control button { min-height:2rem; border:1px solid color-mix(in srgb,var(--log),var(--line) 45%); border-radius:.58rem; background:color-mix(in srgb,var(--log),var(--panel) 84%); font-weight:950; cursor:pointer; }
+@media (max-width:760px),(orientation:portrait) {
+  body.main-screen-active .main-topbar { gap:.10rem !important; min-height:1.98rem !important; padding:.10rem .16rem !important; }
+  .compact-choice-menu > summary,.main-actions-menu > summary { min-height:1.70rem; height:1.70rem; padding-inline:.22rem; font-size:.66rem; }
+  .main-sentence-menu > summary { min-width:2.65rem; }
+  .main-adverb-menu > summary { min-width:3.8rem; }
+  .main-view-menu > summary { min-width:3.4rem; }
+  body.main-screen-active .source-axis-menu,body.main-screen-active .source-axis-menu > summary { min-width:5.2rem !important; }
+  .compact-choice-popover { left:auto; right:0; }
 }
