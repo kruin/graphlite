@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'v2.0.0-rc.9';
+  const VERSION = 'v2.0.0-rc.11';
   const BASE_CELL = 74;
   const ROOT_SIDE_GAP = 1;
   const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -2811,7 +2811,7 @@
 
   function setProjection(projection) {
     const next = projection || 'axes';
-    // v2.0.0-rc.9: alle named-projection views delen exact dezelfde
+    // v2.0.0-rc.11: alle named-projection views delen exact dezelfde
     // viewport. Een projectiewissel mag daarom een handmatige pan/zoom niet
     // wissen en mag de centrale boom horizontaal noch verticaal verplaatsen.
     if (growthSupportedProjection(state.projection) && state.growthStep > 0) {
@@ -4235,7 +4235,7 @@
   }
 
   function projectionStableFrameBox() {
-    // v2.0.0-rc.9: één gezamenlijk frame voor beide centrale views én alle
+    // v2.0.0-rc.11: één gezamenlijk frame voor beide centrale views én alle
     // projectiekeuzes. Het frame is de unie van Syntax en FT. Daardoor blijven
     // schaal, x-positie en y-positie identiek bij Alle/Bron/LEX/SYNT/LOG en
     // ook wanneer de centrale view tussen Syntax en FT wisselt.
@@ -4510,7 +4510,7 @@
 
   function stableGrowthViewBox() {
     if (!growthActive()) return null;
-    // v2.0.0-rc.9: Groei gebruikt hetzelfde frame als de gewone projectie-
+    // v2.0.0-rc.11: Groei gebruikt hetzelfde frame als de gewone projectie-
     // views. Voorheen hadden Alle/Bron/LOG eigen hard-coded viewBoxes, terwijl
     // LEX/SYNT auto-fit gebruikten; dat veroorzaakte de zichtbare sprong.
     return stableProjectionViewBox();
@@ -4547,7 +4547,7 @@
   }
 
   function clearViewportGestureState() {
-    // v2.0.0-rc.9: bij wissel tussen landscape/portrait mogen oude touch-pointers
+    // v2.0.0-rc.11: bij wissel tussen landscape/portrait mogen oude touch-pointers
     // en pinch-state niet blijven hangen. Anders lijkt portrait na zoom in
     // landscape bevroren.
     state.viewDrag = null;
@@ -4809,7 +4809,7 @@
         controlsLeft = state.projectionBoxManual.left;
         controlsTop = state.projectionBoxManual.top;
       } else {
-        // v2.0.0-rc.9: Projecties-box heeft een stabiele schermpositie.
+        // v2.0.0-rc.11: Projecties-box heeft een stabiele schermpositie.
         // Niet meer ankeren aan een wisselende SYNT-as; alleen handmatig slepen verplaatst de box.
         controlsLeft = maxLeft;
         controlsTop = minTop;
@@ -4944,7 +4944,7 @@
 
   function computeAutoFitBox() {
     if (!els.svg) return fallbackViewBox();
-    // v2.0.0-rc.9: alle projectie-views gebruiken één geometrisch viewport,
+    // v2.0.0-rc.11: alle projectie-views gebruiken één geometrisch viewport,
     // onafhankelijk van welke overlay zichtbaar is. Dit sluit auto-fit-
     // verschillen uit en voorkomt elke horizontale of verticale verspringing.
     if (isMainScreenActive() && ['axes', 'source', 'lex', 'synt', 'log'].includes(state.projection)) {
@@ -5270,7 +5270,7 @@
   }
 
   function closeMainChoiceMenus(except = null) {
-    [els.mainSentenceMenu, els.mainAdverbMenu, els.mainViewMenu, els.sourceAxisMenu, els.mainActionsMenu].forEach(menu => {
+    [els.mainSentenceMenu, els.mainAdverbMenu, els.mainViewMenu, els.sourceAxisMenu, els.mainExtraMenu, els.mainActionsMenu].forEach(menu => {
       if (menu && menu !== except) menu.open = false;
     });
   }
@@ -5285,7 +5285,7 @@
       els.mainAdverbSummary.title = isEnglish() ? 'Choose an adverb' : 'Kies een bijwoord';
     }
     if (els.mainViewSummary) {
-      els.mainViewSummary.textContent = state.centerMode === 'ft' ? 'FT' : 'Syntax';
+      els.mainViewSummary.textContent = 'Syntax / FT';
       els.mainViewSummary.title = isEnglish() ? 'Choose Syntax or FT' : 'Kies Syntax of FT';
     }
     if (els.sourceAxisSummaryLabel) {
@@ -5293,11 +5293,11 @@
     }
     if (els.mainActionsSummary) {
       els.mainActionsSummary.textContent = 'Menu';
-      els.mainActionsSummary.title = isEnglish() ? 'Open Extra, language, Help and Config' : 'Open Extra, taal, Help en Config';
+      els.mainActionsSummary.title = isEnglish() ? 'Open the complete main menu' : 'Open het volledige hoofdmenu';
     }
     if (els.mainExtraSummary) {
-      els.mainExtraSummary.textContent = 'Extra';
-      els.mainExtraSummary.title = isEnglish() ? 'Open extra language actions' : 'Open extra taalacties';
+      els.mainExtraSummary.textContent = isEnglish() ? 'LOG order' : 'LOG-volgorde';
+      els.mainExtraSummary.title = isEnglish() ? 'Choose the LOG order' : 'Kies de LOG-volgorde';
     }
     if (els.mainSouthHeading) els.mainSouthHeading.textContent = isEnglish() ? 'LOG order' : 'LOG-volgorde';
     if (els.mainSouthExplanation) {
@@ -6104,7 +6104,7 @@
     document.body.classList.toggle('lang-nl', !en);
     applyConfigLanguageTexts(en);
     document.querySelectorAll('[data-language-toggle]').forEach(button => {
-      button.textContent = button.closest('.main-topbar') ? (en ? 'EN' : 'NL') : (en ? 'English' : 'Nederlands');
+      button.textContent = button.closest('.main-topbar') ? 'NL/EN' : (en ? 'English' : 'Nederlands');
       button.setAttribute('aria-pressed', String(en));
       button.title = en ? 'Click to switch UI/help back to Dutch.' : 'Klik om UI/help naar Engels te wisselen.';
       button.setAttribute('aria-label', button.title);
@@ -6129,7 +6129,7 @@
     setText('[data-projection="axes"], [data-main-projection="axes"]', en ? 'All' : 'Alle');
     document.querySelectorAll('[data-source-axis-action="all"]').forEach(node => { node.textContent = en ? 'All' : 'Alle'; });
     document.querySelectorAll('[data-source-axis-action="none"]').forEach(node => { node.textContent = en ? 'None' : 'Geen'; });
-    document.querySelectorAll('.source-axis-popover p').forEach(node => { node.textContent = en
+    document.querySelectorAll('.source-axis-help').forEach(node => { node.textContent = en
       ? 'All axes are shown by default. Turn LEX, SYNT and LOG on or off independently; None shows only the source.'
       : 'Standaard zijn alle assen zichtbaar. Zet LEX, SYNT en LOG onafhankelijk aan of uit; Geen toont alleen de bron.'; });
     setText('.main-projection-title', en ? 'Projections' : 'Projecties');
@@ -6726,7 +6726,7 @@
       setProjection(event.target.value || 'axes');
       render();
     });
-    [els.mainSentenceMenu, els.mainAdverbMenu, els.mainViewMenu, els.sourceAxisMenu, els.mainActionsMenu].forEach(menu => {
+    [els.mainSentenceMenu, els.mainAdverbMenu, els.mainViewMenu, els.sourceAxisMenu, els.mainExtraMenu, els.mainActionsMenu].forEach(menu => {
       menu?.addEventListener('toggle', () => { if (menu.open) closeMainChoiceMenus(menu); });
     });
     document.querySelectorAll('[data-source-axis]').forEach(button => {
@@ -6744,7 +6744,7 @@
       });
     });
     document.addEventListener('pointerdown', event => {
-      [els.mainSentenceMenu, els.mainAdverbMenu, els.mainViewMenu, els.sourceAxisMenu, els.mainActionsMenu].forEach(menu => {
+      [els.mainSentenceMenu, els.mainAdverbMenu, els.mainViewMenu, els.sourceAxisMenu, els.mainExtraMenu, els.mainActionsMenu].forEach(menu => {
         if (menu?.open && !menu.contains(event.target)) menu.open = false;
       });
     });
@@ -6898,7 +6898,7 @@
       render();
     });
     window.addEventListener('orientationchange', () => {
-      // v2.0.0-rc.9: breek actieve pinch/pan expliciet af vóór herfit.
+      // v2.0.0-rc.11: breek actieve pinch/pan expliciet af vóór herfit.
       resetManualViewBox();
       requestAnimationFrame(() => {
         resetManualViewBox();

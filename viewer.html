@@ -1,6 +1,6 @@
 <!doctype html>
-<!-- OPENGRAPH_ROOT_VIEWER_INDEX_v2.0.0-rc.9: this root index is the app, not docs. -->
-<html lang="nl" data-opengraph-app="viewer" data-version="v2.0.0-rc.9">
+<!-- OPENGRAPH_ROOT_VIEWER_INDEX_v2.0.0-rc.11: this root index is the app, not docs. -->
+<html lang="nl" data-opengraph-app="viewer" data-version="v2.0.0-rc.11">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
@@ -9,10 +9,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#0f172a">
   <meta name="description" content="OpenGraph Lite Viewer: vrije JAN-bronknopen, edits, LEX-plaatsingsregels en projecties.">
-  <title>OpenGraph Lite Viewer v2.0.0-rc.9</title>
+  <title>OpenGraph Lite Viewer v2.0.0-rc.11</title>
   <script>
     (function() {
-      var VERSION = 'v2.0.0-rc.9';
+      var VERSION = 'v2.0.0-rc.11';
       window.__OPENGRAPH_EXPECTED_VERSION__ = VERSION;
       function runCacheCleanupOnce() {
         var flag = 'opengraph-cache-cleaned-' + VERSION;
@@ -52,86 +52,81 @@
   <link rel="icon" href="icons/icon-192.svg" type="image/svg+xml">
   <!-- v4552: manifest disabled in local/dev build to avoid PWA/service-worker confusion. -->
   <!-- <link rel="manifest" href="manifest.webmanifest"> -->
-  <link rel="stylesheet" href="styles.css?v2.0.0-rc.9">
+  <link rel="stylesheet" href="styles.css?v2.0.0-rc.11">
 </head>
 <body class="main-screen-active">
   <header class="app-header">
     <div>
       <div class="eyebrow">OpenGraph · JAN · Open Notation</div>
-      <h1>OpenGraph Lite Viewer <span class="version-tag">v2.0.0-rc.9</span></h1>
-      <p class="header-subtitle">Redesign: View-menu voor syntaxboom of functionele structuur; daarna LEX-projectie en LOG-volgorde.</p>
+      <h1>OpenGraph Lite Viewer <span class="version-tag">v2.0.0-rc.11</span></h1>
+      <p class="header-subtitle">Topmenu met Zin, Bijwoord, Syntax/FT, Projecties, LOG-volgorde, taal, Help en Config.</p>
     </div>
     <button id="installButton" class="ghost hidden" type="button">Installeer</button>
   </header>
 
   <main class="app-shell">
 
-    <section class="main-topbar" aria-label="Hoofdbeeld bediening">
-      <details id="mainSentenceMenu" class="compact-choice-menu main-sentence-menu">
-        <summary id="mainSentenceSummary" title="Kies de voorbeeldzin" aria-label="Voorbeeldzin kiezen">Zin</summary>
-        <div class="compact-choice-popover compact-choice-popover-wide" role="listbox" aria-label="Voorbeeldzin kiezen">
-          <div id="mainSentenceOptions" class="compact-choice-list"></div>
-        </div>
-      </details>
-      <select id="mainExampleSelect" class="main-control-select-compat" aria-hidden="true" tabindex="-1"></select>
-
-      <details id="mainAdverbMenu" class="compact-choice-menu main-adverb-menu">
-        <summary id="mainAdverbSummary" title="Kies een bijwoord" aria-label="Bijwoord kiezen">Bijwoord</summary>
-        <div class="compact-choice-popover compact-choice-popover-wide" role="listbox" aria-label="Bijwoord kiezen">
-          <div id="mainAdverbOptions" class="compact-choice-list"></div>
-        </div>
-      </details>
-      <select id="mainAdverbSelect" class="main-control-select-compat" aria-hidden="true" tabindex="-1"></select>
-
-      <details id="mainViewMenu" class="compact-choice-menu main-view-menu">
-        <summary id="mainViewSummary" title="Kies Syntax of FT" aria-label="View kiezen">Syntax</summary>
-        <div class="compact-choice-popover compact-choice-popover-small" role="listbox" aria-label="View kiezen">
-          <div id="mainViewOptions" class="compact-choice-list"></div>
-        </div>
-      </details>
-      <select id="mainViewSelect" class="main-control-select-compat" aria-hidden="true" tabindex="-1"></select>
-
-      <details id="sourceAxisMenu" class="source-axis-menu compact-choice-menu projection-choice-menu">
-        <summary id="sourceAxisSummary" title="Kies zichtbare projecties" aria-label="Projecties kiezen">
-          <span id="sourceAxisSummaryLabel" class="source-axis-summary-label">Projecties</span>
-        </summary>
-        <div class="source-axis-popover compact-choice-popover" role="group" aria-label="Projecties kiezen">
-          <div class="source-axis-toggle-row">
-            <button type="button" data-source-axis="lex" aria-pressed="true">LEX</button>
-            <button type="button" data-source-axis="synt" aria-pressed="true">SYNT</button>
-            <button type="button" data-source-axis="log" aria-pressed="true">LOG</button>
+    <section class="main-topbar" aria-label="Hoofdmenu">
+      <nav class="main-top-menu" aria-label="Topmenu">
+        <details id="mainSentenceMenu" class="compact-choice-menu main-sentence-menu top-menu-item">
+          <summary id="mainSentenceSummary" title="Kies de voorbeeldzin">Zin</summary>
+          <div class="compact-choice-popover top-menu-popover top-menu-sentence-popover" aria-label="Voorbeeldzin kiezen">
+            <div id="mainSentenceOptions" class="compact-choice-list main-menu-option-list" role="listbox" aria-label="Voorbeeldzin kiezen"></div>
           </div>
-          <div class="source-axis-action-row">
-            <button type="button" data-source-axis-action="all">Alle</button>
-            <button type="button" data-source-axis-action="none">Geen</button>
-          </div>
-          <p>Standaard zijn alle assen zichtbaar. Zet LEX, SYNT en LOG onafhankelijk aan of uit; Geen toont alleen de bron.</p>
-        </div>
-      </details>
-      <select id="mainProjectionSelect" class="main-control-select-compat" aria-hidden="true" tabindex="-1"></select>
+        </details>
 
-      <details id="mainActionsMenu" class="main-actions-menu">
-        <summary id="mainActionsSummary" title="Open Extra, taal, Help en Config">Menu</summary>
-        <div class="main-topbar-actions" aria-label="Hoofdbeeld acties">
-          <details id="mainExtraMenu" class="main-extra-menu">
-            <summary id="mainExtraSummary" title="Open extra taalacties">Extra</summary>
-            <div class="main-extra-popover" role="group" aria-label="Extra taalacties">
-              <section class="extra-log-order-panel">
-                <strong id="mainSouthHeading">LOG-volgorde</strong>
-                <div class="extra-south-control" data-south-logical-control aria-label="LOG-volgorde kiezen">
-                  <button id="mainSouthPrevButton" type="button" title="Vorige LOG-volgorde">‹</button>
-                  <button id="mainSouthModeButton" type="button" title="Volgende LOG-volgorde: SOV, SVO, OVS, OSV-!, VSO-!, VOS-!">SOV</button>
-                  <button id="mainSouthNextButton" type="button" title="Volgende LOG-volgorde">›</button>
-                </div>
-                <p id="mainSouthExplanation">Wijzigt alleen de LOG-projectie; Syntax, FT en LEX blijven gelijk.</p>
-              </section>
+        <details id="mainAdverbMenu" class="compact-choice-menu main-adverb-menu top-menu-item">
+          <summary id="mainAdverbSummary" title="Kies een bijwoord">Bijwoord</summary>
+          <div class="compact-choice-popover top-menu-popover top-menu-adverb-popover" aria-label="Bijwoord kiezen">
+            <div id="mainAdverbOptions" class="compact-choice-list main-menu-option-list" role="listbox" aria-label="Bijwoord kiezen"></div>
+          </div>
+        </details>
+
+        <details id="mainViewMenu" class="compact-choice-menu main-view-menu top-menu-item">
+          <summary id="mainViewSummary" title="Kies Syntax of FT">Syntax / FT</summary>
+          <div class="compact-choice-popover top-menu-popover top-menu-view-popover" aria-label="View kiezen">
+            <div id="mainViewOptions" class="compact-choice-list main-menu-option-list main-menu-view-options" role="listbox" aria-label="View kiezen"></div>
+          </div>
+        </details>
+
+        <details id="sourceAxisMenu" class="compact-choice-menu source-axis-menu main-projection-menu top-menu-item">
+          <summary id="sourceAxisSummary" title="Kies zichtbare projecties"><span id="sourceAxisSummaryLabel">Projecties</span></summary>
+          <div class="compact-choice-popover top-menu-popover top-menu-projection-popover" aria-label="Projecties kiezen">
+            <div class="source-axis-toggle-row" role="group" aria-label="Projecties kiezen">
+              <button type="button" data-source-axis="lex" aria-pressed="true">LEX</button>
+              <button type="button" data-source-axis="synt" aria-pressed="true">SYNT</button>
+              <button type="button" data-source-axis="log" aria-pressed="true">LOG</button>
             </div>
-          </details>
-          <button data-language-toggle class="language-toggle-button" type="button" title="Wissel de UI/help-taal">NL</button>
-          <button id="openHelpButton" class="help-open-button" type="button" title="Open het help-scherm.">Help</button>
-          <button id="openConfigButton" class="primary config-open-button" type="button" title="Open het configuratiescherm met alle projectie-, LEX-, layout- en documentatie-instellingen.">Config</button>
-        </div>
-      </details>
+            <div class="source-axis-action-row">
+              <button type="button" data-source-axis-action="all">Alle</button>
+              <button type="button" data-source-axis-action="none">Geen</button>
+            </div>
+            <p class="main-menu-help source-axis-help">Standaard zijn alle assen zichtbaar. Zet LEX, SYNT en LOG onafhankelijk aan of uit.</p>
+          </div>
+        </details>
+
+        <details id="mainExtraMenu" class="compact-choice-menu main-extra-menu main-log-menu top-menu-item">
+          <summary id="mainExtraSummary" title="Kies de LOG-volgorde">LOG-volgorde</summary>
+          <div class="compact-choice-popover top-menu-popover top-menu-log-popover" aria-label="LOG-volgorde kiezen">
+            <h3 id="mainSouthHeading" class="top-menu-panel-heading">LOG-volgorde</h3>
+            <div class="extra-south-control" data-south-logical-control aria-label="LOG-volgorde kiezen">
+              <button id="mainSouthPrevButton" type="button" title="Vorige LOG-volgorde">‹</button>
+              <button id="mainSouthModeButton" type="button" title="Volgende LOG-volgorde: SOV, SVO, OVS, OSV-!, VSO-!, VOS-!">SOV</button>
+              <button id="mainSouthNextButton" type="button" title="Volgende LOG-volgorde">›</button>
+            </div>
+            <p id="mainSouthExplanation" class="main-menu-help">Wijzigt alleen de LOG-projectie; Syntax, FT en LEX blijven gelijk.</p>
+          </div>
+        </details>
+
+        <button data-language-toggle class="top-menu-action language-toggle-button" type="button" title="Wissel de UI/help-taal">NL/EN</button>
+        <button id="openHelpButton" class="top-menu-action help-open-button" type="button" title="Open het help-scherm.">Help</button>
+        <button id="openConfigButton" class="top-menu-action primary config-open-button" type="button" title="Open het configuratiescherm met alle projectie-, LEX-, layout- en documentatie-instellingen.">Config</button>
+      </nav>
+
+      <select id="mainExampleSelect" class="main-control-select-compat" aria-hidden="true" tabindex="-1"></select>
+      <select id="mainAdverbSelect" class="main-control-select-compat" aria-hidden="true" tabindex="-1"></select>
+      <select id="mainViewSelect" class="main-control-select-compat" aria-hidden="true" tabindex="-1"></select>
+      <select id="mainProjectionSelect" class="main-control-select-compat" aria-hidden="true" tabindex="-1"></select>
     </section>
 
     <section class="main-play-reset-bar" aria-label="Groei, play en reset">
@@ -476,17 +471,17 @@
 
     <section class="toolbar" aria-label="Hoofdbediening">
       <div class="input-sentence-tools" aria-label="Zin-input">
-        <a class="button-link" href="examples-input.html?v2.0.0-rc.9" title="Open de HTML-inputfile met voorbeeldzinnen, subject vet en object cursief">HTML-input</a>
-        <a class="button-link" href="examples-adverbs.html?v2.0.0-rc.9" title="Voorbeeldset met één bijwoord per zin en default-host per categorie">Bijwoordvoorbeelden</a>
-        <a class="button-link" href="docs/LEX_ADVERB_PLACEMENT_RULES_CHECKED.md?v2.0.0-rc.9" title="Plaatsingsregels voor lexicale bijwoordinsertie: default en gemarkeerd">Bijwoordregels</a>
-            <a class="button-link" href="examples-adverb-rules-v4552.html?v2.0.0-rc.9" title="Controle per bijwoord: uitzonderingen en eigen regels">Bijwoordcheck</a>
-        <a class="button-link" href="examples-adverb-rules-v4552.html?v2.0.0-rc.9" title="Controle per bijwoord: uitzonderingen en eigen regels">Bijwoordcheck</a>
-        <a class="button-link" href="lexicon-config.html?v2.0.0-rc.9" title="Leesbare lexicon-config voor voorbeeldzinnen">Lexicon</a>
-        <a class="button-link" href="lexicon-editor.html?v2.0.0-rc.9" title="Lexicon én korte voorbeelduitingen beheren; exporteert lexicon-config.html en examples-input.html">Lexicon+uitingen-editor</a>
-        <a class="button-link" href="structure-editor.html?v2.0.0-rc.9" title="Bewerk eerst syntax-config en functional-config">Structure-editor</a>
-        <a class="button-link" href="docs/docs-home.html?v2.0.0-rc.9" title="Projectcontext, layoutspec en release notes">Docs</a>
-        <a class="button-link" href="lex-movement-rules.html?v2.0.0-rc.9" title="Simpele uitleg van de LEX-Wissels per zinstype">Plaatsingsregels</a>
-        <a class="button-link" href="reset-cache.html?v2.0.0-rc.9" title="Verwijder browsercache/service worker en open de viewer opnieuw">Reset cache</a>
+        <a class="button-link" href="examples-input.html?v2.0.0-rc.11" title="Open de HTML-inputfile met voorbeeldzinnen, subject vet en object cursief">HTML-input</a>
+        <a class="button-link" href="examples-adverbs.html?v2.0.0-rc.11" title="Voorbeeldset met één bijwoord per zin en default-host per categorie">Bijwoordvoorbeelden</a>
+        <a class="button-link" href="docs/LEX_ADVERB_PLACEMENT_RULES_CHECKED.md?v2.0.0-rc.11" title="Plaatsingsregels voor lexicale bijwoordinsertie: default en gemarkeerd">Bijwoordregels</a>
+            <a class="button-link" href="examples-adverb-rules-v4552.html?v2.0.0-rc.11" title="Controle per bijwoord: uitzonderingen en eigen regels">Bijwoordcheck</a>
+        <a class="button-link" href="examples-adverb-rules-v4552.html?v2.0.0-rc.11" title="Controle per bijwoord: uitzonderingen en eigen regels">Bijwoordcheck</a>
+        <a class="button-link" href="lexicon-config.html?v2.0.0-rc.11" title="Leesbare lexicon-config voor voorbeeldzinnen">Lexicon</a>
+        <a class="button-link" href="lexicon-editor.html?v2.0.0-rc.11" title="Lexicon én korte voorbeelduitingen beheren; exporteert lexicon-config.html en examples-input.html">Lexicon+uitingen-editor</a>
+        <a class="button-link" href="structure-editor.html?v2.0.0-rc.11" title="Bewerk eerst syntax-config en functional-config">Structure-editor</a>
+        <a class="button-link" href="docs/docs-home.html?v2.0.0-rc.11" title="Projectcontext, layoutspec en release notes">Docs</a>
+        <a class="button-link" href="lex-movement-rules.html?v2.0.0-rc.11" title="Simpele uitleg van de LEX-Wissels per zinstype">Plaatsingsregels</a>
+        <a class="button-link" href="reset-cache.html?v2.0.0-rc.11" title="Verwijder browsercache/service worker en open de viewer opnieuw">Reset cache</a>
       </div>
       <div class="button-row compact-actions">
         <button id="resetExampleButton" type="button" title="Herlaad het gekozen voorbeeld">Reset voorbeeld</button>
@@ -605,12 +600,12 @@
           <h2>Voorbeeldzinnen</h2>
           <p class="inline-help">Voeg voorbeeldzinnen toe via de editor. Start lokaal met <code>start-local-viewer.bat</code>; dan schrijft <strong>Opslaan</strong> direct naar <code>examples-input.html</code>. Daarna kun je hier de lijst herladen.</p>
           <div class="button-row">
-            <a class="button-link primary" href="examples-editor.html?v2.0.0-rc.9" title="Voorbeeldzinnen toevoegen en opslaan">Voorbeeldzinnen-editor</a>
-            <a class="button-link" href="examples-input.html?v2.0.0-rc.9" title="Leesbare HTML-input met voorbeeldzinnen">HTML-input</a>
-            <a class="button-link" href="examples-adverbs.html?v2.0.0-rc.9" title="Bijwoordvoorbeelden met default-host en gemarkeerde host">Bijwoordvoorbeelden</a>
-            <a class="button-link" href="docs/LEX_ADVERB_PLACEMENT_RULES_CHECKED.md?v2.0.0-rc.9" title="Plaatsingsregels voor lexicale bijwoordinsertie: default en gemarkeerd">Bijwoordregels</a>
-            <a class="button-link" href="examples-adverb-rules-v4552.html?v2.0.0-rc.9" title="Controle per bijwoord: uitzonderingen en eigen regels">Bijwoordcheck</a>
-        <a class="button-link" href="examples-adverb-rules-v4552.html?v2.0.0-rc.9" title="Controle per bijwoord: uitzonderingen en eigen regels">Bijwoordcheck</a>
+            <a class="button-link primary" href="examples-editor.html?v2.0.0-rc.11" title="Voorbeeldzinnen toevoegen en opslaan">Voorbeeldzinnen-editor</a>
+            <a class="button-link" href="examples-input.html?v2.0.0-rc.11" title="Leesbare HTML-input met voorbeeldzinnen">HTML-input</a>
+            <a class="button-link" href="examples-adverbs.html?v2.0.0-rc.11" title="Bijwoordvoorbeelden met default-host en gemarkeerde host">Bijwoordvoorbeelden</a>
+            <a class="button-link" href="docs/LEX_ADVERB_PLACEMENT_RULES_CHECKED.md?v2.0.0-rc.11" title="Plaatsingsregels voor lexicale bijwoordinsertie: default en gemarkeerd">Bijwoordregels</a>
+            <a class="button-link" href="examples-adverb-rules-v4552.html?v2.0.0-rc.11" title="Controle per bijwoord: uitzonderingen en eigen regels">Bijwoordcheck</a>
+        <a class="button-link" href="examples-adverb-rules-v4552.html?v2.0.0-rc.11" title="Controle per bijwoord: uitzonderingen en eigen regels">Bijwoordcheck</a>
             <button id="reloadExamplesButton" type="button" title="Herlees examples-input.html zonder de hele pagina opnieuw te openen">Herlaad zinnen</button>
           </div>
         </section>
@@ -712,9 +707,9 @@
     <div class="mobile-sheet-section" aria-label="Documentatie">
       <h3>Documentatie</h3>
       <div class="mobile-link-grid">
-        <a href="docs/docs-home.html?v2.0.0-rc.9">Docs</a>
-        <a href="lex-movement-rules.html?v2.0.0-rc.9">Plaatsingsregels</a>
-        <a href="reset-cache.html?v2.0.0-rc.9">Reset cache</a>
+        <a href="docs/docs-home.html?v2.0.0-rc.11">Docs</a>
+        <a href="lex-movement-rules.html?v2.0.0-rc.11">Plaatsingsregels</a>
+        <a href="reset-cache.html?v2.0.0-rc.11">Reset cache</a>
       </div>
     </div>
 
@@ -723,7 +718,7 @@
 
 
   <script>
-    window.__opengraphBoot = { version: 'v2.0.0-rc.9', loaded: false, marker: 'viewer-index' };
+    window.__opengraphBoot = { version: 'v2.0.0-rc.11', loaded: false, marker: 'viewer-index' };
     function ogStatus(message) {
       var target = document.getElementById('actionFeedback') || document.body;
       if (target) target.textContent = message;
@@ -736,7 +731,7 @@
     });
     setTimeout(function() {
       if (!window.__opengraphBoot || !window.__opengraphBoot.loaded) {
-        ogStatus('Viewer start niet volledig. Gebruik Reset cache of open http://127.0.0.1:8088/reset-cache.html?v2.0.0-rc.9.');
+        ogStatus('Viewer start niet volledig. Gebruik Reset cache of open http://127.0.0.1:8088/reset-cache.html?v2.0.0-rc.11.');
       }
     }, 2500);
   </script>
@@ -746,11 +741,11 @@
       var isLocal = window.location.protocol === 'file:' || !host || host === 'localhost' || host === '127.0.0.1';
       if (!isLocal) return;
       var script = document.createElement('script');
-      script.src = 'local-mobile-test.js?v2.0.0-rc.9';
+      script.src = 'local-mobile-test.js?v2.0.0-rc.11';
       script.defer = true;
       document.head.appendChild(script);
     })();
   </script>
-  <script src="viewer.js?v2.0.0-rc.9&amp;cb=4" defer></script>
+  <script src="viewer.js?v2.0.0-rc.11&amp;cb=4" defer></script>
 </body>
 </html>

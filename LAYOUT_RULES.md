@@ -45,3 +45,20 @@ LOG      uitsluitend zuidas; nooit centrale view
 - Geen SOV-/taalactiebox in het canvas.
 - Tijdelijke bediening: `Menu → Extra`.
 - Omschakelen van LOG-volgorde mag de viewBox niet wijzigen.
+
+## Eén hoofdmenu
+
+- Boven het grid staat één knop `Menu`.
+- Het geopende paneel bevat alle hoofdkeuzes zonder geneste uitklappen.
+- Het menu mag het grid niet verplaatsen en sluit bij klik buiten het paneel of Escape.
+
+## Lijndikte
+
+- Boom-, relatie- en hulplijnen: zeer dun.
+- Contouren van knopen, slots en regels: zo dun mogelijk.
+- Named-projectionlijnen en hun assen: iets dikker dan de bronstructuur, maar niet vet.
+
+
+## Topmenu v2.0.0-rc.11
+
+Main toont één topmenubalk met acht zichtbare hoofditems: Zin, Bijwoord, Syntax/FT, Projecties, LOG-volgorde, NL/EN, Help en Config. Er is geen algemene knop `Menu` en er zijn geen geneste submenu’s. Keuze-items openen direct hun eigen brede uitklappaneel.

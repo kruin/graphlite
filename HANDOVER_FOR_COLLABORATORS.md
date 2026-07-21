@@ -1,6 +1,6 @@
 # HANDOVER_FOR_COLLABORATORS
 
-Overdracht voor OpenGraph Lite Viewer v2.0.0-rc.9.
+Overdracht voor OpenGraph Lite Viewer v2.0.0-rc.11.
 
 ## Bronbasis
 
@@ -33,3 +33,8 @@ Intern schrijft de viewer `central_opn: "ft"`. Invoer met de oude waarde `functi
 ## Publiceren
 
 Gebruik `publish_checked.bat`. Releasezips en lokale mobile-testbestanden horen niet in de GitHub Pages-root.
+
+
+## Topmenu v2.0.0-rc.11
+
+Main toont één topmenubalk met acht zichtbare hoofditems: Zin, Bijwoord, Syntax/FT, Projecties, LOG-volgorde, NL/EN, Help en Config. Er is geen algemene knop `Menu` en er zijn geen geneste submenu’s. Keuze-items openen direct hun eigen brede uitklappaneel.

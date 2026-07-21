@@ -5293,7 +5293,7 @@ body.viewport-mobile-landscape-test.main-screen-active #graphSvg {
   max-height: 100% !important;
 }
 
-/* v2.0.0-rc.9: View-menu bevat Syntax als eerste view en FT als tweede view; LOG blijft de zuidas. */
+/* v2.0.0-rc.11: View-menu bevat Syntax als eerste view en FT als tweede view; LOG blijft de zuidas. */
 .main-view-field {
   display: flex;
   align-items: center;
@@ -5786,7 +5786,7 @@ body.help-screen-active .help-screen {
   }
 }
 
-/* v2.0.0-rc.9: vaste Play-balkhoogte voor alle projectie-views.
+/* v2.0.0-rc.11: vaste Play-balkhoogte voor alle projectie-views.
    LEX/SYNT schakelen Groei uit; de langere statustekst mag de balk en dus het
    grid nooit lager zetten. */
 body.main-screen-active .main-play-growth-label {
@@ -5815,7 +5815,7 @@ body.main-screen-active .main-play-growth-label {
 }
 
 
-/* v2.0.0-rc.9: projectiekeuze buiten het canvas; Bron kan meerdere assen combineren. */
+/* v2.0.0-rc.11: projectiekeuze buiten het canvas; Bron kan meerdere assen combineren. */
 body.main-screen-active .main-grid-controls {
   display: none !important;
 }
@@ -5927,7 +5927,7 @@ body.main-screen-active .main-grid-controls {
   .source-axis-popover { left: auto; right: 0; }
 }
 
-/* v2.0.0-rc.9: gekozen Bronassen-oplossing en compacte, leesbare bovenbalk.
+/* v2.0.0-rc.11: gekozen Bronassen-oplossing en compacte, leesbare bovenbalk.
    Projectie en Bronassen blijven boven het canvas; taal/Help/Config staan in
    één Menu-popover. De topbar blijft één vaste rij en verandert de viewBox niet. */
 body.main-screen-active .main-topbar {
@@ -6125,7 +6125,7 @@ body.main-screen-active .main-actions-menu .config-open-button {
 }
 
 
-/* v2.0.0-rc.9: smalle koppen, brede uitklappen; Projecties vervangt Bron. */
+/* v2.0.0-rc.11: smalle koppen, brede uitklappen; Projecties vervangt Bron. */
 .main-control-select-compat {
   position: absolute !important; width: 1px !important; height: 1px !important;
   overflow: hidden !important; clip: rect(0 0 0 0) !important;
@@ -6223,3 +6223,347 @@ body.main-screen-active .main-actions-menu .config-open-button { width:100% !imp
   body.main-screen-active .source-axis-menu,body.main-screen-active .source-axis-menu > summary { min-width:5.2rem !important; }
   .compact-choice-popover { left:auto; right:0; }
 }
+
+/* v2.0.0-rc.11: één plat hoofdmenu; geen geneste submenu's. */
+body.main-screen-active .main-topbar {
+  min-height: 2.02rem !important;
+  padding: .10rem .18rem !important;
+  gap: 0 !important;
+}
+body.main-screen-active .main-unified-menu {
+  position: relative;
+  margin: 0;
+  z-index: 650;
+}
+body.main-screen-active .main-unified-menu > summary {
+  min-width: 4rem !important;
+  min-height: 1.72rem !important;
+  height: 1.72rem !important;
+  padding: .08rem .42rem !important;
+  border: .6px solid color-mix(in srgb, var(--line), transparent 18%) !important;
+  border-radius: .48rem !important;
+  font-size: .70rem !important;
+}
+.main-unified-popover {
+  position: absolute;
+  top: calc(100% + .24rem);
+  left: 0;
+  z-index: 700;
+  width: min(48rem, calc(100vw - .7rem));
+  max-height: min(78vh, 42rem);
+  overflow: auto;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: minmax(14rem, 1.45fr) minmax(12rem, 1fr);
+  gap: .44rem;
+  padding: .48rem;
+  border: .6px solid color-mix(in srgb, var(--line), transparent 18%);
+  border-radius: .68rem;
+  background: color-mix(in srgb, var(--panel), #fff 4%);
+  box-shadow: 0 .55rem 1.6rem rgba(15,23,42,.16);
+}
+.main-menu-group {
+  min-width: 0;
+  padding: .42rem;
+  border: .55px solid color-mix(in srgb, var(--line), transparent 28%);
+  border-radius: .56rem;
+  background: color-mix(in srgb, var(--panel), var(--bg) 16%);
+}
+.main-menu-group > h3 {
+  margin: 0 0 .32rem;
+  color: var(--muted);
+  font-size: .69rem;
+  font-weight: 900;
+  letter-spacing: .045em;
+  text-transform: uppercase;
+}
+.main-menu-sentence-group,
+.main-menu-adverb-group { grid-row: span 2; }
+.main-menu-option-list {
+  max-height: 13.5rem;
+  overflow: auto;
+  gap: .18rem;
+}
+.main-menu-option-list .compact-choice-option {
+  min-height: 1.72rem;
+  padding: .22rem .38rem;
+  border-width: .55px;
+  border-radius: .44rem;
+  font-size: .72rem;
+  font-weight: 720;
+}
+.main-menu-view-options {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  max-height: none;
+}
+.main-menu-view-options .compact-choice-option { text-align: center; }
+.main-menu-projection-group .source-axis-toggle-row,
+.main-menu-projection-group .source-axis-action-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0,1fr));
+  gap: .24rem;
+}
+.main-menu-projection-group .source-axis-action-row {
+  grid-template-columns: repeat(2, minmax(0,1fr));
+  margin-top: .26rem;
+}
+.main-menu-projection-group button,
+.main-menu-log-group button,
+.main-menu-actions button {
+  min-height: 1.75rem !important;
+  border-width: .55px !important;
+  border-radius: .44rem !important;
+  font-size: .70rem !important;
+}
+.main-menu-help {
+  margin: .30rem 0 0;
+  color: var(--muted);
+  font-size: .66rem;
+  line-height: 1.32;
+}
+.main-menu-actions {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: .28rem;
+  padding-top: .02rem;
+}
+body.main-screen-active .main-actions-menu .main-topbar-actions,
+body.main-screen-active .main-extra-menu,
+body.main-screen-active .main-extra-popover { display: none !important; }
+@media (max-width: 720px), (orientation: portrait) {
+  .main-unified-popover {
+    width: min(29rem, calc(100vw - .42rem));
+    grid-template-columns: 1fr;
+    max-height: 80vh;
+    padding: .38rem;
+    gap: .34rem;
+  }
+  .main-menu-sentence-group,
+  .main-menu-adverb-group { grid-row: auto; }
+  .main-menu-option-list { max-height: 10.5rem; }
+}
+
+/* v2.0.0-rc.11: lichte belijning; alleen named projections krijgen nadruk. */
+body.main-screen-active .grid-line { stroke-width: .42 !important; opacity: .16 !important; }
+body.main-screen-active .grid-line.major { stroke-width: .58 !important; opacity: .21 !important; }
+body.main-screen-active .axis-line,
+body.main-screen-active .grid-axis { stroke-width: .60 !important; opacity: .46 !important; }
+body.main-screen-active .edge,
+body.main-screen-active .relation-edge,
+body.main-screen-active .tree-edge,
+body.main-screen-active .syntax-tree-edge,
+body.main-screen-active .lex-arc,
+body.main-screen-active .log-edge,
+body.main-screen-active .lex-axis,
+body.main-screen-active .lex-axis-line {
+  stroke-width: .72 !important;
+  opacity: .58 !important;
+}
+body.main-screen-active .node-circle,
+body.main-screen-active .functional-node,
+body.main-screen-active .synthetic-node {
+  stroke-width: .62 !important;
+}
+body.main-screen-active .tree-node.leaf-node .node-circle { stroke-width: .72 !important; }
+body.main-screen-active .node-circle.selected,
+body.main-screen-active .tree-node.selected .node-circle,
+body.main-screen-active .tree-node.selected .synt-box { stroke-width: 1.15 !important; }
+body.main-screen-active .projection-frame,
+body.main-screen-active .axis-band,
+body.main-screen-active .tree-subbox,
+body.main-screen-active .tree-subbox.root,
+body.main-screen-active .jan-subtree-box,
+body.main-screen-active .log-role-box,
+body.main-screen-active .lex-slot-box,
+body.main-screen-active .synt-box,
+body.main-screen-active .category-box,
+body.main-screen-active .syntax-rule-box,
+body.main-screen-active .free-slot-box,
+body.main-screen-active .lex-local-slot,
+body.main-screen-active .lex-free-slot,
+body.main-screen-active .logical-order-box,
+body.main-screen-active .projection-stability-frame {
+  stroke-width: .52 !important;
+  opacity: .78 !important;
+}
+body.main-screen-active .projection-line,
+body.main-screen-active .projection-line.horizontal,
+body.main-screen-active .projection-line.orthogonal,
+body.main-screen-active .logical-projection-line,
+body.main-screen-active .logical-source-line {
+  stroke-width: 1.42 !important;
+  opacity: .86 !important;
+}
+body.main-screen-active .projection-axis-line,
+body.main-screen-active .logical-axis,
+body.main-screen-active .projection-line.lex-source-projection-line {
+  stroke-width: 1.58 !important;
+  opacity: .92 !important;
+}
+body.main-screen-active .node-main-label {
+  stroke-width: 1.25px !important;
+}
+
+/* v2.0.0-rc.11: alle SVG-boxcontouren minimaal; projecties blijven herkenbaar. */
+body.main-screen-active #graphSvg rect {
+  stroke-width: .50 !important;
+}
+body.main-screen-active #graphSvg circle {
+  stroke-width: .60 !important;
+}
+body.main-screen-active #graphSvg .node-circle.selected,
+body.main-screen-active #graphSvg .tree-node.selected .node-circle,
+body.main-screen-active #graphSvg .tree-node.selected .synt-box {
+  stroke-width: 1.10 !important;
+}
+body.main-screen-active .lex-wissel-line,
+body.main-screen-active .projected-rule-line,
+body.main-screen-active .projection-line,
+body.main-screen-active .logical-projection-line,
+body.main-screen-active .logical-source-line {
+  stroke-width: 1.42 !important;
+}
+body.main-screen-active .main-topbar,
+body.main-screen-active .main-play-reset-bar,
+body.main-screen-active .canvas-wrap,
+body.main-screen-active .main-unified-popover,
+body.main-screen-active .main-menu-group,
+body.main-screen-active button,
+body.main-screen-active select {
+  border-width: .55px !important;
+}
+
+/* Alleen projecties zijn nadruklijnen; een LEX-Wissel blijft een dunne actielijn. */
+body.main-screen-active .lex-wissel-line {
+  stroke-width: .72 !important;
+  opacity: .66 !important;
+}
+body.main-screen-active .node-main-label {
+  stroke-width: .75px !important;
+}
+
+
+/* v2.0.0-rc.11: één zichtbaar topmenu met acht hoofditems; geen algemene Menu-knop. */
+body.main-screen-active .main-topbar {
+  min-height: 2.08rem !important;
+  padding: .10rem .18rem !important;
+  overflow: visible !important;
+}
+body.main-screen-active .main-top-menu {
+  display: flex;
+  align-items: center;
+  align-content: center;
+  flex-wrap: wrap;
+  gap: .12rem;
+  width: 100%;
+  min-width: 0;
+  overflow: visible;
+}
+body.main-screen-active .top-menu-item {
+  position: relative;
+  flex: 0 0 auto;
+  margin: 0;
+  z-index: 650;
+}
+body.main-screen-active .top-menu-item > summary,
+body.main-screen-active .top-menu-action {
+  box-sizing: border-box;
+  min-height: 1.72rem !important;
+  height: 1.72rem !important;
+  padding: .08rem .38rem !important;
+  border: .55px solid color-mix(in srgb, var(--line), transparent 18%) !important;
+  border-radius: .46rem !important;
+  background: color-mix(in srgb, var(--panel), var(--bg) 10%) !important;
+  color: var(--text) !important;
+  font-size: .70rem !important;
+  font-weight: 850 !important;
+  line-height: 1 !important;
+  white-space: nowrap;
+  cursor: pointer;
+}
+body.main-screen-active .top-menu-item[open] > summary,
+body.main-screen-active .top-menu-action:hover,
+body.main-screen-active .top-menu-action:focus-visible {
+  background: color-mix(in srgb, var(--accent), var(--panel) 88%) !important;
+}
+body.main-screen-active .top-menu-action.primary {
+  background: color-mix(in srgb, var(--accent), var(--panel) 82%) !important;
+}
+body.main-screen-active .top-menu-popover {
+  position: absolute;
+  top: calc(100% + .22rem);
+  left: 0;
+  z-index: 720;
+  box-sizing: border-box;
+  width: min(25rem, calc(100vw - .7rem));
+  max-height: min(72vh, 31rem);
+  overflow: auto;
+  padding: .42rem;
+  border: .55px solid color-mix(in srgb, var(--line), transparent 18%);
+  border-radius: .58rem;
+  background: color-mix(in srgb, var(--panel), #fff 4%);
+  box-shadow: 0 .45rem 1.3rem rgba(15,23,42,.15);
+}
+body.main-screen-active .top-menu-sentence-popover { width: min(31rem, calc(100vw - .7rem)); }
+body.main-screen-active .top-menu-adverb-popover { width: min(25rem, calc(100vw - .7rem)); }
+body.main-screen-active .top-menu-view-popover { width: min(15rem, calc(100vw - .7rem)); }
+body.main-screen-active .top-menu-projection-popover { width: min(22rem, calc(100vw - .7rem)); }
+body.main-screen-active .top-menu-log-popover { width: min(19rem, calc(100vw - .7rem)); }
+body.main-screen-active .main-projection-menu .top-menu-popover,
+body.main-screen-active .main-log-menu .top-menu-popover {
+  left: auto;
+  right: 0;
+}
+body.main-screen-active .top-menu-panel-heading {
+  margin: 0 0 .30rem;
+  color: var(--muted);
+  font-size: .68rem;
+  font-weight: 900;
+  letter-spacing: .035em;
+  text-transform: uppercase;
+}
+body.main-screen-active .top-menu-popover .main-menu-option-list {
+  max-height: 22rem;
+}
+body.main-screen-active .top-menu-popover .source-axis-toggle-row,
+body.main-screen-active .top-menu-popover .source-axis-action-row {
+  display: grid;
+  gap: .24rem;
+}
+body.main-screen-active .top-menu-popover .source-axis-toggle-row {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+body.main-screen-active .top-menu-popover .source-axis-action-row {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: .26rem;
+}
+body.main-screen-active .main-unified-menu,
+body.main-screen-active .main-unified-popover,
+body.main-screen-active .main-actions-menu {
+  display: none !important;
+}
+@media (max-width: 760px), (orientation: portrait) {
+  body.main-screen-active .main-topbar {
+    min-height: 3.92rem !important;
+    padding: .10rem .14rem !important;
+  }
+  body.main-screen-active .main-top-menu { gap: .10rem; }
+  body.main-screen-active .top-menu-item > summary,
+  body.main-screen-active .top-menu-action {
+    min-height: 1.68rem !important;
+    height: 1.68rem !important;
+    padding-inline: .28rem !important;
+    font-size: .66rem !important;
+  }
+  body.main-screen-active .top-menu-popover {
+    position: fixed;
+    top: calc(max(.45rem, env(safe-area-inset-top)) + 3.98rem);
+    left: max(.25rem, env(safe-area-inset-left)) !important;
+    right: max(.25rem, env(safe-area-inset-right)) !important;
+    width: auto !important;
+    max-height: calc(100dvh - 4.6rem);
+  }
+}
+
+body.main-screen-active .main-extra-menu.top-menu-item { display: block !important; }

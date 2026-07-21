@@ -4,7 +4,7 @@ Actuele status van de OpenGraph / GraphLite viewer.
 
 ## Versie
 
-- Huidige releasekandidaat: `v2.0.0-rc.9`.
+- Huidige releasekandidaat: `v2.0.0-rc.11`.
 - Bronbasis: volledige v1.0.16-bronset, doorontwikkeld via rc.3–rc.9.
 
 ## Centrale views
@@ -53,3 +53,16 @@ Actuele status van de OpenGraph / GraphLite viewer.
 node --check viewer.js
 check_release.bat
 ```
+
+## Hoofdmenu v2.0.0-rc.11
+
+- Main bevat één knop `Menu`.
+- Het menu is plat: geen geneste submenu’s.
+- Zin, Bijwoord, Syntax/FT, Projecties, LOG-volgorde, taal, Help en Config staan direct in hetzelfde paneel.
+- Standaard zijn LEX, SYNT en LOG zichtbaar.
+
+## Lijnhiërarchie v2.0.0-rc.11
+
+- Boomlijnen en hulplijnen zijn dun.
+- Boxcontouren zijn minimaal.
+- Alleen named-projectionlijnen en projectieassen krijgen een iets grotere lijndikte.
