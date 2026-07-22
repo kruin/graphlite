@@ -5293,7 +5293,7 @@ body.viewport-mobile-landscape-test.main-screen-active #graphSvg {
   max-height: 100% !important;
 }
 
-/* v2.0.0-rc.11: View-menu bevat Syntax als eerste view en FT als tweede view; LOG blijft de zuidas. */
+/* v2.0.0-rc.17: View-menu bevat Syntax als eerste view en FT als tweede view; LOG blijft de zuidas. */
 .main-view-field {
   display: flex;
   align-items: center;
@@ -5786,7 +5786,7 @@ body.help-screen-active .help-screen {
   }
 }
 
-/* v2.0.0-rc.11: vaste Play-balkhoogte voor alle projectie-views.
+/* v2.0.0-rc.17: vaste Play-balkhoogte voor alle projectie-views.
    LEX/SYNT schakelen Groei uit; de langere statustekst mag de balk en dus het
    grid nooit lager zetten. */
 body.main-screen-active .main-play-growth-label {
@@ -5815,7 +5815,7 @@ body.main-screen-active .main-play-growth-label {
 }
 
 
-/* v2.0.0-rc.11: projectiekeuze buiten het canvas; Bron kan meerdere assen combineren. */
+/* v2.0.0-rc.17: projectiekeuze buiten het canvas; Bron kan meerdere assen combineren. */
 body.main-screen-active .main-grid-controls {
   display: none !important;
 }
@@ -5927,7 +5927,7 @@ body.main-screen-active .main-grid-controls {
   .source-axis-popover { left: auto; right: 0; }
 }
 
-/* v2.0.0-rc.11: gekozen Bronassen-oplossing en compacte, leesbare bovenbalk.
+/* v2.0.0-rc.17: gekozen Bronassen-oplossing en compacte, leesbare bovenbalk.
    Projectie en Bronassen blijven boven het canvas; taal/Help/Config staan in
    één Menu-popover. De topbar blijft één vaste rij en verandert de viewBox niet. */
 body.main-screen-active .main-topbar {
@@ -6125,7 +6125,7 @@ body.main-screen-active .main-actions-menu .config-open-button {
 }
 
 
-/* v2.0.0-rc.11: smalle koppen, brede uitklappen; Projecties vervangt Bron. */
+/* v2.0.0-rc.17: smalle koppen, brede uitklappen; Projecties vervangt Bron. */
 .main-control-select-compat {
   position: absolute !important; width: 1px !important; height: 1px !important;
   overflow: hidden !important; clip: rect(0 0 0 0) !important;
@@ -6224,7 +6224,7 @@ body.main-screen-active .main-actions-menu .config-open-button { width:100% !imp
   .compact-choice-popover { left:auto; right:0; }
 }
 
-/* v2.0.0-rc.11: één plat hoofdmenu; geen geneste submenu's. */
+/* v2.0.0-rc.17: één plat hoofdmenu; geen geneste submenu's. */
 body.main-screen-active .main-topbar {
   min-height: 2.02rem !important;
   padding: .10rem .18rem !important;
@@ -6344,7 +6344,7 @@ body.main-screen-active .main-extra-popover { display: none !important; }
   .main-menu-option-list { max-height: 10.5rem; }
 }
 
-/* v2.0.0-rc.11: lichte belijning; alleen named projections krijgen nadruk. */
+/* v2.0.0-rc.17: lichte belijning; alleen named projections krijgen nadruk. */
 body.main-screen-active .grid-line { stroke-width: .42 !important; opacity: .16 !important; }
 body.main-screen-active .grid-line.major { stroke-width: .58 !important; opacity: .21 !important; }
 body.main-screen-active .axis-line,
@@ -6405,7 +6405,7 @@ body.main-screen-active .node-main-label {
   stroke-width: 1.25px !important;
 }
 
-/* v2.0.0-rc.11: alle SVG-boxcontouren minimaal; projecties blijven herkenbaar. */
+/* v2.0.0-rc.17: alle SVG-boxcontouren minimaal; projecties blijven herkenbaar. */
 body.main-screen-active #graphSvg rect {
   stroke-width: .50 !important;
 }
@@ -6444,7 +6444,7 @@ body.main-screen-active .node-main-label {
 }
 
 
-/* v2.0.0-rc.11: één zichtbaar topmenu met acht hoofditems; geen algemene Menu-knop. */
+/* v2.0.0-rc.17: één zichtbaar topmenu met negen hoofditems; geen algemene Menu-knop. */
 body.main-screen-active .main-topbar {
   min-height: 2.08rem !important;
   padding: .10rem .18rem !important;
@@ -6567,3 +6567,351 @@ body.main-screen-active .main-actions-menu {
 }
 
 body.main-screen-active .main-extra-menu.top-menu-item { display: block !important; }
+
+/* v2.0.0-rc.17: publieke interfacekeuze onder Config -> Boom. */
+#viewportModeSelect {
+  min-width: 10rem;
+}
+
+/* Een geforceerde mobile-interface op een echt smal scherm gebruikt de echte
+   viewport. Het telefoonframe blijft alleen bestaan voor desktop-preview. */
+@media (max-width: 900px) {
+  body.viewport-mobile-natural.main-screen-active {
+    background: var(--bg) !important;
+  }
+  body.viewport-mobile-natural.main-screen-active::after,
+  body.viewport-mobile-natural.main-screen-active .app-shell::after {
+    content: none !important;
+    display: none !important;
+  }
+  body.viewport-mobile-natural.main-screen-active .app-shell {
+    position: fixed !important;
+    inset: 0 !important;
+    left: 0 !important;
+    top: 0 !important;
+    transform: none !important;
+    width: 100vw !important;
+    height: 100dvh !important;
+    min-width: 100vw !important;
+    min-height: 100dvh !important;
+    max-width: 100vw !important;
+    max-height: 100dvh !important;
+    overflow: hidden !important;
+    padding: 0 !important;
+  }
+  body.viewport-mobile-natural.main-screen-active .workspace {
+    position: fixed !important;
+    left: 0 !important;
+    right: 0 !important;
+    top: var(--main-grid-top, 3.55rem) !important;
+    bottom: 0 !important;
+    inset: var(--main-grid-top, 3.55rem) 0 0 0 !important;
+    width: 100vw !important;
+    height: var(--main-grid-height, calc(100dvh - 3.55rem)) !important;
+    min-width: 100vw !important;
+    min-height: 0 !important;
+    max-width: 100vw !important;
+    max-height: none !important;
+    transform: none !important;
+    overflow: hidden !important;
+  }
+  body.viewport-mobile-natural.main-screen-active .canvas-wrap {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    max-width: none !important;
+    max-height: none !important;
+    margin: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    background: var(--panel) !important;
+  }
+  body.viewport-mobile-natural.main-screen-active #graphSvg {
+    width: 100% !important;
+    height: 100% !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    max-width: none !important;
+    max-height: none !important;
+  }
+  body.viewport-mobile-natural.main-screen-active .main-topbar {
+    position: fixed !important;
+    left: 0 !important;
+    right: 0 !important;
+    top: 0 !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
+    transform: none !important;
+    border-radius: 0 !important;
+  }
+  body.viewport-mobile-natural.main-screen-active .main-play-reset-bar {
+    position: fixed !important;
+    left: 0 !important;
+    right: 0 !important;
+    top: var(--main-playbar-top, 3.25rem) !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
+    transform: none !important;
+  }
+}
+body.main-screen-active .top-menu-interface-popover {
+  width: min(18rem, calc(100vw - .7rem));
+}
+body.main-screen-active .main-menu-interface-options {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  max-height: none;
+}
+body.main-screen-active .main-menu-interface-options .compact-choice-option {
+  text-align: center;
+}
+
+
+/* v2.0.0-rc.17: Rasteroptie direct vindbaar in Config → Boom → Weergave. */
+.display-config-field {
+  margin: .38rem 0 .5rem;
+  padding: .44rem .52rem .5rem;
+  border: .5px solid var(--line);
+  border-radius: .48rem;
+}
+.display-config-field legend {
+  padding: 0 .28rem;
+  font-weight: 700;
+}
+.display-check-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12.5rem, 1fr));
+  gap: .28rem .58rem;
+}
+.display-check-grid label {
+  min-height: 2rem;
+  display: flex;
+  align-items: center;
+  gap: .34rem;
+}
+.display-check-grid .primary-config-toggle {
+  font-weight: 700;
+}
+/* Het raster moet zichtbaar zijn, maar blijft duidelijk dunner dan projecties. */
+body.main-screen-active .grid-line { stroke-width: .48 !important; opacity: .30 !important; }
+body.main-screen-active .grid-line.major { stroke-width: .62 !important; opacity: .42 !important; }
+body.main-screen-active .grid-axis { stroke-width: .66 !important; opacity: .56 !important; }
+
+
+/* v2.0.0-rc.17: raster overal zichtbaar en Config-raster direct vindbaar. */
+body.main-screen-active .grid-line {
+  stroke: color-mix(in srgb, var(--grid-major), var(--text) 10%) !important;
+  stroke-width: .52 !important;
+  opacity: .48 !important;
+}
+body.main-screen-active .grid-line.major {
+  stroke: color-mix(in srgb, var(--grid-major), var(--text) 18%) !important;
+  stroke-width: .64 !important;
+  opacity: .62 !important;
+}
+body.main-screen-active .grid-axis {
+  stroke-width: .70 !important;
+  opacity: .70 !important;
+}
+.config-grid-quick-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: .32rem;
+  min-height: 2rem;
+  padding: .28rem .48rem;
+  border: .55px solid var(--line);
+  border-radius: .48rem;
+  background: color-mix(in srgb, var(--panel), var(--bg) 8%);
+  font-weight: 800;
+  white-space: nowrap;
+}
+.config-grid-quick-toggle input { margin: 0; }
+body.config-screen-active .config-topbar {
+  display: grid !important;
+  grid-template-columns: auto auto auto auto minmax(14rem, 1fr) !important;
+  align-items: center !important;
+  gap: .42rem !important;
+}
+body.config-screen-active .config-topbar > div { min-width: 0; }
+@media (max-width: 760px) {
+  body.config-screen-active .config-topbar {
+    grid-template-columns: auto auto !important;
+    align-items: center !important;
+  }
+  body.config-screen-active .config-topbar .config-grid-quick-toggle {
+    grid-column: 1 / -1;
+    justify-self: stretch;
+    justify-content: center;
+  }
+  body.config-screen-active .config-topbar > div {
+    grid-column: 1 / -1;
+  }
+}
+
+/* v2.0.0-rc.17: topmenu heeft op mobile exact twee rijen voor negen items (vijf + vier).
+   LOG-volgorde kan daardoor geen derde rij maken en Config blijft zichtbaar. */
+body.main-screen-active .main-top-menu {
+  flex-wrap: nowrap !important;
+}
+@media (max-width: 760px), (orientation: portrait) {
+  body.main-screen-active .main-topbar {
+    min-height: 3.72rem !important;
+    height: 3.72rem !important;
+    overflow: visible !important;
+  }
+  body.main-screen-active .main-top-menu {
+    display: grid !important;
+    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+    grid-template-rows: repeat(2, 1.68rem) !important;
+    gap: .10rem !important;
+    width: 100% !important;
+    align-items: stretch !important;
+  }
+  body.main-screen-active .top-menu-item,
+  body.main-screen-active .top-menu-action {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+  body.main-screen-active .top-menu-item > summary,
+  body.main-screen-active .top-menu-action {
+    width: 100% !important;
+    min-width: 0 !important;
+    padding-inline: .12rem !important;
+    font-size: .62rem !important;
+    text-align: center !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+  body.main-screen-active .top-menu-item > summary::after { display: none !important; content: none !important; }
+  body.main-screen-active #mainExtraSummary { font-size: 0 !important; }
+  body.main-screen-active #mainExtraSummary::before { content: "LOG"; font-size: .62rem; }
+  body.main-screen-active .top-menu-popover {
+    top: calc(max(.35rem, env(safe-area-inset-top)) + 3.78rem) !important;
+  }
+}
+
+/* v2.0.0-rc.17: vaste topmenu-indeling op alle interfaces.
+   Rij 1 bevat de zes keuze-items; rij 2 bevat NL/EN, Help en Config.
+   Geen vrije wrapping en geen horizontale uitloop buiten een mobile-preview. */
+body.main-screen-active .main-topbar {
+  box-sizing: border-box !important;
+  min-height: 3.78rem !important;
+  height: auto !important;
+  padding: .10rem .18rem !important;
+  overflow: visible !important;
+}
+body.main-screen-active .main-top-menu {
+  display: grid !important;
+  grid-template-columns: repeat(6, max-content) !important;
+  grid-template-rows: repeat(2, 1.72rem) !important;
+  column-gap: .12rem !important;
+  row-gap: .24rem !important;
+  align-items: stretch !important;
+  align-content: start !important;
+  justify-content: start !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  overflow: visible !important;
+}
+body.main-screen-active .main-top-menu > :nth-child(-n + 6) {
+  grid-row: 1 !important;
+}
+body.main-screen-active .main-top-menu > :nth-child(7) {
+  grid-row: 2 !important;
+  grid-column: 1 !important;
+}
+body.main-screen-active .main-top-menu > :nth-child(8) {
+  grid-row: 2 !important;
+  grid-column: 2 !important;
+}
+body.main-screen-active .main-top-menu > :nth-child(9) {
+  grid-row: 2 !important;
+  grid-column: 3 !important;
+}
+body.main-screen-active .top-menu-item,
+body.main-screen-active .top-menu-action {
+  min-width: 0 !important;
+  max-width: 100% !important;
+}
+/* Alle uitklapitems staan op rij 1; open hun brede paneel onder beide menurijen. */
+body.main-screen-active .top-menu-item .top-menu-popover {
+  top: calc(200% + .46rem) !important;
+}
+
+/* Geforceerde mobile-preview gebruikt de breedte van het telefoonframe en nooit
+   de desktopviewport voor de menuberekening. */
+body.viewport-mobile-test.main-screen-active .main-topbar {
+  box-sizing: border-box !important;
+  min-height: 3.84rem !important;
+  height: auto !important;
+  padding: .10rem .14rem !important;
+}
+body.viewport-mobile-test.main-screen-active .main-top-menu {
+  grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+  grid-template-rows: repeat(2, 1.68rem) !important;
+  column-gap: .10rem !important;
+  row-gap: .24rem !important;
+  width: 100% !important;
+}
+body.viewport-mobile-test.main-screen-active .main-top-menu > :nth-child(7) {
+  grid-column: 1 / span 2 !important;
+}
+body.viewport-mobile-test.main-screen-active .main-top-menu > :nth-child(8) {
+  grid-column: 3 / span 2 !important;
+}
+body.viewport-mobile-test.main-screen-active .main-top-menu > :nth-child(9) {
+  grid-column: 5 / span 2 !important;
+}
+body.viewport-mobile-test.main-screen-active .top-menu-item,
+body.viewport-mobile-test.main-screen-active .top-menu-action,
+body.viewport-mobile-test.main-screen-active .top-menu-item > summary {
+  width: 100% !important;
+  min-width: 0 !important;
+  box-sizing: border-box !important;
+}
+body.viewport-mobile-test.main-screen-active .top-menu-item > summary,
+body.viewport-mobile-test.main-screen-active .top-menu-action {
+  padding-inline: .10rem !important;
+  font-size: .62rem !important;
+  text-align: center !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+body.viewport-mobile-test.main-screen-active .top-menu-item > summary::after {
+  display: none !important;
+  content: none !important;
+}
+body.viewport-mobile-test.main-screen-active .top-menu-item .top-menu-popover {
+  top: calc(200% + .50rem) !important;
+}
+
+/* Echte smalle schermen volgen dezelfde twee rijen. De drie directe acties
+   krijgen elk twee van de zes kolommen, zodat zij leesbaar blijven. */
+@media (max-width: 760px), (orientation: portrait) {
+  body.main-screen-active .main-topbar {
+    min-height: 3.84rem !important;
+    height: auto !important;
+    padding: .10rem .14rem !important;
+  }
+  body.main-screen-active .main-top-menu {
+    grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+    grid-template-rows: repeat(2, 1.68rem) !important;
+    column-gap: .10rem !important;
+    row-gap: .24rem !important;
+  }
+  body.main-screen-active .main-top-menu > :nth-child(7) {
+    grid-column: 1 / span 2 !important;
+  }
+  body.main-screen-active .main-top-menu > :nth-child(8) {
+    grid-column: 3 / span 2 !important;
+  }
+  body.main-screen-active .main-top-menu > :nth-child(9) {
+    grid-column: 5 / span 2 !important;
+  }
+  body.main-screen-active .top-menu-item .top-menu-popover {
+    top: calc(max(.35rem, env(safe-area-inset-top)) + 3.98rem) !important;
+  }
+}

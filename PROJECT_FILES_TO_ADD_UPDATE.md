@@ -5,7 +5,7 @@ Bestanden om als leidende projectbronnen toe te voegen of te vervangen.
 ## Volledige projectzip
 
 ```text
-OpenGraph_Lite_Viewer_v2.0.0-rc.11_full_source.zip
+OpenGraph_Lite_Viewer_v2.0.0-rc.17_full_source.zip
 ```
 
 Deze zip bevat alle 106 bestanden uit de aangeleverde v1.0.16-bronset, plus releasecontrole en versieherkomst.
@@ -26,3 +26,22 @@ DEPLOY_GITHUB_PAGES.md
 ## Niet als leidende bron gebruiken
 
 Oude projectzips, losse screenshots en historische release notes. Historische bestanden mogen in de volledige bronzip aanwezig blijven, maar de bovenstaande bestanden zijn normatief.
+
+## v2.0.0-rc.17
+
+Bijwerken:
+
+- `index.html`
+- `viewer.html`
+- `viewer.js`
+- `styles.css`
+- `VERSION.txt`
+- `sw.js`
+- `reset-cache.html`
+- `manifest.webmanifest`
+- leidende projectdocumentatie
+
+Toevoegen:
+
+- `SOURCE_CHANGES_V2.0.0-rc.12.md`
+- `MOBILE_FULL_VIEW_TEST.md`

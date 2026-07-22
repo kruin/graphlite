@@ -51,6 +51,35 @@ git ls-files --others --exclude-standard
 
 Genegeerde bestanden blokkeren de publicatie niet.
 
+## Eenmalige cache-reset na push
+
+Na een **geslaagde `git push`** opent `publish_checked.bat` automatisch de juiste resetpagina.
+
+- Geen bevestigingsvraag.
+- Geen reset wanneer er niets is gepusht.
+- Geen reset na een mislukte push.
+- Maximaal eenmaal per versie op dezelfde computer.
+- De reset wordt kort uitgesteld zodat GitHub Pages de nieuwe push kan verwerken.
+- De laatst geopende versie wordt lokaal onthouden in:
+
+```text
+%LOCALAPPDATA%\OpenGraphLiteViewer\last-reset-version.txt
+```
+
+De resetmarker staat buiten de repository en wordt dus niet gecommit.
+
+Handmatig opnieuw resetten blijft mogelijk via:
+
+```text
+https://kruin.github.io/graphlite/reset-cache.html?ogv=v2.0.0-rc.17&nocache=TIMESTAMP
+```
+
+Daarna:
+
+```text
+https://kruin.github.io/graphlite/index.html?ogv=v2.0.0-rc.17
+```
+
 ## Niet publiceren naar Pages-root
 
 ```text
@@ -60,26 +89,6 @@ local-mobile-test.html
 ```
 
 Deze staan in `.gitignore`.
-
-## Cache-reset
-
-De BAT kan browsercache niet op afstand wissen. Wel zinvol:
-
-- controleren dat `reset-cache.html` bestaat;
-- na push de juiste reset-URL tonen;
-- eventueel die URL openen.
-
-Voorbeeld:
-
-```text
-https://kruin.github.io/graphlite/reset-cache.html?ogv=v2.0.0-rc.11&nocache=TIMESTAMP
-```
-
-Daarna:
-
-```text
-https://kruin.github.io/graphlite/index.html?ogv=v2.0.0-rc.11
-```
 
 ## GitHub Pages settings
 
@@ -98,7 +107,6 @@ Laat `.nojekyll` in de root staan zodat GitHub Pages alle bestanden direct serve
 ## Line endings
 
 `.gitattributes` legt line-endings vast voor Windows, GitHub Pages en zip-builds.
-
 
 ## .gitignore
 

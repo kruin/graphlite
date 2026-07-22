@@ -1,4 +1,4 @@
-# OpenGraph Lite Viewer v2.0.0-rc.11
+# OpenGraph Lite Viewer v2.0.0-rc.17
 
 OpenGraph Lite Viewer is een demo/viewer voor JAN / OPN / OpenGraph-taalstructuren. Deze versie gebruikt de volledige v1.0.16-bronset als basis.
 
@@ -17,13 +17,13 @@ start-local-viewer.bat
 GitHub Pages:
 
 ```text
-https://kruin.github.io/graphlite/index.html?ogv=v2.0.0-rc.11
+https://kruin.github.io/graphlite/index.html?ogv=v2.0.0-rc.17
 ```
 
 Cache-reset:
 
 ```text
-https://kruin.github.io/graphlite/reset-cache.html?ogv=v2.0.0-rc.11
+https://kruin.github.io/graphlite/reset-cache.html?ogv=v2.0.0-rc.17
 ```
 
 ## Centrale views
@@ -63,6 +63,14 @@ check_release.bat
 ```
 
 
-## v2.0.0-rc.11
+## v2.0.0-rc.17
 
 De Main-bovenbalk gebruikt `Zin`, `Bijwoord`, `Syntax`/`FT` en `Projecties` als smalle koppen met brede uitklappen. Er is geen Bron-tabblad. Standaard zijn LEX, SYNT en LOG zichtbaar; `Geen` toont alleen de bron. SOV staat onder `Menu → Extra`.
+
+## Publicatie en cache-reset
+
+`publish_checked.bat` opent na een geslaagde push automatisch eenmaal per versie de GitHub Pages-resetpagina. Er verschijnt geen bevestigingsvraag. Zonder push of bij een pushfout wordt geen reset gestart.
+
+## Raster
+
+Raster is standaard zichtbaar (`Config → Raster`). Het raster loopt tot de uiterste eindpunten van de projectie-stippellijnen; projectieboxen kunnen buiten die rastergrens staan.

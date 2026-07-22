@@ -57,3 +57,12 @@ LOG      uitsluitend zuidas; nooit centrale view
 - Boom-, relatie- en hulplijnen: zeer dun.
 - Contouren van knopen, slots en regels: zo dun mogelijk.
 - Named-projectionlijnen en hun assen: iets dikker dan de bronstructuur, maar niet vet.
+
+## Raster / grid
+
+- `Config → Raster` staat standaard aan.
+- Migratie uit een oudere release herstelt Raster eenmaal naar zichtbaar.
+- Een daarna bewust opgeslagen keuze blijft behouden.
+- De rastergrens volgt de uiterste eindpunten van de zichtbare projectie-stippellijnen.
+- Projectieboxen mogen buiten het raster staan; de centrale boom blijft volledig binnen het raster.
+- Het wijzigen van rasterzichtbaarheid of rastergrens verandert de viewBox niet.

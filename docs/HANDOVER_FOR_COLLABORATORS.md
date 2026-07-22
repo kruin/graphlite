@@ -1,6 +1,6 @@
 # HANDOVER_FOR_COLLABORATORS
 
-Overdracht voor OpenGraph Lite Viewer v2.0.0-rc.11.
+Overdracht voor OpenGraph Lite Viewer v2.0.0-rc.17.
 
 ## Bronbasis
 
@@ -33,3 +33,14 @@ Intern schrijft de viewer `central_opn: "ft"`. Invoer met de oude waarde `functi
 ## Publiceren
 
 Gebruik `publish_checked.bat`. Releasezips en lokale mobile-testbestanden horen niet in de GitHub Pages-root.
+
+## Publicatiegedrag
+
+Na een geslaagde push start `publish_checked.bat` zonder vraag een eenmalige reset voor de actuele versie. Wijzig dit niet terug naar een interactieve `choice`-vraag.
+
+## Rastercontract
+
+- Raster staat standaard aan in Config.
+- Oudere configuraties migreren eenmaal naar zichtbaar raster.
+- De rastergrens wordt bepaald door centrale boom plus uiterste projectie-stippellijnen, zonder extra rastermarge.
+- Rasterberekening mag de stabiele projectie-viewBox niet wijzigen.

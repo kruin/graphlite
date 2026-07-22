@@ -3,6 +3,9 @@ setlocal EnableExtensions DisableDelayedExpansion
 
 cd /d "%~dp0"
 
+set "PUSH_DONE=0"
+set "RESET_DELAY_SECONDS=30"
+
 echo.
 echo ==============================
 echo OpenGraph publish - checked
@@ -51,7 +54,7 @@ if "%APP_VERSION%"=="" (
     echo FOUT: VERSION.txt is leeg.
     exit /b 1
 )
-set "RELEASE_ZIP=OpenGraph_Lite_Viewer_v2.0.0-rc.11_full_source.zip"
+set "RELEASE_ZIP=OpenGraph_Lite_Viewer_%APP_VERSION%_full_source.zip"
 echo App-versie: %APP_VERSION%
 echo Release-zip: %RELEASE_ZIP%
 echo.
@@ -80,7 +83,7 @@ if "%STATUS_SIZE%"=="0" (
     echo Geen wijzigingen om te committen voor %APP_VERSION%.
     del "%STATUS_ALL%" >nul 2>nul
     del "%STATUS_SITE%" >nul 2>nul
-    goto :after_push_info
+    goto :no_push
 )
 
 del "%STATUS_ALL%" >nul 2>nul
@@ -125,7 +128,7 @@ for /f "delims=" %%f in ('git ls-files --others --exclude-standard') do (
 git diff --cached --quiet
 if not errorlevel 1 (
     echo Geen staged wijzigingen om te committen.
-    goto :after_push_info
+    goto :no_push
 )
 
 echo.
@@ -143,29 +146,67 @@ if errorlevel 1 (
     echo FOUT: git push mislukt.
     exit /b 1
 )
+set "PUSH_DONE=1"
 
-:after_push_info
 echo.
-echo Klaar.
+echo Push geslaagd.
 echo Branch: %BRANCH%
-if defined COMMITMSG echo Commit : %COMMITMSG%
+echo Commit : %COMMITMSG%
+
+goto :automatic_reset
+
+:no_push
 echo.
-echo Reset-cache heeft zin als browser/PWA-cache nog oude assets toont.
-echo Het wist GEEN GitHub Pages deploy-cache op afstand; het opent alleen de client-resetpagina.
-echo Wacht na push meestal 30-90 seconden tot GitHub Pages klaar is.
-echo.
+echo Geen push uitgevoerd; cache-reset wordt niet geopend.
+goto :show_urls
+
+:automatic_reset
 set "USER_RESET_URL=https://kruin.github.io/graphlite/reset-cache.html?ogv=%APP_VERSION%^&nocache=%RANDOM%%RANDOM%"
 set "USER_INDEX_URL=https://kruin.github.io/graphlite/index.html?ogv=%APP_VERSION%^&nocache=%RANDOM%%RANDOM%"
+
+set "RESET_STATE_DIR=%LOCALAPPDATA%\OpenGraphLiteViewer"
+if not defined LOCALAPPDATA set "RESET_STATE_DIR=%TEMP%\OpenGraphLiteViewer"
+if not exist "%RESET_STATE_DIR%" mkdir "%RESET_STATE_DIR%" >nul 2>nul
+set "RESET_MARKER=%RESET_STATE_DIR%\last-reset-version.txt"
+set "LAST_RESET_VERSION="
+if exist "%RESET_MARKER%" set /p LAST_RESET_VERSION=<"%RESET_MARKER%"
+
+if /I "%LAST_RESET_VERSION%"=="%APP_VERSION%" (
+    echo.
+    echo Cache-reset voor %APP_VERSION% is op deze computer al eenmalig geopend.
+    goto :show_urls
+)
+
+where powershell.exe >nul 2>nul
+if errorlevel 1 (
+    echo.
+    echo WAARSCHUWING: PowerShell ontbreekt; resetpagina kan niet automatisch worden geopend.
+    echo Open de onderstaande reset-URL handmatig.
+    goto :show_urls
+)
+
+echo.
+echo Cache-reset voor %APP_VERSION% wordt na %RESET_DELAY_SECONDS% seconden automatisch eenmalig geopend.
+set "PS_RESET_COMMAND=Start-Sleep -Seconds %RESET_DELAY_SECONDS%; Start-Process '%USER_RESET_URL%'; Set-Content -LiteralPath '%RESET_MARKER%' -Value '%APP_VERSION%' -Encoding ASCII"
+start "" powershell.exe -NoProfile -WindowStyle Hidden -Command "%PS_RESET_COMMAND%"
+if errorlevel 1 (
+    echo WAARSCHUWING: automatisch openen kon niet worden gestart.
+    echo Open de onderstaande reset-URL handmatig.
+) else (
+    echo Geen bevestigingsvraag nodig. De reset loopt alleen na een geslaagde push en maximaal eenmaal per versie.
+)
+
+:show_urls
+if not defined USER_RESET_URL set "USER_RESET_URL=https://kruin.github.io/graphlite/reset-cache.html?ogv=%APP_VERSION%^&nocache=HANDMATIG"
+if not defined USER_INDEX_URL set "USER_INDEX_URL=https://kruin.github.io/graphlite/index.html?ogv=%APP_VERSION%"
+
+echo.
 echo GitHub Pages reset:
 echo %USER_RESET_URL%
 echo.
 echo GitHub Pages index:
 echo %USER_INDEX_URL%
 echo.
-choice /C JN /M "Reset-cache openen"
-if errorlevel 2 goto :done
-if errorlevel 1 start "" "%USER_RESET_URL%"
-
-:done
+echo Klaar.
 echo.
 endlocal

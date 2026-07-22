@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'v2.0.0-rc.11';
+  const VERSION = 'v2.0.0-rc.17';
   const BASE_CELL = 74;
   const ROOT_SIDE_GAP = 1;
   const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -32,6 +32,10 @@
     mainViewMenu: document.getElementById('mainViewMenu'),
     mainViewSummary: document.getElementById('mainViewSummary'),
     mainViewOptions: document.getElementById('mainViewOptions'),
+    mainInterfaceMenu: document.getElementById('mainInterfaceMenu'),
+    mainInterfaceSummary: document.getElementById('mainInterfaceSummary'),
+    mainInterfaceOptions: document.getElementById('mainInterfaceOptions'),
+    mainInterfaceHelp: document.getElementById('mainInterfaceHelp'),
     mainActionsMenu: document.getElementById('mainActionsMenu'),
     mainActionsSummary: document.getElementById('mainActionsSummary'),
     mainExtraMenu: document.getElementById('mainExtraMenu'),
@@ -55,6 +59,7 @@
     branchOtherSelect: document.getElementById('branchOtherSelect'),
     layoutDensitySelect: document.getElementById('layoutDensitySelect'),
     viewFitSelect: document.getElementById('viewFitSelect'),
+    viewportModeSelect: document.getElementById('viewportModeSelect'),
     mainViewFitSelectTop: document.getElementById('mainViewFitSelectTop'),
     mainLayoutDensitySelectTop: document.getElementById('mainLayoutDensitySelectTop'),
     rightMenuWidthSelect: document.getElementById('rightMenuWidthSelect'),
@@ -86,6 +91,7 @@
     explainHeading: document.getElementById('explainHeading'),
     explainText: document.getElementById('explainText'),
     showGridInput: document.getElementById('showGridInput'),
+    configGridQuickInput: document.getElementById('configGridQuickInput'),
     showRelationsInput: document.getElementById('showRelationsInput'),
     showLabelsInput: document.getElementById('showLabelsInput'),
     snapInput: document.getElementById('snapInput'),
@@ -298,10 +304,10 @@
   ];
 
   const VIEWPORT_TEST_MODES = [
-    { id: 'auto', label: 'testweergave: auto' },
-    { id: 'desktop', label: 'testweergave: desktop geforceerd' },
-    { id: 'mobile-portrait', label: 'testweergave: mobile portrait' },
-    { id: 'mobile-landscape', label: 'testweergave: mobile landscape' }
+    { id: 'auto', label: 'Automatisch', labelEn: 'Automatic' },
+    { id: 'desktop', label: 'Desktop', labelEn: 'Desktop' },
+    { id: 'mobile-portrait', label: 'Mobiel staand', labelEn: 'Mobile portrait' },
+    { id: 'mobile-landscape', label: 'Mobiel liggend', labelEn: 'Mobile landscape' }
   ];
 
 
@@ -2403,6 +2409,8 @@
       node.classList.toggle('viewport-mobile-test', mobileTest);
       node.classList.toggle('viewport-mobile-portrait-test', mobilePortrait);
       node.classList.toggle('viewport-mobile-landscape-test', mobileLandscape);
+      node.classList.toggle('viewport-mobile-preview-frame', mobileTest && (window.innerWidth || 0) > 900);
+      node.classList.toggle('viewport-mobile-natural', mobileTest && (window.innerWidth || 0) <= 900);
       node.dataset.viewportMode = mode;
     });
     const width = mobilePortrait ? 390 : (mobileLandscape ? 844 : 0);
@@ -2416,6 +2424,31 @@
       root.style.removeProperty('--viewport-test-height');
       root.style.removeProperty('--viewport-test-label');
     }
+  }
+
+  function updateViewportModeUrl(mode) {
+    try {
+      const url = new URL(window.location.href);
+      if (!mode || mode === 'auto') url.searchParams.delete('viewport');
+      else url.searchParams.set('viewport', mode);
+      url.searchParams.delete('device');
+      url.searchParams.set('ogv', VERSION);
+      window.history.replaceState({}, '', url.toString());
+    } catch (_err) {}
+  }
+
+  function setViewportMode(value, options = {}) {
+    const mode = validViewportMode(value);
+    state.viewportMode = mode;
+    if (options.updateUrl !== false) updateViewportModeUrl(mode);
+    syncViewportTestClasses();
+    syncPortraitStageMode();
+    resetManualViewBox();
+    render();
+    requestAnimationFrame(() => {
+      syncMainTopbarLayout();
+      applyViewBoxFit(true);
+    });
   }
 
   function isMobileViewport() {
@@ -2811,7 +2844,7 @@
 
   function setProjection(projection) {
     const next = projection || 'axes';
-    // v2.0.0-rc.11: alle named-projection views delen exact dezelfde
+    // v2.0.0-rc.17: alle named-projection views delen exact dezelfde
     // viewport. Een projectiewissel mag daarom een handmatige pan/zoom niet
     // wissen en mag de centrale boom horizontaal noch verticaal verplaatsen.
     if (growthSupportedProjection(state.projection) && state.growthStep > 0) {
@@ -3066,6 +3099,14 @@
     g.appendChild(captionLayer);
   }
 
+  function placeGridInsideTree(g) {
+    // rc.16: subtree-boxen hebben een gevulde achtergrond. Het raster moet
+    // daarboven liggen, maar onder captions, boomlijnen, knopen en projecties.
+    const grid = g?.querySelector?.(':scope > .grid[data-dynamic-grid="true"]');
+    const captions = g?.querySelector?.(':scope > .subtree-box-caption-layer');
+    if (grid && captions) g.insertBefore(grid, captions);
+  }
+
   function drawOpnTopicalizationSlot(g, layout, origin, growthPlan = null) {
     // v4459: centrale slotboxen zijn bewust verwijderd. De zichtbare wissels
     // horen op de LEX-as thuis en worden daar in Play-modus getoond.
@@ -3231,6 +3272,7 @@
     const growthPlan = growthPlanForLayout(layout);
     layout.__growthPlan = growthPlan;
     drawSubtreeBoxes(g, layout, origin, growthPlan);
+    placeGridInsideTree(g);
     drawTreeEdges(g, layout, origin, growthPlan);
     drawOpnTopicalizationSlot(g, layout, origin, growthPlan);
     drawTreeNodes(g, layout, origin, options.selectable === true, growthPlan);
@@ -3929,7 +3971,9 @@
     });
     if (!rows.length) return;
     const maxText = rows.reduce((max, row) => Math.max(max, row.text.length), 0);
-    const width = Math.max(mode === 'functional' ? 250 : 210, Math.min(380, maxText * 8.2 + 34));
+    const maxRuleWidth = isMobileViewport() ? 320 : 380;
+    const minRuleWidth = mode === 'functional' ? (isMobileViewport() ? 228 : 250) : 210;
+    const width = Math.max(minRuleWidth, Math.min(maxRuleWidth, maxText * 8.2 + 34));
     // v4571: de projectie-as is een echte rechter-as. De regelboxen
     // staan rechts van de as, met een kleine vaste marge. Ze overschrijven
     // de SYNT/LOG-as dus niet meer, maar blijven wel direct aangesloten.
@@ -4194,6 +4238,7 @@
     const growthPlan = growthPlanForLayout(layout);
     layout.__growthPlan = growthPlan;
     drawSubtreeBoxes(g, layout, origin, growthPlan);
+    placeGridInsideTree(g);
     drawTreeEdges(g, layout, origin, growthPlan);
     drawOpnTopicalizationSlot(g, layout, origin, growthPlan);
     drawTreeNodes(g, layout, origin, options.selectable === true, growthPlan);
@@ -4220,13 +4265,16 @@
       sourceMap = layoutNodeMap(centralLayout, origin);
     }
     const southItems = southLogicalItemsFromCentralLayout(centralLayout, origin, centralKind, southLogicalOrder());
+    const compactProjectionLayout = isMobileViewport();
+    const westGap = compactProjectionLayout ? 132 : 168;
+    const eastGap = compactProjectionLayout ? 92 : 118;
     const leftTreePx = px((centralLayout?.box?.minX || 0) - 0.9, origin);
-    const westAxisX = Math.max(120, leftTreePx - 168);
+    const westAxisX = Math.max(compactProjectionLayout ? 104 : 120, leftTreePx - westGap);
     const southAxisY = py((centralLayout?.box?.maxY || 0) + 2.1, origin);
     const southAxisX1 = px((centralLayout?.box?.minX || 0) - 0.75, origin);
     const southAxisX2 = px((centralLayout?.box?.maxX || 0) + 0.75, origin);
     const centralTreeRightPx = px((centralLayout?.box?.maxX || 0), origin);
-    const eastAxisX = centralTreeRightPx + 118;
+    const eastAxisX = centralTreeRightPx + eastGap;
     return { origin, sourceMap, centralLayout, centralKind, southItems, westAxisX, eastAxisX, southAxisX1, southAxisX2, southAxisY };
   }
 
@@ -4235,10 +4283,9 @@
   }
 
   function projectionStableFrameBox() {
-    // v2.0.0-rc.11: één gezamenlijk frame voor beide centrale views én alle
-    // projectiekeuzes. Het frame is de unie van Syntax en FT. Daardoor blijven
-    // schaal, x-positie en y-positie identiek bij Alle/Bron/LEX/SYNT/LOG en
-    // ook wanneer de centrale view tussen Syntax en FT wisselt.
+    // v2.0.0-rc.17: stabiele unie van Syntax en FT zonder de oude reserves
+    // voor verwijderde Projecties- en SOV-boxen in het canvas. Dit frame blijft
+    // identiek bij alle projectiekeuzes, maar benut mobile breedte veel beter.
     const origin = stableCentralViewOrigin();
     const layouts = [getSouthAwareSyntaxLayout(), getSouthAwareFunctionalLayout()];
     const boxes = layouts.map(layout => layout?.box).filter(Boolean);
@@ -4248,47 +4295,58 @@
       maxX: Math.max(...boxes.map(box => Number(box.maxX || 0))),
       maxY: Math.max(...boxes.map(box => Number(box.maxY || 0)))
     } : { minX: -3, minY: 0, maxX: 4, maxY: 6 };
+    const compact = isMobileViewport();
+    const westGap = compact ? 132 : 168;
+    const eastGap = compact ? 92 : 118;
+    const maxRuleWidth = compact ? 320 : 380;
     const leftTreePx = px(union.minX - 0.9, origin);
     const rightTreePx = px(union.maxX + 0.9, origin);
     const topTreePx = py(union.minY - 1.6, origin);
     const bottomTreePx = py(union.maxY + 2.1, origin);
-    const westAxisX = Math.max(120, leftTreePx - 168);
-    const eastAxisX = rightTreePx + 118;
+    const westAxisX = Math.max(compact ? 104 : 120, leftTreePx - westGap);
+    const eastAxisX = rightTreePx + eastGap;
+    const southAxisX1 = px(union.minX - 0.75, origin);
+    const southAxisX2 = px(union.maxX + 0.75, origin);
     const southAxisY = py(union.maxY + 2.1, origin);
-    const left = Math.min(-120, westAxisX - 260, leftTreePx - 300);
-    const top = Math.min(-180, topTreePx - 120);
-    const right = Math.max(2180, eastAxisX + 650, rightTreePx + 760);
-    const bottom = Math.max(1120, southAxisY + 340, bottomTreePx + 360);
+
+    const lexLeft = westAxisX - 122;
+    const logLeft = southAxisX1 - 212;
+    const syntRight = eastAxisX + 22 + maxRuleWidth;
+    const left = Math.min(lexLeft, logLeft, leftTreePx - 104);
+    const top = Math.min(4, topTreePx - 58);
+    const right = Math.max(syntRight + 30, southAxisX2 + 96, rightTreePx + 108);
+    const bottom = Math.max(southAxisY + 104, bottomTreePx + 82);
     return { x: left, y: top, w: right - left, h: bottom - top };
   }
 
   function stableProjectionViewBox() {
-    // Het viewport is expres onafhankelijk van de zichtbare overlay. Gebruik
-    // vaste marges voor de Projecties-box en LOG-actiebox, zodat DOM-metingen
-    // van verborgen knoppen geen verticale of horizontale sprong veroorzaken.
+    // v2.0.0-rc.17: compacte, stabiele full-view. Alleen echte inhoud en een
+    // kleine veiligheidsrand worden opgenomen. De vroegere 18-20% reserves
+    // voor canvas-overlays zijn vervallen omdat die bediening in het topmenu zit.
     const frame = projectionStableFrameBox();
     const base = Math.max(frame.w, frame.h);
-    const margin = Math.max(48, Math.min(96, base * 0.045));
+    const mobile = isMobileViewport();
     const portrait = isPortraitGridFirstViewport();
+    const margin = mobile
+      ? Math.max(18, Math.min(38, base * 0.020))
+      : Math.max(34, Math.min(70, base * 0.032));
     const fit = {
       x: frame.x - margin,
       y: frame.y - margin,
       w: frame.w + margin * 2,
       h: frame.h + margin * 2
     };
-    const extra = portrait
-      ? { left: fit.w * 0.018, top: fit.h * 0.034, right: fit.w * 0.045, bottom: fit.h * 0.20 }
-      : { left: fit.w * 0.018, top: fit.h * 0.034, right: fit.w * 0.18, bottom: fit.h * 0.14 };
-    const expanded = {
+    const extra = mobile
+      ? (portrait
+        ? { left: fit.w * 0.006, top: fit.h * 0.012, right: fit.w * 0.010, bottom: fit.h * 0.034 }
+        : { left: fit.w * 0.006, top: fit.h * 0.010, right: fit.w * 0.014, bottom: fit.h * 0.024 })
+      : { left: fit.w * 0.010, top: fit.h * 0.018, right: fit.w * 0.032, bottom: fit.h * 0.040 };
+    return {
       x: fit.x - extra.left,
       y: fit.y - extra.top,
       w: fit.w + extra.left + extra.right,
       h: fit.h + extra.top + extra.bottom
     };
-    // Geen tweede aanpassing aan de actuele canvas-aspectratio: die ratio kan
-    // tijdens het omschakelen kort verschillen door de rechterkolom. De SVG
-    // schaalt dit vaste viewBox zelf passend in het beschikbare venster.
-    return expanded;
   }
 
   function appendStableProjectionFitFrame(g) {
@@ -4510,7 +4568,7 @@
 
   function stableGrowthViewBox() {
     if (!growthActive()) return null;
-    // v2.0.0-rc.11: Groei gebruikt hetzelfde frame als de gewone projectie-
+    // v2.0.0-rc.17: Groei gebruikt hetzelfde frame als de gewone projectie-
     // views. Voorheen hadden Alle/Bron/LOG eigen hard-coded viewBoxes, terwijl
     // LEX/SYNT auto-fit gebruikten; dat veroorzaakte de zichtbare sprong.
     return stableProjectionViewBox();
@@ -4547,7 +4605,7 @@
   }
 
   function clearViewportGestureState() {
-    // v2.0.0-rc.11: bij wissel tussen landscape/portrait mogen oude touch-pointers
+    // v2.0.0-rc.17: bij wissel tussen landscape/portrait mogen oude touch-pointers
     // en pinch-state niet blijven hangen. Anders lijkt portrait na zoom in
     // landscape bevroren.
     state.viewDrag = null;
@@ -4809,7 +4867,7 @@
         controlsLeft = state.projectionBoxManual.left;
         controlsTop = state.projectionBoxManual.top;
       } else {
-        // v2.0.0-rc.11: Projecties-box heeft een stabiele schermpositie.
+        // v2.0.0-rc.17: Projecties-box heeft een stabiele schermpositie.
         // Niet meer ankeren aan een wisselende SYNT-as; alleen handmatig slepen verplaatst de box.
         controlsLeft = maxLeft;
         controlsTop = minTop;
@@ -4942,20 +5000,61 @@
     return expandBoxToAspect(expanded, canvasAspectRatio());
   }
 
+  function unionSvgBounds(nodes) {
+    let minX = Infinity;
+    let minY = Infinity;
+    let maxX = -Infinity;
+    let maxY = -Infinity;
+    let found = false;
+    for (const node of nodes || []) {
+      if (!node || node.closest?.('.grid')) continue;
+      try {
+        const box = node.getBBox?.();
+        if (!box || ![box.x, box.y, box.width, box.height].every(Number.isFinite)) continue;
+        minX = Math.min(minX, box.x);
+        minY = Math.min(minY, box.y);
+        maxX = Math.max(maxX, box.x + box.width);
+        maxY = Math.max(maxY, box.y + box.height);
+        found = true;
+      } catch (_err) {
+        // SVG geometry can be temporarily unavailable during replacement.
+      }
+    }
+    return found ? { x: minX, y: minY, w: Math.max(1, maxX - minX), h: Math.max(1, maxY - minY) } : null;
+  }
+
+  function unionBoxes(...boxes) {
+    const valid = boxes.filter(box => box && [box.x, box.y, box.w, box.h].every(Number.isFinite) && box.w > 0 && box.h > 0);
+    if (!valid.length) return null;
+    const minX = Math.min(...valid.map(box => box.x));
+    const minY = Math.min(...valid.map(box => box.y));
+    const maxX = Math.max(...valid.map(box => box.x + box.w));
+    const maxY = Math.max(...valid.map(box => box.y + box.h));
+    return { x: minX, y: minY, w: maxX - minX, h: maxY - minY };
+  }
+
+  function projectionGridExtentBox(fallback = null) {
+    if (!els.svg) return fallback;
+    // rc.14: het raster eindigt waar de uiterste projectie-stippellijnen
+    // eindigen. Projectieboxen zelf liggen buiten deze rastergrens. De centrale
+    // boom blijft volledig binnen het raster, ook wanneer een as uit staat.
+    const central = unionSvgBounds([
+      ...els.svg.querySelectorAll('.subtree-box-rect-layer, .node-shape-layer, .tree-edge')
+    ]);
+    const projections = unionSvgBounds([
+      ...els.svg.querySelectorAll('.projection-line')
+    ]);
+    return unionBoxes(central, projections) || central || projections || fallback;
+  }
+
   function computeAutoFitBox() {
     if (!els.svg) return fallbackViewBox();
-    // v2.0.0-rc.11: alle projectie-views gebruiken één geometrisch viewport,
+    // v2.0.0-rc.17: alle projectie-views gebruiken één geometrisch viewport,
     // onafhankelijk van welke overlay zichtbaar is. Dit sluit auto-fit-
     // verschillen uit en voorkomt elke horizontale of verticale verspringing.
     if (isMainScreenActive() && ['axes', 'source', 'lex', 'synt', 'log'].includes(state.projection)) {
       const frame = projectionStableFrameBox();
-      const gridMargin = Math.max(18, Math.min(42, Math.max(frame.w, frame.h) * 0.018));
-      state.lastGridBox = {
-        x: frame.x - gridMargin,
-        y: frame.y - gridMargin,
-        w: frame.w + gridMargin * 2,
-        h: frame.h + gridMargin * 2
-      };
+      state.lastGridBox = projectionGridExtentBox(frame);
       return stableProjectionViewBox();
     }
     const ignored = [...els.svg.querySelectorAll('.grid, .view-pan-hint')];
@@ -5270,7 +5369,7 @@
   }
 
   function closeMainChoiceMenus(except = null) {
-    [els.mainSentenceMenu, els.mainAdverbMenu, els.mainViewMenu, els.sourceAxisMenu, els.mainExtraMenu, els.mainActionsMenu].forEach(menu => {
+    [els.mainSentenceMenu, els.mainAdverbMenu, els.mainViewMenu, els.mainInterfaceMenu, els.sourceAxisMenu, els.mainExtraMenu, els.mainActionsMenu].forEach(menu => {
       if (menu && menu !== except) menu.open = false;
     });
   }
@@ -5287,6 +5386,15 @@
     if (els.mainViewSummary) {
       els.mainViewSummary.textContent = 'Syntax / FT';
       els.mainViewSummary.title = isEnglish() ? 'Choose Syntax or FT' : 'Kies Syntax of FT';
+    }
+    if (els.mainInterfaceSummary) {
+      els.mainInterfaceSummary.textContent = 'Interface';
+      els.mainInterfaceSummary.title = isEnglish() ? 'Choose automatic, desktop or a mobile interface' : 'Kies automatisch, desktop of een mobile-interface';
+    }
+    if (els.mainInterfaceHelp) {
+      els.mainInterfaceHelp.textContent = isEnglish()
+        ? 'Automatic follows the actual screen. Mobile portrait and landscape are also available as desktop previews.'
+        : 'Automatisch volgt het echte scherm. Mobiel staand en mobiel liggend zijn ook op desktop als testweergave beschikbaar.';
     }
     if (els.sourceAxisSummaryLabel) {
       els.sourceAxisSummaryLabel.textContent = isEnglish() ? 'Projections' : 'Projecties';
@@ -5322,6 +5430,10 @@
       state.centerMode = (id === 'ft' || id === 'functional') ? 'ft' : 'syntax';
       closeMainChoiceMenus();
       render();
+    });
+    fillCompactChoiceMenu(els.mainInterfaceOptions, VIEWPORT_TEST_MODES, activeViewportMode(), els.viewportModeSelect, id => {
+      closeMainChoiceMenus();
+      setViewportMode(id);
     });
   }
 
@@ -5377,6 +5489,7 @@
     fillSelect(els.layoutDensitySelect, LAYOUT_DENSITIES, state.layoutDensity);
     fillSelect(els.mainLayoutDensitySelectTop, LAYOUT_DENSITIES, state.layoutDensity);
     fillSelect(els.viewFitSelect, VIEW_FIT_MODES, state.viewFitMode);
+    fillSelect(els.viewportModeSelect, VIEWPORT_TEST_MODES, activeViewportMode());
     fillSelect(els.mainViewFitSelectTop, VIEW_FIT_MODES, state.viewFitMode);
     fillSelect(els.rightMenuWidthSelect, RIGHT_MENU_WIDTHS, validRightMenuMode());
     fillSelect(els.rightMenuWidthSelectTop, RIGHT_MENU_WIDTHS, validRightMenuMode());
@@ -5400,6 +5513,7 @@
     if (els.branchOrderSelect) els.branchOrderSelect.disabled = false;
     fillSelect(els.lexRuleSelect, LEX_RULES, state.example.lexRule);
     if (els.showGridInput) els.showGridInput.checked = state.showGrid;
+    if (els.configGridQuickInput) els.configGridQuickInput.checked = state.showGrid;
     if (els.showRelationsInput) els.showRelationsInput.checked = state.showRelations;
     if (els.showLabelsInput) els.showLabelsInput.checked = state.showLabels;
     if (els.projectionBoxDraggableInput) els.projectionBoxDraggableInput.checked = !!state.projectionBoxDraggable;
@@ -6006,12 +6120,13 @@
     setText('.main-projection-field span', en ? 'Proj.' : 'Proj.');
     setText('.mobile-adverb-field span', en ? 'Adverbs' : 'Bijwoorden');
     setText('.config-topbar h2', en ? 'All settings' : 'Alle instellingen');
-    setText('.config-topbar p', en ? 'Tree spacing and Main window live under Config → Tree. Adverb LEX slots, rules, export and documentation are also here. Main stays narrow: sentences, adverb, Help and Config.' : 'Boomruimte en Hoofdvenster staan onder Config → Boom. Bijwoordslots, plaatsingsregels, export en documentatie staan ook hier. Main blijft smal: zinnen, bijwoord, Help en Config.');
+    setText('.config-topbar p', en ? 'Tree, Interface and Display are at the top. Grid visible is on by default. Adverb slots, rules, export and documentation follow below.' : 'Boom, Interface en Weergave staan bovenaan. Raster zichtbaar is standaard aan. Bijwoordslots, plaatsingsregels, export en documentatie staan verderop.');
     setPanelHeading(0, en ? 'Tree' : 'Boom');
     setPanelHeading(1, en ? 'LEX axis - utterance type' : 'LEX-as · uitingtype');
     setPanelHeading(2, en ? 'Relations / rules' : 'Relaties / regels');
     setText('.right-menu-width-callout .inline-help', en ? 'Set the width of the right menu directly. The grid uses only the space needed for the active view; the remaining space goes to this column.' : 'Kies hier direct de breedte van het rechter menu. Het grid gebruikt alleen de benodigde ruimte voor de actieve view; de rest gaat naar deze kolom.');
-    setText('.side-panel .panel-card:first-child > .sticky-note', en ? 'Tree settings. Tree spacing and Main window are configured here, not above the grid.' : 'Boominstellingen. Boomruimte en Hoofdvenster staan hier, niet meer boven het grid.');
+    setText('.side-panel .panel-card:first-child > .sticky-note', en ? 'Tree settings. View selects Syntax or FT; Interface selects desktop or mobile. Grid visible is directly below under Display and is on by default.' : 'Boominstellingen. View kiest Syntax of FT; Interface kiest desktop of mobile. Raster zichtbaar staat direct hieronder bij Weergave en is standaard aan.');
+    setText('.display-config-field legend', en ? 'Display' : 'Weergave');
 
     setLabelSpan('rightMenuWidthSelectTop', en ? 'Right column visible' : 'Rechterkolom zichtbaar');
     setLabelSpan('centralModeSelect', 'View', en ? 'Choose central view: Syntax or FT (functional structure).' : 'Kies de centrale view: Syntax of FT (functionele structuur).');
@@ -6064,9 +6179,11 @@
       node.appendChild(span);
     });
 
-    setInputLabelText('#showGridInput', en ? 'Grid' : 'Raster');
+    setInputLabelText('#showGridInput', en ? 'Grid visible · default on' : 'Raster zichtbaar · standaard aan');
+    const quickGridLabel = document.querySelector('[data-config-grid-quick-label]');
+    if (quickGridLabel) quickGridLabel.textContent = en ? 'Grid visible' : 'Raster zichtbaar';
     setInputLabelText('#showRelationsInput', en ? 'Branches' : 'Taklijnen');
-    setInputLabelText('#showLabelsInput', en ? 'Tree labels' : 'Boomlabels');
+    setInputLabelText('#showLabelsInput', en ? 'Tree labels visible' : 'Boomlabels zichtbaar');
     setText('#applyLexRuleButton', en ? 'Apply rule' : 'Pas regel toe');
     setText('#relationHelp', en ? 'No separate relation editor. This list follows the active view: SYNT rules, FT roles, or LOG south-axis order.' : 'Geen losse editor-relaties. Deze lijst volgt de actieve view: SYNT-regels, FT-rollen of LOG-volgorde op de zuidas.');
 
@@ -6111,6 +6228,8 @@
     });
 
     setText('.main-sentence-field span, .desktop-sentence-field span, .sentence-card .field span', en ? 'Sentence' : 'Zin');
+    setText('label[for="viewportModeSelect"] span', 'Interface');
+    setTitle('#viewportModeSelect', en ? 'Choose automatic, desktop, mobile portrait or mobile landscape interface.' : 'Kies automatisch, desktop, mobiel staand of mobiel liggend.');
     setText('.mobile-sentence-field span', en ? 'Sentences' : 'Zinnen');
     setTitle('#openHelpButton, #openHelpFromConfigButton', en ? 'Open the Help screen.' : 'Open het help-scherm.');
     setTitle('#openConfigButton', en ? 'Open the configuration screen with projection, LEX, layout and documentation settings.' : 'Open het configuratiescherm met alle projectie-, LEX-, layout- en documentatie-instellingen.');
@@ -6121,7 +6240,7 @@
 
     setText('.config-topbar .intro-kicker', 'Config');
     setText('.config-topbar h2', en ? 'All settings' : 'Alle instellingen');
-    setText('.config-topbar p', en ? 'Tree spacing and Main window live under Config → Tree. Adverb LEX slots, rules, export and documentation are also here. Main stays narrow: sentences, adverb, Help and Config. The Back to main bar stays fixed while this page scrolls.' : 'Boomruimte en Hoofdvenster staan onder Config → Boom. Bijwoordslots, plaatsingsregels, export en documentatie staan ook hier. Main blijft smal: zinnen, bijwoord, Help en Config. De Terug-naar-main-balk blijft vast staan bij scrollen.');
+    setText('.config-topbar p', en ? 'Tree, Interface and Display are at the top. Grid visible is on by default. Adverb slots, rules, export and documentation follow below. The Back to main bar stays fixed while this page scrolls.' : 'Boom, Interface en Weergave staan bovenaan. Raster zichtbaar is standaard aan. Bijwoordslots, plaatsingsregels, export en documentatie staan verderop. De Terug-naar-main-balk blijft vast staan bij scrollen.');
     setText('.help-topbar .intro-kicker', 'Help');
     setText('.help-topbar h2', en ? 'Help' : 'Uitleg');
     setText('.help-topbar p', en ? 'Items on the left, text on the right. Each topic has a reserved carousel-image area below the text.' : 'Links staan de items; rechts staat de tekst. Onder elk item is ruimte voor een carousel-image.');
@@ -6281,7 +6400,8 @@
     if (typeof snapshot.southBoxDraggable === 'boolean') state.southBoxDraggable = snapshot.southBoxDraggable;
     if (snapshot.southBoxManual && Number.isFinite(snapshot.southBoxManual.left) && Number.isFinite(snapshot.southBoxManual.top)) state.southBoxManual = snapshot.southBoxManual;
     else if ('southBoxManual' in snapshot) state.southBoxManual = null;
-    if (typeof snapshot.showGrid === 'boolean') state.showGrid = snapshot.showGrid;
+    if (currentVersionSnapshot && typeof snapshot.showGrid === 'boolean') state.showGrid = snapshot.showGrid;
+    else state.showGrid = true;
     if (typeof snapshot.showRelations === 'boolean') state.showRelations = snapshot.showRelations;
     if (typeof snapshot.showLabels === 'boolean') state.showLabels = snapshot.showLabels;
     if (Number.isFinite(Number(snapshot.freeSlotCount))) state.freeSlotCount = Math.max(0, Math.min(6, Number(snapshot.freeSlotCount)));
@@ -6634,6 +6754,7 @@
     els.centralModeSelect?.addEventListener('change', event => setCenterModeFromViewSelect(event.target.value));
     els.mainViewSelect?.addEventListener('change', event => setCenterModeFromViewSelect(event.target.value));
     els.mobileViewSelect?.addEventListener('change', event => setCenterModeFromViewSelect(event.target.value));
+    els.viewportModeSelect?.addEventListener('change', event => setViewportMode(event.target.value));
     els.functionalOrderSelect?.addEventListener('change', event => {
       state.functionalOrder = event.target.value === 'right-first' ? 'right-first' : 'left-first';
       resetManualViewBox();
@@ -6700,7 +6821,15 @@
       resetForNewExample();
       render();
     });
-    els.showGridInput?.addEventListener('change', event => { state.showGrid = event.target.checked; render(); });
+    const setGridVisible = checked => {
+      state.showGrid = !!checked;
+      if (els.showGridInput) els.showGridInput.checked = state.showGrid;
+      if (els.configGridQuickInput) els.configGridQuickInput.checked = state.showGrid;
+      markConfigDirty(isEnglish() ? 'Grid' : 'Raster');
+      render();
+    };
+    els.showGridInput?.addEventListener('change', event => setGridVisible(event.target.checked));
+    els.configGridQuickInput?.addEventListener('change', event => setGridVisible(event.target.checked));
     els.showRelationsInput?.addEventListener('change', event => { state.showRelations = event.target.checked; render(); });
     els.showLabelsInput?.addEventListener('change', event => { state.showLabels = event.target.checked; render(); });
     els.growthEnabledInput?.addEventListener('change', event => {
@@ -6726,7 +6855,7 @@
       setProjection(event.target.value || 'axes');
       render();
     });
-    [els.mainSentenceMenu, els.mainAdverbMenu, els.mainViewMenu, els.sourceAxisMenu, els.mainExtraMenu, els.mainActionsMenu].forEach(menu => {
+    [els.mainSentenceMenu, els.mainAdverbMenu, els.mainViewMenu, els.mainInterfaceMenu, els.sourceAxisMenu, els.mainExtraMenu, els.mainActionsMenu].forEach(menu => {
       menu?.addEventListener('toggle', () => { if (menu.open) closeMainChoiceMenus(menu); });
     });
     document.querySelectorAll('[data-source-axis]').forEach(button => {
@@ -6744,7 +6873,7 @@
       });
     });
     document.addEventListener('pointerdown', event => {
-      [els.mainSentenceMenu, els.mainAdverbMenu, els.mainViewMenu, els.sourceAxisMenu, els.mainExtraMenu, els.mainActionsMenu].forEach(menu => {
+      [els.mainSentenceMenu, els.mainAdverbMenu, els.mainViewMenu, els.mainInterfaceMenu, els.sourceAxisMenu, els.mainExtraMenu, els.mainActionsMenu].forEach(menu => {
         if (menu?.open && !menu.contains(event.target)) menu.open = false;
       });
     });
@@ -6794,6 +6923,11 @@
       }
       if (event.key === 'Escape' && els.mainActionsMenu?.open) {
         els.mainActionsMenu.open = false;
+        event.preventDefault();
+        return;
+      }
+      if (event.key === 'Escape' && els.mainInterfaceMenu?.open) {
+        els.mainInterfaceMenu.open = false;
         event.preventDefault();
         return;
       }
@@ -6898,7 +7032,7 @@
       render();
     });
     window.addEventListener('orientationchange', () => {
-      // v2.0.0-rc.11: breek actieve pinch/pan expliciet af vóór herfit.
+      // v2.0.0-rc.17: breek actieve pinch/pan expliciet af vóór herfit.
       resetManualViewBox();
       requestAnimationFrame(() => {
         resetManualViewBox();

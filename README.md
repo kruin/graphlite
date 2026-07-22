@@ -1,6 +1,6 @@
-# OpenGraph Lite Viewer v2.0.0-rc.11
+# OpenGraph Lite Viewer v2.0.0-rc.17
 
-OpenGraph Lite Viewer is een demo/viewer voor JAN / OPN / OpenGraph-taalstructuren. Deze versie gebruikt de volledige v1.0.16-bronset als basis.
+Demo/viewer voor JAN / OPN / OpenGraph-taalstructuren.
 
 ## Start
 
@@ -8,7 +8,7 @@ OpenGraph Lite Viewer is een demo/viewer voor JAN / OPN / OpenGraph-taalstructur
 index.html
 ```
 
-Of:
+Of lokaal:
 
 ```bat
 start-local-viewer.bat
@@ -17,57 +17,59 @@ start-local-viewer.bat
 GitHub Pages:
 
 ```text
-https://kruin.github.io/graphlite/index.html?ogv=v2.0.0-rc.11
+https://kruin.github.io/graphlite/index.html?ogv=v2.0.0-rc.17
 ```
 
-Cache-reset:
+## Centrale views en projecties
 
 ```text
-https://kruin.github.io/graphlite/reset-cache.html?ogv=v2.0.0-rc.11
+Views:       Syntax, FT
+Projecties:  LEX west, SYNT oost, LOG zuid
+Default:     LEX + SYNT + LOG zichtbaar
 ```
 
-## Centrale views
+LOG is geen centrale view. LOG-volgorde wijzigt uitsluitend de zuidprojectie.
+
+## Topmenu
 
 ```text
-1. Syntax
-2. FT
+Zin · Bijwoord · Syntax/FT · Interface · Projecties · LOG-volgorde · NL/EN · Help · Config
 ```
 
-Syntax toont de syntactische boom. FT is de tweede centrale view en toont de functionele structuur met onder meer CLAUSE, PRED, AGENS en PATIENS.
+## Interface en mobile full view
 
-## Named projections
+`Interface` en `Config → Boom → Interface` bieden Automatisch, Desktop, Mobiel staand en Mobiel liggend. Automatisch kiest op telefoon zelf de passende mobile-interface. De viewer gebruikt daar de volledige beschikbare ruimte onder de bediening.
+
+## Raster
+
+Het raster is standaard zichtbaar. De instelling staat direct op:
 
 ```text
-LEX    westas
-SYNT   oostas
-LOG    zuidas
+Config → Boom → Weergave → Raster zichtbaar
 ```
 
-LOG is geen centrale view. De SOV/SVO/etc-actie wijzigt alleen de LOG-projectie.
+Het raster eindigt bij de uiterste eindpunten van de zichtbare projectie-stippellijnen. De rastergrens verandert de viewBox niet.
 
-## Projecties en plaatsing
+## Publicatie en reset
 
-De Projectie-keuze staat in de bovenbalk met `Alle`, `Bron`, `LEX`, `SYNT`, `LOG`. Bij Bron kunnen LEX, SYNT en LOG afzonderlijk of gecombineerd zichtbaar zijn. De centrale graph transformeert niet en de viewport blijft gelijk.
-De bovenbalk is compact: Zin, Bijwoord, View en Projectie blijven direct zichtbaar; `Assen` verschijnt alleen bij Bron. Taal, Help en Config staan onder één leesbaar `Menu`.
-
-LEX-Wissels en bijwoordinserties gebeuren op de LEX-as en muteren Syntax en FT niet.
-
-## Versiebron
-
-`VERSION.txt` is leidend voor HTML, JavaScript, service worker, cachequery, publicatiescript en zipnaam.
+`publish_checked.bat` opent na een geslaagde push automatisch eenmaal per versie de resetpagina van GitHub Pages.
 
 ## Controle
 
 ```bat
+node --check viewer.js
 check_release.bat
 ```
 
+## rc.16-correcties
 
-## v2.0.0-rc.11
+Raster is standaard zichtbaar, ook binnen de boom. In Config staat `Raster zichtbaar` direct in de vaste bovenbalk. Het mobile topmenu toont alle acht opties in twee rijen: vijf items boven en vier onder.
 
-De Main-bovenbalk gebruikt `Zin`, `Bijwoord`, `Syntax`/`FT` en `Projecties` als smalle koppen met brede uitklappen. Er is geen Bron-tabblad. Standaard zijn LEX, SYNT en LOG zichtbaar; `Geen` toont alleen de bron. SOV staat onder `Menu → Extra`.
+## Topmenu-indeling rc.17
 
+```text
+Rij 1: Zin · Bijwoord · Syntax/FT · Interface · Projecties · LOG-volgorde
+Rij 2: NL/EN · Help · Config
+```
 
-## Topmenu v2.0.0-rc.11
-
-Main toont één topmenubalk met acht zichtbare hoofditems: Zin, Bijwoord, Syntax/FT, Projecties, LOG-volgorde, NL/EN, Help en Config. Er is geen algemene knop `Menu` en er zijn geen geneste submenu’s. Keuze-items openen direct hun eigen brede uitklappaneel.
+De indeling is vast op desktop en mobile; zij gebruikt geen vrije wrapping.

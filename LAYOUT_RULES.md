@@ -1,64 +1,77 @@
 # LAYOUT_RULES
 
-Harde layoutregels voor OpenGraph / GraphLite.
+Harde layoutregels voor OpenGraph Lite Viewer.
 
-## Centrale views
+## Centrale views en assen
 
 ```text
 Syntax   eerste centrale view
 FT       tweede centrale view
-LOG      uitsluitend zuidas; nooit centrale view
+LEX      westas
+SYNT     oostas
+LOG      zuidas; nooit centrale view
 ```
 
-## Assen
-
-- LEX: west/links.
-- SYNT: oost/rechts.
-- LOG: zuid/onder.
-- Assen zijn vaste SVG-layoutankers.
-- HTML-menu’s beïnvloeden geen fitbox of ashoogte.
-
-## Projecties-menu
-
-- De bediening staat buiten het canvas.
-- Smalle kop: `Projecties` / `Projections`.
-- Brede uitklap: `LEX`, `SYNT`, `LOG`, `Alle`, `Geen`.
-- **Default: LEX + SYNT + LOG zichtbaar.**
-- `Geen` betekent bron zonder assen; er is geen Bron-tabblad.
-- `Alle` en Reset herstellen de default.
-
-## Geen verspringingen
+## Viewportstabiliteit
 
 - Iedere projectiecombinatie gebruikt dezelfde viewBox.
-- De centrale graph behoudt x, y en schaal.
 - Syntax ↔ FT behoudt dezelfde viewport en handmatige pan/zoom.
-- Uitklappen wijzigen de canvasmaat niet.
+- Menu’s, Config en rasterzichtbaarheid wijzigen de canvasmaat of fitbox niet.
 
-## Bovenbalk
+## Projecties
 
-- Vier smalle koppen: `Zin`, `Bijwoord`, `Syntax`/`FT`, `Projecties`.
-- Uitklappen mogen breed zijn en volledige teksten tonen.
-- Taal, Help en Config staan onder `Menu`.
+- Bediening staat buiten het canvas onder `Projecties` / `Projections`.
+- Beschikbaar: LEX, SYNT, LOG, Alle en Geen.
+- Default: LEX + SYNT + LOG zichtbaar.
+- Er is geen Bron-tabblad.
 
-## SOV
+## Topmenu
 
-- Geen SOV-/taalactiebox in het canvas.
-- Tijdelijke bediening: `Menu → Extra`.
-- Omschakelen van LOG-volgorde mag de viewBox niet wijzigen.
+```text
+Zin · Bijwoord · Syntax/FT · Interface · Projecties · LOG-volgorde · NL/EN · Help · Config
+```
 
-## Eén hoofdmenu
+- Geen algemene Menu-knop.
+- Geen geneste submenu’s.
+- Op smalle schermen mag de balk gecontroleerd naar een volgende rij lopen zonder de graph te verschuiven.
 
-- Boven het grid staat één knop `Menu`.
-- Het geopende paneel bevat alle hoofdkeuzes zonder geneste uitklappen.
-- Het menu mag het grid niet verplaatsen en sluit bij klik buiten het paneel of Escape.
+## Mobile full view
+
+- Het SVG-canvas gebruikt de volledige viewport onder topmenu en Play-balk.
+- De mobile fitbox omvat de centrale view en zichtbare assen zonder reserves voor verwijderde canvasbediening.
+- Portrait/landscape voert na keuze of oriëntatiewissel een volledige herfit uit.
+
+## Raster / grid
+
+- `Config → Boom → Weergave → Raster zichtbaar` staat standaard aan.
+- De optie staat direct onder Interface en is zonder scrollen door lange configuraties vindbaar.
+- Migratie uit een oudere release zet Raster eenmaal aan; een later bewust opgeslagen keuze blijft behouden.
+- De rastergrens is de unie van de centrale boom en de uiterste eindpunten van zichtbare projectie-stippellijnen.
+- Projectieboxen mogen buiten de rastergrens liggen.
+- Rasterberekening verandert x, y, schaal of viewBox niet.
 
 ## Lijndikte
 
-- Boom-, relatie- en hulplijnen: zeer dun.
-- Contouren van knopen, slots en regels: zo dun mogelijk.
-- Named-projectionlijnen en hun assen: iets dikker dan de bronstructuur, maar niet vet.
+- Raster-, boom-, relatie- en hulplijnen: dun.
+- Boxcontouren: zo dun mogelijk.
+- Projectielijnen: iets dikker.
+- Projectieassen: iets dikker dan projectielijnen.
 
+## Raster en mobile topmenu (rc.16)
 
-## Topmenu v2.0.0-rc.11
+- Het raster ligt boven gevulde subtree-achtergronden, maar onder captions, boomlijnen, knopen en projecties.
+- Op mobile staan de negen topmenu-items in exact twee rijen: vijf items boven en vier onder. Geen derde menurij.
 
-Main toont één topmenubalk met acht zichtbare hoofditems: Zin, Bijwoord, Syntax/FT, Projecties, LOG-volgorde, NL/EN, Help en Config. Er is geen algemene knop `Menu` en er zijn geen geneste submenu’s. Keuze-items openen direct hun eigen brede uitklappaneel.
+## Topmenu-rijen (v2.0.0-rc.17)
+
+Het topmenu heeft op desktop, mobile en mobile-preview exact twee vaste rijen:
+
+```text
+Rij 1: Zin · Bijwoord · Syntax/FT · Interface · Projecties · LOG-volgorde
+Rij 2: NL/EN · Help · Config
+```
+
+- Rij 2 heeft eigen verticale ruimte en mag niet aansluiten op of overlappen met rij 1.
+- Vrije wrapping is verboden.
+- Geen item mag buiten een mobile-frame of viewport schuiven.
+- Uitklappanelen van rij 1 openen onder de volledige tweerijige menubalk.

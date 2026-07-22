@@ -4,7 +4,7 @@ Actuele status van de OpenGraph / GraphLite viewer.
 
 ## Versie
 
-- Huidige releasekandidaat: `v2.0.0-rc.11`.
+- Huidige releasekandidaat: `v2.0.0-rc.17`.
 - Bronbasis: volledige v1.0.16-bronset, doorontwikkeld via rc.3–rc.9.
 
 ## Centrale views
@@ -54,15 +54,29 @@ node --check viewer.js
 check_release.bat
 ```
 
-## Hoofdmenu v2.0.0-rc.11
+## Hoofdmenu v2.0.0-rc.17
 
 - Main bevat één knop `Menu`.
 - Het menu is plat: geen geneste submenu’s.
 - Zin, Bijwoord, Syntax/FT, Projecties, LOG-volgorde, taal, Help en Config staan direct in hetzelfde paneel.
 - Standaard zijn LEX, SYNT en LOG zichtbaar.
 
-## Lijnhiërarchie v2.0.0-rc.11
+## Lijnhiërarchie v2.0.0-rc.17
 
 - Boomlijnen en hulplijnen zijn dun.
 - Boxcontouren zijn minimaal.
 - Alleen named-projectionlijnen en projectieassen krijgen een iets grotere lijndikte.
+
+## Publicatie-reset
+
+- `publish_checked.bat` opent na een geslaagde push automatisch de resetpagina.
+- Er is geen bevestigingsvraag.
+- De reset wordt maximaal eenmaal per versie en per computer gestart.
+- Geen push betekent geen automatische reset.
+
+## Raster / grid
+
+- Raster is standaard zichtbaar en staat in Config aangevinkt.
+- Bij migratie uit oudere releases wordt Raster eenmaal zichtbaar hersteld.
+- Het raster loopt zonder extra buitenmarge tot de uiterste eindpunten van de zichtbare projectie-stippellijnen.
+- De rasterberekening verandert x, y, schaal of viewBox niet.

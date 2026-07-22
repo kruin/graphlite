@@ -1,40 +1,42 @@
 # HANDOVER_FOR_COLLABORATORS
 
-Overdracht voor OpenGraph Lite Viewer v2.0.0-rc.11.
-
-## Bronbasis
-
-Deze release neemt de volledige bronset van v1.0.16 over en corrigeert de centrale view-indeling.
+Overdracht voor OpenGraph Lite Viewer `v2.0.0-rc.17`.
 
 ## Niet wijzigen zonder expliciete opdracht
 
 ```text
-View-menu:       Syntax → FT
-Projectiekeuze:  Alle → Bron → LEX → SYNT → LOG
-Assen:           LEX west, SYNT oost, LOG zuid
+Centrale views:  Syntax → FT
+Assen:            LEX west, SYNT oost, LOG zuid
+Default assen:    LEX + SYNT + LOG zichtbaar
+Topmenu:          Zin, Bijwoord, Syntax/FT, Interface, Projecties,
+                  LOG-volgorde, NL/EN, Help, Config
+Raster:           standaard aan; Config → Boom → Weergave
 ```
 
-FT is de tweede centrale view. LOG is uitsluitend de zuidas.
+- LOG is nooit een centrale view.
+- Er is geen Bron-tabblad, algemene Menu-knop, genest submenu of SOV-box in het canvas.
 
-Bronassen: LEX, SYNT en LOG zijn bij Bron onafhankelijk combineerbaar. De bediening staat buiten het canvas.
+## Layoutcontract
 
-## Compatibiliteit
+- Projectiewissels veranderen x, y, schaal of viewBox niet.
+- Syntax ↔ FT behoudt pan en zoom.
+- Mobile gebruikt de volledige viewport onder de bediening.
+- Raster loopt tot de uiteinden van zichtbare projectie-stippellijnen en mag de viewBox niet beïnvloeden.
+- Rasterlijnen blijven dunner dan projectielijnen.
 
-Intern schrijft de viewer `central_opn: "ft"`. Invoer met de oude waarde `functional` blijft leesbaar en wordt naar FT gemigreerd. Implementatienamen zoals `functionalNodes` mogen blijven bestaan zolang zij niet als viewnaam aan de gebruiker worden getoond.
+## Configcontract
+
+- `showGrid` start als `true`.
+- Oudere snapshots migreren eenmaal naar `showGrid=true`.
+- De zichtbare checkbox staat direct onder `Config → Boom → Weergave` met label `Raster zichtbaar · standaard aan` / `Grid visible · default on`.
 
 ## Werkwijze
 
-1. Werk vanaf de nieuwste volledige projectzip.
-2. Lees `VERSION.txt`.
-3. Wijzig app en leidende instructies samen.
-4. Voer `check_release.bat` uit.
-5. Maak een zip met exact hetzelfde versienummer als `VERSION.txt`.
+1. Lees `VERSION.txt`.
+2. Wijzig app en leidende instructies samen.
+3. Voer `node --check viewer.js` en `check_release.bat` uit.
+4. Maak een zip met exact hetzelfde versienummer.
 
-## Publiceren
+## Topmenu-layout rc.17
 
-Gebruik `publish_checked.bat`. Releasezips en lokale mobile-testbestanden horen niet in de GitHub Pages-root.
-
-
-## Topmenu v2.0.0-rc.11
-
-Main toont één topmenubalk met acht zichtbare hoofditems: Zin, Bijwoord, Syntax/FT, Projecties, LOG-volgorde, NL/EN, Help en Config. Er is geen algemene knop `Menu` en er zijn geen geneste submenu’s. Keuze-items openen direct hun eigen brede uitklappaneel.
+Behoud altijd twee vaste rijen. De zes keuze-items staan op rij 1; NL/EN, Help en Config staan op rij 2. Dit geldt ook op desktop en in geforceerde mobile-preview.
