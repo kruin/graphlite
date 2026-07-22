@@ -62,7 +62,7 @@ Zin · Bijwoord · Syntax/FT · Interface · Projecties · LOG-volgorde · NL/EN
 - Het raster ligt boven gevulde subtree-achtergronden, maar onder captions, boomlijnen, knopen en projecties.
 - Op mobile staan de negen topmenu-items in exact twee rijen: vijf items boven en vier onder. Geen derde menurij.
 
-## Topmenu-rijen (v2.0.0-rc.17)
+## Topmenu-rijen (v2.0.0-rc.18)
 
 Het topmenu heeft op desktop, mobile en mobile-preview exact twee vaste rijen:
 
@@ -75,3 +75,14 @@ Rij 2: NL/EN · Help · Config
 - Vrije wrapping is verboden.
 - Geen item mag buiten een mobile-frame of viewport schuiven.
 - Uitklappanelen van rij 1 openen onder de volledige tweerijige menubalk.
+
+## Maximale view per interface
+
+```text
+Automatisch       volgt actuele schermvorm en oriëntatie
+Desktop           maximale volledige fit in desktopcanvas
+Mobiel staand     smaller/hoger profiel; maximale portraitbreedte
+Mobiel liggend    breed/lager profiel; maximale landscapehoogte
+```
+
+De stabiele fitbox wordt uit werkelijke inhoudsmaten berekend. Verborgen of verwijderde UI-boxen mogen geen ruimte reserveren. De veiligheidsrand is minimaal en uitsluitend bedoeld voor strokes en labels.

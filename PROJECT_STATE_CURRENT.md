@@ -4,7 +4,7 @@ Actuele, leidende status van OpenGraph Lite Viewer.
 
 ## Versie
 
-- Releasekandidaat: `v2.0.0-rc.17`.
+- Releasekandidaat: `v2.0.0-rc.18`.
 - Functionele bronbasis: volledige v1.0.16-bronset, doorontwikkeld via de v2.0-releasekandidaten.
 - `VERSION.txt` is leidend voor app, cache, documentatie en zipnaam.
 
@@ -84,3 +84,11 @@ Rij 2: NL/EN · Help · Config
 ```
 
 De tweede rij is ook op desktop aanwezig. Mobile-preview berekent de menu-indeling uit de breedte van het telefoonframe, niet uit de omringende desktopviewport.
+
+## Maximale interfacefit — rc.18
+
+- Automatisch, Desktop, Mobiel staand en Mobiel liggend gebruiken ieder de maximaal beschikbare view.
+- De fitbox bevat alleen de werkelijke centrale graph, zichtbare projectielijnen, assen en projectieboxen.
+- Mobile portrait gebruikt een smaller/hoger layoutprofiel; mobile landscape een breed/lager profiel.
+- Oude ruimte voor verwijderde canvas-controls wordt niet meer gereserveerd.
+- Maximaliseren mag nooit clipping of projectieverspringing veroorzaken.

@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'v2.0.0-rc.17';
+  const VERSION = 'v2.0.0-rc.18';
   const BASE_CELL = 74;
   const ROOT_SIDE_GAP = 1;
   const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -2712,18 +2712,17 @@
     syncPortraitStageMode();
     if (!els.canvasWrap) return;
     syncPortraitMenuSpace();
-    // v4536: het gridvenster wordt gemaximeerd op de actuele fit-box
-    // van boom + assen. Het canvas schaalt dus niet groter dan nodig.
+    // v2.0.0-rc.18: alle interface-standen krijgen de maximaal beschikbare
+    // canvasruimte. De SVG-viewBox bepaalt vervolgens de grootste schaal zonder
+    // clipping. Een brede boom in portrait wordt dus niet ook nog eens door een
+    // kunstmatig laag canvas verkleind.
     const fit = box || parseViewBox();
-    const validFit = fit && Number.isFinite(fit.w) && fit.w > 0 && Number.isFinite(fit.h) && fit.h > 0;
     const workspace = workspaceForStage();
     const split = syncRightMenuSplit(fit);
-    const ratio = validFit ? Math.max(0.16, fit.h / fit.w) : 0.62;
     const stageWidth = split?.stageWidth || Math.min(620, window.innerWidth || 620);
-    const bottomReserve = isPortraitGridFirstViewport() ? 92 + 12 : 78;
-    const maxAvailable = Math.max(180, Math.min(880, (window.innerHeight || 640) - bottomReserve));
-    const needed = Math.ceil(stageWidth * ratio);
-    const height = Math.max(140, Math.min(maxAvailable, needed));
+    const bottomReserve = isPortraitGridFirstViewport() ? 18 : 14;
+    const maxAvailable = Math.max(180, Math.min(1200, (window.innerHeight || 640) - bottomReserve));
+    const height = maxAvailable;
     els.canvasWrap.style.setProperty('--mobile-fit-height', `${height}px`);
     els.canvasWrap.style.setProperty('--stage-fit-width', `${Math.ceil(stageWidth)}px`);
     workspace?.style.setProperty('--stage-fit-width', `${Math.ceil(stageWidth)}px`);
@@ -2732,7 +2731,16 @@
   function layoutVisualProfile() {
     const mode = state.layoutDensity || 'auto';
     const mobile = isMobileViewport();
-    if (mobile && mode === 'auto') return { cellX: BASE_CELL * 1.08, cellY: BASE_CELL * 0.86, fontScale: 1.04, label: 'mobile auto' };
+    if (mobile && mode === 'auto') {
+      // rc.18: oriëntatie-afhankelijke max-layout. Portrait wordt smaller en
+      // iets hoger zodat de volledige LEX–boom–SYNT-compositie veel groter kan
+      // schalen; landscape blijft breed/lager. Automatisch kiest dezelfde
+      // profielen op een echt mobiel scherm.
+      if (isPortraitGridFirstViewport()) {
+        return { cellX: BASE_CELL * 0.90, cellY: BASE_CELL * 1.00, fontScale: 1.06, label: 'mobile portrait max' };
+      }
+      return { cellX: BASE_CELL * 1.12, cellY: BASE_CELL * 0.84, fontScale: 1.05, label: 'mobile landscape max' };
+    }
     if (mode === 'compact') return { cellX: BASE_CELL, cellY: BASE_CELL, fontScale: 1.00, label: 'compact' };
     if (mode === 'flat') return { cellX: BASE_CELL * 1.48, cellY: BASE_CELL * 0.72, fontScale: 1.04, label: 'platter' };
     if (mode === 'wide') return { cellX: BASE_CELL * 1.34, cellY: BASE_CELL * 0.86, fontScale: 1.08, label: 'breed/lager' };
@@ -2844,7 +2852,7 @@
 
   function setProjection(projection) {
     const next = projection || 'axes';
-    // v2.0.0-rc.17: alle named-projection views delen exact dezelfde
+    // v2.0.0-rc.18: alle named-projection views delen exact dezelfde
     // viewport. Een projectiewissel mag daarom een handmatige pan/zoom niet
     // wissen en mag de centrale boom horizontaal noch verticaal verplaatsen.
     if (growthSupportedProjection(state.projection) && state.growthStep > 0) {
@@ -4266,10 +4274,12 @@
     }
     const southItems = southLogicalItemsFromCentralLayout(centralLayout, origin, centralKind, southLogicalOrder());
     const compactProjectionLayout = isMobileViewport();
-    const westGap = compactProjectionLayout ? 132 : 168;
-    const eastGap = compactProjectionLayout ? 92 : 118;
+    // rc.18: projectieassen dichter bij de centrale boom zodat alle vier
+    // interface-standen de beschikbare breedte maximaal benutten.
+    const westGap = compactProjectionLayout ? 112 : 148;
+    const eastGap = compactProjectionLayout ? 76 : 104;
     const leftTreePx = px((centralLayout?.box?.minX || 0) - 0.9, origin);
-    const westAxisX = Math.max(compactProjectionLayout ? 104 : 120, leftTreePx - westGap);
+    const westAxisX = Math.max(compactProjectionLayout ? 92 : 112, leftTreePx - westGap);
     const southAxisY = py((centralLayout?.box?.maxY || 0) + 2.1, origin);
     const southAxisX1 = px((centralLayout?.box?.minX || 0) - 0.75, origin);
     const southAxisX2 = px((centralLayout?.box?.maxX || 0) + 0.75, origin);
@@ -4282,10 +4292,21 @@
     return { x: 760, y: 72 };
   }
 
+  function stableProjectedRuleWidth(mode = 'syntax') {
+    const spec = mode === 'functional' ? functionalSpec() : treeSpec();
+    const rules = stringRulesForSpec(spec, mode);
+    const maxText = rules.reduce((max, rule) => Math.max(max, String(rule || '').length), 0);
+    const mobile = isMobileViewport();
+    const minWidth = mode === 'functional' ? (mobile ? 228 : 250) : 210;
+    const maxWidth = mobile ? 320 : 380;
+    return Math.max(minWidth, Math.min(maxWidth, maxText * 8.2 + 34));
+  }
+
   function projectionStableFrameBox() {
-    // v2.0.0-rc.17: stabiele unie van Syntax en FT zonder de oude reserves
-    // voor verwijderde Projecties- en SOV-boxen in het canvas. Dit frame blijft
-    // identiek bij alle projectiekeuzes, maar benut mobile breedte veel beter.
+    // v2.0.0-rc.18: inhoudsgetrouwe, maar nog steeds stabiele unie van Syntax
+    // en FT. Alleen werkelijk gebruikte boxbreedtes en lijnuiteinden tellen mee.
+    // Oude fictieve reserves links van LOG en rechts van SYNT maakten alle vier
+    // interface-standen onnodig klein, vooral mobile portrait.
     const origin = stableCentralViewOrigin();
     const layouts = [getSouthAwareSyntaxLayout(), getSouthAwareFunctionalLayout()];
     const boxes = layouts.map(layout => layout?.box).filter(Boolean);
@@ -4296,56 +4317,49 @@
       maxY: Math.max(...boxes.map(box => Number(box.maxY || 0)))
     } : { minX: -3, minY: 0, maxX: 4, maxY: 6 };
     const compact = isMobileViewport();
-    const westGap = compact ? 132 : 168;
-    const eastGap = compact ? 92 : 118;
-    const maxRuleWidth = compact ? 320 : 380;
+    const westGap = compact ? 112 : 148;
+    const eastGap = compact ? 76 : 104;
+    const syntaxRuleWidth = stableProjectedRuleWidth('syntax');
+    const functionalRuleWidth = stableProjectedRuleWidth('functional');
+    const ruleWidth = Math.max(syntaxRuleWidth, functionalRuleWidth);
     const leftTreePx = px(union.minX - 0.9, origin);
     const rightTreePx = px(union.maxX + 0.9, origin);
     const topTreePx = py(union.minY - 1.6, origin);
     const bottomTreePx = py(union.maxY + 2.1, origin);
-    const westAxisX = Math.max(compact ? 104 : 120, leftTreePx - westGap);
+    const westAxisX = Math.max(compact ? 92 : 112, leftTreePx - westGap);
     const eastAxisX = rightTreePx + eastGap;
     const southAxisX1 = px(union.minX - 0.75, origin);
     const southAxisX2 = px(union.maxX + 0.75, origin);
     const southAxisY = py(union.maxY + 2.1, origin);
 
-    const lexLeft = westAxisX - 122;
-    const logLeft = southAxisX1 - 212;
-    const syntRight = eastAxisX + 22 + maxRuleWidth;
-    const left = Math.min(lexLeft, logLeft, leftTreePx - 104);
-    const top = Math.min(4, topTreePx - 58);
-    const right = Math.max(syntRight + 30, southAxisX2 + 96, rightTreePx + 108);
-    const bottom = Math.max(southAxisY + 104, bottomTreePx + 82);
+    // Werkelijke uitersten: LEX-labels circa 98 px links van de westas;
+    // LOG-boxen 74 px links/rechts van hun marker; SYNT/FT exact de berekende
+    // regelboxbreedte. Titels lopen naar rechts en vragen geen extra linkerveld.
+    const lexLeft = westAxisX - 102;
+    const logLeft = southAxisX1 - 82;
+    const syntRight = eastAxisX + 22 + ruleWidth;
+    const left = Math.min(lexLeft, logLeft, leftTreePx - 70);
+    const top = Math.min(10, topTreePx - 44);
+    const right = Math.max(syntRight + 12, southAxisX2 + 82, rightTreePx + 72);
+    const bottom = Math.max(southAxisY + 92, bottomTreePx + 68);
     return { x: left, y: top, w: right - left, h: bottom - top };
   }
 
   function stableProjectionViewBox() {
-    // v2.0.0-rc.17: compacte, stabiele full-view. Alleen echte inhoud en een
-    // kleine veiligheidsrand worden opgenomen. De vroegere 18-20% reserves
-    // voor canvas-overlays zijn vervallen omdat die bediening in het topmenu zit.
+    // v2.0.0-rc.18: maximale full-view voor Automatisch, Desktop, Mobiel
+    // staand en Mobiel liggend. De veiligheidsrand is alleen nog voldoende
+    // voor dunne strokes en labels; er wordt geen UI-ruimte in SVG gereserveerd.
     const frame = projectionStableFrameBox();
     const base = Math.max(frame.w, frame.h);
     const mobile = isMobileViewport();
-    const portrait = isPortraitGridFirstViewport();
     const margin = mobile
-      ? Math.max(18, Math.min(38, base * 0.020))
-      : Math.max(34, Math.min(70, base * 0.032));
-    const fit = {
+      ? Math.max(8, Math.min(18, base * 0.010))
+      : Math.max(14, Math.min(30, base * 0.016));
+    return {
       x: frame.x - margin,
       y: frame.y - margin,
       w: frame.w + margin * 2,
       h: frame.h + margin * 2
-    };
-    const extra = mobile
-      ? (portrait
-        ? { left: fit.w * 0.006, top: fit.h * 0.012, right: fit.w * 0.010, bottom: fit.h * 0.034 }
-        : { left: fit.w * 0.006, top: fit.h * 0.010, right: fit.w * 0.014, bottom: fit.h * 0.024 })
-      : { left: fit.w * 0.010, top: fit.h * 0.018, right: fit.w * 0.032, bottom: fit.h * 0.040 };
-    return {
-      x: fit.x - extra.left,
-      y: fit.y - extra.top,
-      w: fit.w + extra.left + extra.right,
-      h: fit.h + extra.top + extra.bottom
     };
   }
 
@@ -4568,7 +4582,7 @@
 
   function stableGrowthViewBox() {
     if (!growthActive()) return null;
-    // v2.0.0-rc.17: Groei gebruikt hetzelfde frame als de gewone projectie-
+    // v2.0.0-rc.18: Groei gebruikt hetzelfde frame als de gewone projectie-
     // views. Voorheen hadden Alle/Bron/LOG eigen hard-coded viewBoxes, terwijl
     // LEX/SYNT auto-fit gebruikten; dat veroorzaakte de zichtbare sprong.
     return stableProjectionViewBox();
@@ -4605,7 +4619,7 @@
   }
 
   function clearViewportGestureState() {
-    // v2.0.0-rc.17: bij wissel tussen landscape/portrait mogen oude touch-pointers
+    // v2.0.0-rc.18: bij wissel tussen landscape/portrait mogen oude touch-pointers
     // en pinch-state niet blijven hangen. Anders lijkt portrait na zoom in
     // landscape bevroren.
     state.viewDrag = null;
@@ -4867,7 +4881,7 @@
         controlsLeft = state.projectionBoxManual.left;
         controlsTop = state.projectionBoxManual.top;
       } else {
-        // v2.0.0-rc.17: Projecties-box heeft een stabiele schermpositie.
+        // v2.0.0-rc.18: Projecties-box heeft een stabiele schermpositie.
         // Niet meer ankeren aan een wisselende SYNT-as; alleen handmatig slepen verplaatst de box.
         controlsLeft = maxLeft;
         controlsTop = minTop;
@@ -5049,7 +5063,7 @@
 
   function computeAutoFitBox() {
     if (!els.svg) return fallbackViewBox();
-    // v2.0.0-rc.17: alle projectie-views gebruiken één geometrisch viewport,
+    // v2.0.0-rc.18: alle projectie-views gebruiken één geometrisch viewport,
     // onafhankelijk van welke overlay zichtbaar is. Dit sluit auto-fit-
     // verschillen uit en voorkomt elke horizontale of verticale verspringing.
     if (isMainScreenActive() && ['axes', 'source', 'lex', 'synt', 'log'].includes(state.projection)) {
@@ -7032,7 +7046,7 @@
       render();
     });
     window.addEventListener('orientationchange', () => {
-      // v2.0.0-rc.17: breek actieve pinch/pan expliciet af vóór herfit.
+      // v2.0.0-rc.18: breek actieve pinch/pan expliciet af vóór herfit.
       resetManualViewBox();
       requestAnimationFrame(() => {
         resetManualViewBox();

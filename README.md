@@ -1,4 +1,4 @@
-# OpenGraph Lite Viewer v2.0.0-rc.17
+# OpenGraph Lite Viewer v2.0.0-rc.18
 
 Demo/viewer voor JAN / OPN / OpenGraph-taalstructuren.
 
@@ -17,7 +17,7 @@ start-local-viewer.bat
 GitHub Pages:
 
 ```text
-https://kruin.github.io/graphlite/index.html?ogv=v2.0.0-rc.17
+https://kruin.github.io/graphlite/index.html?ogv=v2.0.0-rc.18
 ```
 
 ## Centrale views en projecties
@@ -73,3 +73,7 @@ Rij 2: NL/EN · Help · Config
 ```
 
 De indeling is vast op desktop en mobile; zij gebruikt geen vrije wrapping.
+
+## Maximale view
+
+Vanaf rc.18 benutten Automatisch, Desktop, Mobiel staand en Mobiel liggend de beschikbare view maximaal. Mobile portrait en landscape hebben eigen layoutprofielen; de volledige graph plus zichtbare assen blijft binnen beeld.

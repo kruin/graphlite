@@ -1,6 +1,6 @@
 # HANDOVER_FOR_COLLABORATORS
 
-Overdracht voor OpenGraph Lite Viewer v2.0.0-rc.17.
+Overdracht voor OpenGraph Lite Viewer v2.0.0-rc.18.
 
 ## Bronbasis
 

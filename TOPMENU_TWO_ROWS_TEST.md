@@ -1,6 +1,6 @@
 # TOPMENU_TWO_ROWS_TEST
 
-Te controleren voor v2.0.0-rc.17:
+Te controleren voor v2.0.0-rc.18:
 
 1. Desktop toont twee menu-rijen.
 2. Mobile landscape toont zes keuze-items op rij 1 en NL/EN, Help, Config op rij 2.
