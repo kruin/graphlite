@@ -1,4 +1,4 @@
-# v2.0.0-rc.21
+# v2.0.0-rc.22
 
 - Mobile raster is inhoudsgebonden en wordt niet meer tot de volledige canvas-aspectratio verbreed.
 - Werkt ook bij geforceerde Desktop/portrait/landscape-interface op een telefoon.

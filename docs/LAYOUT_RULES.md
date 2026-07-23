@@ -72,3 +72,10 @@ Rij 2: NL/EN · Help · Config
 - Deze regel geldt ook wanneer op een telefoon handmatig `Desktop`, `Mobiel staand` of `Mobiel liggend` is gekozen.
 - De viewBox blijft stabiel; alleen lege rasterstroken buiten de projectie-inhoud verdwijnen.
 - Desktop behoudt de responsieve rc.20-layout.
+
+## Echte mobile landscape
+
+- Mobile-detectie gebruikt de korte fysieke viewportzijde plus coarse/touch-pointer; een liggende telefoon mag niet door een width-only breakpoint als desktop worden behandeld.
+- In compact landscape blijven beide topmenurijen zichtbaar, maar zij en de Play-balk gebruiken een compact hoogteprofiel.
+- Het gridprofiel wordt platter en breder zodat LEX + centrale graph + SYNT/FT maximaal in het landscape-canvas passen.
+- Na oriëntatiewissel volgt opnieuw fit nadat `visualViewport` is gestabiliseerd.

@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'v2.0.0-rc.21';
+  const VERSION = 'v2.0.0-rc.22';
   const BASE_CELL = 74;
   const ROOT_SIDE_GAP = 1;
   const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -2414,6 +2414,13 @@
       node.classList.toggle('viewport-mobile-landscape-test', mobileLandscape);
       node.classList.toggle('viewport-mobile-preview-frame', mobileTest && (window.innerWidth || 0) > 900);
       node.classList.toggle('viewport-mobile-natural', mobileTest && (window.innerWidth || 0) <= 900);
+      const visual = window.visualViewport || null;
+      const physicalWidth = Number(visual?.width) || Number(window.innerWidth) || 0;
+      const physicalHeight = Number(visual?.height) || Number(window.innerHeight) || 0;
+      const compactPhysical = isActualCompactScreen();
+      node.classList.toggle('actual-compact-screen', compactPhysical);
+      node.classList.toggle('actual-compact-landscape', compactPhysical && physicalWidth > physicalHeight);
+      node.classList.toggle('actual-compact-portrait', compactPhysical && physicalHeight >= physicalWidth);
       node.dataset.viewportMode = mode;
     });
     const width = mobilePortrait ? 390 : (mobileLandscape ? 844 : 0);
@@ -2454,24 +2461,30 @@
     });
   }
 
+  function physicalViewportMetrics() {
+    if (typeof window === 'undefined') return { width: 0, height: 0, coarse: false };
+    const visual = window.visualViewport || null;
+    const width = Number(visual?.width) || Number(window.innerWidth) || 0;
+    const height = Number(visual?.height) || Number(window.innerHeight) || 0;
+    const coarse = !!(window.matchMedia?.('(pointer: coarse)').matches || Number(navigator.maxTouchPoints || 0) > 0);
+    return { width, height, coarse };
+  }
+
+  function isActualCompactScreen() {
+    // rc.22: een echte telefoon blijft ook in landscape compact. Een pure
+    // width-drempel faalde bij 844x390, omdat 844 > 760. Gebruik daarom de
+    // korte zijde in combinatie met touch/coarse-pointer. Een laag desktop-
+    // venster wordt hierdoor niet ten onrechte als telefoon behandeld.
+    const { width, height, coarse } = physicalViewportMetrics();
+    if (width <= 0 || height <= 0) return false;
+    return width <= 760 || (coarse && Math.min(width, height) <= 760);
+  }
+
   function isMobileViewport() {
     const forced = activeViewportMode();
     if (forced === 'mobile-portrait' || forced === 'mobile-landscape') return true;
     if (forced === 'desktop') return false;
-    return typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(max-width: 760px)').matches;
-  }
-
-  function isActualCompactScreen() {
-    // rc.21: de fysieke browserruimte blijft bepalend voor de rastergrens, ook
-    // wanneer op een telefoon handmatig Desktop, Mobiel staand of Mobiel
-    // liggend is gekozen. Zo kan een geforceerde interface het raster niet
-    // opnieuw tot de volledige canvas-aspectratio verbreden.
-    if (typeof window === 'undefined') return false;
-    const visual = window.visualViewport || null;
-    const width = Number(visual?.width) || Number(window.innerWidth) || 0;
-    const height = Number(visual?.height) || Number(window.innerHeight) || 0;
-    if (width <= 0 || height <= 0) return false;
-    return Math.min(width, height) <= 760;
+    return isActualCompactScreen();
   }
 
   function isPortraitGridFirstViewport() {
@@ -2728,7 +2741,7 @@
     syncPortraitStageMode();
     if (!els.canvasWrap) return;
     syncPortraitMenuSpace();
-    // v2.0.0-rc.21: alle interface-standen krijgen de maximaal beschikbare
+    // v2.0.0-rc.22: alle interface-standen krijgen de maximaal beschikbare
     // canvasruimte. De SVG-viewBox bepaalt vervolgens de grootste schaal zonder
     // clipping. Een brede boom in portrait wordt dus niet ook nog eens door een
     // kunstmatig laag canvas verkleind.
@@ -2757,21 +2770,25 @@
       : (forced === 'mobile-landscape' ? (844 / 300) : ((window.innerWidth || 1280) / Math.max(320, window.innerHeight || 800)));
     const measured = rect && rect.width > 0 && rect.height > 0 ? rect.width / rect.height : fallbackAspect;
     const aspect = Math.max(0.48, Math.min(2.55, Number.isFinite(measured) && measured > 0 ? measured : fallbackAspect));
-    const cacheKey = `${forced}|${Math.round(rect?.width || 0)}x${Math.round(rect?.height || 0)}|${aspect.toFixed(3)}`;
+    const compactLandscape = isActualCompactScreen() && aspect > 1.35;
+    const cacheKey = `${forced}|${Math.round(rect?.width || 0)}x${Math.round(rect?.height || 0)}|${aspect.toFixed(3)}|${compactLandscape ? 'compact-landscape' : 'normal'}`;
     if (state.viewportGridProfileCache?.key === cacheKey) return state.viewportGridProfileCache.value;
     const raw = Math.max(0, Math.min(1, (aspect - 0.48) / (2.55 - 0.48)));
     const t = raw * raw * (3 - 2 * raw);
+    const landscapeRaw = compactLandscape ? Math.max(0, Math.min(1, (aspect - 1.35) / 1.55)) : 0;
+    const landscapeBoost = landscapeRaw * landscapeRaw * (3 - 2 * landscapeRaw);
     const value = {
       aspect,
       t,
-      cellXScale: 0.70 + 0.86 * t,
-      cellYScale: 1.17 - 0.44 * t,
+      compactLandscape,
+      cellXScale: 0.70 + 0.86 * t + 0.34 * landscapeBoost,
+      cellYScale: Math.max(0.56, 1.17 - 0.44 * t - 0.15 * landscapeBoost),
       fontScale: 1.02 + 0.08 * Math.min(1, Math.max(0, (aspect - 0.65) / 1.45)),
-      westGap: Math.round(82 + 92 * t),
-      eastGap: Math.round(52 + 76 * t),
+      westGap: Math.round(82 + 92 * t + 18 * landscapeBoost),
+      eastGap: Math.round(52 + 76 * t + 16 * landscapeBoost),
       minWestAxis: Math.round(72 + 42 * t),
-      ruleMaxWidth: Math.round(258 + 132 * t),
-      label: aspect < 0.82 ? 'viewport portrait max' : (aspect > 1.48 ? 'viewport landscape max' : 'viewport balanced max')
+      ruleMaxWidth: Math.round(258 + 132 * t + 18 * landscapeBoost),
+      label: compactLandscape ? 'mobile landscape full-width' : (aspect < 0.82 ? 'viewport portrait max' : (aspect > 1.48 ? 'viewport landscape max' : 'viewport balanced max'))
     };
     state.viewportGridProfileCache = { key: cacheKey, value };
     return value;
@@ -2907,7 +2924,7 @@
 
   function setProjection(projection) {
     const next = projection || 'axes';
-    // v2.0.0-rc.21: alle named-projection views delen exact dezelfde
+    // v2.0.0-rc.22: alle named-projection views delen exact dezelfde
     // viewport. Een projectiewissel mag daarom een handmatige pan/zoom niet
     // wissen en mag de centrale boom horizontaal noch verticaal verplaatsen.
     if (growthSupportedProjection(state.projection) && state.growthStep > 0) {
@@ -4411,7 +4428,7 @@
   }
 
   function projectionStableFrameBox() {
-    // v2.0.0-rc.21: inhoudsgetrouwe, maar nog steeds stabiele unie van Syntax
+    // v2.0.0-rc.22: inhoudsgetrouwe, maar nog steeds stabiele unie van Syntax
     // en FT. Alleen werkelijk gebruikte boxbreedtes en lijnuiteinden tellen mee.
     // Oude fictieve reserves links van LOG en rechts van SYNT maakten alle vier
     // interface-standen onnodig klein, vooral mobile portrait.
@@ -4454,7 +4471,7 @@
   }
 
   function stableProjectionViewBox() {
-    // v2.0.0-rc.21: maximale full-view voor Automatisch, Desktop, Mobiel
+    // v2.0.0-rc.22: maximale full-view voor Automatisch, Desktop, Mobiel
     // staand en Mobiel liggend. De veiligheidsrand is alleen nog voldoende
     // voor dunne strokes en labels; er wordt geen UI-ruimte in SVG gereserveerd.
     const frame = projectionStableFrameBox();
@@ -4673,7 +4690,7 @@
 
   function stableGrowthViewBox() {
     if (!growthActive()) return null;
-    // v2.0.0-rc.21: Groei gebruikt hetzelfde frame als de gewone projectie-
+    // v2.0.0-rc.22: Groei gebruikt hetzelfde frame als de gewone projectie-
     // views. Voorheen hadden Alle/Bron/LOG eigen hard-coded viewBoxes, terwijl
     // LEX/SYNT auto-fit gebruikten; dat veroorzaakte de zichtbare sprong.
     return stableProjectionViewBox();
@@ -4710,7 +4727,7 @@
   }
 
   function clearViewportGestureState() {
-    // v2.0.0-rc.21: bij wissel tussen landscape/portrait mogen oude touch-pointers
+    // v2.0.0-rc.22: bij wissel tussen landscape/portrait mogen oude touch-pointers
     // en pinch-state niet blijven hangen. Anders lijkt portrait na zoom in
     // landscape bevroren.
     state.viewDrag = null;
@@ -4972,7 +4989,7 @@
         controlsLeft = state.projectionBoxManual.left;
         controlsTop = state.projectionBoxManual.top;
       } else {
-        // v2.0.0-rc.21: Projecties-box heeft een stabiele schermpositie.
+        // v2.0.0-rc.22: Projecties-box heeft een stabiele schermpositie.
         // Niet meer ankeren aan een wisselende SYNT-as; alleen handmatig slepen verplaatst de box.
         controlsLeft = maxLeft;
         controlsTop = minTop;
@@ -5164,7 +5181,7 @@
 
   function computeAutoFitBox() {
     if (!els.svg) return fallbackViewBox();
-    // v2.0.0-rc.21: alle projectie-views gebruiken één geometrisch viewport,
+    // v2.0.0-rc.22: alle projectie-views gebruiken één geometrisch viewport,
     // onafhankelijk van welke overlay zichtbaar is. Dit sluit auto-fit-
     // verschillen uit en voorkomt elke horizontale of verticale verspringing.
     if (isMainScreenActive() && ['axes', 'source', 'lex', 'synt', 'log'].includes(state.projection)) {
@@ -7134,6 +7151,24 @@
     });
   }
 
+  let viewportRefitTimer = null;
+  function scheduleViewportRefit(delay = 0) {
+    if (viewportRefitTimer) window.clearTimeout(viewportRefitTimer);
+    viewportRefitTimer = window.setTimeout(() => {
+      viewportRefitTimer = null;
+      state.viewportGridProfileCache = null;
+      syncViewportTestClasses();
+      syncPortraitStageMode();
+      syncMainTopbarLayout();
+      resetManualViewBox();
+      render();
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        syncMainTopbarLayout();
+        applyViewBoxFit(true);
+      }));
+    }, Math.max(0, Number(delay) || 0));
+  }
+
   async function init() {
     document.body.classList.add('main-screen-active');
     document.body.classList.remove('config-screen-active');
@@ -7155,20 +7190,15 @@
     window.addEventListener('load', () => {
       requestAnimationFrame(stabilizeInitialTreeView);
     }, { once: true });
-    window.addEventListener('resize', () => {
-      syncViewportTestClasses();
-      syncPortraitStageMode();
-      syncMainTopbarLayout();
-      resetManualViewBox();
-      render();
-    });
+    window.addEventListener('resize', () => scheduleViewportRefit(80));
+    window.visualViewport?.addEventListener('resize', () => scheduleViewportRefit(110));
     window.addEventListener('orientationchange', () => {
-      // v2.0.0-rc.21: breek actieve pinch/pan expliciet af vóór herfit.
+      // orientationchange kan vóór de definitieve visualViewport-maat komen.
+      // Fit daarom direct en opnieuw na stabilisatie van browserchrome/safe-area.
       resetManualViewBox();
-      requestAnimationFrame(() => {
-        resetManualViewBox();
-        render();
-      });
+      scheduleViewportRefit(0);
+      window.setTimeout(() => scheduleViewportRefit(180), 180);
+      window.setTimeout(() => scheduleViewportRefit(420), 420);
     });
     window.addEventListener('blur', clearViewportGestureState);
     document.addEventListener('visibilitychange', () => {

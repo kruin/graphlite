@@ -4,7 +4,7 @@ Actuele, leidende status van OpenGraph Lite Viewer.
 
 ## Versie
 
-- Releasekandidaat: `v2.0.0-rc.21`.
+- Releasekandidaat: `v2.0.0-rc.22`.
 - Functionele bronbasis: volledige v1.0.16-bronset, doorontwikkeld via de v2.0-releasekandidaten.
 - `VERSION.txt` is leidend voor app, cache, documentatie en zipnaam.
 
@@ -71,3 +71,9 @@ check_release.bat
 - Op compacte fysieke schermen is de rasterbreedte inhoudsgebonden: centrale boom plus zichtbare projectielijnen.
 - Een geforceerde interfacekeuze mag de rastergrens niet tot de volledige canvas-aspectratio verbreden.
 - Desktopgedrag blijft gelijk aan rc.20.
+
+## Mobile landscape
+
+- Een echte telefoon blijft in landscape mobile, ook wanneer de CSS-breedte groter is dan 760 px.
+- Compact landscape gebruikt een platter/breder gridprofiel en compacte top-/Play-balken.
+- Oriëntatiewissel luistert ook naar `visualViewport.resize` en voert na stabilisatie opnieuw FIT uit.

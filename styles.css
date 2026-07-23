@@ -5293,7 +5293,7 @@ body.viewport-mobile-landscape-test.main-screen-active #graphSvg {
   max-height: 100% !important;
 }
 
-/* v2.0.0-rc.21: View-menu bevat Syntax als eerste view en FT als tweede view; LOG blijft de zuidas. */
+/* v2.0.0-rc.22: View-menu bevat Syntax als eerste view en FT als tweede view; LOG blijft de zuidas. */
 .main-view-field {
   display: flex;
   align-items: center;
@@ -5786,7 +5786,7 @@ body.help-screen-active .help-screen {
   }
 }
 
-/* v2.0.0-rc.21: vaste Play-balkhoogte voor alle projectie-views.
+/* v2.0.0-rc.22: vaste Play-balkhoogte voor alle projectie-views.
    LEX/SYNT schakelen Groei uit; de langere statustekst mag de balk en dus het
    grid nooit lager zetten. */
 body.main-screen-active .main-play-growth-label {
@@ -5815,7 +5815,7 @@ body.main-screen-active .main-play-growth-label {
 }
 
 
-/* v2.0.0-rc.21: projectiekeuze buiten het canvas; Bron kan meerdere assen combineren. */
+/* v2.0.0-rc.22: projectiekeuze buiten het canvas; Bron kan meerdere assen combineren. */
 body.main-screen-active .main-grid-controls {
   display: none !important;
 }
@@ -5927,7 +5927,7 @@ body.main-screen-active .main-grid-controls {
   .source-axis-popover { left: auto; right: 0; }
 }
 
-/* v2.0.0-rc.21: gekozen Bronassen-oplossing en compacte, leesbare bovenbalk.
+/* v2.0.0-rc.22: gekozen Bronassen-oplossing en compacte, leesbare bovenbalk.
    Projectie en Bronassen blijven boven het canvas; taal/Help/Config staan in
    één Menu-popover. De topbar blijft één vaste rij en verandert de viewBox niet. */
 body.main-screen-active .main-topbar {
@@ -6125,7 +6125,7 @@ body.main-screen-active .main-actions-menu .config-open-button {
 }
 
 
-/* v2.0.0-rc.21: smalle koppen, brede uitklappen; Projecties vervangt Bron. */
+/* v2.0.0-rc.22: smalle koppen, brede uitklappen; Projecties vervangt Bron. */
 .main-control-select-compat {
   position: absolute !important; width: 1px !important; height: 1px !important;
   overflow: hidden !important; clip: rect(0 0 0 0) !important;
@@ -6224,7 +6224,7 @@ body.main-screen-active .main-actions-menu .config-open-button { width:100% !imp
   .compact-choice-popover { left:auto; right:0; }
 }
 
-/* v2.0.0-rc.21: één plat hoofdmenu; geen geneste submenu's. */
+/* v2.0.0-rc.22: één plat hoofdmenu; geen geneste submenu's. */
 body.main-screen-active .main-topbar {
   min-height: 2.02rem !important;
   padding: .10rem .18rem !important;
@@ -6344,7 +6344,7 @@ body.main-screen-active .main-extra-popover { display: none !important; }
   .main-menu-option-list { max-height: 10.5rem; }
 }
 
-/* v2.0.0-rc.21: lichte belijning; alleen named projections krijgen nadruk. */
+/* v2.0.0-rc.22: lichte belijning; alleen named projections krijgen nadruk. */
 body.main-screen-active .grid-line { stroke-width: .42 !important; opacity: .16 !important; }
 body.main-screen-active .grid-line.major { stroke-width: .58 !important; opacity: .21 !important; }
 body.main-screen-active .axis-line,
@@ -6405,7 +6405,7 @@ body.main-screen-active .node-main-label {
   stroke-width: 1.25px !important;
 }
 
-/* v2.0.0-rc.21: alle SVG-boxcontouren minimaal; projecties blijven herkenbaar. */
+/* v2.0.0-rc.22: alle SVG-boxcontouren minimaal; projecties blijven herkenbaar. */
 body.main-screen-active #graphSvg rect {
   stroke-width: .50 !important;
 }
@@ -6444,7 +6444,7 @@ body.main-screen-active .node-main-label {
 }
 
 
-/* v2.0.0-rc.21: één zichtbaar topmenu met negen hoofditems; geen algemene Menu-knop. */
+/* v2.0.0-rc.22: één zichtbaar topmenu met negen hoofditems; geen algemene Menu-knop. */
 body.main-screen-active .main-topbar {
   min-height: 2.08rem !important;
   padding: .10rem .18rem !important;
@@ -6568,7 +6568,7 @@ body.main-screen-active .main-actions-menu {
 
 body.main-screen-active .main-extra-menu.top-menu-item { display: block !important; }
 
-/* v2.0.0-rc.21: publieke interfacekeuze onder Config -> Boom. */
+/* v2.0.0-rc.22: publieke interfacekeuze onder Config -> Boom. */
 #viewportModeSelect {
   min-width: 10rem;
 }
@@ -6670,7 +6670,7 @@ body.main-screen-active .main-menu-interface-options .compact-choice-option {
 }
 
 
-/* v2.0.0-rc.21: Rasteroptie direct vindbaar in Config → Boom → Weergave. */
+/* v2.0.0-rc.22: Rasteroptie direct vindbaar in Config → Boom → Weergave. */
 .display-config-field {
   margin: .38rem 0 .5rem;
   padding: .44rem .52rem .5rem;
@@ -6701,7 +6701,7 @@ body.main-screen-active .grid-line.major { stroke-width: .62 !important; opacity
 body.main-screen-active .grid-axis { stroke-width: .66 !important; opacity: .56 !important; }
 
 
-/* v2.0.0-rc.21: raster overal zichtbaar en Config-raster direct vindbaar. */
+/* v2.0.0-rc.22: raster overal zichtbaar en Config-raster direct vindbaar. */
 body.main-screen-active .grid-line {
   stroke: color-mix(in srgb, var(--grid-major), var(--text) 10%) !important;
   stroke-width: .52 !important;
@@ -6751,7 +6751,7 @@ body.config-screen-active .config-topbar > div { min-width: 0; }
   }
 }
 
-/* v2.0.0-rc.21: topmenu heeft op mobile exact twee rijen voor negen items (vijf + vier).
+/* v2.0.0-rc.22: topmenu heeft op mobile exact twee rijen voor negen items (vijf + vier).
    LOG-volgorde kan daardoor geen derde rij maken en Config blijft zichtbaar. */
 body.main-screen-active .main-top-menu {
   flex-wrap: nowrap !important;
@@ -6793,7 +6793,7 @@ body.main-screen-active .main-top-menu {
   }
 }
 
-/* v2.0.0-rc.21: vaste topmenu-indeling op alle interfaces.
+/* v2.0.0-rc.22: vaste topmenu-indeling op alle interfaces.
    Rij 1 bevat de zes keuze-items; rij 2 bevat NL/EN, Help en Config.
    Geen vrije wrapping en geen horizontale uitloop buiten een mobile-preview. */
 body.main-screen-active .main-topbar {
@@ -6916,7 +6916,7 @@ body.viewport-mobile-test.main-screen-active .top-menu-item .top-menu-popover {
   }
 }
 
-/* v2.0.0-rc.21: maximale view in alle vier interface-standen.
+/* v2.0.0-rc.22: maximale view in alle vier interface-standen.
    De oude portrait-reserve van 7.6rem hoorde bij verwijderde canvas-controls.
    Topmenu en Play staan als overlays boven het canvas en reserveren hun eigen
    gemeten ruimte; onderaan blijft daarom geen lege controlestrook bestaan. */
@@ -6939,4 +6939,56 @@ body.viewport-auto.main-screen-active #graphSvg {
 body.viewport-mobile-portrait-test.main-screen-active .canvas-wrap .main-grid-controls,
 body.viewport-mobile-portrait-test.main-screen-active .main-grid-controls {
   display: none !important;
+}
+
+/* v2.0.0-rc.22: echte mobile-landscape blijft mobile, ook boven 760 CSS-px.
+   Twee topmenurijen blijven zichtbaar, maar gebruiken minder verticale ruimte.
+   De Play-balk wordt eveneens compacter zodat de graph meer hoogte krijgt. */
+body.actual-compact-landscape.main-screen-active .main-topbar {
+  min-height: 3.18rem !important;
+  padding: .06rem .12rem !important;
+}
+body.actual-compact-landscape.main-screen-active .main-top-menu {
+  grid-template-rows: repeat(2, 1.42rem) !important;
+  column-gap: .08rem !important;
+  row-gap: .14rem !important;
+}
+body.actual-compact-landscape.main-screen-active .top-menu-item > summary,
+body.actual-compact-landscape.main-screen-active .top-menu-action {
+  min-height: 1.42rem !important;
+  height: 1.42rem !important;
+  padding-inline: .24rem !important;
+  font-size: .60rem !important;
+  border-radius: .42rem !important;
+}
+body.actual-compact-landscape.main-screen-active .top-menu-item .top-menu-popover {
+  top: calc(200% + .28rem) !important;
+}
+body.actual-compact-landscape.main-screen-active .main-play-reset-bar {
+  padding-block: .10rem !important;
+}
+body.actual-compact-landscape.main-screen-active .main-play-reset-controls {
+  gap: .24rem !important;
+  padding: .08rem .18rem !important;
+}
+body.actual-compact-landscape.main-screen-active .main-play-reset-controls button {
+  min-height: 1.82rem !important;
+  min-width: 3.65rem !important;
+  padding-inline: .54rem !important;
+  font-size: .78rem !important;
+}
+body.actual-compact-landscape.main-screen-active .main-play-reset-controls .main-play-step-button {
+  min-width: 2.05rem !important;
+  padding-inline: .34rem !important;
+  font-size: .84rem !important;
+}
+body.actual-compact-landscape.main-screen-active .main-play-growth-label {
+  width: 4.85rem !important;
+  min-width: 4.85rem !important;
+  max-width: 4.85rem !important;
+  height: 1.82rem !important;
+  min-height: 1.82rem !important;
+  max-height: 1.82rem !important;
+  flex-basis: 4.85rem !important;
+  font-size: .70rem !important;
 }

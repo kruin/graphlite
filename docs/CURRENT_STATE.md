@@ -4,7 +4,7 @@ Actuele, leidende status van OpenGraph Lite Viewer.
 
 ## Versie
 
-- Releasekandidaat: `v2.0.0-rc.21`.
+- Releasekandidaat: `v2.0.0-rc.22`.
 - Functionele bronbasis: volledige v1.0.16-bronset, doorontwikkeld via de v2.0-releasekandidaten.
 - `VERSION.txt` is leidend voor app, cache, documentatie en zipnaam.
 

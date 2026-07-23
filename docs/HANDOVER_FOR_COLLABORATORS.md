@@ -1,6 +1,6 @@
 # HANDOVER_FOR_COLLABORATORS
 
-Overdracht voor OpenGraph Lite Viewer `v2.0.0-rc.21`.
+Overdracht voor OpenGraph Lite Viewer `v2.0.0-rc.22`.
 
 ## Niet wijzigen zonder expliciete opdracht
 
@@ -44,3 +44,10 @@ Raster:           standaard aan
 ## Mobile rastercontract
 
 Op compacte fysieke schermen mag `state.lastGridBox` niet via de canvas-aspectratio worden verbreed. Gebruik de werkelijke projectie-extentie. Dit geldt voor Auto, Desktop, Mobiel staand en Mobiel liggend op een telefoon.
+
+## Mobile-landscapecontract
+
+- Gebruik nooit alleen `max-width` om een telefoon in landscape te herkennen.
+- `isActualCompactScreen()` combineert viewportmaat met touch/coarse-pointer.
+- Runtimeklassen `actual-compact-landscape` en `actual-compact-portrait` sturen uitsluitend fysieke schermoptimalisatie.
+- Draaien moet de profielcache wissen en een vertraagde tweede fit uitvoeren.

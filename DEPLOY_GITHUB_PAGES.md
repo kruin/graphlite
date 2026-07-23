@@ -71,13 +71,13 @@ De resetmarker staat buiten de repository en wordt dus niet gecommit.
 Handmatig opnieuw resetten blijft mogelijk via:
 
 ```text
-https://kruin.github.io/graphlite/reset-cache.html?ogv=v2.0.0-rc.21&nocache=TIMESTAMP
+https://kruin.github.io/graphlite/reset-cache.html?ogv=v2.0.0-rc.22&nocache=TIMESTAMP
 ```
 
 Daarna:
 
 ```text
-https://kruin.github.io/graphlite/index.html?ogv=v2.0.0-rc.21
+https://kruin.github.io/graphlite/index.html?ogv=v2.0.0-rc.22
 ```
 
 ## Niet publiceren naar Pages-root
