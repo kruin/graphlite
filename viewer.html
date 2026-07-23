@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 
-<!-- OPENGRAPH_ROOT_VIEWER_INDEX_v2.0.0-rc.24: this root index is the app, not docs. -->
-<html data-opengraph-app="viewer" data-version="v2.0.0-rc.24" lang="nl">
+<!-- OPENGRAPH_ROOT_VIEWER_INDEX_v2.0.0-rc.25: this root index is the app, not docs. -->
+<html data-opengraph-app="viewer" data-version="v2.0.0-rc.25" lang="nl">
 <head>
 <meta charset="utf-8"/>
 <meta content="no-store, no-cache, must-revalidate, max-age=0" http-equiv="Cache-Control"/>
@@ -10,10 +10,10 @@
 <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport"/>
 <meta content="#0f172a" name="theme-color"/>
 <meta content="OpenGraph Lite Viewer: vrije JaN-bronknopen, edits, LEX-plaatsingsregels en projecties." name="description"/>
-<title>OpenGraph Lite Viewer v2.0.0-rc.24</title>
+<title>OpenGraph Lite Viewer v2.0.0-rc.25</title>
 <script>
     (function() {
-      var VERSION = 'v2.0.0-rc.24';
+      var VERSION = 'v2.0.0-rc.25';
       window.__OPENGRAPH_EXPECTED_VERSION__ = VERSION;
       function runCacheCleanupOnce() {
         var flag = 'opengraph-cache-cleaned-' + VERSION;
@@ -52,14 +52,14 @@
 <link href="icons/icon-192.svg" rel="icon" type="image/svg+xml"/>
 <!-- v4552: manifest disabled in local/dev build to avoid PWA/service-worker confusion. -->
 <!-- <link rel="manifest" href="manifest.webmanifest"> -->
-<link href="styles.css?v2.0.0-rc.24" rel="stylesheet"/>
+<link href="styles.css?v2.0.0-rc.25" rel="stylesheet"/>
 </head>
 <body class="main-screen-active">
 <header class="app-header">
 <div>
 <div class="eyebrow">OpenGraph · JaN · Open Notation</div>
-<h1>OpenGraph Lite Viewer <span class="version-tag">v2.0.0-rc.24</span></h1>
-<p class="header-subtitle">Topmenu met Zin, Bijwoord, Syntax/FT, Interface, Projecties, LOG-volgorde, taal, LEESMIJ en Config.</p>
+<h1>OpenGraph Lite Viewer <span class="version-tag">v2.0.0-rc.25</span></h1>
+<p class="header-subtitle">Topmenu met Zin, Bijwoord, Syntax / Functional, Interface, Projecties, LOG-volgorde, taal, LEESMIJ en Config.</p>
 </div>
 <button class="ghost hidden" id="installButton" type="button">Installeer</button>
 </header>
@@ -79,7 +79,7 @@
 </div>
 </details>
 <details class="compact-choice-menu main-view-menu top-menu-item" id="mainViewMenu">
-<summary id="mainViewSummary" title="Kies Syntax of FT">Syntax / FT</summary>
+<summary id="mainViewSummary" title="Kies Syntax of Functional">Syntax</summary>
 <div aria-label="View kiezen" class="compact-choice-popover top-menu-popover top-menu-view-popover">
 <div aria-label="View kiezen" class="compact-choice-list main-menu-option-list main-menu-view-options" id="mainViewOptions" role="listbox"></div>
 </div>
@@ -115,7 +115,7 @@
 <button id="mainSouthModeButton" title="Volgende LOG-volgorde: SOV, SVO, OVS, OSV-!, VSO-!, VOS-!" type="button">SOV</button>
 <button id="mainSouthNextButton" title="Volgende LOG-volgorde" type="button">›</button>
 </div>
-<p class="main-menu-help" id="mainSouthExplanation">Wijzigt alleen de LOG-projectie; Syntax, FT en LEX blijven gelijk.</p>
+<p class="main-menu-help" id="mainSouthExplanation">Wijzigt alleen de LOG-projectie; Syntax, Functional en LEX blijven gelijk.</p>
 </div>
 </details>
 <button class="top-menu-action language-toggle-button" data-language-toggle="" title="Wissel de UI/help-taal" type="button">NL/EN</button>
@@ -452,7 +452,6 @@
 </label>
 <span class="mobile-fit-note" title="FIT past het zichtvenster aan de huidige boom/projecties aan; de boom zelf verandert niet.">FIT = passend beeld</span>
 </section>
-
 <section aria-live="polite" class="status-panel">
 <div class="title-line" id="titleLine">—</div>
 <div class="meta-line" id="metaLine">Kies een voorbeeld of laad JSON.</div>
@@ -469,24 +468,24 @@
 <button id="discardConfigButton" type="button">Nee · herstel laatst bewaarde config</button>
 <button id="downloadConfigLogButton" type="button">Download lokaal config-log</button>
 </div>
-</fieldset></section><details class="config-section" id="config-basic"><summary><span class="help-lang-nl">Basisweergave</span><span class="help-lang-en">Basic display</span></summary><section class="panel-card config-section-body"><label class="field center-mode-field"><span>View</span><select id="centralModeSelect"></select></label><label class="field center-mode-field"><span>Interface</span><select id="viewportModeSelect"></select></label><fieldset aria-label="Weergave" class="display-config-field">
+</fieldset></section><details class="config-section" id="config-basic"><summary><span class="help-lang-nl">Basisweergave</span><span class="help-lang-en">Basic display</span></summary><section class="panel-card config-section-body"><p class="config-section-intro"><small class="config-section-intro-copy"><span class="help-lang-nl">Kies wat direct zichtbaar is en welke centrale view of interface wordt gebruikt.</span><span class="help-lang-en">Choose what is immediately visible and which central view or interface is used.</span></small></p><label class="field center-mode-field" title="Kiest de centrale boomweergave. Syntax toont categorieën; Functional toont functionele rollen. LEX, SYNT en LOG blijven afzonderlijke projecties."><span class="config-field-name">View</span><select id="centralModeSelect"></select><small class="config-item-help"><span class="help-lang-nl">Kiest de centrale boomweergave. Syntax toont categorieën; Functional toont functionele rollen. LEX, SYNT en LOG blijven afzonderlijke projecties.</span><span class="help-lang-en">Chooses the central tree view. Syntax shows categories; Functional shows functional roles. LEX, SYNT and LOG remain separate projections.</span></small></label><label class="field center-mode-field" title="Automatisch volgt apparaat en oriëntatie. Desktop, mobiel staand en mobiel liggend zijn handmatige test- of voorkeursstanden."><span class="config-field-name">Interface</span><select id="viewportModeSelect"></select><small class="config-item-help"><span class="help-lang-nl">Automatisch volgt apparaat en oriëntatie. Desktop, mobiel staand en mobiel liggend zijn handmatige test- of voorkeursstanden.</span><span class="help-lang-en">Automatic follows the device and orientation. Desktop, mobile portrait and mobile landscape are manual test or preference modes.</span></small></label><fieldset aria-label="Weergave" class="display-config-field">
 <legend>Weergave</legend>
 <div class="check-grid display-check-grid">
-<label class="primary-config-toggle"><input checked="" id="showGridInput" type="checkbox"/> Raster zichtbaar · standaard aan</label>
-<label><input checked="" id="showRelationsInput" type="checkbox"/> Taklijnen zichtbaar</label>
-<label><input checked="" id="showLabelsInput" type="checkbox"/> Boomlabels zichtbaar</label>
-<label class="primary-config-toggle"><input checked="" id="growthProjectionImmediateInput" type="checkbox"/> Projecties groeien direct mee</label>
+<label class="primary-config-toggle" title="Toont het raster door de boom en tot de uiteinden van de zichtbare projectielijnen."><input checked="" id="showGridInput" type="checkbox"/><span class="config-check-copy"><span class="config-toggle-title">Raster zichtbaar · standaard aan</span><small class="config-item-help"><span class="help-lang-nl">Toont het raster door de boom en tot de uiteinden van de zichtbare projectielijnen.</span><span class="help-lang-en">Shows the grid through the tree and up to the endpoints of visible projection lines.</span></small></span></label>
+<label title="Toont of verbergt de taklijnen tussen ouder- en kindknopen; de knopen blijven staan."><input checked="" id="showRelationsInput" type="checkbox"/><span class="config-check-copy"><span class="config-toggle-title">Taklijnen zichtbaar</span><small class="config-item-help"><span class="help-lang-nl">Toont of verbergt de taklijnen tussen ouder- en kindknopen; de knopen blijven staan.</span><span class="help-lang-en">Shows or hides parent-child branch lines; the nodes remain in place.</span></small></span></label>
+<label title="Toont of verbergt boomlabels en boxlabels zonder de geometrie te wijzigen."><input checked="" id="showLabelsInput" type="checkbox"/><span class="config-check-copy"><span class="config-toggle-title">Boomlabels zichtbaar</span><small class="config-item-help"><span class="help-lang-nl">Toont of verbergt boomlabels en boxlabels zonder de geometrie te wijzigen.</span><span class="help-lang-en">Shows or hides tree and box labels without changing geometry.</span></small></span></label>
+<label class="primary-config-toggle" title="Aan: elke gekozen projectie verschijnt zodra haar bronknoop wordt gerenderd. Uit: projecties wachten tot de boom voltooid is."><input checked="" id="growthProjectionImmediateInput" type="checkbox"/><span class="config-check-copy"><span class="config-toggle-title">Projecties groeien direct mee</span><small class="config-item-help"><span class="help-lang-nl">Aan: elke gekozen projectie verschijnt zodra haar bronknoop wordt gerenderd. Uit: projecties wachten tot de boom voltooid is.</span><span class="help-lang-en">On: each selected projection appears as soon as its source node is rendered. Off: projections wait until the tree is complete.</span></small></span></label>
 </div>
-</fieldset></section></details><details class="config-section config-jan-section" id="config-jan"><summary><span class="help-lang-nl">JaN-notatie · TODO</span><span class="help-lang-en">JaN notation · TODO</span></summary><section class="panel-card config-section-body"><div class="help-lang-nl"><h3>JaN · Just another Notation</h3><p><code>S:np-VP</code>, nadrukkelijk niet <code>S:NP-VP</code>.</p><p>Werknotatie in onderzoek: <code>S+ np-VP</code>. De notatie wordt eerst uitgewerkt voor binaire bomen en later uitgebreid naar meertakkigheid.</p><p>Dit is nog geen actieve Config-optie; de bestaande Syntax/FT- en save-werkwijze blijven ongewijzigd.</p></div><div class="help-lang-en"><h3>JaN · Just another Notation</h3><p><code>S:np-VP</code>, explicitly not <code>S:NP-VP</code>.</p><p>Working notation under investigation: <code>S+ np-VP</code>. It will be specified for binary trees first and extended to multi-branching trees later.</p><p>This is not an active Config option yet; the existing Syntax/FT and save workflow remain unchanged.</p></div></section></details><details class="config-section" id="config-tree"><summary><span class="help-lang-nl">Boom &amp; layout</span><span class="help-lang-en">Tree &amp; layout</span></summary><section class="panel-card config-section-body"><label class="field center-mode-field"><span>Boomkeuze</span><select id="treeChoiceSelect"></select></label><label class="field center-mode-field"><span>Layout order</span><select id="functionalOrderSelect"></select></label><label class="field center-mode-field"><span>Takvolgorde</span><select id="branchOrderSelect"></select></label><div aria-label="Flip-config per vertakking" class="branch-config-grid">
-<label class="field mini-field"><span>Top S/CLAUSE</span><select id="branchTopSelect"></select></label>
-<label class="field mini-field"><span>VP / ARG-STRUCT</span><select id="branchMiddleSelect"></select></label>
-<label class="field mini-field"><span>Overig</span><select id="branchOtherSelect"></select></label>
-</div><label class="field mini-field"><span>Boomruimte</span><select id="layoutDensitySelect"></select></label><label class="field mini-field"><span>Hoofdvenster</span><select id="viewFitSelect"></select></label><label class="field mini-field" title="Boom vrije rijen: lege ruimte onder de wortel in de centrale OPN-boom."><span>Boom vrije rijen</span><select id="freeSlotCountSelect"></select></label></section></details><details class="config-section" id="config-lex"><summary><span class="help-lang-nl">LEX &amp; bijwoorden</span><span class="help-lang-en">LEX &amp; adverbs</span></summary><section class="panel-card config-section-body"><fieldset aria-label="Bijwoordslot op LEX-as" class="lex-adverb-insert-field">
+</fieldset></section></details><details class="config-section config-jan-section" id="config-jan"><summary><span class="help-lang-nl">JaN-notatie · TODO</span><span class="help-lang-en">JaN notation · TODO</span></summary><section class="panel-card config-section-body"><div class="help-lang-nl"><h3>JaN · Just another Notation</h3><p><code>S:np-VP</code>, nadrukkelijk niet <code>S:NP-VP</code>.</p><p>Werknotatie in onderzoek: <code>S+ np-VP</code>. De notatie wordt eerst uitgewerkt voor binaire bomen en later uitgebreid naar meertakkigheid.</p><p>Dit is nog geen actieve Config-optie; de bestaande Syntax / Functional- en save-werkwijze blijven ongewijzigd.</p></div><div class="help-lang-en"><h3>JaN · Just another Notation</h3><p><code>S:np-VP</code>, explicitly not <code>S:NP-VP</code>.</p><p>Working notation under investigation: <code>S+ np-VP</code>. It will be specified for binary trees first and extended to multi-branching trees later.</p><p>This is not an active Config option yet; the existing Syntax / Functional and save workflow remain unchanged.</p></div></section></details><details class="config-section" id="config-tree"><summary><span class="help-lang-nl">Boom &amp; layout</span><span class="help-lang-en">Tree &amp; layout</span></summary><section class="panel-card config-section-body"><p class="config-section-intro"><small class="config-section-intro-copy"><span class="help-lang-nl">Deze instellingen veranderen alleen layout en presentatie; de onderliggende zin blijft dezelfde.</span><span class="help-lang-en">These settings change layout and presentation only; the underlying sentence remains the same.</span></small></p><label class="field center-mode-field" title="Kiest welke bronstructuur de centrale Syntax- en Functional-weergave gebruiken. De keuze verandert niet welke projectieassen aanstaan."><span class="config-field-name">Boomkeuze</span><select id="treeChoiceSelect"></select><small class="config-item-help"><span class="help-lang-nl">Kiest welke bronstructuur de centrale Syntax- en Functional-weergave gebruiken. De keuze verandert niet welke projectieassen aanstaan.</span><span class="help-lang-en">Chooses the source structure used by the central Syntax and Functional views. It does not change which projection axes are enabled.</span></small></label><label class="field center-mode-field" title="Bepaalt de links/rechts-volgorde binnen de Functional-weergave. Syntax en de gekozen projecties blijven inhoudelijk gelijk."><span class="config-field-name">Functional-volgorde</span><select id="functionalOrderSelect"></select><small class="config-item-help"><span class="help-lang-nl">Bepaalt de links/rechts-volgorde binnen de Functional-weergave. Syntax en de gekozen projecties blijven inhoudelijk gelijk.</span><span class="help-lang-en">Sets the left/right order inside the Functional view. Syntax and the selected projections remain unchanged in content.</span></small></label><label class="field center-mode-field" title="Kiest de algemene strategie voor takvolgorde: grammaticaal, compact, uitgelijnd of volledig gespiegeld."><span class="config-field-name">Takvolgorde</span><select id="branchOrderSelect"></select><small class="config-item-help"><span class="help-lang-nl">Kiest de algemene strategie voor takvolgorde: grammaticaal, compact, uitgelijnd of volledig gespiegeld.</span><span class="help-lang-en">Chooses the general branch-order strategy: grammatical, compact, aligned or fully flipped.</span></small></label><div aria-label="Flip-config per vertakking" class="branch-config-grid">
+<label class="field mini-field" title="Overschrijft alleen de bovenste vertakking van S of CLAUSE. Auto volgt de algemene takvolgorde."><span class="config-field-name">Top S/CLAUSE</span><select id="branchTopSelect"></select><small class="config-item-help"><span class="help-lang-nl">Overschrijft alleen de bovenste vertakking van S of CLAUSE. Auto volgt de algemene takvolgorde.</span><span class="help-lang-en">Overrides only the top split of S or CLAUSE. Auto follows the general branch order.</span></small></label>
+<label class="field mini-field" title="Overschrijft de vertakking van VP of ARG-STRUCT. Auto volgt de algemene takvolgorde."><span class="config-field-name">VP / ARG-STRUCT</span><select id="branchMiddleSelect"></select><small class="config-item-help"><span class="help-lang-nl">Overschrijft de vertakking van VP of ARG-STRUCT. Auto volgt de algemene takvolgorde.</span><span class="help-lang-en">Overrides the VP or ARG-STRUCT split. Auto follows the general branch order.</span></small></label>
+<label class="field mini-field" title="Overschrijft overige vertakkingen. Gebruik dit voor lokale tests zonder de hele boom te flippen."><span class="config-field-name">Overig</span><select id="branchOtherSelect"></select><small class="config-item-help"><span class="help-lang-nl">Overschrijft overige vertakkingen. Gebruik dit voor lokale tests zonder de hele boom te flippen.</span><span class="help-lang-en">Overrides remaining branches. Use this for local tests without flipping the entire tree.</span></small></label>
+</div><label class="field mini-field" title="Past afstand, hoogte en lettergrootte van de boom aan. De structuur en labels veranderen niet."><span class="config-field-name">Boomruimte</span><select id="layoutDensitySelect"></select><small class="config-item-help"><span class="help-lang-nl">Past afstand, hoogte en lettergrootte van de boom aan. De structuur en labels veranderen niet.</span><span class="help-lang-en">Adjusts tree spacing, height and font size. Structure and labels do not change.</span></small></label><label class="field mini-field" title="Bepaalt hoe de boom in het hoofdvenster past. FIT verandert alleen het zichtvenster, nooit de boomstructuur."><span class="config-field-name">Hoofdvenster</span><select id="viewFitSelect"></select><small class="config-item-help"><span class="help-lang-nl">Bepaalt hoe de boom in het hoofdvenster past. FIT verandert alleen het zichtvenster, nooit de boomstructuur.</span><span class="help-lang-en">Determines how the tree fits in the main window. FIT changes only the viewport, never the tree structure.</span></small></label><label class="field mini-field" title="Reserveert lege gridrijen onder de wortel voor latere plaatsing of experimenten; er worden geen knopen toegevoegd."><span class="config-field-name">Boom vrije rijen</span><select id="freeSlotCountSelect"></select><small class="config-item-help"><span class="help-lang-nl">Reserveert lege gridrijen onder de wortel voor latere plaatsing of experimenten; er worden geen knopen toegevoegd.</span><span class="help-lang-en">Reserves empty grid rows below the root for later placement or experiments; no nodes are added.</span></small></label></section></details><details class="config-section" id="config-lex"><summary><span class="help-lang-nl">LEX &amp; bijwoorden</span><span class="help-lang-en">LEX &amp; adverbs</span></summary><section class="panel-card config-section-body"><p class="config-section-intro"><small class="config-section-intro-copy"><span class="help-lang-nl">LEX-instellingen plaatsen externe slots en verlengen zo nodig takken of grenzen; bijwoorden worden geen syntaxknoop.</span><span class="help-lang-en">LEX settings place external slots and may extend branches or boundaries; adverbs do not become syntax nodes.</span></small></p><fieldset aria-label="Bijwoordslot op LEX-as" class="lex-adverb-insert-field">
 <legend>Bijwoordslot op LEX-as</legend>
 <p class="top-menu-choice-help">Kies het bijwoord en de hostbox. Het bijwoord verschijnt als extern LEX-slot op de LEX-as. Hostplaatsing staat net boven S, NP, VP, V, PP of AP; vooropplaatsing vult LEX-slot 1 en activeert V2/inversie.</p>
-<label class="field mini-field" title="Aantal bijwoordboxen boven een geldige syntactische categoriebox."><span>Aantal bijwoordboxen</span><select id="lexFreeSlotCountSelect"></select></label>
-<label class="field mini-field" title="Kies de hostbox: S, NP, VP, V, PP of AP."><span>Hostbox</span><select id="lexFreeSlotPlacementSelect"></select></label>
-<label class="field mini-field" title="Kies welk bijwoord boven de gekozen syntactische categoriebox verschijnt."><span>Bijwoord / inhoud</span><select id="lexInsertionContentSelect"></select></label>
+<label class="field mini-field" title="Stelt het aantal externe LEX-bijwoordslots in. Nul verwijdert de extra slots."><span class="config-field-name">Aantal bijwoordboxen</span><select id="lexFreeSlotCountSelect"></select><small class="config-item-help"><span class="help-lang-nl">Stelt het aantal externe LEX-bijwoordslots in. Nul verwijdert de extra slots.</span><span class="help-lang-en">Sets the number of external LEX adverb slots. Zero removes the extra slots.</span></small></label>
+<label class="field mini-field" title="Kiest de syntactische hosthoogte waarop het externe bijwoordslot aan de LEX-as wordt geplaatst."><span class="config-field-name">Hostbox</span><select id="lexFreeSlotPlacementSelect"></select><small class="config-item-help"><span class="help-lang-nl">Kiest de syntactische hosthoogte waarop het externe bijwoordslot aan de LEX-as wordt geplaatst.</span><span class="help-lang-en">Chooses the syntactic host height where the external adverb slot is placed on the LEX axis.</span></small></label>
+<label class="field mini-field" title="Kiest welk bijwoord of welke lexicale inhoud in het externe LEX-slot verschijnt."><span class="config-field-name">Bijwoord / inhoud</span><select id="lexInsertionContentSelect"></select><small class="config-item-help"><span class="help-lang-nl">Kiest welk bijwoord of welke lexicale inhoud in het externe LEX-slot verschijnt.</span><span class="help-lang-en">Chooses which adverb or lexical content appears in the external LEX slot.</span></small></label>
 <details class="adverb-placement-rules-config" open="">
 <summary>Bijwoordplaatsingsregels v4552 · gecontroleerd · default/gemarkeerd</summary>
 <p class="top-menu-choice-help">Configuratieregel v4552: bijwoorden zijn externe <code>LEX-ADV</code>-inserties. Ze worden eerst op de LEX-as geplaatst, net boven de hostbox/trace; daarna pas werken LEX-Wissels. <code>scopeHost</code> en <code>linear</code> worden gescheiden: <code>S</code>-scope is niet automatisch voorop. Alleen <code>linear=fronted-v2</code> activeert hoofdzin-inversie. De SYNT-boom muteert niet.</p>
@@ -512,71 +511,68 @@
 </details>
 </fieldset><fieldset aria-label="Takverlenging (niet voor bijwoorden)" class="lex-extension-field" title="Niet meer leidend voor bijwoorden: bijwoorden staan boven een syntactische categoriebox, niet tussen boxen.">
 <legend>Takverlenging (niet voor bijwoorden)</legend>
-<label title="Standaard voor VANDAAG: de insertie tussen werkwoord en object verlengt de VP-zone/grens, zonder VANDAAG als boomknoop toe te voegen."><input data-lex-extension-target="vp-boundary" type="checkbox"/> VP-grens V ↔ object</label>
-<label title="Verlengt de grens tussen subject en VP. Nuttig als de insertie tussen zinsdelen ligt."><input data-lex-extension-target="s-boundary" type="checkbox"/> S-grens subject ↔ VP</label>
-<label title="Verlengt de objecttak; bruikbaar als de insertie vlak vóór het object staat."><input data-lex-extension-target="object-branch" type="checkbox"/> objecttak / NP obj / patiens</label>
-<label title="Verlengt de verb/predicaattak; bruikbaar als de insertie direct aan het verbcluster kleeft."><input data-lex-extension-target="verb-branch" type="checkbox"/> verbtak / V / pred</label>
-<label title="Verlengt de subjecttak; beschikbaar voor tests."><input data-lex-extension-target="subject-branch" type="checkbox"/> subjecttak / NP subj / agens</label>
-<label title="Functionele variant: verlengt de argumentstructuur tussen agens en patiens."><input data-lex-extension-target="arg-boundary" type="checkbox"/> ARG-STRUCT-grens</label>
-<label title="Functionele variant: verlengt de grens tussen predicaat en argumentstructuur."><input data-lex-extension-target="clause-boundary" type="checkbox"/> CLAUSE-grens</label>
+<label title="Standaard voor VANDAAG: de insertie tussen werkwoord en object verlengt de VP-zone/grens, zonder VANDAAG als boomknoop toe te voegen."><input data-lex-extension-target="vp-boundary" type="checkbox"/> VP-grens V ↔ object<small class="config-item-help"><span class="help-lang-nl">Standaard voor VANDAAG: de insertie tussen werkwoord en object verlengt de VP-zone/grens, zonder VANDAAG als boomknoop toe te voegen.</span><span class="help-lang-en">Default for VANDAAG: insertion between verb and object extends the VP zone without adding VANDAAG as a tree node.</span></small></label>
+<label title="Verlengt de grens tussen subject en VP. Nuttig als de insertie tussen zinsdelen ligt."><input data-lex-extension-target="s-boundary" type="checkbox"/> S-grens subject ↔ VP<small class="config-item-help"><span class="help-lang-nl">Verlengt de grens tussen subject en VP. Nuttig als de insertie tussen zinsdelen ligt.</span><span class="help-lang-en">Extends the boundary between subject and VP. Useful when the insertion lies between constituents.</span></small></label>
+<label title="Verlengt de objecttak; bruikbaar als de insertie vlak vóór het object staat."><input data-lex-extension-target="object-branch" type="checkbox"/> objecttak / NP obj / patiens<small class="config-item-help"><span class="help-lang-nl">Verlengt de objecttak; bruikbaar als de insertie vlak vóór het object staat.</span><span class="help-lang-en">Extends the object branch; useful when the insertion is directly before the object.</span></small></label>
+<label title="Verlengt de verb/predicaattak; bruikbaar als de insertie direct aan het verbcluster kleeft."><input data-lex-extension-target="verb-branch" type="checkbox"/> verbtak / V / pred<small class="config-item-help"><span class="help-lang-nl">Verlengt de verb/predicaattak; bruikbaar als de insertie direct aan het verbcluster kleeft.</span><span class="help-lang-en">Extends the verb/predicate branch; useful when the insertion attaches to the verb cluster.</span></small></label>
+<label title="Verlengt de subjecttak; beschikbaar voor tests."><input data-lex-extension-target="subject-branch" type="checkbox"/> subjecttak / NP subj / agens<small class="config-item-help"><span class="help-lang-nl">Verlengt de subjecttak; beschikbaar voor tests.</span><span class="help-lang-en">Extends the subject branch; available for tests.</span></small></label>
+<label title="Functionele variant: verlengt de argumentstructuur tussen agens en patiens."><input data-lex-extension-target="arg-boundary" type="checkbox"/> ARG-STRUCT-grens<small class="config-item-help"><span class="help-lang-nl">Functionele variant: verlengt de argumentstructuur tussen agens en patiens.</span><span class="help-lang-en">Functional variant: extends the argument structure between agent and patient.</span></small></label>
+<label title="Functionele variant: verlengt de grens tussen predicaat en argumentstructuur."><input data-lex-extension-target="clause-boundary" type="checkbox"/> CLAUSE-grens<small class="config-item-help"><span class="help-lang-nl">Functionele variant: verlengt de grens tussen predicaat en argumentstructuur.</span><span class="help-lang-en">Functional variant: extends the boundary between predicate and argument structure.</span></small></label>
 <p class="top-menu-choice-help" data-lex-extension-help="">Takverlenging wordt geladen.</p>
-</fieldset></section></details><details class="config-section" id="config-projections"><summary><span class="help-lang-nl">Projecties</span><span class="help-lang-en">Projections</span></summary><section class="panel-card config-section-body"><p class="inline-help" id="projectionHelp">Open Graph: gridregel en projectiemechanisme. In de taalweergave gebruiken LEX, SYNT en LOG eigen selectieregels. Bronknopen projecteren eerst naar projectiemerkers; as-verplaatsingen komen daarna.</p><fieldset aria-label="Menu's boven grid" class="top-menu-choice-field" title="Kies maximaal vier menu's die boven het grid mogen staan. Niet gekozen menu's staan onder het grid.">
+</fieldset></section></details><details class="config-section" id="config-projections"><summary><span class="help-lang-nl">Projecties</span><span class="help-lang-en">Projections</span></summary><section class="panel-card config-section-body"><p class="config-section-intro"><small class="config-section-intro-copy"><span class="help-lang-nl">Projectie-instellingen bepalen bediening en kleur van LEX, SYNT en LOG, los van de centrale view.</span><span class="help-lang-en">Projection settings control the UI and colours of LEX, SYNT and LOG, independently of the central view.</span></small></p><p class="inline-help" id="projectionHelp">Open Graph: gridregel en projectiemechanisme. In de taalweergave gebruiken LEX, SYNT en LOG eigen selectieregels. Bronknopen projecteren eerst naar projectiemerkers; as-verplaatsingen komen daarna.</p><fieldset aria-label="Menu's boven grid" class="top-menu-choice-field" title="Kies maximaal vier menu's die boven het grid mogen staan. Niet gekozen menu's staan onder het grid.">
 <legend>Menu’s boven grid <span class="top-menu-choice-count" data-top-menu-count="">0/4</span></legend>
-<label title="Projectiekeuze: Alle, Bron, LEX, SYNT en LOG. Nuttig als je tussen centrale view en named projections vergelijkt."><input data-top-menu-choice="projection" type="checkbox"/> Projectiekeuze</label>
-<label title="Voorbeeldzin: kies snel HOND BIJT MAN en varianten. Nuttig bij contrasten tussen zinnen."><input data-top-menu-choice="sentence" type="checkbox"/> Voorbeeldzin</label>
-<label title="Play/Groei: groei-presentatie, stapknoppen en afspelen. Nuttig voor didactische demonstratie."><input data-top-menu-choice="play" type="checkbox"/> Play/Groei</label>
-<label title="Werkknoppen: FIT, reset, JSON, Docs en editors. Nuttig bij bouwen/testen, minder bij uitleg."><input data-top-menu-choice="tools" type="checkbox"/> Werkknoppen</label>
+<label title="Projectiekeuze: Alle, Bron, LEX, SYNT en LOG. Nuttig als je tussen centrale view en named projections vergelijkt."><input data-top-menu-choice="projection" type="checkbox"/> Projectiekeuze<small class="config-item-help"><span class="help-lang-nl">Projectiekeuze: Alle, Bron, LEX, SYNT en LOG. Nuttig als je tussen centrale view en named projections vergelijkt.</span><span class="help-lang-en">Projection choice: All, Source, LEX, SYNT and LOG. Useful when comparing the central view with named projections.</span></small></label>
+<label title="Voorbeeldzin: kies snel HOND BIJT MAN en varianten. Nuttig bij contrasten tussen zinnen."><input data-top-menu-choice="sentence" type="checkbox"/> Voorbeeldzin<small class="config-item-help"><span class="help-lang-nl">Voorbeeldzin: kies snel HOND BIJT MAN en varianten. Nuttig bij contrasten tussen zinnen.</span><span class="help-lang-en">Sample sentence: quickly choose HOND BIJT MAN and variants. Useful for sentence contrasts.</span></small></label>
+<label title="Play/Groei: groei-presentatie, stapknoppen en afspelen. Nuttig voor didactische demonstratie."><input data-top-menu-choice="play" type="checkbox"/> Play/Groei<small class="config-item-help"><span class="help-lang-nl">Play/Groei: groei-presentatie, stapknoppen en afspelen. Nuttig voor didactische demonstratie.</span><span class="help-lang-en">Play/Grow: growth presentation, step controls and playback. Useful for teaching demonstrations.</span></small></label>
+<label title="Werkknoppen: FIT, reset, JSON, Docs en editors. Nuttig bij bouwen/testen, minder bij uitleg."><input data-top-menu-choice="tools" type="checkbox"/> Werkknoppen<small class="config-item-help"><span class="help-lang-nl">Werkknoppen: FIT, reset, JSON, Docs en editors. Nuttig bij bouwen/testen, minder bij uitleg.</span><span class="help-lang-en">Work controls: FIT, reset, JSON, Docs and editors. Useful for building and testing.</span></small></label>
 <p class="top-menu-choice-help" data-top-menu-help="">Geen menu boven het grid. Maximaal vier keuzes; overige menu’s staan onder het grid.</p>
 </fieldset><fieldset aria-label="Projectiekleuren" class="projection-color-field">
 <legend>Projectiekleuren</legend>
 <p class="top-menu-choice-help">LEX en de LEX-projectielijnen blijven blauw. Kies hier de kleuren voor de andere named projections.</p>
-<label class="field mini-field" title="LEX blijft blauw, inclusief projectielijnen en projectiemerkers."><span>LEX-kleur</span><select disabled="" id="lexProjectionColorSelect"><option value="blue">blauw</option></select></label>
-<label class="field mini-field"><span>SYNT-kleur</span><select id="syntProjectionColorSelect"></select></label>
-<label class="field mini-field"><span>LOG-kleur</span><select id="logProjectionColorSelect"></select></label>
+<label class="field mini-field" title="LEX en zijn projectielijnen blijven blauw; deze vaste keuze bewaakt de herkenbaarheid van de LEX-as."><span class="config-field-name">LEX-kleur</span><select disabled="" id="lexProjectionColorSelect"><option value="blue">blauw</option></select><small class="config-item-help"><span class="help-lang-nl">LEX en zijn projectielijnen blijven blauw; deze vaste keuze bewaakt de herkenbaarheid van de LEX-as.</span><span class="help-lang-en">LEX and its projection lines remain blue; this fixed choice preserves recognition of the LEX axis.</span></small></label>
+<label class="field mini-field" title="Wijzigt alleen de kleur van de SYNT-projectie en haar projectielijnen."><span class="config-field-name">SYNT-kleur</span><select id="syntProjectionColorSelect"></select><small class="config-item-help"><span class="help-lang-nl">Wijzigt alleen de kleur van de SYNT-projectie en haar projectielijnen.</span><span class="help-lang-en">Changes only the colour of the SYNT projection and its projection lines.</span></small></label>
+<label class="field mini-field" title="Wijzigt alleen de kleur van de LOG-projectie op de zuidas."><span class="config-field-name">LOG-kleur</span><select id="logProjectionColorSelect"></select><small class="config-item-help"><span class="help-lang-nl">Wijzigt alleen de kleur van de LOG-projectie op de zuidas.</span><span class="help-lang-en">Changes only the colour of the LOG projection on the south axis.</span></small></label>
 </fieldset></section></details><details class="config-section config-files-section" id="config-files"><summary><span class="help-lang-nl">Bestanden &amp; editors</span><span class="help-lang-en">Files &amp; editors</span></summary><section class="panel-card config-section-body"><section aria-label="Hoofdbediening" class="toolbar">
 <div aria-label="Zin-input" class="input-sentence-tools">
-<a class="button-link" href="examples-input.html?v2.0.0-rc.24" title="Open de HTML-inputfile met voorbeeldzinnen, subject vet en object cursief">HTML-input</a>
-<a class="button-link" href="examples-adverbs.html?v2.0.0-rc.24" title="Voorbeeldset met één bijwoord per zin en default-host per categorie">Bijwoordvoorbeelden</a>
-<a class="button-link" href="docs/LEX_ADVERB_PLACEMENT_RULES_CHECKED.md?v2.0.0-rc.24" title="Plaatsingsregels voor lexicale bijwoordinsertie: default en gemarkeerd">Bijwoordregels</a>
-<a class="button-link" href="examples-adverb-rules-v4552.html?v2.0.0-rc.24" title="Controle per bijwoord: uitzonderingen en eigen regels">Bijwoordcheck</a>
-<a class="button-link" href="examples-adverb-rules-v4552.html?v2.0.0-rc.24" title="Controle per bijwoord: uitzonderingen en eigen regels">Bijwoordcheck</a>
-<a class="button-link" href="lexicon-config.html?v2.0.0-rc.24" title="Leesbare lexicon-config voor voorbeeldzinnen">Lexicon</a>
-<a class="button-link" href="lexicon-editor.html?v2.0.0-rc.24" title="Lexicon én korte voorbeelduitingen beheren; exporteert lexicon-config.html en examples-input.html">Lexicon+uitingen-editor</a>
-<a class="button-link" href="structure-editor.html?v2.0.0-rc.24" title="Bewerk eerst syntax-config en functional-config">Structure-editor</a>
-<a class="button-link" href="docs/docs-home.html?v2.0.0-rc.24" title="Projectcontext, layoutspec en release notes">Docs</a>
-<a class="button-link" href="lex-movement-rules.html?v2.0.0-rc.24" title="Simpele uitleg van de LEX-Wissels per zinstype">Plaatsingsregels</a>
-<a class="button-link" href="reset-cache.html?v2.0.0-rc.24" title="Verwijder browsercache/service worker en open de viewer opnieuw">Reset cache</a>
+<a class="button-link" href="examples-input.html?v2.0.0-rc.25" title="Open de HTML-inputfile met voorbeeldzinnen, subject vet en object cursief">HTML-input</a>
+<a class="button-link" href="examples-adverbs.html?v2.0.0-rc.25" title="Voorbeeldset met één bijwoord per zin en default-host per categorie">Bijwoordvoorbeelden</a>
+<a class="button-link" href="docs/LEX_ADVERB_PLACEMENT_RULES_CHECKED.md?v2.0.0-rc.25" title="Plaatsingsregels voor lexicale bijwoordinsertie: default en gemarkeerd">Bijwoordregels</a>
+<a class="button-link" href="examples-adverb-rules-v4552.html?v2.0.0-rc.25" title="Controle per bijwoord: uitzonderingen en eigen regels">Bijwoordcheck</a>
+<a class="button-link" href="examples-adverb-rules-v4552.html?v2.0.0-rc.25" title="Controle per bijwoord: uitzonderingen en eigen regels">Bijwoordcheck</a>
+<a class="button-link" href="lexicon-config.html?v2.0.0-rc.25" title="Leesbare lexicon-config voor voorbeeldzinnen">Lexicon</a>
+<a class="button-link" href="lexicon-editor.html?v2.0.0-rc.25" title="Lexicon én korte voorbeelduitingen beheren; exporteert lexicon-config.html en examples-input.html">Lexicon+uitingen-editor</a>
+<a class="button-link" href="structure-editor.html?v2.0.0-rc.25" title="Bewerk eerst syntax-config en functional-config">Structure-editor</a>
+<a class="button-link" href="docs/docs-home.html?v2.0.0-rc.25" title="Projectcontext, layoutspec en release notes">Docs</a>
+<a class="button-link" href="lex-movement-rules.html?v2.0.0-rc.25" title="Simpele uitleg van de LEX-Wissels per zinstype">Plaatsingsregels</a>
+<a class="button-link" href="reset-cache.html?v2.0.0-rc.25" title="Verwijder browsercache/service worker en open de viewer opnieuw">Reset cache</a>
 </div>
 <div class="button-row compact-actions">
 <button id="resetExampleButton" title="Herlaad het gekozen voorbeeld" type="button">Reset voorbeeld</button>
 <button id="fitButton" title="FIT: pas boom en named projections passend in beeld; verandert de boom niet." type="button">FIT</button>
 </div>
 <div class="button-row compact-actions">
-<label class="file-label" title="OpenGraph Lite JSON laden">
+<label class="file-label" title="Laadt een eerder opgeslagen OpenGraph-JSON in de huidige sessie. Bronbestanden worden niet overschreven.">
           JSON laden
           <input accept="application/json,.json,.opn" id="fileInput" type="file"/>
-</label>
+<small class="config-item-help"><span class="help-lang-nl">Laadt een eerder opgeslagen OpenGraph-JSON in de huidige sessie. Bronbestanden worden niet overschreven.</span><span class="help-lang-en">Loads a previously saved OpenGraph JSON into the current session. Source files are not overwritten.</span></small></label>
 <button id="downloadJsonButton" title="Download actuele OpenGraph Lite JSON" type="button">Download JSON</button>
 </div>
-</section></section></details>
-
-
-
+</section><div class="config-action-help-list"><h3><span class="help-lang-nl">Wat doen deze items?</span><span class="help-lang-en">What do these items do?</span></h3><ul><li><span class="help-lang-nl"><strong>HTML-input en voorbeeldbestanden</strong> — openen de leesbare bronbestanden voor zinnen en bijwoorden.</span><span class="help-lang-en"><strong>HTML input and sample files</strong> — open the readable source files for sentences and adverbs.</span></li><li><span class="help-lang-nl"><strong>Lexicon- en structure-editors</strong> — bewerken lexicale gegevens of de Syntax / Functional-bronstructuren.</span><span class="help-lang-en"><strong>Lexicon and structure editors</strong> — edit lexical data or the Syntax / Functional source structures.</span></li><li><span class="help-lang-nl"><strong>Reset cache</strong> — verwijdert oude browsercache na publicatie en opent de actuele versie.</span><span class="help-lang-en"><strong>Reset cache</strong> — removes stale browser cache after publication and opens the current version.</span></li><li><span class="help-lang-nl"><strong>Reset voorbeeld en FIT</strong> — herstellen het voorbeeld of passen alleen het zichtvenster aan.</span><span class="help-lang-en"><strong>Reset sample and FIT</strong> — restore the sample or adjust only the viewport.</span></li><li><span class="help-lang-nl"><strong>JSON laden/downloaden</strong> — wisselt een sessieconfiguratie uit zonder de bronbestanden automatisch te overschrijven.</span><span class="help-lang-en"><strong>Load/download JSON</strong> — exchanges a session configuration without automatically overwriting source files.</span></li></ul></div></section></details>
 <details class="config-section" id="config-examples"><summary><span class="help-lang-nl">Voorbeelden &amp; editors</span><span class="help-lang-en">Examples &amp; editors</span></summary><section class="panel-card config-section-body"><section aria-label="Voorbeeldzinnen beheren" class="panel-card examples-config-card">
 <h2>Voorbeeldzinnen</h2>
 <p class="inline-help">Voeg voorbeeldzinnen toe via de editor. Start lokaal met <code>start-local-viewer.bat</code>; dan schrijft <strong>Opslaan</strong> direct naar <code>examples-input.html</code>. Daarna kun je hier de lijst herladen.</p>
 <div class="button-row">
-<a class="button-link primary" href="examples-editor.html?v2.0.0-rc.24" title="Voorbeeldzinnen toevoegen en opslaan">Voorbeeldzinnen-editor</a>
-<a class="button-link" href="examples-input.html?v2.0.0-rc.24" title="Leesbare HTML-input met voorbeeldzinnen">HTML-input</a>
-<a class="button-link" href="examples-adverbs.html?v2.0.0-rc.24" title="Bijwoordvoorbeelden met default-host en gemarkeerde host">Bijwoordvoorbeelden</a>
-<a class="button-link" href="docs/LEX_ADVERB_PLACEMENT_RULES_CHECKED.md?v2.0.0-rc.24" title="Plaatsingsregels voor lexicale bijwoordinsertie: default en gemarkeerd">Bijwoordregels</a>
-<a class="button-link" href="examples-adverb-rules-v4552.html?v2.0.0-rc.24" title="Controle per bijwoord: uitzonderingen en eigen regels">Bijwoordcheck</a>
-<a class="button-link" href="examples-adverb-rules-v4552.html?v2.0.0-rc.24" title="Controle per bijwoord: uitzonderingen en eigen regels">Bijwoordcheck</a>
+<a class="button-link primary" href="examples-editor.html?v2.0.0-rc.25" title="Voorbeeldzinnen toevoegen en opslaan">Voorbeeldzinnen-editor</a>
+<a class="button-link" href="examples-input.html?v2.0.0-rc.25" title="Leesbare HTML-input met voorbeeldzinnen">HTML-input</a>
+<a class="button-link" href="examples-adverbs.html?v2.0.0-rc.25" title="Bijwoordvoorbeelden met default-host en gemarkeerde host">Bijwoordvoorbeelden</a>
+<a class="button-link" href="docs/LEX_ADVERB_PLACEMENT_RULES_CHECKED.md?v2.0.0-rc.25" title="Plaatsingsregels voor lexicale bijwoordinsertie: default en gemarkeerd">Bijwoordregels</a>
+<a class="button-link" href="examples-adverb-rules-v4552.html?v2.0.0-rc.25" title="Controle per bijwoord: uitzonderingen en eigen regels">Bijwoordcheck</a>
+<a class="button-link" href="examples-adverb-rules-v4552.html?v2.0.0-rc.25" title="Controle per bijwoord: uitzonderingen en eigen regels">Bijwoordcheck</a>
 <button id="reloadExamplesButton" title="Herlees examples-input.html zonder de hele pagina opnieuw te openen" type="button">Herlaad zinnen</button>
 </div>
-</section></section></details><details class="config-section" id="config-advanced"><summary><span class="help-lang-nl">Geavanceerd</span><span class="help-lang-en">Advanced</span></summary><section class="config-advanced-stack"><section class="panel-card lex-card">
+</section><div class="config-action-help-list"><h3><span class="help-lang-nl">Wat doen deze items?</span><span class="help-lang-en">What do these items do?</span></h3><ul><li><span class="help-lang-nl"><strong>Voorbeeldzinnen-editor</strong> — voegt zinnen toe en schrijft ze lokaal weg wanneer de lokale server actief is.</span><span class="help-lang-en"><strong>Sample-sentence editor</strong> — adds sentences and writes them locally when the local server is active.</span></li><li><span class="help-lang-nl"><strong>HTML-input</strong> — toont de leesbare lijst die de viewer opnieuw kan laden.</span><span class="help-lang-en"><strong>HTML input</strong> — shows the readable list that the viewer can reload.</span></li><li><span class="help-lang-nl"><strong>Bijwoordbestanden</strong> — documenteren voorbeelden, default-hosts en gecontroleerde plaatsingsregels.</span><span class="help-lang-en"><strong>Adverb files</strong> — document examples, default hosts and checked placement rules.</span></li><li><span class="help-lang-nl"><strong>Herlaad zinnen</strong> — leest examples-input.html opnieuw zonder de hele app te herstarten.</span><span class="help-lang-en"><strong>Reload sentences</strong> — reads examples-input.html again without restarting the whole app.</span></li></ul></div></section></details><details class="config-section" id="config-advanced"><summary><span class="help-lang-nl">Geavanceerd</span><span class="help-lang-en">Advanced</span></summary><section class="config-advanced-stack"><section class="panel-card lex-card">
 <h2>LEX-as · uitingtype</h2>
-<label class="field"><span>Uitingtype-regel</span><select id="lexRuleSelect"></select></label>
+<label class="field" title="Kiest de LEX-plaatsings- en Wisselregel voor het huidige zinstype. De centrale Syntax- of Functional-boom blijft staan."><span class="config-field-name">Uitingtype-regel</span><select id="lexRuleSelect"></select><small class="config-item-help"><span class="help-lang-nl">Kiest de LEX-plaatsings- en Wisselregel voor het huidige zinstype. De centrale Syntax- of Functional-boom blijft staan.</span><span class="help-lang-en">Chooses the LEX placement and exchange rule for the current sentence type. The central Syntax or Functional tree remains unchanged.</span></small></label>
 <div aria-label="LEX volgorde" class="lex-order-list" id="lexOrderList"></div>
 <div class="button-row">
 <button id="lexLeftButton" type="button">←</button>
@@ -588,7 +584,7 @@
 <h2>Relaties / regels</h2>
 <p class="inline-help" id="relationHelp">Geen losse editor-relaties. Deze lijst volgt de actieve structuur: syntaxregels, functional-structure-regels of LOG-volgorde.</p>
 <div aria-label="Structuurregels" class="edge-list" id="edgeList"></div>
-</section></section></details></aside>
+</section><div class="config-action-help-list"><h3><span class="help-lang-nl">Wat doen deze items?</span><span class="help-lang-en">What do these items do?</span></h3><ul><li><span class="help-lang-nl"><strong>Uitingtype-regel</strong> — selecteert de actieve LEX-volgorderegel voor hoofdzin, bijzin of perfectum.</span><span class="help-lang-en"><strong>Utterance-type rule</strong> — selects the active LEX order rule for main clause, subordinate clause or perfect.</span></li><li><span class="help-lang-nl"><strong>Pijlen</strong> — verplaatsen het geselecteerde LEX-item één positie binnen de bewerkbare volgorde.</span><span class="help-lang-en"><strong>Arrow buttons</strong> — move the selected LEX item one position within the editable order.</span></li><li><span class="help-lang-nl"><strong>Pas regel toe</strong> — voert de gekozen LEX-Wissel uit; de centrale boom verandert niet.</span><span class="help-lang-en"><strong>Apply rule</strong> — executes the selected LEX exchange; the central tree does not change.</span></li><li><span class="help-lang-nl"><strong>Relaties / regels</strong> — toont de regels die horen bij de actieve Syntax-, Functional- of LOG-weergave.</span><span class="help-lang-en"><strong>Relations / rules</strong> — shows the rules belonging to the active Syntax, Functional or LOG view.</span></li></ul></div></section></details></aside>
 <section aria-label="OpenGraph canvas" class="canvas-wrap" id="canvasWrap">
 <svg aria-label="OpenGraph projectie" id="graphSvg" role="img" tabindex="0" title="Grid is vastgezet; bediening staat buiten het boomvenster." xmlns="http://www.w3.org/2000/svg"></svg>
 </section>
@@ -623,8 +619,6 @@
 </div>
 <button id="mobileCloseButton" title="Sluit mobiel menu" type="button">Sluit</button>
 </header>
-
-
 <div aria-label="View keuze" class="mobile-sheet-section">
 <h3>View</h3>
 <label class="mobile-sheet-field" title="Kies de centrale view: syntaxboom of functionele structuur."><span>View</span><select id="mobileViewSelect"></select></label>
@@ -651,15 +645,15 @@
 <div aria-label="Documentatie" class="mobile-sheet-section">
 <h3>Documentatie</h3>
 <div class="mobile-link-grid">
-<a href="docs/docs-home.html?v2.0.0-rc.24">Docs</a>
-<a href="lex-movement-rules.html?v2.0.0-rc.24">Plaatsingsregels</a>
-<a href="reset-cache.html?v2.0.0-rc.24">Reset cache</a>
+<a href="docs/docs-home.html?v2.0.0-rc.25">Docs</a>
+<a href="lex-movement-rules.html?v2.0.0-rc.25">Plaatsingsregels</a>
+<a href="reset-cache.html?v2.0.0-rc.25">Reset cache</a>
 </div>
 </div>
 <p class="mobile-sheet-note">Sleep met één vinger om te pannen. Knijp met twee vingers om te zoomen. FIT past het zichtvenster aan de huidige boom en named projections aan; de boom zelf verandert niet.</p>
 </section>
 <script>
-    window.__opengraphBoot = { version: 'v2.0.0-rc.24', loaded: false, marker: 'viewer-index' };
+    window.__opengraphBoot = { version: 'v2.0.0-rc.25', loaded: false, marker: 'viewer-index' };
     function ogStatus(message) {
       var target = document.getElementById('actionFeedback') || document.body;
       if (target) target.textContent = message;
@@ -672,7 +666,7 @@
     });
     setTimeout(function() {
       if (!window.__opengraphBoot || !window.__opengraphBoot.loaded) {
-        ogStatus('Viewer start niet volledig. Gebruik Reset cache of open http://127.0.0.1:8088/reset-cache.html?v2.0.0-rc.24.');
+        ogStatus('Viewer start niet volledig. Gebruik Reset cache of open http://127.0.0.1:8088/reset-cache.html?v2.0.0-rc.25.');
       }
     }, 2500);
   </script>
@@ -682,11 +676,11 @@
       var isLocal = window.location.protocol === 'file:' || !host || host === 'localhost' || host === '127.0.0.1';
       if (!isLocal) return;
       var script = document.createElement('script');
-      script.src = 'local-mobile-test.js?v2.0.0-rc.24';
+      script.src = 'local-mobile-test.js?v2.0.0-rc.25';
       script.defer = true;
       document.head.appendChild(script);
     })();
   </script>
-<script defer="" src="viewer.js?v2.0.0-rc.24&amp;cb=4"></script>
+<script defer="" src="viewer.js?v2.0.0-rc.25&amp;cb=4"></script>
 </body>
 </html>

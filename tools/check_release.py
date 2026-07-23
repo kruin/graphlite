@@ -67,7 +67,15 @@ if "return ['axes', 'source', 'lex', 'synt', 'log'].includes(projection);" not i
 if "state.growthProjectionImmediate === false" not in js:
     errors.append('vertraagde compatibiliteitsmodus ontbreekt')
 if 'Standaard zijn alle assen zichtbaar.' not in index: errors.append('default alle assen niet vermeld')
-for bad in ['LOG/FT','FT/LOG']:
+
+if 'Kies Syntax of Functional' not in index or "{ id: 'ft', label: 'Functional' }" not in js or "state.centerMode === 'ft' ? 'Functional' : 'Syntax'" not in js:
+    errors.append('zichtbare viewnaam Functional ontbreekt')
+if 'Syntax / FT' in index or '>FT<' in index:
+    errors.append('oude zichtbare viewnaam FT staat nog in Main')
+for required_help in ['config-item-help','config-action-help-list','config-toggle-title']:
+    if required_help not in index and required_help not in css:
+        errors.append(f'Config-toelichting mist {required_help}')
+for bad in ['LOG/Functional','Functional/LOG']:
     for p in ROOT.rglob('*'):
         if p.name == 'check_release.py':
             continue

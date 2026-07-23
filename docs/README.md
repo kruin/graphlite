@@ -1,4 +1,4 @@
-# OpenGraph Lite Viewer v2.0.0-rc.24
+# OpenGraph Lite Viewer v2.0.0-rc.25
 
 Demo/viewer voor JaN / OPN / OpenGraph-taalstructuren.
 
@@ -17,13 +17,13 @@ start-local-viewer.bat
 GitHub Pages:
 
 ```text
-https://kruin.github.io/graphlite/index.html?ogv=v2.0.0-rc.24
+https://kruin.github.io/graphlite/index.html?ogv=v2.0.0-rc.25
 ```
 
 ## Centrale views en projecties
 
 ```text
-Views:       Syntax, FT
+Views:       Syntax, Functional
 Projecties:  LEX west, SYNT oost, LOG zuid
 Default:     LEX + SYNT + LOG zichtbaar
 ```
@@ -33,7 +33,7 @@ LOG is geen centrale view. LOG-volgorde wijzigt uitsluitend de zuidprojectie.
 ## Topmenu
 
 ```text
-Rij 1: Zin · Bijwoord · Syntax/FT · Interface · Projecties · LOG-volgorde
+Rij 1: Zin · Bijwoord · Syntax / Functional · Interface · Projecties · LOG-volgorde
 Rij 2: NL/EN · LEESMIJ/README · Config
 ```
 
@@ -45,7 +45,7 @@ Met `Boomruimte: Auto` volgt de grid-layout continu het werkelijk beschikbare ca
 - landscape wordt breder en lager;
 - desktop volgt de actuele vensterverhouding;
 - viewBox en raster krijgen dezelfde schermverhouding;
-- Syntax, FT en alle projectiecombinaties behouden dezelfde positie en schaal binnen die viewport.
+- Syntax, Functional en alle projectiecombinaties behouden dezelfde positie en schaal binnen die viewport.
 
 De volledige graph plus gekozen assen wordt zo groot mogelijk weergegeven zonder clipping.
 
@@ -79,6 +79,10 @@ check_release.bat
 ## Raster op mobile
 
 Op compacte schermen eindigt het raster bij de centrale boom en de uiteinden van de zichtbare projectielijnen. Handmatige interfacekeuzes veranderen deze inhoudsgrens niet.
+
+## Mobile landscape
+
+Automatisch herkent een liggende telefoon via de korte viewportzijde en touch/coarse-pointer. Het landscapeprofiel maakt de graph platter en breder en voert na draaien opnieuw FIT uit.
 ## TODO
 
 - Niet-binaire, meertakkige bomen.

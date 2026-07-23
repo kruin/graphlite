@@ -11,9 +11,9 @@ Actuele, leidende status van OpenGraph Lite Viewer.
 ## Centrale views
 
 - `Syntax` is de eerste centrale view.
-- `FT` is de tweede centrale functionele view.
+- `Functional` is de tweede centrale functionele view.
 - `LOG` is uitsluitend de zuidas/projectie en nooit een centrale view.
-- Syntax ↔ FT behoudt viewport, schaal en handmatige pan/zoom.
+- Syntax ↔ Functional behoudt viewport, schaal en handmatige pan/zoom.
 
 ## Projecties en groei
 
@@ -39,7 +39,7 @@ Portrait wordt smaller en hoger; landscape breder en lager; desktop volgt de fei
 ## Topmenu
 
 ```text
-Rij 1: Zin · Bijwoord · Syntax/FT · Interface · Projecties · LOG-volgorde
+Rij 1: Zin · Bijwoord · Syntax / Functional · Interface · Projecties · LOG-volgorde
 Rij 2: NL/EN · Help · Config
 ```
 

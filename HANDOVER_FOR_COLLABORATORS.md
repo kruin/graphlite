@@ -1,14 +1,14 @@
 # HANDOVER_FOR_COLLABORATORS
 
-Overdracht voor OpenGraph Lite Viewer `v2.0.0-rc.24`.
+Overdracht voor OpenGraph Lite Viewer `v2.0.0-rc.25`.
 
 ## Niet wijzigen zonder expliciete opdracht
 
 ```text
-Centrale views:  Syntax → FT
+Centrale views:  Syntax → Functional
 Assen:            LEX west, SYNT oost, LOG zuid
 Default assen:    LEX + SYNT + LOG zichtbaar
-Topmenu rij 1:    Zin, Bijwoord, Syntax/FT, Interface, Projecties, LOG-volgorde
+Topmenu rij 1:    Zin, Bijwoord, Syntax / Functional, Interface, Projecties, LOG-volgorde
 Topmenu rij 2:    NL/EN, LEESMIJ/README, Config
 Raster:           standaard aan
 ```
@@ -23,7 +23,7 @@ Raster:           standaard aan
 - Landscape vergroot `cellX`, verkleint `cellY` en spreidt de assen verder uit.
 - Desktop volgt dezelfde continue curve op basis van de werkelijke vensterverhouding.
 - `stableProjectionViewBox()` en het dynamische raster worden aan de canvasverhouding aangepast.
-- Syntax, FT en iedere projectiecombinatie gebruiken binnen dezelfde viewport exact hetzelfde profiel.
+- Syntax, Functional en iedere projectiecombinatie gebruiken binnen dezelfde viewport exact hetzelfde profiel.
 - Projectiewissels veranderen x, y, schaal of viewBox niet.
 - Een resize of oriëntatiewissel mag wel één volledige herfit uitvoeren.
 
@@ -60,3 +60,10 @@ Op compacte fysieke schermen mag `state.lastGridBox` niet via de canvas-aspectra
 - Terugnavigatie gebruikt steeds de vorm `Terug naar: Main` of `Terug naar: Config`.
 - De bestaande save-werkwijze blijft ongewijzigd: `Ja · bewaar config`, `Nee · herstel laatst bewaarde config`, en download van het lokale config-log.
 - JaN is de werknaam voor Just another Notation. TODO: `S:np-VP` (niet `S:NP-VP`); werkvorm `S+ np-VP`; binaire bomen eerst, meertakkigheid later.
+
+
+## Functional-compatibiliteit
+
+- Zichtbare naam: `Functional`.
+- Interne opgeslagen waarde blijft `ft`; oude waarde `functional` blijft leesbaar.
+- Gebruik niet opnieuw de oude afkorting als zichtbare naam.

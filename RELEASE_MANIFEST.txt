@@ -144,3 +144,6 @@ sw.js
 tools/check_release.py
 viewer.html
 viewer.js
+
+SOURCE_CHANGES_V2.0.0-rc.25.md
+FUNCTIONAL_CONFIG_HELP_TEST.md

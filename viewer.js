@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'v2.0.0-rc.24';
+  const VERSION = 'v2.0.0-rc.25';
   const BASE_CELL = 74;
   const ROOT_SIDE_GAP = 1;
   const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -246,7 +246,7 @@
 
   const CENTER_MODES = [
     { id: 'syntax', label: 'Syntax' },
-    { id: 'ft', label: 'FT' }
+    { id: 'ft', label: 'Functional' }
   ];
 
   const PROJECTION_OPTIONS = [
@@ -2741,7 +2741,7 @@
     syncPortraitStageMode();
     if (!els.canvasWrap) return;
     syncPortraitMenuSpace();
-    // v2.0.0-rc.24: alle interface-standen krijgen de maximaal beschikbare
+    // v2.0.0-rc.25: alle interface-standen krijgen de maximaal beschikbare
     // canvasruimte. De SVG-viewBox bepaalt vervolgens de grootste schaal zonder
     // clipping. Een brede boom in portrait wordt dus niet ook nog eens door een
     // kunstmatig laag canvas verkleind.
@@ -2810,7 +2810,7 @@
     if (mode === 'flat') return { cellX: BASE_CELL * 1.48, cellY: BASE_CELL * 0.72, fontScale: 1.04, label: 'platter' };
     if (mode === 'wide') return { cellX: BASE_CELL * 1.34, cellY: BASE_CELL * 0.86, fontScale: 1.08, label: 'breed/lager' };
     if (mode === 'large') return { cellX: BASE_CELL * 1.46, cellY: BASE_CELL * 0.82, fontScale: 1.16, label: 'breed + groter font' };
-    // Auto is de standaard. Dezelfde profielwaarden gelden voor Syntax, FT en
+    // Auto is de standaard. Dezelfde profielwaarden gelden voor Syntax, Functional en
     // iedere projectiecombinatie, zodat alleen de schermvorm de geometrie wijzigt.
     const viewport = viewportGridProfile();
     return {
@@ -2924,7 +2924,7 @@
 
   function setProjection(projection) {
     const next = projection || 'axes';
-    // v2.0.0-rc.24: alle named-projection views delen exact dezelfde
+    // v2.0.0-rc.25: alle named-projection views delen exact dezelfde
     // viewport. Een projectiewissel mag daarom een handmatige pan/zoom niet
     // wissen en mag de centrale boom horizontaal noch verticaal verplaatsen.
     if (growthSupportedProjection(state.projection) && state.growthStep > 0) {
@@ -4091,7 +4091,7 @@
   function drawProjectedRules(g, x, layout, origin, spec, options = {}) {
     if (!layout || !origin || !spec) return;
     const mode = options.mode || 'syntax';
-    const title = options.title || (mode === 'functional' ? 'FT · functionele regels/rollen' : 'SYNT-projectie · regels');
+    const title = options.title || (mode === 'functional' ? 'Functional · regels/rollen' : 'SYNT-projectie · regels');
     const cls = mode === 'functional' ? 'synt functional' : 'synt';
     const boxClass = mode === 'functional' ? 'syntax-rule-box projected-rule-box projected-functional-rule-box' : 'syntax-rule-box projected-rule-box';
     const ruleClass = mode === 'functional' ? 'rule-label projected-rule-label projected-functional-rule-label' : 'rule-label projected-rule-label';
@@ -4326,13 +4326,13 @@
     if (layout && origin) {
       drawProjectedRules(g, x, layout, origin, functionalSpec(), {
         mode: 'functional',
-        title: 'FT · functionele regels op bronhoogte',
+        title: 'Functional · regels op bronhoogte',
         growthPlan
       });
       return;
     }
     const axisBoxGap = 22;
-    drawAxisTitle(g, x + axisBoxGap, 40, 'FT · functionele regels/rollen');
+    drawAxisTitle(g, x + axisBoxGap, 40, 'Functional · regels/rollen');
     functionalRules().forEach((rule, i) => {
       const yy = 86 + i * 66;
       const width = Math.max(250, Math.min(380, rule.length * 8.2 + 34));
@@ -4353,7 +4353,7 @@
       ];
     }
     const useFunctional = state.centerMode === 'ft';
-    const title = useFunctional ? 'FT · functionele rollen' : 'SYNT · syntaxregels';
+    const title = useFunctional ? 'Functional · rollen' : 'SYNT · syntaxregels';
     const rows = useFunctional ? functionalRules() : syntaxRules();
     return [title, ...rows];
   }
@@ -4366,7 +4366,7 @@
     const roleNames = (rootDef?.children || [])
       .map(id => functionalNodes.find(n => n.id === id)?.label || id)
       .join(' + ') || 'role-boxen';
-    if (options.showTitle !== false) drawAxisTitle(g, origin.x - 180, origin.y - 70, `FT · functionele structuur · ${rootLabel} → ${roleNames} · ${state.functionalOrder}`);
+    if (options.showTitle !== false) drawAxisTitle(g, origin.x - 180, origin.y - 70, `Functional · structuur · ${rootLabel} → ${roleNames} · ${state.functionalOrder}`);
     drawAxisTitle(g, origin.x - 176, origin.y - 48, `v4547 · ${branchModeLabel()} · vrije plaatsing + LEX-bijwoordslots`);
     const growthPlan = growthPlanForLayout(layout);
     layout.__growthPlan = growthPlan;
@@ -4428,8 +4428,8 @@
   }
 
   function projectionStableFrameBox() {
-    // v2.0.0-rc.24: inhoudsgetrouwe, maar nog steeds stabiele unie van Syntax
-    // en FT. Alleen werkelijk gebruikte boxbreedtes en lijnuiteinden tellen mee.
+    // v2.0.0-rc.25: inhoudsgetrouwe, maar nog steeds stabiele unie van Syntax
+    // en Functional. Alleen werkelijk gebruikte boxbreedtes en lijnuiteinden tellen mee.
     // Oude fictieve reserves links van LOG en rechts van SYNT maakten alle vier
     // interface-standen onnodig klein, vooral mobile portrait.
     const origin = stableCentralViewOrigin();
@@ -4458,7 +4458,7 @@
     const southAxisY = py(union.maxY + 2.1, origin);
 
     // Werkelijke uitersten: LEX-labels circa 98 px links van de westas;
-    // LOG-boxen 74 px links/rechts van hun marker; SYNT/FT exact de berekende
+    // LOG-boxen 74 px links/rechts van hun marker; SYNT/Functional exact de berekende
     // regelboxbreedte. Titels lopen naar rechts en vragen geen extra linkerveld.
     const lexLeft = westAxisX - 102;
     const logLeft = southAxisX1 - 82;
@@ -4471,7 +4471,7 @@
   }
 
   function stableProjectionViewBox() {
-    // v2.0.0-rc.24: maximale full-view voor Automatisch, Desktop, Mobiel
+    // v2.0.0-rc.25: maximale full-view voor Automatisch, Desktop, Mobiel
     // staand en Mobiel liggend. De veiligheidsrand is alleen nog voldoende
     // voor dunne strokes en labels; er wordt geen UI-ruimte in SVG gereserveerd.
     const frame = projectionStableFrameBox();
@@ -4540,7 +4540,7 @@
   function drawAxes() {
     const g = baseSvg('axes-view');
     const origin = { x: 760, y: 72 };
-    drawAxisTitle(g, origin.x - 170, origin.y - 76, state.centerMode === 'ft' ? `CENTRAAL · FT · functionele structuur · ${state.functionalOrder}` : `CENTRAAL · OPN-syntaxboom · ${movementSummaryLabel()}`);
+    drawAxisTitle(g, origin.x - 170, origin.y - 76, state.centerMode === 'ft' ? `CENTRAAL · Functional · ${state.functionalOrder}` : `CENTRAAL · OPN-syntaxboom · ${movementSummaryLabel()}`);
 
     const ctx = canonicalProjectionContext(g, { drawCentral: true });
     const { sourceMap, centralLayout, southItems, westAxisX, eastAxisX, southAxisX1, southAxisX2, southAxisY } = ctx;
@@ -4690,7 +4690,7 @@
 
   function stableGrowthViewBox() {
     if (!growthActive()) return null;
-    // v2.0.0-rc.24: Groei gebruikt hetzelfde frame als de gewone projectie-
+    // v2.0.0-rc.25: Groei gebruikt hetzelfde frame als de gewone projectie-
     // views. Voorheen hadden Alle/Bron/LOG eigen hard-coded viewBoxes, terwijl
     // LEX/SYNT auto-fit gebruikten; dat veroorzaakte de zichtbare sprong.
     return stableProjectionViewBox();
@@ -4727,7 +4727,7 @@
   }
 
   function clearViewportGestureState() {
-    // v2.0.0-rc.24: bij wissel tussen landscape/portrait mogen oude touch-pointers
+    // v2.0.0-rc.25: bij wissel tussen landscape/portrait mogen oude touch-pointers
     // en pinch-state niet blijven hangen. Anders lijkt portrait na zoom in
     // landscape bevroren.
     state.viewDrag = null;
@@ -4989,7 +4989,7 @@
         controlsLeft = state.projectionBoxManual.left;
         controlsTop = state.projectionBoxManual.top;
       } else {
-        // v2.0.0-rc.24: Projecties-box heeft een stabiele schermpositie.
+        // v2.0.0-rc.25: Projecties-box heeft een stabiele schermpositie.
         // Niet meer ankeren aan een wisselende SYNT-as; alleen handmatig slepen verplaatst de box.
         controlsLeft = maxLeft;
         controlsTop = minTop;
@@ -5181,7 +5181,7 @@
 
   function computeAutoFitBox() {
     if (!els.svg) return fallbackViewBox();
-    // v2.0.0-rc.24: alle projectie-views gebruiken één geometrisch viewport,
+    // v2.0.0-rc.25: alle projectie-views gebruiken één geometrisch viewport,
     // onafhankelijk van welke overlay zichtbaar is. Dit sluit auto-fit-
     // verschillen uit en voorkomt elke horizontale of verticale verspringing.
     if (isMainScreenActive() && ['axes', 'source', 'lex', 'synt', 'log'].includes(state.projection)) {
@@ -5335,7 +5335,7 @@
 
   function renderStatus() {
     const syntaxModeLabel = isEnglish() ? 'OPN syntax tree' : 'OPN-syntaxboom';
-    const functionalModeLabel = isEnglish() ? 'FT functional structure' : 'FT functionele structuur';
+    const functionalModeLabel = isEnglish() ? 'Functional structure' : 'Functional · functionele structuur';
     els.titleLine.textContent = `${activeSentenceText()} · ${state.projectionLabel || projectionLabel()} · ${state.centerMode === 'syntax' ? syntaxModeLabel : functionalModeLabel}`;
     const noticeText = state.example.notice ? ` · NOTICE=${state.example.notice}` : '';
     const adverbText = activeAdverbStatusLabel();
@@ -5345,10 +5345,10 @@
     if (els.sentencePreview) els.sentencePreview.innerHTML = activeSentenceHtml();
     const baseFeedback = isEnglish()
       ? (state.projection === 'source'
-        ? 'Source shows the selected OPN source from structure-config.html. At Source, LEX, SYNT and LOG axes can be combined independently. The View menu switches between the Syntax view and the FT view (functional CLAUSE roles). Syntax and FT views use bottom-up recursive box layout; left/right controls both layouts; branch order can be global, compact-auto or align-auto.'
+        ? 'Source shows the selected OPN source from structure-config.html. At Source, LEX, SYNT and LOG axes can be combined independently. The View menu switches between the Syntax view and the Functional view (functional CLAUSE roles). Syntax and Functional views use bottom-up recursive box layout; left/right controls both layouts; branch order can be global, compact-auto or align-auto.'
         : 'Phase view: first the structure config, then sample sentences projected to those sources, then the local LEX placement rule.')
       : (state.projection === 'source'
-        ? 'Bron toont de gekozen OPN-bron uit structure-config.html; LEX-, SYNT- en LOG-as zijn daar onafhankelijk combineerbaar. Het View-menu wisselt tussen de Syntax-view en de FT-view (functionele CLAUSE/rollen). Syntax en FT gebruiken bottom-up recursieve box-layout; left/right stuurt beide layouts; takvolgorde kan globaal, compact-auto of align-auto zijn.'
+        ? 'Bron toont de gekozen OPN-bron uit structure-config.html; LEX-, SYNT- en LOG-as zijn daar onafhankelijk combineerbaar. Het View-menu wisselt tussen de Syntax-view en de Functional-view (functionele CLAUSE/rollen). Syntax en Functional gebruiken bottom-up recursieve box-layout; left/right stuurt beide layouts; takvolgorde kan globaal, compact-auto of align-auto zijn.'
         : 'Faseversie: eerst structure-config, dan voorbeeldzinnen die naar die sources projecteren, dan lokale LEX-regel.');
     const validationMsg = state.exampleValidationMessages?.length ? ` · ${state.exampleValidationMessages[0]}` : '';
     const noticeMsg = state.example.notice ? ` · ${state.example.notice}` : '';
@@ -5379,13 +5379,13 @@
 
   function helpText() {
     if (isEnglish()) {
-      if (state.projection === 'source') return `Source: the Syntax and FT structures are read from structure-config.html. Selected axes at Source: ${sourceAxesShortLabel()}. LEX, SYNT and LOG can be combined without moving or rescaling the central view.`;
+      if (state.projection === 'source') return `Source: the Syntax and Functional structures are read from structure-config.html. Selected axes at Source: ${sourceAxesShortLabel()}. LEX, SYNT and LOG can be combined without moving or rescaling the central view.`;
       if (state.projection === 'lex') return 'LEX: west named projection. Source nodes project to blue projection markers first; after all central nodes are placed, LEX exchanges may fill reserved empty positions.';
       if (state.projection === 'synt') return 'SYNT: isolated syntax-rule set. Rules are placed at their source height; the central tree is only used as a hidden height anchor.';
       if (state.projection === 'log') return 'LOG: named projection on the south axis. It selects S, O and V for the logical order projection.';
       return 'All: central view selected by the View menu. LEX, SYNT and LOG use named projections with their own projection markers and selection rules.';
     }
-    if (state.projection === 'source') return `Bron: de Syntax- en FT-structuren worden gelezen uit structure-config.html. Gekozen assen bij Bron: ${sourceAxesShortLabel()}. LEX, SYNT en LOG kunnen gecombineerd worden zonder de centrale view te verplaatsen of te herschalen.`;
+    if (state.projection === 'source') return `Bron: de Syntax- en Functional-structuren worden gelezen uit structure-config.html. Gekozen assen bij Bron: ${sourceAxesShortLabel()}. LEX, SYNT en LOG kunnen gecombineerd worden zonder de centrale view te verplaatsen of te herschalen.`;
     if (state.projection === 'lex') return 'LEX: westelijke named projection. Bronknopen projecteren eerst naar blauwe projectiemerkers; pas na plaatsing van alle centrale knopen kunnen LEX-Wissels gereserveerde lege plekken vullen.';
     if (state.projection === 'synt') return 'SYNT: geïsoleerde syntax-regelset. Regels staan op bronhoogte; de centrale boom dient alleen als verborgen hoogteanker.';
     if (state.projection === 'log') return 'LOG: named projection op de zuidas. LOG selecteert S, O en V voor de logische volgordeprojectie.';
@@ -5416,10 +5416,10 @@
   }
 
   const SELECT_OPTION_LABELS_EN = {
-    centralModeSelect: { syntax: 'Syntax tree', ft: 'FT · functional structure (CLAUSE)' },
-    mainViewSelect: { syntax: 'Syntax', ft: 'FT' },
+    centralModeSelect: { syntax: 'Syntax tree', ft: 'Functional' },
+    mainViewSelect: { syntax: 'Syntax', ft: 'Functional' },
     mainProjectionSelect: { axes: 'All', source: 'Source', lex: 'LEX', synt: 'SYNT', log: 'LOG' },
-    mobileViewSelect: { syntax: 'Syntax tree', ft: 'FT · functional structure' },
+    mobileViewSelect: { syntax: 'Syntax tree', ft: 'Functional' },
     treeChoiceSelect: { 'auto-min': 'tree choice: auto per sample type', 'structure-config': 'tree choice: structure-config base tree' },
     functionalOrderSelect: { 'left-first': 'layout: left-first', 'right-first': 'layout: right-first' },
     branchOrderSelect: { normal: 'default: grammatical order', 'auto-compact': 'goal: compact - auto per branch', 'auto-align': 'goal: align subject/agent + object/patient', 'flip-all': 'global: flip all branches' },
@@ -5520,8 +5520,8 @@
       els.mainAdverbSummary.title = isEnglish() ? 'Choose an adverb' : 'Kies een bijwoord';
     }
     if (els.mainViewSummary) {
-      els.mainViewSummary.textContent = 'Syntax / FT';
-      els.mainViewSummary.title = isEnglish() ? 'Choose Syntax or FT' : 'Kies Syntax of FT';
+      els.mainViewSummary.textContent = state.centerMode === 'ft' ? 'Functional' : 'Syntax';
+      els.mainViewSummary.title = isEnglish() ? 'Choose Syntax or Functional' : 'Kies Syntax of Functional';
     }
     if (els.mainInterfaceSummary) {
       els.mainInterfaceSummary.textContent = 'Interface';
@@ -5546,8 +5546,8 @@
     if (els.mainSouthHeading) els.mainSouthHeading.textContent = isEnglish() ? 'LOG order' : 'LOG-volgorde';
     if (els.mainSouthExplanation) {
       els.mainSouthExplanation.textContent = isEnglish()
-        ? 'Changes only the LOG projection; Syntax, FT and LEX remain unchanged.'
-        : 'Wijzigt alleen de LOG-projectie; Syntax, FT en LEX blijven gelijk.';
+        ? 'Changes only the LOG projection; Syntax, Functional and LEX remain unchanged.'
+        : 'Wijzigt alleen de LOG-projectie; Syntax, Functional en LEX blijven gelijk.';
     }
     fillCompactChoiceMenu(els.mainSentenceOptions, EXAMPLES, state.example.id, els.mainExampleSelect, id => {
       state.example = EXAMPLES.find(e => e.id === id) || EXAMPLES[0];
@@ -6227,6 +6227,11 @@
     inputs.forEach(input => {
       const label = input.closest?.('label');
       if (!label) return;
+      const title = label.querySelector?.('.config-toggle-title');
+      if (title) {
+        title.textContent = text;
+        return;
+      }
       const kept = [];
       label.childNodes.forEach(node => {
         if (node === input || (node.nodeType === 1 && node.contains?.(input))) kept.push(node);
@@ -6262,15 +6267,15 @@
     setPanelHeading(1, en ? 'LEX axis - utterance type' : 'LEX-as · uitingtype');
     setPanelHeading(2, en ? 'Relations / rules' : 'Relaties / regels');
     setText('.right-menu-width-callout .inline-help', en ? 'Set the width of the right menu directly. The grid uses only the space needed for the active view; the remaining space goes to this column.' : 'Kies hier direct de breedte van het rechter menu. Het grid gebruikt alleen de benodigde ruimte voor de actieve view; de rest gaat naar deze kolom.');
-    setText('.side-panel .panel-card:first-child > .sticky-note', en ? 'Tree settings. View selects Syntax or FT; Interface selects desktop or mobile. Grid visible is directly below under Display and is on by default.' : 'Boominstellingen. View kiest Syntax of FT; Interface kiest desktop of mobile. Raster zichtbaar staat direct hieronder bij Weergave en is standaard aan.');
+    setText('.side-panel .panel-card:first-child > .sticky-note', en ? 'Tree settings. View selects Syntax or Functional; Interface selects desktop or mobile. Grid visible is directly below under Display and is on by default.' : 'Boominstellingen. View kiest Syntax of Functional; Interface kiest desktop of mobile. Raster zichtbaar staat direct hieronder bij Weergave en is standaard aan.');
     setText('.display-config-field legend', en ? 'Display' : 'Weergave');
 
     setLabelSpan('rightMenuWidthSelectTop', en ? 'Right column visible' : 'Rechterkolom zichtbaar');
-    setLabelSpan('centralModeSelect', 'View', en ? 'Choose central view: Syntax or FT (functional structure).' : 'Kies de centrale view: Syntax of FT (functionele structuur).');
-    setLabelSpan('mainViewSelect', 'View', en ? 'Choose central view: Syntax or FT (functional structure).' : 'Kies de centrale view: Syntax of FT (functionele structuur).');
-    setLabelSpan('mobileViewSelect', 'View', en ? 'Choose central view: Syntax or FT (functional structure).' : 'Kies de centrale view: Syntax of FT (functionele structuur).');
+    setLabelSpan('centralModeSelect', 'View', en ? 'Choose the central view: Syntax or Functional.' : 'Kies de centrale view: Syntax of Functional.');
+    setLabelSpan('mainViewSelect', 'View', en ? 'Choose the central view: Syntax or Functional.' : 'Kies de centrale view: Syntax of Functional.');
+    setLabelSpan('mobileViewSelect', 'View', en ? 'Choose the central view: Syntax or Functional.' : 'Kies de centrale view: Syntax of Functional.');
     setLabelSpan('treeChoiceSelect', en ? 'Tree choice' : 'Boomkeuze');
-    setLabelSpan('functionalOrderSelect', en ? 'Layout order' : 'Layout order');
+    setLabelSpan('functionalOrderSelect', en ? 'Functional order' : 'Functional-volgorde');
     setLabelSpan('branchOrderSelect', en ? 'Branch order' : 'Takvolgorde');
     setLabelSpan('branchTopSelect', en ? 'Top S/CLAUSE' : 'Top S/CLAUSE');
     setLabelSpan('branchMiddleSelect', en ? 'VP / ARG-STRUCT' : 'VP / ARG-STRUCT');
@@ -6323,7 +6328,7 @@
     setInputLabelText('#showRelationsInput', en ? 'Branches' : 'Taklijnen');
     setInputLabelText('#showLabelsInput', en ? 'Tree labels visible' : 'Boomlabels zichtbaar');
     setText('#applyLexRuleButton', en ? 'Apply rule' : 'Pas regel toe');
-    setText('#relationHelp', en ? 'No separate relation editor. This list follows the active view: SYNT rules, FT roles, or LOG south-axis order.' : 'Geen losse editor-relaties. Deze lijst volgt de actieve view: SYNT-regels, FT-rollen of LOG-volgorde op de zuidas.');
+    setText('#relationHelp', en ? 'No separate relation editor. This list follows the active view: SYNT rules, Functional roles, or LOG south-axis order.' : 'Geen losse editor-relaties. Deze lijst volgt de actieve view: SYNT-regels, Functional-rollen of LOG-volgorde op de zuidas.');
 
     setText('.mobile-sheet-header .intro-kicker', en ? 'Mobile viewer' : 'Mobiele viewer');
     setText('#mobileCloseButton', en ? 'Close' : 'Sluit');
@@ -6888,7 +6893,7 @@
     });
     const setCenterModeFromViewSelect = value => {
       state.centerMode = (value === 'ft' || value === 'functional') ? 'ft' : 'syntax';
-      // Syntax en FT zijn twee centrale views in hetzelfde vaste viewport.
+      // Syntax en Functional zijn twee centrale views in hetzelfde vaste viewport.
       // Geen reset: ook deze wissel mag niet horizontaal of verticaal springen.
       render();
     };

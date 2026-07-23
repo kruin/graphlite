@@ -4,16 +4,16 @@ Actuele, leidende status van OpenGraph Lite Viewer.
 
 ## Versie
 
-- Releasekandidaat: `v2.0.0-rc.22`.
+- Releasekandidaat: `v2.0.0-rc.25`.
 - Functionele bronbasis: volledige v1.0.16-bronset, doorontwikkeld via de v2.0-releasekandidaten.
 - `VERSION.txt` is leidend voor app, cache, documentatie en zipnaam.
 
 ## Centrale views
 
 - `Syntax` is de eerste centrale view.
-- `FT` is de tweede centrale functionele view.
+- `Functional` is de tweede centrale functionele view.
 - `LOG` is uitsluitend de zuidas/projectie en nooit een centrale view.
-- Syntax ↔ FT behoudt viewport, schaal en handmatige pan/zoom.
+- Syntax ↔ Functional behoudt viewport, schaal en handmatige pan/zoom.
 
 ## Projecties en groei
 
@@ -39,8 +39,8 @@ Portrait wordt smaller en hoger; landscape breder en lager; desktop volgt de fei
 ## Topmenu
 
 ```text
-Rij 1: Zin · Bijwoord · Syntax/FT · Interface · Projecties · LOG-volgorde
-Rij 2: NL/EN · Help · Config
+Rij 1: Zin · Bijwoord · Syntax / Functional · Interface · Projecties · LOG-volgorde
+Rij 2: NL/EN · LEESMIJ/README · Config
 ```
 
 - Geen algemene knop `Menu`.
@@ -77,3 +77,27 @@ check_release.bat
 - Een echte telefoon blijft in landscape mobile, ook wanneer de CSS-breedte groter is dan 760 px.
 - Compact landscape gebruikt een platter/breder gridprofiel en compacte top-/Play-balken.
 - Oriëntatiewissel luistert ook naar `visualViewport.resize` en voert na stabilisatie opnieuw FIT uit.
+
+## TODO
+
+- Niet-binaire, meertakkige bomen.
+- JaN (Just another Notation): `S:np-VP`, niet `S:NP-VP`.
+- Werknotatie in onderzoek: `S+ np-VP`; eerst voor binaire bomen, later voor meertakkigheid.
+- Flip van het verbale cluster: `heeft gebeten` ↔ `gebeten heeft`.
+
+
+
+## Config-overzicht (rc.24)
+
+- Config opent met een compact sectieoverzicht; uitgebreide instellingen zijn standaard ingeklapt.
+- Secties: Basisweergave, JaN-notatie (TODO), Boom & layout, LEX & bijwoorden, Projecties, Voorbeelden & editors en Geavanceerd.
+- Terugnavigatie gebruikt steeds de vorm `Terug naar: Main` of `Terug naar: Config`.
+- De bestaande save-werkwijze blijft ongewijzigd: `Ja · bewaar config`, `Nee · herstel laatst bewaarde config`, en download van het lokale config-log.
+- JaN is de werknaam voor Just another Notation. TODO: `S:np-VP` (niet `S:NP-VP`); werkvorm `S+ np-VP`; binaire bomen eerst, meertakkigheid later.
+
+
+## Config-uitleg
+
+- Config opent als compact sectieoverzicht.
+- Binnen geopende secties staat bij instellingen waar mogelijk een korte uitleg: wat doet de optie en welke laag blijft ongewijzigd.
+- De bestaande `Ja · bewaar config` / `Nee · herstel laatst bewaarde config`-werkwijze blijft behouden.

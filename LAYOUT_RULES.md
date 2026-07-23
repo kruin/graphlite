@@ -6,7 +6,7 @@ Harde layoutregels voor OpenGraph Lite Viewer.
 
 ```text
 Syntax   eerste centrale view
-FT       tweede centrale view
+Functional       tweede centrale view
 LEX      westas
 SYNT     oostas
 LOG      zuidas; nooit centrale view
@@ -15,7 +15,7 @@ LOG      zuidas; nooit centrale view
 ## Viewportstabiliteit
 
 - Iedere projectiecombinatie gebruikt dezelfde viewBox.
-- Syntax ↔ FT behoudt dezelfde viewport en handmatige pan/zoom.
+- Syntax ↔ Functional behoudt dezelfde viewport en handmatige pan/zoom.
 - Menu’s, Config en rasterzichtbaarheid wijzigen de canvasmaat of fitbox niet.
 - Een oriëntatie- of vensterwijziging voert één volledige herfit uit.
 
@@ -28,7 +28,7 @@ De standaardwaarde `Boomruimte: Auto` volgt continu de werkelijke verhouding van
 - Desktop: dezelfde continue berekening op basis van de actuele vensterverhouding; geen vaste desktoppreset.
 - De viewBox krijgt exact dezelfde verhouding als het beschikbare canvas.
 - De rastergrens volgt dezelfde verhouding en blijft gekoppeld aan centrale boom, projectielijnen en assen.
-- Syntax, FT en alle projectiecombinaties gebruiken binnen één viewport exact hetzelfde responsieve profiel.
+- Syntax, Functional en alle projectiecombinaties gebruiken binnen één viewport exact hetzelfde responsieve profiel.
 
 Doel: de graph plus gekozen projecties gebruikt zoveel mogelijk breedte én hoogte, zonder clipping, vervorming of projectieverspringing.
 
@@ -43,7 +43,7 @@ Doel: de graph plus gekozen projecties gebruikt zoveel mogelijk breedte én hoog
 ## Topmenu
 
 ```text
-Rij 1: Zin · Bijwoord · Syntax/FT · Interface · Projecties · LOG-volgorde
+Rij 1: Zin · Bijwoord · Syntax / Functional · Interface · Projecties · LOG-volgorde
 Rij 2: NL/EN · LEESMIJ/README · Config
 ```
 
@@ -77,5 +77,5 @@ Rij 2: NL/EN · LEESMIJ/README · Config
 
 - Mobile-detectie gebruikt de korte fysieke viewportzijde plus coarse/touch-pointer; een liggende telefoon mag niet door een width-only breakpoint als desktop worden behandeld.
 - In compact landscape blijven beide topmenurijen zichtbaar, maar zij en de Play-balk gebruiken een compact hoogteprofiel.
-- Het gridprofiel wordt platter en breder zodat LEX + centrale graph + SYNT/FT maximaal in het landscape-canvas passen.
+- Het gridprofiel wordt platter en breder zodat LEX + centrale graph + SYNT/Functional maximaal in het landscape-canvas passen.
 - Na oriëntatiewissel volgt opnieuw fit nadat `visualViewport` is gestabiliseerd.

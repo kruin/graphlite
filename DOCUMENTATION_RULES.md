@@ -6,18 +6,18 @@ Regels voor actuele projectdocumentatie en helpteksten.
 
 ```text
 Syntax-view     eerste centrale view
-FT-view         tweede centrale functionele view
+Functional-view         tweede centrale functionele view
 LEX-projectie   westas
 SYNT-projectie  oostas
 LOG-projectie   zuidas
 ```
 
-Gebruik nooit een gecombineerde aanduiding voor LOG en FT.
+Gebruik nooit een gecombineerde aanduiding voor LOG en Functional.
 
 ## Actuele interface
 
 ```text
-Zin · Bijwoord · Syntax/FT · Interface · Projecties · LOG-volgorde · NL/EN · LEESMIJ/README · Config
+Zin · Bijwoord · Syntax / Functional · Interface · Projecties · LOG-volgorde · NL/EN · LEESMIJ/README · Config
 ```
 
 - Geen algemene Menu-knop of geneste submenu’s.
@@ -51,3 +51,8 @@ Beschrijf Play/Groei standaard als gelijktijdige bron- en projectiegroei: iedere
 - Terugnavigatie gebruikt steeds de vorm `Terug naar: Main` of `Terug naar: Config`.
 - De bestaande save-werkwijze blijft ongewijzigd: `Ja · bewaar config`, `Nee · herstel laatst bewaarde config`, en download van het lokale config-log.
 - JaN is de werknaam voor Just another Notation. TODO: `S:np-VP` (niet `S:NP-VP`); werkvorm `S+ np-VP`; binaire bomen eerst, meertakkigheid later.
+
+
+## Config-toelichtingen
+
+Elke actieve instelling krijgt waar mogelijk direct onder het item een korte uitleg van het effect. De uitleg benoemt ook wat niet verandert, bijvoorbeeld dat FIT alleen het zichtvenster wijzigt of dat LEX-Wissels de centrale boom niet muteren.

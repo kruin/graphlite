@@ -5293,7 +5293,7 @@ body.viewport-mobile-landscape-test.main-screen-active #graphSvg {
   max-height: 100% !important;
 }
 
-/* v2.0.0-rc.22: View-menu bevat Syntax als eerste view en FT als tweede view; LOG blijft de zuidas. */
+/* v2.0.0-rc.22: View-menu bevat Syntax als eerste view en Functional als tweede view; LOG blijft de zuidas. */
 .main-view-field {
   display: flex;
   align-items: center;
@@ -6994,7 +6994,7 @@ body.actual-compact-landscape.main-screen-active .main-play-growth-label {
 }
 
 
-/* v2.0.0-rc.24: Config redesign. Initial screen is a compact section index;
+/* v2.0.0-rc.25: Config redesign. Initial screen is a compact section index;
    existing controls and save IDs remain intact inside native details sections. */
 body.config-screen-active .projection-sticky-bar,
 body.config-screen-active .status-panel,
@@ -7124,4 +7124,81 @@ body.config-screen-active .config-topbar {
 }
 @media (max-width: 440px) {
   .config-dashboard { grid-template-columns: 1fr; }
+}
+
+
+/* v2.0.0-rc.25: zichtbare uitleg per Config-item; secties blijven ingeklapt op het beginscherm. */
+body.config-screen-active .config-section-intro {
+  margin: 0 0 .15rem;
+  padding: .45rem .55rem;
+  border-left: 2px solid color-mix(in srgb, var(--accent), transparent 30%);
+  background: color-mix(in srgb, var(--panel), var(--accent) 4%);
+  border-radius: .35rem;
+}
+body.config-screen-active .config-section-intro-copy {
+  display: block;
+  color: var(--muted);
+  font-size: .84rem;
+  line-height: 1.4;
+  font-weight: 500;
+}
+body.config-screen-active .config-section-body .field {
+  align-items: start;
+}
+body.config-screen-active .config-field-name {
+  padding-top: .48rem;
+  white-space: normal !important;
+}
+body.config-screen-active .config-item-help {
+  grid-column: 2;
+  display: block;
+  margin-top: -.08rem;
+  color: var(--muted);
+  font-size: .76rem;
+  line-height: 1.36;
+  font-weight: 500;
+  white-space: normal !important;
+}
+body.config-screen-active .display-check-grid label,
+body.config-screen-active .top-menu-choice-grid label,
+body.config-screen-active .lex-extension-field label {
+  align-items: flex-start;
+}
+body.config-screen-active .config-check-copy {
+  display: grid;
+  gap: .12rem;
+  min-width: 0;
+}
+body.config-screen-active .config-toggle-title {
+  color: var(--text);
+  font-weight: 700;
+}
+body.config-screen-active .config-check-copy .config-item-help,
+body.config-screen-active .top-menu-choice-grid .config-item-help,
+body.config-screen-active .lex-extension-field .config-item-help {
+  grid-column: auto;
+  margin: 0;
+}
+body.config-screen-active .config-action-help-list {
+  margin-top: .55rem;
+  padding: .58rem .68rem;
+  border: .5px solid var(--line);
+  border-radius: .55rem;
+  background: color-mix(in srgb, var(--panel), var(--bg) 8%);
+}
+body.config-screen-active .config-action-help-list h3 {
+  margin: 0 0 .32rem;
+  font-size: .86rem;
+}
+body.config-screen-active .config-action-help-list ul {
+  margin: 0;
+  padding-left: 1.15rem;
+  color: var(--muted);
+  font-size: .78rem;
+  line-height: 1.42;
+}
+body.config-screen-active .config-action-help-list li + li { margin-top: .18rem; }
+@media (max-width: 760px) {
+  body.config-screen-active .config-item-help { grid-column: 1; }
+  body.config-screen-active .config-field-name { padding-top: 0; }
 }
