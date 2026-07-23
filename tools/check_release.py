@@ -18,7 +18,25 @@ if 'id="mainActionsMenu"' in index or '>Menu</summary>' in index:
     errors.append('algemene Menu-knop staat nog in Main')
 if '>NL/EN</button>' not in index:
     errors.append('topmenu mist zichtbare optie NL/EN')
-top_menu=re.search(r'<nav class="main-top-menu".*?</nav>',index,re.S)
+
+if '>LEESMIJ</button>' not in index:
+    errors.append('Nederlandse topmenu-optie LEESMIJ ontbreekt')
+if "en ? 'README' : 'LEESMIJ'" not in js:
+    errors.append('taalwissel README/LEESMIJ ontbreekt')
+if 'data-help-topic-button="todo"' not in index or 'data-help-topic="todo"' not in index:
+    errors.append('TODO ontbreekt in ingebouwde LEESMIJ/README')
+
+for required in ['id="config-overview"','id="config-basic"','id="config-jan"','id="config-tree"','id="config-lex"','id="config-projections"','id="config-examples"','id="config-advanced"','data-config-target="config-basic"','← Terug naar: Main']:
+    if required not in index: errors.append(f'Config redesign mist {required}')
+if 'JaN (Just another Notation)' not in index or 'S:np-VP' not in index or 'S:NP-VP' not in index:
+    errors.append('JaN TODO/notatie ontbreekt of is onvolledig')
+if '>JaN<' not in index and 'OpenGraph · JaN · Open Notation' not in index:
+    errors.append('werknaam JaN ontbreekt in zichtbare UI')
+readme=(ROOT/'README.md').read_text(encoding='utf-8',errors='ignore')
+for todo_item in ['Niet-binaire, meertakkige bomen','S:np-VP','S+ np-VP','heeft gebeten']:
+    if todo_item not in readme:
+        errors.append(f'README TODO mist {todo_item}')
+top_menu=re.search(r'<nav[^>]*class=["\'][^"\']*\bmain-top-menu\b[^"\']*["\'][^>]*>.*?</nav>',index,re.S)
 if not top_menu:
     errors.append('zichtbare topmenubalk ontbreekt')
 else:
@@ -42,7 +60,7 @@ for f in ['stroke-width: .72 !important','stroke-width: 1.42 !important','stroke
     if f not in css: errors.append(f'lijnhiërarchie mist {f}')
 if 'class="main-projection-field"' in index: errors.append('oude zichtbare projectieselect staat nog in Main')
 
-if 'id="growthProjectionImmediateInput" type="checkbox" checked' not in index:
+if not re.search(r'<input[^>]*id=["\']growthProjectionImmediateInput["\'][^>]*checked|<input[^>]*checked[^>]*id=["\']growthProjectionImmediateInput["\']', index):
     errors.append('directe projectiegroei is niet standaard aangevinkt')
 if "return ['axes', 'source', 'lex', 'synt', 'log'].includes(projection);" not in js:
     errors.append('groei werkt niet in alle projectiestanden')

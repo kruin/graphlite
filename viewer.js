@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'v2.0.0-rc.22';
+  const VERSION = 'v2.0.0-rc.24';
   const BASE_CELL = 74;
   const ROOT_SIDE_GAP = 1;
   const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -2471,7 +2471,7 @@
   }
 
   function isActualCompactScreen() {
-    // rc.22: een echte telefoon blijft ook in landscape compact. Een pure
+    // rc.23: een echte telefoon blijft ook in landscape compact. Een pure
     // width-drempel faalde bij 844x390, omdat 844 > 760. Gebruik daarom de
     // korte zijde in combinatie met touch/coarse-pointer. Een laag desktop-
     // venster wordt hierdoor niet ten onrechte als telefoon behandeld.
@@ -2741,7 +2741,7 @@
     syncPortraitStageMode();
     if (!els.canvasWrap) return;
     syncPortraitMenuSpace();
-    // v2.0.0-rc.22: alle interface-standen krijgen de maximaal beschikbare
+    // v2.0.0-rc.24: alle interface-standen krijgen de maximaal beschikbare
     // canvasruimte. De SVG-viewBox bepaalt vervolgens de grootste schaal zonder
     // clipping. Een brede boom in portrait wordt dus niet ook nog eens door een
     // kunstmatig laag canvas verkleind.
@@ -2924,7 +2924,7 @@
 
   function setProjection(projection) {
     const next = projection || 'axes';
-    // v2.0.0-rc.22: alle named-projection views delen exact dezelfde
+    // v2.0.0-rc.24: alle named-projection views delen exact dezelfde
     // viewport. Een projectiewissel mag daarom een handmatige pan/zoom niet
     // wissen en mag de centrale boom horizontaal noch verticaal verplaatsen.
     if (growthSupportedProjection(state.projection) && state.growthStep > 0) {
@@ -4428,7 +4428,7 @@
   }
 
   function projectionStableFrameBox() {
-    // v2.0.0-rc.22: inhoudsgetrouwe, maar nog steeds stabiele unie van Syntax
+    // v2.0.0-rc.24: inhoudsgetrouwe, maar nog steeds stabiele unie van Syntax
     // en FT. Alleen werkelijk gebruikte boxbreedtes en lijnuiteinden tellen mee.
     // Oude fictieve reserves links van LOG en rechts van SYNT maakten alle vier
     // interface-standen onnodig klein, vooral mobile portrait.
@@ -4471,7 +4471,7 @@
   }
 
   function stableProjectionViewBox() {
-    // v2.0.0-rc.22: maximale full-view voor Automatisch, Desktop, Mobiel
+    // v2.0.0-rc.24: maximale full-view voor Automatisch, Desktop, Mobiel
     // staand en Mobiel liggend. De veiligheidsrand is alleen nog voldoende
     // voor dunne strokes en labels; er wordt geen UI-ruimte in SVG gereserveerd.
     const frame = projectionStableFrameBox();
@@ -4690,7 +4690,7 @@
 
   function stableGrowthViewBox() {
     if (!growthActive()) return null;
-    // v2.0.0-rc.22: Groei gebruikt hetzelfde frame als de gewone projectie-
+    // v2.0.0-rc.24: Groei gebruikt hetzelfde frame als de gewone projectie-
     // views. Voorheen hadden Alle/Bron/LOG eigen hard-coded viewBoxes, terwijl
     // LEX/SYNT auto-fit gebruikten; dat veroorzaakte de zichtbare sprong.
     return stableProjectionViewBox();
@@ -4727,7 +4727,7 @@
   }
 
   function clearViewportGestureState() {
-    // v2.0.0-rc.22: bij wissel tussen landscape/portrait mogen oude touch-pointers
+    // v2.0.0-rc.24: bij wissel tussen landscape/portrait mogen oude touch-pointers
     // en pinch-state niet blijven hangen. Anders lijkt portrait na zoom in
     // landscape bevroren.
     state.viewDrag = null;
@@ -4989,7 +4989,7 @@
         controlsLeft = state.projectionBoxManual.left;
         controlsTop = state.projectionBoxManual.top;
       } else {
-        // v2.0.0-rc.22: Projecties-box heeft een stabiele schermpositie.
+        // v2.0.0-rc.24: Projecties-box heeft een stabiele schermpositie.
         // Niet meer ankeren aan een wisselende SYNT-as; alleen handmatig slepen verplaatst de box.
         controlsLeft = maxLeft;
         controlsTop = minTop;
@@ -5181,7 +5181,7 @@
 
   function computeAutoFitBox() {
     if (!els.svg) return fallbackViewBox();
-    // v2.0.0-rc.22: alle projectie-views gebruiken één geometrisch viewport,
+    // v2.0.0-rc.24: alle projectie-views gebruiken één geometrisch viewport,
     // onafhankelijk van welke overlay zichtbaar is. Dit sluit auto-fit-
     // verschillen uit en voorkomt elke horizontale of verticale verspringing.
     if (isMainScreenActive() && ['axes', 'source', 'lex', 'synt', 'log'].includes(state.projection)) {
@@ -6256,8 +6256,8 @@
     setText('.main-view-field span', 'View');
     setText('.main-projection-field span', en ? 'Proj.' : 'Proj.');
     setText('.mobile-adverb-field span', en ? 'Adverbs' : 'Bijwoorden');
-    setText('.config-topbar h2', en ? 'All settings' : 'Alle instellingen');
-    setText('.config-topbar p', en ? 'Tree, Interface and Display are at the top. Grid visible is on by default. Adverb slots, rules, export and documentation follow below.' : 'Boom, Interface en Weergave staan bovenaan. Raster zichtbaar is standaard aan. Bijwoordslots, plaatsingsregels, export en documentatie staan verderop.');
+    setText('.config-topbar h2', en ? 'Configuration overview' : 'Config-overzicht');
+    setText('.config-topbar p', en ? 'Choose a section. Save still uses Yes · save config / No · restore last saved config.' : 'Kies een sectie. Opslaan blijft Ja · bewaar config / Nee · herstel laatst bewaarde config.');
     setPanelHeading(0, en ? 'Tree' : 'Boom');
     setPanelHeading(1, en ? 'LEX axis - utterance type' : 'LEX-as · uitingtype');
     setPanelHeading(2, en ? 'Relations / rules' : 'Relaties / regels');
@@ -6348,7 +6348,7 @@
     const details = document.querySelectorAll('.text-panel details');
     if (details[0]) details[0].querySelectorAll('p').forEach((p, i) => {
       if (i === 0) p.textContent = en ? 'The viewer shows Open Graph Notation with grid rule, projection mechanism, views and named projections. You can choose sample sentences, use Play, inspect projections, pan/zoom the canvas, load/download JSON and open documentation.' : 'De viewer toont Open Graph Notation met gridregel, projectiemechanisme, views en named projections. Je kunt voorbeeldzinnen kiezen, Play gebruiken, projecties bekijken, canvas pannen/zoomen, JSON laden/downloaden en documentatie openen.';
-      if (i === 1) p.textContent = en ? 'Not carried over from the Java app: classical graph algorithms such as planarity, Dijkstra, MST, biconnectivity and canonical ordering. They are outside this first JAN language-tree layer.' : 'Niet overgenomen uit de Java-app: klassieke graph-algoritmen zoals planarity, Dijkstra, MST, biconnectivity en canonical ordering. Die horen niet bij deze eerste JAN-taalboomlaag.';
+      if (i === 1) p.textContent = en ? 'Not carried over from the Java app: classical graph algorithms such as planarity, Dijkstra, MST, biconnectivity and canonical ordering. They are outside this first JaN language-tree layer.' : 'Niet overgenomen uit de Java-app: klassieke graph-algoritmen zoals planarity, Dijkstra, MST, biconnectivity en canonical ordering. Die horen niet bij deze eerste JaN-taalboomlaag.';
     });
   }
 
@@ -6361,7 +6361,7 @@
     document.querySelectorAll('[data-language-toggle]').forEach(button => {
       button.textContent = button.closest('.main-topbar') ? 'NL/EN' : (en ? 'English' : 'Nederlands');
       button.setAttribute('aria-pressed', String(en));
-      button.title = en ? 'Click to switch UI/help back to Dutch.' : 'Klik om UI/help naar Engels te wisselen.';
+      button.title = en ? 'Click to switch the UI and README back to Dutch.' : 'Klik om de UI en LEESMIJ naar Engels te wisselen.';
       button.setAttribute('aria-label', button.title);
     });
 
@@ -6369,19 +6369,19 @@
     setText('label[for="viewportModeSelect"] span', 'Interface');
     setTitle('#viewportModeSelect', en ? 'Choose automatic, desktop, mobile portrait or mobile landscape interface.' : 'Kies automatisch, desktop, mobiel staand of mobiel liggend.');
     setText('.mobile-sentence-field span', en ? 'Sentences' : 'Zinnen');
-    setTitle('#openHelpButton, #openHelpFromConfigButton', en ? 'Open the Help screen.' : 'Open het help-scherm.');
+    setTitle('#openHelpButton, #openHelpFromConfigButton', en ? 'Open README.' : 'Open LEESMIJ.');
     setTitle('#openConfigButton', en ? 'Open the configuration screen with projection, LEX, layout and documentation settings.' : 'Open het configuratiescherm met alle projectie-, LEX-, layout- en documentatie-instellingen.');
-    setTitle('#closeConfigButton, #closeHelpButton', en ? 'Back to main view.' : 'Terug naar hoofdbeeld.');
-    setText('#closeConfigButton, #closeHelpButton', en ? '← Back to main' : '← Terug naar main');
+    setTitle('#closeConfigButton, #closeHelpButton', en ? 'Back to: Main.' : 'Terug naar: Main.');
+    setText('#closeConfigButton, #closeHelpButton', en ? '← Back to: Main' : '← Terug naar: Main');
     setText('#openConfigButton, #openConfigFromHelpButton', 'Config');
-    setText('#openHelpButton, #openHelpFromConfigButton', 'Help');
+    setText('#openHelpButton, #openHelpFromConfigButton', en ? 'README' : 'LEESMIJ');
 
     setText('.config-topbar .intro-kicker', 'Config');
-    setText('.config-topbar h2', en ? 'All settings' : 'Alle instellingen');
-    setText('.config-topbar p', en ? 'Tree, Interface and Display are at the top. Grid visible is on by default. Adverb slots, rules, export and documentation follow below. The Back to main bar stays fixed while this page scrolls.' : 'Boom, Interface en Weergave staan bovenaan. Raster zichtbaar is standaard aan. Bijwoordslots, plaatsingsregels, export en documentatie staan verderop. De Terug-naar-main-balk blijft vast staan bij scrollen.');
-    setText('.help-topbar .intro-kicker', 'Help');
-    setText('.help-topbar h2', en ? 'Help' : 'Uitleg');
-    setText('.help-topbar p', en ? 'Items on the left, text on the right. Each topic has a reserved carousel-image area below the text.' : 'Links staan de items; rechts staat de tekst. Onder elk item is ruimte voor een carousel-image.');
+    setText('.config-topbar h2', en ? 'Configuration overview' : 'Config-overzicht');
+    setText('.config-topbar p', en ? 'Choose a section. Save still uses Yes · save config / No · restore last saved config.' : 'Kies een sectie. Opslaan blijft Ja · bewaar config / Nee · herstel laatst bewaarde config.');
+    setText('.help-topbar .intro-kicker', en ? 'README' : 'LEESMIJ');
+    setText('.help-topbar h2', en ? 'Project information' : 'Projectinformatie');
+    setText('.help-topbar p', en ? 'README topics are listed on the left; the selected text is shown on the right.' : 'LEESMIJ-onderwerpen staan links; rechts staat de geselecteerde tekst.');
 
     setText('[data-projection="axes"], [data-main-projection="axes"]', en ? 'All' : 'Alle');
     document.querySelectorAll('[data-source-axis-action="all"]').forEach(node => { node.textContent = en ? 'All' : 'Alle'; });
@@ -7129,6 +7129,20 @@
   }
 
 
+  function setupConfigSectionNavigation() {
+    document.querySelectorAll('[data-config-target]').forEach(button => {
+      button.addEventListener('click', () => {
+        const target = document.getElementById(button.dataset.configTarget || '');
+        if (!target) return;
+        if (target.tagName === 'DETAILS') target.open = true;
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        const focusable = target.querySelector('summary, button, select, input, a');
+        window.setTimeout(() => focusable?.focus?.({ preventScroll: true }), 250);
+      });
+    });
+  }
+
+
   function ensureHelpTopicCarouselSlots() {
     const panels = Array.from(document.querySelectorAll('.help-topic-panel'));
     panels.forEach(panel => {
@@ -7177,6 +7191,7 @@
     syncPortraitStageMode();
     ensureHelpTopicCarouselSlots();
     registerEvents();
+    setupConfigSectionNavigation();
     registerCanvasPan();
     registerPaneSplitter();
     await loadStructureConfig();
@@ -7186,6 +7201,8 @@
     syncConfigSaveStatus();
     render();
     applyLanguage();
+    const requestedScreen = new URLSearchParams(window.location.search).get('screen');
+    if (requestedScreen === 'config' || requestedScreen === 'help') setAppScreen(requestedScreen);
     requestAnimationFrame(() => requestAnimationFrame(stabilizeInitialTreeView));
     window.addEventListener('load', () => {
       requestAnimationFrame(stabilizeInitialTreeView);

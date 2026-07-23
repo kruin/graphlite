@@ -44,7 +44,7 @@ Doel: de graph plus gekozen projecties gebruikt zoveel mogelijk breedte én hoog
 
 ```text
 Rij 1: Zin · Bijwoord · Syntax/FT · Interface · Projecties · LOG-volgorde
-Rij 2: NL/EN · Help · Config
+Rij 2: NL/EN · LEESMIJ/README · Config
 ```
 
 - Geen algemene Menu-knop.

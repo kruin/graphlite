@@ -21,9 +21,9 @@ The main view stays minimal:
 
 The right-hand in-window control strip contains the projection choices: All, Source, LEX, SYN and LOG. The SOV/SVO/OVS/OSV-!/VSO-!/VOS-! order button is visible only in the All view.
 
-## JAN Open Notation
+## JaN Open Notation
 
-JAN is the open notation layer used here for language trees. The central tree contains freely placed nodes and branches. Word order and other readings are projected onto separate axes rather than forced into one traditional downward tree.
+JaN is the open notation layer used here for language trees. The central tree contains freely placed nodes and branches. Word order and other readings are projected onto separate axes rather than forced into one traditional downward tree.
 
 Current axes:
 

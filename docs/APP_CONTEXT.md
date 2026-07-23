@@ -8,7 +8,7 @@ De leidende actuele indeling is: `Syntax → FT` in het View-menu en `LEX / SYNT
 
 ## v4430 · bronpositie blijft zichtbaar op de LEX-as
 
-OpenGraph/JAN behandelt de LEX-as als projectieruimte met lokale plaatsingsregels. De boom levert bronposities; de LEX-as voert Wissels uit met vrije slots. Daarom blijven projecties horizontaal en verschuift een bronitem niet door de projectie zelf.
+OpenGraph/JaN behandelt de LEX-as als projectieruimte met lokale plaatsingsregels. De boom levert bronposities; de LEX-as voert Wissels uit met vrije slots. Daarom blijven projecties horizontaal en verschuift een bronitem niet door de projectie zelf.
 
 
 ---
@@ -23,7 +23,7 @@ De viewer noteert Nederlandse V2 niet als wijziging van de centrale boom, maar a
 
 ## Doel
 
-OpenGraph Lite Viewer is een lokale demo van JAN / Open Notation voor taalbomen.
+OpenGraph Lite Viewer is een lokale demo van JaN / Open Notation voor taalbomen.
 De viewer toont hoe een taalstructuur eerst als OPN-bron wordt opgebouwd en daarna naar LEX wordt geprojecteerd.
 
 Hoofdzin van de app:
@@ -73,7 +73,7 @@ De viewer kan de vooraf berekende centrale boom stapsgewijs tonen. Dit is een pr
 layout volledig berekenen → growthStep per element → gedeeltelijk renderen
 ```
 
-Daarmee kan JAN/Open Notation didactisch worden getoond als een groeiende vrije boom, zonder dat knopen tijdens het afspelen verspringen.
+Daarmee kan JaN/Open Notation didactisch worden getoond als een groeiende vrije boom, zonder dat knopen tijdens het afspelen verspringen.
 
 
 ## Lexicon-editor vanaf v4430

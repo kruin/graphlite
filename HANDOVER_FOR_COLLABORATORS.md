@@ -1,6 +1,6 @@
 # HANDOVER_FOR_COLLABORATORS
 
-Overdracht voor OpenGraph Lite Viewer `v2.0.0-rc.22`.
+Overdracht voor OpenGraph Lite Viewer `v2.0.0-rc.24`.
 
 ## Niet wijzigen zonder expliciete opdracht
 
@@ -9,7 +9,7 @@ Centrale views:  Syntax → FT
 Assen:            LEX west, SYNT oost, LOG zuid
 Default assen:    LEX + SYNT + LOG zichtbaar
 Topmenu rij 1:    Zin, Bijwoord, Syntax/FT, Interface, Projecties, LOG-volgorde
-Topmenu rij 2:    NL/EN, Help, Config
+Topmenu rij 2:    NL/EN, LEESMIJ/README, Config
 Raster:           standaard aan
 ```
 
@@ -51,3 +51,12 @@ Op compacte fysieke schermen mag `state.lastGridBox` niet via de canvas-aspectra
 - `isActualCompactScreen()` combineert viewportmaat met touch/coarse-pointer.
 - Runtimeklassen `actual-compact-landscape` en `actual-compact-portrait` sturen uitsluitend fysieke schermoptimalisatie.
 - Draaien moet de profielcache wissen en een vertraagde tweede fit uitvoeren.
+
+
+## Config-overzicht (rc.24)
+
+- Config opent met een compact sectieoverzicht; uitgebreide instellingen zijn standaard ingeklapt.
+- Secties: Basisweergave, JaN-notatie (TODO), Boom & layout, LEX & bijwoorden, Projecties, Voorbeelden & editors en Geavanceerd.
+- Terugnavigatie gebruikt steeds de vorm `Terug naar: Main` of `Terug naar: Config`.
+- De bestaande save-werkwijze blijft ongewijzigd: `Ja · bewaar config`, `Nee · herstel laatst bewaarde config`, en download van het lokale config-log.
+- JaN is de werknaam voor Just another Notation. TODO: `S:np-VP` (niet `S:NP-VP`); werkvorm `S+ np-VP`; binaire bomen eerst, meertakkigheid later.

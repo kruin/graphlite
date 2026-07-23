@@ -6992,3 +6992,136 @@ body.actual-compact-landscape.main-screen-active .main-play-growth-label {
   flex-basis: 4.85rem !important;
   font-size: .70rem !important;
 }
+
+
+/* v2.0.0-rc.24: Config redesign. Initial screen is a compact section index;
+   existing controls and save IDs remain intact inside native details sections. */
+body.config-screen-active .projection-sticky-bar,
+body.config-screen-active .status-panel,
+body.config-screen-active .intro-panel,
+body.config-screen-active .text-panel {
+  display: none !important;
+}
+body.config-screen-active .workspace {
+  display: block !important;
+}
+body.config-screen-active .side-panel {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  gap: .55rem !important;
+  max-width: 72rem !important;
+  margin: 0 auto !important;
+}
+.config-overview-card {
+  display: block !important;
+  padding: .78rem !important;
+}
+.config-dashboard {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+  gap: .5rem;
+  margin: .6rem 0 .8rem;
+}
+.config-dashboard-card {
+  display: grid;
+  gap: .2rem;
+  align-content: start;
+  min-height: 5.2rem;
+  padding: .65rem .72rem;
+  text-align: left;
+  border: .55px solid var(--line);
+  border-radius: .72rem;
+  background: color-mix(in srgb, var(--panel), var(--bg) 7%);
+  color: var(--text);
+}
+.config-dashboard-card:hover,
+.config-dashboard-card:focus-visible {
+  border-color: color-mix(in srgb, var(--accent), var(--line) 45%);
+  background: color-mix(in srgb, var(--panel), var(--accent) 7%);
+}
+.config-dashboard-card strong { font-size: .94rem; }
+.config-dashboard-card > span { color: var(--muted); font-size: .82rem; line-height: 1.35; }
+.config-section {
+  border: .55px solid var(--line);
+  border-radius: .72rem;
+  background: color-mix(in srgb, var(--panel), var(--bg) 8%);
+  overflow: clip;
+}
+.config-section > summary {
+  cursor: pointer;
+  padding: .62rem .75rem;
+  font-weight: 900;
+  list-style-position: inside;
+  background: color-mix(in srgb, var(--panel), var(--bg) 4%);
+}
+.config-section[open] > summary {
+  border-bottom: .55px solid var(--line);
+  background: color-mix(in srgb, var(--panel), var(--accent) 5%);
+}
+.config-section-body,
+.config-advanced-stack {
+  display: grid !important;
+  gap: .58rem;
+  padding: .7rem !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+.config-advanced-stack > .panel-card {
+  display: block !important;
+  margin: 0 !important;
+}
+.config-files-section .toolbar {
+  display: flex !important;
+  order: initial !important;
+  margin: 0 !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+body.config-screen-active .config-save-field {
+  margin-top: .65rem;
+  border-color: color-mix(in srgb, var(--accent), var(--line) 55%);
+}
+body.config-screen-active .config-topbar {
+  grid-template-columns: auto auto auto auto minmax(10rem, 1fr) !important;
+}
+.page-return-nav {
+  position: sticky;
+  top: 0;
+  z-index: 999;
+  display: flex;
+  flex-wrap: wrap;
+  gap: .4rem;
+  padding: .45rem .6rem;
+  border-bottom: .55px solid #cbd5e1;
+  background: rgba(248,250,252,.96);
+  backdrop-filter: blur(10px);
+}
+.page-return-nav a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2rem;
+  padding: .28rem .55rem;
+  border: .55px solid #cbd5e1;
+  border-radius: .55rem;
+  color: #0f172a;
+  background: #fff;
+  font: 700 .85rem/1.2 system-ui, sans-serif;
+  text-decoration: none;
+}
+@media (max-width: 760px) {
+  body.config-screen-active .config-topbar {
+    grid-template-columns: 1fr 1fr !important;
+  }
+  body.config-screen-active .config-topbar .config-back-button {
+    grid-column: 1 / -1;
+    justify-self: stretch;
+  }
+  .config-dashboard { grid-template-columns: 1fr 1fr; }
+  .config-dashboard-card { min-height: 4.7rem; padding: .55rem; }
+}
+@media (max-width: 440px) {
+  .config-dashboard { grid-template-columns: 1fr; }
+}

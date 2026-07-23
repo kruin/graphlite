@@ -1,6 +1,6 @@
-# OpenGraph Lite Viewer v2.0.0-rc.22
+# OpenGraph Lite Viewer v2.0.0-rc.24
 
-Demo/viewer voor JAN / OPN / OpenGraph-taalstructuren.
+Demo/viewer voor JaN / OPN / OpenGraph-taalstructuren.
 
 ## Start
 
@@ -17,7 +17,7 @@ start-local-viewer.bat
 GitHub Pages:
 
 ```text
-https://kruin.github.io/graphlite/index.html?ogv=v2.0.0-rc.22
+https://kruin.github.io/graphlite/index.html?ogv=v2.0.0-rc.24
 ```
 
 ## Centrale views en projecties
@@ -34,7 +34,7 @@ LOG is geen centrale view. LOG-volgorde wijzigt uitsluitend de zuidprojectie.
 
 ```text
 Rij 1: Zin · Bijwoord · Syntax/FT · Interface · Projecties · LOG-volgorde
-Rij 2: NL/EN · Help · Config
+Rij 2: NL/EN · LEESMIJ/README · Config
 ```
 
 ## Responsieve maximale view
@@ -79,3 +79,10 @@ check_release.bat
 ## Raster op mobile
 
 Op compacte schermen eindigt het raster bij de centrale boom en de uiteinden van de zichtbare projectielijnen. Handmatige interfacekeuzes veranderen deze inhoudsgrens niet.
+## TODO
+
+- Niet-binaire, meertakkige bomen.
+- JaN (Just another Notation): `S:np-VP`, niet `S:NP-VP`.
+- Werknotatie in onderzoek: `S+ np-VP`; eerst voor binaire bomen, later voor meertakkigheid.
+- Flip van het verbale cluster: `heeft gebeten` ↔ `gebeten heeft`.
+

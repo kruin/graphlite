@@ -17,7 +17,7 @@ Gebruik nooit een gecombineerde aanduiding voor LOG en FT.
 ## Actuele interface
 
 ```text
-Zin · Bijwoord · Syntax/FT · Interface · Projecties · LOG-volgorde · NL/EN · Help · Config
+Zin · Bijwoord · Syntax/FT · Interface · Projecties · LOG-volgorde · NL/EN · LEESMIJ/README · Config
 ```
 
 - Geen algemene Menu-knop of geneste submenu’s.
@@ -42,3 +42,12 @@ Beschrijf het topmenu vanaf rc.17 als twee vaste rijen. Noem nooit vrije wrappin
 ## Groei uitleggen
 
 Beschrijf Play/Groei standaard als gelijktijdige bron- en projectiegroei: iedere nieuw zichtbare centrale knoop toont meteen haar geldige gekozen projectie. Vermeld apart dat LEX-Wissels pas na de structurele groei volgen.
+
+
+## Config-overzicht (rc.24)
+
+- Config opent met een compact sectieoverzicht; uitgebreide instellingen zijn standaard ingeklapt.
+- Secties: Basisweergave, JaN-notatie (TODO), Boom & layout, LEX & bijwoorden, Projecties, Voorbeelden & editors en Geavanceerd.
+- Terugnavigatie gebruikt steeds de vorm `Terug naar: Main` of `Terug naar: Config`.
+- De bestaande save-werkwijze blijft ongewijzigd: `Ja · bewaar config`, `Nee · herstel laatst bewaarde config`, en download van het lokale config-log.
+- JaN is de werknaam voor Just another Notation. TODO: `S:np-VP` (niet `S:NP-VP`); werkvorm `S+ np-VP`; binaire bomen eerst, meertakkigheid later.

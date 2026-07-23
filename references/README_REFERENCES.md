@@ -1,6 +1,6 @@
 # REFERENCES
 
-Achtergrondbronnen bij OpenGraph / GraphLite / JAN / OPN.
+Achtergrondbronnen bij OpenGraph / GraphLite / JaN / OPN.
 
 Deze map is referentie, niet de leidende projectspecificatie. Voor actuele werkinstructies gelden:
 
