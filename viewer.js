@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'v2.0.0-rc.18';
+  const VERSION = 'v2.0.0-rc.20';
   const BASE_CELL = 74;
   const ROOT_SIDE_GAP = 1;
   const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -94,6 +94,7 @@
     configGridQuickInput: document.getElementById('configGridQuickInput'),
     showRelationsInput: document.getElementById('showRelationsInput'),
     showLabelsInput: document.getElementById('showLabelsInput'),
+    growthProjectionImmediateInput: document.getElementById('growthProjectionImmediateInput'),
     snapInput: document.getElementById('snapInput'),
     lexRuleSelect: document.getElementById('lexRuleSelect'),
     lexOrderList: document.getElementById('lexOrderList'),
@@ -811,6 +812,7 @@
     showGrid: true,
     showRelations: true,
     showLabels: true,
+    growthProjectionImmediate: true,
     roleSwap: false,
     growthEnabled: false,
     growthStep: 0,
@@ -2365,7 +2367,8 @@
         title: meta[which]?.title || which,
         word: meta[which]?.word || which,
         px: node ? px(node.x, origin) : null,
-        sourceTopY: node ? py(node.y, origin) + 22 : null
+        sourceTopY: node ? py(node.y, origin) + 22 : null,
+        sourceId: node?.id || null
       };
     }).filter(item => Number.isFinite(item.px));
   }
@@ -2712,7 +2715,7 @@
     syncPortraitStageMode();
     if (!els.canvasWrap) return;
     syncPortraitMenuSpace();
-    // v2.0.0-rc.18: alle interface-standen krijgen de maximaal beschikbare
+    // v2.0.0-rc.20: alle interface-standen krijgen de maximaal beschikbare
     // canvasruimte. De SVG-viewBox bepaalt vervolgens de grootste schaal zonder
     // clipping. Een brede boom in portrait wordt dus niet ook nog eens door een
     // kunstmatig laag canvas verkleind.
@@ -2728,27 +2731,64 @@
     workspace?.style.setProperty('--stage-fit-width', `${Math.ceil(stageWidth)}px`);
   }
 
+  function viewportGridProfile() {
+    // rc.20: één continue viewportcurve voor Automatisch, Desktop, Mobiel
+    // staand en Mobiel liggend. Het raster wordt niet langer uit vier vaste
+    // presets opgebouwd: de actuele canvasverhouding bepaalt de horizontale
+    // en verticale celafstand. Daardoor benut de graph zowel breedte als hoogte.
+    syncMainTopbarLayout();
+    const rect = els.canvasWrap?.getBoundingClientRect?.();
+    const forced = activeViewportMode();
+    const fallbackAspect = forced === 'mobile-portrait'
+      ? (390 / 690)
+      : (forced === 'mobile-landscape' ? (844 / 300) : ((window.innerWidth || 1280) / Math.max(320, window.innerHeight || 800)));
+    const measured = rect && rect.width > 0 && rect.height > 0 ? rect.width / rect.height : fallbackAspect;
+    const aspect = Math.max(0.48, Math.min(2.55, Number.isFinite(measured) && measured > 0 ? measured : fallbackAspect));
+    const cacheKey = `${forced}|${Math.round(rect?.width || 0)}x${Math.round(rect?.height || 0)}|${aspect.toFixed(3)}`;
+    if (state.viewportGridProfileCache?.key === cacheKey) return state.viewportGridProfileCache.value;
+    const raw = Math.max(0, Math.min(1, (aspect - 0.48) / (2.55 - 0.48)));
+    const t = raw * raw * (3 - 2 * raw);
+    const value = {
+      aspect,
+      t,
+      cellXScale: 0.70 + 0.86 * t,
+      cellYScale: 1.17 - 0.44 * t,
+      fontScale: 1.02 + 0.08 * Math.min(1, Math.max(0, (aspect - 0.65) / 1.45)),
+      westGap: Math.round(82 + 92 * t),
+      eastGap: Math.round(52 + 76 * t),
+      minWestAxis: Math.round(72 + 42 * t),
+      ruleMaxWidth: Math.round(258 + 132 * t),
+      label: aspect < 0.82 ? 'viewport portrait max' : (aspect > 1.48 ? 'viewport landscape max' : 'viewport balanced max')
+    };
+    state.viewportGridProfileCache = { key: cacheKey, value };
+    return value;
+  }
+
+  function projectionSpacingProfile() {
+    const profile = viewportGridProfile();
+    return {
+      westGap: profile.westGap,
+      eastGap: profile.eastGap,
+      minWestAxis: profile.minWestAxis,
+      ruleMaxWidth: profile.ruleMaxWidth
+    };
+  }
+
   function layoutVisualProfile() {
     const mode = state.layoutDensity || 'auto';
-    const mobile = isMobileViewport();
-    if (mobile && mode === 'auto') {
-      // rc.18: oriëntatie-afhankelijke max-layout. Portrait wordt smaller en
-      // iets hoger zodat de volledige LEX–boom–SYNT-compositie veel groter kan
-      // schalen; landscape blijft breed/lager. Automatisch kiest dezelfde
-      // profielen op een echt mobiel scherm.
-      if (isPortraitGridFirstViewport()) {
-        return { cellX: BASE_CELL * 0.90, cellY: BASE_CELL * 1.00, fontScale: 1.06, label: 'mobile portrait max' };
-      }
-      return { cellX: BASE_CELL * 1.12, cellY: BASE_CELL * 0.84, fontScale: 1.05, label: 'mobile landscape max' };
-    }
     if (mode === 'compact') return { cellX: BASE_CELL, cellY: BASE_CELL, fontScale: 1.00, label: 'compact' };
     if (mode === 'flat') return { cellX: BASE_CELL * 1.48, cellY: BASE_CELL * 0.72, fontScale: 1.04, label: 'platter' };
     if (mode === 'wide') return { cellX: BASE_CELL * 1.34, cellY: BASE_CELL * 0.86, fontScale: 1.08, label: 'breed/lager' };
     if (mode === 'large') return { cellX: BASE_CELL * 1.46, cellY: BASE_CELL * 0.82, fontScale: 1.16, label: 'breed + groter font' };
-    // Auto: alle centrale views en named-projection views gebruiken exact
-    // dezelfde celmaten. LEX, SYNT en LOG mogen de centrale boom niet laten
-    // verspringen of herschalen wanneer alleen de projectie-overlay wisselt.
-    return { cellX: BASE_CELL * 1.26, cellY: BASE_CELL * 0.87, fontScale: 1.08, label: 'auto stabiele centrale boom' };
+    // Auto is de standaard. Dezelfde profielwaarden gelden voor Syntax, FT en
+    // iedere projectiecombinatie, zodat alleen de schermvorm de geometrie wijzigt.
+    const viewport = viewportGridProfile();
+    return {
+      cellX: BASE_CELL * viewport.cellXScale,
+      cellY: BASE_CELL * viewport.cellYScale,
+      fontScale: viewport.fontScale,
+      label: viewport.label
+    };
   }
 
   function cellX() { return layoutVisualProfile().cellX; }
@@ -2843,33 +2883,36 @@
   }
 
   function growthSupportedProjection(projection = state.projection) {
-    return ['axes', 'source', 'log'].includes(projection);
+    // rc.20: groei werkt in iedere hoofdprojectiestand. De gekozen assen
+    // groeien mee met hun bronknopen; een geïsoleerde LEX-, SYNT- of LOG-view
+    // hoeft dus niet meer eerst naar Alle/Bron te worden omgezet.
+    return ['axes', 'source', 'lex', 'synt', 'log'].includes(projection);
   }
-
   function growthActive() {
     return !!state.growthEnabled && growthSupportedProjection(state.projection);
   }
 
   function setProjection(projection) {
     const next = projection || 'axes';
-    // v2.0.0-rc.18: alle named-projection views delen exact dezelfde
+    // v2.0.0-rc.20: alle named-projection views delen exact dezelfde
     // viewport. Een projectiewissel mag daarom een handmatige pan/zoom niet
     // wissen en mag de centrale boom horizontaal noch verticaal verplaatsen.
     if (growthSupportedProjection(state.projection) && state.growthStep > 0) {
       state.lastSupportedGrowthStep = state.growthStep;
     }
     state.projection = next;
-    if (next === 'axes' && state.projectionBlockUnlocked && !state.growthTimer) {
-      state.growthEnabled = false;
-      state.growthStep = 0;
-    }
+    // rc.20: wisselen van projectiekeuze beëindigt de groeimodus niet. Dezelfde
+    // groeistap wordt toegepast op de nieuw gekozen as of assen.
     if (!growthSupportedProjection(next)) {
       stopGrowthPlayback();
       return;
     }
     if (state.growthEnabled && state.growthStep === 0 && state.lastSupportedGrowthStep > 0) {
       state.growthStep = Math.min(state.lastSupportedGrowthStep, growthStepMax());
+    } else {
+      state.growthStep = Math.min(state.growthStep, growthStepMax());
     }
+    state.projectionBlockUnlocked = state.growthStep > 0 && state.growthStep >= growthStepMax();
   }
 
   function activeCentralSpec() {
@@ -2899,15 +2942,11 @@
     if (!growthSupportedProjection()) return 0;
     const metrics = collectGrowthMetrics(activeCentralSpec());
     const structureSteps = metrics.count;
-    if (state.projection === 'axes') {
-      // v4450: de maximale groeistap moet alle lokale LEX-Wissels tellen.
-      // Anders stopt de slider/playback na de eerste Wissel, waardoor bij
-      // HOND BIJT MAN de tweede stap (BIJT → slot 2 + t[V]) nooit zichtbaar wordt.
-      return structureSteps + orderedLexMovements(activeLexItems()).length + 3;
-    }
-    return structureSteps + 1;
+    const selectedAxes = activeProjectionAxisSet();
+    const movementCount = selectedAxes.has('lex') ? orderedLexMovements(activeLexItems()).length : 0;
+    const delayedProjectionStep = state.growthProjectionImmediate === false && selectedAxes.size ? 1 : 0;
+    return structureSteps + delayedProjectionStep + movementCount;
   }
-
   function clampGrowthStep(value) {
     const max = growthStepMax();
     const n = Math.max(0, Math.min(max, Number(value) || 0));
@@ -3011,22 +3050,48 @@
   }
 
   function growthPlanForLayout(layout) {
-    if (!growthActive()) return { active: false, current: Infinity, max: 0, nodeStep: new Map(), structureStep: 0, slotStep: 0, lexBaseStep: 0, lexMovementStartStep: 0, lexMovementCount: 0, projectionStep: 0 };
+    if (!growthActive()) return {
+      active: false,
+      current: Infinity,
+      max: 0,
+      nodeStep: new Map(),
+      structureStep: 0,
+      slotStep: 0,
+      lexBaseStep: 0,
+      lexMovementStartStep: 0,
+      lexMovementCount: 0,
+      projectionStep: 0,
+      immediateProjection: true,
+      selectedAxes: new Set()
+    };
     const metrics = collectGrowthMetrics(activeCentralSpec());
     const orderedNodes = orderedGrowthNodes(layout, metrics);
     const structureStep = Math.max(1, orderedNodes.length);
-    const slotStep = structureStep;
-    const lexBaseStep = structureStep + 1;
-    const lexMovementCount = orderedLexMovements(activeLexItems()).length;
-    const lexMovementStartStep = lexBaseStep + 1;
-    const projectionStep = lexBaseStep + lexMovementCount + 1;
-    const max = state.projection === 'axes' ? projectionStep : structureStep;
+    const selectedAxes = activeProjectionAxisSet();
+    const immediateProjection = state.growthProjectionImmediate !== false;
+    const projectionStep = selectedAxes.size ? (immediateProjection ? 1 : structureStep + 1) : 0;
+    const lexBaseStep = selectedAxes.has('lex') ? projectionStep : 0;
+    const lexMovementCount = selectedAxes.has('lex') ? orderedLexMovements(activeLexItems()).length : 0;
+    const lexMovementStartStep = structureStep + (immediateProjection ? 1 : (selectedAxes.size ? 2 : 1));
+    const max = structureStep + (immediateProjection ? 0 : (selectedAxes.size ? 1 : 0)) + lexMovementCount;
     if (state.growthStep > max) state.growthStep = max;
     const nodeStep = new Map();
     orderedNodes.forEach(({ node }, index) => nodeStep.set(node.id, index + 1));
-    return { active: true, current: state.growthStep, max, nodeStep, structureStep, slotStep, lexBaseStep, lexMovementStartStep, lexMovementCount, projectionStep };
+    return {
+      active: true,
+      current: state.growthStep,
+      max,
+      nodeStep,
+      structureStep,
+      slotStep: 1,
+      lexBaseStep,
+      lexMovementStartStep,
+      lexMovementCount,
+      projectionStep,
+      immediateProjection,
+      selectedAxes
+    };
   }
-
   function visibleAt(plan, step) {
     return !plan || !plan.active || step <= plan.current;
   }
@@ -3043,28 +3108,51 @@
     return Math.max(nodeGrowthStep(plan, edge.from), nodeGrowthStep(plan, edge.to));
   }
 
+  function projectionLayerVisible(plan) {
+    if (!plan?.active) return true;
+    if (!plan.selectedAxes?.size) return false;
+    return plan.current >= Math.max(1, plan.projectionStep || 1);
+  }
+
+  function projectionSourceVisible(plan, sourceId) {
+    if (!plan?.active) return true;
+    if (!projectionLayerVisible(plan)) return false;
+    if (plan.immediateProjection === false) return true;
+    return visibleAt(plan, nodeGrowthStep(plan, sourceId));
+  }
+
+  function executedLexMovementCount(plan) {
+    if (!plan?.active || !plan.selectedAxes?.has('lex')) return undefined;
+    if (plan.current < plan.lexMovementStartStep) return 0;
+    return Math.max(0, Math.min(plan.lexMovementCount, plan.current - plan.lexMovementStartStep + 1));
+  }
+
   function growthLabel() {
     if (!growthSupportedProjection()) return 'Groei n.v.t.';
     const max = growthStepMax();
     const step = clampGrowthStep(state.growthStep);
     if (!state.growthEnabled) return `Groei uit · max ${max}`;
     if (step === 0) return `stap 0/${max}: raster/titels`;
-    const metrics = collectGrowthMetrics(activeCentralSpec());
-    const structureStep = metrics.count;
-    if (step <= structureStep) return `stap ${step}/${max}: boom groeit knoop voor knoop`;
-    if (state.projection === 'axes') {
-      const movementCount = orderedLexMovements(activeLexItems()).length;
-      const lexBaseStep = structureStep + 1;
-      const movementStart = lexBaseStep + 1;
-      if (step === lexBaseStep) return `stap ${step}/${max}: LEX-basisprojectie`;
-      if (step >= movementStart && step < movementStart + movementCount) {
-        const currentMove = step - movementStart + 1;
-        return `stap ${step}/${max}: LEX-Wissel ${currentMove}/${movementCount}`;
-      }
+    const structureStep = collectGrowthMetrics(activeCentralSpec()).count;
+    const selectedAxes = activeProjectionAxisSet();
+    const immediate = state.growthProjectionImmediate !== false;
+    if (step <= structureStep) {
+      const projectionText = selectedAxes.size
+        ? (immediate ? ' + gekozen projecties' : '')
+        : '';
+      return `stap ${step}/${max}: boom${projectionText} groeit knoop voor knoop`;
     }
-    return `stap ${step}/${max}: LEX-resultaat en projectiepanelen`;
+    if (!immediate && selectedAxes.size && step === structureStep + 1) {
+      return `stap ${step}/${max}: gekozen projecties zichtbaar`;
+    }
+    if (selectedAxes.has('lex')) {
+      const start = structureStep + (immediate ? 1 : 2);
+      const movementCount = orderedLexMovements(activeLexItems()).length;
+      const currentMove = Math.max(1, step - start + 1);
+      return `stap ${step}/${max}: LEX-Wissel ${Math.min(currentMove, movementCount)}/${movementCount}`;
+    }
+    return `stap ${step}/${max}: groei voltooid`;
   }
-
   function orderedSubtreeBoxes(layout) {
     // v4427: render-order is explicit, not an accidental side effect of the
     // layout recursion or of JavaScript sort stability.  Large background boxes
@@ -3834,6 +3922,8 @@
   }
 
   function drawLexAxis(g, x, y0, items, sourceMap = null, options = {}) {
+    const growthPlan = options.growthPlan || null;
+    if (growthPlan?.active && !projectionLayerVisible(growthPlan)) return new Map();
     const horizontalProjectionMode = !!sourceMap && !options.localOnly;
     const systemY0 = sourceMap ? projectedLexSystemY0(y0, sourceMap) : y0;
     drawAxisTitle(g, x - 98, systemY0 - 70, horizontalProjectionMode ? 'LEX-projectie · projectiemerkers + Wisselregels' : 'LEX-as · lokale plaatsingsregels');
@@ -3872,6 +3962,8 @@
 
     items.forEach((item, i) => {
       const p = item.source && sourceMap ? sourceMap.get(item.source) : null;
+      const sourceId = p?.id || item.source || null;
+      if (growthPlan?.active && item.source && !projectionSourceVisible(growthPlan, sourceId)) return;
       const y = projectedLexItemY(item, i, y0, sourceMap, items, options);
       const oldY = baseLexY(item, i, y0, sourceMap, items);
       const movement = localAxisMovement(item, i, oldY, y, items, options);
@@ -4068,6 +4160,8 @@
   }
 
   function drawLogicalProjection(g, x1, x2, y, layout = null, options = {}) {
+    const growthPlan = options.growthPlan || null;
+    if (growthPlan?.active && !projectionLayerVisible(growthPlan)) return;
     const requestedOrder = Array.isArray(options.order) && options.order.length ? options.order : null;
     const items = Array.isArray(options.items) && options.items.length ? options.items : logicalProjectionItemsFromLayout(layout, requestedOrder);
     if (!items.length) return;
@@ -4133,6 +4227,7 @@
     const sourceCenters = items.map((item, index) => Number.isFinite(item.px) ? item.px : (x1 + step * index));
     const boxCenters = layoutLogicalProjectionCenters(items, x1, x2, 148, 18);
     items.forEach((item, index) => {
+      if (growthPlan?.active && item.sourceId && !projectionSourceVisible(growthPlan, item.sourceId)) return;
       const sourceX = sourceCenters[index];
       const cx = boxCenters[index];
       const boxLeft = cx - 74;
@@ -4273,13 +4368,13 @@
       sourceMap = layoutNodeMap(centralLayout, origin);
     }
     const southItems = southLogicalItemsFromCentralLayout(centralLayout, origin, centralKind, southLogicalOrder());
-    const compactProjectionLayout = isMobileViewport();
-    // rc.18: projectieassen dichter bij de centrale boom zodat alle vier
-    // interface-standen de beschikbare breedte maximaal benutten.
-    const westGap = compactProjectionLayout ? 112 : 148;
-    const eastGap = compactProjectionLayout ? 76 : 104;
+    const spacing = projectionSpacingProfile();
+    // rc.20: de afstand tot de west- en oostas volgt continu de actuele
+    // canvasverhouding. Portrait comprimeert horizontaal; landscape spreidt uit.
+    const westGap = spacing.westGap;
+    const eastGap = spacing.eastGap;
     const leftTreePx = px((centralLayout?.box?.minX || 0) - 0.9, origin);
-    const westAxisX = Math.max(compactProjectionLayout ? 92 : 112, leftTreePx - westGap);
+    const westAxisX = Math.max(spacing.minWestAxis, leftTreePx - westGap);
     const southAxisY = py((centralLayout?.box?.maxY || 0) + 2.1, origin);
     const southAxisX1 = px((centralLayout?.box?.minX || 0) - 0.75, origin);
     const southAxisX2 = px((centralLayout?.box?.maxX || 0) + 0.75, origin);
@@ -4296,14 +4391,14 @@
     const spec = mode === 'functional' ? functionalSpec() : treeSpec();
     const rules = stringRulesForSpec(spec, mode);
     const maxText = rules.reduce((max, rule) => Math.max(max, String(rule || '').length), 0);
-    const mobile = isMobileViewport();
-    const minWidth = mode === 'functional' ? (mobile ? 228 : 250) : 210;
-    const maxWidth = mobile ? 320 : 380;
-    return Math.max(minWidth, Math.min(maxWidth, maxText * 8.2 + 34));
+    const spacing = projectionSpacingProfile();
+    const minWidth = mode === 'functional' ? 224 : 204;
+    const maxWidth = spacing.ruleMaxWidth;
+    return Math.max(minWidth, Math.min(maxWidth, maxText * 8.0 + 32));
   }
 
   function projectionStableFrameBox() {
-    // v2.0.0-rc.18: inhoudsgetrouwe, maar nog steeds stabiele unie van Syntax
+    // v2.0.0-rc.20: inhoudsgetrouwe, maar nog steeds stabiele unie van Syntax
     // en FT. Alleen werkelijk gebruikte boxbreedtes en lijnuiteinden tellen mee.
     // Oude fictieve reserves links van LOG en rechts van SYNT maakten alle vier
     // interface-standen onnodig klein, vooral mobile portrait.
@@ -4316,9 +4411,9 @@
       maxX: Math.max(...boxes.map(box => Number(box.maxX || 0))),
       maxY: Math.max(...boxes.map(box => Number(box.maxY || 0)))
     } : { minX: -3, minY: 0, maxX: 4, maxY: 6 };
-    const compact = isMobileViewport();
-    const westGap = compact ? 112 : 148;
-    const eastGap = compact ? 76 : 104;
+    const spacing = projectionSpacingProfile();
+    const westGap = spacing.westGap;
+    const eastGap = spacing.eastGap;
     const syntaxRuleWidth = stableProjectedRuleWidth('syntax');
     const functionalRuleWidth = stableProjectedRuleWidth('functional');
     const ruleWidth = Math.max(syntaxRuleWidth, functionalRuleWidth);
@@ -4326,7 +4421,7 @@
     const rightTreePx = px(union.maxX + 0.9, origin);
     const topTreePx = py(union.minY - 1.6, origin);
     const bottomTreePx = py(union.maxY + 2.1, origin);
-    const westAxisX = Math.max(compact ? 92 : 112, leftTreePx - westGap);
+    const westAxisX = Math.max(spacing.minWestAxis, leftTreePx - westGap);
     const eastAxisX = rightTreePx + eastGap;
     const southAxisX1 = px(union.minX - 0.75, origin);
     const southAxisX2 = px(union.maxX + 0.75, origin);
@@ -4346,7 +4441,7 @@
   }
 
   function stableProjectionViewBox() {
-    // v2.0.0-rc.18: maximale full-view voor Automatisch, Desktop, Mobiel
+    // v2.0.0-rc.20: maximale full-view voor Automatisch, Desktop, Mobiel
     // staand en Mobiel liggend. De veiligheidsrand is alleen nog voldoende
     // voor dunne strokes en labels; er wordt geen UI-ruimte in SVG gereserveerd.
     const frame = projectionStableFrameBox();
@@ -4355,12 +4450,15 @@
     const margin = mobile
       ? Math.max(8, Math.min(18, base * 0.010))
       : Math.max(14, Math.min(30, base * 0.016));
-    return {
+    const padded = {
       x: frame.x - margin,
       y: frame.y - margin,
       w: frame.w + margin * 2,
       h: frame.h + margin * 2
     };
+    // De viewBox volgt exact de canvasverhouding. In combinatie met de
+    // viewport-afhankelijke celmaten voorkomt dit ongebruikte meet-banden.
+    return expandBoxToAspect(padded, canvasAspectRatio());
   }
 
   function appendStableProjectionFitFrame(g) {
@@ -4382,12 +4480,16 @@
   function drawSingleProjection(kind) {
     const g = baseSvg(`${kind}-projection-view selected-projection-view`);
     const ctx = canonicalProjectionContext(g, { drawCentral: true });
+    const growthPlan = ctx.centralLayout?.__growthPlan || null;
     if (kind === 'lex') {
       drawAxisTitle(g, ctx.westAxisX - 40, 40, 'LEX · geselecteerde named projection op vaste west-aspositie');
-      drawLexAxis(g, ctx.westAxisX, 126, activeLexItems(), ctx.sourceMap);
+      drawLexAxis(g, ctx.westAxisX, 126, activeLexItems(), ctx.sourceMap, {
+        growthPlan,
+        executedMovementCount: executedLexMovementCount(growthPlan)
+      });
     } else if (kind === 'synt') {
-      if (state.centerMode === 'ft') drawFunctionalRules(g, ctx.eastAxisX, ctx.centralLayout, ctx.origin, null);
-      else drawSyntaxRules(g, ctx.eastAxisX, 126, ctx.centralLayout, ctx.origin, null);
+      if (state.centerMode === 'ft') drawFunctionalRules(g, ctx.eastAxisX, ctx.centralLayout, ctx.origin, growthPlan);
+      else drawSyntaxRules(g, ctx.eastAxisX, 126, ctx.centralLayout, ctx.origin, growthPlan);
     } else if (kind === 'log') {
       drawLogicalProjection(g, ctx.southAxisX1, ctx.southAxisX2, ctx.southAxisY, getFunctionalLayout(), {
         cls: 'log',
@@ -4396,6 +4498,7 @@
         badgeText: southLogicalModeLabel(state.southLogicalMode || 'SOV'),
         order: southLogicalOrder(),
         items: ctx.southItems,
+        growthPlan,
         interactive: true,
         tipText: 'tip: SOV → SVO → OVS → OSV-! → VSO-! → VOS-!',
         badgeAlign: 'right-below'
@@ -4404,7 +4507,6 @@
     appendStableProjectionFitFrame(g);
     els.svg.appendChild(g);
   }
-
   function drawAxes() {
     const g = baseSvg('axes-view');
     const origin = { x: 760, y: 72 };
@@ -4412,66 +4514,39 @@
 
     const ctx = canonicalProjectionContext(g, { drawCentral: true });
     const { sourceMap, centralLayout, southItems, westAxisX, eastAxisX, southAxisX1, southAxisX2, southAxisY } = ctx;
+    const growthPlan = centralLayout?.__growthPlan || null;
 
-    const growthPlan = centralLayout?.__growthPlan;
-    const drawAllNamedProjections = (plan = null) => {
-      drawLexAxis(g, westAxisX, 126, activeLexItems(), sourceMap);
-      if (state.centerMode === 'ft') drawFunctionalRules(g, eastAxisX, centralLayout, origin, plan);
-      else drawSyntaxRules(g, eastAxisX, 126, centralLayout, origin, plan);
-      drawLogicalProjection(g, southAxisX1, southAxisX2, southAxisY, getFunctionalLayout(), {
-        cls: 'log',
-        title: 'LOG · zuidas',
-        subtitle: `Named projection op de zuidas: selectie van S, O en V. De volgordeknop wijzigt alleen LOG.${southModeWarningText()}`,
-        badgeText: southLogicalModeLabel(state.southLogicalMode || 'SOV'),
-        order: southLogicalOrder(),
-        items: southItems,
-        interactive: true,
-        tipText: 'tip: SOV → SVO → OVS → OSV-! → VSO-! → VOS-!',
-        badgeAlign: 'right-below'
-      });
-    };
-    if (!growthPlan?.active || state.projectionBlockUnlocked) {
-      // Projecties > Alle betekent: centrale view met alle named projections.
-      // Bron blijft de centrale bronview zonder projectie-assen.
-      drawAllNamedProjections(growthPlan?.active ? growthPlan : null);
-      appendStableProjectionFitFrame(g);
-      els.svg.appendChild(g);
-      return;
-    }
-    const showLexBaseStep = !growthPlan?.active || visibleAt(growthPlan, growthPlan.lexBaseStep);
-    const showProjectionPanels = !growthPlan?.active || visibleAt(growthPlan, growthPlan.projectionStep);
-    if (showProjectionPanels) {
-      drawAllNamedProjections(growthPlan);
-    } else if (showLexBaseStep) {
-      const executedMovementCount = growthPlan?.active
-        ? Math.max(0, Math.min(growthPlan.lexMovementCount, growthPlan.current - growthPlan.lexMovementStartStep + 1))
-        : undefined;
-      drawLexAxis(g, westAxisX, 126, activeLexItems(), sourceMap, { localOnly: true, executedMovementCount });
-      drawAxisTitle(g, eastAxisX, 116, 'SYNT-projectie verschijnt in de laatste stap');
-      drawLogicalProjection(g, southAxisX1, southAxisX2, southAxisY, getFunctionalLayout(), {
-        cls: 'log',
-        title: 'LOG · zuidas',
-        subtitle: `LOG-projectie wordt mee zichtbaar in de eindfase. De volgordeknop wijzigt alleen LOG.${southModeWarningText()}`,
-        badgeText: southLogicalModeLabel(state.southLogicalMode || 'SOV'),
-        order: southLogicalOrder(),
-        items: southItems,
-        interactive: true,
-        tipText: 'tip: SOV → SVO → OVS → OSV-! → VSO-! → VOS-!',
-        badgeAlign: 'right-below'
-      });
-    } else {
-      drawAxisTitle(g, westAxisX - 45, 116, `Groei-presentatie · ${growthLabel()}`);
-      drawAxisTitle(g, eastAxisX, 116, 'SYNT-projectie verschijnt in de laatste stap');
-    }
+    // rc.20: de gekozen projecties worden per bronknoop gerenderd. Er is geen
+    // afsluitende 'toon alle projecties'-stap meer. SYNT filtert regels op de
+    // zichtbare moederknoop, LEX filtert projectiemerkers op hun bronknoop en
+    // LOG filtert S/O/V op de corresponderende centrale knoop.
+    drawLexAxis(g, westAxisX, 126, activeLexItems(), sourceMap, {
+      growthPlan,
+      executedMovementCount: executedLexMovementCount(growthPlan)
+    });
+    if (state.centerMode === 'ft') drawFunctionalRules(g, eastAxisX, centralLayout, origin, growthPlan);
+    else drawSyntaxRules(g, eastAxisX, 126, centralLayout, origin, growthPlan);
+    drawLogicalProjection(g, southAxisX1, southAxisX2, southAxisY, getFunctionalLayout(), {
+      cls: 'log',
+      title: 'LOG · zuidas',
+      subtitle: `Named projection op de zuidas: selectie van S, O en V. De volgordeknop wijzigt alleen LOG.${southModeWarningText()}`,
+      badgeText: southLogicalModeLabel(state.southLogicalMode || 'SOV'),
+      order: southLogicalOrder(),
+      items: southItems,
+      growthPlan,
+      interactive: true,
+      tipText: 'tip: SOV → SVO → OVS → OSV-! → VSO-! → VOS-!',
+      badgeAlign: 'right-below'
+    });
     appendStableProjectionFitFrame(g);
     els.svg.appendChild(g);
   }
-
   function drawSource() {
     const g = baseSvg('source-view');
     const ctx = canonicalProjectionContext(g, { drawCentral: true });
     const origin = ctx.origin || stableCentralViewOrigin();
     const selectedAxes = sourceAxisSet();
+    const growthPlan = ctx.centralLayout?.__growthPlan || null;
     const axesText = selectedAxes.size ? ` + ${sourceAxesShortLabel()}` : '';
     if (state.centerMode === 'ft') {
       drawAxisTitle(g, origin.x - 240, origin.y - 78, `BRON${axesText} · OPN-functioneel · structure-config · ${state.functionalOrder}`);
@@ -4479,11 +4554,14 @@
       drawAxisTitle(g, origin.x - 270, origin.y - 78, `BRON${axesText} · OPN-syntax-tree · vrije HOR/VER-boxplaatsing + vrije-slotruimte`);
     }
     if (selectedAxes.has('lex')) {
-      drawLexAxis(g, ctx.westAxisX, 126, activeLexItems(), ctx.sourceMap);
+      drawLexAxis(g, ctx.westAxisX, 126, activeLexItems(), ctx.sourceMap, {
+        growthPlan,
+        executedMovementCount: executedLexMovementCount(growthPlan)
+      });
     }
     if (selectedAxes.has('synt')) {
-      if (state.centerMode === 'ft') drawFunctionalRules(g, ctx.eastAxisX, ctx.centralLayout, ctx.origin, null);
-      else drawSyntaxRules(g, ctx.eastAxisX, 126, ctx.centralLayout, ctx.origin, null);
+      if (state.centerMode === 'ft') drawFunctionalRules(g, ctx.eastAxisX, ctx.centralLayout, ctx.origin, growthPlan);
+      else drawSyntaxRules(g, ctx.eastAxisX, 126, ctx.centralLayout, ctx.origin, growthPlan);
     }
     if (selectedAxes.has('log')) {
       drawLogicalProjection(g, ctx.southAxisX1, ctx.southAxisX2, ctx.southAxisY, getFunctionalLayout(), {
@@ -4493,6 +4571,7 @@
         badgeText: southLogicalModeLabel(state.southLogicalMode || 'SOV'),
         order: southLogicalOrder(),
         items: ctx.southItems,
+        growthPlan,
         interactive: true,
         tipText: 'tip: SOV → SVO → OVS → OSV-! → VSO-! → VOS-!',
         badgeAlign: 'right-below'
@@ -4501,7 +4580,6 @@
     appendStableProjectionFitFrame(g);
     els.svg.appendChild(g);
   }
-
   function drawLex() {
     drawSingleProjection('lex');
   }
@@ -4582,7 +4660,7 @@
 
   function stableGrowthViewBox() {
     if (!growthActive()) return null;
-    // v2.0.0-rc.18: Groei gebruikt hetzelfde frame als de gewone projectie-
+    // v2.0.0-rc.20: Groei gebruikt hetzelfde frame als de gewone projectie-
     // views. Voorheen hadden Alle/Bron/LOG eigen hard-coded viewBoxes, terwijl
     // LEX/SYNT auto-fit gebruikten; dat veroorzaakte de zichtbare sprong.
     return stableProjectionViewBox();
@@ -4619,7 +4697,7 @@
   }
 
   function clearViewportGestureState() {
-    // v2.0.0-rc.18: bij wissel tussen landscape/portrait mogen oude touch-pointers
+    // v2.0.0-rc.20: bij wissel tussen landscape/portrait mogen oude touch-pointers
     // en pinch-state niet blijven hangen. Anders lijkt portrait na zoom in
     // landscape bevroren.
     state.viewDrag = null;
@@ -4881,7 +4959,7 @@
         controlsLeft = state.projectionBoxManual.left;
         controlsTop = state.projectionBoxManual.top;
       } else {
-        // v2.0.0-rc.18: Projecties-box heeft een stabiele schermpositie.
+        // v2.0.0-rc.20: Projecties-box heeft een stabiele schermpositie.
         // Niet meer ankeren aan een wisselende SYNT-as; alleen handmatig slepen verplaatst de box.
         controlsLeft = maxLeft;
         controlsTop = minTop;
@@ -5063,12 +5141,16 @@
 
   function computeAutoFitBox() {
     if (!els.svg) return fallbackViewBox();
-    // v2.0.0-rc.18: alle projectie-views gebruiken één geometrisch viewport,
+    // v2.0.0-rc.20: alle projectie-views gebruiken één geometrisch viewport,
     // onafhankelijk van welke overlay zichtbaar is. Dit sluit auto-fit-
     // verschillen uit en voorkomt elke horizontale of verticale verspringing.
     if (isMainScreenActive() && ['axes', 'source', 'lex', 'synt', 'log'].includes(state.projection)) {
       const frame = projectionStableFrameBox();
-      state.lastGridBox = projectionGridExtentBox(frame);
+      const extent = projectionGridExtentBox(frame);
+      // Het raster vult dezelfde schermverhouding als de viewBox. De layout
+      // zelf verplaatst de assen naar buiten/inwaarts, zodat de extra rasterband
+      // minimaal blijft en de graph maximaal groot wordt.
+      state.lastGridBox = expandBoxToAspect(extent, canvasAspectRatio());
       return stableProjectionViewBox();
     }
     const ignored = [...els.svg.querySelectorAll('.grid, .view-pan-hint')];
@@ -5530,6 +5612,7 @@
     if (els.configGridQuickInput) els.configGridQuickInput.checked = state.showGrid;
     if (els.showRelationsInput) els.showRelationsInput.checked = state.showRelations;
     if (els.showLabelsInput) els.showLabelsInput.checked = state.showLabels;
+    if (els.growthProjectionImmediateInput) els.growthProjectionImmediateInput.checked = state.growthProjectionImmediate !== false;
     if (els.projectionBoxDraggableInput) els.projectionBoxDraggableInput.checked = !!state.projectionBoxDraggable;
     if (els.southBoxDraggableInput) els.southBoxDraggableInput.checked = !!state.southBoxDraggable;
     const growthSupported = growthSupportedProjection();
@@ -6194,6 +6277,7 @@
     });
 
     setInputLabelText('#showGridInput', en ? 'Grid visible · default on' : 'Raster zichtbaar · standaard aan');
+    setInputLabelText('#growthProjectionImmediateInput', en ? 'Projections grow immediately' : 'Projecties groeien direct mee');
     const quickGridLabel = document.querySelector('[data-config-grid-quick-label]');
     if (quickGridLabel) quickGridLabel.textContent = en ? 'Grid visible' : 'Raster zichtbaar';
     setInputLabelText('#showRelationsInput', en ? 'Branches' : 'Taklijnen');
@@ -6336,6 +6420,7 @@
       showGrid: !!state.showGrid,
       showRelations: !!state.showRelations,
       showLabels: !!state.showLabels,
+      growthProjectionImmediate: state.growthProjectionImmediate !== false,
       syntProjectionColor: state.syntProjectionColor,
       logProjectionColor: state.logProjectionColor,
       projectionBoxDraggable: !!state.projectionBoxDraggable,
@@ -6418,6 +6503,8 @@
     else state.showGrid = true;
     if (typeof snapshot.showRelations === 'boolean') state.showRelations = snapshot.showRelations;
     if (typeof snapshot.showLabels === 'boolean') state.showLabels = snapshot.showLabels;
+    if (currentVersionSnapshot && typeof snapshot.growthProjectionImmediate === 'boolean') state.growthProjectionImmediate = snapshot.growthProjectionImmediate;
+    else state.growthProjectionImmediate = true;
     if (Number.isFinite(Number(snapshot.freeSlotCount))) state.freeSlotCount = Math.max(0, Math.min(6, Number(snapshot.freeSlotCount)));
     if (Number.isFinite(Number(snapshot.lexFreeSlotCount))) state.lexFreeSlotCount = Math.max(0, Math.min(8, Number(snapshot.lexFreeSlotCount)));
     if (typeof snapshot.lexFreeSlotPlacement === 'string') state.lexFreeSlotPlacement = snapshot.lexFreeSlotPlacement;
@@ -6846,6 +6933,13 @@
     els.configGridQuickInput?.addEventListener('change', event => setGridVisible(event.target.checked));
     els.showRelationsInput?.addEventListener('change', event => { state.showRelations = event.target.checked; render(); });
     els.showLabelsInput?.addEventListener('change', event => { state.showLabels = event.target.checked; render(); });
+    els.growthProjectionImmediateInput?.addEventListener('change', event => {
+      state.growthProjectionImmediate = event.target.checked;
+      state.projectionBlockUnlocked = false;
+      state.growthStep = clampGrowthStep(state.growthStep);
+      markConfigDirty(isEnglish() ? 'Growing projections' : 'Meegroeiende projecties');
+      render();
+    });
     els.growthEnabledInput?.addEventListener('change', event => {
       state.growthEnabled = event.target.checked;
       if (!state.growthEnabled) stopGrowthPlayback();
@@ -7046,7 +7140,7 @@
       render();
     });
     window.addEventListener('orientationchange', () => {
-      // v2.0.0-rc.18: breek actieve pinch/pan expliciet af vóór herfit.
+      // v2.0.0-rc.20: breek actieve pinch/pan expliciet af vóór herfit.
       resetManualViewBox();
       requestAnimationFrame(() => {
         resetManualViewBox();

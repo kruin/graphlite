@@ -1,4 +1,4 @@
-# OpenGraph Lite Viewer v2.0.0-rc.18
+# OpenGraph Lite Viewer v2.0.0-rc.20
 
 Demo/viewer voor JAN / OPN / OpenGraph-taalstructuren.
 
@@ -17,7 +17,7 @@ start-local-viewer.bat
 GitHub Pages:
 
 ```text
-https://kruin.github.io/graphlite/index.html?ogv=v2.0.0-rc.18
+https://kruin.github.io/graphlite/index.html?ogv=v2.0.0-rc.20
 ```
 
 ## Centrale views en projecties
@@ -33,22 +33,37 @@ LOG is geen centrale view. LOG-volgorde wijzigt uitsluitend de zuidprojectie.
 ## Topmenu
 
 ```text
-Zin · Bijwoord · Syntax/FT · Interface · Projecties · LOG-volgorde · NL/EN · Help · Config
+Rij 1: Zin · Bijwoord · Syntax/FT · Interface · Projecties · LOG-volgorde
+Rij 2: NL/EN · Help · Config
 ```
 
-## Interface en mobile full view
+## Responsieve maximale view
 
-`Interface` en `Config → Boom → Interface` bieden Automatisch, Desktop, Mobiel staand en Mobiel liggend. Automatisch kiest op telefoon zelf de passende mobile-interface. De viewer gebruikt daar de volledige beschikbare ruimte onder de bediening.
+Met `Boomruimte: Auto` volgt de grid-layout continu het werkelijk beschikbare canvas:
+
+- portrait wordt smaller en hoger;
+- landscape wordt breder en lager;
+- desktop volgt de actuele vensterverhouding;
+- viewBox en raster krijgen dezelfde schermverhouding;
+- Syntax, FT en alle projectiecombinaties behouden dezelfde positie en schaal binnen die viewport.
+
+De volledige graph plus gekozen assen wordt zo groot mogelijk weergegeven zonder clipping.
+
+## Interface
+
+`Interface` en `Config → Boom → Interface` bieden Automatisch, Desktop, Mobiel staand en Mobiel liggend. Automatisch kiest op telefoon zelf de passende stand en herfit na oriëntatiewissel.
 
 ## Raster
 
-Het raster is standaard zichtbaar. De instelling staat direct op:
+Het raster staat standaard aan via:
 
 ```text
 Config → Boom → Weergave → Raster zichtbaar
 ```
 
-Het raster eindigt bij de uiterste eindpunten van de zichtbare projectie-stippellijnen. De rastergrens verandert de viewBox niet.
+## Groei en projecties
+
+Met **Projecties groeien direct mee** verschijnt bij iedere nieuw gerenderde bronknoop meteen de geldige gekozen LEX-, SYNT- en/of LOG-projectie. LEX-Wissels volgen pas na de structurele knoopgroei.
 
 ## Publicatie en reset
 
@@ -60,20 +75,3 @@ Het raster eindigt bij de uiterste eindpunten van de zichtbare projectie-stippel
 node --check viewer.js
 check_release.bat
 ```
-
-## rc.16-correcties
-
-Raster is standaard zichtbaar, ook binnen de boom. In Config staat `Raster zichtbaar` direct in de vaste bovenbalk. Het mobile topmenu toont alle acht opties in twee rijen: vijf items boven en vier onder.
-
-## Topmenu-indeling rc.17
-
-```text
-Rij 1: Zin · Bijwoord · Syntax/FT · Interface · Projecties · LOG-volgorde
-Rij 2: NL/EN · Help · Config
-```
-
-De indeling is vast op desktop en mobile; zij gebruikt geen vrije wrapping.
-
-## Maximale view
-
-Vanaf rc.18 benutten Automatisch, Desktop, Mobiel staand en Mobiel liggend de beschikbare view maximaal. Mobile portrait en landscape hebben eigen layoutprofielen; de volledige graph plus zichtbare assen blijft binnen beeld.

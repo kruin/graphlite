@@ -1,6 +1,6 @@
 # GRID_CONFIG_DEFAULT_TEST
 
-Controlepunten voor v2.0.0-rc.18.
+Controlepunten voor v2.0.0-rc.19.
 
 ## Vindbaarheid
 

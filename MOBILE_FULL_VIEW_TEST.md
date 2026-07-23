@@ -1,6 +1,6 @@
 # MOBILE_FULL_VIEW_TEST
 
-Versie: `v2.0.0-rc.18`
+Versie: `v2.0.0-rc.19`
 
 ## Statische controles
 

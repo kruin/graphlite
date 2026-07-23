@@ -1,51 +1,63 @@
 # PROJECT_STATE_CURRENT
 
-Actuele status van de OpenGraph / GraphLite viewer.
+Actuele, leidende status van OpenGraph Lite Viewer.
 
 ## Versie
 
-- Huidige releasekandidaat: `v2.0.0-rc.18`.
-- Bronbasis: volledige v1.0.16-bronset, doorontwikkeld via rc.3–rc.9.
+- Releasekandidaat: `v2.0.0-rc.20`.
+- Functionele bronbasis: volledige v1.0.16-bronset, doorontwikkeld via de v2.0-releasekandidaten.
+- `VERSION.txt` is leidend voor app, cache, documentatie en zipnaam.
 
 ## Centrale views
 
 - `Syntax` is de eerste centrale view.
-- `FT` is de tweede centrale view op dezelfde voorbeeldzin.
-- `LOG` is geen centrale view; LOG is uitsluitend de zuidas/projectie.
+- `FT` is de tweede centrale functionele view.
+- `LOG` is uitsluitend de zuidas/projectie en nooit een centrale view.
 - Syntax ↔ FT behoudt viewport, schaal en handmatige pan/zoom.
 
-## Projecties
+## Projecties en groei
 
-- LEX staat links/west.
-- SYNT staat rechts/oost.
-- LOG staat onder/zuid.
-- De smalle kop `Projecties` opent een brede keuze voor LEX, SYNT en LOG.
-- **Standaard zijn alle drie assen zichtbaar.**
-- Iedere as kan onafhankelijk worden uitgezet.
-- `Geen` toont alleen de centrale bron; er is geen apart Bron-tabblad.
-- `Alle` en een expliciete Reset herstellen LEX + SYNT + LOG.
-- Iedere combinatie gebruikt exact dezelfde vaste viewBox; geen horizontale of verticale verspringing.
+- LEX: west/links.
+- SYNT: oost/rechts.
+- LOG: zuid/onder.
+- Standaard zijn LEX + SYNT + LOG zichtbaar.
+- Iedere as kan afzonderlijk worden uitgezet; `Alle` herstelt alle assen en `Geen` toont alleen de centrale view.
+- Bij groei verschijnt iedere geldige gekozen projectie direct met haar gerenderde bronknoop.
+- LEX-Wissels volgen pas na de structurele groei.
 
-## Bovenbalk
+## Responsieve grid-layout
 
-- Vier smalle koppen met brede uitklappen: `Zin`, `Bijwoord`, `Syntax`/`FT`, `Projecties`.
-- Engels: `Sentence`, `Adverb`, `Syntax`/`FT`, `Projections`.
-- Lange waarden staan in de brede uitklap, niet in de smalle kop.
-- Taal, Help en Config staan onder `Menu`.
+`Boomruimte: Auto` gebruikt vanaf rc.20 geen vaste portrait-, landscape- of desktopafmetingen meer. De actuele canvasverhouding bepaalt continu:
 
-## SOV / LOG-volgorde
+- horizontale en verticale celafstand;
+- afstand van centrale boom tot LEX- en SYNT-as;
+- maximale breedte van de regelprojectie;
+- de verhouding van raster en viewBox.
 
-- Geen SOV-box in Main of in het canvas.
-- De LOG-volgordekeuze staat voorlopig onder `Menu → Extra`.
-- Zij wijzigt alleen LOG; Syntax, FT en LEX blijven gelijk.
-- Twee toekomstige notatieoplossingen staan in `SOV_NOTATION_OPTIONS.md`.
+Portrait wordt smaller en hoger; landscape breder en lager; desktop volgt de feitelijke vensterverhouding. Alle centrale views en projectiecombinaties delen binnen dezelfde viewport exact hetzelfde profiel. Doel is maximale schermvulling zonder clipping of verspringing.
 
-## Migratie en reset
+## Topmenu
 
-- Een verse rc.9-start opent met alle assen.
-- Een oudere lokale config behoudt overige instellingen maar migreert bij de eerste rc.9-start naar alle assen.
-- Een in rc.9 opgeslagen config bewaart daarna de bewuste gebruikerskeuze.
-- Reset herstelt alle assen.
+```text
+Rij 1: Zin · Bijwoord · Syntax/FT · Interface · Projecties · LOG-volgorde
+Rij 2: NL/EN · Help · Config
+```
+
+- Geen algemene knop `Menu`.
+- Geen geneste submenu’s.
+- De tweede rij is zichtbaar op desktop en mobile.
+
+## Raster
+
+- Raster staat standaard aan.
+- Instelling: `Config → Boom → Weergave → Raster zichtbaar`.
+- Het raster is zichtbaar binnen en buiten de subtree-boxen.
+- De rasterlaag en viewBox volgen de actuele schermverhouding.
+
+## Publicatie-reset
+
+- `publish_checked.bat` opent na een geslaagde push automatisch eenmaal per versie de resetpagina.
+- Geen push of mislukte push betekent geen automatische reset.
 
 ## Controle
 
@@ -53,30 +65,3 @@ Actuele status van de OpenGraph / GraphLite viewer.
 node --check viewer.js
 check_release.bat
 ```
-
-## Hoofdmenu v2.0.0-rc.18
-
-- Main bevat één knop `Menu`.
-- Het menu is plat: geen geneste submenu’s.
-- Zin, Bijwoord, Syntax/FT, Projecties, LOG-volgorde, taal, Help en Config staan direct in hetzelfde paneel.
-- Standaard zijn LEX, SYNT en LOG zichtbaar.
-
-## Lijnhiërarchie v2.0.0-rc.18
-
-- Boomlijnen en hulplijnen zijn dun.
-- Boxcontouren zijn minimaal.
-- Alleen named-projectionlijnen en projectieassen krijgen een iets grotere lijndikte.
-
-## Publicatie-reset
-
-- `publish_checked.bat` opent na een geslaagde push automatisch de resetpagina.
-- Er is geen bevestigingsvraag.
-- De reset wordt maximaal eenmaal per versie en per computer gestart.
-- Geen push betekent geen automatische reset.
-
-## Raster / grid
-
-- Raster is standaard zichtbaar en staat in Config aangevinkt.
-- Bij migratie uit oudere releases wordt Raster eenmaal zichtbaar hersteld.
-- Het raster loopt zonder extra buitenmarge tot de uiterste eindpunten van de zichtbare projectie-stippellijnen.
-- De rasterberekening verandert x, y, schaal of viewBox niet.

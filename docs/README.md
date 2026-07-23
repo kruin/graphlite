@@ -1,6 +1,6 @@
-# OpenGraph Lite Viewer v2.0.0-rc.18
+# OpenGraph Lite Viewer v2.0.0-rc.20
 
-OpenGraph Lite Viewer is een demo/viewer voor JAN / OPN / OpenGraph-taalstructuren. Deze versie gebruikt de volledige v1.0.16-bronset als basis.
+Demo/viewer voor JAN / OPN / OpenGraph-taalstructuren.
 
 ## Start
 
@@ -8,7 +8,7 @@ OpenGraph Lite Viewer is een demo/viewer voor JAN / OPN / OpenGraph-taalstructur
 index.html
 ```
 
-Of:
+Of lokaal:
 
 ```bat
 start-local-viewer.bat
@@ -17,60 +17,61 @@ start-local-viewer.bat
 GitHub Pages:
 
 ```text
-https://kruin.github.io/graphlite/index.html?ogv=v2.0.0-rc.18
+https://kruin.github.io/graphlite/index.html?ogv=v2.0.0-rc.20
 ```
 
-Cache-reset:
+## Centrale views en projecties
 
 ```text
-https://kruin.github.io/graphlite/reset-cache.html?ogv=v2.0.0-rc.18
+Views:       Syntax, FT
+Projecties:  LEX west, SYNT oost, LOG zuid
+Default:     LEX + SYNT + LOG zichtbaar
 ```
 
-## Centrale views
+LOG is geen centrale view. LOG-volgorde wijzigt uitsluitend de zuidprojectie.
+
+## Topmenu
 
 ```text
-1. Syntax
-2. FT
+Rij 1: Zin · Bijwoord · Syntax/FT · Interface · Projecties · LOG-volgorde
+Rij 2: NL/EN · Help · Config
 ```
 
-Syntax toont de syntactische boom. FT is de tweede centrale view en toont de functionele structuur met onder meer CLAUSE, PRED, AGENS en PATIENS.
+## Responsieve maximale view
 
-## Named projections
+Met `Boomruimte: Auto` volgt de grid-layout continu het werkelijk beschikbare canvas:
+
+- portrait wordt smaller en hoger;
+- landscape wordt breder en lager;
+- desktop volgt de actuele vensterverhouding;
+- viewBox en raster krijgen dezelfde schermverhouding;
+- Syntax, FT en alle projectiecombinaties behouden dezelfde positie en schaal binnen die viewport.
+
+De volledige graph plus gekozen assen wordt zo groot mogelijk weergegeven zonder clipping.
+
+## Interface
+
+`Interface` en `Config → Boom → Interface` bieden Automatisch, Desktop, Mobiel staand en Mobiel liggend. Automatisch kiest op telefoon zelf de passende stand en herfit na oriëntatiewissel.
+
+## Raster
+
+Het raster staat standaard aan via:
 
 ```text
-LEX    westas
-SYNT   oostas
-LOG    zuidas
+Config → Boom → Weergave → Raster zichtbaar
 ```
 
-LOG is geen centrale view. De SOV/SVO/etc-actie wijzigt alleen de LOG-projectie.
+## Groei en projecties
 
-## Projecties en plaatsing
+Met **Projecties groeien direct mee** verschijnt bij iedere nieuw gerenderde bronknoop meteen de geldige gekozen LEX-, SYNT- en/of LOG-projectie. LEX-Wissels volgen pas na de structurele knoopgroei.
 
-De Projectie-keuze staat in de bovenbalk met `Alle`, `Bron`, `LEX`, `SYNT`, `LOG`. Bij Bron kunnen LEX, SYNT en LOG afzonderlijk of gecombineerd zichtbaar zijn. De centrale graph transformeert niet en de viewport blijft gelijk.
-De bovenbalk is compact: Zin, Bijwoord, View en Projectie blijven direct zichtbaar; `Assen` verschijnt alleen bij Bron. Taal, Help en Config staan onder één leesbaar `Menu`.
+## Publicatie en reset
 
-LEX-Wissels en bijwoordinserties gebeuren op de LEX-as en muteren Syntax en FT niet.
-
-## Versiebron
-
-`VERSION.txt` is leidend voor HTML, JavaScript, service worker, cachequery, publicatiescript en zipnaam.
+`publish_checked.bat` opent na een geslaagde push automatisch eenmaal per versie de resetpagina van GitHub Pages.
 
 ## Controle
 
 ```bat
+node --check viewer.js
 check_release.bat
 ```
-
-
-## v2.0.0-rc.18
-
-De Main-bovenbalk gebruikt `Zin`, `Bijwoord`, `Syntax`/`FT` en `Projecties` als smalle koppen met brede uitklappen. Er is geen Bron-tabblad. Standaard zijn LEX, SYNT en LOG zichtbaar; `Geen` toont alleen de bron. SOV staat onder `Menu → Extra`.
-
-## Publicatie en cache-reset
-
-`publish_checked.bat` opent na een geslaagde push automatisch eenmaal per versie de GitHub Pages-resetpagina. Er verschijnt geen bevestigingsvraag. Zonder push of bij een pushfout wordt geen reset gestart.
-
-## Raster
-
-Raster is standaard zichtbaar (`Config → Raster`). Het raster loopt tot de uiterste eindpunten van de projectie-stippellijnen; projectieboxen kunnen buiten die rastergrens staan.

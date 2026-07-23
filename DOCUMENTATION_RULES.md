@@ -38,3 +38,7 @@ Vermeld dat Raster standaard aan staat en tot de uiterste projectie-stippellijne
 ## Tweerijig topmenu
 
 Beschrijf het topmenu vanaf rc.17 als twee vaste rijen. Noem nooit vrije wrapping als layoutmechanisme.
+
+## Groei uitleggen
+
+Beschrijf Play/Groei standaard als gelijktijdige bron- en projectiegroei: iedere nieuw zichtbare centrale knoop toont meteen haar geldige gekozen projectie. Vermeld apart dat LEX-Wissels pas na de structurele groei volgen.

@@ -1,41 +1,44 @@
 # DOCUMENTATION_RULES
 
-Regels voor actuele projectdocumentatie, helpteksten en overdrachtsteksten.
+Regels voor actuele projectdocumentatie en helpteksten.
 
-## Terminologiecontract
+## Terminologie
 
 ```text
-Syntax view              Syntax-view
-FT view                  FT-view / functionele boomview
-LEX projection           LEX-projectie op de westas
-SYNT projection          SYNT-projectie op de oostas
-LOG projection           LOG-projectie op de zuidas
+Syntax-view     eerste centrale view
+FT-view         tweede centrale functionele view
+LEX-projectie   westas
+SYNT-projectie  oostas
+LOG-projectie   zuidas
 ```
 
 Gebruik nooit een gecombineerde aanduiding voor LOG en FT.
 
-## Vaste uitlegvolgorde
+## Actuele interface
 
-1. Open Graph Notation.
-2. Gridregel en projectiemechanisme.
-3. Centrale views: Syntax, daarna FT.
-4. Named projections: LEX, SYNT, LOG.
-5. Taalacties en LEX-plaatsingsregels.
+```text
+Zin · Bijwoord · Syntax/FT · Interface · Projecties · LOG-volgorde · NL/EN · Help · Config
+```
 
-## View versus projectie
+- Geen algemene Menu-knop of geneste submenu’s.
+- Geen Bron-tabblad.
+- `Geen` betekent centrale view zonder assen.
 
-- Het View-menu bevat `Syntax` en `FT`.
-- De Projectie-keuze in de bovenbalk bevat `Alle`, `Bron`, `LEX`, `SYNT`, `LOG`.
-- De Bronassen-popover kiest LEX, SYNT en LOG onafhankelijk of gecombineerd.
-- LOG wordt uitsluitend als zuidas/projectie beschreven.
-- FT wordt uitsluitend als tweede centrale functionele view beschreven.
+## Rastertekst
 
-## Actuele toestand
+Noem de instelling exact:
 
-Gewone documentatie beschrijft de huidige werking. Historische notities mogen in release- of archiefbestanden blijven staan, maar zijn niet leidend.
-## Bovenbalkterminologie
+```text
+Config → Boom → Weergave → Raster zichtbaar
+Config → Tree → Display → Grid visible
+```
 
-- Schrijf `Projectie`, `Bron` en `Assen`; noem de oude zwevende `Projecties-box` niet als actieve UI.
-- Beschrijf `Assen` als keuze die alleen bij Bron verschijnt.
-- Beschrijf Taal, Help en Config als onderdelen van het compacte `Menu`.
+Vermeld dat Raster standaard aan staat en tot de uiterste projectie-stippellijnen loopt zonder de viewBox te wijzigen.
 
+## Tweerijig topmenu
+
+Beschrijf het topmenu vanaf rc.17 als twee vaste rijen. Noem nooit vrije wrapping als layoutmechanisme.
+
+## Groei uitleggen
+
+Beschrijf Play/Groei standaard als gelijktijdige bron- en projectiegroei: iedere nieuw zichtbare centrale knoop toont meteen haar geldige gekozen projectie. Vermeld apart dat LEX-Wissels pas na de structurele groei volgen.

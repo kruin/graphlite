@@ -17,6 +17,20 @@ LOG      zuidas; nooit centrale view
 - Iedere projectiecombinatie gebruikt dezelfde viewBox.
 - Syntax ↔ FT behoudt dezelfde viewport en handmatige pan/zoom.
 - Menu’s, Config en rasterzichtbaarheid wijzigen de canvasmaat of fitbox niet.
+- Een oriëntatie- of vensterwijziging voert één volledige herfit uit.
+
+## Responsief raster en maximale schermvulling
+
+De standaardwaarde `Boomruimte: Auto` volgt continu de werkelijke verhouding van het beschikbare canvas.
+
+- Portrait: kleinere horizontale celafstand, grotere verticale celafstand, assen dichter bij de centrale boom.
+- Landscape: grotere horizontale celafstand, kleinere verticale celafstand, assen verder uit elkaar.
+- Desktop: dezelfde continue berekening op basis van de actuele vensterverhouding; geen vaste desktoppreset.
+- De viewBox krijgt exact dezelfde verhouding als het beschikbare canvas.
+- De rastergrens volgt dezelfde verhouding en blijft gekoppeld aan centrale boom, projectielijnen en assen.
+- Syntax, FT en alle projectiecombinaties gebruiken binnen één viewport exact hetzelfde responsieve profiel.
+
+Doel: de graph plus gekozen projecties gebruikt zoveel mogelijk breedte én hoogte, zonder clipping, vervorming of projectieverspringing.
 
 ## Projecties
 
@@ -24,31 +38,25 @@ LOG      zuidas; nooit centrale view
 - Beschikbaar: LEX, SYNT, LOG, Alle en Geen.
 - Default: LEX + SYNT + LOG zichtbaar.
 - Er is geen Bron-tabblad.
+- Projecties groeien standaard direct mee met de gerenderde bronknopen.
 
 ## Topmenu
 
 ```text
-Zin · Bijwoord · Syntax/FT · Interface · Projecties · LOG-volgorde · NL/EN · Help · Config
+Rij 1: Zin · Bijwoord · Syntax/FT · Interface · Projecties · LOG-volgorde
+Rij 2: NL/EN · Help · Config
 ```
 
 - Geen algemene Menu-knop.
 - Geen geneste submenu’s.
-- Op smalle schermen mag de balk gecontroleerd naar een volgende rij lopen zonder de graph te verschuiven.
-
-## Mobile full view
-
-- Het SVG-canvas gebruikt de volledige viewport onder topmenu en Play-balk.
-- De mobile fitbox omvat de centrale view en zichtbare assen zonder reserves voor verwijderde canvasbediening.
-- Portrait/landscape voert na keuze of oriëntatiewissel een volledige herfit uit.
+- Beide rijen hebben eigen vaste ruimte op desktop en mobile.
+- Vrije wrapping en een derde rij zijn verboden.
 
 ## Raster / grid
 
 - `Config → Boom → Weergave → Raster zichtbaar` staat standaard aan.
-- De optie staat direct onder Interface en is zonder scrollen door lange configuraties vindbaar.
-- Migratie uit een oudere release zet Raster eenmaal aan; een later bewust opgeslagen keuze blijft behouden.
-- De rastergrens is de unie van de centrale boom en de uiterste eindpunten van zichtbare projectie-stippellijnen.
-- Projectieboxen mogen buiten de rastergrens liggen.
-- Rasterberekening verandert x, y, schaal of viewBox niet.
+- Het raster ligt boven gevulde subtree-achtergronden en onder labels, boomlijnen, knopen en projecties.
+- Rasterberekening verandert handmatige pan/zoom niet.
 
 ## Lijndikte
 
@@ -56,33 +64,3 @@ Zin · Bijwoord · Syntax/FT · Interface · Projecties · LOG-volgorde · NL/EN
 - Boxcontouren: zo dun mogelijk.
 - Projectielijnen: iets dikker.
 - Projectieassen: iets dikker dan projectielijnen.
-
-## Raster en mobile topmenu (rc.16)
-
-- Het raster ligt boven gevulde subtree-achtergronden, maar onder captions, boomlijnen, knopen en projecties.
-- Op mobile staan de negen topmenu-items in exact twee rijen: vijf items boven en vier onder. Geen derde menurij.
-
-## Topmenu-rijen (v2.0.0-rc.18)
-
-Het topmenu heeft op desktop, mobile en mobile-preview exact twee vaste rijen:
-
-```text
-Rij 1: Zin · Bijwoord · Syntax/FT · Interface · Projecties · LOG-volgorde
-Rij 2: NL/EN · Help · Config
-```
-
-- Rij 2 heeft eigen verticale ruimte en mag niet aansluiten op of overlappen met rij 1.
-- Vrije wrapping is verboden.
-- Geen item mag buiten een mobile-frame of viewport schuiven.
-- Uitklappanelen van rij 1 openen onder de volledige tweerijige menubalk.
-
-## Maximale view per interface
-
-```text
-Automatisch       volgt actuele schermvorm en oriëntatie
-Desktop           maximale volledige fit in desktopcanvas
-Mobiel staand     smaller/hoger profiel; maximale portraitbreedte
-Mobiel liggend    breed/lager profiel; maximale landscapehoogte
-```
-
-De stabiele fitbox wordt uit werkelijke inhoudsmaten berekend. Verborgen of verwijderde UI-boxen mogen geen ruimte reserveren. De veiligheidsrand is minimaal en uitsluitend bedoeld voor strokes en labels.

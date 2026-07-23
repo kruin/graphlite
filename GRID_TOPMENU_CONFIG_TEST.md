@@ -6,7 +6,7 @@
 - `python tools/check_release.py`: geslaagd.
 - `index.html` en `viewer.html`: byte-identiek.
 - HTML-id’s: uniek.
-- Versie in VERSION, HTML, JavaScript, service worker en resetpagina: `v2.0.0-rc.18`.
+- Versie in VERSION, HTML, JavaScript, service worker en resetpagina: `v2.0.0-rc.19`.
 - Hoofdmenu bevat negen zichtbare items.
 - Mobile CSS gebruikt twee rijen met vijf kolommen; de tweede rij bevat vier items.
 - `Config` is daardoor altijd onderdeel van de tweede rij en kan niet in een derde, afgedekte rij terechtkomen.

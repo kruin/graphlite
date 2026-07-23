@@ -1,3 +1,11 @@
+# v2.0.0-rc.20
+
+- Gekozen LEX-, SYNT- en LOG-projecties groeien standaard direct mee met iedere nieuwe centrale knoop.
+- Nieuwe Config-optie `Projecties groeien direct mee`, standaard aan.
+- LEX-Wissels blijven vervolgstappen na de structurele groei.
+- Groei werkt ook in geïsoleerde LEX-, SYNT- en LOG-views en in iedere assencombinatie.
+- Projectieposities en viewBox blijven gedurende de groei stabiel.
+
 
 ## v4551 — gecontroleerde bijwoordplaatsing
 
@@ -712,3 +720,11 @@ Dit blijft een LEX/FUNC-regel. De SYNT-boom wordt niet gemuteerd.
 - Desktop en mobiel starten op deze veilige fit-modus.
 - De fitbox krijgt extra ondermarge voor LOG en extra rechterruimte voor de SYNT-as.
 - `strak`, `scroll` en `vast/debug` blijven beschikbaar als secundaire opties.
+
+## v2.0.0-rc.20
+
+- Gridgeometrie volgt continu de actuele canvasverhouding.
+- Portrait wordt smaller/hoger; landscape breder/lager; desktop volgt het actuele venster.
+- LEX-/SYNT-asafstand en regelboxbreedte passen mee aan.
+- Raster en viewBox gebruiken dezelfde schermverhouding.
+- Syntax, FT en alle projectiecombinaties blijven binnen een viewport stabiel.

@@ -1,6 +1,6 @@
 # MAX_VIEW_ALL_INTERFACES_TEST
 
-Controleer v2.0.0-rc.18 in vier standen:
+Controleer v2.0.0-rc.19 in vier standen:
 
 1. Interface → Automatisch.
 2. Interface → Desktop.

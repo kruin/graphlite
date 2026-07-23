@@ -109,7 +109,7 @@ Een Wissel is een LEX-regel:
 - kan een trace/oude positie zichtbaar maken.
 
 
-## Assen bij Bron (v2.0.0-rc.18)
+## Assen bij Bron (v2.0.0-rc.20)
 
 - `Bron` is de centrale Syntax- of FT-view zonder verplichte named projection.
 - De gebruiker kan bij Bron afzonderlijk LEX, SYNT en LOG activeren.
@@ -124,3 +124,16 @@ Een Wissel is een LEX-regel:
 - `Geen` toont de centrale bron zonder assen.
 - `Alle` en Reset herstellen LEX + SYNT + LOG.
 - De keuze verandert Syntax of FT niet.
+
+## Projectiegroei
+
+Tijdens Play/Groei worden gekozen named projections brongebonden opgebouwd:
+
+```text
+nieuwe centrale knoop → direct geldige LEX/SYNT/LOG-projectie
+```
+
+- LEX toont de basisprojectielijn en projectiemerker zodra de lexicale bronknoop zichtbaar is.
+- SYNT toont de regel zodra de bijbehorende categorieknoop zichtbaar is.
+- LOG toont S, O of V zodra de corresponderende centrale knoop zichtbaar is.
+- LEX-Wissels blijven afzonderlijke vervolgstappen na de volledige structurele groei.

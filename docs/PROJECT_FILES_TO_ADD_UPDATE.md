@@ -5,7 +5,7 @@ Bestanden om als leidende projectbronnen toe te voegen of te vervangen.
 ## Volledige projectzip
 
 ```text
-OpenGraph_Lite_Viewer_v2.0.0-rc.18_full_source.zip
+OpenGraph_Lite_Viewer_v2.0.0-rc.20_full_source.zip
 ```
 
 Deze zip bevat alle 106 bestanden uit de aangeleverde v1.0.16-bronset, plus releasecontrole en versieherkomst.

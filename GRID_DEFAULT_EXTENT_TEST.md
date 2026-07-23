@@ -1,4 +1,4 @@
-# GRID_DEFAULT_EXTENT_TEST — v2.0.0-rc.18
+# GRID_DEFAULT_EXTENT_TEST — v2.0.0-rc.19
 
 ## Te controleren
 
