@@ -1,6 +1,6 @@
 # HANDOVER_FOR_COLLABORATORS
 
-Overdracht voor OpenGraph Lite Viewer `v2.0.0-rc.25`.
+Overdracht voor OpenGraph Lite Viewer `v2.0.5`.
 
 ## Niet wijzigen zonder expliciete opdracht
 
@@ -67,3 +67,19 @@ Op compacte fysieke schermen mag `state.lastGridBox` niet via de canvas-aspectra
 - Zichtbare naam: `Functional`.
 - Interne opgeslagen waarde blijft `ft`; oude waarde `functional` blijft leesbaar.
 - Gebruik niet opnieuw de oude afkorting als zichtbare naam.
+
+## Eenvoudige lokale release-installatie
+
+Kopieer de uitgepakte broninhoud rechtstreeks over `C:\git\graphlite`, maar behoud `.git`. Test lokaal en start daarna `publish_checked.bat`. De BAT controleert, vraagt een commitbericht, commit, pusht en opent na een geslaagde push de resetpagina.
+
+## Talen
+
+- Default voor nieuwe installatie: English.
+- Menu: English, Nederlands, Deutsch, Français, Español.
+- Nederlandse voorbeeldzinnen en Nederlandse woordvolgorde blijven taaldata, ongeacht de interfacetaal.
+- Duits/Frans/Spaans gebruiken Engels als technische fallback.
+
+## Lokale Git-update
+
+De actuele workflow gebruikt geen `graphlite-next`, clone, bundle of promotie. Er wordt geen `git pull` of force-push uitgevoerd. Zie `EENVOUDIGE_RELEASE_WERKWIJZE.md`.
+

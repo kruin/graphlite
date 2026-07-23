@@ -4,7 +4,7 @@ Actuele, leidende status van OpenGraph Lite Viewer.
 
 ## Versie
 
-- Releasekandidaat: `v2.0.0-rc.22`.
+- Actuele release: `v2.0.5`.
 - Functionele bronbasis: volledige v1.0.16-bronset, doorontwikkeld via de v2.0-releasekandidaten.
 - `VERSION.txt` is leidend voor app, cache, documentatie en zipnaam.
 
@@ -40,7 +40,7 @@ Portrait wordt smaller en hoger; landscape breder en lager; desktop volgt de fei
 
 ```text
 Rij 1: Zin · Bijwoord · Syntax / Functional · Interface · Projecties · LOG-volgorde
-Rij 2: NL/EN · Help · Config
+Rij 2: Taal/Language · README/LEESMIJ · Config
 ```
 
 - Geen algemene knop `Menu`.
@@ -56,7 +56,7 @@ Rij 2: NL/EN · Help · Config
 
 ## Publicatie-reset
 
-- `publish_checked.bat` opent na een geslaagde push automatisch eenmaal per versie de resetpagina.
+- `publish_checked.bat` opent na een geslaagde push de resetpagina.
 - Geen push of mislukte push betekent geen automatische reset.
 
 ## Controle
@@ -65,3 +65,56 @@ Rij 2: NL/EN · Help · Config
 node --check viewer.js
 check_release.bat
 ```
+
+## Mobile rastercorrectie rc.21
+
+- Op compacte fysieke schermen is de rasterbreedte inhoudsgebonden: centrale boom plus zichtbare projectielijnen.
+- Een geforceerde interfacekeuze mag de rastergrens niet tot de volledige canvas-aspectratio verbreden.
+- Desktopgedrag blijft gelijk aan rc.20.
+
+## Mobile landscape
+
+- Een echte telefoon blijft in landscape mobile, ook wanneer de CSS-breedte groter is dan 760 px.
+- Compact landscape gebruikt een platter/breder gridprofiel en compacte top-/Play-balken.
+- Oriëntatiewissel luistert ook naar `visualViewport.resize` en voert na stabilisatie opnieuw FIT uit.
+
+## TODO
+
+- Niet-binaire, meertakkige bomen.
+- JaN (Just another Notation): `S:np-VP`, niet `S:NP-VP`.
+- Werknotatie in onderzoek: `S+ np-VP`; eerst voor binaire bomen, later voor meertakkigheid.
+- Flip van het verbale cluster: `heeft gebeten` ↔ `gebeten heeft`.
+
+
+
+## Config-overzicht (rc.24)
+
+- Config opent met een compact sectieoverzicht; uitgebreide instellingen zijn standaard ingeklapt.
+- Secties: Basisweergave, JaN-notatie (TODO), Boom & layout, LEX & bijwoorden, Projecties, Voorbeelden & editors en Geavanceerd.
+- Terugnavigatie gebruikt steeds de vorm `Terug naar: Main` of `Terug naar: Config`.
+- De bestaande save-werkwijze blijft ongewijzigd: `Ja · bewaar config`, `Nee · herstel laatst bewaarde config`, en download van het lokale config-log.
+- JaN is de werknaam voor Just another Notation. TODO: `S:np-VP` (niet `S:NP-VP`); werkvorm `S+ np-VP`; binaire bomen eerst, meertakkigheid later.
+
+
+## Config-uitleg
+
+- Config opent als compact sectieoverzicht.
+- Binnen geopende secties staat bij instellingen waar mogelijk een korte uitleg: wat doet de optie en welke laag blijft ongewijzigd.
+- De bestaande `Ja · bewaar config` / `Nee · herstel laatst bewaarde config`-werkwijze blijft behouden.
+
+## Eenvoudige lokale release-installatie
+
+- Pak de bronzip buiten Git uit.
+- Kopieer de inhoud rechtstreeks over `C:\git\graphlite`; behoud `.git`.
+- Test lokaal via `start-local-viewer.bat` en `reset-cache.html`.
+- Publiceer daarna met `publish_checked.bat`.
+- De publicatie-BAT vraagt een commitbericht, commit en pusht direct na geslaagde controles.
+- Geen `graphlite-next`, clone, bundle, promotie, `git pull` of force-push.
+
+## Talen
+
+- English is de standaardtaal bij een nieuwe installatie.
+- Beschikbaar: English, Nederlands, Deutsch, Français en Español.
+- Een eerder gekozen taal blijft lokaal bewaard.
+- De taalkeuze vertaalt de interface; de voorbeeldzinnen blijven Nederlands en demonstreren Nederlandse woordvolgorde.
+- Niet vertaalde technische teksten in Duits, Frans en Spaans vallen terug op Engels.

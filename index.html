@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 
-<!-- OPENGRAPH_ROOT_VIEWER_INDEX_v2.0.0-rc.25: this root index is the app, not docs. -->
-<html data-opengraph-app="viewer" data-version="v2.0.0-rc.25" lang="nl">
+<!-- OPENGRAPH_ROOT_VIEWER_INDEX_v2.0.5: this root index is the app, not docs. -->
+<html data-opengraph-app="viewer" data-version="v2.0.5" lang="en">
 <head>
 <meta charset="utf-8"/>
 <meta content="no-store, no-cache, must-revalidate, max-age=0" http-equiv="Cache-Control"/>
@@ -10,10 +10,10 @@
 <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport"/>
 <meta content="#0f172a" name="theme-color"/>
 <meta content="OpenGraph Lite Viewer: vrije JaN-bronknopen, edits, LEX-plaatsingsregels en projecties." name="description"/>
-<title>OpenGraph Lite Viewer v2.0.0-rc.25</title>
+<title>OpenGraph Lite Viewer v2.0.5</title>
 <script>
     (function() {
-      var VERSION = 'v2.0.0-rc.25';
+      var VERSION = 'v2.0.5';
       window.__OPENGRAPH_EXPECTED_VERSION__ = VERSION;
       function runCacheCleanupOnce() {
         var flag = 'opengraph-cache-cleaned-' + VERSION;
@@ -52,47 +52,47 @@
 <link href="icons/icon-192.svg" rel="icon" type="image/svg+xml"/>
 <!-- v4552: manifest disabled in local/dev build to avoid PWA/service-worker confusion. -->
 <!-- <link rel="manifest" href="manifest.webmanifest"> -->
-<link href="styles.css?v2.0.0-rc.25" rel="stylesheet"/>
+<link href="styles.css?v2.0.5" rel="stylesheet"/>
 </head>
 <body class="main-screen-active">
 <header class="app-header">
 <div>
 <div class="eyebrow">OpenGraph · JaN · Open Notation</div>
-<h1>OpenGraph Lite Viewer <span class="version-tag">v2.0.0-rc.25</span></h1>
-<p class="header-subtitle">Topmenu met Zin, Bijwoord, Syntax / Functional, Interface, Projecties, LOG-volgorde, taal, LEESMIJ en Config.</p>
+<h1>OpenGraph Lite Viewer <span class="version-tag">v2.0.5</span></h1>
+<p class="header-subtitle">Top menu with Sentence, Adverb, Syntax / Functional, Interface, Projections, LOG order, Language, README and Config.</p>
 </div>
-<button class="ghost hidden" id="installButton" type="button">Installeer</button>
+<button class="ghost hidden" id="installButton" type="button">Install</button>
 </header>
 <main class="app-shell">
-<section aria-label="Hoofdmenu" class="main-topbar">
-<nav aria-label="Topmenu" class="main-top-menu">
+<section aria-label="Main menu" class="main-topbar">
+<nav aria-label="Top menu" class="main-top-menu">
 <details class="compact-choice-menu main-sentence-menu top-menu-item" id="mainSentenceMenu">
-<summary id="mainSentenceSummary" title="Kies de voorbeeldzin">Zin</summary>
+<summary id="mainSentenceSummary" title="Choose sample sentence">Sentence</summary>
 <div aria-label="Voorbeeldzin kiezen" class="compact-choice-popover top-menu-popover top-menu-sentence-popover">
 <div aria-label="Voorbeeldzin kiezen" class="compact-choice-list main-menu-option-list" id="mainSentenceOptions" role="listbox"></div>
 </div>
 </details>
 <details class="compact-choice-menu main-adverb-menu top-menu-item" id="mainAdverbMenu">
-<summary id="mainAdverbSummary" title="Kies een bijwoord">Bijwoord</summary>
+<summary id="mainAdverbSummary" title="Choose an adverb">Adverb</summary>
 <div aria-label="Bijwoord kiezen" class="compact-choice-popover top-menu-popover top-menu-adverb-popover">
 <div aria-label="Bijwoord kiezen" class="compact-choice-list main-menu-option-list" id="mainAdverbOptions" role="listbox"></div>
 </div>
 </details>
 <details class="compact-choice-menu main-view-menu top-menu-item" id="mainViewMenu">
-<summary id="mainViewSummary" title="Kies Syntax of Functional">Syntax</summary>
+<summary id="mainViewSummary" title="Choose Syntax or Functional">Syntax</summary>
 <div aria-label="View kiezen" class="compact-choice-popover top-menu-popover top-menu-view-popover">
 <div aria-label="View kiezen" class="compact-choice-list main-menu-option-list main-menu-view-options" id="mainViewOptions" role="listbox"></div>
 </div>
 </details>
 <details class="compact-choice-menu main-interface-menu top-menu-item" id="mainInterfaceMenu">
-<summary id="mainInterfaceSummary" title="Kies desktop of een mobile-interface">Interface</summary>
+<summary id="mainInterfaceSummary" title="Choose desktop or a mobile interface">Interface</summary>
 <div aria-label="Interface kiezen" class="compact-choice-popover top-menu-popover top-menu-interface-popover">
 <div aria-label="Interface kiezen" class="compact-choice-list main-menu-option-list main-menu-interface-options" id="mainInterfaceOptions" role="listbox"></div>
 <p class="main-menu-help" id="mainInterfaceHelp">Automatisch volgt het echte scherm. Mobiel staand en mobiel liggend zijn ook op desktop als testweergave beschikbaar.</p>
 </div>
 </details>
 <details class="compact-choice-menu source-axis-menu main-projection-menu top-menu-item" id="sourceAxisMenu">
-<summary id="sourceAxisSummary" title="Kies zichtbare projecties"><span id="sourceAxisSummaryLabel">Projecties</span></summary>
+<summary id="sourceAxisSummary" title="Choose visible projections"><span id="sourceAxisSummaryLabel">Projections</span></summary>
 <div aria-label="Projecties kiezen" class="compact-choice-popover top-menu-popover top-menu-projection-popover">
 <div aria-label="Projecties kiezen" class="source-axis-toggle-row" role="group">
 <button aria-pressed="true" data-source-axis="lex" type="button">LEX</button>
@@ -100,45 +100,69 @@
 <button aria-pressed="true" data-source-axis="log" type="button">LOG</button>
 </div>
 <div class="source-axis-action-row">
-<button data-source-axis-action="all" type="button">Alle</button>
-<button data-source-axis-action="none" type="button">Geen</button>
+<button data-source-axis-action="all" type="button">All</button>
+<button data-source-axis-action="none" type="button">None</button>
 </div>
-<p class="main-menu-help source-axis-help">Standaard zijn alle assen zichtbaar. Zet LEX, SYNT en LOG onafhankelijk aan of uit.</p>
+<p class="main-menu-help source-axis-help">All axes are visible by default. Turn LEX, SYNT and LOG on or off independently.</p>
 </div>
 </details>
 <details class="compact-choice-menu main-extra-menu main-log-menu top-menu-item" id="mainExtraMenu">
-<summary id="mainExtraSummary" title="Kies de LOG-volgorde">LOG-volgorde</summary>
+<summary id="mainExtraSummary" title="Choose LOG order">LOG order</summary>
 <div aria-label="LOG-volgorde kiezen" class="compact-choice-popover top-menu-popover top-menu-log-popover">
-<h3 class="top-menu-panel-heading" id="mainSouthHeading">LOG-volgorde</h3>
+<h3 class="top-menu-panel-heading" id="mainSouthHeading">LOG order</h3>
 <div aria-label="LOG-volgorde kiezen" class="extra-south-control" data-south-logical-control="">
 <button id="mainSouthPrevButton" title="Vorige LOG-volgorde" type="button">‹</button>
 <button id="mainSouthModeButton" title="Volgende LOG-volgorde: SOV, SVO, OVS, OSV-!, VSO-!, VOS-!" type="button">SOV</button>
 <button id="mainSouthNextButton" title="Volgende LOG-volgorde" type="button">›</button>
 </div>
-<p class="main-menu-help" id="mainSouthExplanation">Wijzigt alleen de LOG-projectie; Syntax, Functional en LEX blijven gelijk.</p>
+<p class="main-menu-help" id="mainSouthExplanation">Changes only the LOG projection; Syntax, Functional and LEX remain unchanged.</p>
 </div>
 </details>
-<button class="top-menu-action language-toggle-button" data-language-toggle="" title="Wissel de UI/help-taal" type="button">NL/EN</button>
-<button class="top-menu-action help-open-button" id="openHelpButton" title="Open LEESMIJ." type="button">LEESMIJ</button>
-<button class="top-menu-action primary config-open-button" id="openConfigButton" title="Open het configuratiescherm met alle projectie-, LEX-, layout- en documentatie-instellingen." type="button">Config</button>
+<details class="compact-choice-menu language-menu top-menu-item top-menu-action" id="mainLanguageMenu">
+<summary id="mainLanguageSummary" title="Choose language">English</summary>
+<div aria-label="Choose language" class="compact-choice-popover top-menu-popover language-popover">
+<div class="language-option-list" role="listbox">
+<button data-language-option="en" type="button">English</button>
+<button data-language-option="nl" type="button">Nederlands</button>
+<button data-language-option="de" type="button">Deutsch</button>
+<button data-language-option="fr" type="button">Français</button>
+<button data-language-option="es" type="button">Español</button>
+</div>
+<p class="main-menu-help language-sentence-note" id="mainLanguageNote">The sentence examples are Dutch and illustrate Dutch sentence word order.</p>
+</div>
+</details>
+<button class="top-menu-action help-open-button" id="openHelpButton" title="Open README." type="button">README</button>
+<button class="top-menu-action primary config-open-button" id="openConfigButton" title="Open the configuration screen with projection, LEX, layout and documentation settings." type="button">Config</button>
 </nav>
 <select aria-hidden="true" class="main-control-select-compat" id="mainExampleSelect" tabindex="-1"></select>
 <select aria-hidden="true" class="main-control-select-compat" id="mainAdverbSelect" tabindex="-1"></select>
 <select aria-hidden="true" class="main-control-select-compat" id="mainViewSelect" tabindex="-1"></select>
 <select aria-hidden="true" class="main-control-select-compat" id="mainProjectionSelect" tabindex="-1"></select>
 </section>
-<section aria-label="Groei, play en reset" class="main-play-reset-bar">
+<section aria-label="Growth, play and reset" class="main-play-reset-bar">
 <div class="main-play-reset-controls">
-<button class="main-play-step-button" id="mainGrowthPrevButton" title="Vorige groei-stap" type="button">←</button>
-<button class="main-play-button" id="mainGrowthPlayButton" title="Speel groei-presentatie af" type="button">Play</button>
-<button class="main-play-step-button" id="mainGrowthNextButton" title="Volgende groei-stap" type="button">→</button>
-<span class="main-growth-step-label main-play-growth-label" id="mainGrowthStepLabel">Groei uit</span>
-<button class="main-reset-button" id="mainResetButton" title="Reset de huidige zin" type="button">Reset</button>
+<button class="main-play-step-button" id="mainGrowthPrevButton" title="Previous growth step" type="button">←</button>
+<button class="main-play-button" id="mainGrowthPlayButton" title="Play growth presentation" type="button">Play</button>
+<button class="main-play-step-button" id="mainGrowthNextButton" title="Next growth step" type="button">→</button>
+<span class="main-growth-step-label main-play-growth-label" id="mainGrowthStepLabel">Growth off</span>
+<button class="main-reset-button" id="mainResetButton" title="Reset the current sentence" type="button">Reset</button>
 </div>
 </section>
 <section aria-label="Configuratiescherm bediening" class="config-topbar">
 <button class="primary config-back-button" id="closeConfigButton" title="Terug naar: Main." type="button">← Terug naar: Main</button>
-<button class="language-toggle-button" data-language-toggle="" title="Wissel de UI/help-taal" type="button">Nederlands</button>
+<details class="compact-choice-menu language-menu config-language-menu" id="configLanguageMenu">
+<summary id="configLanguageSummary" title="Choose language">English</summary>
+<div aria-label="Choose language" class="compact-choice-popover language-popover">
+<div class="language-option-list" role="listbox">
+<button data-language-option="en" type="button">English</button>
+<button data-language-option="nl" type="button">Nederlands</button>
+<button data-language-option="de" type="button">Deutsch</button>
+<button data-language-option="fr" type="button">Français</button>
+<button data-language-option="es" type="button">Español</button>
+</div>
+<p class="main-menu-help language-sentence-note">The sentence examples are Dutch and illustrate Dutch sentence word order.</p>
+</div>
+</details>
 <button class="help-open-button" id="openHelpFromConfigButton" title="Open LEESMIJ." type="button">LEESMIJ</button>
 <label class="config-grid-quick-toggle" title="Toon of verberg het raster onmiddellijk in de boomweergave."><input checked="" id="configGridQuickInput" type="checkbox"/> <span data-config-grid-quick-label="">Raster zichtbaar</span></label>
 <div>
@@ -150,6 +174,19 @@
 <section aria-label="LEESMIJ-scherm bediening" class="help-topbar">
 <button class="primary config-back-button" id="closeHelpButton" title="Terug naar: Main." type="button">← Terug naar: Main</button>
 <button class="config-open-button" id="openConfigFromHelpButton" title="Open Config naast LEESMIJ." type="button">Config</button>
+<details class="compact-choice-menu language-menu help-language-menu" id="helpLanguageMenu">
+<summary id="helpLanguageSummary" title="Choose language">English</summary>
+<div aria-label="Choose language" class="compact-choice-popover language-popover">
+<div class="language-option-list" role="listbox">
+<button data-language-option="en" type="button">English</button>
+<button data-language-option="nl" type="button">Nederlands</button>
+<button data-language-option="de" type="button">Deutsch</button>
+<button data-language-option="fr" type="button">Français</button>
+<button data-language-option="es" type="button">Español</button>
+</div>
+<p class="main-menu-help language-sentence-note">The sentence examples are Dutch and illustrate Dutch sentence word order.</p>
+</div>
+</details>
 <div>
 <div class="intro-kicker">LEESMIJ</div>
 <h2>Projectinformatie</h2>
@@ -534,17 +571,17 @@
 <label class="field mini-field" title="Wijzigt alleen de kleur van de LOG-projectie op de zuidas."><span class="config-field-name">LOG-kleur</span><select id="logProjectionColorSelect"></select><small class="config-item-help"><span class="help-lang-nl">Wijzigt alleen de kleur van de LOG-projectie op de zuidas.</span><span class="help-lang-en">Changes only the colour of the LOG projection on the south axis.</span></small></label>
 </fieldset></section></details><details class="config-section config-files-section" id="config-files"><summary><span class="help-lang-nl">Bestanden &amp; editors</span><span class="help-lang-en">Files &amp; editors</span></summary><section class="panel-card config-section-body"><section aria-label="Hoofdbediening" class="toolbar">
 <div aria-label="Zin-input" class="input-sentence-tools">
-<a class="button-link" href="examples-input.html?v2.0.0-rc.25" title="Open de HTML-inputfile met voorbeeldzinnen, subject vet en object cursief">HTML-input</a>
-<a class="button-link" href="examples-adverbs.html?v2.0.0-rc.25" title="Voorbeeldset met één bijwoord per zin en default-host per categorie">Bijwoordvoorbeelden</a>
-<a class="button-link" href="docs/LEX_ADVERB_PLACEMENT_RULES_CHECKED.md?v2.0.0-rc.25" title="Plaatsingsregels voor lexicale bijwoordinsertie: default en gemarkeerd">Bijwoordregels</a>
-<a class="button-link" href="examples-adverb-rules-v4552.html?v2.0.0-rc.25" title="Controle per bijwoord: uitzonderingen en eigen regels">Bijwoordcheck</a>
-<a class="button-link" href="examples-adverb-rules-v4552.html?v2.0.0-rc.25" title="Controle per bijwoord: uitzonderingen en eigen regels">Bijwoordcheck</a>
-<a class="button-link" href="lexicon-config.html?v2.0.0-rc.25" title="Leesbare lexicon-config voor voorbeeldzinnen">Lexicon</a>
-<a class="button-link" href="lexicon-editor.html?v2.0.0-rc.25" title="Lexicon én korte voorbeelduitingen beheren; exporteert lexicon-config.html en examples-input.html">Lexicon+uitingen-editor</a>
-<a class="button-link" href="structure-editor.html?v2.0.0-rc.25" title="Bewerk eerst syntax-config en functional-config">Structure-editor</a>
-<a class="button-link" href="docs/docs-home.html?v2.0.0-rc.25" title="Projectcontext, layoutspec en release notes">Docs</a>
-<a class="button-link" href="lex-movement-rules.html?v2.0.0-rc.25" title="Simpele uitleg van de LEX-Wissels per zinstype">Plaatsingsregels</a>
-<a class="button-link" href="reset-cache.html?v2.0.0-rc.25" title="Verwijder browsercache/service worker en open de viewer opnieuw">Reset cache</a>
+<a class="button-link" href="examples-input.html?v2.0.5" title="Open de HTML-inputfile met voorbeeldzinnen, subject vet en object cursief">HTML-input</a>
+<a class="button-link" href="examples-adverbs.html?v2.0.5" title="Voorbeeldset met één bijwoord per zin en default-host per categorie">Bijwoordvoorbeelden</a>
+<a class="button-link" href="docs/LEX_ADVERB_PLACEMENT_RULES_CHECKED.md?v2.0.5" title="Plaatsingsregels voor lexicale bijwoordinsertie: default en gemarkeerd">Bijwoordregels</a>
+<a class="button-link" href="examples-adverb-rules-v4552.html?v2.0.5" title="Controle per bijwoord: uitzonderingen en eigen regels">Bijwoordcheck</a>
+<a class="button-link" href="examples-adverb-rules-v4552.html?v2.0.5" title="Controle per bijwoord: uitzonderingen en eigen regels">Bijwoordcheck</a>
+<a class="button-link" href="lexicon-config.html?v2.0.5" title="Leesbare lexicon-config voor voorbeeldzinnen">Lexicon</a>
+<a class="button-link" href="lexicon-editor.html?v2.0.5" title="Lexicon én korte voorbeelduitingen beheren; exporteert lexicon-config.html en examples-input.html">Lexicon+uitingen-editor</a>
+<a class="button-link" href="structure-editor.html?v2.0.5" title="Bewerk eerst syntax-config en functional-config">Structure-editor</a>
+<a class="button-link" href="docs/docs-home.html?v2.0.5" title="Projectcontext, layoutspec en release notes">Docs</a>
+<a class="button-link" href="lex-movement-rules.html?v2.0.5" title="Simpele uitleg van de LEX-Wissels per zinstype">Plaatsingsregels</a>
+<a class="button-link" href="reset-cache.html?v2.0.5" title="Verwijder browsercache/service worker en open de viewer opnieuw">Reset cache</a>
 </div>
 <div class="button-row compact-actions">
 <button id="resetExampleButton" title="Herlaad het gekozen voorbeeld" type="button">Reset voorbeeld</button>
@@ -562,12 +599,12 @@
 <h2>Voorbeeldzinnen</h2>
 <p class="inline-help">Voeg voorbeeldzinnen toe via de editor. Start lokaal met <code>start-local-viewer.bat</code>; dan schrijft <strong>Opslaan</strong> direct naar <code>examples-input.html</code>. Daarna kun je hier de lijst herladen.</p>
 <div class="button-row">
-<a class="button-link primary" href="examples-editor.html?v2.0.0-rc.25" title="Voorbeeldzinnen toevoegen en opslaan">Voorbeeldzinnen-editor</a>
-<a class="button-link" href="examples-input.html?v2.0.0-rc.25" title="Leesbare HTML-input met voorbeeldzinnen">HTML-input</a>
-<a class="button-link" href="examples-adverbs.html?v2.0.0-rc.25" title="Bijwoordvoorbeelden met default-host en gemarkeerde host">Bijwoordvoorbeelden</a>
-<a class="button-link" href="docs/LEX_ADVERB_PLACEMENT_RULES_CHECKED.md?v2.0.0-rc.25" title="Plaatsingsregels voor lexicale bijwoordinsertie: default en gemarkeerd">Bijwoordregels</a>
-<a class="button-link" href="examples-adverb-rules-v4552.html?v2.0.0-rc.25" title="Controle per bijwoord: uitzonderingen en eigen regels">Bijwoordcheck</a>
-<a class="button-link" href="examples-adverb-rules-v4552.html?v2.0.0-rc.25" title="Controle per bijwoord: uitzonderingen en eigen regels">Bijwoordcheck</a>
+<a class="button-link primary" href="examples-editor.html?v2.0.5" title="Voorbeeldzinnen toevoegen en opslaan">Voorbeeldzinnen-editor</a>
+<a class="button-link" href="examples-input.html?v2.0.5" title="Leesbare HTML-input met voorbeeldzinnen">HTML-input</a>
+<a class="button-link" href="examples-adverbs.html?v2.0.5" title="Bijwoordvoorbeelden met default-host en gemarkeerde host">Bijwoordvoorbeelden</a>
+<a class="button-link" href="docs/LEX_ADVERB_PLACEMENT_RULES_CHECKED.md?v2.0.5" title="Plaatsingsregels voor lexicale bijwoordinsertie: default en gemarkeerd">Bijwoordregels</a>
+<a class="button-link" href="examples-adverb-rules-v4552.html?v2.0.5" title="Controle per bijwoord: uitzonderingen en eigen regels">Bijwoordcheck</a>
+<a class="button-link" href="examples-adverb-rules-v4552.html?v2.0.5" title="Controle per bijwoord: uitzonderingen en eigen regels">Bijwoordcheck</a>
 <button id="reloadExamplesButton" title="Herlees examples-input.html zonder de hele pagina opnieuw te openen" type="button">Herlaad zinnen</button>
 </div>
 </section><div class="config-action-help-list"><h3><span class="help-lang-nl">Wat doen deze items?</span><span class="help-lang-en">What do these items do?</span></h3><ul><li><span class="help-lang-nl"><strong>Voorbeeldzinnen-editor</strong> — voegt zinnen toe en schrijft ze lokaal weg wanneer de lokale server actief is.</span><span class="help-lang-en"><strong>Sample-sentence editor</strong> — adds sentences and writes them locally when the local server is active.</span></li><li><span class="help-lang-nl"><strong>HTML-input</strong> — toont de leesbare lijst die de viewer opnieuw kan laden.</span><span class="help-lang-en"><strong>HTML input</strong> — shows the readable list that the viewer can reload.</span></li><li><span class="help-lang-nl"><strong>Bijwoordbestanden</strong> — documenteren voorbeelden, default-hosts en gecontroleerde plaatsingsregels.</span><span class="help-lang-en"><strong>Adverb files</strong> — document examples, default hosts and checked placement rules.</span></li><li><span class="help-lang-nl"><strong>Herlaad zinnen</strong> — leest examples-input.html opnieuw zonder de hele app te herstarten.</span><span class="help-lang-en"><strong>Reload sentences</strong> — reads examples-input.html again without restarting the whole app.</span></li></ul></div></section></details><details class="config-section" id="config-advanced"><summary><span class="help-lang-nl">Geavanceerd</span><span class="help-lang-en">Advanced</span></summary><section class="config-advanced-stack"><section class="panel-card lex-card">
@@ -645,15 +682,15 @@
 <div aria-label="Documentatie" class="mobile-sheet-section">
 <h3>Documentatie</h3>
 <div class="mobile-link-grid">
-<a href="docs/docs-home.html?v2.0.0-rc.25">Docs</a>
-<a href="lex-movement-rules.html?v2.0.0-rc.25">Plaatsingsregels</a>
-<a href="reset-cache.html?v2.0.0-rc.25">Reset cache</a>
+<a href="docs/docs-home.html?v2.0.5">Docs</a>
+<a href="lex-movement-rules.html?v2.0.5">Plaatsingsregels</a>
+<a href="reset-cache.html?v2.0.5">Reset cache</a>
 </div>
 </div>
 <p class="mobile-sheet-note">Sleep met één vinger om te pannen. Knijp met twee vingers om te zoomen. FIT past het zichtvenster aan de huidige boom en named projections aan; de boom zelf verandert niet.</p>
 </section>
 <script>
-    window.__opengraphBoot = { version: 'v2.0.0-rc.25', loaded: false, marker: 'viewer-index' };
+    window.__opengraphBoot = { version: 'v2.0.5', loaded: false, marker: 'viewer-index' };
     function ogStatus(message) {
       var target = document.getElementById('actionFeedback') || document.body;
       if (target) target.textContent = message;
@@ -666,7 +703,7 @@
     });
     setTimeout(function() {
       if (!window.__opengraphBoot || !window.__opengraphBoot.loaded) {
-        ogStatus('Viewer start niet volledig. Gebruik Reset cache of open http://127.0.0.1:8088/reset-cache.html?v2.0.0-rc.25.');
+        ogStatus('Viewer start niet volledig. Gebruik Reset cache of open http://127.0.0.1:8088/reset-cache.html?v2.0.5.');
       }
     }, 2500);
   </script>
@@ -676,11 +713,11 @@
       var isLocal = window.location.protocol === 'file:' || !host || host === 'localhost' || host === '127.0.0.1';
       if (!isLocal) return;
       var script = document.createElement('script');
-      script.src = 'local-mobile-test.js?v2.0.0-rc.25';
+      script.src = 'local-mobile-test.js?v2.0.5';
       script.defer = true;
       document.head.appendChild(script);
     })();
   </script>
-<script defer="" src="viewer.js?v2.0.0-rc.25&amp;cb=4"></script>
+<script defer="" src="viewer.js?v2.0.5&amp;cb=4"></script>
 </body>
 </html>

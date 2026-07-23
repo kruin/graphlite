@@ -5,10 +5,8 @@ Bestanden om als leidende projectbronnen toe te voegen of te vervangen.
 ## Volledige projectzip
 
 ```text
-OpenGraph_Lite_Viewer_v2.0.0-rc.22_full_source.zip
+OpenGraph_Lite_Viewer_v2.0.5_full_source.zip
 ```
-
-Deze zip bevat alle 106 bestanden uit de aangeleverde v1.0.16-bronset, plus releasecontrole en versieherkomst.
 
 ## Leidende losse bestanden
 
@@ -21,8 +19,21 @@ LINGUISTIC_ACTIONS.md
 DOCUMENTATION_RULES.md
 HANDOVER_FOR_COLLABORATORS.md
 DEPLOY_GITHUB_PAGES.md
+EENVOUDIGE_RELEASE_WERKWIJZE.md
 ```
 
-## Niet als leidende bron gebruiken
+## v2.0.5
 
-Oude projectzips, losse screenshots en historische release notes. Historische bestanden mogen in de volledige bronzip aanwezig blijven, maar de bovenstaande bestanden zijn normatief.
+Toevoegen of vervangen:
+
+- `publish_checked.bat`;
+- `EENVOUDIGE_RELEASE_WERKWIJZE.md`;
+- `EENVOUDIGE_RELEASE_WERKWIJZE_TEST.md`;
+- `SOURCE_CHANGES_V2.0.5.md`;
+- alle versiegebonden app-, cache- en manifestbestanden.
+
+Niet meer als actuele workflow gebruiken:
+
+- `graphlite_safe_update.bat`;
+- `LOCAL_GIT_SAFE_WORKFLOW.md`;
+- A/B-clone-, bundle- en promotiescripts.

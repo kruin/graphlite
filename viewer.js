@@ -1,13 +1,31 @@
 (() => {
   'use strict';
 
-  const VERSION = 'v2.0.0-rc.25';
+  const VERSION = 'v2.0.5';
   const BASE_CELL = 74;
   const ROOT_SIDE_GAP = 1;
   const SVG_NS = 'http://www.w3.org/2000/svg';
   const CANVAS_GUIDE_TEXT_VISIBLE = false;
   const CONFIG_STORAGE_KEY = 'opengraph_saved_config_v1013';
   const CONFIG_LOG_KEY = 'opengraph_local_config_log_v1013';
+
+  const LANGUAGE_OPTIONS = [
+    { id: 'en', label: 'English' },
+    { id: 'nl', label: 'Nederlands' },
+    { id: 'de', label: 'Deutsch' },
+    { id: 'fr', label: 'Français' },
+    { id: 'es', label: 'Español' }
+  ];
+  const LANGUAGE_IDS = new Set(LANGUAGE_OPTIONS.map(option => option.id));
+  const DEFAULT_LANGUAGE = 'en';
+
+  function normalizeLanguage(language) {
+    return LANGUAGE_IDS.has(language) ? language : DEFAULT_LANGUAGE;
+  }
+
+  function languageValue(values) {
+    return values[state.language] || values.en || values.nl || '';
+  }
 
   const els = {
     svg: document.getElementById('graphSvg'),
@@ -40,6 +58,13 @@
     mainActionsSummary: document.getElementById('mainActionsSummary'),
     mainExtraMenu: document.getElementById('mainExtraMenu'),
     mainExtraSummary: document.getElementById('mainExtraSummary'),
+    mainLanguageMenu: document.getElementById('mainLanguageMenu'),
+    mainLanguageSummary: document.getElementById('mainLanguageSummary'),
+    configLanguageMenu: document.getElementById('configLanguageMenu'),
+    configLanguageSummary: document.getElementById('configLanguageSummary'),
+    helpLanguageMenu: document.getElementById('helpLanguageMenu'),
+    helpLanguageSummary: document.getElementById('helpLanguageSummary'),
+    mainLanguageNote: document.getElementById('mainLanguageNote'),
     mainSouthHeading: document.getElementById('mainSouthHeading'),
     mainSouthExplanation: document.getElementById('mainSouthExplanation'),
     mobileViewSelect: document.getElementById('mobileViewSelect'),
@@ -784,7 +809,7 @@
 
   const state = {
     example: EXAMPLES[0],
-    language: (function(){ try { return localStorage.getItem('opengraph_language') === 'en' ? 'en' : 'nl'; } catch (_err) { return 'nl'; } })(),
+    language: (function(){ try { return normalizeLanguage(localStorage.getItem('opengraph_language')); } catch (_err) { return DEFAULT_LANGUAGE; } })(),
     projection: 'axes',
     sourceAxes: (function(){
       try {
@@ -2741,7 +2766,7 @@
     syncPortraitStageMode();
     if (!els.canvasWrap) return;
     syncPortraitMenuSpace();
-    // v2.0.0-rc.25: alle interface-standen krijgen de maximaal beschikbare
+    // v2.0.5: alle interface-standen krijgen de maximaal beschikbare
     // canvasruimte. De SVG-viewBox bepaalt vervolgens de grootste schaal zonder
     // clipping. Een brede boom in portrait wordt dus niet ook nog eens door een
     // kunstmatig laag canvas verkleind.
@@ -2924,7 +2949,7 @@
 
   function setProjection(projection) {
     const next = projection || 'axes';
-    // v2.0.0-rc.25: alle named-projection views delen exact dezelfde
+    // v2.0.5: alle named-projection views delen exact dezelfde
     // viewport. Een projectiewissel mag daarom een handmatige pan/zoom niet
     // wissen en mag de centrale boom horizontaal noch verticaal verplaatsen.
     if (growthSupportedProjection(state.projection) && state.growthStep > 0) {
@@ -4428,7 +4453,7 @@
   }
 
   function projectionStableFrameBox() {
-    // v2.0.0-rc.25: inhoudsgetrouwe, maar nog steeds stabiele unie van Syntax
+    // v2.0.5: inhoudsgetrouwe, maar nog steeds stabiele unie van Syntax
     // en Functional. Alleen werkelijk gebruikte boxbreedtes en lijnuiteinden tellen mee.
     // Oude fictieve reserves links van LOG en rechts van SYNT maakten alle vier
     // interface-standen onnodig klein, vooral mobile portrait.
@@ -4471,7 +4496,7 @@
   }
 
   function stableProjectionViewBox() {
-    // v2.0.0-rc.25: maximale full-view voor Automatisch, Desktop, Mobiel
+    // v2.0.5: maximale full-view voor Automatisch, Desktop, Mobiel
     // staand en Mobiel liggend. De veiligheidsrand is alleen nog voldoende
     // voor dunne strokes en labels; er wordt geen UI-ruimte in SVG gereserveerd.
     const frame = projectionStableFrameBox();
@@ -4690,7 +4715,7 @@
 
   function stableGrowthViewBox() {
     if (!growthActive()) return null;
-    // v2.0.0-rc.25: Groei gebruikt hetzelfde frame als de gewone projectie-
+    // v2.0.5: Groei gebruikt hetzelfde frame als de gewone projectie-
     // views. Voorheen hadden Alle/Bron/LOG eigen hard-coded viewBoxes, terwijl
     // LEX/SYNT auto-fit gebruikten; dat veroorzaakte de zichtbare sprong.
     return stableProjectionViewBox();
@@ -4727,7 +4752,7 @@
   }
 
   function clearViewportGestureState() {
-    // v2.0.0-rc.25: bij wissel tussen landscape/portrait mogen oude touch-pointers
+    // v2.0.5: bij wissel tussen landscape/portrait mogen oude touch-pointers
     // en pinch-state niet blijven hangen. Anders lijkt portrait na zoom in
     // landscape bevroren.
     state.viewDrag = null;
@@ -4989,7 +5014,7 @@
         controlsLeft = state.projectionBoxManual.left;
         controlsTop = state.projectionBoxManual.top;
       } else {
-        // v2.0.0-rc.25: Projecties-box heeft een stabiele schermpositie.
+        // v2.0.5: Projecties-box heeft een stabiele schermpositie.
         // Niet meer ankeren aan een wisselende SYNT-as; alleen handmatig slepen verplaatst de box.
         controlsLeft = maxLeft;
         controlsTop = minTop;
@@ -5181,7 +5206,7 @@
 
   function computeAutoFitBox() {
     if (!els.svg) return fallbackViewBox();
-    // v2.0.0-rc.25: alle projectie-views gebruiken één geometrisch viewport,
+    // v2.0.5: alle projectie-views gebruiken één geometrisch viewport,
     // onafhankelijk van welke overlay zichtbaar is. Dit sluit auto-fit-
     // verschillen uit en voorkomt elke horizontale of verticale verspringing.
     if (isMainScreenActive() && ['axes', 'source', 'lex', 'synt', 'log'].includes(state.projection)) {
@@ -5330,7 +5355,23 @@
   }
 
   function isEnglish() {
-    return state.language === 'en';
+    // Nederlands has a complete dedicated UI/help layer. Other languages use
+    // English for technical texts that have not yet received a translation.
+    return state.language !== 'nl';
+  }
+
+  function languageLabel(language = state.language) {
+    return LANGUAGE_OPTIONS.find(option => option.id === language)?.label || 'English';
+  }
+
+  function dutchSentenceOrderNote() {
+    return languageValue({
+      en: 'The sentence examples are Dutch and illustrate Dutch sentence word order.',
+      nl: 'De voorbeeldzinnen zijn Nederlands en tonen de Nederlandse woordvolgorde.',
+      de: 'Die Beispielsätze sind niederländisch und zeigen die niederländische Satzstellung.',
+      fr: 'Les phrases d’exemple sont néerlandaises et montrent l’ordre des mots en néerlandais.',
+      es: 'Las frases de ejemplo están en neerlandés y muestran el orden de palabras del neerlandés.'
+    });
   }
 
   function renderStatus() {
@@ -6357,17 +6398,69 @@
     });
   }
 
+  function applySelectedLanguageTexts() {
+    if (state.language === 'en' || state.language === 'nl') return;
+    const t = {
+      de: {
+        sentence: 'Satz', adverb: 'Adverb', interface: 'Ansicht', projections: 'Projektionen',
+        logOrder: 'LOG-Reihenfolge', readme: 'README', config: 'Konfiguration', reset: 'Zurücksetzen',
+        growthOff: 'Wachstum aus', chooseLanguage: 'Sprache wählen', backMain: '← Zurück zu: Main',
+        configOverview: 'Konfigurationsübersicht', projectInfo: 'Projektinformationen'
+      },
+      fr: {
+        sentence: 'Phrase', adverb: 'Adverbe', interface: 'Interface', projections: 'Projections',
+        logOrder: 'Ordre LOG', readme: 'README', config: 'Configuration', reset: 'Réinitialiser',
+        growthOff: 'Croissance arrêtée', chooseLanguage: 'Choisir la langue', backMain: '← Retour à : Main',
+        configOverview: 'Vue d’ensemble de la configuration', projectInfo: 'Informations sur le projet'
+      },
+      es: {
+        sentence: 'Oración', adverb: 'Adverbio', interface: 'Interfaz', projections: 'Proyecciones',
+        logOrder: 'Orden LOG', readme: 'README', config: 'Configuración', reset: 'Restablecer',
+        growthOff: 'Crecimiento desactivado', chooseLanguage: 'Elegir idioma', backMain: '← Volver a: Main',
+        configOverview: 'Resumen de configuración', projectInfo: 'Información del proyecto'
+      }
+    }[state.language];
+    if (!t) return;
+    if (els.mainSentenceSummary) els.mainSentenceSummary.textContent = state.example?.title || t.sentence;
+    if (els.mainAdverbSummary && (state.selectedAdverbId === 'none' || !state.selectedAdverbId)) els.mainAdverbSummary.textContent = t.adverb;
+    if (els.mainInterfaceSummary && els.mainInterfaceSummary.textContent === 'Interface') els.mainInterfaceSummary.textContent = t.interface;
+    if (els.sourceAxisSummaryLabel) els.sourceAxisSummaryLabel.textContent = t.projections;
+    if (els.mainExtraSummary) els.mainExtraSummary.textContent = t.logOrder;
+    setText('#mainSouthHeading', t.logOrder);
+    setText('#openHelpButton, #openHelpFromConfigButton', t.readme);
+    setText('#openConfigButton, #openConfigFromHelpButton', t.config);
+    setText('#mainResetButton, #growthResetButton, #mobileGrowthResetButton', t.reset);
+    if (els.mainGrowthStepLabel && !state.growthActive) els.mainGrowthStepLabel.textContent = t.growthOff;
+    setText('#closeConfigButton, #closeHelpButton', t.backMain);
+    setText('.config-topbar h2', t.configOverview);
+    setText('.help-topbar h2', t.projectInfo);
+    document.querySelectorAll('.language-menu > summary').forEach(summary => {
+      summary.title = t.chooseLanguage;
+    });
+  }
+
   function applyLanguage() {
     const en = isEnglish();
-    document.documentElement.lang = en ? 'en' : 'nl';
+    document.documentElement.lang = state.language;
     document.body.classList.toggle('lang-en', en);
     document.body.classList.toggle('lang-nl', !en);
+    document.body.dataset.language = state.language;
     applyConfigLanguageTexts(en);
-    document.querySelectorAll('[data-language-toggle]').forEach(button => {
-      button.textContent = button.closest('.main-topbar') ? 'NL/EN' : (en ? 'English' : 'Nederlands');
-      button.setAttribute('aria-pressed', String(en));
-      button.title = en ? 'Click to switch the UI and README back to Dutch.' : 'Klik om de UI en LEESMIJ naar Engels te wisselen.';
-      button.setAttribute('aria-label', button.title);
+    const selectedLanguageLabel = languageLabel();
+    document.querySelectorAll('.language-menu > summary').forEach(summary => {
+      summary.textContent = selectedLanguageLabel;
+      summary.title = languageValue({
+        en: 'Choose language', nl: 'Kies taal', de: 'Sprache wählen', fr: 'Choisir la langue', es: 'Elegir idioma'
+      });
+      summary.setAttribute('aria-label', summary.title);
+    });
+    document.querySelectorAll('[data-language-option]').forEach(button => {
+      const selected = button.dataset.languageOption === state.language;
+      button.classList.toggle('is-selected', selected);
+      button.setAttribute('aria-selected', String(selected));
+    });
+    document.querySelectorAll('.language-sentence-note').forEach(note => {
+      note.textContent = dutchSentenceOrderNote();
     });
 
     setText('.main-sentence-field span, .desktop-sentence-field span, .sentence-card .field span', en ? 'Sentence' : 'Zin');
@@ -6387,6 +6480,10 @@
     setText('.help-topbar .intro-kicker', en ? 'README' : 'LEESMIJ');
     setText('.help-topbar h2', en ? 'Project information' : 'Projectinformatie');
     setText('.help-topbar p', en ? 'README topics are listed on the left; the selected text is shown on the right.' : 'LEESMIJ-onderwerpen staan links; rechts staat de geselecteerde tekst.');
+    setText('.header-subtitle', en
+      ? 'Top menu with Sentence, Adverb, Syntax / Functional, Interface, Projections, LOG order, Language, README and Config.'
+      : 'Topmenu met Zin, Bijwoord, Syntax / Functional, Interface, Projecties, LOG-volgorde, taal, LEESMIJ en Config.');
+    setText('#installButton', en ? 'Install' : 'Installeer');
 
     setText('[data-projection="axes"], [data-main-projection="axes"]', en ? 'All' : 'Alle');
     document.querySelectorAll('[data-source-axis-action="all"]').forEach(node => { node.textContent = en ? 'All' : 'Alle'; });
@@ -6404,22 +6501,20 @@
     if (els.mainGrowthPlayButton) els.mainGrowthPlayButton.textContent = state.growthTimer ? (en ? 'Pause' : 'Pauze') : 'Play';
 
     document.querySelectorAll('a[href="docs/OpenGraph_Lite_Viewer_EN_v4506.pdf"]').forEach(a => {
-      a.textContent = en ? 'English PDF' : 'English PDF';
+      a.textContent = 'English PDF';
       a.title = en ? 'Open English PDF documentation' : 'Open Engelstalige PDF-documentatie';
     });
+    applySelectedLanguageTexts();
   }
 
   function setLanguage(language) {
-    state.language = language === 'en' ? 'en' : 'nl';
+    state.language = normalizeLanguage(language);
     try { localStorage.setItem('opengraph_language', state.language); } catch (_err) {}
     syncControls();
     applyLanguage();
     renderStatus();
   }
 
-  function toggleLanguage() {
-    setLanguage(isEnglish() ? 'nl' : 'en');
-  }
 
 
 
@@ -6522,7 +6617,7 @@
   function applyConfigSnapshot(snapshot = {}) {
     if (!snapshot || typeof snapshot !== 'object') return false;
     const currentVersionSnapshot = snapshot.version === VERSION;
-    if (typeof snapshot.language === 'string') state.language = snapshot.language === 'en' ? 'en' : 'nl';
+    if (typeof snapshot.language === 'string') state.language = normalizeLanguage(snapshot.language);
     if (typeof snapshot.centerMode === 'string') state.centerMode = (snapshot.centerMode === 'ft' || snapshot.centerMode === 'functional') ? 'ft' : 'syntax';
     if (currentVersionSnapshot) {
       if (typeof snapshot.projection === 'string' && PROJECTION_OPTIONS.some(option => option.id === snapshot.projection)) state.projection = snapshot.projection;
@@ -6885,8 +6980,11 @@
     els.openHelpFromConfigButton?.addEventListener('click', () => setHelpScreen(true));
     els.closeHelpButton?.addEventListener('click', () => setHelpScreen(false));
     registerHelpTopicTree();
-    document.querySelectorAll('[data-language-toggle]').forEach(button => {
-      button.addEventListener('click', event => { toggleLanguage(); if (event.currentTarget.closest('.main-actions-menu') && els.mainActionsMenu) els.mainActionsMenu.open = false; });
+    document.querySelectorAll('[data-language-option]').forEach(button => {
+      button.addEventListener('click', event => {
+        setLanguage(event.currentTarget.dataset.languageOption || DEFAULT_LANGUAGE);
+        document.querySelectorAll('.language-menu[open]').forEach(menu => { menu.open = false; });
+      });
     });
     window.addEventListener('keydown', event => {
       if (event.key === 'Escape' && (document.body.classList.contains('config-screen-active') || document.body.classList.contains('help-screen-active'))) setAppScreen('main');

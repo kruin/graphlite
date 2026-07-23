@@ -8,27 +8,27 @@ set "RESET_DELAY_SECONDS=30"
 
 echo.
 echo ==============================
-echo OpenGraph publish - checked
+echo OpenGraph Lite Viewer - publiceren
 echo ==============================
 echo.
 
 where git >nul 2>nul
 if errorlevel 1 (
     echo FOUT: git is niet gevonden in PATH.
-    exit /b 1
+    goto :failed
 )
 
 git rev-parse --is-inside-work-tree >nul 2>nul
 if errorlevel 1 (
     echo FOUT: deze map is geen Git repository.
     echo Map: %CD%
-    exit /b 1
+    goto :failed
 )
 
 for /f "delims=" %%b in ('git branch --show-current') do set "BRANCH=%%b"
 if "%BRANCH%"=="" (
     echo FOUT: kon actieve branch niet bepalen.
-    exit /b 1
+    goto :failed
 )
 
 echo Huidige branch: %BRANCH%
@@ -40,19 +40,19 @@ echo.
 for %%f in (index.html viewer.html viewer.js styles.css reset-cache.html) do (
     if not exist "%%f" (
         echo FOUT: %%f ontbreekt in deze map.
-        exit /b 1
+        goto :failed
     )
 )
 
 set "APP_VERSION="
 if not exist "VERSION.txt" (
     echo FOUT: VERSION.txt ontbreekt.
-    exit /b 1
+    goto :failed
 )
 set /p APP_VERSION=<VERSION.txt
 if "%APP_VERSION%"=="" (
     echo FOUT: VERSION.txt is leeg.
-    exit /b 1
+    goto :failed
 )
 set "RELEASE_ZIP=OpenGraph_Lite_Viewer_%APP_VERSION%_full_source.zip"
 echo App-versie: %APP_VERSION%
@@ -62,7 +62,7 @@ echo.
 call check_release.bat
 if errorlevel 1 (
     echo FOUT: releasecontrole mislukt.
-    exit /b 1
+    goto :failed
 )
 
 echo.
@@ -93,7 +93,7 @@ set /p "COMMITMSG=Geef commit message: "
 if "%COMMITMSG%"=="" (
     echo.
     echo Geen commit message opgegeven. Afgebroken.
-    exit /b 1
+    goto :failed
 )
 
 echo.
@@ -101,7 +101,7 @@ echo Staging tracked wijzigingen en verwijderingen voor %APP_VERSION%...
 git add -u -- .
 if errorlevel 1 (
     echo FOUT: git add -u mislukt.
-    exit /b 1
+    goto :failed
 )
 
 echo Verwijder release-zips en lokale testhulp uit Git-index als ze eerder getrackt waren...
@@ -120,7 +120,7 @@ for /f "delims=" %%f in ('git ls-files --others --exclude-standard') do (
         git add -- "%%f"
         if errorlevel 1 (
             echo FOUT: git add mislukt voor %%f
-            exit /b 1
+            goto :failed
         )
     )
 )
@@ -136,7 +136,7 @@ echo Committen...
 git commit -m "%COMMITMSG%"
 if errorlevel 1 (
     echo FOUT: git commit mislukt.
-    exit /b 1
+    goto :failed
 )
 
 echo.
@@ -144,7 +144,7 @@ echo Push naar origin/%BRANCH% ...
 git push -u origin "%BRANCH%"
 if errorlevel 1 (
     echo FOUT: git push mislukt.
-    exit /b 1
+    goto :failed
 )
 set "PUSH_DONE=1"
 
@@ -209,4 +209,15 @@ echo %USER_INDEX_URL%
 echo.
 echo Klaar.
 echo.
+echo Druk op een toets om dit venster te sluiten.
+pause >nul
 endlocal
+exit /b 0
+
+:failed
+echo.
+echo Publicatie afgebroken. Controleer de melding hierboven.
+echo Druk op een toets om dit venster te sluiten.
+pause >nul
+endlocal
+exit /b 1

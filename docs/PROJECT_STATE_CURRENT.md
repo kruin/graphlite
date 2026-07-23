@@ -4,7 +4,7 @@ Actuele, leidende status van OpenGraph Lite Viewer.
 
 ## Versie
 
-- Releasekandidaat: `v2.0.0-rc.25`.
+- Actuele release: `v2.0.5`.
 - Functionele bronbasis: volledige v1.0.16-bronset, doorontwikkeld via de v2.0-releasekandidaten.
 - `VERSION.txt` is leidend voor app, cache, documentatie en zipnaam.
 
@@ -40,7 +40,7 @@ Portrait wordt smaller en hoger; landscape breder en lager; desktop volgt de fei
 
 ```text
 Rij 1: Zin · Bijwoord · Syntax / Functional · Interface · Projecties · LOG-volgorde
-Rij 2: NL/EN · LEESMIJ/README · Config
+Rij 2: Taal/Language · README/LEESMIJ · Config
 ```
 
 - Geen algemene knop `Menu`.
@@ -56,7 +56,7 @@ Rij 2: NL/EN · LEESMIJ/README · Config
 
 ## Publicatie-reset
 
-- `publish_checked.bat` opent na een geslaagde push automatisch eenmaal per versie de resetpagina.
+- `publish_checked.bat` opent na een geslaagde push de resetpagina.
 - Geen push of mislukte push betekent geen automatische reset.
 
 ## Controle
@@ -101,3 +101,20 @@ check_release.bat
 - Config opent als compact sectieoverzicht.
 - Binnen geopende secties staat bij instellingen waar mogelijk een korte uitleg: wat doet de optie en welke laag blijft ongewijzigd.
 - De bestaande `Ja · bewaar config` / `Nee · herstel laatst bewaarde config`-werkwijze blijft behouden.
+
+## Eenvoudige lokale release-installatie
+
+- Pak de bronzip buiten Git uit.
+- Kopieer de inhoud rechtstreeks over `C:\git\graphlite`; behoud `.git`.
+- Test lokaal via `start-local-viewer.bat` en `reset-cache.html`.
+- Publiceer daarna met `publish_checked.bat`.
+- De publicatie-BAT vraagt een commitbericht, commit en pusht direct na geslaagde controles.
+- Geen `graphlite-next`, clone, bundle, promotie, `git pull` of force-push.
+
+## Talen
+
+- English is de standaardtaal bij een nieuwe installatie.
+- Beschikbaar: English, Nederlands, Deutsch, Français en Español.
+- Een eerder gekozen taal blijft lokaal bewaard.
+- De taalkeuze vertaalt de interface; de voorbeeldzinnen blijven Nederlands en demonstreren Nederlandse woordvolgorde.
+- Niet vertaalde technische teksten in Duits, Frans en Spaans vallen terug op Engels.

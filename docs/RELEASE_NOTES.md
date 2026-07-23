@@ -1,3 +1,9 @@
+# v2.0.5
+
+- Eenvoudige directe releasewerkwijze hersteld: bron over `C:\git\graphlite` kopiëren, lokaal testen, daarna `publish_checked.bat`.
+- `graphlite_safe_update.bat`, `graphlite-next`, clone-, bundle- en promotiewerkwijze zijn niet langer de actuele releasebediening.
+- Alle actieve versieaanduidingen en lokale startlinks gebruiken v2.0.5.
+
 # v2.0.0-rc.22
 
 - Mobile raster is inhoudsgebonden en wordt niet meer tot de volledige canvas-aspectratio verbreed.
@@ -733,3 +739,11 @@ Dit blijft een LEX/FUNC-regel. De SYNT-boom wordt niet gemuteerd.
 - LEX-/SYNT-asafstand en regelboxbreedte passen mee aan.
 - Raster en viewBox gebruiken dezelfde schermverhouding.
 - Syntax, FT en alle projectiecombinaties blijven binnen een viewport stabiel.
+
+
+## v2.0.3
+
+- English default for new installations.
+- Language menus: English, Nederlands, Deutsch, Français and Español.
+- Explicit note that example sentences are Dutch and illustrate Dutch word order.
+- One safe J/N release workflow: `graphlite_safe_update.bat`.

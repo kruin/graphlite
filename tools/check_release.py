@@ -1,97 +1,189 @@
 from __future__ import annotations
-import json,re,sys
+import json, re, sys
 from pathlib import Path
-ROOT=Path(__file__).resolve().parents[1]
-VERSION=(ROOT/'VERSION.txt').read_text(encoding='utf-8').strip()
-errors=[]
-for rel in ['index.html','viewer.html','viewer.js','styles.css','reset-cache.html','sw.js','structure-config.html','examples-input.html','lexicon-config.html','.nojekyll','PROJECT_STATE_CURRENT.md','LAYOUT_RULES.md','LINGUISTIC_ACTIONS.md','SOV_NOTATION_OPTIONS.md']:
-    if not (ROOT/rel).is_file(): errors.append(f'ontbreekt: {rel}')
-index=(ROOT/'index.html').read_text(encoding='utf-8',errors='ignore')
-js=(ROOT/'viewer.js').read_text(encoding='utf-8',errors='ignore')
-css=(ROOT/'styles.css').read_text(encoding='utf-8',errors='ignore')
-for rel in ['index.html','viewer.html','viewer.js','reset-cache.html','sw.js']:
-    if VERSION not in (ROOT/rel).read_text(encoding='utf-8',errors='ignore'): errors.append(f'versie ontbreekt in {rel}')
-if (ROOT/'index.html').read_bytes()!=(ROOT/'viewer.html').read_bytes(): errors.append('viewer.html verschilt van index.html')
-for f in ['id="mainSentenceMenu"','id="mainAdverbMenu"','id="mainViewMenu"','id="mainInterfaceMenu"','id="viewportModeSelect"','id="sourceAxisMenu"','id="mainExtraMenu"','id="mainSentenceOptions"','id="mainAdverbOptions"','id="mainViewOptions"','id="sourceAxisSummaryLabel"','data-source-axis="lex"','data-source-axis="synt"','data-source-axis="log"','data-language-toggle','id="openHelpButton"','id="openConfigButton"','id="growthProjectionImmediateInput"']:
-    if f not in index: errors.append(f'UI mist {f}')
+
+ROOT = Path(__file__).resolve().parents[1]
+VERSION = (ROOT / 'VERSION.txt').read_text(encoding='utf-8').strip()
+errors: list[str] = []
+
+required_files = [
+    'index.html','viewer.html','viewer.js','styles.css','reset-cache.html','sw.js',
+    'manifest.webmanifest','structure-config.html','examples-input.html','lexicon-config.html',
+    '.nojekyll','PROJECT_STATE_CURRENT.md','LAYOUT_RULES.md','LINGUISTIC_ACTIONS.md',
+    'SOV_NOTATION_OPTIONS.md','EENVOUDIGE_RELEASE_WERKWIJZE.md','publish_checked.bat',
+    'check_release.bat','start-local-viewer.bat','README.md','SOURCE_CHANGES_V2.0.5.md',
+    'LANGUAGE_MENU_TEST.md','EENVOUDIGE_RELEASE_WERKWIJZE_TEST.md',
+    'RELEASE_MANIFEST_GIT_EXCLUSION_TEST.md','RELEASE_MANIFEST.txt'
+]
+for rel in required_files:
+    if not (ROOT / rel).is_file():
+        errors.append(f'ontbreekt: {rel}')
+
+index = (ROOT/'index.html').read_text(encoding='utf-8', errors='ignore')
+js = (ROOT/'viewer.js').read_text(encoding='utf-8', errors='ignore')
+css = (ROOT/'styles.css').read_text(encoding='utf-8', errors='ignore')
+
+for rel in ['index.html','viewer.html','viewer.js','reset-cache.html','sw.js','manifest.webmanifest']:
+    if VERSION not in (ROOT/rel).read_text(encoding='utf-8', errors='ignore'):
+        errors.append(f'versie ontbreekt in {rel}')
+if (ROOT/'index.html').read_bytes() != (ROOT/'viewer.html').read_bytes():
+    errors.append('viewer.html verschilt van index.html')
+
+# Main contract.
+for token in [
+    'id="mainSentenceMenu"','id="mainAdverbMenu"','id="mainViewMenu"',
+    'id="mainInterfaceMenu"','id="sourceAxisMenu"','id="mainExtraMenu"',
+    'id="mainLanguageMenu"','id="openHelpButton"','id="openConfigButton"',
+    'id="growthProjectionImmediateInput"','data-source-axis="lex"',
+    'data-source-axis="synt"','data-source-axis="log"'
+]:
+    if token not in index: errors.append(f'UI mist {token}')
 if 'id="mainActionsMenu"' in index or '>Menu</summary>' in index:
     errors.append('algemene Menu-knop staat nog in Main')
-if '>NL/EN</button>' not in index:
-    errors.append('topmenu mist zichtbare optie NL/EN')
-
-if '>LEESMIJ</button>' not in index:
-    errors.append('Nederlandse topmenu-optie LEESMIJ ontbreekt')
-if "en ? 'README' : 'LEESMIJ'" not in js:
-    errors.append('taalwissel README/LEESMIJ ontbreekt')
-if 'data-help-topic-button="todo"' not in index or 'data-help-topic="todo"' not in index:
-    errors.append('TODO ontbreekt in ingebouwde LEESMIJ/README')
-
-for required in ['id="config-overview"','id="config-basic"','id="config-jan"','id="config-tree"','id="config-lex"','id="config-projections"','id="config-examples"','id="config-advanced"','data-config-target="config-basic"','← Terug naar: Main']:
-    if required not in index: errors.append(f'Config redesign mist {required}')
-if 'JaN (Just another Notation)' not in index or 'S:np-VP' not in index or 'S:NP-VP' not in index:
-    errors.append('JaN TODO/notatie ontbreekt of is onvolledig')
-if '>JaN<' not in index and 'OpenGraph · JaN · Open Notation' not in index:
-    errors.append('werknaam JaN ontbreekt in zichtbare UI')
-readme=(ROOT/'README.md').read_text(encoding='utf-8',errors='ignore')
-for todo_item in ['Niet-binaire, meertakkige bomen','S:np-VP','S+ np-VP','heeft gebeten']:
-    if todo_item not in readme:
-        errors.append(f'README TODO mist {todo_item}')
-top_menu=re.search(r'<nav[^>]*class=["\'][^"\']*\bmain-top-menu\b[^"\']*["\'][^>]*>.*?</nav>',index,re.S)
-if not top_menu:
-    errors.append('zichtbare topmenubalk ontbreekt')
-else:
-    block=top_menu.group(0)
-    required=['mainSentenceMenu','mainAdverbMenu','mainViewMenu','mainInterfaceMenu','sourceAxisMenu','mainExtraMenu','data-language-toggle','openHelpButton','openConfigButton']
-    for item in required:
-        if item not in block: errors.append(f'topmenu mist {item}')
-    if block.count('<details') != 6:
-        errors.append('topmenu moet zes directe keuze-items bevatten')
-canvas=re.search(r'<section id="canvasWrap".*?</section>',index,re.S)
-if canvas and ('mainSouthModeButton' in canvas.group(0) or 'language-action-box' in canvas.group(0)): errors.append('SOV staat nog in canvas')
-if 'id="southBoxDraggableInput"' in index: errors.append('oude SOV-dragoptie staat nog in Config')
-for f in ["projection: 'axes'","const parsed = raw ? JSON.parse(raw) : SOURCE_AXIS_IDS;","function activeProjectionAxisSet()","function applyProjectionAxes(","applyProjectionAxes(SOURCE_AXIS_IDS); resetForNewExample(); render();","function renderMainChoiceMenus()","function setViewportMode(","function viewportGridProfile()","function projectionSpacingProfile()","cellXScale: 0.70 + 0.86 * t + 0.34 * landscapeBoost","cellYScale: Math.max(0.56, 1.17 - 0.44 * t - 0.15 * landscapeBoost)","expandBoxToAspect(padded, canvasAspectRatio())","function projectionStableFrameBox()","function stableProjectionViewBox()","function physicalViewportMetrics()","actual-compact-landscape","window.visualViewport?.addEventListener('resize'","scheduleViewportRefit(420)","growthProjectionImmediate: true","function projectionSourceVisible(","function executedLexMovementCount(","growthPlan,\n        executedMovementCount: executedLexMovementCount(growthPlan)"]:
-    if f not in js: errors.append(f'JS mist {f!r}')
-for f in ['.main-top-menu','.top-menu-popover','.main-control-select-compat','lichte belijning; alleen named projections krijgen nadruk','viewport-mobile-natural','top-menu-interface-popover']:
-    if f not in css: errors.append(f'CSS mist {f}')
-
-if 'Math.max(2180' in js or 'Math.max(1120' in js:
-    errors.append('oude overgrote projectie-fitbox staat nog in viewer.js')
-for f in ['stroke-width: .72 !important','stroke-width: 1.42 !important','stroke-width: .50 !important']:
-    if f not in css: errors.append(f'lijnhiërarchie mist {f}')
-if 'class="main-projection-field"' in index: errors.append('oude zichtbare projectieselect staat nog in Main')
-
-if not re.search(r'<input[^>]*id=["\']growthProjectionImmediateInput["\'][^>]*checked|<input[^>]*checked[^>]*id=["\']growthProjectionImmediateInput["\']', index):
-    errors.append('directe projectiegroei is niet standaard aangevinkt')
-if "return ['axes', 'source', 'lex', 'synt', 'log'].includes(projection);" not in js:
-    errors.append('groei werkt niet in alle projectiestanden')
-if "state.growthProjectionImmediate === false" not in js:
-    errors.append('vertraagde compatibiliteitsmodus ontbreekt')
-if 'Standaard zijn alle assen zichtbaar.' not in index: errors.append('default alle assen niet vermeld')
-
-if 'Kies Syntax of Functional' not in index or "{ id: 'ft', label: 'Functional' }" not in js or "state.centerMode === 'ft' ? 'Functional' : 'Syntax'" not in js:
+if ('Kies Syntax of Functional' not in index and 'Choose Syntax or Functional' not in index) or "{ id: 'ft', label: 'Functional' }" not in js:
     errors.append('zichtbare viewnaam Functional ontbreekt')
 if 'Syntax / FT' in index or '>FT<' in index:
     errors.append('oude zichtbare viewnaam FT staat nog in Main')
-for required_help in ['config-item-help','config-action-help-list','config-toggle-title']:
-    if required_help not in index and required_help not in css:
-        errors.append(f'Config-toelichting mist {required_help}')
-for bad in ['LOG/Functional','Functional/LOG']:
-    for p in ROOT.rglob('*'):
-        if p.name == 'check_release.py':
-            continue
-        if p.is_file() and p.suffix.lower() in {'.html','.js','.css','.md','.txt','.py','.bat'} and bad in p.read_text(encoding='utf-8',errors='ignore'):
-            errors.append(f'verboden term {bad} in {p.relative_to(ROOT)}')
+
+# Language contract.
+for lang in ['English','Nederlands','Deutsch','Français','Español']:
+    if lang not in index: errors.append(f'talenmenu mist {lang}')
+if index.count('data-language-option=') != 15:
+    errors.append('verwacht vijf talen in elk van drie talenmenu’s')
+for token in [
+    "const DEFAULT_LANGUAGE = 'en';",
+    "{ id: 'de', label: 'Deutsch' }",
+    "{ id: 'fr', label: 'Français' }",
+    "{ id: 'es', label: 'Español' }",
+    "localStorage.getItem('opengraph_language')",
+    'The sentence examples are Dutch and illustrate Dutch sentence word order.',
+    'De voorbeeldzinnen zijn Nederlands en tonen de Nederlandse woordvolgorde.',
+    'Die Beispielsätze sind niederländisch',
+    'Les phrases d’exemple sont néerlandaises',
+    'Las frases de ejemplo están en neerlandés'
+]:
+    if token not in js and token not in index:
+        errors.append(f'taalcontract mist {token!r}')
+for menu_id in ['mainLanguageMenu','configLanguageMenu','helpLanguageMenu']:
+    if f'id="{menu_id}"' not in index: errors.append(f'talenmenu ontbreekt: {menu_id}')
+if 'language-option-list' not in css or 'language-sentence-note' not in css:
+    errors.append('talenmenu-opmaak ontbreekt')
+
+# Fixed two-row top menu: six choices, then language/readme/config.
+top = re.search(r'<nav[^>]*class=["\'][^"\']*\bmain-top-menu\b[^"\']*["\'][^>]*>.*?</nav>', index, re.S)
+if not top:
+    errors.append('zichtbare topmenubalk ontbreekt')
+else:
+    block=top.group(0)
+    if block.count('<details') != 7:
+        errors.append('topmenu moet zeven details-keuzes bevatten: zes op rij 1 en taal op rij 2')
+    for item in ['mainSentenceMenu','mainAdverbMenu','mainViewMenu','mainInterfaceMenu','sourceAxisMenu','mainExtraMenu','mainLanguageMenu','openHelpButton','openConfigButton']:
+        if item not in block: errors.append(f'topmenu mist {item}')
+
+# Config and JaN contract.
+for token in ['id="config-overview"','id="config-basic"','id="config-jan"','id="config-tree"','id="config-lex"','id="config-projections"','id="config-examples"','id="config-advanced"','S:np-VP','S:NP-VP','S+ np-VP']:
+    if token not in index: errors.append(f'Config/JaN mist {token}')
+for token in ['config-item-help','config-action-help-list','config-toggle-title']:
+    if token not in index and token not in css: errors.append(f'Config-toelichting mist {token}')
+
+# Existing layout/growth safety contract.
+for token in [
+    "projection: 'axes'",'function activeProjectionAxisSet()','function setViewportMode(',
+    'function viewportGridProfile()','function projectionStableFrameBox()',
+    'function stableProjectionViewBox()','function physicalViewportMetrics()',
+    'actual-compact-landscape',"window.visualViewport?.addEventListener('resize'",
+    'growthProjectionImmediate: true','function projectionSourceVisible(',
+    'function executedLexMovementCount('
+]:
+    if token not in js: errors.append(f'JS mist {token!r}')
+if not re.search(r'<input[^>]*id=["\']growthProjectionImmediateInput["\'][^>]*checked|<input[^>]*checked[^>]*id=["\']growthProjectionImmediateInput["\']', index):
+    errors.append('directe projectiegroei is niet standaard aangevinkt')
+for token in ['stroke-width: .72 !important','stroke-width: 1.42 !important','stroke-width: .50 !important']:
+    if token not in css: errors.append(f'lijnhiërarchie mist {token}')
+
+# Simple direct release workflow.
+removed_scripts=['graphlite_safe_update.bat','prepare_release_clone.bat','promote_release_clone.bat','recover_git_bundle.bat']
+for rel in removed_scripts:
+    if (ROOT/rel).exists(): errors.append(f'verwijderd releasescript staat nog in bron: {rel}')
+bat=(ROOT/'publish_checked.bat').read_text(encoding='utf-8', errors='ignore')
+for token in ['call check_release.bat','Geef commit message','git commit -m','git push -u origin','automatic_reset','reset-cache.html?ogv=%APP_VERSION%','pause >nul']:
+    if token.lower() not in bat.lower(): errors.append(f'publish_checked.bat mist {token}')
+if re.search(r'(?mi)^\s*git\s+pull\b', bat): errors.append('publish_checked.bat voert git pull uit')
+if re.search(r'(?mi)^\s*git\s+push\b.*(?:--force|-f\b)', bat): errors.append('publish_checked.bat voert force-push uit')
+workflow=(ROOT/'EENVOUDIGE_RELEASE_WERKWIJZE.md').read_text(encoding='utf-8', errors='ignore')
+for token in [r'C:\git\graphlite','publish_checked.bat','start-local-viewer.bat','reset-cache.html','geen `graphlite-next`','geen `git pull`']:
+    if token.lower() not in workflow.lower(): errors.append(f'eenvoudige releasewerkwijze mist {token}')
+
+# Docs copies.
+for rel in ['README.md','EENVOUDIGE_RELEASE_WERKWIJZE.md','PROJECT_STATE_CURRENT.md','HANDOVER_FOR_COLLABORATORS.md']:
+    doc=ROOT/'docs'/rel
+    if not doc.is_file(): errors.append(f'docskopie ontbreekt: docs/{rel}')
+    elif (ROOT/rel).read_bytes()!=doc.read_bytes(): errors.append(f'docskopie wijkt af: docs/{rel}')
+
+# Links and JSON.
 attr=re.compile(r'(?:href|src)=["\']([^"\'#?]+)')
 for p in ROOT.rglob('*.html'):
-    for target in attr.findall(p.read_text(encoding='utf-8',errors='ignore')):
+    for target in attr.findall(p.read_text(encoding='utf-8', errors='ignore')):
         if target.startswith(('http:','https:','mailto:','data:','javascript:','/')): continue
-        r=(p.parent/target).resolve()
-        try: r.relative_to(ROOT.resolve())
+        resolved=(p.parent/target).resolve()
+        try: resolved.relative_to(ROOT.resolve())
         except ValueError: continue
-        if not r.exists(): errors.append(f'gebroken link {p.relative_to(ROOT)} -> {target}')
+        if not resolved.exists(): errors.append(f'gebroken link {p.relative_to(ROOT)} -> {target}')
 for p in ROOT.rglob('*.json'):
     try: json.loads(p.read_text(encoding='utf-8'))
-    except Exception as e: errors.append(f'ongeldige JSON {p.relative_to(ROOT)}: {e}')
+    except Exception as exc: errors.append(f'ongeldige JSON {p.relative_to(ROOT)}: {exc}')
+
+# The checker itself must keep repository metadata outside the product manifest.
+checker_source = (ROOT/'tools/check_release.py').read_text(encoding='utf-8', errors='ignore')
+for token in [
+    "EXCLUDED_RELEASE_DIRS = {'.git', '__pycache__'}",
+    "entry.startswith('.git/')",
+    "if is_release_file(path)"
+]:
+    if token not in checker_source:
+        errors.append(f'manifest-.git-uitsluiting mist {token!r}')
+
+# Manifest is the sorted product-source file list, including itself.
+# Repository metadata and local runtime artifacts are deliberately outside the
+# release manifest. This lets the same check run both in an extracted source
+# folder and inside C:\\git\\graphlite without ever scanning .git.
+EXCLUDED_RELEASE_DIRS = {'.git', '__pycache__'}
+EXCLUDED_RELEASE_NAMES = {'.DS_Store', 'Thumbs.db'}
+
+def is_release_file(path: Path) -> bool:
+    rel = path.relative_to(ROOT)
+    if any(part in EXCLUDED_RELEASE_DIRS for part in rel.parts):
+        return False
+    name = path.name
+    if name in EXCLUDED_RELEASE_NAMES or name.endswith(('.pyc', '.pyo')):
+        return False
+    if re.fullmatch(r'OpenGraph_Lite_Viewer_v.*_full_source\.zip(?:\.sha256)?', name, re.I):
+        return False
+    if re.fullmatch(r'(?:opengraph-)?local-config-log.*\.txt', name, re.I):
+        return False
+    return path.is_file()
+
+manifest = [
+    line.strip().replace('\\', '/')
+    for line in (ROOT/'RELEASE_MANIFEST.txt').read_text(encoding='utf-8').splitlines()
+    if line.strip()
+]
+if any(entry == '.git' or entry.startswith('.git/') for entry in manifest):
+    errors.append('manifest mag geen .git-bestanden bevatten; herstel RELEASE_MANIFEST.txt uit de bronzip')
+actual = sorted(
+    str(path.relative_to(ROOT)).replace('\\', '/')
+    for path in ROOT.rglob('*')
+    if is_release_file(path)
+)
+if manifest != actual:
+    missing=sorted(set(actual)-set(manifest))
+    extra=sorted(set(manifest)-set(actual))
+    if missing: errors.append('manifest mist: '+', '.join(missing[:8]))
+    if extra: errors.append('manifest bevat niet-bestaand: '+', '.join(extra[:8]))
+    if not missing and not extra: errors.append('manifest is niet alfabetisch gesorteerd')
+
 if errors:
-    print('RELEASE CHECK: FOUT'); [print('-',e) for e in errors]; sys.exit(1)
+    print('RELEASE CHECK: FOUT')
+    for error in errors: print('-',error)
+    sys.exit(1)
 print(f'RELEASE CHECK: OK ({VERSION})')

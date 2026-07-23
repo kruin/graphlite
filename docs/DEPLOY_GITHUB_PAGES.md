@@ -2,13 +2,41 @@
 
 Deploy- en cache-instructies voor GitHub Pages.
 
-## Publiceren
+## Eenvoudige lokale bronupdate
 
-Gebruik één gecontroleerde publicatie-BAT:
+Pak de volledige source-zip buiten Git uit. Kopieer daarna de inhoud van de uitgepakte versiemap over:
 
 ```text
+C:\git\graphlite
+```
+
+Laat `C:\git\graphlite\.git` staan. Er is geen `graphlite-next`, clone, bundle of promotiefase.
+
+## Eerst lokaal testen
+
+Start:
+
+```bat
+start-local-viewer.bat
+```
+
+Open:
+
+```text
+http://127.0.0.1:8088/reset-cache.html
+```
+
+Publiceer pas nadat desktop en mobile lokaal goed werken.
+
+## Publiceren
+
+Start in `C:\git\graphlite`:
+
+```bat
 publish_checked.bat
 ```
+
+De BAT controleert de release, vraagt om een commitbericht, staged de sitebestanden, commit en pusht naar de actieve branch. Er wordt geen `git pull` en geen force-push uitgevoerd.
 
 Publicatiepad:
 
@@ -17,100 +45,27 @@ https://github.com/kruin/graphlite
 https://kruin.github.io/graphlite/
 ```
 
-## Preflight
-
-Voor push controleert de BAT minimaal:
-
-```bat
-node --check viewer.js
-```
-
-En minimaal bestaan:
-
-```text
-index.html
-viewer.html
-viewer.js
-styles.css
-reset-cache.html
-```
-
-## Staging
-
-De BAT staged tracked wijzigingen met:
-
-```bat
-git add -u -- .
-```
-
-Daarna voegt hij alleen nieuwe, niet-genegeerde bestanden toe via:
-
-```bat
-git ls-files --others --exclude-standard
-```
-
-Genegeerde bestanden blokkeren de publicatie niet.
-
 ## Eenmalige cache-reset na push
 
-Na een **geslaagde `git push`** opent `publish_checked.bat` automatisch de juiste resetpagina.
-
-- Geen bevestigingsvraag.
-- Geen reset wanneer er niets is gepusht.
-- Geen reset na een mislukte push.
-- Maximaal eenmaal per versie op dezelfde computer.
-- De reset wordt kort uitgesteld zodat GitHub Pages de nieuwe push kan verwerken.
-- De laatst geopende versie wordt lokaal onthouden in:
+Na een geslaagde push opent `publish_checked.bat` automatisch eenmaal:
 
 ```text
-%LOCALAPPDATA%\OpenGraphLiteViewer\last-reset-version.txt
+https://kruin.github.io/graphlite/reset-cache.html?ogv=v2.0.5&nocache=...
 ```
 
-De resetmarker staat buiten de repository en wordt dus niet gecommit.
-
-Handmatig opnieuw resetten blijft mogelijk via:
+Handmatig opnieuw resetten:
 
 ```text
-https://kruin.github.io/graphlite/reset-cache.html?ogv=v2.0.0-rc.22&nocache=TIMESTAMP
+https://kruin.github.io/graphlite/reset-cache.html?ogv=v2.0.5&nocache=TIMESTAMP
 ```
 
 Daarna:
 
 ```text
-https://kruin.github.io/graphlite/index.html?ogv=v2.0.0-rc.22
+https://kruin.github.io/graphlite/index.html?ogv=v2.0.5
 ```
 
 ## Niet publiceren naar Pages-root
-
-```text
-OpenGraph_Lite_Viewer_v*.zip
-local-mobile-test.js
-local-mobile-test.html
-```
-
-Deze staan in `.gitignore`.
-
-## GitHub Pages settings
-
-Controleer bij problemen:
-
-```text
-Source: Deploy from a branch
-Branch: main
-Folder: /root
-```
-
-## .nojekyll
-
-Laat `.nojekyll` in de root staan zodat GitHub Pages alle bestanden direct serveert.
-
-## Line endings
-
-`.gitattributes` legt line-endings vast voor Windows, GitHub Pages en zip-builds.
-
-## .gitignore
-
-Deze bestanden blijven lokaal of buiten de Pages-root:
 
 ```text
 OpenGraph_Lite_Viewer_v*.zip
@@ -120,8 +75,14 @@ opengraph-local-config-log-*.txt
 local-config-log*.txt
 ```
 
-Reden:
+Deze staan in `.gitignore` of worden door `publish_checked.bat` uitgesloten.
 
-- release-zips zijn downloadartefacten, geen sitebestanden;
-- `local-mobile-test.*` is alleen voor lokale mobile-test op desktop;
-- config-logbestanden zijn lokale werksessie-logs.
+## GitHub Pages settings
+
+```text
+Source: Deploy from a branch
+Branch: main
+Folder: /root
+```
+
+Laat `.nojekyll` in de root staan. `.gitattributes` legt line-endings vast.

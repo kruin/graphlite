@@ -6994,7 +6994,7 @@ body.actual-compact-landscape.main-screen-active .main-play-growth-label {
 }
 
 
-/* v2.0.0-rc.25: Config redesign. Initial screen is a compact section index;
+/* v2.0.0: Config redesign. Initial screen is a compact section index;
    existing controls and save IDs remain intact inside native details sections. */
 body.config-screen-active .projection-sticky-bar,
 body.config-screen-active .status-panel,
@@ -7127,7 +7127,7 @@ body.config-screen-active .config-topbar {
 }
 
 
-/* v2.0.0-rc.25: zichtbare uitleg per Config-item; secties blijven ingeklapt op het beginscherm. */
+/* v2.0.0: zichtbare uitleg per Config-item; secties blijven ingeklapt op het beginscherm. */
 body.config-screen-active .config-section-intro {
   margin: 0 0 .15rem;
   padding: .45rem .55rem;
@@ -7201,4 +7201,86 @@ body.config-screen-active .config-action-help-list li + li { margin-top: .18rem;
 @media (max-width: 760px) {
   body.config-screen-active .config-item-help { grid-column: 1; }
   body.config-screen-active .config-field-name { padding-top: 0; }
+}
+
+/* v2.0.5: five-language menu. English is the default; non-Dutch technical
+   help falls back to English. Sentence examples remain Dutch and explicitly
+   identify Dutch sentence word order. */
+.language-menu { position: relative; }
+.language-menu > summary { list-style: none; }
+.language-menu > summary::-webkit-details-marker { display: none; }
+.language-menu > summary::after { content: '▾'; margin-left: .24rem; color: var(--muted); font-size: .62rem; }
+.language-menu[open] > summary::after { content: '▴'; }
+.language-popover { width: min(20rem, calc(100vw - .7rem)) !important; }
+.language-option-list { display: grid; gap: .26rem; }
+.language-option-list button {
+  min-height: 2rem;
+  padding: .34rem .52rem;
+  border: .55px solid color-mix(in srgb, var(--line), transparent 18%);
+  border-radius: .52rem;
+  background: color-mix(in srgb, var(--panel), var(--bg) 7%);
+  color: var(--text);
+  font-weight: 800;
+  text-align: left;
+  cursor: pointer;
+}
+.language-option-list button:hover,
+.language-option-list button:focus-visible,
+.language-option-list button.is-selected {
+  background: color-mix(in srgb, var(--accent), var(--panel) 84%);
+  border-color: color-mix(in srgb, var(--accent), var(--line) 38%);
+}
+.language-option-list button.is-selected::after { content: ' ✓'; }
+.language-sentence-note { margin: .45rem .06rem 0; line-height: 1.35; }
+.config-language-menu > summary,
+.help-language-menu > summary {
+  box-sizing: border-box;
+  min-height: 2.35rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: .36rem .72rem;
+  border: 1px solid var(--line);
+  border-radius: .8rem;
+  background: color-mix(in srgb, var(--panel), var(--bg) 6%);
+  color: var(--text);
+  font-weight: 900;
+  cursor: pointer;
+}
+.config-language-menu .language-popover,
+.help-language-menu .language-popover {
+  position: absolute;
+  z-index: 900;
+  top: calc(100% + .3rem);
+  left: 0;
+  box-sizing: border-box;
+  max-height: min(70vh, 28rem);
+  overflow: auto;
+  padding: .42rem;
+  border: 1px solid var(--line);
+  border-radius: .66rem;
+  background: var(--panel);
+  box-shadow: 0 .55rem 1.5rem rgba(15,23,42,.18);
+}
+@media (max-width: 760px), (orientation: portrait) {
+  body.main-screen-active .language-menu > summary::after,
+  body.viewport-mobile-test.main-screen-active .language-menu > summary::after { display: none !important; }
+  body.main-screen-active .language-popover,
+  body.viewport-mobile-test.main-screen-active .language-popover {
+    position: fixed !important;
+    left: .35rem !important;
+    right: .35rem !important;
+    width: auto !important;
+  }
+}
+
+/* v2.0.5: the language chooser is the first item on row 2. On desktop its
+   popover opens directly under that summary; fixed mobile positioning remains. */
+body.main-screen-active .main-top-menu > .language-menu .language-popover {
+  top: calc(100% + .30rem) !important;
+}
+@media (max-width: 760px), (orientation: portrait) {
+  body.main-screen-active .main-top-menu > .language-menu .language-popover {
+    top: calc(max(.35rem, env(safe-area-inset-top)) + 3.98rem) !important;
+  }
 }
