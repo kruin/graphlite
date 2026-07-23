@@ -1,4 +1,4 @@
-# OpenGraph Lite Viewer v2.0.0-rc.20
+# OpenGraph Lite Viewer v2.0.0-rc.21
 
 Demo/viewer voor JAN / OPN / OpenGraph-taalstructuren.
 
@@ -17,7 +17,7 @@ start-local-viewer.bat
 GitHub Pages:
 
 ```text
-https://kruin.github.io/graphlite/index.html?ogv=v2.0.0-rc.20
+https://kruin.github.io/graphlite/index.html?ogv=v2.0.0-rc.21
 ```
 
 ## Centrale views en projecties
@@ -75,3 +75,7 @@ Met **Projecties groeien direct mee** verschijnt bij iedere nieuw gerenderde bro
 node --check viewer.js
 check_release.bat
 ```
+
+## Raster op mobile
+
+Op compacte schermen eindigt het raster bij de centrale boom en de uiteinden van de zichtbare projectielijnen. Handmatige interfacekeuzes veranderen deze inhoudsgrens niet.

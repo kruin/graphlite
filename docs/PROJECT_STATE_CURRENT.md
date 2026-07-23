@@ -4,7 +4,7 @@ Actuele, leidende status van OpenGraph Lite Viewer.
 
 ## Versie
 
-- Releasekandidaat: `v2.0.0-rc.20`.
+- Releasekandidaat: `v2.0.0-rc.21`.
 - Functionele bronbasis: volledige v1.0.16-bronset, doorontwikkeld via de v2.0-releasekandidaten.
 - `VERSION.txt` is leidend voor app, cache, documentatie en zipnaam.
 
@@ -65,3 +65,9 @@ Rij 2: NL/EN · Help · Config
 node --check viewer.js
 check_release.bat
 ```
+
+## Mobile rastercorrectie rc.21
+
+- Op compacte fysieke schermen is de rasterbreedte inhoudsgebonden: centrale boom plus zichtbare projectielijnen.
+- Een geforceerde interfacekeuze mag de rastergrens niet tot de volledige canvas-aspectratio verbreden.
+- Desktopgedrag blijft gelijk aan rc.20.

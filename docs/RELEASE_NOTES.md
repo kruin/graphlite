@@ -1,3 +1,8 @@
+# v2.0.0-rc.21
+
+- Mobile raster is inhoudsgebonden en wordt niet meer tot de volledige canvas-aspectratio verbreed.
+- Werkt ook bij geforceerde Desktop/portrait/landscape-interface op een telefoon.
+
 # v2.0.0-rc.20
 
 - Gekozen LEX-, SYNT- en LOG-projecties groeien standaard direct mee met iedere nieuwe centrale knoop.

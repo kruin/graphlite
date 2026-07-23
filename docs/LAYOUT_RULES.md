@@ -64,3 +64,11 @@ Rij 2: NL/EN · Help · Config
 - Boxcontouren: zo dun mogelijk.
 - Projectielijnen: iets dikker.
 - Projectieassen: iets dikker dan projectielijnen.
+
+## Compact rasterbereik
+
+- Op een werkelijk compact scherm volgt het raster de zichtbare centrale boom en de uiteinden van de gekozen projectielijnen.
+- Het raster wordt op mobile niet tot de aspectratio van het volledige canvas verbreed.
+- Deze regel geldt ook wanneer op een telefoon handmatig `Desktop`, `Mobiel staand` of `Mobiel liggend` is gekozen.
+- De viewBox blijft stabiel; alleen lege rasterstroken buiten de projectie-inhoud verdwijnen.
+- Desktop behoudt de responsieve rc.20-layout.

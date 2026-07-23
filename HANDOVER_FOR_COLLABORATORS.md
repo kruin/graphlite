@@ -1,6 +1,6 @@
 # HANDOVER_FOR_COLLABORATORS
 
-Overdracht voor OpenGraph Lite Viewer `v2.0.0-rc.20`.
+Overdracht voor OpenGraph Lite Viewer `v2.0.0-rc.21`.
 
 ## Niet wijzigen zonder expliciete opdracht
 
@@ -40,3 +40,7 @@ Raster:           standaard aan
 2. Wijzig app en leidende instructies samen.
 3. Voer `node --check viewer.js` en `check_release.bat` uit.
 4. Maak een zip met exact hetzelfde versienummer.
+
+## Mobile rastercontract
+
+Op compacte fysieke schermen mag `state.lastGridBox` niet via de canvas-aspectratio worden verbreed. Gebruik de werkelijke projectie-extentie. Dit geldt voor Auto, Desktop, Mobiel staand en Mobiel liggend op een telefoon.

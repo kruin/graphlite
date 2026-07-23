@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'v2.0.0-rc.20';
+  const VERSION = 'v2.0.0-rc.21';
   const BASE_CELL = 74;
   const ROOT_SIDE_GAP = 1;
   const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -2461,6 +2461,19 @@
     return typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(max-width: 760px)').matches;
   }
 
+  function isActualCompactScreen() {
+    // rc.21: de fysieke browserruimte blijft bepalend voor de rastergrens, ook
+    // wanneer op een telefoon handmatig Desktop, Mobiel staand of Mobiel
+    // liggend is gekozen. Zo kan een geforceerde interface het raster niet
+    // opnieuw tot de volledige canvas-aspectratio verbreden.
+    if (typeof window === 'undefined') return false;
+    const visual = window.visualViewport || null;
+    const width = Number(visual?.width) || Number(window.innerWidth) || 0;
+    const height = Number(visual?.height) || Number(window.innerHeight) || 0;
+    if (width <= 0 || height <= 0) return false;
+    return Math.min(width, height) <= 760;
+  }
+
   function isPortraitGridFirstViewport() {
     if (typeof window === 'undefined') return false;
     const forced = activeViewportMode();
@@ -2715,7 +2728,7 @@
     syncPortraitStageMode();
     if (!els.canvasWrap) return;
     syncPortraitMenuSpace();
-    // v2.0.0-rc.20: alle interface-standen krijgen de maximaal beschikbare
+    // v2.0.0-rc.21: alle interface-standen krijgen de maximaal beschikbare
     // canvasruimte. De SVG-viewBox bepaalt vervolgens de grootste schaal zonder
     // clipping. Een brede boom in portrait wordt dus niet ook nog eens door een
     // kunstmatig laag canvas verkleind.
@@ -2894,7 +2907,7 @@
 
   function setProjection(projection) {
     const next = projection || 'axes';
-    // v2.0.0-rc.20: alle named-projection views delen exact dezelfde
+    // v2.0.0-rc.21: alle named-projection views delen exact dezelfde
     // viewport. Een projectiewissel mag daarom een handmatige pan/zoom niet
     // wissen en mag de centrale boom horizontaal noch verticaal verplaatsen.
     if (growthSupportedProjection(state.projection) && state.growthStep > 0) {
@@ -4398,7 +4411,7 @@
   }
 
   function projectionStableFrameBox() {
-    // v2.0.0-rc.20: inhoudsgetrouwe, maar nog steeds stabiele unie van Syntax
+    // v2.0.0-rc.21: inhoudsgetrouwe, maar nog steeds stabiele unie van Syntax
     // en FT. Alleen werkelijk gebruikte boxbreedtes en lijnuiteinden tellen mee.
     // Oude fictieve reserves links van LOG en rechts van SYNT maakten alle vier
     // interface-standen onnodig klein, vooral mobile portrait.
@@ -4441,7 +4454,7 @@
   }
 
   function stableProjectionViewBox() {
-    // v2.0.0-rc.20: maximale full-view voor Automatisch, Desktop, Mobiel
+    // v2.0.0-rc.21: maximale full-view voor Automatisch, Desktop, Mobiel
     // staand en Mobiel liggend. De veiligheidsrand is alleen nog voldoende
     // voor dunne strokes en labels; er wordt geen UI-ruimte in SVG gereserveerd.
     const frame = projectionStableFrameBox();
@@ -4660,7 +4673,7 @@
 
   function stableGrowthViewBox() {
     if (!growthActive()) return null;
-    // v2.0.0-rc.20: Groei gebruikt hetzelfde frame als de gewone projectie-
+    // v2.0.0-rc.21: Groei gebruikt hetzelfde frame als de gewone projectie-
     // views. Voorheen hadden Alle/Bron/LOG eigen hard-coded viewBoxes, terwijl
     // LEX/SYNT auto-fit gebruikten; dat veroorzaakte de zichtbare sprong.
     return stableProjectionViewBox();
@@ -4697,7 +4710,7 @@
   }
 
   function clearViewportGestureState() {
-    // v2.0.0-rc.20: bij wissel tussen landscape/portrait mogen oude touch-pointers
+    // v2.0.0-rc.21: bij wissel tussen landscape/portrait mogen oude touch-pointers
     // en pinch-state niet blijven hangen. Anders lijkt portrait na zoom in
     // landscape bevroren.
     state.viewDrag = null;
@@ -4959,7 +4972,7 @@
         controlsLeft = state.projectionBoxManual.left;
         controlsTop = state.projectionBoxManual.top;
       } else {
-        // v2.0.0-rc.20: Projecties-box heeft een stabiele schermpositie.
+        // v2.0.0-rc.21: Projecties-box heeft een stabiele schermpositie.
         // Niet meer ankeren aan een wisselende SYNT-as; alleen handmatig slepen verplaatst de box.
         controlsLeft = maxLeft;
         controlsTop = minTop;
@@ -5139,9 +5152,19 @@
     return unionBoxes(central, projections) || central || projections || fallback;
   }
 
+  function projectionGridBoxForViewport(extent) {
+    if (!extent) return extent;
+    // rc.21: op een echt compact scherm volgt het raster uitsluitend de
+    // zichtbare boom plus de uiteinden van de gekozen projectielijnen. De
+    // viewBox mag voor `meet` wel de canvasverhouding volgen, maar het raster
+    // zelf krijgt geen lege aspectratio-opvulling. Desktop behoudt rc.20.
+    if (isActualCompactScreen()) return { ...extent };
+    return expandBoxToAspect(extent, canvasAspectRatio());
+  }
+
   function computeAutoFitBox() {
     if (!els.svg) return fallbackViewBox();
-    // v2.0.0-rc.20: alle projectie-views gebruiken één geometrisch viewport,
+    // v2.0.0-rc.21: alle projectie-views gebruiken één geometrisch viewport,
     // onafhankelijk van welke overlay zichtbaar is. Dit sluit auto-fit-
     // verschillen uit en voorkomt elke horizontale of verticale verspringing.
     if (isMainScreenActive() && ['axes', 'source', 'lex', 'synt', 'log'].includes(state.projection)) {
@@ -5150,7 +5173,7 @@
       // Het raster vult dezelfde schermverhouding als de viewBox. De layout
       // zelf verplaatst de assen naar buiten/inwaarts, zodat de extra rasterband
       // minimaal blijft en de graph maximaal groot wordt.
-      state.lastGridBox = expandBoxToAspect(extent, canvasAspectRatio());
+      state.lastGridBox = projectionGridBoxForViewport(extent);
       return stableProjectionViewBox();
     }
     const ignored = [...els.svg.querySelectorAll('.grid, .view-pan-hint')];
@@ -7140,7 +7163,7 @@
       render();
     });
     window.addEventListener('orientationchange', () => {
-      // v2.0.0-rc.20: breek actieve pinch/pan expliciet af vóór herfit.
+      // v2.0.0-rc.21: breek actieve pinch/pan expliciet af vóór herfit.
       resetManualViewBox();
       requestAnimationFrame(() => {
         resetManualViewBox();
