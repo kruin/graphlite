@@ -166,3 +166,8 @@ structurele host
 - De kernzin levert de lexicale waarden voor structurele bronnen en slots, maar creëert geen nieuwe plaats.
 - Een Wissel gebruikt vooraf bepaalde bron- en doelposities.
 - Play/Groei onthult dezelfde vooraf berekende layout; het verschijnen van een insertie betekent niet dat haar ruimte pas op dat moment ontstaat.
+
+
+### Lineaire zone versus scope
+
+Bij meervoudige middenveldinserties zijn lineaire landingsplaats en semantische scope gescheiden. In `... DE MAN MISSCHIEN WEL VAAK GEBETEN HEEFT` reserveert het plaatsingsplan beide insertiegroepen na het object en vóór het V-CLUSTER. `MISSCHIEN WEL` kan daarbij propositionele scope houden; die scope verplicht geen hoge positie boven de hele VP op de LEX-as.

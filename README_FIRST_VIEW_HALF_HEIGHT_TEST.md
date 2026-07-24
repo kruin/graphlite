@@ -1,4 +1,4 @@
-# LEESMIJ/README first-view test — v2.0.9
+# LEESMIJ/README first-view test — v2.0.10
 
 ## Gelijke eerste weergave in alle modi
 

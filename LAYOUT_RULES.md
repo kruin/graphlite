@@ -106,3 +106,8 @@ Rij 2: NL/EN · LEESMIJ/README · Config
 - In compact landscape blijven beide topmenurijen zichtbaar, maar zij en de Play-balk gebruiken een compact hoogteprofiel.
 - Het gridprofiel wordt platter en breder zodat LEX + centrale graph + SYNT/Functional maximaal in het landscape-canvas passen.
 - Na oriëntatiewissel volgt opnieuw fit nadat `visualViewport` is gestabiliseerd.
+
+
+### Lineaire zone versus scope
+
+Bij meervoudige middenveldinserties zijn lineaire landingsplaats en semantische scope gescheiden. In `... DE MAN MISSCHIEN WEL VAAK GEBETEN HEEFT` reserveert het plaatsingsplan beide insertiegroepen na het object en vóór het V-CLUSTER. `MISSCHIEN WEL` kan daarbij propositionele scope houden; die scope verplicht geen hoge positie boven de hele VP op de LEX-as.

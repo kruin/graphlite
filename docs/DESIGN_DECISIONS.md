@@ -1,4 +1,4 @@
-# Design decisions — actuele aanvulling v2.0.9
+# Design decisions — actuele aanvulling v2.0.10
 
 ## Plaatsingsplan vóór rendering
 

@@ -1,4 +1,4 @@
-# v2.0.9
+# v2.0.10
 
 - README/LEESMIJ en leidende specificaties leggen nu de extra architectuurstap vast: plaatsingsplan berekenen vóór centrale plaatsing en rendering.
 - Structuur, meervoudige lexicale inserties, plaatsingsregels, Wissels en actieve projecties zijn gezamenlijk layoutinput.
@@ -10,7 +10,7 @@
 
 - Eenvoudige directe releasewerkwijze hersteld: bron over `C:\git\graphlite` kopiëren, lokaal testen, daarna `publish_checked.bat`.
 - `graphlite_safe_update.bat`, `graphlite-next`, clone-, bundle- en promotiewerkwijze zijn niet langer de actuele releasebediening.
-- Alle actieve versieaanduidingen en lokale startlinks gebruiken v2.0.9.
+- Alle actieve versieaanduidingen en lokale startlinks gebruiken v2.0.10.
 
 # v2.0.0-rc.22
 

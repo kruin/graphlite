@@ -14,7 +14,7 @@ required_files = [
     'check_release.bat','start-local-viewer.bat','README.md','SOURCE_CHANGES_V2.0.5.md',
     'LANGUAGE_MENU_TEST.md','EENVOUDIGE_RELEASE_WERKWIJZE_TEST.md',
     'RELEASE_MANIFEST_GIT_EXCLUSION_TEST.md','README_FIRST_VIEW_HALF_HEIGHT_TEST.md','SOURCE_CHANGES_V2.0.8.md',
-    'SOURCE_CHANGES_V2.0.9.md','LEXICAL_PLACEMENT_PLAN_TEST.md','RELEASE_MANIFEST.txt'
+    'SOURCE_CHANGES_V2.0.9.md','LEXICAL_PLACEMENT_PLAN_TEST.md','SOURCE_CHANGES_V2.0.10.md','LEX_INSERTION_LINEAR_ORDER_TEST.md','RELEASE_MANIFEST.txt'
 ]
 for rel in required_files:
     if not (ROOT / rel).is_file():
@@ -72,7 +72,7 @@ if 'language-option-list' not in css or 'language-sentence-note' not in css:
 
 # README first-view contract.
 for token in [
-    'v2.0.9: README/LEESMIJ first view in every interface mode',
+    'v2.0.10: README/LEESMIJ first view in every interface mode',
     'grid-template-rows: minmax(0, 1fr) minmax(0, 1fr)',
     'body.help-screen-active .help-tree-screen',
     'grid-template-columns: minmax(0, 1fr)',
@@ -125,6 +125,23 @@ for token in [
 ]:
     if token not in index:
         errors.append(f'ingebouwde README mist plaatsingsplanregel {token!r}')
+
+# Multiple insertion linear-order contract.
+for token in [
+    "OMDAT DE HOND DE MAN MISSCHIEN WEL VAAK GEBETEN HEEFT",
+    "host: 'V-CLUSTER'",
+    "linear: 'post-object-pre-vcluster'",
+    "function insertionLinearZone(spec = {})",
+    "na object · vóór V-CLUSTER"
+]:
+    if token not in js and token not in index:
+        errors.append(f'LEX-insertievolgorde mist {token!r}')
+if "OMDAT DE HOND DE MAN MISSCHIEN WEL VAAK HEEFT GEBETEN" in js:
+    errors.append('foutieve bijzinsvolgorde HEEFT GEBETEN staat nog in viewer.js')
+examples_html=(ROOT/'examples-input.html').read_text(encoding='utf-8', errors='ignore')
+for token in ['data-host="V-CLUSTER"','data-linear="post-object-pre-vcluster"','MISSCHIEN WEL VAAK GEBETEN HEEFT']:
+    if token not in examples_html:
+        errors.append(f'voorbeeldspecificatie mist {token!r}')
 
 # Existing layout/growth safety contract.
 for token in [

@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'v2.0.9';
+  const VERSION = 'v2.0.10';
   const BASE_CELL = 74;
   const ROOT_SIDE_GAP = 1;
   const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -254,8 +254,8 @@
       objectDefault: 'DE MAN',
       predicate: 'GEBETEN',
       lexInsertions: [
-        { id: 'misschien-wel', text: 'MISSCHIEN WEL', host: 'VP', defaultHost: 'VP', category: 'MODALITEIT', order: 1, group: 'modal-group' },
-        { id: 'vaak', text: 'VAAK', host: 'VP', defaultHost: 'VP', category: 'FREQUENTIE', order: 2, group: 'frequency-group' }
+        { id: 'misschien-wel', text: 'MISSCHIEN WEL', host: 'V-CLUSTER', defaultHost: 'V-CLUSTER', category: 'MODALITEIT', order: 1, group: 'modal-group', scope: 'propositie', linear: 'post-object-pre-vcluster' },
+        { id: 'vaak', text: 'VAAK', host: 'V-CLUSTER', defaultHost: 'V-CLUSTER', category: 'FREQUENTIE', order: 2, group: 'frequency-group', scope: 'gebeurtenis', linear: 'post-object-pre-vcluster' }
       ],
       lexItems: [
         { id: 'subject-hond', label: 'DE HOND', source: 'subject', role: 'subject', thematicRole: 'agens', lexeme: 'hond' },
@@ -265,25 +265,25 @@
       ]
     },
     {
-      id: 'omdat-de-hond-de-man-misschien-wel-vaak-heeft-gebeten',
-      title: 'OMDAT DE HOND DE MAN MISSCHIEN WEL VAAK HEEFT GEBETEN',
+      id: 'omdat-de-hond-de-man-misschien-wel-vaak-gebeten-heeft',
+      title: 'OMDAT DE HOND DE MAN MISSCHIEN WEL VAAK GEBETEN HEEFT',
       phase: 'Meervoudige LEX-insertie · bijzin',
       lexRule: 'bijzin-omdat',
-      sentence: 'OMDAT DE HOND DE MAN MISSCHIEN WEL VAAK HEEFT GEBETEN',
-      sentenceHtml: 'OMDAT <strong>DE HOND</strong> <em>DE MAN</em> MISSCHIEN WEL VAAK HEEFT GEBETEN',
+      sentence: 'OMDAT DE HOND DE MAN MISSCHIEN WEL VAAK GEBETEN HEEFT',
+      sentenceHtml: 'OMDAT <strong>DE HOND</strong> <em>DE MAN</em> MISSCHIEN WEL VAAK GEBETEN HEEFT',
       subjectDefault: 'DE HOND',
       objectDefault: 'DE MAN',
       predicate: 'GEBETEN',
       lexInsertions: [
-        { id: 'misschien-wel', text: 'MISSCHIEN WEL', host: 'VP', defaultHost: 'VP', category: 'MODALITEIT', order: 1, group: 'modal-group' },
-        { id: 'vaak', text: 'VAAK', host: 'VP', defaultHost: 'VP', category: 'FREQUENTIE', order: 2, group: 'frequency-group' }
+        { id: 'misschien-wel', text: 'MISSCHIEN WEL', host: 'V-CLUSTER', defaultHost: 'V-CLUSTER', category: 'MODALITEIT', order: 1, group: 'modal-group', scope: 'propositie', linear: 'post-object-pre-vcluster' },
+        { id: 'vaak', text: 'VAAK', host: 'V-CLUSTER', defaultHost: 'V-CLUSTER', category: 'FREQUENTIE', order: 2, group: 'frequency-group', scope: 'gebeurtenis', linear: 'post-object-pre-vcluster' }
       ],
       lexItems: [
         { id: 'omdat', label: 'OMDAT', source: null, slot: 'comp', lexeme: 'omdat' },
         { id: 'subject-hond', label: 'DE HOND', source: 'subject', role: 'subject', thematicRole: 'agens', lexeme: 'hond' },
         { id: 'object-man', label: 'DE MAN', source: 'object', role: 'object', thematicRole: 'patiens', lexeme: 'man' },
-        { id: 'pv-heeft', label: 'HEEFT', source: 'pv', role: 'aux', lexeme: 'heeft' },
-        { id: 'vdw-bijt', label: 'GEBETEN', source: 'vdw', role: 'participle', lexeme: 'bijt' }
+        { id: 'vdw-bijt', label: 'GEBETEN', source: 'vdw', role: 'participle', lexeme: 'bijt' },
+        { id: 'pv-heeft', label: 'HEEFT', source: 'pv', role: 'aux', lexeme: 'heeft' }
       ]
     },
     {
@@ -1192,6 +1192,7 @@
             category: String(item.dataset.category || 'BIJWOORD').trim(),
             marking: String(item.dataset.marking || 'functional:default-host').trim(),
             scope: String(item.dataset.scope || '').trim(),
+            linear: String(item.dataset.linear || item.dataset.linearSlot || '').trim(),
             order: Number.isFinite(Number(item.dataset.order)) ? Number(item.dataset.order) : insertionIndex + 1,
             group: String(item.dataset.group || id).trim()
           };
@@ -2141,10 +2142,18 @@
   }
 
 
+  function insertionLinearZone(spec = {}) {
+    const linear = String(spec.linear || spec.linearSlot || '').trim().toLowerCase();
+    if (linear === 'post-object-pre-vcluster') return 'na object · vóór V-CLUSTER';
+    return '';
+  }
+
   function applyLexAdverbAxisSlotSpace(layout) {
-    // Meervoudige lexicale inserties worden per host gegroepeerd. De centra
-    // liggen op minor-posities (.5), maar opeenvolgende grote boxen houden
-    // één volledige cel afstand. Daardoor kunnen zij niet visueel overlappen.
+    // Meervoudige lexicale inserties worden per lineair anker gegroepeerd.
+    // Voor middenveldinserties in perfectumzinnen is dat het V-CLUSTER: na
+    // het object en vóór de werkwoorden. Scope en lineaire positie blijven
+    // onderscheiden. De centra liggen op minor-posities (.5), terwijl grote
+    // boxen minimaal één veilige fysieke celafstand houden.
     const specs = activeLexInsertionSpecs().filter(spec => lexPlacementIsSyntaxHost(spec.placement));
     if (!layout || !specs.length) return layout;
 
@@ -2180,11 +2189,13 @@
       orderedSpecs.forEach((spec, index) => {
         const content = spec.content || insertionContentForSpec(spec);
         const hostLabel = activeAdverbHostLabel(content, spec.placement);
+        const linearZone = insertionLinearZone(spec);
         slots.push({
           id: spec.id || `lex-adverb-axis-slot-${slots.length + 1}`,
-          label: `stap 1 · insertie ${index + 1} boven ${hostLabel}`,
+          label: `stap 1 · insertie ${index + 1}${linearZone ? ` · ${linearZone}` : ` boven ${hostLabel}`}`,
           hostId: shiftedHost.id,
           hostLabel,
+          linearZone,
           x: shiftedHost.x,
           y: slotY0 + index * slotStepRows,
           content: content.id,
@@ -2926,7 +2937,7 @@
     syncPortraitStageMode();
     if (!els.canvasWrap) return;
     syncPortraitMenuSpace();
-    // v2.0.9: alle interface-standen krijgen de maximaal beschikbare
+    // v2.0.10: alle interface-standen krijgen de maximaal beschikbare
     // canvasruimte. De SVG-viewBox bepaalt vervolgens de grootste schaal zonder
     // clipping. Een brede boom in portrait wordt dus niet ook nog eens door een
     // kunstmatig laag canvas verkleind.
@@ -3109,7 +3120,7 @@
 
   function setProjection(projection) {
     const next = projection || 'axes';
-    // v2.0.9: alle named-projection views delen exact dezelfde
+    // v2.0.10: alle named-projection views delen exact dezelfde
     // viewport. Een projectiewissel mag daarom een handmatige pan/zoom niet
     // wissen en mag de centrale boom horizontaal noch verticaal verplaatsen.
     if (growthSupportedProjection(state.projection) && state.growthStep > 0) {
@@ -3737,6 +3748,7 @@
         y: slot.py,
         label: slot.label || `stap 1 · LEX-insertie ${index + 1}`,
         hostLabel: slot.hostLabel || '',
+        linearZone: slot.linearZone || '',
         content: slot.contentDef || insertionContentForSpec({ id: slot.content, text: slot.text, sub: slot.sub }),
         marked: !!slot.marked,
         marking: slot.marking || 'functional:default-host',
@@ -3751,6 +3763,7 @@
       y: y0 + 40 + index * 64,
       label: `stap 1 · LEX-insertie ${index + 1}`,
       hostLabel: spec.host || adverbHostLabelFromPlacement(spec.placement, spec.content),
+      linearZone: insertionLinearZone(spec),
       content: spec.content || insertionContentForSpec(spec),
       marked: !!spec.marked,
       marking: spec.marking || 'functional:default-host',
@@ -3764,9 +3777,11 @@
     const marked = slot.marked ? (isEnglish() ? ' · marked' : ' · gemarkeerd') : '';
     const toggleLabel = slot.toggleLabel || adverbMarkedToggleLabel();
     const hasToggle = !!slot.toggleTargetId;
-    const sub = slot.hostLabel
-      ? `extern · LEX-as · vóór Wissels · boven ${slot.hostLabel}${marked}`
-      : (lexInsertionContentSub(content) || 'andere LEX-as / anafoor');
+    const sub = slot.linearZone
+      ? `extern · LEX-as · ${slot.linearZone} · vóór Wissels${marked}`
+      : slot.hostLabel
+        ? `extern · LEX-as · vóór Wissels · boven ${slot.hostLabel}${marked}`
+        : (lexInsertionContentSub(content) || 'andere LEX-as / anafoor');
     const group = svgEl('g', {
       class: `lex-adverb-axis-slot-node${slot.marked ? ' marked' : ''}${hasToggle ? ' clickable' : ''}`,
       tabindex: hasToggle ? 0 : null,
@@ -4592,7 +4607,7 @@
   }
 
   function projectionStableFrameBox() {
-    // v2.0.9: inhoudsgetrouwe, maar nog steeds stabiele unie van Syntax
+    // v2.0.10: inhoudsgetrouwe, maar nog steeds stabiele unie van Syntax
     // en Functional. Alleen werkelijk gebruikte boxbreedtes en lijnuiteinden tellen mee.
     // Oude fictieve reserves links van LOG en rechts van SYNT maakten alle vier
     // interface-standen onnodig klein, vooral mobile portrait.
@@ -4635,7 +4650,7 @@
   }
 
   function stableProjectionViewBox() {
-    // v2.0.9: maximale full-view voor Automatisch, Desktop, Mobiel
+    // v2.0.10: maximale full-view voor Automatisch, Desktop, Mobiel
     // staand en Mobiel liggend. De veiligheidsrand is alleen nog voldoende
     // voor dunne strokes en labels; er wordt geen UI-ruimte in SVG gereserveerd.
     const frame = projectionStableFrameBox();
@@ -4854,7 +4869,7 @@
 
   function stableGrowthViewBox() {
     if (!growthActive()) return null;
-    // v2.0.9: Groei gebruikt hetzelfde frame als de gewone projectie-
+    // v2.0.10: Groei gebruikt hetzelfde frame als de gewone projectie-
     // views. Voorheen hadden Alle/Bron/LOG eigen hard-coded viewBoxes, terwijl
     // LEX/SYNT auto-fit gebruikten; dat veroorzaakte de zichtbare sprong.
     return stableProjectionViewBox();
@@ -4891,7 +4906,7 @@
   }
 
   function clearViewportGestureState() {
-    // v2.0.9: bij wissel tussen landscape/portrait mogen oude touch-pointers
+    // v2.0.10: bij wissel tussen landscape/portrait mogen oude touch-pointers
     // en pinch-state niet blijven hangen. Anders lijkt portrait na zoom in
     // landscape bevroren.
     state.viewDrag = null;
@@ -5153,7 +5168,7 @@
         controlsLeft = state.projectionBoxManual.left;
         controlsTop = state.projectionBoxManual.top;
       } else {
-        // v2.0.9: Projecties-box heeft een stabiele schermpositie.
+        // v2.0.10: Projecties-box heeft een stabiele schermpositie.
         // Niet meer ankeren aan een wisselende SYNT-as; alleen handmatig slepen verplaatst de box.
         controlsLeft = maxLeft;
         controlsTop = minTop;
@@ -5345,7 +5360,7 @@
 
   function computeAutoFitBox() {
     if (!els.svg) return fallbackViewBox();
-    // v2.0.9: alle projectie-views gebruiken één geometrisch viewport,
+    // v2.0.10: alle projectie-views gebruiken één geometrisch viewport,
     // onafhankelijk van welke overlay zichtbaar is. Dit sluit auto-fit-
     // verschillen uit en voorkomt elke horizontale of verticale verspringing.
     if (isMainScreenActive() && ['axes', 'source', 'lex', 'synt', 'log'].includes(state.projection)) {

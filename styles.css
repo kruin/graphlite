@@ -7203,7 +7203,7 @@ body.config-screen-active .config-action-help-list li + li { margin-top: .18rem;
   body.config-screen-active .config-field-name { padding-top: 0; }
 }
 
-/* v2.0.9: five-language menu. English is the default; non-Dutch technical
+/* v2.0.10: five-language menu. English is the default; non-Dutch technical
    help falls back to English. Sentence examples remain Dutch and explicitly
    identify Dutch sentence word order. */
 .language-menu { position: relative; }
@@ -7274,7 +7274,7 @@ body.config-screen-active .config-action-help-list li + li { margin-top: .18rem;
   }
 }
 
-/* v2.0.9: the language chooser is the first item on row 2. On desktop its
+/* v2.0.10: the language chooser is the first item on row 2. On desktop its
    popover opens directly under that summary; fixed mobile positioning remains. */
 body.main-screen-active .main-top-menu > .language-menu .language-popover {
   top: calc(100% + .30rem) !important;
@@ -7285,7 +7285,7 @@ body.main-screen-active .main-top-menu > .language-menu .language-popover {
   }
 }
 
-/* v2.0.9: README/LEESMIJ first view in every interface mode.
+/* v2.0.10: README/LEESMIJ first view in every interface mode.
    Desktop, mobile landscape and mobile portrait use the same two-half layout:
    the topic tree occupies the upper half and the selected topic text the lower
    half. Both regions scroll independently, so the first topic text is visible

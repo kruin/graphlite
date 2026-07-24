@@ -1,8 +1,8 @@
-# OpenGraph Lite Viewer v2.0.9
+# OpenGraph Lite Viewer v2.0.10
 
 Demo/viewer voor JaN / OPN / OpenGraph-taalstructuren.
 
-## v2.0.9 — plaatsingsplan vóór rendering
+## v2.0.10 — plaatsingsplan vóór rendering
 
 Lexicale inserties worden niet achteraf aan een reeds geplaatste kernboom toegevoegd. De layout leest eerst de structuur, alle insertiegroepen, plaatsingsregels, wissels en actieve projecties. Daarna reserveert zij de benodigde major-/minor-gridposities en corridors en plaatst zij de centrale boom in het resterende veld.
 
@@ -23,13 +23,13 @@ Vaste architectuurvolgorde:
 
 ## v2.0.8 — meervoudige lexicale inserties
 
-Voorbeeldzinnen kunnen nu meerdere zelfstandige LEX-insertiegroepen bevatten. `MISSCHIEN WEL` telt als één meerwoordige groep; `VAAK` krijgt een tweede slot. De slotcentra liggen op minor-gridankers, maar de renderer bewaakt minimaal 72 pixels centrumafstand. Daardoor overlappen de grote insertieboxen niet, ook niet in mobile landscape.
+Voorbeeldzinnen kunnen nu meerdere zelfstandige LEX-insertiegroepen bevatten. De landingszone is een lineaire eigenschap en staat los van scope: in de perfectumvoorbeelden landen `MISSCHIEN WEL` en `VAAK` na het object en vóór het V-CLUSTER. `MISSCHIEN WEL` telt als één meerwoordige groep; `VAAK` krijgt een tweede slot. De slotcentra liggen op minor-gridankers, maar de renderer bewaakt minimaal 72 pixels centrumafstand. Daardoor overlappen de grote insertieboxen niet, ook niet in mobile landscape.
 
 Toegevoegde voorbeeldzinnen:
 
 ```text
 DE HOND HEEFT DE MAN MISSCHIEN WEL VAAK GEBETEN
-OMDAT DE HOND DE MAN MISSCHIEN WEL VAAK HEEFT GEBETEN
+OMDAT DE HOND DE MAN MISSCHIEN WEL VAAK GEBETEN HEEFT
 ```
 
 ## Start
@@ -49,7 +49,7 @@ start-local-viewer.bat
 GitHub Pages:
 
 ```text
-https://kruin.github.io/graphlite/index.html?ogv=v2.0.9
+https://kruin.github.io/graphlite/index.html?ogv=v2.0.10
 ```
 
 ## Talen

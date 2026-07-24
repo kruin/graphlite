@@ -30,4 +30,4 @@ Open README/LEESMIJ en controleer:
 - bestaande meervoudige insertievoorbeelden blijven aanwezig;
 - Config-save-werkwijze is ongewijzigd;
 - `node --check viewer.js` slaagt;
-- `python tools/check_release.py` rapporteert `RELEASE CHECK: OK (v2.0.9)`.
+- `python tools/check_release.py` rapporteert `RELEASE CHECK: OK (v2.0.10)`.

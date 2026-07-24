@@ -2,7 +2,7 @@
   "name": "OpenGraph Lite Viewer",
   "short_name": "OpenGraph Lite",
   "description": "OpenGraph Lite Viewer for JaN/Open Notation with Dutch example sentences, Dutch word order, named projections, views and LEX placement rules.",
-  "start_url": "./index.html?ogv=v2.0.9",
+  "start_url": "./index.html?ogv=v2.0.10",
   "scope": "./",
   "display": "standalone",
   "orientation": "any",

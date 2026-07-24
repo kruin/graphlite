@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 
-<!-- OPENGRAPH_ROOT_VIEWER_INDEX_v2.0.9: this root index is the app, not docs. -->
-<html data-opengraph-app="viewer" data-version="v2.0.9" lang="en">
+<!-- OPENGRAPH_ROOT_VIEWER_INDEX_v2.0.10: this root index is the app, not docs. -->
+<html data-opengraph-app="viewer" data-version="v2.0.10" lang="en">
 <head>
 <meta charset="utf-8"/>
 <meta content="no-store, no-cache, must-revalidate, max-age=0" http-equiv="Cache-Control"/>
@@ -10,10 +10,10 @@
 <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport"/>
 <meta content="#0f172a" name="theme-color"/>
 <meta content="OpenGraph Lite Viewer: vrije JaN-bronknopen, edits, LEX-plaatsingsregels en projecties." name="description"/>
-<title>OpenGraph Lite Viewer v2.0.9</title>
+<title>OpenGraph Lite Viewer v2.0.10</title>
 <script>
     (function() {
-      var VERSION = 'v2.0.9';
+      var VERSION = 'v2.0.10';
       window.__OPENGRAPH_EXPECTED_VERSION__ = VERSION;
       function runCacheCleanupOnce() {
         var flag = 'opengraph-cache-cleaned-' + VERSION;
@@ -52,13 +52,13 @@
 <link href="icons/icon-192.svg" rel="icon" type="image/svg+xml"/>
 <!-- v4552: manifest disabled in local/dev build to avoid PWA/service-worker confusion. -->
 <!-- <link rel="manifest" href="manifest.webmanifest"> -->
-<link href="styles.css?v2.0.9" rel="stylesheet"/>
+<link href="styles.css?v2.0.10" rel="stylesheet"/>
 </head>
 <body class="main-screen-active">
 <header class="app-header">
 <div>
 <div class="eyebrow">OpenGraph · JaN · Open Notation</div>
-<h1>OpenGraph Lite Viewer <span class="version-tag">v2.0.9</span></h1>
+<h1>OpenGraph Lite Viewer <span class="version-tag">v2.0.10</span></h1>
 <p class="header-subtitle">Top menu with Sentence, Adverb, Syntax / Functional, Interface, Projections, LOG order, Language, README and Config.</p>
 </div>
 <button class="ghost hidden" id="installButton" type="button">Install</button>
@@ -430,8 +430,8 @@
 <div class="help-lang-en"><h3>LEX exchanges</h3><p>A LEX exchange changes visible word order on the LEX projection. The central graph does not transform.</p><p>Exchanges become active only after all central nodes have been placed. They use reserved empty positions such as Comp, fronting/topic, V2/finite verb and adverb slots. Space may be created by a free row, an extended branch, or lowering the host subtree.</p></div>
 </article>
 <article class="help-topic-panel" data-help-topic="adverbs">
-<div class="help-lang-nl"><h3>Bijwoorden</h3><p>Bijwoorden zijn lexicale inserties. Alle insertiegroepen worden vóór de centrale boomplaatsing in het plaatsingsplan opgenomen. Een bijwoord krijgt daarin een extern LEX-slot op hosthoogte of vult bij vooropplaatsing slot 1.</p><p>Een meerwoordige uitdrukking zoals <strong>misschien wel</strong> vormt standaard één insertiegroep en gebruikt dus één slot. Een zelfstandig volgend bijwoord zoals <strong>vaak</strong> krijgt een tweede slot.</p><p>Meervoudige insertieboxen staan op minor-ankers, maar de renderer houdt minimaal 72 pixels centrumafstand aan. Daardoor overlappen de boxen niet, ook niet in een plat mobile-landscapeprofiel. De hostbox of host-subboom wordt automatisch lager gezet.</p></div>
-<div class="help-lang-en"><h3>Adverbs</h3><p>Adverbs are lexical insertions. All insertion groups enter the placement plan before the central tree is placed. An adverb receives an external LEX slot at host height or fills slot 1 when fronted.</p><p>A multiword expression such as <strong>misschien wel</strong> is one insertion group and therefore uses one slot. A following independent adverb such as <strong>vaak</strong> receives a second slot.</p><p>Multiple insertion boxes use minor anchors, while the renderer maintains at least 72 pixels between their centres. The boxes therefore do not overlap, including in a flat mobile-landscape profile. The host box or host subtree is lowered automatically.</p></div>
+<div class="help-lang-nl"><h3>Bijwoorden</h3><p>Bijwoorden zijn lexicale inserties. Alle insertiegroepen worden vóór de centrale boomplaatsing in het plaatsingsplan opgenomen. Een bijwoord krijgt daarin een extern LEX-slot op zijn vooraf berekende lineaire zone of vult bij vooropplaatsing slot 1.</p><p>Een meerwoordige uitdrukking zoals <strong>misschien wel</strong> vormt standaard één insertiegroep en gebruikt dus één slot. Een zelfstandig volgend bijwoord zoals <strong>vaak</strong> krijgt een tweede slot.</p><p>Meervoudige insertieboxen staan op minor-ankers, maar de renderer houdt minimaal 72 pixels centrumafstand aan. Daardoor overlappen de boxen niet, ook niet in een plat mobile-landscapeprofiel. De hostbox of host-subboom wordt automatisch lager gezet. In de perfectumvoorbeelden staan MISSCHIEN WEL en VAAK na het object en vóór het V-CLUSTER; scope en lineaire plaats blijven onderscheiden.</p></div>
+<div class="help-lang-en"><h3>Adverbs</h3><p>Adverbs are lexical insertions. All insertion groups enter the placement plan before the central tree is placed. An adverb receives an external LEX slot in its precomputed linear zone or fills slot 1 when fronted.</p><p>A multiword expression such as <strong>misschien wel</strong> is one insertion group and therefore uses one slot. A following independent adverb such as <strong>vaak</strong> receives a second slot.</p><p>Multiple insertion boxes use minor anchors, while the renderer maintains at least 72 pixels between their centres. The boxes therefore do not overlap, including in a flat mobile-landscape profile. The host box or host subtree is lowered automatically. In the perfect examples, MISSCHIEN WEL and VAAK occur after the object and before the V-CLUSTER; scope and linear position remain distinct.</p></div>
 </article>
 <article class="help-topic-panel" data-help-topic="gitignore">
 <div class="help-lang-nl">
@@ -519,7 +519,7 @@
 <label class="field mini-field" title="Overschrijft overige vertakkingen. Gebruik dit voor lokale tests zonder de hele boom te flippen."><span class="config-field-name">Overig</span><select id="branchOtherSelect"></select><small class="config-item-help"><span class="help-lang-nl">Overschrijft overige vertakkingen. Gebruik dit voor lokale tests zonder de hele boom te flippen.</span><span class="help-lang-en">Overrides remaining branches. Use this for local tests without flipping the entire tree.</span></small></label>
 </div><label class="field mini-field" title="Past afstand, hoogte en lettergrootte van de boom aan. De structuur en labels veranderen niet."><span class="config-field-name">Boomruimte</span><select id="layoutDensitySelect"></select><small class="config-item-help"><span class="help-lang-nl">Past afstand, hoogte en lettergrootte van de boom aan. De structuur en labels veranderen niet.</span><span class="help-lang-en">Adjusts tree spacing, height and font size. Structure and labels do not change.</span></small></label><label class="field mini-field" title="Bepaalt hoe de boom in het hoofdvenster past. FIT verandert alleen het zichtvenster, nooit de boomstructuur."><span class="config-field-name">Hoofdvenster</span><select id="viewFitSelect"></select><small class="config-item-help"><span class="help-lang-nl">Bepaalt hoe de boom in het hoofdvenster past. FIT verandert alleen het zichtvenster, nooit de boomstructuur.</span><span class="help-lang-en">Determines how the tree fits in the main window. FIT changes only the viewport, never the tree structure.</span></small></label><label class="field mini-field" title="Reserveert lege gridrijen onder de wortel voor latere plaatsing of experimenten; er worden geen knopen toegevoegd."><span class="config-field-name">Boom vrije rijen</span><select id="freeSlotCountSelect"></select><small class="config-item-help"><span class="help-lang-nl">Reserveert lege gridrijen onder de wortel voor latere plaatsing of experimenten; er worden geen knopen toegevoegd.</span><span class="help-lang-en">Reserves empty grid rows below the root for later placement or experiments; no nodes are added.</span></small></label></section></details><details class="config-section" id="config-lex"><summary><span class="help-lang-nl">LEX &amp; bijwoorden</span><span class="help-lang-en">LEX &amp; adverbs</span></summary><section class="panel-card config-section-body"><p class="config-section-intro"><small class="config-section-intro-copy"><span class="help-lang-nl">LEX-instellingen plaatsen externe slots en verlengen zo nodig takken of grenzen; bijwoorden worden geen syntaxknoop.</span><span class="help-lang-en">LEX settings place external slots and may extend branches or boundaries; adverbs do not become syntax nodes.</span></small></p><fieldset aria-label="Bijwoordslot op LEX-as" class="lex-adverb-insert-field">
 <legend>Bijwoordslot op LEX-as</legend>
-<p class="top-menu-choice-help">Kies het bijwoord en de hostbox. Het bijwoord verschijnt als extern LEX-slot op de LEX-as. Voorbeeldzinnen kunnen meerdere insertiegroepen bevatten: MISSCHIEN WEL gebruikt één slot en VAAK een tweede. De renderer reserveert automatisch voldoende afstand om overlap te voorkomen. Hostplaatsing staat net boven S, NP, VP, V, PP of AP; vooropplaatsing vult LEX-slot 1 en activeert V2/inversie.</p>
+<p class="top-menu-choice-help">Kies het bijwoord en de hostbox. Het bijwoord verschijnt als extern LEX-slot op de LEX-as. Voorbeeldzinnen kunnen meerdere insertiegroepen bevatten: MISSCHIEN WEL gebruikt één slot en VAAK een tweede. De renderer reserveert automatisch voldoende afstand om overlap te voorkomen. Hostplaatsing staat net boven S, NP, VP, V, V-CLUSTER, PP of AP; vooropplaatsing vult LEX-slot 1 en activeert V2/inversie.</p>
 <label class="field mini-field" title="Stelt het aantal externe LEX-bijwoordslots in. Nul verwijdert de extra slots."><span class="config-field-name">Aantal bijwoordboxen</span><select id="lexFreeSlotCountSelect"></select><small class="config-item-help"><span class="help-lang-nl">Stelt het aantal externe LEX-bijwoordslots in. Nul verwijdert de extra slots.</span><span class="help-lang-en">Sets the number of external LEX adverb slots. Zero removes the extra slots.</span></small></label>
 <label class="field mini-field" title="Kiest de syntactische hosthoogte waarop het externe bijwoordslot aan de LEX-as wordt geplaatst."><span class="config-field-name">Hostbox</span><select id="lexFreeSlotPlacementSelect"></select><small class="config-item-help"><span class="help-lang-nl">Kiest de syntactische hosthoogte waarop het externe bijwoordslot aan de LEX-as wordt geplaatst.</span><span class="help-lang-en">Chooses the syntactic host height where the external adverb slot is placed on the LEX axis.</span></small></label>
 <label class="field mini-field" title="Kiest welk bijwoord of welke lexicale inhoud in het externe LEX-slot verschijnt."><span class="config-field-name">Bijwoord / inhoud</span><select id="lexInsertionContentSelect"></select><small class="config-item-help"><span class="help-lang-nl">Kiest welk bijwoord of welke lexicale inhoud in het externe LEX-slot verschijnt.</span><span class="help-lang-en">Chooses which adverb or lexical content appears in the external LEX slot.</span></small></label>
@@ -571,17 +571,17 @@
 <label class="field mini-field" title="Wijzigt alleen de kleur van de LOG-projectie op de zuidas."><span class="config-field-name">LOG-kleur</span><select id="logProjectionColorSelect"></select><small class="config-item-help"><span class="help-lang-nl">Wijzigt alleen de kleur van de LOG-projectie op de zuidas.</span><span class="help-lang-en">Changes only the colour of the LOG projection on the south axis.</span></small></label>
 </fieldset></section></details><details class="config-section config-files-section" id="config-files"><summary><span class="help-lang-nl">Bestanden &amp; editors</span><span class="help-lang-en">Files &amp; editors</span></summary><section class="panel-card config-section-body"><section aria-label="Hoofdbediening" class="toolbar">
 <div aria-label="Zin-input" class="input-sentence-tools">
-<a class="button-link" href="examples-input.html?v2.0.9" title="Open de HTML-inputfile met voorbeeldzinnen, subject vet en object cursief">HTML-input</a>
-<a class="button-link" href="examples-adverbs.html?v2.0.9" title="Voorbeeldset met één bijwoord per zin en default-host per categorie">Bijwoordvoorbeelden</a>
-<a class="button-link" href="docs/LEX_ADVERB_PLACEMENT_RULES_CHECKED.md?v2.0.9" title="Plaatsingsregels voor lexicale bijwoordinsertie: default en gemarkeerd">Bijwoordregels</a>
-<a class="button-link" href="examples-adverb-rules-v4552.html?v2.0.9" title="Controle per bijwoord: uitzonderingen en eigen regels">Bijwoordcheck</a>
-<a class="button-link" href="examples-adverb-rules-v4552.html?v2.0.9" title="Controle per bijwoord: uitzonderingen en eigen regels">Bijwoordcheck</a>
-<a class="button-link" href="lexicon-config.html?v2.0.9" title="Leesbare lexicon-config voor voorbeeldzinnen">Lexicon</a>
-<a class="button-link" href="lexicon-editor.html?v2.0.9" title="Lexicon én korte voorbeelduitingen beheren; exporteert lexicon-config.html en examples-input.html">Lexicon+uitingen-editor</a>
-<a class="button-link" href="structure-editor.html?v2.0.9" title="Bewerk eerst syntax-config en functional-config">Structure-editor</a>
-<a class="button-link" href="docs/docs-home.html?v2.0.9" title="Projectcontext, layoutspec en release notes">Docs</a>
-<a class="button-link" href="lex-movement-rules.html?v2.0.9" title="Simpele uitleg van de LEX-Wissels per zinstype">Plaatsingsregels</a>
-<a class="button-link" href="reset-cache.html?v2.0.9" title="Verwijder browsercache/service worker en open de viewer opnieuw">Reset cache</a>
+<a class="button-link" href="examples-input.html?v2.0.10" title="Open de HTML-inputfile met voorbeeldzinnen, subject vet en object cursief">HTML-input</a>
+<a class="button-link" href="examples-adverbs.html?v2.0.10" title="Voorbeeldset met één bijwoord per zin en default-host per categorie">Bijwoordvoorbeelden</a>
+<a class="button-link" href="docs/LEX_ADVERB_PLACEMENT_RULES_CHECKED.md?v2.0.10" title="Plaatsingsregels voor lexicale bijwoordinsertie: default en gemarkeerd">Bijwoordregels</a>
+<a class="button-link" href="examples-adverb-rules-v4552.html?v2.0.10" title="Controle per bijwoord: uitzonderingen en eigen regels">Bijwoordcheck</a>
+<a class="button-link" href="examples-adverb-rules-v4552.html?v2.0.10" title="Controle per bijwoord: uitzonderingen en eigen regels">Bijwoordcheck</a>
+<a class="button-link" href="lexicon-config.html?v2.0.10" title="Leesbare lexicon-config voor voorbeeldzinnen">Lexicon</a>
+<a class="button-link" href="lexicon-editor.html?v2.0.10" title="Lexicon én korte voorbeelduitingen beheren; exporteert lexicon-config.html en examples-input.html">Lexicon+uitingen-editor</a>
+<a class="button-link" href="structure-editor.html?v2.0.10" title="Bewerk eerst syntax-config en functional-config">Structure-editor</a>
+<a class="button-link" href="docs/docs-home.html?v2.0.10" title="Projectcontext, layoutspec en release notes">Docs</a>
+<a class="button-link" href="lex-movement-rules.html?v2.0.10" title="Simpele uitleg van de LEX-Wissels per zinstype">Plaatsingsregels</a>
+<a class="button-link" href="reset-cache.html?v2.0.10" title="Verwijder browsercache/service worker en open de viewer opnieuw">Reset cache</a>
 </div>
 <div class="button-row compact-actions">
 <button id="resetExampleButton" title="Herlaad het gekozen voorbeeld" type="button">Reset voorbeeld</button>
@@ -599,12 +599,12 @@
 <h2>Voorbeeldzinnen</h2>
 <p class="inline-help">Voeg voorbeeldzinnen toe via de editor. Start lokaal met <code>start-local-viewer.bat</code>; dan schrijft <strong>Opslaan</strong> direct naar <code>examples-input.html</code>. Daarna kun je hier de lijst herladen.</p>
 <div class="button-row">
-<a class="button-link primary" href="examples-editor.html?v2.0.9" title="Voorbeeldzinnen toevoegen en opslaan">Voorbeeldzinnen-editor</a>
-<a class="button-link" href="examples-input.html?v2.0.9" title="Leesbare HTML-input met voorbeeldzinnen">HTML-input</a>
-<a class="button-link" href="examples-adverbs.html?v2.0.9" title="Bijwoordvoorbeelden met default-host en gemarkeerde host">Bijwoordvoorbeelden</a>
-<a class="button-link" href="docs/LEX_ADVERB_PLACEMENT_RULES_CHECKED.md?v2.0.9" title="Plaatsingsregels voor lexicale bijwoordinsertie: default en gemarkeerd">Bijwoordregels</a>
-<a class="button-link" href="examples-adverb-rules-v4552.html?v2.0.9" title="Controle per bijwoord: uitzonderingen en eigen regels">Bijwoordcheck</a>
-<a class="button-link" href="examples-adverb-rules-v4552.html?v2.0.9" title="Controle per bijwoord: uitzonderingen en eigen regels">Bijwoordcheck</a>
+<a class="button-link primary" href="examples-editor.html?v2.0.10" title="Voorbeeldzinnen toevoegen en opslaan">Voorbeeldzinnen-editor</a>
+<a class="button-link" href="examples-input.html?v2.0.10" title="Leesbare HTML-input met voorbeeldzinnen">HTML-input</a>
+<a class="button-link" href="examples-adverbs.html?v2.0.10" title="Bijwoordvoorbeelden met default-host en gemarkeerde host">Bijwoordvoorbeelden</a>
+<a class="button-link" href="docs/LEX_ADVERB_PLACEMENT_RULES_CHECKED.md?v2.0.10" title="Plaatsingsregels voor lexicale bijwoordinsertie: default en gemarkeerd">Bijwoordregels</a>
+<a class="button-link" href="examples-adverb-rules-v4552.html?v2.0.10" title="Controle per bijwoord: uitzonderingen en eigen regels">Bijwoordcheck</a>
+<a class="button-link" href="examples-adverb-rules-v4552.html?v2.0.10" title="Controle per bijwoord: uitzonderingen en eigen regels">Bijwoordcheck</a>
 <button id="reloadExamplesButton" title="Herlees examples-input.html zonder de hele pagina opnieuw te openen" type="button">Herlaad zinnen</button>
 </div>
 </section><div class="config-action-help-list"><h3><span class="help-lang-nl">Wat doen deze items?</span><span class="help-lang-en">What do these items do?</span></h3><ul><li><span class="help-lang-nl"><strong>Voorbeeldzinnen-editor</strong> — voegt zinnen toe en schrijft ze lokaal weg wanneer de lokale server actief is.</span><span class="help-lang-en"><strong>Sample-sentence editor</strong> — adds sentences and writes them locally when the local server is active.</span></li><li><span class="help-lang-nl"><strong>HTML-input</strong> — toont de leesbare lijst die de viewer opnieuw kan laden.</span><span class="help-lang-en"><strong>HTML input</strong> — shows the readable list that the viewer can reload.</span></li><li><span class="help-lang-nl"><strong>Bijwoordbestanden</strong> — documenteren voorbeelden, default-hosts en gecontroleerde plaatsingsregels.</span><span class="help-lang-en"><strong>Adverb files</strong> — document examples, default hosts and checked placement rules.</span></li><li><span class="help-lang-nl"><strong>Herlaad zinnen</strong> — leest examples-input.html opnieuw zonder de hele app te herstarten.</span><span class="help-lang-en"><strong>Reload sentences</strong> — reads examples-input.html again without restarting the whole app.</span></li></ul></div></section></details><details class="config-section" id="config-advanced"><summary><span class="help-lang-nl">Geavanceerd</span><span class="help-lang-en">Advanced</span></summary><section class="config-advanced-stack"><section class="panel-card lex-card">
@@ -682,15 +682,15 @@
 <div aria-label="Documentatie" class="mobile-sheet-section">
 <h3>Documentatie</h3>
 <div class="mobile-link-grid">
-<a href="docs/docs-home.html?v2.0.9">Docs</a>
-<a href="lex-movement-rules.html?v2.0.9">Plaatsingsregels</a>
-<a href="reset-cache.html?v2.0.9">Reset cache</a>
+<a href="docs/docs-home.html?v2.0.10">Docs</a>
+<a href="lex-movement-rules.html?v2.0.10">Plaatsingsregels</a>
+<a href="reset-cache.html?v2.0.10">Reset cache</a>
 </div>
 </div>
 <p class="mobile-sheet-note">Sleep met één vinger om te pannen. Knijp met twee vingers om te zoomen. FIT past het zichtvenster aan de huidige boom en named projections aan; de boom zelf verandert niet.</p>
 </section>
 <script>
-    window.__opengraphBoot = { version: 'v2.0.9', loaded: false, marker: 'viewer-index' };
+    window.__opengraphBoot = { version: 'v2.0.10', loaded: false, marker: 'viewer-index' };
     function ogStatus(message) {
       var target = document.getElementById('actionFeedback') || document.body;
       if (target) target.textContent = message;
@@ -703,7 +703,7 @@
     });
     setTimeout(function() {
       if (!window.__opengraphBoot || !window.__opengraphBoot.loaded) {
-        ogStatus('Viewer start niet volledig. Gebruik Reset cache of open http://127.0.0.1:8088/reset-cache.html?v2.0.9.');
+        ogStatus('Viewer start niet volledig. Gebruik Reset cache of open http://127.0.0.1:8088/reset-cache.html?v2.0.10.');
       }
     }, 2500);
   </script>
@@ -713,11 +713,11 @@
       var isLocal = window.location.protocol === 'file:' || !host || host === 'localhost' || host === '127.0.0.1';
       if (!isLocal) return;
       var script = document.createElement('script');
-      script.src = 'local-mobile-test.js?v2.0.9';
+      script.src = 'local-mobile-test.js?v2.0.10';
       script.defer = true;
       document.head.appendChild(script);
     })();
   </script>
-<script defer="" src="viewer.js?v2.0.9&amp;cb=4"></script>
+<script defer="" src="viewer.js?v2.0.10&amp;cb=4"></script>
 </body>
 </html>
