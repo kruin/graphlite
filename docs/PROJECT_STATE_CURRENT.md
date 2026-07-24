@@ -4,7 +4,7 @@ Actuele, leidende status van OpenGraph Lite Viewer.
 
 ## Versie
 
-- Actuele release: `v2.0.5`.
+- Actuele release: `v2.0.6`.
 - Functionele bronbasis: volledige v1.0.16-bronset, doorontwikkeld via de v2.0-releasekandidaten.
 - `VERSION.txt` is leidend voor app, cache, documentatie en zipnaam.
 
@@ -118,3 +118,7 @@ check_release.bat
 - Een eerder gekozen taal blijft lokaal bewaard.
 - De taalkeuze vertaalt de interface; de voorbeeldzinnen blijven Nederlands en demonstreren Nederlandse woordvolgorde.
 - Niet vertaalde technische teksten in Duits, Frans en Spaans vallen terug op Engels.
+
+## v2.0.6 — LEESMIJ/README eerste view
+
+Mobile portrait toont de onderwerpenboom en de actieve itemtekst direct in twee gelijke hoogtezones. Desktop en landscape blijven links-rechts.

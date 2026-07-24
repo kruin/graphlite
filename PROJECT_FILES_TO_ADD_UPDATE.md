@@ -5,7 +5,7 @@ Bestanden om als leidende projectbronnen toe te voegen of te vervangen.
 ## Volledige projectzip
 
 ```text
-OpenGraph_Lite_Viewer_v2.0.5_full_source.zip
+OpenGraph_Lite_Viewer_v2.0.6_full_source.zip
 ```
 
 ## Leidende losse bestanden
@@ -22,7 +22,7 @@ DEPLOY_GITHUB_PAGES.md
 EENVOUDIGE_RELEASE_WERKWIJZE.md
 ```
 
-## v2.0.5
+## v2.0.6
 
 Toevoegen of vervangen:
 

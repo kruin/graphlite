@@ -1,8 +1,8 @@
-# v2.0.5
+# v2.0.6
 
 - Eenvoudige directe releasewerkwijze hersteld: bron over `C:\git\graphlite` kopiëren, lokaal testen, daarna `publish_checked.bat`.
 - `graphlite_safe_update.bat`, `graphlite-next`, clone-, bundle- en promotiewerkwijze zijn niet langer de actuele releasebediening.
-- Alle actieve versieaanduidingen en lokale startlinks gebruiken v2.0.5.
+- Alle actieve versieaanduidingen en lokale startlinks gebruiken v2.0.6.
 
 # v2.0.0-rc.22
 

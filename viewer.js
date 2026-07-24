@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'v2.0.5';
+  const VERSION = 'v2.0.6';
   const BASE_CELL = 74;
   const ROOT_SIDE_GAP = 1;
   const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -2766,7 +2766,7 @@
     syncPortraitStageMode();
     if (!els.canvasWrap) return;
     syncPortraitMenuSpace();
-    // v2.0.5: alle interface-standen krijgen de maximaal beschikbare
+    // v2.0.6: alle interface-standen krijgen de maximaal beschikbare
     // canvasruimte. De SVG-viewBox bepaalt vervolgens de grootste schaal zonder
     // clipping. Een brede boom in portrait wordt dus niet ook nog eens door een
     // kunstmatig laag canvas verkleind.
@@ -2949,7 +2949,7 @@
 
   function setProjection(projection) {
     const next = projection || 'axes';
-    // v2.0.5: alle named-projection views delen exact dezelfde
+    // v2.0.6: alle named-projection views delen exact dezelfde
     // viewport. Een projectiewissel mag daarom een handmatige pan/zoom niet
     // wissen en mag de centrale boom horizontaal noch verticaal verplaatsen.
     if (growthSupportedProjection(state.projection) && state.growthStep > 0) {
@@ -4453,7 +4453,7 @@
   }
 
   function projectionStableFrameBox() {
-    // v2.0.5: inhoudsgetrouwe, maar nog steeds stabiele unie van Syntax
+    // v2.0.6: inhoudsgetrouwe, maar nog steeds stabiele unie van Syntax
     // en Functional. Alleen werkelijk gebruikte boxbreedtes en lijnuiteinden tellen mee.
     // Oude fictieve reserves links van LOG en rechts van SYNT maakten alle vier
     // interface-standen onnodig klein, vooral mobile portrait.
@@ -4496,7 +4496,7 @@
   }
 
   function stableProjectionViewBox() {
-    // v2.0.5: maximale full-view voor Automatisch, Desktop, Mobiel
+    // v2.0.6: maximale full-view voor Automatisch, Desktop, Mobiel
     // staand en Mobiel liggend. De veiligheidsrand is alleen nog voldoende
     // voor dunne strokes en labels; er wordt geen UI-ruimte in SVG gereserveerd.
     const frame = projectionStableFrameBox();
@@ -4715,7 +4715,7 @@
 
   function stableGrowthViewBox() {
     if (!growthActive()) return null;
-    // v2.0.5: Groei gebruikt hetzelfde frame als de gewone projectie-
+    // v2.0.6: Groei gebruikt hetzelfde frame als de gewone projectie-
     // views. Voorheen hadden Alle/Bron/LOG eigen hard-coded viewBoxes, terwijl
     // LEX/SYNT auto-fit gebruikten; dat veroorzaakte de zichtbare sprong.
     return stableProjectionViewBox();
@@ -4752,7 +4752,7 @@
   }
 
   function clearViewportGestureState() {
-    // v2.0.5: bij wissel tussen landscape/portrait mogen oude touch-pointers
+    // v2.0.6: bij wissel tussen landscape/portrait mogen oude touch-pointers
     // en pinch-state niet blijven hangen. Anders lijkt portrait na zoom in
     // landscape bevroren.
     state.viewDrag = null;
@@ -5014,7 +5014,7 @@
         controlsLeft = state.projectionBoxManual.left;
         controlsTop = state.projectionBoxManual.top;
       } else {
-        // v2.0.5: Projecties-box heeft een stabiele schermpositie.
+        // v2.0.6: Projecties-box heeft een stabiele schermpositie.
         // Niet meer ankeren aan een wisselende SYNT-as; alleen handmatig slepen verplaatst de box.
         controlsLeft = maxLeft;
         controlsTop = minTop;
@@ -5206,7 +5206,7 @@
 
   function computeAutoFitBox() {
     if (!els.svg) return fallbackViewBox();
-    // v2.0.5: alle projectie-views gebruiken één geometrisch viewport,
+    // v2.0.6: alle projectie-views gebruiken één geometrisch viewport,
     // onafhankelijk van welke overlay zichtbaar is. Dit sluit auto-fit-
     // verschillen uit en voorkomt elke horizontale of verticale verspringing.
     if (isMainScreenActive() && ['axes', 'source', 'lex', 'synt', 'log'].includes(state.projection)) {
@@ -6479,7 +6479,7 @@
     setText('.config-topbar p', en ? 'Choose a section. Save still uses Yes · save config / No · restore last saved config.' : 'Kies een sectie. Opslaan blijft Ja · bewaar config / Nee · herstel laatst bewaarde config.');
     setText('.help-topbar .intro-kicker', en ? 'README' : 'LEESMIJ');
     setText('.help-topbar h2', en ? 'Project information' : 'Projectinformatie');
-    setText('.help-topbar p', en ? 'README topics are listed on the left; the selected text is shown on the right.' : 'LEESMIJ-onderwerpen staan links; rechts staat de geselecteerde tekst.');
+    setText('.help-topbar p', en ? 'README topics and the selected text are both visible immediately; on mobile portrait they each use half the available height.' : 'LEESMIJ-onderwerpen en de geselecteerde tekst zijn direct zichtbaar; op mobile portrait gebruiken beide de halve beschikbare hoogte.');
     setText('.header-subtitle', en
       ? 'Top menu with Sentence, Adverb, Syntax / Functional, Interface, Projections, LOG order, Language, README and Config.'
       : 'Topmenu met Zin, Bijwoord, Syntax / Functional, Interface, Projecties, LOG-volgorde, taal, LEESMIJ en Config.');
@@ -6534,6 +6534,8 @@
       button.setAttribute('aria-current', active ? 'page' : 'false');
       button.setAttribute('aria-expanded', active ? 'true' : 'false');
     });
+    const stage = document.querySelector('.help-topic-stage');
+    if (stage) stage.scrollTop = 0;
   }
 
   function registerHelpTopicTree() {
@@ -6733,6 +6735,7 @@
   }
 
   function setHelpScreen(open) {
+    if (open) setHelpTopic('opengraph');
     setAppScreen(open ? 'help' : 'main');
   }
 

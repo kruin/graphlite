@@ -13,7 +13,7 @@ required_files = [
     'SOV_NOTATION_OPTIONS.md','EENVOUDIGE_RELEASE_WERKWIJZE.md','publish_checked.bat',
     'check_release.bat','start-local-viewer.bat','README.md','SOURCE_CHANGES_V2.0.5.md',
     'LANGUAGE_MENU_TEST.md','EENVOUDIGE_RELEASE_WERKWIJZE_TEST.md',
-    'RELEASE_MANIFEST_GIT_EXCLUSION_TEST.md','RELEASE_MANIFEST.txt'
+    'RELEASE_MANIFEST_GIT_EXCLUSION_TEST.md','README_FIRST_VIEW_HALF_HEIGHT_TEST.md','RELEASE_MANIFEST.txt'
 ]
 for rel in required_files:
     if not (ROOT / rel).is_file():
@@ -68,6 +68,18 @@ for menu_id in ['mainLanguageMenu','configLanguageMenu','helpLanguageMenu']:
     if f'id="{menu_id}"' not in index: errors.append(f'talenmenu ontbreekt: {menu_id}')
 if 'language-option-list' not in css or 'language-sentence-note' not in css:
     errors.append('talenmenu-opmaak ontbreekt')
+
+# README first-view contract.
+for token in [
+    'v2.0.6: README/LEESMIJ first view on mobile portrait',
+    'grid-template-rows: minmax(0, 1fr) minmax(0, 1fr)',
+    'body.viewport-mobile-portrait-test.help-screen-active .help-tree-screen',
+    "if (stage) stage.scrollTop = 0;"
+]:
+    if token not in css and token not in js:
+        errors.append(f'LEESMIJ-eerste-view mist {token!r}')
+if not (ROOT/'README_FIRST_VIEW_HALF_HEIGHT_TEST.md').is_file():
+    errors.append('ontbreekt: README_FIRST_VIEW_HALF_HEIGHT_TEST.md')
 
 # Fixed two-row top menu: six choices, then language/readme/config.
 top = re.search(r'<nav[^>]*class=["\'][^"\']*\bmain-top-menu\b[^"\']*["\'][^>]*>.*?</nav>', index, re.S)

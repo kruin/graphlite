@@ -50,19 +50,19 @@ https://kruin.github.io/graphlite/
 Na een geslaagde push opent `publish_checked.bat` automatisch eenmaal:
 
 ```text
-https://kruin.github.io/graphlite/reset-cache.html?ogv=v2.0.5&nocache=...
+https://kruin.github.io/graphlite/reset-cache.html?ogv=v2.0.6&nocache=...
 ```
 
 Handmatig opnieuw resetten:
 
 ```text
-https://kruin.github.io/graphlite/reset-cache.html?ogv=v2.0.5&nocache=TIMESTAMP
+https://kruin.github.io/graphlite/reset-cache.html?ogv=v2.0.6&nocache=TIMESTAMP
 ```
 
 Daarna:
 
 ```text
-https://kruin.github.io/graphlite/index.html?ogv=v2.0.5
+https://kruin.github.io/graphlite/index.html?ogv=v2.0.6
 ```
 
 ## Niet publiceren naar Pages-root

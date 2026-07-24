@@ -1,4 +1,4 @@
-# OpenGraph Lite Viewer v2.0.5
+# OpenGraph Lite Viewer v2.0.6
 
 Demo/viewer voor JaN / OPN / OpenGraph-taalstructuren.
 
@@ -19,7 +19,7 @@ start-local-viewer.bat
 GitHub Pages:
 
 ```text
-https://kruin.github.io/graphlite/index.html?ogv=v2.0.5
+https://kruin.github.io/graphlite/index.html?ogv=v2.0.6
 ```
 
 ## Talen
@@ -110,3 +110,7 @@ Automatisch herkent een liggende telefoon via de korte viewportzijde en touch/co
 - JaN (Just another Notation): `S:np-VP`, niet `S:NP-VP`.
 - Werknotatie in onderzoek: `S+ np-VP`; eerst voor binaire bomen, later voor meertakkigheid.
 - Flip van het verbale cluster: `heeft gebeten` ↔ `gebeten heeft`.
+
+## v2.0.6 — LEESMIJ eerste weergave
+
+Op mobile portrait zijn bij het openen van LEESMIJ/README de onderwerpenlijst en de tekst van het actieve eerste item meteen samen zichtbaar. Beide gebruiken ongeveer de helft van de beschikbare documentatiehoogte en scrollen onafhankelijk.

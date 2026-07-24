@@ -2,7 +2,7 @@
 
 ## Nieuwe versieduiding
 
-De release is aangeduid als `v2.0.5`. `VERSION.txt`, appbestanden, cachebestanden, manifest, actieve documentatie en lokale startlinks gebruiken dezelfde versie.
+De release is aangeduid als `v2.0.6`. `VERSION.txt`, appbestanden, cachebestanden, manifest, actieve documentatie en lokale startlinks gebruiken dezelfde versie.
 
 ## Eenvoudige Git-werkwijze hersteld
 
