@@ -44,6 +44,21 @@ Beschrijf het topmenu vanaf rc.17 als twee vaste rijen. Noem nooit vrije wrappin
 Beschrijf Play/Groei standaard als gelijktijdige bron- en projectiegroei: iedere nieuw zichtbare centrale knoop toont meteen haar geldige gekozen projectie. Vermeld apart dat LEX-Wissels pas na de structurele groei volgen.
 
 
+## Plaatsingsplan uitleggen
+
+Beschrijf lexicale inserties nooit als elementen die na voltooiing van de kernboom nog ergens worden tussengevoegd. Gebruik de vaste volgorde:
+
+```text
+plaatsingsplan berekenen → kernzin invullen → groei/rendering
+```
+
+Vermeld waar relevant:
+
+- structuur, insertiegroepen, plaatsingsregels, wissels en projecties zijn gezamenlijk layoutinput;
+- alle benodigde gridruimte en corridors worden vooraf gereserveerd;
+- de kernzin is de structurele en lexicale invulling van het plan;
+- Play/Groei onthult een vooraf vastgelegde layout en herberekent haar niet.
+
 ## Config-overzicht (rc.24)
 
 - Config opent met een compact sectieoverzicht; uitgebreide instellingen zijn standaard ingeklapt.

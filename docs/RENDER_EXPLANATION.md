@@ -6,15 +6,18 @@ De render-uitleg hoort in **Help** en documentatie, niet in **Config**.
 
 Config is voor instellingen. Lange uitlegblokken mogen daar niet tussen actieve opties vallen, omdat zij de configuratiekolom onderbreken en opties zoals `Takverlenging door insertie` naar beneden drukken.
 
-## Render-volgorde
+## Plaatsings- en render-volgorde
 
-1. Bereken eerst de centrale boom en de boxen.
-2. Teken daarna de projectie-assen: LEX, SYNTAX en LOG.
-3. Projecteer eindknopen naar de LEX-as.
-4. Plaats vrije LEX-inserts in gereserveerde slots.
-5. Teken eventuele LEX-verplaatsingsregels of wissels.
+1. Lees structuur, lexicale insertiegroepen, plaatsingsregels, Wissels en actieve projecties.
+2. Bepaal structurele hosts en alle lexicale landingsplaatsen.
+3. Reserveer gridruimte, minimale boxafstand en Wissel-corridors.
+4. Bereken daarna de centrale boom en haar boxen in het resterende veld.
+5. Vul de kernzin en de lexicale waarden in de berekende plaatsen in.
+6. Leg LEX-, SYNT- en LOG-projecties, traces en Wisselpaden vast.
+7. Ken groei- en renderstappen toe.
+8. Teken het vooraf berekende resultaat.
 
-De centrale boom blijft daarbij ongewijzigd.
+De centrale boom en de inserties behoren dus tot één plaatsingsplan. De renderer voegt niets achteraf in en maakt tijdens Play/Groei geen nieuwe ruimte.
 
 ## Vrije LEX-inserts
 

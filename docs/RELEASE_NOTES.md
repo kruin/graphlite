@@ -1,8 +1,16 @@
-# v2.0.6
+# v2.0.9
+
+- README/LEESMIJ en leidende specificaties leggen nu de extra architectuurstap vast: plaatsingsplan berekenen vóór centrale plaatsing en rendering.
+- Structuur, meervoudige lexicale inserties, plaatsingsregels, Wissels en actieve projecties zijn gezamenlijk layoutinput.
+- De kernzin is de structurele en lexicale invulling van het vooraf gereserveerde gridframe.
+- Play/Groei en de renderer maken geen nieuwe ruimte en verplaatsen geen reeds berekende onderdelen.
+- Geen wijziging aan viewerfunctionaliteit of Config-save-werkwijze.
+
+# v2.0.4
 
 - Eenvoudige directe releasewerkwijze hersteld: bron over `C:\git\graphlite` kopiëren, lokaal testen, daarna `publish_checked.bat`.
 - `graphlite_safe_update.bat`, `graphlite-next`, clone-, bundle- en promotiewerkwijze zijn niet langer de actuele releasebediening.
-- Alle actieve versieaanduidingen en lokale startlinks gebruiken v2.0.6.
+- Alle actieve versieaanduidingen en lokale startlinks gebruiken v2.0.9.
 
 # v2.0.0-rc.22
 

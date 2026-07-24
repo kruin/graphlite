@@ -6,6 +6,12 @@ The render explanation belongs in **Help** and documentation, not in **Config**.
 
 Config is for settings. Long explanation blocks must not interrupt active configuration options, because they break the configuration column and push options such as `Branch extension by insertion` downwards.
 
+## Placement before render
+
+Lexical insertions are layout input, not additions made after drawing a completed core tree. The engine first reads the structure, insertion groups, placement rules, exchanges and active projections. It then reserves grid positions and corridors, places the central tree, fills the core sentence, fixes projections and exchange paths, and only then renders.
+
+Play/Growth reveals this fixed result step by step. A growth step does not create space or move previously calculated elements.
+
 ## Render order
 
 1. First compute the central tree and its boxes.

@@ -137,3 +137,32 @@ nieuwe centrale knoop → direct geldige LEX/SYNT/LOG-projectie
 - SYNT toont de regel zodra de bijbehorende categorieknoop zichtbaar is.
 - LOG toont S, O of V zodra de corresponderende centrale knoop zichtbaar is.
 - LEX-Wissels blijven afzonderlijke vervolgstappen na de volledige structurele groei.
+
+## Meervoudige lexicale inserties
+
+- Een insertiegroep is de eenheid die één LEX-slot gebruikt.
+- `misschien wel` is standaard één meerwoordige insertiegroep.
+- Een zelfstandig bijwoord zoals `vaak` gebruikt een afzonderlijk slot.
+- Meerdere groepen behouden een expliciete lineaire volgorde.
+- Insertiegroepen worden niet als Syntax- of Functional-knoop toegevoegd.
+- Hun slotcentra liggen op minor-gridankers; de renderer bewaakt fysieke afstand en voorkomt overlap.
+
+## Lexicale insertie als voorafgaande layoutactie
+
+Lexicale insertie is een invoer voor de plaatsingsberekening, niet een reparatie na het tekenen van de kernzin.
+
+```text
+structurele host
++ insertiegroepen
++ plaatsingsregels
++ mogelijke Wissels
+→ volledig plaatsingsplan
+→ kernzin invullen
+→ renderen
+```
+
+- Alle insertiegroepen worden vóór de centrale boomplaatsing verzameld en per host geordend.
+- De layout reserveert hun minor-ankers, fysieke boxafstand en eventuele wisselcorridors vooraf.
+- De kernzin levert de lexicale waarden voor structurele bronnen en slots, maar creëert geen nieuwe plaats.
+- Een Wissel gebruikt vooraf bepaalde bron- en doelposities.
+- Play/Groei onthult dezelfde vooraf berekende layout; het verschijnen van een insertie betekent niet dat haar ruimte pas op dat moment ontstaat.

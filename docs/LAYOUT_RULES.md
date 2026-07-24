@@ -32,6 +32,33 @@ De standaardwaarde `Boomruimte: Auto` volgt continu de werkelijke verhouding van
 
 Doel: de graph plus gekozen projecties gebruikt zoveel mogelijk breedte én hoogte, zonder clipping, vervorming of projectieverspringing.
 
+## Plaatsingsplan vóór rendering
+
+De volledige plaatsingsruimte wordt berekend voordat een centraal element of een lexicale insertie wordt getekend.
+
+```text
+layoutinput = structuur + lexicale inserties + plaatsingsregels + wissels + actieve projecties
+```
+
+Vaste volgorde:
+
+1. bepaal structurele hosts;
+2. bepaal alle insertiegroepen en hun landingsplaatsen;
+3. reserveer major-/minor-gridposities en noodzakelijke wisselcorridors;
+4. plaats de centrale Syntax- of Functional-boom;
+5. vul de kernzin lexicaal in;
+6. leg projectieposities, traces en wisselpaden vast;
+7. ken growthSteps en renderlagen toe;
+8. render het vaste resultaat.
+
+Gevolgen:
+
+- lexicale inserties worden niet achteraf tegen een bestaande boom aangelegd;
+- de kernzin bepaalt niet zelfstandig de volledige layout, maar vult het berekende frame;
+- groei herberekent geen posities en reserveert geen nieuwe ruimte;
+- renderen mag geen layoutbeslissing nemen;
+- meervoudige inserties kunnen niet botsen wanneer hun ruimte vooraf correct is gereserveerd.
+
 ## Projecties
 
 - Bediening staat buiten het canvas onder `Projecties` / `Projections`.

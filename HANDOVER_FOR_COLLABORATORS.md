@@ -1,6 +1,6 @@
 # HANDOVER_FOR_COLLABORATORS
 
-Overdracht voor OpenGraph Lite Viewer `v2.0.6`.
+Overdracht voor OpenGraph Lite Viewer `v2.0.9`.
 
 ## Niet wijzigen zonder expliciete opdracht
 
@@ -26,6 +26,14 @@ Raster:           standaard aan
 - Syntax, Functional en iedere projectiecombinatie gebruiken binnen dezelfde viewport exact hetzelfde profiel.
 - Projectiewissels veranderen x, y, schaal of viewBox niet.
 - Een resize of oriëntatiewissel mag wel één volledige herfit uitvoeren.
+
+## Plaatsingsplancontract
+
+- Verzamel structuur, alle lexicale insertiegroepen, plaatsingsregels, Wissels en actieve projecties vóór de centrale plaatsing.
+- Reserveer minor-ankers, fysieke boxafstand en wisselcorridors vóór het tekenen.
+- De kernzin is invulling van het berekende frame, niet de reeds voltooide layout waarop later inserties worden geplakt.
+- Groei en rendering mogen geen nieuwe positie claimen of de layout herberekenen.
+- Wijzigingen aan inserties vereisen een nieuwe volledige layoutberekening vóór de volgende render.
 
 ## Configcontract
 

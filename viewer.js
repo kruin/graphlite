@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'v2.0.6';
+  const VERSION = 'v2.0.9';
   const BASE_CELL = 74;
   const ROOT_SIDE_GAP = 1;
   const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -243,6 +243,49 @@
       ]
     }
     ,
+    {
+      id: 'de-hond-heeft-de-man-misschien-wel-vaak-gebeten',
+      title: 'DE HOND HEEFT DE MAN MISSCHIEN WEL VAAK GEBETEN',
+      phase: 'Meervoudige LEX-insertie',
+      lexRule: 'hoofdzininvariant',
+      sentence: 'DE HOND HEEFT DE MAN MISSCHIEN WEL VAAK GEBETEN',
+      sentenceHtml: '<strong>DE HOND</strong> HEEFT <em>DE MAN</em> MISSCHIEN WEL VAAK GEBETEN',
+      subjectDefault: 'DE HOND',
+      objectDefault: 'DE MAN',
+      predicate: 'GEBETEN',
+      lexInsertions: [
+        { id: 'misschien-wel', text: 'MISSCHIEN WEL', host: 'VP', defaultHost: 'VP', category: 'MODALITEIT', order: 1, group: 'modal-group' },
+        { id: 'vaak', text: 'VAAK', host: 'VP', defaultHost: 'VP', category: 'FREQUENTIE', order: 2, group: 'frequency-group' }
+      ],
+      lexItems: [
+        { id: 'subject-hond', label: 'DE HOND', source: 'subject', role: 'subject', thematicRole: 'agens', lexeme: 'hond' },
+        { id: 'pv-heeft', label: 'HEEFT', source: 'pv', role: 'aux', lexeme: 'heeft' },
+        { id: 'object-man', label: 'DE MAN', source: 'object', role: 'object', thematicRole: 'patiens', lexeme: 'man' },
+        { id: 'vdw-bijt', label: 'GEBETEN', source: 'vdw', role: 'participle', lexeme: 'bijt' }
+      ]
+    },
+    {
+      id: 'omdat-de-hond-de-man-misschien-wel-vaak-heeft-gebeten',
+      title: 'OMDAT DE HOND DE MAN MISSCHIEN WEL VAAK HEEFT GEBETEN',
+      phase: 'Meervoudige LEX-insertie · bijzin',
+      lexRule: 'bijzin-omdat',
+      sentence: 'OMDAT DE HOND DE MAN MISSCHIEN WEL VAAK HEEFT GEBETEN',
+      sentenceHtml: 'OMDAT <strong>DE HOND</strong> <em>DE MAN</em> MISSCHIEN WEL VAAK HEEFT GEBETEN',
+      subjectDefault: 'DE HOND',
+      objectDefault: 'DE MAN',
+      predicate: 'GEBETEN',
+      lexInsertions: [
+        { id: 'misschien-wel', text: 'MISSCHIEN WEL', host: 'VP', defaultHost: 'VP', category: 'MODALITEIT', order: 1, group: 'modal-group' },
+        { id: 'vaak', text: 'VAAK', host: 'VP', defaultHost: 'VP', category: 'FREQUENTIE', order: 2, group: 'frequency-group' }
+      ],
+      lexItems: [
+        { id: 'omdat', label: 'OMDAT', source: null, slot: 'comp', lexeme: 'omdat' },
+        { id: 'subject-hond', label: 'DE HOND', source: 'subject', role: 'subject', thematicRole: 'agens', lexeme: 'hond' },
+        { id: 'object-man', label: 'DE MAN', source: 'object', role: 'object', thematicRole: 'patiens', lexeme: 'man' },
+        { id: 'pv-heeft', label: 'HEEFT', source: 'pv', role: 'aux', lexeme: 'heeft' },
+        { id: 'vdw-bijt', label: 'GEBETEN', source: 'vdw', role: 'participle', lexeme: 'bijt' }
+      ]
+    },
     {
       id: 'omdat-vrouw-trui-heeft-gebreid',
       title: 'OMDAT VROUW TRUI HEEFT GEBREID',
@@ -670,6 +713,7 @@
     { id: 'hard', label: 'HARD', text: 'HARD', sub: 'wijze · V-nabij', subEn: 'manner · V-near', caption: 'wijze-slot', captionEn: 'manner slot', tip: 'HARD: wijze. Plaats boven V of VP; niet boven S als zinsbijwoord.', tipEn: 'HARD: manner. Place above V or VP; not above S as a sentence adverb.' },
     { id: 'zachtjes', label: 'ZACHTJES', text: 'ZACHTJES', sub: 'wijze · V-nabij', subEn: 'manner · V-near', caption: 'wijze-slot', captionEn: 'manner slot', tip: 'ZACHTJES: wijze. Plaats boven V, dicht bij predicaat.', tipEn: 'ZACHTJES: manner. Place above V, close to the predicate.' },
     { id: 'misschien', label: 'MISSCHIEN', text: 'MISSCHIEN', sub: 'zinsbijwoord · S/VP', subEn: 'sentence adverb · S/VP', caption: 'S/VP-slot', captionEn: 'S/VP slot', tip: 'MISSCHIEN: zinsbijwoord. Hoge host: boven S of VP; niet boven V.', tipEn: 'MISSCHIEN: sentence adverb. High host: above S or VP; not above V.' },
+    { id: 'misschien-wel', label: 'MISSCHIEN WEL', text: 'MISSCHIEN WEL', sub: 'meerwoordige insertiegroep · S/VP', subEn: 'multiword insertion group · S/VP', caption: 'insertiegroep', captionEn: 'insertion group', tip: 'MISSCHIEN WEL: één meerwoordige lexicale insertiegroep. De twee woorden delen één slot; een volgend zelfstandig bijwoord krijgt een apart slot.', tipEn: 'MISSCHIEN WEL: one multiword lexical insertion group. Both words share one slot; a following independent adverb receives a separate slot.' },
     { id: 'waarschijnlijk', label: 'WAARSCHIJNLIJK', text: 'WAARSCHIJNLIJK', sub: 'zinsbijwoord · S/VP', subEn: 'sentence adverb · S/VP', caption: 'S/VP-slot', captionEn: 'S/VP slot', tip: 'WAARSCHIJNLIJK: zinsbijwoord. Plaats boven S of VP; scope is de hele propositie.', tipEn: 'WAARSCHIJNLIJK: sentence adverb. Place above S or VP; scope is the whole proposition.' },
     { id: 'helaas', label: 'HELAAS', text: 'HELAAS', sub: 'zinsbijwoord · S-links', subEn: 'sentence adverb · S-left', caption: 'S-links-slot', captionEn: 'S-left slot', tip: 'HELAAS: zinsbijwoord. Vaak boven S; vooropplaatsing blijft een LEX-regel.', tipEn: 'HELAAS: sentence adverb. Often above S; fronting remains a LEX rule.' },
     { id: 'alleen', label: 'ALLEEN', text: 'ALLEEN', sub: 'focus · phrase-intern', subEn: 'focus · phrase-internal', caption: 'focus-slot', captionEn: 'focus slot', tip: 'ALLEEN: focus. Plaats boven de gefocuste phrase: NP of VP; geen algemene tussenpositie.', tipEn: 'ALLEEN: focus. Place above the focused phrase: NP or VP; not a general between-position.' },
@@ -851,6 +895,7 @@
     lexFreeSlotPlacement: 'above-vp',
     lexInsertionContent: 'empty',
     selectedAdverbId: 'none',
+    useExampleLexInsertions: true,
     lexInsertionExtensionTargets: ['vp-boundary'],
     portraitMenuSlots: 0,
     topMenusAbove: [],
@@ -1038,7 +1083,15 @@
     });
   }
 
+  function exampleLexInsertionsActive(ex = state.example) {
+    return !!state.useExampleLexInsertions
+      && state.selectedAdverbId === 'none'
+      && Array.isArray(ex?.lexInsertions)
+      && ex.lexInsertions.length > 0;
+  }
+
   function activeSentenceText() {
+    if (exampleLexInsertionsActive() && state.example?.sentence) return state.example.sentence;
     return activeLexItems().map(i => i.label).join(' ');
   }
 
@@ -1050,6 +1103,10 @@
   }
 
   function activeSentenceHtml() {
+    // Voorbeelden met meerdere lexicale insertiegroepen tonen de volledige
+    // Nederlandse oppervlaktezin; de inserties blijven op de LEX-as externe
+    // groepen en worden niet als syntaxknopen toegevoegd.
+    if (exampleLexInsertionsActive() && state.example?.sentenceHtml && !state.roleSwap) return state.example.sentenceHtml;
     // v4427: preview follows the editable examples-input.html token list.
     // v4545: bijwoord is een aparte laag/dropdown; de LEX-preview blijft de gekozen basiszin.
     return activeLexItems().map(tokenHtml).join(' ');
@@ -1122,6 +1179,23 @@
           thematicRole: token.dataset.thematicRole || null,
           lexeme: token.dataset.lexeme || null
         }));
+        const lexInsertions = [...card.querySelectorAll('.lex-insertion')].map((item, insertionIndex) => {
+          const text = (item.dataset.text || item.textContent || '').replace(/\s+/g, ' ').trim().toUpperCase();
+          const id = String(item.dataset.id || text || `lex-insertion-${insertionIndex + 1}`).trim().toLowerCase().replace(/\s+/g, '-');
+          const host = String(item.dataset.host || item.dataset.defaultHost || 'VP').trim().toUpperCase();
+          const defaultHost = String(item.dataset.defaultHost || host || 'VP').trim().toUpperCase();
+          return {
+            id,
+            text,
+            host,
+            defaultHost,
+            category: String(item.dataset.category || 'BIJWOORD').trim(),
+            marking: String(item.dataset.marking || 'functional:default-host').trim(),
+            scope: String(item.dataset.scope || '').trim(),
+            order: Number.isFinite(Number(item.dataset.order)) ? Number(item.dataset.order) : insertionIndex + 1,
+            group: String(item.dataset.group || id).trim()
+          };
+        }).filter(item => item.text);
         const adverbWord = (card.dataset.adverbWord || card.dataset.adverb || '').trim();
         const adverbHost = (card.dataset.adverbHost || card.dataset.adverbDefaultHost || '').trim().toUpperCase();
         const adverbDefaultHost = (card.dataset.adverbDefaultHost || adverbHost || '').trim().toUpperCase();
@@ -1147,6 +1221,7 @@
           objectDefault: object.toUpperCase(),
           predicate: (card.dataset.predicate || 'BIJT').toUpperCase(),
           adverb,
+          lexInsertions,
           lexItems
         };
       }).filter(ex => ex.id && ex.lexItems.length);
@@ -1445,7 +1520,8 @@
     if (Array.isArray(layout.lexAdverbAxisSlots)) {
       cloned.lexAdverbAxisSlots = layout.lexAdverbAxisSlots.map(slot => ({ ...slot }));
     }
-    if (layout.lexAdverbAxisSpace) cloned.lexAdverbAxisSpace = { ...layout.lexAdverbAxisSpace };
+    if (Array.isArray(layout.lexAdverbAxisSpace)) cloned.lexAdverbAxisSpace = layout.lexAdverbAxisSpace.map(space => ({ ...space }));
+    else if (layout.lexAdverbAxisSpace) cloned.lexAdverbAxisSpace = { ...layout.lexAdverbAxisSpace };
     if (layout.topicalizationSlot) cloned.topicalizationSlot = { ...layout.topicalizationSlot };
     if (layout.v2Slot) cloned.v2Slot = { ...layout.v2Slot };
     if (layout.freeSlotReservation) cloned.freeSlotReservation = { ...layout.freeSlotReservation };
@@ -1813,7 +1889,71 @@
     return 'above-vp';
   }
 
+  function insertionContentForSpec(spec = {}) {
+    const id = String(spec.id || spec.content || '').trim().toLowerCase();
+    const known = LEX_INSERTION_CONTENTS.find(option => option.id === id);
+    if (known) return known;
+    const text = String(spec.text || spec.word || id || 'INSERTIEPUNT').replace(/\s+/g, ' ').trim().toUpperCase();
+    return {
+      id: id || text.toLowerCase().replace(/\s+/g, '-'),
+      label: text,
+      text,
+      sub: spec.sub || 'lexicale insertiegroep',
+      subEn: spec.subEn || 'lexical insertion group',
+      caption: spec.caption || 'insertiegroep',
+      captionEn: spec.captionEn || 'insertion group',
+      tip: spec.tip || 'Externe lexicale insertie op de LEX-as.',
+      tipEn: spec.tipEn || 'External lexical insertion on the LEX axis.'
+    };
+  }
+
+  function activeLexInsertionSpecs() {
+    if (exampleLexInsertionsActive()) {
+      return [...state.example.lexInsertions]
+        .sort((a, b) => (Number(a.order) || 0) - (Number(b.order) || 0))
+        .map((spec, index) => {
+          const content = insertionContentForSpec(spec);
+          const host = String(spec.host || spec.defaultHost || 'VP').trim().toUpperCase();
+          return {
+            ...spec,
+            id: spec.id || `example-insertion-${index + 1}`,
+            content,
+            host,
+            placement: validLexSlotPlacement(hostToLexPlacement(host)),
+            order: Number(spec.order) || index + 1
+          };
+        });
+    }
+    const count = lexFreeSlotCount();
+    if (!count) return [];
+    const content = lexInsertionContentDef();
+    const placement = validLexSlotPlacement();
+    return Array.from({ length: count }, (_unused, index) => ({
+      id: `lex-insert-${index + 1}`,
+      content,
+      host: adverbHostLabelFromPlacement(placement, content),
+      placement,
+      order: index + 1,
+      marking: activeAdverbData()?.marking || 'functional:default-host',
+      marked: adverbOptionIsMarked(activeAdverbOption())
+    }));
+  }
+
+  function effectiveLexFreeSlotCount() {
+    return activeLexInsertionSpecs().length;
+  }
+
   function applyExampleAdverbDefaults() {
+    if (state.selectedAdverbId === 'none' && Array.isArray(state.example?.lexInsertions) && state.example.lexInsertions.length) {
+      state.useExampleLexInsertions = true;
+      const first = [...state.example.lexInsertions].sort((a, b) => (Number(a.order) || 0) - (Number(b.order) || 0))[0];
+      const content = insertionContentForSpec(first);
+      state.lexFreeSlotCount = Math.min(8, state.example.lexInsertions.length);
+      state.lexInsertionContent = validLexInsertionContent(content.id);
+      state.lexFreeSlotPlacement = validLexSlotPlacement(hostToLexPlacement(first.host || first.defaultHost || 'VP'));
+      return;
+    }
+    state.useExampleLexInsertions = false;
     const adv = activeAdverbData();
     if (!adv?.word) {
       state.lexFreeSlotCount = 0;
@@ -1885,25 +2025,28 @@
   }
 
   function lexFreeSlotDescriptors() {
-    const placement = validLexSlotPlacement();
-    const content = lexInsertionContentDef();
     const extensionTargets = validLexInsertionTargets();
-    return Array.from({ length: lexFreeSlotCount() }, (_, index) => ({
-      id: `lex-insert-${index + 1}`,
-      label: `LEX-insertie ${index + 1}`,
-      kind: lexPlacementIsSyntaxHost(placement) ? 'lex-axis-adverb-slot' : 'lex-axis-insertion-box',
-      axis: 'LEX',
-      placement,
-      host_box: lexPlacementIsSyntaxHost(placement) ? adverbHostLabelFromPlacement(placement, content) : null,
-      content: content.id,
-      text: content.text,
-      sub: lexInsertionContentSub(content),
-      extension_targets: extensionTargets,
-      insertion_grips_tree: false,
-      effect: lexPlacementIsSyntaxHost(placement) ? 'external lexical insertion on LEX axis; host subtree is lowered to reserve vertical space' : 'extends-selected-branches-or-box-boundaries',
-      accepts_future_sources: ['other-lex-axis', 'other-tree', 'anaphoric-element', 'adverbial-headless-clause']
-    }));
+    return activeLexInsertionSpecs().map((spec, index) => {
+      const content = spec.content || insertionContentForSpec(spec);
+      const placement = validLexSlotPlacement(spec.placement || hostToLexPlacement(spec.host || 'VP'));
+      return {
+        id: spec.id || `lex-insert-${index + 1}`,
+        label: `LEX-insertie ${index + 1}`,
+        kind: lexPlacementIsSyntaxHost(placement) ? 'lex-axis-adverb-slot' : 'lex-axis-insertion-box',
+        axis: 'LEX',
+        placement,
+        host_box: lexPlacementIsSyntaxHost(placement) ? adverbHostLabelFromPlacement(placement, content) : null,
+        content: content.id,
+        text: content.text,
+        sub: lexInsertionContentSub(content),
+        extension_targets: extensionTargets,
+        insertion_grips_tree: false,
+        effect: lexPlacementIsSyntaxHost(placement) ? 'external lexical insertion on LEX axis; host subtree is lowered to reserve vertical space' : 'extends-selected-branches-or-box-boundaries',
+        accepts_future_sources: ['other-lex-axis', 'other-tree', 'anaphoric-element', 'adverbial-headless-clause']
+      };
+    });
   }
+
 
   function reservedPortraitMenuSlots() {
     const n = Number(state.portraitMenuSlots);
@@ -1999,51 +2142,68 @@
 
 
   function applyLexAdverbAxisSlotSpace(layout) {
-    // v4545: "boven VP/S/etc." betekent niet: een bijwoordlabel boven de
-    // syntactische box. Het betekent: een extern LEX-slot op de LEX-as,
-    // verticaal net boven die box. Om die rij zichtbaar te maken wordt de
-    // gekozen host-subboom lager gezet; de insertie zelf komt niet uit de
-    // basisboom en wordt niet als boomprojectie getekend.
-    const count = lexFreeSlotCount();
-    const placement = validLexSlotPlacement();
-    if (!layout || count <= 0 || !lexPlacementIsSyntaxHost(placement)) return layout;
-    const content = lexInsertionContentDef();
-    const host = findAdverbHostNode(layout, placement, content);
-    if (!host) return layout;
-    const hostLabel = activeAdverbHostLabel(content, placement);
-    const visibleSlotCount = Math.max(1, count);
-    // v4548: reserveer één extra gridrij. Het bijwoordslot ligt daardoor
-    // echt boven de hostbox (V-CLUSTER/NP/VP/etc.) en raakt/overlapt de
-    // box niet. De host wordt alleen als hoogteanker gebruikt.
-    const reserveRows = visibleSlotCount + 1;
-    const beforeBox = hostBoxForNode(layout, host);
-    const oldSlotTopY = beforeBox ? beforeBox.minY : host.y;
-    shiftSubtreeY(layout, host.id, reserveRows);
-    const shiftedHost = (layout.nodes || []).find(n => String(n.id) === String(host.id)) || host;
-    const shiftedBox = hostBoxForNode(layout, shiftedHost);
-    const slotY0 = shiftedBox ? shiftedBox.minY - reserveRows : oldSlotTopY;
+    // Meervoudige lexicale inserties worden per host gegroepeerd. De centra
+    // liggen op minor-posities (.5), maar opeenvolgende grote boxen houden
+    // één volledige cel afstand. Daardoor kunnen zij niet visueel overlappen.
+    const specs = activeLexInsertionSpecs().filter(spec => lexPlacementIsSyntaxHost(spec.placement));
+    if (!layout || !specs.length) return layout;
+
+    const groupsByHost = new Map();
+    for (const spec of specs) {
+      const content = spec.content || insertionContentForSpec(spec);
+      const placement = validLexSlotPlacement(spec.placement || hostToLexPlacement(spec.host || 'VP'));
+      const host = findAdverbHostNode(layout, placement, content);
+      if (!host) continue;
+      if (!groupsByHost.has(host.id)) groupsByHost.set(host.id, { hostId: host.id, initialY: host.y, specs: [] });
+      groupsByHost.get(host.id).specs.push({ ...spec, content, placement });
+    }
+
+    const groups = [...groupsByHost.values()].sort((a, b) => a.initialY - b.initialY);
     const slots = [];
-    for (let index = 0; index < visibleSlotCount; index += 1) {
-      slots.push({
-        id: `lex-adverb-axis-slot-${index + 1}`,
-        label: visibleSlotCount > 1 ? `stap 1 · LEX-slot boven ${hostLabel} ${index + 1}` : `stap 1 · LEX-slot boven ${hostLabel}`,
-        hostId: shiftedHost.id,
-        hostLabel,
-        x: shiftedHost.x,
-        y: slotY0 + index,
-        content: content.id,
-        text: content.text,
-        sub: lexInsertionContentSub(content),
-        marked: adverbOptionIsMarked(activeAdverbOption()),
-        marking: adverbOptionIsMarked(activeAdverbOption()) ? (activeAdverbData()?.marking || 'functional:marked-host') : (activeAdverbData()?.marking || 'functional:default-host'),
-        toggleTargetId: findAdverbMarkedToggleTarget()?.id || '',
-        toggleLabel: adverbMarkedToggleLabel()
+    const spaces = [];
+    for (const group of groups) {
+      const host = (layout.nodes || []).find(node => String(node.id) === String(group.hostId));
+      if (!host) continue;
+      const orderedSpecs = [...group.specs].sort((a, b) => (Number(a.order) || 0) - (Number(b.order) || 0));
+      const visibleSlotCount = orderedSpecs.length;
+      // Grote insertieboxen zijn 60 px hoog. Op een plat landscape-profiel
+      // kan één logische cel lager dan 60 px zijn. Kies daarom de kleinste
+      // halve-celstap die minstens 72 px centrumafstand geeft.
+      const slotStepRows = Math.max(1, Math.ceil((72 / Math.max(1, cellY())) * 2) / 2);
+      const reserveRows = Math.ceil(0.5 + Math.max(0, visibleSlotCount - 1) * slotStepRows + 1.5);
+      const beforeBox = hostBoxForNode(layout, host);
+      const oldSlotTopY = beforeBox ? beforeBox.minY : host.y;
+      shiftSubtreeY(layout, host.id, reserveRows);
+      const shiftedHost = (layout.nodes || []).find(node => String(node.id) === String(host.id)) || host;
+      const shiftedBox = hostBoxForNode(layout, shiftedHost);
+      const slotY0 = (shiftedBox ? shiftedBox.minY - reserveRows : oldSlotTopY) + 0.5;
+      orderedSpecs.forEach((spec, index) => {
+        const content = spec.content || insertionContentForSpec(spec);
+        const hostLabel = activeAdverbHostLabel(content, spec.placement);
+        slots.push({
+          id: spec.id || `lex-adverb-axis-slot-${slots.length + 1}`,
+          label: `stap 1 · insertie ${index + 1} boven ${hostLabel}`,
+          hostId: shiftedHost.id,
+          hostLabel,
+          x: shiftedHost.x,
+          y: slotY0 + index * slotStepRows,
+          content: content.id,
+          contentDef: content,
+          text: content.text,
+          sub: lexInsertionContentSub(content),
+          marked: !!spec.marked,
+          marking: spec.marking || 'functional:default-host',
+          toggleTargetId: '',
+          toggleLabel: ''
+        });
       });
+      spaces.push({ count: visibleSlotCount, reserveRows, slotStepRows, hostId: shiftedHost.id, hostLabel: activeAdverbHostLabel(orderedSpecs[0]?.content, orderedSpecs[0]?.placement), axis: 'LEX', source: 'external-lexical-insertion' });
     }
     layout.lexAdverbAxisSlots = slots;
-    layout.lexAdverbAxisSpace = { count: visibleSlotCount, reserveRows, hostId: shiftedHost.id, hostLabel, placement, axis: 'LEX', source: 'external-lexical-insertion' };
+    layout.lexAdverbAxisSpace = spaces;
     return recomputeLayoutBox(layout);
   }
+
 
   function findLayoutNode(layout, target, mode = 'syntax') {
     if (!layout) return null;
@@ -2766,7 +2926,7 @@
     syncPortraitStageMode();
     if (!els.canvasWrap) return;
     syncPortraitMenuSpace();
-    // v2.0.6: alle interface-standen krijgen de maximaal beschikbare
+    // v2.0.9: alle interface-standen krijgen de maximaal beschikbare
     // canvasruimte. De SVG-viewBox bepaalt vervolgens de grootste schaal zonder
     // clipping. Een brede boom in portrait wordt dus niet ook nog eens door een
     // kunstmatig laag canvas verkleind.
@@ -2949,7 +3109,7 @@
 
   function setProjection(projection) {
     const next = projection || 'axes';
-    // v2.0.6: alle named-projection views delen exact dezelfde
+    // v2.0.9: alle named-projection views delen exact dezelfde
     // viewport. Een projectiewissel mag daarom een handmatige pan/zoom niet
     // wissen en mag de centrale boom horizontaal noch verticaal verplaatsen.
     if (growthSupportedProjection(state.projection) && state.growthStep > 0) {
@@ -3546,79 +3706,58 @@
   }
 
   function lexConfiguredFreeSlots(y0, items = state.example?.lexItems || [], contextYs = [], sourceMap = null) {
-    const count = lexFreeSlotCount();
-    if (!count) return [];
-    const placement = validLexSlotPlacement();
-    const content = lexInsertionContentDef();
-    if (activeAdverbIsNeutralNiet()) {
+    const specs = activeLexInsertionSpecs();
+    if (!specs.length) return [];
+    const single = specs.length === 1 ? specs[0] : null;
+    const singleContent = single?.content || (single ? insertionContentForSpec(single) : null);
+    if (single && activeAdverbIsNeutralNiet()) {
       const slotY = lexPostObjectNegationSlotY(y0, sourceMap, items);
       return [{
-        id: 'lex-adverb-negation-slot-1',
-        y: slotY,
-        label: 'stap 1 · NIET na object / vóór V-cluster',
-        hostLabel: 'VP · negatiescope',
-        content,
-        marked: false,
+        id: 'lex-adverb-negation-slot-1', y: slotY, label: 'stap 1 · NIET na object / vóór V-cluster',
+        hostLabel: 'VP · negatiescope', content: singleContent, marked: false,
         marking: activeAdverbData()?.marking || 'functional:neg-scope-default',
-        toggleTargetId: findAdverbMarkedToggleTarget()?.id || '',
-        toggleLabel: adverbMarkedToggleLabel(),
-        axis: 'LEX',
-        source: 'external-negation'
+        toggleTargetId: findAdverbMarkedToggleTarget()?.id || '', toggleLabel: adverbMarkedToggleLabel(),
+        axis: 'LEX', source: 'external-negation'
       }];
     }
-    if (activeAdverbIsFronted() && isMainV2Rule()) {
+    if (single && activeAdverbIsFronted() && isMainV2Rule()) {
       const slotY = projectedFrontedAdverbSlotY(y0, sourceMap, items);
       return [{
-        id: 'lex-adverb-fronted-slot-1',
-        y: slotY,
-        label: 'stap 1 · BIJWOORD voorop',
-        hostLabel: 'S/V2',
-        content,
-        marked: adverbOptionIsMarked(activeAdverbOption()),
+        id: 'lex-adverb-fronted-slot-1', y: slotY, label: 'stap 1 · BIJWOORD voorop',
+        hostLabel: 'S/V2', content: singleContent, marked: adverbOptionIsMarked(activeAdverbOption()),
         marking: activeAdverbData()?.marking || 'functional:fronted-v2',
-        toggleTargetId: findAdverbMarkedToggleTarget()?.id || '',
-        toggleLabel: adverbMarkedToggleLabel(),
-        axis: 'LEX',
-        source: 'external-fronted-adverb'
+        toggleTargetId: findAdverbMarkedToggleTarget()?.id || '', toggleLabel: adverbMarkedToggleLabel(),
+        axis: 'LEX', source: 'external-fronted-adverb'
       }];
     }
-    if (lexPlacementIsSyntaxHost(placement)) {
-      const stored = sourceMap?.get?.('__lexAdverbAxisSlots')?.slots || [];
-      if (stored.length) {
-        return stored.slice(0, count).map((slot, index) => ({
-          id: slot.id || `lex-adverb-axis-slot-${index + 1}`,
-          y: slot.py,
-          label: slot.label || `stap 1 · LEX-slot boven ${slot.hostLabel || adverbHostLabelFromPlacement(placement, content)}`,
-          hostLabel: slot.hostLabel || adverbHostLabelFromPlacement(placement, content),
-          content,
-          marked: !!slot.marked,
-          marking: slot.marking || 'functional:default-host',
-          toggleTargetId: slot.toggleTargetId || findAdverbMarkedToggleTarget()?.id || '',
-          toggleLabel: slot.toggleLabel || adverbMarkedToggleLabel(),
-          axis: 'LEX',
-          source: 'external'
-        }));
-      }
-      // Fallback voor LEX-only view zonder centrale boom: toon het slot op de
-      // LEX-as, maar zonder verticale hostuitlijning. In de assenweergave wordt
-      // sourceMap gevuld en is de plaats wél exact gekoppeld aan de hostbox.
-      const hostLabel = adverbHostLabelFromPlacement(placement, content);
-      return Array.from({ length: count }, (_unused, index) => ({
-        id: `lex-adverb-axis-slot-${index + 1}`,
-        y: y0 + 40 + index * 64,
-        label: `stap 1 · LEX-slot boven ${hostLabel}`,
-        hostLabel,
-        content,
-        marked: adverbOptionIsMarked(activeAdverbOption()),
-        marking: adverbOptionIsMarked(activeAdverbOption()) ? (activeAdverbData()?.marking || 'functional:marked-host') : (activeAdverbData()?.marking || 'functional:default-host'),
-        toggleTargetId: findAdverbMarkedToggleTarget()?.id || '',
-        toggleLabel: adverbMarkedToggleLabel(),
-        axis: 'LEX',
-        source: 'external'
+    const stored = sourceMap?.get?.('__lexAdverbAxisSlots')?.slots || [];
+    if (stored.length) {
+      return stored.map((slot, index) => ({
+        id: slot.id || `lex-adverb-axis-slot-${index + 1}`,
+        y: slot.py,
+        label: slot.label || `stap 1 · LEX-insertie ${index + 1}`,
+        hostLabel: slot.hostLabel || '',
+        content: slot.contentDef || insertionContentForSpec({ id: slot.content, text: slot.text, sub: slot.sub }),
+        marked: !!slot.marked,
+        marking: slot.marking || 'functional:default-host',
+        toggleTargetId: slot.toggleTargetId || '',
+        toggleLabel: slot.toggleLabel || '',
+        axis: 'LEX', source: 'external'
       }));
     }
-    return [];
+    // LEX-only fallback: ook hier één volledige cel tussen grote boxen.
+    return specs.map((spec, index) => ({
+      id: spec.id || `lex-adverb-axis-slot-${index + 1}`,
+      y: y0 + 40 + index * 64,
+      label: `stap 1 · LEX-insertie ${index + 1}`,
+      hostLabel: spec.host || adverbHostLabelFromPlacement(spec.placement, spec.content),
+      content: spec.content || insertionContentForSpec(spec),
+      marked: !!spec.marked,
+      marking: spec.marking || 'functional:default-host',
+      toggleTargetId: '', toggleLabel: '', axis: 'LEX', source: 'external'
+    }));
   }
+
 
   function drawLexConfiguredFreeSlot(g, x, slot) {
     const content = slot.content || lexInsertionContentDef();
@@ -4007,8 +4146,8 @@
     if (v2SlotY !== null) drawLexV2Slot(g, x, v2SlotY);
 
     const ruleText = isMainV2Rule()
-      ? `Projectie: bronknopen → blauwe projectiemerkers. Daarna Wissels naar lege plekken 0/1/2; bijwoordslots (${lexFreeSlotCount()} · ${lexSlotPlacementLabel()}) staan eerst op de LEX-as; de hostbox wordt lager gezet om ruimte te maken.`
-      : `Projectie: bronknopen → blauwe projectiemerkers. Daarna plaatsingsregels; Comp gebruikt slot 0; bijwoordslots (${lexFreeSlotCount()} · ${lexSlotPlacementLabel()}) staan eerst op de LEX-as; de hostbox wordt lager gezet om ruimte te maken.`;
+      ? `Projectie: bronknopen → blauwe projectiemerkers. Daarna Wissels naar lege plekken 0/1/2; bijwoordslots (${effectiveLexFreeSlotCount()} · ${lexSlotPlacementLabel()}) staan eerst op de LEX-as; de hostbox wordt lager gezet om ruimte te maken.`
+      : `Projectie: bronknopen → blauwe projectiemerkers. Daarna plaatsingsregels; Comp gebruikt slot 0; bijwoordslots (${effectiveLexFreeSlotCount()} · ${lexSlotPlacementLabel()}) staan eerst op de LEX-as; de hostbox wordt lager gezet om ruimte te maken.`;
     drawCanvasGuideText(g, x + 150, axisMinY + 18, ruleText, 'wissel-label');
 
     // Projectie naar LEX: de bronknoop projecteert horizontaal naar de west-as.
@@ -4453,7 +4592,7 @@
   }
 
   function projectionStableFrameBox() {
-    // v2.0.6: inhoudsgetrouwe, maar nog steeds stabiele unie van Syntax
+    // v2.0.9: inhoudsgetrouwe, maar nog steeds stabiele unie van Syntax
     // en Functional. Alleen werkelijk gebruikte boxbreedtes en lijnuiteinden tellen mee.
     // Oude fictieve reserves links van LOG en rechts van SYNT maakten alle vier
     // interface-standen onnodig klein, vooral mobile portrait.
@@ -4496,7 +4635,7 @@
   }
 
   function stableProjectionViewBox() {
-    // v2.0.6: maximale full-view voor Automatisch, Desktop, Mobiel
+    // v2.0.9: maximale full-view voor Automatisch, Desktop, Mobiel
     // staand en Mobiel liggend. De veiligheidsrand is alleen nog voldoende
     // voor dunne strokes en labels; er wordt geen UI-ruimte in SVG gereserveerd.
     const frame = projectionStableFrameBox();
@@ -4715,7 +4854,7 @@
 
   function stableGrowthViewBox() {
     if (!growthActive()) return null;
-    // v2.0.6: Groei gebruikt hetzelfde frame als de gewone projectie-
+    // v2.0.9: Groei gebruikt hetzelfde frame als de gewone projectie-
     // views. Voorheen hadden Alle/Bron/LOG eigen hard-coded viewBoxes, terwijl
     // LEX/SYNT auto-fit gebruikten; dat veroorzaakte de zichtbare sprong.
     return stableProjectionViewBox();
@@ -4752,7 +4891,7 @@
   }
 
   function clearViewportGestureState() {
-    // v2.0.6: bij wissel tussen landscape/portrait mogen oude touch-pointers
+    // v2.0.9: bij wissel tussen landscape/portrait mogen oude touch-pointers
     // en pinch-state niet blijven hangen. Anders lijkt portrait na zoom in
     // landscape bevroren.
     state.viewDrag = null;
@@ -5014,7 +5153,7 @@
         controlsLeft = state.projectionBoxManual.left;
         controlsTop = state.projectionBoxManual.top;
       } else {
-        // v2.0.6: Projecties-box heeft een stabiele schermpositie.
+        // v2.0.9: Projecties-box heeft een stabiele schermpositie.
         // Niet meer ankeren aan een wisselende SYNT-as; alleen handmatig slepen verplaatst de box.
         controlsLeft = maxLeft;
         controlsTop = minTop;
@@ -5206,7 +5345,7 @@
 
   function computeAutoFitBox() {
     if (!els.svg) return fallbackViewBox();
-    // v2.0.6: alle projectie-views gebruiken één geometrisch viewport,
+    // v2.0.9: alle projectie-views gebruiken één geometrisch viewport,
     // onafhankelijk van welke overlay zichtbaar is. Dit sluit auto-fit-
     // verschillen uit en voorkomt elke horizontale of verticale verspringing.
     if (isMainScreenActive() && ['axes', 'source', 'lex', 'synt', 'log'].includes(state.projection)) {
@@ -5481,8 +5620,8 @@
     mobileLexFreeSlotCountSelect: { 0: 'LEX slots: 0', 1: 'LEX slots: 1', 2: 'LEX slots: 2', 3: 'LEX slots: 3', 4: 'LEX slots: 4', 5: 'LEX slots: 5', 6: 'LEX slots: 6', 7: 'LEX slots: 7', 8: 'LEX slots: 8' },
     lexFreeSlotPlacementSelect: { 'above-selected-box': 'above selected box', 'above-s': 'above S', 'above-np': 'above NP', 'above-vp': 'above VP', 'above-v': 'above V', 'above-pp': 'above PP', 'above-ap': 'above AP' },
     mobileLexFreeSlotPlacementSelect: { 'above-selected-box': 'above selected box', 'above-s': 'above S', 'above-np': 'above NP', 'above-vp': 'above VP', 'above-v': 'above V', 'above-pp': 'above PP', 'above-ap': 'above AP' },
-    lexInsertionContentSelect: { empty: 'empty slot', gisteren: 'GISTEREN', morgen: 'MORGEN', daar: 'DAAR', daarom: 'DAAROM', anders: 'ANDERS', vaak: 'VAAK', soms: 'SOMS', altijd: 'ALTIJD', niet: 'NIET', snel: 'SNEL', hard: 'HARD', zachtjes: 'ZACHTJES', misschien: 'MISSCHIEN', waarschijnlijk: 'WAARSCHIJNLIJK', helaas: 'HELAAS', alleen: 'ALLEEN', ook: 'OOK', zelfs: 'ZELFS', heel: 'HEEL', erg: 'ERG', zeer: 'ZEER', anafoor: 'anaphor', 'other-lex-axis': 'other LEX axis' },
-    mobileLexInsertionContentSelect: { empty: 'empty slot', gisteren: 'GISTEREN', morgen: 'MORGEN', daar: 'DAAR', daarom: 'DAAROM', anders: 'ANDERS', vaak: 'VAAK', soms: 'SOMS', altijd: 'ALTIJD', niet: 'NIET', snel: 'SNEL', hard: 'HARD', zachtjes: 'ZACHTJES', misschien: 'MISSCHIEN', waarschijnlijk: 'WAARSCHIJNLIJK', helaas: 'HELAAS', alleen: 'ALLEEN', ook: 'OOK', zelfs: 'ZELFS', heel: 'HEEL', erg: 'ERG', zeer: 'ZEER', anafoor: 'anaphor', 'other-lex-axis': 'other LEX axis' },
+    lexInsertionContentSelect: { empty: 'empty slot', gisteren: 'GISTEREN', morgen: 'MORGEN', daar: 'DAAR', daarom: 'DAAROM', anders: 'ANDERS', vaak: 'VAAK', soms: 'SOMS', altijd: 'ALTIJD', niet: 'NIET', snel: 'SNEL', hard: 'HARD', zachtjes: 'ZACHTJES', misschien: 'MISSCHIEN', 'misschien-wel': 'MISSCHIEN WEL', waarschijnlijk: 'WAARSCHIJNLIJK', helaas: 'HELAAS', alleen: 'ALLEEN', ook: 'OOK', zelfs: 'ZELFS', heel: 'HEEL', erg: 'ERG', zeer: 'ZEER', anafoor: 'anaphor', 'other-lex-axis': 'other LEX axis' },
+    mobileLexInsertionContentSelect: { empty: 'empty slot', gisteren: 'GISTEREN', morgen: 'MORGEN', daar: 'DAAR', daarom: 'DAAROM', anders: 'ANDERS', vaak: 'VAAK', soms: 'SOMS', altijd: 'ALTIJD', niet: 'NIET', snel: 'SNEL', hard: 'HARD', zachtjes: 'ZACHTJES', misschien: 'MISSCHIEN', 'misschien-wel': 'MISSCHIEN WEL', waarschijnlijk: 'WAARSCHIJNLIJK', helaas: 'HELAAS', alleen: 'ALLEEN', ook: 'OOK', zelfs: 'ZELFS', heel: 'HEEL', erg: 'ERG', zeer: 'ZEER', anafoor: 'anaphor', 'other-lex-axis': 'other LEX axis' },
     portraitMenuSlotsSelect: { 0: 'bottom space: 0 menus', 1: 'bottom space: 1 menu', 2: 'bottom space: 2 menus' },
     mobilePortraitMenuSlotsSelect: { 0: 'bottom space: 0 menus', 1: 'bottom space: 1 menu', 2: 'bottom space: 2 menus' },
     lexRuleSelect: { hoofdzininvariant: 'main clause V2: subject/topic - finite verb/predicate - object - exchange', 'bijzin-omdat': 'subordinate clause: Comp/(om)dat + subject + object + predicate - no V2', 'perfectum-heeft-vdw': 'perfect V2: subject/topic - finite verb - object - participle - exchange' }
@@ -5598,6 +5737,7 @@
     });
     fillCompactChoiceMenu(els.mainAdverbOptions, ADVERB_OPTIONS, state.selectedAdverbId, els.mainAdverbSelect, id => {
       state.selectedAdverbId = id || 'none';
+      state.useExampleLexInsertions = state.selectedAdverbId === 'none';
       applyExampleAdverbDefaults();
       resetManualViewBox();
       closeMainChoiceMenus();
@@ -6959,6 +7099,7 @@
     });
     const updateMainAdverb = event => {
       state.selectedAdverbId = event.target.value || 'none';
+      state.useExampleLexInsertions = state.selectedAdverbId === 'none';
       applyExampleAdverbDefaults();
       resetManualViewBox();
       render();
@@ -7036,13 +7177,13 @@
     els.logProjectionColorSelect?.addEventListener('change', event => { state.logProjectionColor = event.target.value || 'purple'; try { localStorage.setItem('opengraph_projection_color_log', state.logProjectionColor); } catch (_err) {} appendConfigLog('change-log-color', { logProjectionColor: state.logProjectionColor }); markConfigDirty('LOG-kleur'); render(); });
     els.projectionBoxDraggableInput?.addEventListener('change', event => { updateProjectionBoxDraggable(event.target.checked); appendConfigLog('change-projection-box-draggable', { enabled: !!event.target.checked }); markConfigDirty('Projecties-box'); });
     els.southBoxDraggableInput?.addEventListener('change', event => { updateSouthBoxDraggable(event.target.checked); appendConfigLog('change-south-box-draggable', { enabled: !!event.target.checked }); markConfigDirty('Taalactiebox'); });
-    const updateLexFreeSlotCount = event => { state.lexFreeSlotCount = Math.max(0, Math.min(8, Number(event.target.value) || 0)); resetManualViewBox(); render(); };
-    const updateLexFreeSlotPlacement = event => { state.lexFreeSlotPlacement = validLexSlotPlacement(event.target.value); resetManualViewBox(); render(); };
+    const updateLexFreeSlotCount = event => { state.useExampleLexInsertions = false; state.lexFreeSlotCount = Math.max(0, Math.min(8, Number(event.target.value) || 0)); resetManualViewBox(); render(); };
+    const updateLexFreeSlotPlacement = event => { state.useExampleLexInsertions = false; state.lexFreeSlotPlacement = validLexSlotPlacement(event.target.value); resetManualViewBox(); render(); };
     els.lexFreeSlotCountSelect?.addEventListener('change', updateLexFreeSlotCount);
     els.mobileLexFreeSlotCountSelect?.addEventListener('change', updateLexFreeSlotCount);
     els.lexFreeSlotPlacementSelect?.addEventListener('change', updateLexFreeSlotPlacement);
     els.mobileLexFreeSlotPlacementSelect?.addEventListener('change', updateLexFreeSlotPlacement);
-    const updateLexInsertionContent = event => { state.lexInsertionContent = validLexInsertionContent(event.target.value); resetManualViewBox(); render(); };
+    const updateLexInsertionContent = event => { state.useExampleLexInsertions = false; state.lexInsertionContent = validLexInsertionContent(event.target.value); resetManualViewBox(); render(); };
     els.lexInsertionContentSelect?.addEventListener('change', updateLexInsertionContent);
     els.mobileLexInsertionContentSelect?.addEventListener('change', updateLexInsertionContent);
     document.querySelectorAll('[data-lex-extension-target]').forEach(input => {

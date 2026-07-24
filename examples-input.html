@@ -21,6 +21,8 @@
     .lex-sequence { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; padding: 0; margin: 10px 0; }
     .lex-token { border: 1px solid #cbd5e1; background: #f8fafc; border-radius: 999px; padding: 6px 10px; font-weight: 700; }
     .lex-token.local { border-style: dashed; color: #9a3412; }
+    .lex-insertions { margin: 10px 0 0; padding: 10px 14px 10px 34px; border-left: 4px solid #2563eb; background: #eff6ff; border-radius: 10px; }
+    .lex-insertion { margin: 4px 0; font-weight: 800; }
     button, .button-link { border: 1px solid #94a3b8; background: #fff; border-radius: 10px; padding: 8px 12px; font-weight: 800; cursor: pointer; color: #0f172a; text-decoration: none; display: inline-flex; }
     code { background: #e2e8f0; border-radius: 6px; padding: 2px 5px; }
   </style>
@@ -163,6 +165,38 @@
           <li class="lex-token" data-id="object-trui" data-source="object" data-role="object" data-thematic-role="patiens" data-lexeme="trui"><em data-role="object" data-thematic-role="patiens">TRUI</em></li>
           <li class="lex-token" data-id="pv-heeft" data-source="pv" data-role="aux" data-lexeme="heeft">HEEFT</li>
           <li class="lex-token" data-id="vdw-breit" data-source="vdw" data-role="participle" data-lexeme="breit">GEBREID</li>
+        </ol>
+      </article>
+
+
+      <article class="example-input" data-id="de-hond-heeft-de-man-misschien-wel-vaak-gebeten" data-phase="Meervoudige LEX-insertie" data-lex-rule="hoofdzininvariant" data-predicate="GEBETEN">
+        <p class="sentence" title="MISSCHIEN WEL is één insertiegroep; VAAK is een tweede insertie"><strong data-role="subject" data-thematic-role="agens">DE HOND</strong> HEEFT <em data-role="object" data-thematic-role="patiens">DE MAN</em> MISSCHIEN WEL VAAK GEBETEN</p>
+        <p class="meta">hoofdzin · perfectum · twee zelfstandige LEX-inserties boven VP · MISSCHIEN WEL telt als één meerwoordige insertiegroep · VAAK krijgt een tweede slot · slotcentra liggen op minor-posities met één volledige cel tussenruimte</p>
+        <ol class="lex-sequence" aria-label="Structurele LEX-bronnen zonder externe inserties">
+          <li class="lex-token" data-id="subject-hond" data-source="subject" data-role="subject" data-thematic-role="agens" data-lexeme="hond"><strong data-role="subject" data-thematic-role="agens">DE HOND</strong></li>
+          <li class="lex-token" data-id="pv-heeft" data-source="pv" data-role="aux" data-lexeme="heeft">HEEFT</li>
+          <li class="lex-token" data-id="object-man" data-source="object" data-role="object" data-thematic-role="patiens" data-lexeme="man"><em data-role="object" data-thematic-role="patiens">DE MAN</em></li>
+          <li class="lex-token" data-id="vdw-bijt" data-source="vdw" data-role="participle" data-lexeme="bijt">GEBETEN</li>
+        </ol>
+        <ol class="lex-insertions" aria-label="Externe lexicale insertiegroepen">
+          <li class="lex-insertion" data-id="misschien-wel" data-text="MISSCHIEN WEL" data-group="modal-group" data-category="MODALITEIT" data-default-host="VP" data-host="VP" data-order="1" data-scope="propositie">MISSCHIEN WEL — één groep, boven VP</li>
+          <li class="lex-insertion" data-id="vaak" data-text="VAAK" data-group="frequency-group" data-category="FREQUENTIE" data-default-host="VP" data-host="VP" data-order="2" data-scope="gebeurtenis">VAAK — tweede groep, boven VP</li>
+        </ol>
+      </article>
+
+      <article class="example-input" data-id="omdat-de-hond-de-man-misschien-wel-vaak-heeft-gebeten" data-phase="Meervoudige LEX-insertie · bijzin" data-lex-rule="bijzin-omdat" data-predicate="GEBETEN">
+        <p class="sentence" title="Bijzin met twee externe insertiegroepen">OMDAT <strong data-role="subject" data-thematic-role="agens">DE HOND</strong> <em data-role="object" data-thematic-role="patiens">DE MAN</em> MISSCHIEN WEL VAAK HEEFT GEBETEN</p>
+        <p class="meta">omdat-bijzin · Comp in slot 0 · twee zelfstandige LEX-inserties boven VP · MISSCHIEN WEL blijft één groep · VAAK blijft een afzonderlijke groep</p>
+        <ol class="lex-sequence" aria-label="Structurele LEX-bronnen zonder externe inserties">
+          <li class="lex-token local" data-id="omdat" data-slot="comp" data-lexeme="omdat">OMDAT</li>
+          <li class="lex-token" data-id="subject-hond" data-source="subject" data-role="subject" data-thematic-role="agens" data-lexeme="hond"><strong data-role="subject" data-thematic-role="agens">DE HOND</strong></li>
+          <li class="lex-token" data-id="object-man" data-source="object" data-role="object" data-thematic-role="patiens" data-lexeme="man"><em data-role="object" data-thematic-role="patiens">DE MAN</em></li>
+          <li class="lex-token" data-id="pv-heeft" data-source="pv" data-role="aux" data-lexeme="heeft">HEEFT</li>
+          <li class="lex-token" data-id="vdw-bijt" data-source="vdw" data-role="participle" data-lexeme="bijt">GEBETEN</li>
+        </ol>
+        <ol class="lex-insertions" aria-label="Externe lexicale insertiegroepen">
+          <li class="lex-insertion" data-id="misschien-wel" data-text="MISSCHIEN WEL" data-group="modal-group" data-category="MODALITEIT" data-default-host="VP" data-host="VP" data-order="1" data-scope="propositie">MISSCHIEN WEL — één groep, boven VP</li>
+          <li class="lex-insertion" data-id="vaak" data-text="VAAK" data-group="frequency-group" data-category="FREQUENTIE" data-default-host="VP" data-host="VP" data-order="2" data-scope="gebeurtenis">VAAK — tweede groep, boven VP</li>
         </ol>
       </article>
 

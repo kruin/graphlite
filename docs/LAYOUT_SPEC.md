@@ -1,4 +1,32 @@
 
+# Actuele architectuur — plaatsingsplan vóór rendering
+
+De layout krijgt niet alleen de kernstructuur als input. Zij krijgt het volledige plaatsingsprobleem:
+
+```text
+structuur
++ lexicale insertiegroepen
++ plaatsingsregels
++ Wissels
++ actieve projecties
+```
+
+De berekening verloopt in deze volgorde:
+
+```text
+1. structurele hosts en subtree-afmetingen bepalen
+2. insertiegroepen per host verzamelen en ordenen
+3. landingsplaatsen, minor-ankers en minimale fysieke afstanden bepalen
+4. gridruimte en Wissel-corridors reserveren
+5. centrale boom in het resterende veld plaatsen
+6. kernzin en lexicale waarden in de berekende posities invullen
+7. projecties, traces en Wisselpaden vastleggen
+8. growthSteps en SVG-renderlagen toekennen
+9. renderen
+```
+
+De renderer is daarmee uitsluitend een teken- en zichtbaarheidslaag. Ook Play/Groei gebruikt de definitieve layout en laat daarvan steeds meer elementen zien. Een growthStep mag nooit nieuwe ruimte reserveren of bestaande coördinaten wijzigen.
+
 ## v4540 - Bijwoorden als externe LEX-slots
 
 Bijwoordplaatsing blijft volledig op de LEX-as. `Boven S/NP/VP/V/PP/AP` betekent: plaats een extern LEX-slot verticaal net boven de gekozen syntactische hostbox. Het bijwoord wordt niet op de syntaxboom getekend en is geen projectie uit de basisboom. De host-subboom wordt lager gezet om ruimte te maken. Notatie: `LEX-ADV[..., axis=LEX, source=external, host=...]`.

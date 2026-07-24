@@ -7203,7 +7203,7 @@ body.config-screen-active .config-action-help-list li + li { margin-top: .18rem;
   body.config-screen-active .config-field-name { padding-top: 0; }
 }
 
-/* v2.0.6: five-language menu. English is the default; non-Dutch technical
+/* v2.0.9: five-language menu. English is the default; non-Dutch technical
    help falls back to English. Sentence examples remain Dutch and explicitly
    identify Dutch sentence word order. */
 .language-menu { position: relative; }
@@ -7274,7 +7274,7 @@ body.config-screen-active .config-action-help-list li + li { margin-top: .18rem;
   }
 }
 
-/* v2.0.6: the language chooser is the first item on row 2. On desktop its
+/* v2.0.9: the language chooser is the first item on row 2. On desktop its
    popover opens directly under that summary; fixed mobile positioning remains. */
 body.main-screen-active .main-top-menu > .language-menu .language-popover {
   top: calc(100% + .30rem) !important;
@@ -7285,36 +7285,28 @@ body.main-screen-active .main-top-menu > .language-menu .language-popover {
   }
 }
 
-/* v2.0.6: README/LEESMIJ first view on mobile portrait.
-   The topic tree and the selected topic text each receive half of the
-   available README screen. The active first topic is therefore visible
-   immediately, without first scrolling past the complete topic tree. */
-@media (max-width: 760px) and (orientation: portrait) {
-  body.help-screen-active .help-tree-screen {
-    display: grid !important;
-    grid-template-columns: minmax(0, 1fr) !important;
-    grid-template-rows: minmax(0, 1fr) minmax(0, 1fr) !important;
-    height: 100% !important;
-    min-height: 0 !important;
-    overflow: hidden !important;
-  }
-  body.help-screen-active .help-tree-nav,
-  body.help-screen-active .help-topic-stage {
-    box-sizing: border-box !important;
-    width: 100% !important;
-    height: auto !important;
-    min-height: 0 !important;
-    max-height: none !important;
-    overflow: auto !important;
-  }
-  body.help-screen-active .help-topic-stage {
-    scroll-padding-top: .6rem !important;
-  }
+/* v2.0.9: README/LEESMIJ first view in every interface mode.
+   Desktop, mobile landscape and mobile portrait use the same two-half layout:
+   the topic tree occupies the upper half and the selected topic text the lower
+   half. Both regions scroll independently, so the first topic text is visible
+   immediately while the remaining topics stay reachable. */
+body.help-screen-active .app-shell {
+  box-sizing: border-box !important;
+  height: 100dvh !important;
+  min-height: 100dvh !important;
+  max-height: 100dvh !important;
+  overflow: hidden !important;
 }
-
-/* Forced mobile-portrait preview uses the same two-half README layout,
-   even when it is tested on a desktop-sized physical viewport. */
-body.viewport-mobile-portrait-test.help-screen-active .help-tree-screen {
+body.help-screen-active .help-topbar {
+  flex: 0 0 auto !important;
+}
+body.help-screen-active .help-screen {
+  flex: 1 1 auto !important;
+  height: auto !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+body.help-screen-active .help-tree-screen {
   display: grid !important;
   grid-template-columns: minmax(0, 1fr) !important;
   grid-template-rows: minmax(0, 1fr) minmax(0, 1fr) !important;
@@ -7322,8 +7314,8 @@ body.viewport-mobile-portrait-test.help-screen-active .help-tree-screen {
   min-height: 0 !important;
   overflow: hidden !important;
 }
-body.viewport-mobile-portrait-test.help-screen-active .help-tree-nav,
-body.viewport-mobile-portrait-test.help-screen-active .help-topic-stage {
+body.help-screen-active .help-tree-nav,
+body.help-screen-active .help-topic-stage {
   box-sizing: border-box !important;
   width: 100% !important;
   height: auto !important;
@@ -7331,39 +7323,6 @@ body.viewport-mobile-portrait-test.help-screen-active .help-topic-stage {
   max-height: none !important;
   overflow: auto !important;
 }
-
-/* Keep the two mobile-portrait halves inside the visible viewport. */
-@media (max-width: 760px) and (orientation: portrait) {
-  body.help-screen-active .app-shell {
-    box-sizing: border-box !important;
-    height: 100dvh !important;
-    min-height: 100dvh !important;
-    max-height: 100dvh !important;
-    overflow: hidden !important;
-  }
-  body.help-screen-active .help-topbar {
-    flex: 0 0 auto !important;
-  }
-  body.help-screen-active .help-screen {
-    flex: 1 1 auto !important;
-    height: auto !important;
-    min-height: 0 !important;
-    overflow: hidden !important;
-  }
-}
-body.viewport-mobile-portrait-test.help-screen-active .app-shell {
-  box-sizing: border-box !important;
-  height: 100dvh !important;
-  min-height: 100dvh !important;
-  max-height: 100dvh !important;
-  overflow: hidden !important;
-}
-body.viewport-mobile-portrait-test.help-screen-active .help-topbar {
-  flex: 0 0 auto !important;
-}
-body.viewport-mobile-portrait-test.help-screen-active .help-screen {
-  flex: 1 1 auto !important;
-  height: auto !important;
-  min-height: 0 !important;
-  overflow: hidden !important;
+body.help-screen-active .help-topic-stage {
+  scroll-padding-top: .6rem !important;
 }

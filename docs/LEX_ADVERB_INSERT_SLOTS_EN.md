@@ -1,5 +1,11 @@
 # LEX adverb slots — v4540 rule
 
+## Precomputed placement
+
+All adverbial insertion groups are collected before the central tree is placed. The layout reserves their LEX slots, minor anchors, physical separation and any exchange corridors first. The host box or host subtree is placed afterwards, and the core sentence fills the resulting plan.
+
+An insertion is therefore not added to accidental leftover space. Growth only reveals an already calculated slot.
+
 This replaces the earlier “adverb above syntax box” interpretation.
 
 ## Current rule

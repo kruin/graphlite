@@ -29,6 +29,19 @@ Bij elke nieuwe versie:
 7. update `docs/RELEASE_NOTES.md`
 8. update relevante specs als de inhoud verandert
 
+## Architectuurgrens: layout versus rendering
+
+De layoutfase moet vóór iedere render alle structurele en lexicale plaatsen bepalen. Input is minimaal: structuur, `lexInsertions`, plaatsingsregels, Wissels en actieve projecties. De renderer ontvangt alleen het definitieve resultaat plus zichtbaarheid/growthStep.
+
+Verboden in de renderfase:
+
+- nieuwe slots reserveren;
+- de hostsubboom alsnog verschuiven;
+- een Wisseldoel kiezen;
+- coördinaten aanpassen op basis van wat al zichtbaar is.
+
+Een wijziging in inserties of plaatsingsregels moet daarom eerst een volledige nieuwe layoutberekening veroorzaken.
+
 ## Testen
 
 Minimaal:

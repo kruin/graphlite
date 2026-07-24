@@ -13,7 +13,8 @@ required_files = [
     'SOV_NOTATION_OPTIONS.md','EENVOUDIGE_RELEASE_WERKWIJZE.md','publish_checked.bat',
     'check_release.bat','start-local-viewer.bat','README.md','SOURCE_CHANGES_V2.0.5.md',
     'LANGUAGE_MENU_TEST.md','EENVOUDIGE_RELEASE_WERKWIJZE_TEST.md',
-    'RELEASE_MANIFEST_GIT_EXCLUSION_TEST.md','README_FIRST_VIEW_HALF_HEIGHT_TEST.md','RELEASE_MANIFEST.txt'
+    'RELEASE_MANIFEST_GIT_EXCLUSION_TEST.md','README_FIRST_VIEW_HALF_HEIGHT_TEST.md','SOURCE_CHANGES_V2.0.8.md',
+    'SOURCE_CHANGES_V2.0.9.md','LEXICAL_PLACEMENT_PLAN_TEST.md','RELEASE_MANIFEST.txt'
 ]
 for rel in required_files:
     if not (ROOT / rel).is_file():
@@ -71,9 +72,10 @@ if 'language-option-list' not in css or 'language-sentence-note' not in css:
 
 # README first-view contract.
 for token in [
-    'v2.0.6: README/LEESMIJ first view on mobile portrait',
+    'v2.0.9: README/LEESMIJ first view in every interface mode',
     'grid-template-rows: minmax(0, 1fr) minmax(0, 1fr)',
-    'body.viewport-mobile-portrait-test.help-screen-active .help-tree-screen',
+    'body.help-screen-active .help-tree-screen',
+    'grid-template-columns: minmax(0, 1fr)',
     "if (stage) stage.scrollTop = 0;"
 ]:
     if token not in css and token not in js:
@@ -97,6 +99,32 @@ for token in ['id="config-overview"','id="config-basic"','id="config-jan"','id="
     if token not in index: errors.append(f'Config/JaN mist {token}')
 for token in ['config-item-help','config-action-help-list','config-toggle-title']:
     if token not in index and token not in css: errors.append(f'Config-toelichting mist {token}')
+
+# Placement-plan documentation contract.
+placement_docs = {
+    'README.md': ['plaatsingsplan vóór rendering', 'kernzin lexicaal invullen'],
+    'PROJECT_STATE_CURRENT.md': ['plaatsingsplan vóór rendering', 'layoutinput'],
+    'LAYOUT_RULES.md': ['layoutinput = structuur + lexicale inserties', 'render het vaste resultaat'],
+    'LINGUISTIC_ACTIONS.md': ['Lexicale insertie als voorafgaande layoutactie', 'volledig plaatsingsplan'],
+    'DOCUMENTATION_RULES.md': ['plaatsingsplan berekenen → kernzin invullen → groei/rendering'],
+    'HANDOVER_FOR_COLLABORATORS.md': ['Plaatsingsplancontract'],
+    'docs/LAYOUT_SPEC.md': ['Actuele architectuur — plaatsingsplan vóór rendering'],
+    'docs/RENDER_EXPLANATION.md': ['Plaatsings- en render-volgorde'],
+    'docs/RENDER_EXPLANATION_EN.md': ['Placement before render'],
+}
+for rel, tokens in placement_docs.items():
+    content=(ROOT/rel).read_text(encoding='utf-8', errors='ignore')
+    for token in tokens:
+        if token not in content:
+            errors.append(f'plaatsingsplan-documentatie mist {token!r} in {rel}')
+for token in [
+    'vóór de rendering één volledig plaatsingsplan berekend',
+    'Before the central tree is rendered, the placement plan reserves',
+    'Alle insertiegroepen worden vóór de centrale boomplaatsing',
+    'All insertion groups enter the placement plan before the central tree is placed'
+]:
+    if token not in index:
+        errors.append(f'ingebouwde README mist plaatsingsplanregel {token!r}')
 
 # Existing layout/growth safety contract.
 for token in [

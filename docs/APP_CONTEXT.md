@@ -43,6 +43,10 @@ Redesign: eerst syntax-tree, daarna LEX-projectie, daarna lokale LEX-regel.
 | lexicon-editor | beheer en uitbreiding van `lexicon-config.html` |
 | examples-input | concrete voorbeeldzinnen met subject/object-markering |
 
+## Plaatsingsprincipe
+
+De viewer berekent vóór de rendering één volledig plaatsingsplan. De input bestaat uit structuur, lexicale inserties, plaatsingsregels, Wissels en actieve projecties. Nadat alle posities en corridors zijn gereserveerd, vult de kernzin dit frame. Groei is uitsluitend een zichtbaarheidspresentatie van dat vaste resultaat.
+
 ## Hoofdprincipe
 
 De centrale OPN-structuur blijft invariant. Lokale variatie zoals bijzin, perfectum of latere topicalisatie wordt voorbereid via slots en LEX-regels, niet door de bronboom inhoudelijk te herschrijven.

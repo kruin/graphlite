@@ -1,3 +1,13 @@
+# Design decisions — actuele aanvulling v2.0.9
+
+## Plaatsingsplan vóór rendering
+
+39. Structuur, lexicale insertiegroepen, plaatsingsregels, Wissels en actieve projecties vormen gezamenlijk de layoutinput.
+40. Alle benodigde major-/minor-posities, fysieke afstanden en Wissel-corridors worden vóór de centrale boomplaatsing gereserveerd.
+41. De kernzin is de concrete structurele en lexicale invulling van het berekende plaatsingsplan.
+42. Rendering en Play/Groei mogen geen nieuwe ruimte claimen, geen doelpositie kiezen en geen bestaande coördinaten wijzigen.
+43. Een wijziging in inserties of plaatsingsregels veroorzaakt vóór de volgende render een volledige layoutberekening.
+
 
 ## v4540 - Bijwoorden als externe LEX-slots
 

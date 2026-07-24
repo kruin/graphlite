@@ -1,4 +1,4 @@
-# Language menu test — v2.0.6
+# Language menu test — v2.0.9
 
 ## Default
 

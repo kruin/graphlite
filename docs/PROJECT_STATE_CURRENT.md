@@ -1,10 +1,18 @@
 # PROJECT_STATE_CURRENT
 
+## v2.0.9 — plaatsingsplan vóór rendering
+
+De leidende architectuurregel is nu expliciet: structuur, lexicale inserties, plaatsingsregels, wissels en actieve projecties vormen samen de layoutinput. De layout reserveert eerst alle benodigde posities en corridors. De kernzin is daarna de structurele en lexicale invulling van dat plaatsingsplan; rendering en Play/Groei tonen alleen reeds berekende posities.
+
+## v2.0.8 — meervoudige lexicale inserties
+
+Voorbeeldzinnen kunnen meerdere externe LEX-insertiegroepen definiëren. `MISSCHIEN WEL` is één groep; `VAAK` is een tweede groep. Grote insertieboxen staan op minor-ankers en gebruiken een dynamische minimale centrumafstand van 72 pixels, zodat zij niet overlappen. Structurele knopen blijven op het major grid.
+
 Actuele, leidende status van OpenGraph Lite Viewer.
 
 ## Versie
 
-- Actuele release: `v2.0.6`.
+- Actuele release: `v2.0.9`.
 - Functionele bronbasis: volledige v1.0.16-bronset, doorontwikkeld via de v2.0-releasekandidaten.
 - `VERSION.txt` is leidend voor app, cache, documentatie en zipnaam.
 
@@ -122,3 +130,9 @@ check_release.bat
 ## v2.0.6 — LEESMIJ/README eerste view
 
 Mobile portrait toont de onderwerpenboom en de actieve itemtekst direct in twee gelijke hoogtezones. Desktop en landscape blijven links-rechts.
+
+## v2.0.9 — LEESMIJ/README eerste view in alle modi
+
+- Desktop, mobile landscape en mobile portrait gebruiken één boven/onder-indeling.
+- Onderwerpen staan in de bovenste helft; tekst van het actieve item staat direct in de onderste helft.
+- Beide delen scrollen onafhankelijk.

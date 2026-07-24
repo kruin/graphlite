@@ -4,6 +4,12 @@ Voorbeeldzinnen bepalen de eindvolgorde. De plaatsingsregels verklaren de route 
 
 # Lexicon en voorbeeldzinnen v4430
 
+## Actuele rol van de kernzin
+
+De voorbeeldzin is niet de reeds voltooide geometrie waarop inserties achteraf worden aangebracht. Zij levert de concrete lexicale invulling van structurele bronnen en vooraf berekende LEX-posities.
+
+Voor elke render wordt eerst een plaatsingsplan gemaakt uit structuur, insertiegroepen, plaatsingsregels, Wissels en projecties. De volgorde in `examples-input.html` blijft gezaghebbend voor de oppervlaktestring, maar de benodigde ruimte en routes zijn al vóór de zichtbare rendering vastgelegd.
+
 ## v4430 · plaatsingsregels op de LEX-as
 
 Voorlopig worden plaatsingsregels alleen op de LEX-as genoteerd. De regel heet **Wissel**:

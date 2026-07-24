@@ -2,6 +2,12 @@
 
 Deze file vervangt de eerdere interpretatie “bijwoord boven syntaxbox”.
 
+## Voorafgaande plaatsingsberekening
+
+Alle bijwoordelijke insertiegroepen worden vóór de centrale boomplaatsing verzameld. De layout reserveert hun LEX-slots, minor-ankers, onderlinge fysieke afstand en eventuele Wissel-corridors. Pas daarna wordt de hostbox of hostsubboom geplaatst en wordt de kernzin ingevuld.
+
+Een insertie verschijnt dus niet achteraf in toevallig overgebleven ruimte. De groeiversie toont een reeds berekend slot op het gekozen moment.
+
 ## Actuele regel
 
 Alle bijwoordplaatsing staat op de **LEX-as**.

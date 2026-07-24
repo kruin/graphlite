@@ -2,7 +2,7 @@
 
 ## Broninstallatie
 
-1. Pak de v2.0.6-source-zip buiten Git uit.
+1. Pak de v2.0.9-source-zip buiten Git uit.
 2. Kopieer de inhoud over `C:\git\graphlite`.
 3. Controleer dat `C:\git\graphlite\.git` nog bestaat.
 4. Controleer met `git status --short` dat alleen verwachte bronwijzigingen zichtbaar zijn.

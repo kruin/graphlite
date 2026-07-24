@@ -1,6 +1,13 @@
-# LEESMIJ/README first-view test — v2.0.6
+# LEESMIJ/README first-view test — v2.0.9
 
-## Mobile portrait
+## Gelijke eerste weergave in alle modi
+
+Voer deze controle uit in:
+
+- Automatisch;
+- Desktop;
+- Mobiel staand;
+- Mobiel liggend.
 
 1. Open `reset-cache.html` en daarna de viewer.
 2. Kies `README` of `LEESMIJ`.
@@ -9,16 +16,21 @@
    - onder: de tekst `Open Graph Notation`;
    - beide zones gebruiken ongeveer de helft van de beschikbare LEESMIJ-hoogte.
 4. Scroll de onderwerpenlijst. Het tekstvlak mag niet meescrollen.
-5. Kies `Gridregel` / `Grid rule`.
-6. Controleer dat het tekstvlak bovenaan begint.
+5. Scroll het tekstvlak. De onderwerpenlijst mag niet meescrollen.
+6. Kies `Gridregel` / `Grid rule`.
+7. Controleer dat het tekstvlak bovenaan begint.
 
-## Geforceerd mobiel staand
+## Desktop
 
-1. Kies Interface → Mobiel staand op desktop.
-2. Open README/LEESMIJ.
-3. Controleer dezelfde halve-hoogte-indeling.
+- Geen links-rechtsindeling meer.
+- Onderwerpen boven, geselecteerde tekst onder.
+- Beide vlakken blijven zelfstandig scrollbaar.
 
-## Landscape en desktop
+## Mobile landscape
 
-- Mobile landscape behoudt de links-rechtsindeling.
-- Desktop behoudt de links-rechtsindeling.
+- Dezelfde boven/onder-indeling als desktop en portrait.
+- De tekst van het actieve eerste item is direct zichtbaar.
+
+## Mobile portrait
+
+- De bestaande halve-hoogte-indeling blijft behouden.
