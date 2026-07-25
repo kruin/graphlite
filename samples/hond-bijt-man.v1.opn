@@ -1,0 +1,302 @@
+{
+  "opn": "Open Graph Notation",
+  "document_type": "opengraph-document",
+  "opn_version": "1.0",
+  "metadata": {
+    "document_id": "sample-hond-bijt-man-v1",
+    "title": "HOND BIJT MAN",
+    "language": "nl",
+    "created_at": "2026-07-25T00:00:00+02:00",
+    "modified_at": "2026-07-25T00:00:00+02:00",
+    "schema": "data-metadata-paradata",
+    "generator": {
+      "name": "OpenGraph Lite Viewer",
+      "version": "v2.0.0-rc.23"
+    },
+    "source": {
+      "kind": "sample",
+      "example_id": "hond-bijt-man"
+    }
+  },
+  "data": {
+    "example": {
+      "id": "hond-bijt-man",
+      "title": "HOND BIJT MAN",
+      "phase": "Fase 1+2",
+      "sentence": "HOND BIJT MAN",
+      "sentence_html": "<strong>HOND</strong> BIJT <em>MAN</em>",
+      "subject_default": "HOND",
+      "object_default": "MAN",
+      "predicate": "BIJT",
+      "lex_rule": "hoofdzininvariant",
+      "lex_items": [
+        {
+          "id": "hond",
+          "label": "HOND",
+          "source": "subject",
+          "role": "subject",
+          "thematicRole": "agens"
+        },
+        {
+          "id": "bijt",
+          "label": "BIJT",
+          "source": "predicate",
+          "role": "predicate"
+        },
+        {
+          "id": "man",
+          "label": "MAN",
+          "source": "object",
+          "role": "object",
+          "thematicRole": "patiens"
+        }
+      ]
+    },
+    "graphs": {
+      "syntax": {
+        "view": "syntax",
+        "root_id": "s",
+        "nodes": [
+          {
+            "id": "s",
+            "label": "S",
+            "category": "S",
+            "role": "top",
+            "kind": "branch",
+            "x": 0,
+            "y": 0
+          },
+          {
+            "id": "np-subj",
+            "label": "NP",
+            "category": "NP",
+            "role": "subject",
+            "kind": "branch",
+            "x": -1,
+            "y": 1
+          },
+          {
+            "id": "vp",
+            "label": "VP",
+            "category": "VP",
+            "role": "predicate",
+            "kind": "branch",
+            "x": 1,
+            "y": 1
+          },
+          {
+            "id": "hond",
+            "label": "HOND",
+            "category": "N",
+            "role": "subject",
+            "kind": "leaf",
+            "x": -2,
+            "y": 2
+          },
+          {
+            "id": "man",
+            "label": "MAN",
+            "category": "N",
+            "role": "object",
+            "kind": "leaf",
+            "x": 1,
+            "y": 3
+          },
+          {
+            "id": "bijt",
+            "label": "BIJT",
+            "category": "V",
+            "role": "predicate",
+            "kind": "leaf",
+            "x": 2,
+            "y": 2
+          }
+        ],
+        "edges": [
+          {
+            "from": "s",
+            "to": "np-subj",
+            "type": "tree"
+          },
+          {
+            "from": "s",
+            "to": "vp",
+            "type": "tree"
+          },
+          {
+            "from": "np-subj",
+            "to": "hond",
+            "type": "tree"
+          },
+          {
+            "from": "vp",
+            "to": "man",
+            "type": "tree"
+          },
+          {
+            "from": "vp",
+            "to": "bijt",
+            "type": "tree"
+          }
+        ],
+        "rules": [
+          "S → NP VP",
+          "NP → HOND",
+          "VP → MAN BIJT"
+        ]
+      },
+      "ft": {
+        "view": "ft",
+        "root_id": "ft-clause",
+        "nodes": [
+          {
+            "id": "ft-clause",
+            "label": "CLAUSE",
+            "category": "CLAUSE",
+            "role": "top",
+            "kind": "role-root",
+            "x": 0,
+            "y": 0
+          },
+          {
+            "id": "ft-agens",
+            "label": "AGENS",
+            "category": "AGENS",
+            "role": "agens",
+            "kind": "role",
+            "x": -1,
+            "y": 1
+          },
+          {
+            "id": "ft-pred",
+            "label": "PRED",
+            "category": "PRED",
+            "role": "pred",
+            "kind": "role",
+            "x": 1,
+            "y": 1
+          },
+          {
+            "id": "ft-patiens",
+            "label": "PATIENS",
+            "category": "PATIENS",
+            "role": "patiens",
+            "kind": "role",
+            "x": -2,
+            "y": 3
+          }
+        ],
+        "edges": [
+          {
+            "from": "ft-clause",
+            "to": "ft-agens",
+            "type": "tree"
+          },
+          {
+            "from": "ft-clause",
+            "to": "ft-pred",
+            "type": "tree"
+          },
+          {
+            "from": "ft-clause",
+            "to": "ft-patiens",
+            "type": "tree"
+          }
+        ],
+        "rules": [
+          "CLAUSE → AGENS PRED PATIENS"
+        ]
+      }
+    },
+    "projections": {
+      "lex": {
+        "axis": "west",
+        "position_source": "LOG",
+        "projection_origin": "SOURCE-Y",
+        "placement_mode": "horizontal-then-move",
+        "sentence": "HOND BIJT MAN",
+        "rule": "hoofdzininvariant",
+        "items": [
+          {
+            "id": "hond",
+            "label": "HOND",
+            "source": "subject",
+            "role": "subject",
+            "thematicRole": "agens"
+          },
+          {
+            "id": "bijt",
+            "label": "BIJT",
+            "source": "predicate",
+            "role": "predicate"
+          },
+          {
+            "id": "man",
+            "label": "MAN",
+            "source": "object",
+            "role": "object",
+            "thematicRole": "patiens"
+          }
+        ],
+        "free_slot_count": 0,
+        "free_slot_placement": "above-vp",
+        "insertion_content": "empty",
+        "insertion_extension_targets": [
+          "vp-boundary"
+        ],
+        "free_slots": [],
+        "logical_sequence": [
+          {"id": "S", "kind": "major", "short": "S", "word": "HOND", "logical_slot": 0, "width": 1, "interval": null},
+          {"id": "O", "kind": "major", "short": "O", "word": "MAN", "logical_slot": 1, "width": 1, "interval": null},
+          {"id": "V", "kind": "major", "short": "V", "word": "BIJT", "logical_slot": 2, "width": 1, "interval": null}
+        ],
+        "adverb": null
+      },
+      "synt": {
+        "axis": "east",
+        "rules": [
+          "S → NP VP",
+          "NP → HOND",
+          "VP → MAN BIJT"
+        ]
+      },
+      "log": {
+        "axis": "south",
+        "authority": "LOG",
+        "order": "SOV",
+        "marked": false,
+        "position_unit": "slot",
+        "insertion_interval": "auto",
+        "sequence": [
+          {"id": "S", "kind": "major", "short": "S", "word": "HOND", "logical_slot": 0, "width": 1, "interval": null},
+          {"id": "O", "kind": "major", "short": "O", "word": "MAN", "logical_slot": 1, "width": 1, "interval": null},
+          {"id": "V", "kind": "major", "short": "V", "word": "BIJT", "logical_slot": 2, "width": 1, "interval": null}
+        ],
+        "distances": {
+          "S_O": 1,
+          "O_V": 1,
+          "S_V": 2
+        },
+        "lex_position_source": "LOG",
+        "lex_projection_origin": "SOURCE-Y",
+        "lex_placement_mode": "horizontal-then-move",
+        "example_controls_layout": false
+      }
+    },
+    "notation": {
+      "tree_choice": "auto-min",
+      "functional_order": "left-first",
+      "branch_order": "normal",
+      "branch_overrides": {
+        "top": "auto",
+        "middle": "auto",
+        "other": "auto"
+      },
+      "role_swap": false,
+      "free_slot_count": 2
+    }
+  },
+  "paradata": {
+    "included": false
+  }
+}

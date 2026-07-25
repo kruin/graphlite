@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" role="img" aria-labelledby="title description">
+  <title id="title">Play verloopt in de fasen LOG, ruimte en LEX</title>
+  <desc id="description">Drie kaarten tonen eerst de LOG-as met een minor, daarna gereserveerde lege LEX-rijen en ten slotte de woorden op de LEX-as.</desc>
+  <defs>
+    <linearGradient id="page" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f8fafc"/>
+      <stop offset="1" stop-color="#eef2ff"/>
+    </linearGradient>
+    <filter id="shadow" x="-12%" y="-12%" width="124%" height="132%">
+      <feDropShadow dx="0" dy="8" stdDeviation="9" flood-color="#0f172a" flood-opacity=".08"/>
+    </filter>
+    <style>
+      .card { fill:#fff; stroke:#cbd5e1; stroke-width:2; }
+      .number { fill:#4f46e5; font:900 24px system-ui,-apple-system,"Segoe UI",sans-serif; text-anchor:middle; dominant-baseline:middle; }
+      .heading { fill:#0f172a; font:850 24px system-ui,-apple-system,"Segoe UI",sans-serif; text-anchor:middle; }
+      .small { fill:#64748b; font:650 16px system-ui,-apple-system,"Segoe UI",sans-serif; text-anchor:middle; }
+      .axis { stroke:#64748b; stroke-width:4; stroke-linecap:round; }
+      .major { fill:#e0e7ff; stroke:#4f46e5; stroke-width:2.2; }
+      .minor { fill:#dcfce7; stroke:#16a34a; stroke-width:2.2; }
+      .empty { fill:#f8fafc; stroke:#94a3b8; stroke-width:2; stroke-dasharray:7 6; }
+      .lex { fill:#dbeafe; stroke:#2563eb; stroke-width:2.2; }
+      .label { fill:#0f172a; font:800 18px system-ui,-apple-system,"Segoe UI",sans-serif; text-anchor:middle; dominant-baseline:middle; }
+      .title { fill:#0f172a; font:800 32px system-ui,-apple-system,"Segoe UI",sans-serif; }
+      .subtitle { fill:#64748b; font:500 19px system-ui,-apple-system,"Segoe UI",sans-serif; }
+      .arrow { fill:none; stroke:#4f46e5; stroke-width:5; stroke-linecap:round; stroke-linejoin:round; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="675" rx="28" fill="url(#page)"/>
+  <text class="title" x="62" y="62">Play: eerst LOG, dan ruimte, dan LEX</text>
+  <text class="subtitle" x="62" y="98">de voorbeeldzin stuurt de layout niet</text>
+
+  <g filter="url(#shadow)">
+    <rect class="card" x="44" y="142" width="330" height="454" rx="24"/>
+    <rect class="card" x="435" y="142" width="330" height="454" rx="24"/>
+    <rect class="card" x="826" y="142" width="330" height="454" rx="24"/>
+  </g>
+
+  <circle cx="83" cy="180" r="24" fill="#e0e7ff"/>
+  <circle cx="474" cy="180" r="24" fill="#e0e7ff"/>
+  <circle cx="865" cy="180" r="24" fill="#e0e7ff"/>
+  <text class="number" x="83" y="181">1</text>
+  <text class="number" x="474" y="181">2</text>
+  <text class="number" x="865" y="181">3</text>
+  <text class="heading" x="209" y="190">LOG-AS</text>
+  <text class="heading" x="600" y="190">RUIMTE</text>
+  <text class="heading" x="991" y="190">LEX-AS</text>
+
+  <line class="axis" x1="88" y1="330" x2="330" y2="330"/>
+  <rect class="major" x="77" y="285" width="74" height="58" rx="14"/>
+  <rect class="minor" x="172" y="278" width="74" height="65" rx="14"/>
+  <rect class="major" x="267" y="285" width="74" height="58" rx="14"/>
+  <text class="label" x="114" y="314">S</text>
+  <text class="label" x="209" y="310">ADV</text>
+  <text class="label" x="304" y="314">O</text>
+  <text class="small" x="209" y="392">minor vergroot d(S,O)</text>
+  <text class="small" x="209" y="420">en legt de slots vast</text>
+
+  <line class="axis" x1="600" y1="260" x2="600" y2="490"/>
+  <rect class="empty" x="529" y="245" width="142" height="54" rx="14"/>
+  <rect class="empty" x="529" y="330" width="142" height="54" rx="14"/>
+  <rect class="empty" x="529" y="415" width="142" height="54" rx="14"/>
+  <text class="small" x="600" y="273">vrije rij</text>
+  <text class="small" x="600" y="358">minorruimte</text>
+  <text class="small" x="600" y="443">vrije rij</text>
+  <text class="small" x="600" y="526">vaste gridstap</text>
+
+  <line class="axis" x1="991" y1="260" x2="991" y2="490"/>
+  <rect class="lex" x="920" y="245" width="142" height="54" rx="14"/>
+  <rect class="minor" x="920" y="330" width="142" height="54" rx="14"/>
+  <rect class="lex" x="920" y="415" width="142" height="54" rx="14"/>
+  <text class="label" x="991" y="272">HOND</text>
+  <text class="label" x="991" y="357">GISTEREN</text>
+  <text class="label" x="991" y="442">MAN</text>
+  <text class="small" x="991" y="526">plaatsing uit LOG-slots</text>
+
+  <path class="arrow" d="M384 370h36m-13-13 13 13-13 13"/>
+  <path class="arrow" d="M775 370h36m-13-13 13 13-13 13"/>
+</svg>

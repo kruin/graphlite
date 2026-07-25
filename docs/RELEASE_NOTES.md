@@ -1,30 +1,144 @@
-# v2.0.10
 
-- README/LEESMIJ en leidende specificaties leggen nu de extra architectuurstap vast: plaatsingsplan berekenen vóór centrale plaatsing en rendering.
-- Structuur, meervoudige lexicale inserties, plaatsingsregels, Wissels en actieve projecties zijn gezamenlijk layoutinput.
-- De kernzin is de structurele en lexicale invulling van het vooraf gereserveerde gridframe.
-- Play/Groei en de renderer maken geen nieuwe ruimte en verplaatsen geen reeds berekende onderdelen.
-- Geen wijziging aan viewerfunctionaliteit of Config-save-werkwijze.
+## v2.0.0-rc.23 — Play loopt ook exact achteruit
 
-# v2.0.4
+- De ontgrendeling van de volledige eindlaag geldt alleen nog op precies de
+  laatste Play-stap.
+- Eén klik op `←`/min vanaf het eindresultaat verwijdert daardoor onmiddellijk
+  de laatste projectielaag; zij blijft niet meer over de eerdere fasen staan.
+- Verdere min-stappen keren de opbouw exact om:
+  eindprojecties → LEX-Wissels → LEX-inhoud → LEX-ruimte → LOG → boom.
+- De correctie geldt voor de hoofdknoppen, Config, mobiel en de
+  toetsenbordstap, omdat alle routes dezelfde `setGrowthStep()` gebruiken.
+- Nieuwe regressiecontrole: `tools/check_play_reverse.py`.
+- De DOM-renderproef doorloopt de volledige Play eerst vooruit en daarna
+  achteruit en controleert het verdwijnen van SYNT, LEX en LOG per fase.
 
-- Eenvoudige directe releasewerkwijze hersteld: bron over `C:\git\graphlite` kopiëren, lokaal testen, daarna `publish_checked.bat`.
-- `graphlite_safe_update.bat`, `graphlite-next`, clone-, bundle- en promotiewerkwijze zijn niet langer de actuele releasebediening.
-- Alle actieve versieaanduidingen en lokale startlinks gebruiken v2.0.10.
+## v2.0.0-rc.22 — vrije LEX-goot en social-export
 
-# v2.0.0-rc.22
+- De westelijke LEX-as wordt niet meer met een vaste minimum-x naar de boom
+  teruggeduwd. De volledige zichtbare LEX-laag reserveert nu een eigen strook
+  plus 48 SVG-eenheden tussenruimte vóór de buitenste S/CLAUSE-box.
+- De geometrische rendercontrole bevestigt deze goot voor zowel Syntax als FT,
+  ook bij de lange zin met `MISSCHIEN WEL` en `VAAK`.
+- De Bijwoord-dropdown bevat 25 voorbeelden plus `Geen bijwoord`.
+  `MISSCHIEN WEL`, `AF EN TOE`, `OP DIT MOMENT` en
+  `MET VEEL AANDACHT` zijn toegevoegd als beperkte meerwoordige eenheden.
+  Elke groep blijft voorlopig één LOG-minor.
+- `Config → Bestanden → Graph publiceren` exporteert een zelfstandige SVG,
+  een LinkedIn-PNG van 1200 × 627 of een WebM-opname van de volledige Play.
+- De Play-opname gebruikt alle named projections, 30 fps en een vast sociaal
+  beeldkader; na de opname wordt de eerdere viewerstaat hersteld.
+- Nieuwe documentatie:
+  `docs/TALIGE_UITBREIDINGEN.md` en `docs/SOCIAL_EXPORT.md`.
+- Nieuwe regressiecontrole:
+  `tools/check_social_and_linguistic_export.py`.
 
-- Mobile raster is inhoudsgebonden en wordt niet meer tot de volledige canvas-aspectratio verbreed.
-- Werkt ook bij geforceerde Desktop/portrait/landscape-interface op een telefoon.
+## v2.0.0-rc.21 — rechte LOG-projecties en één LEX-verplaatsing
 
-# v2.0.0-rc.20
+- LOG-majors projecteren rechtstreeks verticaal vanuit hun bron-x en worden
+  niet meer naar het midden getrokken. Minors staan op een compacte tweede
+  labelrij.
+- LOG en eventuele topic-/V2-regels bepalen samen eerst één einddoel. Ieder
+  bronwoord toont daarna hoogstens één LEX-pijl en één brontrace.
+- `HOND BIJT MAN` heeft precies drie zichtbare verplaatsingen. De langere zin
+  met `MISSCHIEN WEL` en `VAAK` heeft vier verplaatsingen voor haar vier
+  boombronnen, zonder extra neerwaartse tussensprongen.
+- Een gevuld TOPIC- of V2-slot toont niet langer ook `TOPIC/XP` of
+  `vrij slot`. Compacte genummerde trajectlabels voorkomen onderlinge
+  overschrijving.
+- De bijwoordkeuze heeft ook bij `file://` een ingebouwde lijst met
+  `Geen bijwoord` plus 21 voorbeelden.
+- De actieve zin staat boven de graph, boven de vrijgehouden strook voor een
+  mogelijke noord-as.
+- De README-intro toont voorlopig alleen het eerste beeld; de generieke
+  carrouselbediening blijft verborgen tot latere specificatiebeelden bestaan.
+- Nieuwe regressiecontrole: `tools/check_projection_cleanup.py`.
 
-- Gekozen LEX-, SYNT- en LOG-projecties groeien standaard direct mee met iedere nieuwe centrale knoop.
-- Nieuwe Config-optie `Projecties groeien direct mee`, standaard aan.
-- LEX-Wissels blijven vervolgstappen na de structurele groei.
-- Groei werkt ook in geïsoleerde LEX-, SYNT- en LOG-views en in iedere assencombinatie.
-- Projectieposities en viewBox blijven gedurende de groei stabiel.
+## v2.0.0-rc.20 — Config-tabbladen en zichtbare menulagen
 
+- Config is verdeeld in `Beeld`, `LOG & LEX`, `Bestanden` en `Geavanceerd`.
+- `Boomruimte = MAX` en `Venstervulling = MAX` staan direct bovenaan in
+  `Beeld`, met een korte uitleg van MAX.
+- `Hoofdvenster` heet voortaan `Venstervulling`: dit is de benutting van het
+  beschikbare appvenster, geen apart venster.
+- De dropdowns `Zin`, `Bijwoord`, `Syntax / FT` en `Projecties` staan boven de
+  vaste Play-balk en boven latere topmenu-items; hun inhoud wordt niet meer
+  visueel afgedekt.
+- Play-fase `2/3 ruimte` reserveert intern dezelfde LOG-afgeleide LEX-ruimte,
+  maar toont niet langer drie herhaalde vakken `vrije LEX-rij`. Eén smalle
+  reserveringsband markeert de volledige ruimte.
+- Nieuwe regressiecontrole:
+  `tools/check_config_tabs_and_menus.py`.
+
+## v2.0.0-rc.19 — leesbare desktopweergave op MAX
+
+- `Boomruimte` staat standaard op `MAX`: lage, brede boom en SVG-fontschaal
+  `1.70`.
+- `Hoofdvenster` staat standaard op `MAX`: het werkvlak gebruikt de volledige
+  beschikbare desktopbreedte en -hoogte.
+- Het grote onzichtbare stabiliteitskader telt niet langer mee bij deze fit;
+  alleen de werkelijk getekende boom en projecties bepalen het zichtvenster.
+- De MAX-kadrering blijft tijdens de gefaseerde Play-reeks stabiel.
+- Oudere lokaal bewaarde auto/window-defaults worden één keer naar MAX
+  gemigreerd.
+- Ook de acht zichtbare desktop-topmenu-items hebben een leesbare
+  standaardlettergrootte.
+
+## v2.0.0-rc.18 — horizontale LEX-projectie vóór plaatsing
+
+- Een lexicale bron projecteert weer exact horizontaal naar LEX.
+- LOG levert een doelrij, maar vervangt de bronhoogte niet.
+- Bronanker → LOG-doel en LOG-doel → V2 worden afzonderlijke Wissels langs
+  de LEX-as, elk met een trace op de verlaten positie.
+- Play-fase 3 toont eerst de horizontale bronprojecties.
+- De nieuwe regressietest gebruikt `BIJT` als keten:
+  bronhoogte → LOG-doelrij → V2-slot.
+
+## v2.0.0-rc.17 — LOG-config stuurt de plaatsing
+
+- `example-controls-layout=false` wordt nu werkelijk toegepast.
+- `MISSCHIEN WEL` (`MODALITEIT`) staat tussen S en O.
+- `VAAK` (`FREQUENTIE`) staat tussen O en V.
+- Oude voorbeeldpositiehints en de lineaire woordvolgorde kunnen deze
+  automatische plaatsing niet meer terugdraaien.
+- De regressietest controleert ook de afgeleide LEX-rijen.
+
+## v2.0.0-rc.16 — actieve carrousel en gefaseerde LOG → LEX-Play
+
+- De introcarrousel bevat drie echte SVG-slides; pijlen, stapbolletjes en
+  pijltoetsen zijn actief.
+- De externe zoeklink opent in een afzonderlijk venster, zodat de app open
+  blijft.
+- Play toont na de centrale boomopbouw eerst LOG, reserveert daarna lege
+  LOG-afgeleide LEX-rijen en plaatst pas vervolgens de lexicale inhoud.
+- De Play-volgorde staat in `structure-config.html`.
+- `README.md` is Engels; `LEESMIJ.md` is Nederlands.
+
+## v2.0.0-rc.15 — Lees mij met eerste carrouselbeeld
+
+- `Help` heet voortaan `Lees mij / README` en opent direct op de intro
+  `Boom, gek`.
+- Het rechter tekstpaneel is meteen zichtbaar; een algemene flexregel
+  overschrijft de tweekolomsindeling niet langer.
+- De carrouselruimte bevat één eigen SVG met drie traditionele
+  voorbeeldbomen.
+- Bij één beeld blijft de navigatie verborgen. Latere beelden per README-item
+  kunnen als volgende slides worden toegevoegd; vanaf twee beelden verschijnt
+  de navigatie automatisch.
+
+## v2.0.0-rc.14 — LOG-slotafstand bepaalt LEX
+
+- `S`, `O` en `V` staan als majors in vaste LOG-slots; ingevoegde bijwoorden
+  zijn minors en voegen elk precies één afstandsslot toe.
+- De neutrale plaats op de LEX-as wordt uit de LOG-volgorde afgeleid. De
+  voorbeeldzin is voortaan validatie-invoer en geen layoutregel.
+- Het LOG-interval is configureerbaar als `vóór S`, `S–O`, `O–V` of `na V`;
+  `automatisch` gebruikt de categoriekoppeling uit de structuurconfiguratie.
+- Viewer, configuratie-editors, voorbeelden en OPN-rondreis bewaren dezelfde
+  LOG-informatie.
+- `logische afstand` is binnen dit project de operationele term voor het
+  aantal LOG-slots tussen twee majors; er wordt geen algemeen gevestigde
+  taalkundige metriek mee geclaimd.
 
 ## v4551 — gecontroleerde bijwoordplaatsing
 
@@ -739,19 +853,3 @@ Dit blijft een LEX/FUNC-regel. De SYNT-boom wordt niet gemuteerd.
 - Desktop en mobiel starten op deze veilige fit-modus.
 - De fitbox krijgt extra ondermarge voor LOG en extra rechterruimte voor de SYNT-as.
 - `strak`, `scroll` en `vast/debug` blijven beschikbaar als secundaire opties.
-
-## v2.0.0-rc.20
-
-- Gridgeometrie volgt continu de actuele canvasverhouding.
-- Portrait wordt smaller/hoger; landscape breder/lager; desktop volgt het actuele venster.
-- LEX-/SYNT-asafstand en regelboxbreedte passen mee aan.
-- Raster en viewBox gebruiken dezelfde schermverhouding.
-- Syntax, FT en alle projectiecombinaties blijven binnen een viewport stabiel.
-
-
-## v2.0.3
-
-- English default for new installations.
-- Language menus: English, Nederlands, Deutsch, Français and Español.
-- Explicit note that example sentences are Dutch and illustrate Dutch word order.
-- One safe J/N release workflow: `graphlite_safe_update.bat`.

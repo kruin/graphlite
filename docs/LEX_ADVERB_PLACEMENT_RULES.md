@@ -1,5 +1,10 @@
 # LEX-bijwoordinsertie: gecontroleerde plaatsingsregels per bijwoord
 
+> Actueel rc.18-contract: deze tabellen leveren klasse- en scopeinformatie.
+> De klasse kiest een LOG-interval; de minorpositie bepaalt de neutrale
+> LEX-rij. `host` is secundaire metadata. Zie
+> `../projectie-master-spec.md`.
+
 Versie: v4551
 
 

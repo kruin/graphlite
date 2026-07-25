@@ -1,5 +1,9 @@
 # LEX-bijwoordinsertie: gecontroleerde plaatsingsregels per bijwoord
 
+> Actueel rc.15-contract: deze historische regels beschrijven klasse, scope
+> en gemarkeerdheid. Plaatsing loopt nu via LOG-minors en LOG→LEX; `host`
+> bepaalt geen afstand of rij. Zie `../projectie-master-spec.md`.
+
 Versie: v4551
 
 

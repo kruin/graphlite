@@ -6,7 +6,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>OpenGraph structure-editor v4537</title>
+  <title>OpenGraph structure-editor v2.0.0-rc.23</title>
   <style>
     :root { color-scheme: light; --bg:#f8fafc; --panel:#fff; --text:#0f172a; --muted:#64748b; --line:#cbd5e1; --accent:#1d4ed8; --danger:#b91c1c; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
     * { box-sizing:border-box; }
@@ -36,11 +36,9 @@
   </style>
 </head>
 <body>
-<nav class="page-return-nav" aria-label="Terugnavigatie"><a href="index.html?screen=config">← Terug naar: Config</a><a href="index.html">Terug naar: Main</a></nav>
-
   <header>
-    <h1>OpenGraph structure-editor <span>v4537</span></h1>
-    <p>Bewerk eerst de structure-config. De viewer én de voorbeeldzinnen-editor lezen daarna dezelfde syntax- en functional-config. Regels worden bottom-up gebruikt: eerst subtree/box, daarna vrije plaatsing. Functioneel gebruikt nu CLAUSE → PRED ARG-STRUCT, zodat het predicaat en de argumentstructuur apart vrij kunnen staan.</p>
+    <h1>OpenGraph structure-editor <span>v2.0.0-rc.23</span></h1>
+    <p>Bewerk eerst de structure-config. De viewer én de voorbeeldzinnen-editor lezen daarna dezelfde syntax-, functional- en LOG-config. LOG-majors/minors bepalen met vaste slotafstand de neutrale LEX-basis; de voorbeeldzin valideert alleen.</p>
   </header>
 
   <main>
@@ -48,14 +46,14 @@
       <div class="panel-header">
         <h2>Config-bron</h2>
         <div class="button-row">
-          <a class="button-link" href="index.html?v4537">Viewer</a>
-          <a class="button-link" href="examples-editor.html?v4537">Voorbeeldeditor</a>
-          <a class="button-link" href="structure-config.html?v4537">structure-config.html</a>
-          <a class="button-link" href="lexicon-config.html?v4537">lexicon-config.html</a>
+          <a class="button-link" href="index.html?v2.0.0-rc.23">Viewer</a>
+          <a class="button-link" href="examples-editor.html?v2.0.0-rc.23">Voorbeeldeditor</a>
+          <a class="button-link" href="structure-config.html?v2.0.0-rc.23">structure-config.html</a>
+          <a class="button-link" href="lexicon-config.html?v2.0.0-rc.23">lexicon-config.html</a>
         </div>
       </div>
       <div class="panel-body">
-        <div class="notice">Regelformaat: <code>id:LABEL [cat=X] -> child1 child2</code>. Structurele leaf: <code>subj:{subject} [leaf role=subject source=subject cat=N]</code>. De structure-config bevat géén woorden zoals hond/man/bijt, maar alleen boomregels en projectiebronnen. Zichtbare woorden komen uit lexicon-config.html.</div>
+        <div class="notice">Regelformaat: <code>id:LABEL [cat=X] -> child1 child2</code>. Structurele leaf: <code>subj:{subject} [leaf role=subject source=subject cat=N]</code>. De LOG-slotconfig blijft als leesbare HTML bewerkbaar en wordt bij export round-trip behouden. Zichtbare woorden komen uit lexicon-config.html.</div>
         <div class="button-row" style="margin-top:12px">
           <button id="loadButton" type="button">Laad actuele structure-config</button>
           <button id="defaultButton" type="button">Reset basisconfig</button>
@@ -85,8 +83,9 @@
     </section>
 
     <section class="panel">
-      <div class="panel-header"><h2>LEX-slots en validatie</h2><input id="status" value="—" disabled></div>
+      <div class="panel-header"><h2>LOG, LEX-slots en validatie</h2><input id="status" value="—" disabled></div>
       <div class="panel-body grid">
+        <label class="field"><span>LOG-slotconfig (HTML)</span><textarea id="logText" spellcheck="false"></textarea></label>
         <label class="field"><span>LEX-slots</span><textarea id="slotsText" spellcheck="false"></textarea></label>
         <label class="field"><span>Structurele sources uit syntax/functional-config</span><textarea id="lexiconText" spellcheck="false" readonly></textarea></label>
         <label class="field"><span>HTML-preview</span><textarea id="htmlOutput" spellcheck="false"></textarea></label>
@@ -95,10 +94,11 @@
   </main>
 
   <script>
-    const VERSION = 'v4537';
+    const VERSION = 'v2.0.0-rc.23';
     const els = {
       syntax: document.getElementById('syntaxText'),
       functional: document.getElementById('functionalText'),
+      log: document.getElementById('logText'),
       slots: document.getElementById('slotsText'),
       lexicon: document.getElementById('lexiconText'),
       output: document.getElementById('htmlOutput'),
@@ -138,7 +138,35 @@ f-obj:{object} [leaf role=object source=object cat=N]`;
 
     const defaultSlots = `comp:slot 0 · Comp/(om)dat
 topic:slot 1 · vooropplaatsing/topicalisatie
+v2:slot 2 · V2 / persoonsvorm
+trace:trace · lege inhoud van gewisseld slot
 aux:AUX / pv`;
+
+    const defaultLogSection = `<section id="opengraph-log-config" data-authority="LOG" data-position-unit="slot" data-major-gap="1" data-minor-width="1" data-expands-major-gap="true" data-axis-slot-pixels="176" data-lex-slot-pixels="64" data-lex-position-source="LOG" data-lex-projection-origin="SOURCE-Y" data-lex-placement-mode="horizontal-then-move" data-example-controls-layout="false" data-play-phases="LOG SPACE LEX" data-play-space-mode="reserve-empty-lex-rows" aria-label="LOG-slotconfig">
+      <h2>LOG-slotconfig</h2>
+      <p class="note">S, O en V zijn majors. Iedere bijwoord-minor vergroot de begrensde majorafstand met één vast slot. LOG bepaalt de neutrale LEX-rijen; de voorbeeldzin valideert alleen. Play gebruikt de fasen LOG → SPACE → LEX.</p>
+      <div class="log-major-config" data-id="S" data-label="Subject" data-source="subject" data-role="subject">S [major source=subject]</div>
+      <div class="log-major-config" data-id="O" data-label="Object" data-source="object" data-role="object">O [major source=object]</div>
+      <div class="log-major-config" data-id="V" data-label="Verb" data-sources="predicate pv vdw" data-role="predicate">V [major sources=predicate+pv+vdw]</div>
+      <div class="log-interval-config" data-id="before-S" data-label="vóór S" data-label-en="before S" data-after="START" data-before="S">vóór S [START → S]</div>
+      <div class="log-interval-config" data-id="S-O" data-label="na S · vóór O" data-label-en="after S · before O" data-after="S" data-before="O">tussen S en O [S → O]</div>
+      <div class="log-interval-config" data-id="O-V" data-label="na O · vóór V" data-label-en="after O · before V" data-after="O" data-before="V">tussen O en V [O → V]</div>
+      <div class="log-interval-config" data-id="after-V" data-label="na V" data-label-en="after V" data-after="V" data-before="END">na V [V → END]</div>
+      <div class="log-class-config" data-category="DEFAULT" data-interval="S-O">DEFAULT → S-O</div>
+      <div class="log-class-config" data-category="MODALITEIT" data-interval="S-O">MODALITEIT → S-O</div>
+      <div class="log-class-config" data-category="SCHAKEERPARTIKEL" data-interval="S-O">SCHAKEERPARTIKEL → S-O</div>
+      <div class="log-class-config" data-category="FOCUSPARTIKEL" data-interval="S-O">FOCUSPARTIKEL → S-O</div>
+      <div class="log-class-config" data-category="TIJD" data-interval="O-V">TIJD → O-V</div>
+      <div class="log-class-config" data-category="FREQUENTIE" data-interval="O-V">FREQUENTIE → O-V</div>
+      <div class="log-class-config" data-category="PLAATS" data-interval="O-V">PLAATS → O-V</div>
+      <div class="log-class-config" data-category="NEGATIE" data-interval="O-V">NEGATIE → O-V</div>
+      <div class="log-class-config" data-category="NEG_FREQ" data-interval="O-V">NEG_FREQ → O-V</div>
+      <div class="log-class-config" data-category="NEG_PLACE" data-interval="O-V">NEG_PLACE → O-V</div>
+      <div class="log-class-config" data-category="GRAAD" data-interval="O-V">GRAAD → O-V</div>
+      <div class="log-class-config" data-category="WIJZE" data-interval="O-V">WIJZE → O-V</div>
+      <div class="log-class-config" data-category="REDEN_OORZAAK" data-interval="before-S">REDEN_OORZAAK → vóór S</div>
+      <div class="log-class-config" data-category="VOORWAARDE_GEVOLG" data-interval="before-S">VOORWAARDE_GEVOLG → vóór S</div>
+    </section>`;
 
     function escapeHtml(value) {
       return String(value ?? '').replace(/[&<>"']/g, ch => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[ch]));
@@ -230,7 +258,7 @@ aux:AUX / pv`;
     h1 { margin: 0 0 8px; }
     h2 { margin-top: 28px; }
     .note { color: #475569; line-height: 1.5; }
-    .node-config, .lexical-config, .lex-slot-config { background: white; border: 1px solid #cbd5e1; border-radius: 14px; padding: 10px 12px; margin: 8px 0; }
+    .node-config, .lexical-config, .lex-slot-config, .log-major-config, .log-interval-config, .log-class-config { background: white; border: 1px solid #cbd5e1; border-radius: 14px; padding: 10px 12px; margin: 8px 0; }
     code { background: #e2e8f0; border-radius: 6px; padding: 2px 5px; }
     .button-link { border: 1px solid #94a3b8; background: white; border-radius: 10px; padding: 8px 12px; color: #0f172a; text-decoration: none; display: inline-flex; font-weight: 800; }
   </style>
@@ -238,7 +266,7 @@ aux:AUX / pv`;
 <body>
   <main>
     <h1>OpenGraph structure-config ${VERSION}</h1>
-    <p class="note">Deze HTML-file is de structurele bron voor viewer en voorbeeldeditor. De structure-config bevat alleen structurele posities; lexicale vulling staat in lexicon-config.html. Lidwoorden/determinatorposities zijn verwijderd. Bewerk bij voorkeur via <a class="button-link" href="structure-editor.html?v4537">structure-editor.html</a>.</p>
+    <p class="note">Deze HTML-file is de structurele bron voor viewer en voorbeeldeditor. De structure-config bevat structurele posities plus de normatieve LOG-slotconfig; lexicale vulling staat in lexicon-config.html. Bewerk bij voorkeur via <a class="button-link" href="structure-editor.html?v2.0.0-rc.23">structure-editor.html</a>.</p>
 
     <section id="opengraph-syntax-config" data-root="${escapeHtml(syntaxRoot)}" aria-label="Syntax-config">
       <h2>Syntax-config</h2>
@@ -254,6 +282,8 @@ ${functionalNodes.map(n => nodeDiv(n, true)).join('\n')}
       <h2>Structurele sources</h2>
 ${lexEntries.map(entry => `      <div class="lexical-config" data-source="${escapeHtml(entry.source)}" data-label="${escapeHtml(entry.label)}" data-role="${escapeHtml(entry.role || '')}" data-cat="${escapeHtml(entry.cat || '')}" data-from="${escapeHtml(entry.from.join(' '))}">${escapeHtml(entry.source)}:${escapeHtml(entry.label)} [role=${escapeHtml(entry.role || '-')} cat=${escapeHtml(entry.cat || '-')} from=${escapeHtml(entry.from.join('+'))}]</div>`).join('\n')}
     </section>
+
+    ${els.log.value.trim() || defaultLogSection}
 
     <section id="opengraph-lex-config" aria-label="LEX-config">
       <h2>LEX-slots</h2>
@@ -287,6 +317,7 @@ ${slots.map(s => `      <div class="lex-slot-config" data-id="${escapeHtml(s.id)
       }
       els.syntax.value = nodesToLines('opengraph-syntax-config') || defaultSyntax;
       els.functional.value = nodesToLines('opengraph-functional-config') || defaultFunctional;
+      els.log.value = doc.getElementById('opengraph-log-config')?.outerHTML || defaultLogSection;
       els.slots.value = [...doc.querySelectorAll('#opengraph-lex-config .lex-slot-config')].map(s => `${s.dataset.id}:${s.dataset.label || s.textContent.trim()}`).join('\n') || defaultSlots;
       buildHtml();
     }
@@ -312,6 +343,7 @@ ${slots.map(s => `      <div class="lex-slot-config" data-id="${escapeHtml(s.id)
       } catch (err) {
         els.syntax.value = defaultSyntax;
         els.functional.value = defaultFunctional;
+        els.log.value = defaultLogSection;
         els.slots.value = defaultSlots;
         buildHtml();
         els.status.value = 'Fallback basisconfig geladen';
@@ -319,7 +351,7 @@ ${slots.map(s => `      <div class="lex-slot-config" data-id="${escapeHtml(s.id)
     }
 
     document.getElementById('loadButton').addEventListener('click', loadCurrent);
-    document.getElementById('defaultButton').addEventListener('click', () => { els.syntax.value = defaultSyntax; els.functional.value = defaultFunctional; els.slots.value = defaultSlots; buildHtml(); });
+    document.getElementById('defaultButton').addEventListener('click', () => { els.syntax.value = defaultSyntax; els.functional.value = defaultFunctional; els.log.value = defaultLogSection; els.slots.value = defaultSlots; buildHtml(); });
     document.getElementById('vpClusterButton').addEventListener('click', () => { els.syntax.value = clusterSyntax; buildHtml(); els.status.value = 'Perfectum-regelset actief: VP -> NP VP; VP -> pv VDW'; });
     document.getElementById('downloadButton').addEventListener('click', () => download('structure-config.html', buildHtml()));
     document.getElementById('saveAsButton').addEventListener('click', async () => {
@@ -339,7 +371,7 @@ ${slots.map(s => `      <div class="lex-slot-config" data-id="${escapeHtml(s.id)
       parseHtmlConfig(await file.text());
       event.target.value = '';
     });
-    [els.syntax, els.functional, els.slots].forEach(el => el.addEventListener('input', () => { try { buildHtml(); } catch (err) { els.status.value = err.message; } }));
+    [els.syntax, els.functional, els.log, els.slots].forEach(el => el.addEventListener('input', () => { try { buildHtml(); } catch (err) { els.status.value = err.message; } }));
 
     loadCurrent();
   </script>

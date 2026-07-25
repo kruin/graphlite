@@ -1,21 +1,24 @@
-# SOURCE_CHANGES v2.0.0-rc.19
+# Source changes · v2.0.0-rc.15
 
-## Herstel Config-raster
+## Lees mij / README
 
-- `Raster` verplaatst van de onderkant van een lange algemene configuratiekaart naar `Config → Boom → Weergave`.
-- Nieuw zichtbaar label: `Raster zichtbaar · standaard aan`.
-- Engelse vertaling: `Grid visible · default on`.
-- Taklijnen en boomlabels staan in dezelfde directe Weergavegroep.
+- De zichtbare knop `Help` heet voortaan `Lees mij / README`.
+- De README opent altijd op de nieuwe intro `Boom, gek`.
+- De intro staat direct in het rechter paneel, zonder voorafgaande onderwerpklik.
+- Het eerste carrouselbeeld is een eigen SVG met drie traditionele
+  voorbeeldbomen.
 
-## Werkelijke standaard
+## Carrousel
 
-- `state.showGrid` blijft `true`.
-- Een snapshot uit een oudere release migreert bij rc.15 naar `showGrid=true`.
-- Een daarna bewust in rc.15 opgeslagen uitgeschakelde keuze blijft behouden.
-- De HTML-checkbox is standaard `checked`.
+- De README bevat nu precies één samengesteld beeld.
+- Navigatie blijft verborgen zolang er maar één slide is.
+- De bestaande carrouselcode maakt pijlen en stapbolletjes automatisch
+  zichtbaar zodra latere README-items een eigen beeld krijgen.
 
-## Zichtbaarheid en grens
+## Halfschermcorrectie
 
-- Rasterlijnen blijven dunner dan projectielijnen, maar hebben voldoende dekking om op desktop en mobile zichtbaar te zijn.
-- De rastergrens blijft de unie van centrale boom en zichtbare projectie-stippellijnen.
-- De stabiele projectie-viewBox verandert niet.
+- De specifieke tweekoloms-gridregel wint weer van de algemene flexregel voor
+  het README-scherm.
+- Onderwerpnavigatie staat links en de actieve tekst staat onmiddellijk rechts.
+- Op smalle schermen blijven beide panelen gelijktijdig bereikbaar en
+  afzonderlijk scrollbaar.

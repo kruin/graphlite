@@ -1,13 +1,19 @@
-# Design decisions — actuele aanvulling v2.0.10
 
-## Plaatsingsplan vóór rendering
+## Actuele beslissingen · v2.0.0-rc.23
 
-39. Structuur, lexicale insertiegroepen, plaatsingsregels, Wissels en actieve projecties vormen gezamenlijk de layoutinput.
-40. Alle benodigde major-/minor-posities, fysieke afstanden en Wissel-corridors worden vóór de centrale boomplaatsing gereserveerd.
-41. De kernzin is de concrete structurele en lexicale invulling van het berekende plaatsingsplan.
-42. Rendering en Play/Groei mogen geen nieuwe ruimte claimen, geen doelpositie kiezen en geen bestaande coördinaten wijzigen.
-43. Een wijziging in inserties of plaatsingsregels veroorzaakt vóór de volgende render een volledige layoutberekening.
+1. LOG is autoriteit voor de neutrale plaatsing.
+2. S, O en V zijn majors; bijwoorden zijn minors.
+3. Logische afstand is de absolute LOG-slotafstand.
+4. Iedere minor vergroot de begrensde majorafstand met zijn vaste breedte.
+5. LOG bepaalt de neutrale LEX-rijen.
+6. De voorbeeldzin valideert en levert geen layoutcoördinaten.
+7. Topic/V2 zijn latere LEX-Wissels met traces.
+8. Oude hostvelden blijven alleen scope-/compatibiliteitsmetadata.
 
+Onderstaande eerdere beslissingen zijn historische notities en niet
+normatief waar zij hiermee botsen.
+
+---
 
 ## v4540 - Bijwoorden als externe LEX-slots
 

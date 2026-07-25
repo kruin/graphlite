@@ -1,32 +1,53 @@
-# SOURCE_CHANGES v2.0.0-rc.19
+# Source changes · v2.0.0-rc.18
 
-## Doel
+## Horizontale LEX-projectie hersteld
 
-Alle vier interfacekeuzes gebruiken de beschikbare view maximaal:
+De LOG-afgeleide doelrij werd in rc.17 ten onrechte meteen als
+projectieanker gebruikt. Daardoor konden werkwoorden zoals `BIJT` te hoog op
+LEX verschijnen en kreeg de bronprojectielijn een verticale sectie.
+
+De afleiding is nu:
 
 ```text
-Automatisch
-Desktop
-Mobiel staand
-Mobiel liggend
+bronknoop
+→ horizontale LEX-projectie op SOURCE-Y
+→ Wissel langs LEX naar de LOG-doelrij
+→ eventuele expliciete topic-/V2-Wissel
 ```
 
-## Correcties
+- Bron → LEX blijft exact horizontaal.
+- LOG bepaalt een doelrij, niet de bronhoogte.
+- Bronanker → LOG-doel krijgt `Wissel LOG → LEX`.
+- Op de horizontale bronhoogte blijft een trace staan.
+- Een latere V2-Wissel vertrekt vanaf de LOG-doelrij en laat daar een tweede
+  trace staan.
 
-- De stabiele fitbox gebruikt werkelijke LEX-, SYNT-, FT- en LOG-uitersten.
-- De fictieve reserve van 212 px links van LOG is verwijderd.
-- De rechterreserve gebruikt de werkelijk berekende SYNT-/FT-regelboxbreedte.
-- Projectieassen staan op mobile dichter bij de centrale boom.
-- Mobile portrait gebruikt een smaller/hoger layoutprofiel.
-- Mobile landscape gebruikt een breed/lager layoutprofiel.
-- De veiligheidsmarge rond de fitbox is teruggebracht tot alleen stroke- en labelruimte.
-- De oude portrait-reserve van 7,6 rem voor verwijderde canvas-controls is verwijderd.
-- Het canvas gebruikt de maximaal beschikbare hoogte.
+## Play
 
-## Contracten behouden
+Na LOG en de gereserveerde doelruimte toont fase 3 eerst de horizontale
+LEX-bronprojecties. De verplaatsingen naar LOG-doelrijen en daarna
+topic-/V2-slots volgen als afzonderlijke stappen.
 
-- Syntax en FT blijven de twee centrale views.
-- LOG blijft uitsluitend de zuidas.
-- Alle projectiecombinaties gebruiken dezelfde viewBox binnen één interface- en oriëntatiestand.
-- Geen horizontale of verticale sprong bij projectiewissels.
-- De volledige actieve graph plus zichtbare assen blijft binnen beeld.
+## Config en OPN
+
+Het contract bevat nu expliciet:
+
+```text
+lex-projection-origin=SOURCE-Y
+lex-placement-mode=horizontal-then-move
+```
+
+OPN bewaart dezelfde waarden als `lex_projection_origin` en
+`lex_placement_mode`.
+
+## Regressiecontrole
+
+`tools/check_lex_horizontal_projection.py` controleert:
+
+- dat een bronlijn geen verticale sectie bevat;
+- dat `BIJT` eerst laag op zijn bronhoogte staat;
+- daarna naar de LOG-doelrij gaat;
+- en pas daarna naar het V2-slot verhuist.
+
+De volledige DOM-rendercontrole bevestigt bovendien dat Play-fase 3 `BIJT`
+nog op de lage bronhoogte toont.

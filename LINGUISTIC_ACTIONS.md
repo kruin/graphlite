@@ -1,173 +1,53 @@
 # LINGUISTIC_ACTIONS
 
-Ontwerpnotities voor taalkundige acties in GraphLite.
+Taalkundige acties in OpenGraph Lite Viewer `v2.0.0-rc.23`.
 
-## Views
-
-```text
-Syntax tree              standaardweergave
-Functional structure     standaard alternatieve weergave
-```
-
-## Named projections
+## Basisafleiding
 
 ```text
-LEX    zichtbare woordvolgorde, lexicale plaatsing en projectiemerkers
-SYNT   syntactische regels en categorieprojectie
-LOG    logische S-O-V-volgordeprojectie
+LOG-majors/minors
+→ neutrale LEX-rijen
+→ Wissels
+→ surface-validatie
 ```
 
-Elke named projection heeft eigen selectieregels.
+### LOG-minor plaatsen
 
-## Projectiemerkers
+Een bijwoord wordt ingevoegd in een LOG-interval. De actie:
 
-De punten op named projections heten projectiemerkers.
+- voegt geen centrale SYNT- of FT-knoop toe;
+- vergroot de majorafstand met de vaste minorbreedte;
+- bepaalt meteen de corresponderende neutrale LEX-rij;
+- bewaart klasse, scopehost en markering als metadata.
+
+### LOG-volgorde wijzigen
+
+Beschikbare majorvolgorden:
 
 ```text
-source node → projection line → projection marker
-bronknoop   → projectielijn     → projectiemerker
+SOV · SVO · OVS · OSV-! · VSO-! · VOS-!
 ```
 
-Een projectiemerker is geen nieuwe centrale knoop.
+De majorvolgorde verandert de LOG-sequentie en daardoor de neutrale
+LEX-basis. De centrale Syntax- en FT-graphs blijven ongemoeid. `!` betekent
+dat een aanvullende, expliciete LEX-verplaatsingsregel nodig kan zijn.
 
-## Taalactiebox
+### Wissel
 
-Voor nu bevat de taalactiebox:
+Een Wissel:
 
-```text
-‹ SOV ›
-```
+- werkt pas na LOG → LEX;
+- vult een gereserveerde LEX-positie, zoals topic of V2;
+- laat een trace op de LOG-afgeleide basispositie;
+- muteert Syntax, FT en LOG niet.
 
-De SOV/VSO/etc-keuze verandert de LOG-volgordeprojectie.
+## Voorbeeldzin
 
-```text
-SOV
-SVO
-OVS
-OSV-!
-VSO-!
-VOS-!
-```
+De voorbeeldzin is een verwachte surface-realisatie. Zij valideert de
+afleiding, maar bepaalt geen LOG-slot, LEX-basisrij of projectiecoördinaat.
 
-`!` markeert een niet-neutrale of gemarkeerde variant.
+## Oude hostnotatie
 
-## Geen syntaxmutatie
-
-De SOV/VSO/etc-actie verandert niet:
-
-- de centrale boomstructuur;
-- de SYNT-projectie;
-- de lexicale inhoud;
-- de Functional structure-view.
-
-Ze beïnvloedt alleen de LOG-volgordeprojectie.
-
-## LEX-stappen
-
-```text
-1. Centrale bronknopen plaatsen.
-2. LEX-projectiemerkers schrijven.
-3. LEX-Wissels toepassen op gereserveerde lege plekken.
-```
-
-Verplaatsingen op de as worden pas actief nadat alle centrale knopen zijn geplaatst.
-
-## Lege plekken op LEX
-
-```text
-Comp-slot                bijvoorbeeld OMDAT / DAT
-vooropplaatsing/topic    eerste zinsdeel
-V2/PV-slot               persoonsvormpositie
-bijwoordslot             externe LEX-insertie
-trace                    oude basispositie na Wissel
-```
-
-Ruimte kan worden gemaakt door:
-
-```text
-vrije rij
-verlengde tak
-host-subboom lager plaatsen
-```
-
-## Bijwoordplaatsing
-
-Bijwoorden zijn LEX-inserties:
-
-- extern toegevoegd;
-- niet uit de syntaxboom geprojecteerd;
-- geplaatst op de LEX-as;
-- syntaxbox is hoogstens anker, geen bron.
-
-## Wissel
-
-Een Wissel is een LEX-regel:
-
-- zichtbaar op de LEX-as;
-- verandert woordvolgorde;
-- laat syntaxstructuur ongemoeid;
-- kan een trace/oude positie zichtbaar maken.
-
-
-## Assen bij Bron (v2.0.0)
-
-- `Bron` is de centrale Syntax- of Functional-view zonder verplichte named projection.
-- De gebruiker kan bij Bron afzonderlijk LEX, SYNT en LOG activeren.
-- De assen zijn onafhankelijk combineerbaar.
-- De centrale bronstructuur muteert niet door deze keuze.
-- De LOG-volgordeactie blijft uitsluitend gekoppeld aan een zichtbare LOG-as.
-
-
-## Projecties: standaard alle assen
-
-- Main start met LEX, SYNT en LOG zichtbaar.
-- `Geen` toont de centrale bron zonder assen.
-- `Alle` en Reset herstellen LEX + SYNT + LOG.
-- De keuze verandert Syntax of Functional niet.
-
-## Projectiegroei
-
-Tijdens Play/Groei worden gekozen named projections brongebonden opgebouwd:
-
-```text
-nieuwe centrale knoop → direct geldige LEX/SYNT/LOG-projectie
-```
-
-- LEX toont de basisprojectielijn en projectiemerker zodra de lexicale bronknoop zichtbaar is.
-- SYNT toont de regel zodra de bijbehorende categorieknoop zichtbaar is.
-- LOG toont S, O of V zodra de corresponderende centrale knoop zichtbaar is.
-- LEX-Wissels blijven afzonderlijke vervolgstappen na de volledige structurele groei.
-
-## Meervoudige lexicale inserties
-
-- Een insertiegroep is de eenheid die één LEX-slot gebruikt.
-- `misschien wel` is standaard één meerwoordige insertiegroep.
-- Een zelfstandig bijwoord zoals `vaak` gebruikt een afzonderlijk slot.
-- Meerdere groepen behouden een expliciete lineaire volgorde.
-- Insertiegroepen worden niet als Syntax- of Functional-knoop toegevoegd.
-- Hun slotcentra liggen op minor-gridankers; de renderer bewaakt fysieke afstand en voorkomt overlap.
-
-## Lexicale insertie als voorafgaande layoutactie
-
-Lexicale insertie is een invoer voor de plaatsingsberekening, niet een reparatie na het tekenen van de kernzin.
-
-```text
-structurele host
-+ insertiegroepen
-+ plaatsingsregels
-+ mogelijke Wissels
-→ volledig plaatsingsplan
-→ kernzin invullen
-→ renderen
-```
-
-- Alle insertiegroepen worden vóór de centrale boomplaatsing verzameld en per host geordend.
-- De layout reserveert hun minor-ankers, fysieke boxafstand en eventuele wisselcorridors vooraf.
-- De kernzin levert de lexicale waarden voor structurele bronnen en slots, maar creëert geen nieuwe plaats.
-- Een Wissel gebruikt vooraf bepaalde bron- en doelposities.
-- Play/Groei onthult dezelfde vooraf berekende layout; het verschijnen van een insertie betekent niet dat haar ruimte pas op dat moment ontstaat.
-
-
-### Lineaire zone versus scope
-
-Bij meervoudige middenveldinserties zijn lineaire landingsplaats en semantische scope gescheiden. In `... DE MAN MISSCHIEN WEL VAAK GEBETEN HEEFT` reserveert het plaatsingsplan beide insertiegroepen na het object en vóór het V-CLUSTER. `MISSCHIEN WEL` kan daarbij propositionele scope houden; die scope verplicht geen hoge positie boven de hele VP op de LEX-as.
+`above-S`, `above-VP` en vergelijkbare waarden blijven leesbaar als
+scope-/compatibiliteitsmetadata. Bij actieve LOG-autoriteit zijn zij geen
+plaatsingsactie meer.

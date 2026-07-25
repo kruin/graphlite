@@ -1,93 +1,60 @@
 # HANDOVER_FOR_COLLABORATORS
 
-Overdracht voor OpenGraph Lite Viewer `v2.0.10`.
+Overdracht voor OpenGraph Lite Viewer v2.0.0-rc.23.
+
+## Bronbasis
+
+Deze release neemt de volledige bronset van v1.0.16 over en corrigeert de centrale view-indeling.
 
 ## Niet wijzigen zonder expliciete opdracht
 
 ```text
-Centrale views:  Syntax → Functional
-Assen:            LEX west, SYNT oost, LOG zuid
-Default assen:    LEX + SYNT + LOG zichtbaar
-Topmenu rij 1:    Zin, Bijwoord, Syntax / Functional, Interface, Projecties, LOG-volgorde
-Topmenu rij 2:    NL/EN, LEESMIJ/README, Config
-Raster:           standaard aan
+View-menu:       Syntax → FT
+Projectiekeuze:  Alle → Bron → LEX → SYNT → LOG
+Assen:           LEX west, SYNT oost, LOG zuid
 ```
 
-- LOG is nooit een centrale view.
-- Er is geen Bron-tabblad, algemene Menu-knop, genest submenu of SOV-box in het canvas.
+FT is de tweede centrale view. LOG is uitsluitend de zuidas.
 
-## Responsief layoutcontract
+Bronassen: LEX, SYNT en LOG zijn bij Bron onafhankelijk combineerbaar. De bediening staat buiten het canvas.
 
-- `layoutDensity === "auto"` gebruikt de actuele canvasverhouding, niet alleen een mobile/desktop-boolean.
-- Portrait verkleint `cellX`, vergroot `cellY` en brengt west-/oostas dichter bij de centrale boom.
-- Landscape vergroot `cellX`, verkleint `cellY` en spreidt de assen verder uit.
-- Desktop volgt dezelfde continue curve op basis van de werkelijke vensterverhouding.
-- `stableProjectionViewBox()` en het dynamische raster worden aan de canvasverhouding aangepast.
-- Syntax, Functional en iedere projectiecombinatie gebruiken binnen dezelfde viewport exact hetzelfde profiel.
-- Projectiewissels veranderen x, y, schaal of viewBox niet.
-- Een resize of oriëntatiewissel mag wel één volledige herfit uitvoeren.
+## LOG → LEX-contract
 
-## Plaatsingsplancontract
+Lees vóór plaatsingswijzigingen `projectie-master-spec.md`.
 
-- Verzamel structuur, alle lexicale insertiegroepen, plaatsingsregels, Wissels en actieve projecties vóór de centrale plaatsing.
-- Reserveer minor-ankers, fysieke boxafstand en wisselcorridors vóór het tekenen.
-- De kernzin is invulling van het berekende frame, niet de reeds voltooide layout waarop later inserties worden geplakt.
-- Groei en rendering mogen geen nieuwe positie claimen of de layout herberekenen.
-- Wijzigingen aan inserties vereisen een nieuwe volledige layoutberekening vóór de volgende render.
+```text
+LOG-majors/minors → neutrale LEX-basis → expliciete Wissels → zinsvalidatie
+```
 
-## Configcontract
+- S/O/V zijn majors; bijwoorden zijn minors.
+- Iedere minor vergroot de begrensde majorafstand met één vast slot.
+- LOG is autoriteit voor de neutrale LEX-rij.
+- De voorbeeldzin bepaalt geen layoutcoördinaat.
+- Oude hostvelden zijn alleen scope-/compatibiliteitsmetadata.
 
-- `showGrid` start als `true`.
-- `growthProjectionImmediate` start als `true`.
-- Raster en directe projectiegroei staan onder `Config → Boom → Weergave`.
-- Een bewust opgeslagen keuze blijft na de releasemigratie behouden.
+## Compatibiliteit
+
+Intern schrijft de viewer `central_opn: "ft"`. Invoer met de oude waarde `functional` blijft leesbaar en wordt naar FT gemigreerd. Implementatienamen zoals `functionalNodes` mogen blijven bestaan zolang zij niet als viewnaam aan de gebruiker worden getoond.
 
 ## Werkwijze
 
-1. Lees `VERSION.txt`.
-2. Wijzig app en leidende instructies samen.
-3. Voer `node --check viewer.js` en `check_release.bat` uit.
-4. Maak een zip met exact hetzelfde versienummer.
+1. Werk vanaf de nieuwste volledige projectzip.
+2. Lees `VERSION.txt`.
+3. Wijzig app en leidende instructies samen.
+4. Voer ook `tools/check_log_slot_distance.py` uit.
+5. Voer `check_release.bat` uit.
+6. Maak een zip met exact hetzelfde versienummer als `VERSION.txt`.
 
-## Mobile rastercontract
+## Publiceren
 
-Op compacte fysieke schermen mag `state.lastGridBox` niet via de canvas-aspectratio worden verbreed. Gebruik de werkelijke projectie-extentie. Dit geldt voor Auto, Desktop, Mobiel staand en Mobiel liggend op een telefoon.
-
-## Mobile-landscapecontract
-
-- Gebruik nooit alleen `max-width` om een telefoon in landscape te herkennen.
-- `isActualCompactScreen()` combineert viewportmaat met touch/coarse-pointer.
-- Runtimeklassen `actual-compact-landscape` en `actual-compact-portrait` sturen uitsluitend fysieke schermoptimalisatie.
-- Draaien moet de profielcache wissen en een vertraagde tweede fit uitvoeren.
+Gebruik `publish_checked.bat`. Releasezips en lokale mobile-testbestanden horen niet in de GitHub Pages-root.
 
 
-## Config-overzicht (rc.24)
+## Topmenu v2.0.0-rc.23
 
-- Config opent met een compact sectieoverzicht; uitgebreide instellingen zijn standaard ingeklapt.
-- Secties: Basisweergave, JaN-notatie (TODO), Boom & layout, LEX & bijwoorden, Projecties, Voorbeelden & editors en Geavanceerd.
-- Terugnavigatie gebruikt steeds de vorm `Terug naar: Main` of `Terug naar: Config`.
-- De bestaande save-werkwijze blijft ongewijzigd: `Ja · bewaar config`, `Nee · herstel laatst bewaarde config`, en download van het lokale config-log.
-- JaN is de werknaam voor Just another Notation. TODO: `S:np-VP` (niet `S:NP-VP`); werkvorm `S+ np-VP`; binaire bomen eerst, meertakkigheid later.
+Main toont één topmenubalk met acht zichtbare hoofditems: Zin, Bijwoord, Syntax/FT, Projecties, LOG-volgorde, NL/EN, Help en Config. Er is geen algemene knop `Menu` en er zijn geen geneste submenu’s. Keuze-items openen direct hun eigen brede uitklappaneel.
 
 
-## Functional-compatibiliteit
+## Opslagcontract
 
-- Zichtbare naam: `Functional`.
-- Interne opgeslagen waarde blijft `ft`; oude waarde `functional` blijft leesbaar.
-- Gebruik niet opnieuw de oude afkorting als zichtbare naam.
-
-## Eenvoudige lokale release-installatie
-
-Kopieer de uitgepakte broninhoud rechtstreeks over `C:\git\graphlite`, maar behoud `.git`. Test lokaal en start daarna `publish_checked.bat`. De BAT controleert, vraagt een commitbericht, commit, pusht en opent na een geslaagde push de resetpagina.
-
-## Talen
-
-- Default voor nieuwe installatie: English.
-- Menu: English, Nederlands, Deutsch, Français, Español.
-- Nederlandse voorbeeldzinnen en Nederlandse woordvolgorde blijven taaldata, ongeacht de interfacetaal.
-- Duits/Frans/Spaans gebruiken Engels als technische fallback.
-
-## Lokale Git-update
-
-De actuele workflow gebruikt geen `graphlite-next`, clone, bundle of promotie. Er wordt geen `git pull` of force-push uitgevoerd. Zie `EENVOUDIGE_RELEASE_WERKWIJZE.md`.
-
+Werk bij opslagwijzigingen altijd volgens `OPN_STORAGE_FORMAT.md`. Meng graphdata, documentmetadata en paradata niet opnieuw in één vlak object. `.opn` is leidend; Legacy JSON is alleen compatibiliteit.

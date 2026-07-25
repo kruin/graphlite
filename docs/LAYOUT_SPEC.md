@@ -1,31 +1,17 @@
 
-# Actuele architectuur — plaatsingsplan vóór rendering
+## Actueel contract · v2.0.0-rc.23
 
-De layout krijgt niet alleen de kernstructuur als input. Zij krijgt het volledige plaatsingsprobleem:
+LOG gebruikt vaste major/minor-slots. Een extra minor maakt de LOG-as één
+vaste stap langer en vergroot uitsluitend de relevante majorafstand. De
+volledige LOG-volgorde levert neutrale LEX-doelrijen, maar de projectielijn
+ernaartoe mag nooit orthogonaal worden: iedere bron projecteert eerst exact
+horizontaal naar LEX. Pas langs de LEX-as volgt een Wissel naar de LOG-doelrij;
+topic/V2-Wissels volgen daarna. Een minor verlaagt geen host-subboom.
 
-```text
-structuur
-+ lexicale insertiegroepen
-+ plaatsingsregels
-+ Wissels
-+ actieve projecties
-```
+Onderstaande eerdere LEX-hostregels zijn historische notities en niet
+normatief waar zij hiermee botsen.
 
-De berekening verloopt in deze volgorde:
-
-```text
-1. structurele hosts en subtree-afmetingen bepalen
-2. insertiegroepen per host verzamelen en ordenen
-3. landingsplaatsen, minor-ankers en minimale fysieke afstanden bepalen
-4. gridruimte en Wissel-corridors reserveren
-5. centrale boom in het resterende veld plaatsen
-6. kernzin en lexicale waarden in de berekende posities invullen
-7. projecties, traces en Wisselpaden vastleggen
-8. growthSteps en SVG-renderlagen toekennen
-9. renderen
-```
-
-De renderer is daarmee uitsluitend een teken- en zichtbaarheidslaag. Ook Play/Groei gebruikt de definitieve layout en laat daarvan steeds meer elementen zien. Een growthStep mag nooit nieuwe ruimte reserveren of bestaande coördinaten wijzigen.
+---
 
 ## v4540 - Bijwoorden als externe LEX-slots
 
@@ -369,8 +355,3 @@ Zie ook: `docs/LEX_ADVERB_INSERT_SLOTS.md`.
 ## v4535 - LEX slot 0 boven S
 
 Slot 0 op de LEX-as staat in de gecombineerde Assen-weergave weer boven de centrale S/CLAUSE-root. Bronknopen blijven op hun eigen hoogte; alleen de lokale LEX-systeemslots starten hoger.
-
-
-### Lineaire zone versus scope
-
-Bij meervoudige middenveldinserties zijn lineaire landingsplaats en semantische scope gescheiden. In `... DE MAN MISSCHIEN WEL VAAK GEBETEN HEEFT` reserveert het plaatsingsplan beide insertiegroepen na het object en vóór het V-CLUSTER. `MISSCHIEN WEL` kan daarbij propositionele scope houden; die scope verplicht geen hoge positie boven de hele VP op de LEX-as.

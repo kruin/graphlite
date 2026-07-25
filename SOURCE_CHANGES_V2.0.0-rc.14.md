@@ -1,17 +1,25 @@
-# SOURCE_CHANGES v2.0.0-rc.19
+# Source changes · v2.0.0-rc.14
 
-## Wijzigingen
+## LOG-slotafstand
 
-- Raster/Grid is standaard zichtbaar in Main en aangevinkt onder Config.
-- Configuraties uit oudere releases migreren eenmaal naar zichtbaar raster.
-- Binnen rc.14 kan een gebruiker Raster nog bewust uitzetten en die keuze opslaan.
-- De dynamische rastergrens gebruikt de geometrische unie van de centrale boom en de zichtbare projectie-stippellijnen.
-- Extra rastermarges rondom projectieboxen zijn verwijderd.
-- De stabiele viewBox voor Syntax, FT en alle projectiekeuzes blijft ongewijzigd.
+- `structure-config.html` bevat een normatieve `opengraph-log-config`.
+- `S`, `O` en `V` zijn LOG-majors; bijwoorden zijn LOG-minors.
+- Iedere minor vergroot de afstand tussen de begrenzende majors met één vast
+  slot.
+- De LOG-volgorde bepaalt de neutrale LEX-rijen.
+- De voorbeeldzin valideert de uitkomst en bepaalt de layout niet.
 
-## Niet gewijzigd
+## Viewer
 
-- Syntax is de eerste centrale view; FT de tweede.
-- LOG blijft uitsluitend de zuidas.
-- Alle assen zijn standaard zichtbaar.
-- De dunne lijnhiërarchie blijft behouden.
+- LOG toont majors, minors, slotnummers en actuele majorafstanden.
+- LEX toont de LOG-afgeleide basis vóór topic-/V2-Wissels.
+- De configuratie heeft een expliciete keuze voor het LOG-interval.
+- De vroegere hostkeuze blijft alleen als scope-/compatibiliteitsmetadata.
+- OPN- en Legacy JSON-export bewaren interval, sequentie en afstanden.
+
+## Voorbeelden en tests
+
+- De twee meervoudige bijwoordvoorbeelden annoteren hun minors expliciet als
+  `O-V`.
+- `tools/check_log_slot_distance.py` controleert de afstandsinvariant.
+- `projectie-master-spec.md` is de normatieve specificatie.

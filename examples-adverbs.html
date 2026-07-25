@@ -1,4 +1,105 @@
 <!doctype html>
-<html lang="nl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>GraphLite bijwoordvoorbeelden v4552</title><style>body{font-family:system-ui,-apple-system,Segoe UI,sans-serif;margin:24px;background:#f8fafc;color:#0f172a}main{max-width:1120px;margin:auto}table{border-collapse:collapse;width:100%;background:#fff}th,td{border:1px solid #cbd5e1;padding:8px 10px;text-align:left;vertical-align:top}th{background:#e2e8f0}code{background:#e2e8f0;border-radius:6px;padding:2px 5px}.warn{background:#fff7ed;border-left:4px solid #f97316;padding:10px 12px}a{color:#1d4ed8}</style></head><body>
-<nav class="page-return-nav" aria-label="Terugnavigatie"><a href="index.html?screen=config">← Terug naar: Config</a><a href="index.html">Terug naar: Main</a></nav>
-<main><h1>GraphLite bijwoordvoorbeelden v4552</h1><p>Dit bestand blijft bewust parser-compatibel met de BIJWOORD-dropdown: kolommen zijn <code>id</code>, <code>zin</code>, <code>categorie</code>, <code>default-host</code>, <code>actuele host</code>, <code>markering</code>.</p><p class="warn"><strong>v4552-correctie:</strong> de volledige taalkundige controle staat apart in <a href="examples-adverb-rules-v4552.html?v4552">examples-adverb-rules-v4552.html</a> en <a href="docs/LEX_ADVERB_PLACEMENT_RULES_CHECKED.md?v4552">docs/LEX_ADVERB_PLACEMENT_RULES_CHECKED.md</a>. Let op: <code>niet</code> gebruikt nu een eigen LEX-regel <code>post-object-pre-vcluster</code>: neutraal <code>HOND BIJT MAN NIET</code>; <code>HOND BIJT NIET MAN</code> is gemarkeerd/contrastief. Focuspartikels hebben een focusdoel; graadwoorden vereisen AP/ADV-target.</p><table><thead><tr><th>id</th><th>zin</th><th>categorie</th><th>default-host</th><th>actuele host</th><th>markering</th></tr></thead><tbody><tr><td><code>adv-modal-waarschijnlijk-s</code></td><td>WAARSCHIJNLIJK BIJT HOND MAN</td><td>MODALITEIT</td><td><code>S</code></td><td><code>S</code></td><td>functional:fronted-v2</td></tr><tr><td><code>adv-modal-waarschijnlijk-v</code></td><td>HOND BIJT WAARSCHIJNLIJK MAN</td><td>MODALITEIT</td><td><code>S</code></td><td><code>V</code></td><td>functional:marked-host</td></tr><tr><td><code>adv-modal-misschien-s</code></td><td>MISSCHIEN BIJT HOND MAN</td><td>MODALITEIT</td><td><code>S</code></td><td><code>S</code></td><td>functional:fronted-v2</td></tr><tr><td><code>adv-time-gisteren-s</code></td><td>GISTEREN BEET HOND MAN</td><td>TIJD</td><td><code>VP</code></td><td><code>S</code></td><td>functional:fronted-v2</td></tr><tr><td><code>adv-time-gisteren-vp</code></td><td>HOND BEET GISTEREN MAN</td><td>TIJD</td><td><code>VP</code></td><td><code>VP</code></td><td>functional:time-default</td></tr><tr><td><code>adv-freq-vaak-vp</code></td><td>HOND BIJT VAAK MAN</td><td>FREQUENTIE</td><td><code>VP</code></td><td><code>VP</code></td><td>functional:default-host</td></tr><tr><td><code>adv-freq-vaak-s</code></td><td>VAAK BIJT HOND MAN</td><td>FREQUENTIE</td><td><code>VP</code></td><td><code>S</code></td><td>functional:fronted-v2</td></tr><tr><td><code>adv-place-daar-vp</code></td><td>HOND BIJT DAAR MAN</td><td>PLAATS</td><td><code>VP</code></td><td><code>VP</code></td><td>functional:default-host</td></tr><tr><td><code>adv-place-daar-s</code></td><td>DAAR BIJT HOND MAN</td><td>PLAATS</td><td><code>VP</code></td><td><code>S</code></td><td>functional:fronted-v2</td></tr><tr><td><code>adv-neg-niet-vp</code></td><td>HOND BIJT MAN NIET</td><td>NEGATIE</td><td><code>VP</code></td><td><code>VP</code></td><td>functional:neg-scope-default</td></tr><tr><td><code>adv-neg-niet-np</code></td><td>HOND BIJT NIET MAN MAAR VROUW</td><td>NEGATIE</td><td><code>VP</code></td><td><code>NP</code></td><td>functional:scope-marked</td></tr><tr><td><code>adv-degree-heel-ap</code></td><td>HOND IS HEEL MOOI</td><td>GRAAD</td><td><code>AP</code></td><td><code>AP</code></td><td>functional:degree-default</td></tr><tr><td><code>adv-degree-heel-advmod</code></td><td>VROUW BREIT HEEL HARD TRUI</td><td>GRAAD</td><td><code>AP</code></td><td><code>AP</code></td><td>functional:degree-advmod-needed</td></tr><tr><td><code>adv-manner-hard-vcluster</code></td><td>VROUW HEEFT TRUI HARD GEBREID</td><td>WIJZE</td><td><code>VP</code></td><td><code>V-CLUSTER</code></td><td>functional:manner-default</td></tr><tr><td><code>adv-manner-hard-s</code></td><td>HARD BREIT VROUW TRUI</td><td>WIJZE</td><td><code>VP</code></td><td><code>S</code></td><td>functional:fronted-v2-marked</td></tr><tr><td><code>adv-cause-daarom-s</code></td><td>DAAROM BIJT HOND MAN</td><td>REDEN_OORZAAK</td><td><code>S</code></td><td><code>S</code></td><td>functional:fronted-v2</td></tr><tr><td><code>adv-cause-daardoor-vp</code></td><td>HOND BIJT DAARDOOR MAN</td><td>REDEN_OORZAAK</td><td><code>VP</code></td><td><code>VP</code></td><td>functional:cause-default</td></tr><tr><td><code>adv-cond-anders-s</code></td><td>ANDERS BIJT HOND MAN</td><td>VOORWAARDE_GEVOLG</td><td><code>S</code></td><td><code>S</code></td><td>functional:fronted-v2</td></tr><tr><td><code>adv-cond-anders-vp</code></td><td>HOND BIJT ANDERS</td><td>VOORWAARDE_GEVOLG</td><td><code>S</code></td><td><code>VP</code></td><td>functional:reclassified-manner</td></tr><tr><td><code>adv-focus-alleen-np</code></td><td>ALLEEN HOND BIJT MAN</td><td>FOCUSPARTIKEL</td><td><code>FOCUS_TARGET</code></td><td><code>NP</code></td><td>functional:focus-default</td></tr><tr><td><code>adv-focus-ook-np</code></td><td>OOK HOND BIJT MAN</td><td>FOCUSPARTIKEL</td><td><code>FOCUS_TARGET</code></td><td><code>NP</code></td><td>functional:focus-default</td></tr></tbody></table><h2>Notatie</h2><pre>LEX-ADV[word=NIET, class=NEGATIE, axis=LEX, defaultHost=VP, host=VP, linear=post-object-pre-vcluster, source=external, marking=functional:neg-scope-default]</pre><h2>Volledige regels</h2><p>Machineleesbaar: <code>samples/adverb_placement_rules_v4552.json</code> en <code>samples/adverb_word_rules_v4552.json</code>.</p></main></body></html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GraphLite bijwoordvoorbeelden v4552</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, sans-serif; margin: 24px; background: #f8fafc; color: #0f172a; }
+    main { max-width: 1120px; margin: auto; }
+    table { border-collapse: collapse; width: 100%; background: #fff; }
+    th, td { border: 1px solid #cbd5e1; padding: 8px 10px; text-align: left; vertical-align: top; }
+    th { background: #e2e8f0; }
+    code { background: #e2e8f0; border-radius: 6px; padding: 2px 5px; }
+    .warn { background: #fff7ed; border-left: 4px solid #f97316; padding: 10px 12px; }
+    a { color: #1d4ed8; }
+  </style>
+</head>
+<body>
+<main>
+  <h1>GraphLite bijwoordvoorbeelden v4552</h1>
+  <p>
+    Dit bestand blijft parser-compatibel met de BIJWOORD-dropdown. De zes
+    kolommen zijn <code>id</code>, <code>zin</code>, <code>categorie</code>,
+    <code>default-host</code>, <code>actuele host</code> en
+    <code>markering</code>. Bij een meerwoordige bepaling bevat
+    <code>data-word</code> de volledige zichtbare groep.
+  </p>
+  <p>
+    <strong>Beperkte talige uitbreiding:</strong> naast enkelvoudige
+    bijwoorden zijn vier groepen opgenomen: <code>MISSCHIEN WEL</code>,
+    <code>AF EN TOE</code>, <code>OP DIT MOMENT</code> en
+    <code>MET VEEL AANDACHT</code>. Iedere groep blijft voorlopig één
+    LOG-minor; de interne woordstructuur wordt nog niet uitgewerkt.
+  </p>
+  <p class="warn">
+    <strong>v4552-correctie:</strong> de volledige taalkundige controle staat
+    apart in
+    <a href="examples-adverb-rules-v4552.html?v4552">examples-adverb-rules-v4552.html</a>
+    en
+    <a href="docs/LEX_ADVERB_PLACEMENT_RULES_CHECKED.md?v4552">docs/LEX_ADVERB_PLACEMENT_RULES_CHECKED.md</a>.
+    <code>niet</code> gebruikt een eigen LEX-regel
+    <code>post-object-pre-vcluster</code>. Focuspartikels hebben een
+    focusdoel; graadwoorden vereisen AP/ADV-target.
+  </p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>id</th>
+        <th>zin</th>
+        <th>categorie</th>
+        <th>default-host</th>
+        <th>actuele host</th>
+        <th>markering</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td><code>adv-modal-waarschijnlijk-s</code></td><td>WAARSCHIJNLIJK BIJT HOND MAN</td><td>MODALITEIT</td><td><code>S</code></td><td><code>S</code></td><td>functional:fronted-v2</td></tr>
+      <tr><td><code>adv-modal-waarschijnlijk-v</code></td><td>HOND BIJT WAARSCHIJNLIJK MAN</td><td>MODALITEIT</td><td><code>S</code></td><td><code>V</code></td><td>functional:marked-host</td></tr>
+      <tr><td><code>adv-modal-misschien-s</code></td><td>MISSCHIEN BIJT HOND MAN</td><td>MODALITEIT</td><td><code>S</code></td><td><code>S</code></td><td>functional:fronted-v2</td></tr>
+      <tr data-word="MISSCHIEN WEL"><td><code>adv-modal-misschien-wel-vcluster</code></td><td>DE HOND HEEFT DE MAN MISSCHIEN WEL GEBETEN</td><td>MODALITEIT</td><td><code>V-CLUSTER</code></td><td><code>V-CLUSTER</code></td><td>functional:modal-group-default</td></tr>
+
+      <tr><td><code>adv-time-gisteren-s</code></td><td>GISTEREN BEET HOND MAN</td><td>TIJD</td><td><code>VP</code></td><td><code>S</code></td><td>functional:fronted-v2</td></tr>
+      <tr><td><code>adv-time-gisteren-vp</code></td><td>HOND BEET GISTEREN MAN</td><td>TIJD</td><td><code>VP</code></td><td><code>VP</code></td><td>functional:time-default</td></tr>
+      <tr data-word="OP DIT MOMENT"><td><code>adv-time-op-dit-moment-vp</code></td><td>DE HOND BIJT OP DIT MOMENT DE MAN</td><td>TIJD</td><td><code>VP</code></td><td><code>VP</code></td><td>functional:time-phrase-default</td></tr>
+
+      <tr><td><code>adv-freq-vaak-vp</code></td><td>HOND BIJT VAAK MAN</td><td>FREQUENTIE</td><td><code>VP</code></td><td><code>VP</code></td><td>functional:default-host</td></tr>
+      <tr><td><code>adv-freq-vaak-s</code></td><td>VAAK BIJT HOND MAN</td><td>FREQUENTIE</td><td><code>VP</code></td><td><code>S</code></td><td>functional:fronted-v2</td></tr>
+      <tr data-word="AF EN TOE"><td><code>adv-freq-af-en-toe-vcluster</code></td><td>DE HOND HEEFT DE MAN AF EN TOE GEBETEN</td><td>FREQUENTIE</td><td><code>V-CLUSTER</code></td><td><code>V-CLUSTER</code></td><td>functional:frequency-group-default</td></tr>
+
+      <tr><td><code>adv-place-daar-vp</code></td><td>HOND BIJT DAAR MAN</td><td>PLAATS</td><td><code>VP</code></td><td><code>VP</code></td><td>functional:default-host</td></tr>
+      <tr><td><code>adv-place-daar-s</code></td><td>DAAR BIJT HOND MAN</td><td>PLAATS</td><td><code>VP</code></td><td><code>S</code></td><td>functional:fronted-v2</td></tr>
+
+      <tr><td><code>adv-neg-niet-vp</code></td><td>HOND BIJT MAN NIET</td><td>NEGATIE</td><td><code>VP</code></td><td><code>VP</code></td><td>functional:neg-scope-default</td></tr>
+      <tr><td><code>adv-neg-niet-np</code></td><td>HOND BIJT NIET MAN MAAR VROUW</td><td>NEGATIE</td><td><code>VP</code></td><td><code>NP</code></td><td>functional:scope-marked</td></tr>
+
+      <tr><td><code>adv-degree-heel-ap</code></td><td>HOND IS HEEL MOOI</td><td>GRAAD</td><td><code>AP</code></td><td><code>AP</code></td><td>functional:degree-default</td></tr>
+      <tr><td><code>adv-degree-heel-advmod</code></td><td>VROUW BREIT HEEL HARD TRUI</td><td>GRAAD</td><td><code>AP</code></td><td><code>AP</code></td><td>functional:degree-advmod-needed</td></tr>
+
+      <tr><td><code>adv-manner-hard-vcluster</code></td><td>VROUW HEEFT TRUI HARD GEBREID</td><td>WIJZE</td><td><code>VP</code></td><td><code>V-CLUSTER</code></td><td>functional:manner-default</td></tr>
+      <tr><td><code>adv-manner-hard-s</code></td><td>HARD BREIT VROUW TRUI</td><td>WIJZE</td><td><code>VP</code></td><td><code>S</code></td><td>functional:fronted-v2-marked</td></tr>
+      <tr data-word="MET VEEL AANDACHT"><td><code>adv-manner-met-veel-aandacht-vcluster</code></td><td>VROUW HEEFT TRUI MET VEEL AANDACHT GEBREID</td><td>WIJZE</td><td><code>V-CLUSTER</code></td><td><code>V-CLUSTER</code></td><td>functional:manner-phrase-default</td></tr>
+
+      <tr><td><code>adv-cause-daarom-s</code></td><td>DAAROM BIJT HOND MAN</td><td>REDEN_OORZAAK</td><td><code>S</code></td><td><code>S</code></td><td>functional:fronted-v2</td></tr>
+      <tr><td><code>adv-cause-daardoor-vp</code></td><td>HOND BIJT DAARDOOR MAN</td><td>REDEN_OORZAAK</td><td><code>VP</code></td><td><code>VP</code></td><td>functional:cause-default</td></tr>
+
+      <tr><td><code>adv-cond-anders-s</code></td><td>ANDERS BIJT HOND MAN</td><td>VOORWAARDE_GEVOLG</td><td><code>S</code></td><td><code>S</code></td><td>functional:fronted-v2</td></tr>
+      <tr><td><code>adv-cond-anders-vp</code></td><td>HOND BIJT ANDERS</td><td>VOORWAARDE_GEVOLG</td><td><code>S</code></td><td><code>VP</code></td><td>functional:reclassified-manner</td></tr>
+
+      <tr><td><code>adv-focus-alleen-np</code></td><td>ALLEEN HOND BIJT MAN</td><td>FOCUSPARTIKEL</td><td><code>FOCUS_TARGET</code></td><td><code>NP</code></td><td>functional:focus-default</td></tr>
+      <tr><td><code>adv-focus-ook-np</code></td><td>OOK HOND BIJT MAN</td><td>FOCUSPARTIKEL</td><td><code>FOCUS_TARGET</code></td><td><code>NP</code></td><td>functional:focus-default</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Notatie</h2>
+  <pre>LEX-ADV[word=NIET, class=NEGATIE, axis=LEX, defaultHost=VP, host=VP, linear=post-object-pre-vcluster, source=external, marking=functional:neg-scope-default]</pre>
+  <h2>Volledige regels</h2>
+  <p>
+    Machineleesbaar:
+    <code>samples/adverb_placement_rules_v4552.json</code> en
+    <code>samples/adverb_word_rules_v4552.json</code>.
+  </p>
+</main>
+</body>
+</html>

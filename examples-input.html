@@ -21,15 +21,11 @@
     .lex-sequence { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; padding: 0; margin: 10px 0; }
     .lex-token { border: 1px solid #cbd5e1; background: #f8fafc; border-radius: 999px; padding: 6px 10px; font-weight: 700; }
     .lex-token.local { border-style: dashed; color: #9a3412; }
-    .lex-insertions { margin: 10px 0 0; padding: 10px 14px 10px 34px; border-left: 4px solid #2563eb; background: #eff6ff; border-radius: 10px; }
-    .lex-insertion { margin: 4px 0; font-weight: 800; }
     button, .button-link { border: 1px solid #94a3b8; background: #fff; border-radius: 10px; padding: 8px 12px; font-weight: 800; cursor: pointer; color: #0f172a; text-decoration: none; display: inline-flex; }
     code { background: #e2e8f0; border-radius: 6px; padding: 2px 5px; }
   </style>
 </head>
 <body>
-<nav class="page-return-nav" aria-label="Terugnavigatie"><a href="index.html?screen=config">← Terug naar: Config</a><a href="index.html">Terug naar: Main</a></nav>
-
   <main>
     <h1>OpenGraph voorbeeldzinnen · HTML-input</h1>
     <p class="note">Deze file is de leesbare inputbron voor voorbeeldzinnen. <strong>Vet</strong> markeert subject/agens; <em>cursief</em> markeert object/patiens. Oudere korte voorbeelden zijn meestal lidwoordloos; nieuwere voorbeelden kunnen <code>DE HOND</code> en <code>DE MAN</code> tonen terwijl ze intern aan <code>lexeme=hond</code> en <code>lexeme=man</code> gekoppeld blijven. De lexicale vulling en thematische rollen komen uit <a class="button-link" href="lexicon-config.html?v4540">lexicon-config.html</a>. Voeg voorbeeldzinnen toe via <a class="button-link" href="examples-editor.html?v4540">examples-editor.html</a>; beheer lexemen via <a class="button-link" href="lexicon-editor.html?v4540">lexicon-editor.html</a>.</p>
@@ -171,7 +167,7 @@
 
       <article class="example-input" data-id="de-hond-heeft-de-man-misschien-wel-vaak-gebeten" data-phase="Meervoudige LEX-insertie" data-lex-rule="hoofdzininvariant" data-predicate="GEBETEN">
         <p class="sentence" title="MISSCHIEN WEL is één insertiegroep; VAAK is een tweede insertie"><strong data-role="subject" data-thematic-role="agens">DE HOND</strong> HEEFT <em data-role="object" data-thematic-role="patiens">DE MAN</em> MISSCHIEN WEL VAAK GEBETEN</p>
-        <p class="meta">hoofdzin · perfectum · twee zelfstandige LEX-inserties na het object en vóór V-CLUSTER · MISSCHIEN WEL telt als één meerwoordige insertiegroep · VAAK krijgt een tweede slot · slotcentra liggen op minor-posities met één volledige cel tussenruimte</p>
+        <p class="meta">hoofdzin · perfectum · twee zelfstandige LEX-inserties · de voorbeeldtekst valideert alleen de woorden · de LOG-config plaatst MODALITEIT tussen S en O en FREQUENTIE tussen O en V</p>
         <ol class="lex-sequence" aria-label="Structurele LEX-bronnen zonder externe inserties">
           <li class="lex-token" data-id="subject-hond" data-source="subject" data-role="subject" data-thematic-role="agens" data-lexeme="hond"><strong data-role="subject" data-thematic-role="agens">DE HOND</strong></li>
           <li class="lex-token" data-id="pv-heeft" data-source="pv" data-role="aux" data-lexeme="heeft">HEEFT</li>
@@ -179,14 +175,14 @@
           <li class="lex-token" data-id="vdw-bijt" data-source="vdw" data-role="participle" data-lexeme="bijt">GEBETEN</li>
         </ol>
         <ol class="lex-insertions" aria-label="Externe lexicale insertiegroepen">
-          <li class="lex-insertion" data-id="misschien-wel" data-text="MISSCHIEN WEL" data-group="modal-group" data-category="MODALITEIT" data-default-host="V-CLUSTER" data-host="V-CLUSTER" data-linear="post-object-pre-vcluster" data-order="1" data-scope="propositie">MISSCHIEN WEL — één groep, na object en vóór V-CLUSTER</li>
-          <li class="lex-insertion" data-id="vaak" data-text="VAAK" data-group="frequency-group" data-category="FREQUENTIE" data-default-host="V-CLUSTER" data-host="V-CLUSTER" data-linear="post-object-pre-vcluster" data-order="2" data-scope="gebeurtenis">VAAK — tweede groep, na object en vóór V-CLUSTER</li>
+          <li class="lex-insertion" data-id="misschien-wel" data-text="MISSCHIEN WEL" data-group="modal-group" data-category="MODALITEIT" data-default-host="V-CLUSTER" data-host="V-CLUSTER" data-linear="post-object-pre-vcluster" data-order="1" data-scope="propositie">MISSCHIEN WEL — MODALITEIT; LOG-config → S-O</li>
+          <li class="lex-insertion" data-id="vaak" data-text="VAAK" data-group="frequency-group" data-category="FREQUENTIE" data-default-host="V-CLUSTER" data-host="V-CLUSTER" data-linear="post-object-pre-vcluster" data-order="2" data-scope="gebeurtenis">VAAK — FREQUENTIE; LOG-config → O-V</li>
         </ol>
       </article>
 
       <article class="example-input" data-id="omdat-de-hond-de-man-misschien-wel-vaak-gebeten-heeft" data-phase="Meervoudige LEX-insertie · bijzin" data-lex-rule="bijzin-omdat" data-predicate="GEBETEN">
         <p class="sentence" title="Bijzin met twee externe insertiegroepen">OMDAT <strong data-role="subject" data-thematic-role="agens">DE HOND</strong> <em data-role="object" data-thematic-role="patiens">DE MAN</em> MISSCHIEN WEL VAAK GEBETEN HEEFT</p>
-        <p class="meta">omdat-bijzin · Comp in slot 0 · twee zelfstandige LEX-inserties na het object en vóór V-CLUSTER · MISSCHIEN WEL blijft één groep · VAAK blijft een afzonderlijke groep</p>
+        <p class="meta">omdat-bijzin · Comp in slot 0 · twee zelfstandige LEX-inserties · de voorbeeldtekst valideert alleen de woorden · de LOG-config plaatst MODALITEIT tussen S en O en FREQUENTIE tussen O en V</p>
         <ol class="lex-sequence" aria-label="Structurele LEX-bronnen zonder externe inserties">
           <li class="lex-token local" data-id="omdat" data-slot="comp" data-lexeme="omdat">OMDAT</li>
           <li class="lex-token" data-id="subject-hond" data-source="subject" data-role="subject" data-thematic-role="agens" data-lexeme="hond"><strong data-role="subject" data-thematic-role="agens">DE HOND</strong></li>
@@ -195,8 +191,8 @@
           <li class="lex-token" data-id="pv-heeft" data-source="pv" data-role="aux" data-lexeme="heeft">HEEFT</li>
         </ol>
         <ol class="lex-insertions" aria-label="Externe lexicale insertiegroepen">
-          <li class="lex-insertion" data-id="misschien-wel" data-text="MISSCHIEN WEL" data-group="modal-group" data-category="MODALITEIT" data-default-host="V-CLUSTER" data-host="V-CLUSTER" data-linear="post-object-pre-vcluster" data-order="1" data-scope="propositie">MISSCHIEN WEL — één groep, na object en vóór V-CLUSTER</li>
-          <li class="lex-insertion" data-id="vaak" data-text="VAAK" data-group="frequency-group" data-category="FREQUENTIE" data-default-host="V-CLUSTER" data-host="V-CLUSTER" data-linear="post-object-pre-vcluster" data-order="2" data-scope="gebeurtenis">VAAK — tweede groep, na object en vóór V-CLUSTER</li>
+          <li class="lex-insertion" data-id="misschien-wel" data-text="MISSCHIEN WEL" data-group="modal-group" data-category="MODALITEIT" data-default-host="V-CLUSTER" data-host="V-CLUSTER" data-linear="post-object-pre-vcluster" data-order="1" data-scope="propositie">MISSCHIEN WEL — MODALITEIT; LOG-config → S-O</li>
+          <li class="lex-insertion" data-id="vaak" data-text="VAAK" data-group="frequency-group" data-category="FREQUENTIE" data-default-host="V-CLUSTER" data-host="V-CLUSTER" data-linear="post-object-pre-vcluster" data-order="2" data-scope="gebeurtenis">VAAK — FREQUENTIE; LOG-config → O-V</li>
         </ol>
       </article>
 

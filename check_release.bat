@@ -14,4 +14,22 @@ if errorlevel 1 (
   exit /b 1
 )
 python tools\check_release.py
+if errorlevel 1 exit /b 1
+python tools\check_examples_roundtrip.py
+if errorlevel 1 exit /b 1
+python tools\check_log_slot_distance.py
+if errorlevel 1 exit /b 1
+python tools\check_lex_horizontal_projection.py
+if errorlevel 1 exit /b 1
+python tools\check_projection_cleanup.py
+if errorlevel 1 exit /b 1
+python tools\check_config_tabs_and_menus.py
+if errorlevel 1 exit /b 1
+python tools\check_desktop_max_view.py
+if errorlevel 1 exit /b 1
+python tools\check_social_and_linguistic_export.py
+if errorlevel 1 exit /b 1
+python tools\check_play_reverse.py
+if errorlevel 1 exit /b 1
+python tools\check_opn_storage.py samples\hond-bijt-man.v1.opn
 exit /b %errorlevel%

@@ -1,17 +1,39 @@
-# SOURCE_CHANGES v2.0.0-rc.23
+# Source changes · v2.0.0-rc.23
 
-## Interface
+## Eindlaag niet langer blijvend ontgrendeld
 
-- Topmenu-item `Help` hernoemd naar `LEESMIJ` in de Nederlandse interface.
-- Hetzelfde item heet `README` in de Engelse interface.
-- De ingebouwde documentatiekoppen en Config-koppeling gebruiken dezelfde termen.
+`setGrowthStep()` behandelde `projectionBlockUnlocked` als een blijvende vlag:
+op de laatste stap werd zij `true`, maar bij teruggaan pas op stap nul weer
+`false`. Daardoor tekende `drawAxes()` tijdens alle min-stappen de volledige
+eindlaag en leek Play niet omkeerbaar.
 
-## README / LEESMIJ
+De vlag wordt nu bij iedere stap opnieuw afgeleid:
 
-Nieuwe TODO-sectie toegevoegd:
+```text
+projectionBlockUnlocked = (growthStep == laatste stap)
+```
 
-- niet-binaire, meertakkige bomen;
-- JAN: `S → NP VP`;
-- flip van het verbale cluster: `heeft gebeten` ↔ `gebeten heeft`.
+Bij de eerste min-stap wordt de eindlaag dus direct gesloten. Daarna gebruikt
+de bestaande `visibleAt()`-logica dezelfde stapgrenzen achteruit.
 
-De TODO staat zowel in `README.md` als in de ingebouwde LEESMIJ/README-weergave.
+## Reverse-volgorde
+
+De zichtbare afbraak is:
+
+1. eindprojecties en SYNT-paneel;
+2. LEX-Wissels, één voor één;
+3. horizontale LEX-inhoud;
+4. gereserveerde LEX-ruimte;
+5. LOG-as;
+6. centrale boom, knoop voor knoop.
+
+Hoofdvenster, Config, mobiel en toetsenbord delen `setGrowthStep()` en krijgen
+daarom hetzelfde gedrag.
+
+## Controle
+
+- `tools/check_play_reverse.py` verbiedt de oude blijvende vlaglogica en
+  bewaakt de renderfasevolgorde.
+- De DOM-rendertest bouwt Play volledig op, klikt één keer terug en controleert
+  dat SYNT meteen weg is. Daarna controleert zij achtereenvolgens fase 3/3,
+  2/3, 1/3 en het verdwijnen van LOG bij terugkeer naar de boom.

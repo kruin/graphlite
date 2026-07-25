@@ -378,6 +378,13 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
   stroke-width: 1.65;
   vector-effect: non-scaling-stroke;
 }
+.logical-minor-box {
+  fill: color-mix(in srgb, var(--log), var(--panel) 86%);
+  stroke-dasharray: 6 3;
+}
+.logical-major-box {
+  fill: color-mix(in srgb, var(--panel), var(--bg) 18%);
+}
 .logical-order-label,
 .logical-order-sub {
   text-anchor: middle;
@@ -557,6 +564,19 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
   font-weight: 900;
   letter-spacing: .04em;
 }
+.graph-sentence-box {
+  fill: color-mix(in srgb, var(--panel), #ffffff 12%);
+  stroke: color-mix(in srgb, var(--text), var(--line) 70%);
+  stroke-width: 1.1;
+  vector-effect: non-scaling-stroke;
+}
+.graph-sentence-text {
+  fill: var(--text);
+  font-size: calc(18px * var(--og-font-scale));
+  font-weight: 950;
+  letter-spacing: .025em;
+  text-anchor: middle;
+}
 .lex-axis-line {
   stroke: var(--lex);
   stroke-width: 4;
@@ -581,6 +601,18 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
 .lex-free-slot {
   stroke-dasharray: 8 5;
   fill: #fff7ed;
+}
+.lex-space-reservation {
+  fill: color-mix(in srgb, var(--lex), transparent 84%);
+  stroke: none;
+  pointer-events: none;
+}
+.lex-space-reservation-cap {
+  stroke: var(--lex);
+  stroke-width: 1.4;
+  opacity: .58;
+  vector-effect: non-scaling-stroke;
+  pointer-events: none;
 }
 .comp-slot {
   stroke: #f97316;
@@ -778,21 +810,33 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
   stroke-width: 2.8;
   fill: #dbeafe;
 }
-.lex-trace-slot {
-  fill: #f8fafc;
+.lex-trace-tick {
   stroke: #94a3b8;
-  stroke-width: 1.6;
+  stroke-width: 1.4;
   stroke-dasharray: 4 4;
   vector-effect: non-scaling-stroke;
 }
 .lex-trace-label {
   fill: #64748b;
-  font-size: calc(15px * var(--og-font-scale));
-  font-weight: 950;
-  text-anchor: middle;
+  font-size: calc(12px * var(--og-font-scale));
+  font-weight: 850;
+  text-anchor: end;
 }
-.trace-caption {
-  fill: #64748b;
+.lex-trace-marker {
+  pointer-events: none;
+}
+.lex-wissel-movement {
+  pointer-events: none;
+}
+.lex-wissel-step-label {
+  fill: #1e3a8a;
+  font-size: calc(10px * var(--og-font-scale));
+  font-weight: 900;
+  paint-order: stroke;
+  stroke: var(--panel);
+  stroke-width: 3px;
+  stroke-linejoin: round;
+  text-anchor: middle;
 }
 .lex-wissel-line {
   stroke: #1d4ed8;
@@ -2676,6 +2720,154 @@ body.pane-split-dragging * {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+/* v2.0.0-rc.20: Config is divided into focused tabs; MAX is the first view. */
+body.config-screen-active .side-panel {
+  display: block !important;
+}
+body.config-screen-active .config-tab-list {
+  display: flex;
+  align-items: center;
+  gap: .42rem;
+  width: 100%;
+  margin: 0 0 .8rem;
+  padding: .36rem;
+  overflow-x: auto;
+  box-sizing: border-box;
+  border: 1px solid var(--line);
+  border-radius: .9rem;
+  background: color-mix(in srgb, var(--panel), var(--bg) 12%);
+  box-shadow: var(--shadow-soft);
+}
+body.config-screen-active .config-tab-button {
+  flex: 0 0 auto;
+  min-height: 2.55rem;
+  padding: .45rem .9rem;
+  border: 1px solid var(--line);
+  border-radius: .68rem;
+  background: var(--panel);
+  color: var(--text);
+  font-size: .94rem;
+  font-weight: 900;
+  cursor: pointer;
+}
+body.config-screen-active .config-tab-button.active,
+body.config-screen-active .config-tab-button[aria-selected="true"] {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent), var(--panel) 82%);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent), transparent 56%);
+}
+body.config-screen-active .config-tab-panel[hidden] {
+  display: none !important;
+}
+body.config-screen-active .config-tab-panel.active {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 28rem), 1fr));
+  gap: .8rem;
+  width: 100%;
+  align-items: start;
+}
+body.config-screen-active .config-tab-panel > .panel-card {
+  display: block !important;
+  grid-column: auto !important;
+  width: auto !important;
+  min-width: 0 !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  overflow: visible !important;
+}
+body.config-screen-active [data-config-tab-panel="view"] > [data-config-card="tree"],
+body.config-screen-active [data-config-card="log-settings"],
+body.config-screen-active [data-config-card="advanced"] {
+  grid-column: 1 / -1 !important;
+}
+.config-max-callout {
+  display: flex;
+  align-items: center;
+  gap: .7rem;
+  margin: .15rem 0 .7rem;
+  padding: .7rem .8rem;
+  border: 1px solid color-mix(in srgb, var(--accent), var(--line) 42%);
+  border-radius: .78rem;
+  background: color-mix(in srgb, var(--accent), var(--panel) 88%);
+  color: var(--text);
+  line-height: 1.4;
+}
+.config-max-badge {
+  flex: 0 0 auto;
+  padding: .28rem .52rem;
+  border-radius: .52rem;
+  background: var(--accent);
+  color: var(--accent-contrast);
+  font-size: .9rem;
+  letter-spacing: .05em;
+}
+.config-primary-view-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: .55rem;
+  margin-bottom: .75rem;
+}
+body.config-screen-active .config-primary-view-grid .field {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: .3rem;
+  align-content: start;
+  min-width: 0;
+  padding: .58rem;
+  border: 1px solid var(--line);
+  border-radius: .72rem;
+  background: color-mix(in srgb, var(--panel), var(--bg) 15%);
+}
+body.config-screen-active .config-primary-view-grid .field span {
+  min-width: 0 !important;
+  white-space: normal !important;
+  font-weight: 900;
+}
+body.config-screen-active .config-primary-view-grid select {
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 2.55rem;
+  font-weight: 850;
+}
+body.config-screen-active #layoutDensitySelect,
+body.config-screen-active #viewFitSelect {
+  border-color: color-mix(in srgb, var(--accent), var(--line) 28%);
+  background: color-mix(in srgb, var(--accent), var(--panel) 92%);
+}
+body.config-screen-active .config-file-settings-card .config-save-field {
+  margin: 0;
+}
+@media (max-width: 760px) {
+  .config-primary-view-grid {
+    grid-template-columns: 1fr;
+  }
+  body.config-screen-active .config-tab-button {
+    min-height: 2.35rem;
+    padding-inline: .7rem;
+    font-size: .84rem;
+  }
+  .config-max-callout {
+    align-items: flex-start;
+  }
+}
+
+/* Open top-menu panels must paint above the Play bar and above later siblings. */
+body.main-screen-active .main-topbar {
+  z-index: 2000 !important;
+}
+body.main-screen-active .top-menu-item[open] {
+  z-index: 2200 !important;
+}
+body.main-screen-active .top-menu-item[open] .top-menu-popover {
+  z-index: 2210 !important;
+  opacity: 1 !important;
+  color: var(--text) !important;
+}
+body.main-screen-active .top-menu-item[open] .main-menu-option-list {
+  display: grid !important;
+}
 body.portrait-grid-first .side-panel .lex-extension-field label {
   font-size: .66rem !important;
 }
@@ -3968,6 +4160,34 @@ body.help-screen-active .help-screen {
   background: var(--accent);
   border-color: var(--accent);
   color: var(--accent-contrast);
+}
+
+/* rc.22: zelfstandige graph-export en LinkedIn-uitvoer in Bestanden. */
+.graph-export-card {
+  border-color: color-mix(in srgb, var(--accent), var(--line) 58%);
+}
+.graph-export-actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: stretch;
+  gap: .55rem;
+}
+.graph-export-actions > button {
+  min-height: 2.65rem;
+  white-space: normal;
+}
+.export-status {
+  min-height: 2.6em;
+  margin-top: .62rem;
+}
+.export-status.is-error {
+  color: #a61b1b;
+  font-weight: 750;
+}
+@media (max-width: 720px) {
+  .graph-export-actions {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* v4540: bijwoorden blijven op de LEX-as; hostbox is alleen hoogteanker. */
@@ -5293,7 +5513,7 @@ body.viewport-mobile-landscape-test.main-screen-active #graphSvg {
   max-height: 100% !important;
 }
 
-/* v2.0.0-rc.22: View-menu bevat Syntax als eerste view en Functional als tweede view; LOG blijft de zuidas. */
+/* v2.0.0-rc.14: View-menu bevat Syntax als eerste view en FT als tweede view; LOG blijft de zuidas. */
 .main-view-field {
   display: flex;
   align-items: center;
@@ -5706,9 +5926,16 @@ body.main-screen-active .logical-order-box {
   fill: color-mix(in srgb, var(--panel), var(--log) 8%) !important;
 }
 
-/* v1.0.16: Help links/rechts, tekst rechts, carouselruimte per item onder de tekst. */
+/* rc.18: README links/rechts. De specifieke gridregel herstelt het directe
+   rechter tekstpaneel dat anders door de algemene flexregel werd overschreven. */
 body.help-screen-active .help-screen {
   overflow: hidden !important;
+}
+body.help-screen-active .help-screen.help-tree-screen {
+  display: grid !important;
+  grid-template-columns: minmax(13rem, 17rem) minmax(0, 1fr) !important;
+  grid-template-rows: minmax(0, 1fr) !important;
+  align-items: stretch !important;
 }
 .help-tree-screen {
   grid-template-columns: minmax(13rem, 17rem) minmax(0, 1fr) !important;
@@ -5743,9 +5970,106 @@ body.help-screen-active .help-screen {
   text-transform: uppercase;
   letter-spacing: .055em;
 }
+.readme-intro-panel {
+  max-width: 68rem;
+}
+.readme-intro-panel h4 {
+  margin: 1rem 0 .35rem;
+  color: var(--text);
+  font-size: 1.03rem;
+}
+.readme-intro-panel a {
+  color: var(--accent);
+  font-weight: 750;
+  text-underline-offset: .16em;
+}
+.readme-query-note {
+  font-size: .88rem !important;
+  font-style: italic;
+}
+.readme-tree-carousel {
+  width: min(100%, 64rem);
+  margin-top: 1.25rem;
+  border: 1px solid var(--line);
+  border-radius: 1.1rem;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--panel), var(--bg) 18%);
+  box-shadow: 0 18px 44px rgba(15, 23, 42, .10);
+}
+.readme-carousel-viewport {
+  aspect-ratio: 16 / 10;
+  min-height: 20rem;
+}
+.readme-carousel-slide {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  height: 100%;
+  margin: 0;
+}
+.readme-carousel-slide[hidden] {
+  display: none !important;
+}
+.readme-carousel-slide img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  object-fit: contain;
+  background: #f8fafc;
+}
+.readme-carousel-slide figcaption {
+  min-height: 3rem;
+  padding: .65rem .85rem;
+  border-top: 1px solid var(--line);
+  background: color-mix(in srgb, var(--panel), var(--bg) 9%);
+  color: var(--muted);
+  line-height: 1.4;
+}
+.readme-carousel-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .7rem;
+  padding: .55rem .75rem;
+  border-top: 1px solid var(--line);
+}
+.readme-carousel-controls[hidden] {
+  display: none !important;
+}
+.readme-carousel-controls > button {
+  min-width: 2.4rem;
+  min-height: 2.1rem;
+  border: 1px solid var(--line);
+  border-radius: .65rem;
+  background: var(--panel);
+  color: var(--text);
+  cursor: pointer;
+}
+.readme-carousel-dots {
+  display: flex;
+  align-items: center;
+  gap: .38rem;
+}
+.readme-carousel-dots button {
+  width: .72rem;
+  height: .72rem;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--muted), transparent 52%);
+  cursor: pointer;
+}
+.readme-carousel-dots button.is-active {
+  background: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent), transparent 82%);
+}
 @media (max-width: 860px) {
   body.help-screen-active .help-screen {
     overflow: hidden !important;
+  }
+  body.help-screen-active .help-screen.help-tree-screen {
+    display: grid !important;
+    grid-template-columns: minmax(8.5rem, 36vw) minmax(0, 1fr) !important;
   }
   .help-tree-screen {
     grid-template-columns: minmax(8.5rem, 36vw) minmax(0, 1fr) !important;
@@ -5784,9 +6108,17 @@ body.help-screen-active .help-screen {
     min-height: 8.5rem !important;
     aspect-ratio: 4 / 3 !important;
   }
+  .readme-carousel-viewport {
+    min-height: 11rem;
+    aspect-ratio: 4 / 3;
+  }
+  .readme-carousel-slide figcaption {
+    padding: .5rem .6rem;
+    font-size: .78rem;
+  }
 }
 
-/* v2.0.0-rc.22: vaste Play-balkhoogte voor alle projectie-views.
+/* v2.0.0-rc.14: vaste Play-balkhoogte voor alle projectie-views.
    LEX/SYNT schakelen Groei uit; de langere statustekst mag de balk en dus het
    grid nooit lager zetten. */
 body.main-screen-active .main-play-growth-label {
@@ -5815,7 +6147,7 @@ body.main-screen-active .main-play-growth-label {
 }
 
 
-/* v2.0.0-rc.22: projectiekeuze buiten het canvas; Bron kan meerdere assen combineren. */
+/* v2.0.0-rc.14: projectiekeuze buiten het canvas; Bron kan meerdere assen combineren. */
 body.main-screen-active .main-grid-controls {
   display: none !important;
 }
@@ -5927,7 +6259,7 @@ body.main-screen-active .main-grid-controls {
   .source-axis-popover { left: auto; right: 0; }
 }
 
-/* v2.0.0-rc.22: gekozen Bronassen-oplossing en compacte, leesbare bovenbalk.
+/* v2.0.0-rc.14: gekozen Bronassen-oplossing en compacte, leesbare bovenbalk.
    Projectie en Bronassen blijven boven het canvas; taal/Help/Config staan in
    één Menu-popover. De topbar blijft één vaste rij en verandert de viewBox niet. */
 body.main-screen-active .main-topbar {
@@ -6125,7 +6457,7 @@ body.main-screen-active .main-actions-menu .config-open-button {
 }
 
 
-/* v2.0.0-rc.22: smalle koppen, brede uitklappen; Projecties vervangt Bron. */
+/* v2.0.0-rc.14: smalle koppen, brede uitklappen; Projecties vervangt Bron. */
 .main-control-select-compat {
   position: absolute !important; width: 1px !important; height: 1px !important;
   overflow: hidden !important; clip: rect(0 0 0 0) !important;
@@ -6224,7 +6556,7 @@ body.main-screen-active .main-actions-menu .config-open-button { width:100% !imp
   .compact-choice-popover { left:auto; right:0; }
 }
 
-/* v2.0.0-rc.22: één plat hoofdmenu; geen geneste submenu's. */
+/* v2.0.0-rc.14: één plat hoofdmenu; geen geneste submenu's. */
 body.main-screen-active .main-topbar {
   min-height: 2.02rem !important;
   padding: .10rem .18rem !important;
@@ -6344,7 +6676,7 @@ body.main-screen-active .main-extra-popover { display: none !important; }
   .main-menu-option-list { max-height: 10.5rem; }
 }
 
-/* v2.0.0-rc.22: lichte belijning; alleen named projections krijgen nadruk. */
+/* v2.0.0-rc.14: lichte belijning; alleen named projections krijgen nadruk. */
 body.main-screen-active .grid-line { stroke-width: .42 !important; opacity: .16 !important; }
 body.main-screen-active .grid-line.major { stroke-width: .58 !important; opacity: .21 !important; }
 body.main-screen-active .axis-line,
@@ -6382,6 +6714,7 @@ body.main-screen-active .syntax-rule-box,
 body.main-screen-active .free-slot-box,
 body.main-screen-active .lex-local-slot,
 body.main-screen-active .lex-free-slot,
+body.main-screen-active .lex-space-reservation-cap,
 body.main-screen-active .logical-order-box,
 body.main-screen-active .projection-stability-frame {
   stroke-width: .52 !important;
@@ -6405,7 +6738,7 @@ body.main-screen-active .node-main-label {
   stroke-width: 1.25px !important;
 }
 
-/* v2.0.0-rc.22: alle SVG-boxcontouren minimaal; projecties blijven herkenbaar. */
+/* v2.0.0-rc.14: alle SVG-boxcontouren minimaal; projecties blijven herkenbaar. */
 body.main-screen-active #graphSvg rect {
   stroke-width: .50 !important;
 }
@@ -6444,7 +6777,7 @@ body.main-screen-active .node-main-label {
 }
 
 
-/* v2.0.0-rc.22: één zichtbaar topmenu met negen hoofditems; geen algemene Menu-knop. */
+/* v2.0.0-rc.14: één zichtbaar topmenu met acht hoofditems; geen algemene Menu-knop. */
 body.main-screen-active .main-topbar {
   min-height: 2.08rem !important;
   padding: .10rem .18rem !important;
@@ -6568,761 +6901,57 @@ body.main-screen-active .main-actions-menu {
 
 body.main-screen-active .main-extra-menu.top-menu-item { display: block !important; }
 
-/* v2.0.0-rc.22: publieke interfacekeuze onder Config -> Boom. */
-#viewportModeSelect {
-  min-width: 10rem;
-}
 
-/* Een geforceerde mobile-interface op een echt smal scherm gebruikt de echte
-   viewport. Het telefoonframe blijft alleen bestaan voor desktop-preview. */
-@media (max-width: 900px) {
-  body.viewport-mobile-natural.main-screen-active {
-    background: var(--bg) !important;
-  }
-  body.viewport-mobile-natural.main-screen-active::after,
-  body.viewport-mobile-natural.main-screen-active .app-shell::after {
-    content: none !important;
-    display: none !important;
-  }
-  body.viewport-mobile-natural.main-screen-active .app-shell {
-    position: fixed !important;
-    inset: 0 !important;
-    left: 0 !important;
-    top: 0 !important;
-    transform: none !important;
-    width: 100vw !important;
-    height: 100dvh !important;
-    min-width: 100vw !important;
-    min-height: 100dvh !important;
-    max-width: 100vw !important;
-    max-height: 100dvh !important;
-    overflow: hidden !important;
-    padding: 0 !important;
-  }
-  body.viewport-mobile-natural.main-screen-active .workspace {
-    position: fixed !important;
-    left: 0 !important;
-    right: 0 !important;
-    top: var(--main-grid-top, 3.55rem) !important;
-    bottom: 0 !important;
-    inset: var(--main-grid-top, 3.55rem) 0 0 0 !important;
-    width: 100vw !important;
-    height: var(--main-grid-height, calc(100dvh - 3.55rem)) !important;
-    min-width: 100vw !important;
-    min-height: 0 !important;
-    max-width: 100vw !important;
-    max-height: none !important;
-    transform: none !important;
-    overflow: hidden !important;
-  }
-  body.viewport-mobile-natural.main-screen-active .canvas-wrap {
-    position: absolute !important;
-    inset: 0 !important;
-    width: 100% !important;
-    height: 100% !important;
-    min-width: 0 !important;
-    min-height: 0 !important;
-    max-width: none !important;
-    max-height: none !important;
-    margin: 0 !important;
-    border: 0 !important;
-    border-radius: 0 !important;
-    box-shadow: none !important;
-    background: var(--panel) !important;
-  }
-  body.viewport-mobile-natural.main-screen-active #graphSvg {
-    width: 100% !important;
-    height: 100% !important;
-    min-width: 0 !important;
-    min-height: 0 !important;
-    max-width: none !important;
-    max-height: none !important;
-  }
-  body.viewport-mobile-natural.main-screen-active .main-topbar {
-    position: fixed !important;
-    left: 0 !important;
-    right: 0 !important;
-    top: 0 !important;
-    width: 100vw !important;
-    max-width: 100vw !important;
-    transform: none !important;
-    border-radius: 0 !important;
-  }
-  body.viewport-mobile-natural.main-screen-active .main-play-reset-bar {
-    position: fixed !important;
-    left: 0 !important;
-    right: 0 !important;
-    top: var(--main-playbar-top, 3.25rem) !important;
-    width: 100vw !important;
-    max-width: 100vw !important;
-    transform: none !important;
-  }
-}
-body.main-screen-active .top-menu-interface-popover {
-  width: min(18rem, calc(100vw - .7rem));
-}
-body.main-screen-active .main-menu-interface-options {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  max-height: none;
-}
-body.main-screen-active .main-menu-interface-options .compact-choice-option {
-  text-align: center;
-}
+/* rc.14: visible OPN save/export/import workflow */
+.opn-document-card { border-style: solid; }
+.opn-document-actions { align-items: center; flex-wrap: wrap; }
+.opn-document-actions .primary, .opn-mobile-actions button { font-weight: 900; }
+.opn-mobile-actions .file-label { width: auto; }
 
 
-/* v2.0.0-rc.22: Rasteroptie direct vindbaar in Config → Boom → Weergave. */
-.display-config-field {
-  margin: .38rem 0 .5rem;
-  padding: .44rem .52rem .5rem;
-  border: .5px solid var(--line);
-  border-radius: .48rem;
+/* v2.0.0-rc.20: desktop MAX is the readable full-window default. */
+body.main-screen-active.main-window-max,
+body.main-screen-active.main-window-max .app-shell,
+body.main-screen-active.main-window-max .workspace,
+body.main-screen-active.main-window-max .canvas-wrap {
+  width: 100vw !important;
+  max-width: none !important;
+  overflow: hidden !important;
 }
-.display-config-field legend {
-  padding: 0 .28rem;
-  font-weight: 700;
+body.main-screen-active.main-window-max .workspace {
+  height: var(--main-grid-height, calc(100dvh - 5.5rem)) !important;
 }
-.display-check-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(12.5rem, 1fr));
-  gap: .28rem .58rem;
-}
-.display-check-grid label {
-  min-height: 2rem;
-  display: flex;
-  align-items: center;
-  gap: .34rem;
-}
-.display-check-grid .primary-config-toggle {
-  font-weight: 700;
-}
-/* Het raster moet zichtbaar zijn, maar blijft duidelijk dunner dan projecties. */
-body.main-screen-active .grid-line { stroke-width: .48 !important; opacity: .30 !important; }
-body.main-screen-active .grid-line.major { stroke-width: .62 !important; opacity: .42 !important; }
-body.main-screen-active .grid-axis { stroke-width: .66 !important; opacity: .56 !important; }
-
-
-/* v2.0.0-rc.22: raster overal zichtbaar en Config-raster direct vindbaar. */
-body.main-screen-active .grid-line {
-  stroke: color-mix(in srgb, var(--grid-major), var(--text) 10%) !important;
-  stroke-width: .52 !important;
-  opacity: .48 !important;
-}
-body.main-screen-active .grid-line.major {
-  stroke: color-mix(in srgb, var(--grid-major), var(--text) 18%) !important;
-  stroke-width: .64 !important;
-  opacity: .62 !important;
-}
-body.main-screen-active .grid-axis {
-  stroke-width: .70 !important;
-  opacity: .70 !important;
-}
-.config-grid-quick-toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: .32rem;
-  min-height: 2rem;
-  padding: .28rem .48rem;
-  border: .55px solid var(--line);
-  border-radius: .48rem;
-  background: color-mix(in srgb, var(--panel), var(--bg) 8%);
-  font-weight: 800;
-  white-space: nowrap;
-}
-.config-grid-quick-toggle input { margin: 0; }
-body.config-screen-active .config-topbar {
-  display: grid !important;
-  grid-template-columns: auto auto auto auto minmax(14rem, 1fr) !important;
-  align-items: center !important;
-  gap: .42rem !important;
-}
-body.config-screen-active .config-topbar > div { min-width: 0; }
-@media (max-width: 760px) {
-  body.config-screen-active .config-topbar {
-    grid-template-columns: auto auto !important;
-    align-items: center !important;
-  }
-  body.config-screen-active .config-topbar .config-grid-quick-toggle {
-    grid-column: 1 / -1;
-    justify-self: stretch;
-    justify-content: center;
-  }
-  body.config-screen-active .config-topbar > div {
-    grid-column: 1 / -1;
-  }
+body.main-screen-active.main-window-max .canvas-wrap,
+body.main-screen-active.main-window-max #graphSvg {
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  max-width: none !important;
+  max-height: none !important;
+  display: block !important;
 }
 
-/* v2.0.0-rc.22: topmenu heeft op mobile exact twee rijen voor negen items (vijf + vier).
-   LOG-volgorde kan daardoor geen derde rij maken en Config blijft zichtbaar. */
-body.main-screen-active .main-top-menu {
-  flex-wrap: nowrap !important;
-}
-@media (max-width: 760px), (orientation: portrait) {
+@media (min-width: 761px) {
   body.main-screen-active .main-topbar {
-    min-height: 3.72rem !important;
-    height: 3.72rem !important;
-    overflow: visible !important;
+    min-height: 2.62rem !important;
+    padding: .20rem .34rem !important;
   }
   body.main-screen-active .main-top-menu {
-    display: grid !important;
-    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
-    grid-template-rows: repeat(2, 1.68rem) !important;
-    gap: .10rem !important;
-    width: 100% !important;
-    align-items: stretch !important;
-  }
-  body.main-screen-active .top-menu-item,
-  body.main-screen-active .top-menu-action {
-    width: 100% !important;
-    min-width: 0 !important;
+    gap: .22rem !important;
   }
   body.main-screen-active .top-menu-item > summary,
   body.main-screen-active .top-menu-action {
-    width: 100% !important;
-    min-width: 0 !important;
-    padding-inline: .12rem !important;
-    font-size: .62rem !important;
-    text-align: center !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
+    min-height: 2.12rem !important;
+    height: 2.12rem !important;
+    padding: .16rem .60rem !important;
+    border-radius: .58rem !important;
+    font-size: .88rem !important;
+    line-height: 1.1 !important;
   }
-  body.main-screen-active .top-menu-item > summary::after { display: none !important; content: none !important; }
-  body.main-screen-active #mainExtraSummary { font-size: 0 !important; }
-  body.main-screen-active #mainExtraSummary::before { content: "LOG"; font-size: .62rem; }
-  body.main-screen-active .top-menu-popover {
-    top: calc(max(.35rem, env(safe-area-inset-top)) + 3.78rem) !important;
+  body.main-screen-active .top-menu-popover,
+  body.main-screen-active .top-menu-popover button,
+  body.main-screen-active .top-menu-popover select {
+    font-size: .92rem !important;
   }
-}
-
-/* v2.0.0-rc.22: vaste topmenu-indeling op alle interfaces.
-   Rij 1 bevat de zes keuze-items; rij 2 bevat NL/EN, Help en Config.
-   Geen vrije wrapping en geen horizontale uitloop buiten een mobile-preview. */
-body.main-screen-active .main-topbar {
-  box-sizing: border-box !important;
-  min-height: 3.78rem !important;
-  height: auto !important;
-  padding: .10rem .18rem !important;
-  overflow: visible !important;
-}
-body.main-screen-active .main-top-menu {
-  display: grid !important;
-  grid-template-columns: repeat(6, max-content) !important;
-  grid-template-rows: repeat(2, 1.72rem) !important;
-  column-gap: .12rem !important;
-  row-gap: .24rem !important;
-  align-items: stretch !important;
-  align-content: start !important;
-  justify-content: start !important;
-  width: 100% !important;
-  min-width: 0 !important;
-  overflow: visible !important;
-}
-body.main-screen-active .main-top-menu > :nth-child(-n + 6) {
-  grid-row: 1 !important;
-}
-body.main-screen-active .main-top-menu > :nth-child(7) {
-  grid-row: 2 !important;
-  grid-column: 1 !important;
-}
-body.main-screen-active .main-top-menu > :nth-child(8) {
-  grid-row: 2 !important;
-  grid-column: 2 !important;
-}
-body.main-screen-active .main-top-menu > :nth-child(9) {
-  grid-row: 2 !important;
-  grid-column: 3 !important;
-}
-body.main-screen-active .top-menu-item,
-body.main-screen-active .top-menu-action {
-  min-width: 0 !important;
-  max-width: 100% !important;
-}
-/* Alle uitklapitems staan op rij 1; open hun brede paneel onder beide menurijen. */
-body.main-screen-active .top-menu-item .top-menu-popover {
-  top: calc(200% + .46rem) !important;
-}
-
-/* Geforceerde mobile-preview gebruikt de breedte van het telefoonframe en nooit
-   de desktopviewport voor de menuberekening. */
-body.viewport-mobile-test.main-screen-active .main-topbar {
-  box-sizing: border-box !important;
-  min-height: 3.84rem !important;
-  height: auto !important;
-  padding: .10rem .14rem !important;
-}
-body.viewport-mobile-test.main-screen-active .main-top-menu {
-  grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
-  grid-template-rows: repeat(2, 1.68rem) !important;
-  column-gap: .10rem !important;
-  row-gap: .24rem !important;
-  width: 100% !important;
-}
-body.viewport-mobile-test.main-screen-active .main-top-menu > :nth-child(7) {
-  grid-column: 1 / span 2 !important;
-}
-body.viewport-mobile-test.main-screen-active .main-top-menu > :nth-child(8) {
-  grid-column: 3 / span 2 !important;
-}
-body.viewport-mobile-test.main-screen-active .main-top-menu > :nth-child(9) {
-  grid-column: 5 / span 2 !important;
-}
-body.viewport-mobile-test.main-screen-active .top-menu-item,
-body.viewport-mobile-test.main-screen-active .top-menu-action,
-body.viewport-mobile-test.main-screen-active .top-menu-item > summary {
-  width: 100% !important;
-  min-width: 0 !important;
-  box-sizing: border-box !important;
-}
-body.viewport-mobile-test.main-screen-active .top-menu-item > summary,
-body.viewport-mobile-test.main-screen-active .top-menu-action {
-  padding-inline: .10rem !important;
-  font-size: .62rem !important;
-  text-align: center !important;
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
-}
-body.viewport-mobile-test.main-screen-active .top-menu-item > summary::after {
-  display: none !important;
-  content: none !important;
-}
-body.viewport-mobile-test.main-screen-active .top-menu-item .top-menu-popover {
-  top: calc(200% + .50rem) !important;
-}
-
-/* Echte smalle schermen volgen dezelfde twee rijen. De drie directe acties
-   krijgen elk twee van de zes kolommen, zodat zij leesbaar blijven. */
-@media (max-width: 760px), (orientation: portrait) {
-  body.main-screen-active .main-topbar {
-    min-height: 3.84rem !important;
-    height: auto !important;
-    padding: .10rem .14rem !important;
-  }
-  body.main-screen-active .main-top-menu {
-    grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
-    grid-template-rows: repeat(2, 1.68rem) !important;
-    column-gap: .10rem !important;
-    row-gap: .24rem !important;
-  }
-  body.main-screen-active .main-top-menu > :nth-child(7) {
-    grid-column: 1 / span 2 !important;
-  }
-  body.main-screen-active .main-top-menu > :nth-child(8) {
-    grid-column: 3 / span 2 !important;
-  }
-  body.main-screen-active .main-top-menu > :nth-child(9) {
-    grid-column: 5 / span 2 !important;
-  }
-  body.main-screen-active .top-menu-item .top-menu-popover {
-    top: calc(max(.35rem, env(safe-area-inset-top)) + 3.98rem) !important;
-  }
-}
-
-/* v2.0.0-rc.22: maximale view in alle vier interface-standen.
-   De oude portrait-reserve van 7.6rem hoorde bij verwijderde canvas-controls.
-   Topmenu en Play staan als overlays boven het canvas en reserveren hun eigen
-   gemeten ruimte; onderaan blijft daarom geen lege controlestrook bestaan. */
-body.viewport-mobile-portrait-test.main-screen-active .canvas-wrap {
-  --main-control-height: 0rem !important;
-}
-body.viewport-mobile-portrait-test.main-screen-active #graphSvg,
-body.viewport-mobile-landscape-test.main-screen-active #graphSvg,
-body.viewport-desktop.main-screen-active #graphSvg,
-body.viewport-auto.main-screen-active #graphSvg {
-  width: 100% !important;
-  height: 100% !important;
-  min-width: 100% !important;
-  min-height: 100% !important;
-  max-width: 100% !important;
-  max-height: 100% !important;
-  margin: 0 !important;
-  padding: 0 !important;
-}
-body.viewport-mobile-portrait-test.main-screen-active .canvas-wrap .main-grid-controls,
-body.viewport-mobile-portrait-test.main-screen-active .main-grid-controls {
-  display: none !important;
-}
-
-/* v2.0.0-rc.22: echte mobile-landscape blijft mobile, ook boven 760 CSS-px.
-   Twee topmenurijen blijven zichtbaar, maar gebruiken minder verticale ruimte.
-   De Play-balk wordt eveneens compacter zodat de graph meer hoogte krijgt. */
-body.actual-compact-landscape.main-screen-active .main-topbar {
-  min-height: 3.18rem !important;
-  padding: .06rem .12rem !important;
-}
-body.actual-compact-landscape.main-screen-active .main-top-menu {
-  grid-template-rows: repeat(2, 1.42rem) !important;
-  column-gap: .08rem !important;
-  row-gap: .14rem !important;
-}
-body.actual-compact-landscape.main-screen-active .top-menu-item > summary,
-body.actual-compact-landscape.main-screen-active .top-menu-action {
-  min-height: 1.42rem !important;
-  height: 1.42rem !important;
-  padding-inline: .24rem !important;
-  font-size: .60rem !important;
-  border-radius: .42rem !important;
-}
-body.actual-compact-landscape.main-screen-active .top-menu-item .top-menu-popover {
-  top: calc(200% + .28rem) !important;
-}
-body.actual-compact-landscape.main-screen-active .main-play-reset-bar {
-  padding-block: .10rem !important;
-}
-body.actual-compact-landscape.main-screen-active .main-play-reset-controls {
-  gap: .24rem !important;
-  padding: .08rem .18rem !important;
-}
-body.actual-compact-landscape.main-screen-active .main-play-reset-controls button {
-  min-height: 1.82rem !important;
-  min-width: 3.65rem !important;
-  padding-inline: .54rem !important;
-  font-size: .78rem !important;
-}
-body.actual-compact-landscape.main-screen-active .main-play-reset-controls .main-play-step-button {
-  min-width: 2.05rem !important;
-  padding-inline: .34rem !important;
-  font-size: .84rem !important;
-}
-body.actual-compact-landscape.main-screen-active .main-play-growth-label {
-  width: 4.85rem !important;
-  min-width: 4.85rem !important;
-  max-width: 4.85rem !important;
-  height: 1.82rem !important;
-  min-height: 1.82rem !important;
-  max-height: 1.82rem !important;
-  flex-basis: 4.85rem !important;
-  font-size: .70rem !important;
-}
-
-
-/* v2.0.0: Config redesign. Initial screen is a compact section index;
-   existing controls and save IDs remain intact inside native details sections. */
-body.config-screen-active .projection-sticky-bar,
-body.config-screen-active .status-panel,
-body.config-screen-active .intro-panel,
-body.config-screen-active .text-panel {
-  display: none !important;
-}
-body.config-screen-active .workspace {
-  display: block !important;
-}
-body.config-screen-active .side-panel {
-  display: grid !important;
-  grid-template-columns: minmax(0, 1fr) !important;
-  gap: .55rem !important;
-  max-width: 72rem !important;
-  margin: 0 auto !important;
-}
-.config-overview-card {
-  display: block !important;
-  padding: .78rem !important;
-}
-.config-dashboard {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
-  gap: .5rem;
-  margin: .6rem 0 .8rem;
-}
-.config-dashboard-card {
-  display: grid;
-  gap: .2rem;
-  align-content: start;
-  min-height: 5.2rem;
-  padding: .65rem .72rem;
-  text-align: left;
-  border: .55px solid var(--line);
-  border-radius: .72rem;
-  background: color-mix(in srgb, var(--panel), var(--bg) 7%);
-  color: var(--text);
-}
-.config-dashboard-card:hover,
-.config-dashboard-card:focus-visible {
-  border-color: color-mix(in srgb, var(--accent), var(--line) 45%);
-  background: color-mix(in srgb, var(--panel), var(--accent) 7%);
-}
-.config-dashboard-card strong { font-size: .94rem; }
-.config-dashboard-card > span { color: var(--muted); font-size: .82rem; line-height: 1.35; }
-.config-section {
-  border: .55px solid var(--line);
-  border-radius: .72rem;
-  background: color-mix(in srgb, var(--panel), var(--bg) 8%);
-  overflow: clip;
-}
-.config-section > summary {
-  cursor: pointer;
-  padding: .62rem .75rem;
-  font-weight: 900;
-  list-style-position: inside;
-  background: color-mix(in srgb, var(--panel), var(--bg) 4%);
-}
-.config-section[open] > summary {
-  border-bottom: .55px solid var(--line);
-  background: color-mix(in srgb, var(--panel), var(--accent) 5%);
-}
-.config-section-body,
-.config-advanced-stack {
-  display: grid !important;
-  gap: .58rem;
-  padding: .7rem !important;
-  border: 0 !important;
-  border-radius: 0 !important;
-  box-shadow: none !important;
-  background: transparent !important;
-}
-.config-advanced-stack > .panel-card {
-  display: block !important;
-  margin: 0 !important;
-}
-.config-files-section .toolbar {
-  display: flex !important;
-  order: initial !important;
-  margin: 0 !important;
-  border: 0 !important;
-  box-shadow: none !important;
-  background: transparent !important;
-}
-body.config-screen-active .config-save-field {
-  margin-top: .65rem;
-  border-color: color-mix(in srgb, var(--accent), var(--line) 55%);
-}
-body.config-screen-active .config-topbar {
-  grid-template-columns: auto auto auto auto minmax(10rem, 1fr) !important;
-}
-.page-return-nav {
-  position: sticky;
-  top: 0;
-  z-index: 999;
-  display: flex;
-  flex-wrap: wrap;
-  gap: .4rem;
-  padding: .45rem .6rem;
-  border-bottom: .55px solid #cbd5e1;
-  background: rgba(248,250,252,.96);
-  backdrop-filter: blur(10px);
-}
-.page-return-nav a {
-  display: inline-flex;
-  align-items: center;
-  min-height: 2rem;
-  padding: .28rem .55rem;
-  border: .55px solid #cbd5e1;
-  border-radius: .55rem;
-  color: #0f172a;
-  background: #fff;
-  font: 700 .85rem/1.2 system-ui, sans-serif;
-  text-decoration: none;
-}
-@media (max-width: 760px) {
-  body.config-screen-active .config-topbar {
-    grid-template-columns: 1fr 1fr !important;
-  }
-  body.config-screen-active .config-topbar .config-back-button {
-    grid-column: 1 / -1;
-    justify-self: stretch;
-  }
-  .config-dashboard { grid-template-columns: 1fr 1fr; }
-  .config-dashboard-card { min-height: 4.7rem; padding: .55rem; }
-}
-@media (max-width: 440px) {
-  .config-dashboard { grid-template-columns: 1fr; }
-}
-
-
-/* v2.0.0: zichtbare uitleg per Config-item; secties blijven ingeklapt op het beginscherm. */
-body.config-screen-active .config-section-intro {
-  margin: 0 0 .15rem;
-  padding: .45rem .55rem;
-  border-left: 2px solid color-mix(in srgb, var(--accent), transparent 30%);
-  background: color-mix(in srgb, var(--panel), var(--accent) 4%);
-  border-radius: .35rem;
-}
-body.config-screen-active .config-section-intro-copy {
-  display: block;
-  color: var(--muted);
-  font-size: .84rem;
-  line-height: 1.4;
-  font-weight: 500;
-}
-body.config-screen-active .config-section-body .field {
-  align-items: start;
-}
-body.config-screen-active .config-field-name {
-  padding-top: .48rem;
-  white-space: normal !important;
-}
-body.config-screen-active .config-item-help {
-  grid-column: 2;
-  display: block;
-  margin-top: -.08rem;
-  color: var(--muted);
-  font-size: .76rem;
-  line-height: 1.36;
-  font-weight: 500;
-  white-space: normal !important;
-}
-body.config-screen-active .display-check-grid label,
-body.config-screen-active .top-menu-choice-grid label,
-body.config-screen-active .lex-extension-field label {
-  align-items: flex-start;
-}
-body.config-screen-active .config-check-copy {
-  display: grid;
-  gap: .12rem;
-  min-width: 0;
-}
-body.config-screen-active .config-toggle-title {
-  color: var(--text);
-  font-weight: 700;
-}
-body.config-screen-active .config-check-copy .config-item-help,
-body.config-screen-active .top-menu-choice-grid .config-item-help,
-body.config-screen-active .lex-extension-field .config-item-help {
-  grid-column: auto;
-  margin: 0;
-}
-body.config-screen-active .config-action-help-list {
-  margin-top: .55rem;
-  padding: .58rem .68rem;
-  border: .5px solid var(--line);
-  border-radius: .55rem;
-  background: color-mix(in srgb, var(--panel), var(--bg) 8%);
-}
-body.config-screen-active .config-action-help-list h3 {
-  margin: 0 0 .32rem;
-  font-size: .86rem;
-}
-body.config-screen-active .config-action-help-list ul {
-  margin: 0;
-  padding-left: 1.15rem;
-  color: var(--muted);
-  font-size: .78rem;
-  line-height: 1.42;
-}
-body.config-screen-active .config-action-help-list li + li { margin-top: .18rem; }
-@media (max-width: 760px) {
-  body.config-screen-active .config-item-help { grid-column: 1; }
-  body.config-screen-active .config-field-name { padding-top: 0; }
-}
-
-/* v2.0.10: five-language menu. English is the default; non-Dutch technical
-   help falls back to English. Sentence examples remain Dutch and explicitly
-   identify Dutch sentence word order. */
-.language-menu { position: relative; }
-.language-menu > summary { list-style: none; }
-.language-menu > summary::-webkit-details-marker { display: none; }
-.language-menu > summary::after { content: '▾'; margin-left: .24rem; color: var(--muted); font-size: .62rem; }
-.language-menu[open] > summary::after { content: '▴'; }
-.language-popover { width: min(20rem, calc(100vw - .7rem)) !important; }
-.language-option-list { display: grid; gap: .26rem; }
-.language-option-list button {
-  min-height: 2rem;
-  padding: .34rem .52rem;
-  border: .55px solid color-mix(in srgb, var(--line), transparent 18%);
-  border-radius: .52rem;
-  background: color-mix(in srgb, var(--panel), var(--bg) 7%);
-  color: var(--text);
-  font-weight: 800;
-  text-align: left;
-  cursor: pointer;
-}
-.language-option-list button:hover,
-.language-option-list button:focus-visible,
-.language-option-list button.is-selected {
-  background: color-mix(in srgb, var(--accent), var(--panel) 84%);
-  border-color: color-mix(in srgb, var(--accent), var(--line) 38%);
-}
-.language-option-list button.is-selected::after { content: ' ✓'; }
-.language-sentence-note { margin: .45rem .06rem 0; line-height: 1.35; }
-.config-language-menu > summary,
-.help-language-menu > summary {
-  box-sizing: border-box;
-  min-height: 2.35rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: .36rem .72rem;
-  border: 1px solid var(--line);
-  border-radius: .8rem;
-  background: color-mix(in srgb, var(--panel), var(--bg) 6%);
-  color: var(--text);
-  font-weight: 900;
-  cursor: pointer;
-}
-.config-language-menu .language-popover,
-.help-language-menu .language-popover {
-  position: absolute;
-  z-index: 900;
-  top: calc(100% + .3rem);
-  left: 0;
-  box-sizing: border-box;
-  max-height: min(70vh, 28rem);
-  overflow: auto;
-  padding: .42rem;
-  border: 1px solid var(--line);
-  border-radius: .66rem;
-  background: var(--panel);
-  box-shadow: 0 .55rem 1.5rem rgba(15,23,42,.18);
-}
-@media (max-width: 760px), (orientation: portrait) {
-  body.main-screen-active .language-menu > summary::after,
-  body.viewport-mobile-test.main-screen-active .language-menu > summary::after { display: none !important; }
-  body.main-screen-active .language-popover,
-  body.viewport-mobile-test.main-screen-active .language-popover {
-    position: fixed !important;
-    left: .35rem !important;
-    right: .35rem !important;
-    width: auto !important;
-  }
-}
-
-/* v2.0.10: the language chooser is the first item on row 2. On desktop its
-   popover opens directly under that summary; fixed mobile positioning remains. */
-body.main-screen-active .main-top-menu > .language-menu .language-popover {
-  top: calc(100% + .30rem) !important;
-}
-@media (max-width: 760px), (orientation: portrait) {
-  body.main-screen-active .main-top-menu > .language-menu .language-popover {
-    top: calc(max(.35rem, env(safe-area-inset-top)) + 3.98rem) !important;
-  }
-}
-
-/* v2.0.10: README/LEESMIJ first view in every interface mode.
-   Desktop, mobile landscape and mobile portrait use the same two-half layout:
-   the topic tree occupies the upper half and the selected topic text the lower
-   half. Both regions scroll independently, so the first topic text is visible
-   immediately while the remaining topics stay reachable. */
-body.help-screen-active .app-shell {
-  box-sizing: border-box !important;
-  height: 100dvh !important;
-  min-height: 100dvh !important;
-  max-height: 100dvh !important;
-  overflow: hidden !important;
-}
-body.help-screen-active .help-topbar {
-  flex: 0 0 auto !important;
-}
-body.help-screen-active .help-screen {
-  flex: 1 1 auto !important;
-  height: auto !important;
-  min-height: 0 !important;
-  overflow: hidden !important;
-}
-body.help-screen-active .help-tree-screen {
-  display: grid !important;
-  grid-template-columns: minmax(0, 1fr) !important;
-  grid-template-rows: minmax(0, 1fr) minmax(0, 1fr) !important;
-  height: 100% !important;
-  min-height: 0 !important;
-  overflow: hidden !important;
-}
-body.help-screen-active .help-tree-nav,
-body.help-screen-active .help-topic-stage {
-  box-sizing: border-box !important;
-  width: 100% !important;
-  height: auto !important;
-  min-height: 0 !important;
-  max-height: none !important;
-  overflow: auto !important;
-}
-body.help-screen-active .help-topic-stage {
-  scroll-padding-top: .6rem !important;
 }

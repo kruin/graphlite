@@ -2,7 +2,7 @@
 
 ## Boom eerst
 
-**Boom eerst** is de didactische en notationele volgorde in OpenGraph/JaN. De centrale open boom is de bron. Daarna worden projecties getekend naar de assen:
+**Boom eerst** is de didactische en notationele volgorde in OpenGraph/JAN. De centrale open boom is de bron. Daarna worden projecties getekend naar de assen:
 
 - LEX links/west: woordvolgorde, plaatsingsregels en LEX-inserties.
 - SYNTAX rechts/oost: syntactische regels op boomhoogte.
@@ -26,7 +26,7 @@ Dit is iets anders dan de didactische keuze **boom eerst**. Boom eerst zegt welk
 
 ### Tree first
 
-**Tree first** is the didactic and notational sequence in OpenGraph/JaN. The central open tree is the source. Projections are then drawn to the axes: LEX west, SYNTAX east and LOG south. LEX exchanges, traces and insertions remain visible on the LEX axis.
+**Tree first** is the didactic and notational sequence in OpenGraph/JAN. The central open tree is the source. Projections are then drawn to the axes: LEX west, SYNTAX east and LOG south. LEX exchanges, traces and insertions remain visible on the LEX axis.
 
 ### Recursion technique in the tree
 

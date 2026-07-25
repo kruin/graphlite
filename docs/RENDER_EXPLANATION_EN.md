@@ -6,12 +6,6 @@ The render explanation belongs in **Help** and documentation, not in **Config**.
 
 Config is for settings. Long explanation blocks must not interrupt active configuration options, because they break the configuration column and push options such as `Branch extension by insertion` downwards.
 
-## Placement before render
-
-Lexical insertions are layout input, not additions made after drawing a completed core tree. The engine first reads the structure, insertion groups, placement rules, exchanges and active projections. It then reserves grid positions and corridors, places the central tree, fills the core sentence, fixes projections and exchange paths, and only then renders.
-
-Play/Growth reveals this fixed result step by step. A growth step does not create space or move previously calculated elements.
-
 ## Render order
 
 1. First compute the central tree and its boxes.
@@ -44,8 +38,3 @@ Examples:
 
 `VSO` and `VOS` are now marked like `OSV`: `VSO-!` and `VOS-!`. The exclamation mark means that the box approach cannot produce the order as a base alternative. Correct rendering above syntax boxes requires an explicit movement rule. Existing trees and existing flip behaviour remain unchanged.
 
-
-
-### Lineaire zone versus scope
-
-Bij meervoudige middenveldinserties zijn lineaire landingsplaats en semantische scope gescheiden. In `... DE MAN MISSCHIEN WEL VAAK GEBETEN HEEFT` reserveert het plaatsingsplan beide insertiegroepen na het object en vóór het V-CLUSTER. `MISSCHIEN WEL` kan daarbij propositionele scope houden; die scope verplicht geen hoge positie boven de hele VP op de LEX-as.

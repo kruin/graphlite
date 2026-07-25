@@ -1,138 +1,158 @@
 # PROJECT_STATE_CURRENT
 
-## v2.0.10 — plaatsingsplan vóór rendering
+Leidende status van OpenGraph Lite Viewer `v2.0.0-rc.23`.
 
-De leidende architectuurregel is nu expliciet: structuur, lexicale inserties, plaatsingsregels, wissels en actieve projecties vormen samen de layoutinput. De layout reserveert eerst alle benodigde posities en corridors. De kernzin is daarna de structurele en lexicale invulling van dat plaatsingsplan; rendering en Play/Groei tonen alleen reeds berekende posities.
+## Lees mij / README
 
-## v2.0.8 — meervoudige lexicale inserties
+- `Help` is hernoemd tot `Lees mij / README`.
+- Openen activeert altijd de intro `Boom, gek`.
+- De README gebruikt een vaste links/rechts-indeling: onderwerpen links,
+  actieve tekst onmiddellijk rechts.
+- `README.md` is Engels; `LEESMIJ.md` is Nederlands.
+- De intro toont alleen het eerste SVG-beeld met traditionele zinsbomen.
+- De generieke carrouselcode blijft beschikbaar voor latere
+  specificatiebeelden; bij één beeld blijft de bediening verborgen.
+- De externe zoeklink in de intro opent in een afzonderlijk venster; de app
+  blijft open.
 
-Voorbeeldzinnen kunnen meerdere externe LEX-insertiegroepen definiëren. In perfectumvoorbeelden wordt hun lineaire zone vooraf gepland na het object en vóór het V-CLUSTER; scope blijft afzonderlijke metadata. `MISSCHIEN WEL` is één groep; `VAAK` is een tweede groep. Grote insertieboxen staan op minor-ankers en gebruiken een dynamische minimale centrumafstand van 72 pixels, zodat zij niet overlappen. Structurele knopen blijven op het major grid.
+## Desktop-MAX
 
-Actuele, leidende status van OpenGraph Lite Viewer.
+- `Config → Beeld → Boomruimte` staat standaard op `MAX`.
+- `Config → Beeld → Venstervulling` staat standaard op `MAX`.
+- MAX gebruikt het volledige resterende browservenster en een
+  SVG-fontschaal van `1.70`.
+- Raster, hulplabel en het historische ruime stabiliteitskader tellen niet
+  mee in de MAX-fit.
+- Een compacte Syntax/FT- en projectie-unie houdt schaal en positie stabiel
+  tijdens projectiewissels en Play.
+- De westelijke LEX-laag reserveert haar volledige zichtbare breedte vóór de
+  buitenste S/CLAUSE-box. Daardoor kan de LEX-as niet meer over S/CLAUSE heen
+  worden getekend, ook niet bij meerwoordige minors of meerdere Wissels.
 
-## Versie
+## Projectiecontract
 
-- Actuele release: `v2.0.10`.
-- Functionele bronbasis: volledige v1.0.16-bronset, doorontwikkeld via de v2.0-releasekandidaten.
-- `VERSION.txt` is leidend voor app, cache, documentatie en zipnaam.
+```text
+structure-config
+→ LOG-majors/minors
+→ horizontale LEX-bronprojectie
+→ LOG-afgeleide neutrale doelrij
+→ eventueel vervangen door expliciet topic-/V2-doel
+→ één rechtstreekse zichtbare LEX-verplaatsing per bronwoord
+→ voorbeeldzin als validatie
+```
 
-## Centrale views
+- `S`, `O` en `V` zijn LOG-majors.
+- Een bijwoord(groep) is een LOG-minor.
+- Iedere minor bezet één vast slot en vergroot de afstand tussen zijn
+  begrenzende majors met één.
+- De bronknoop bepaalt altijd de hoogte van het LEX-projectieanker.
+- LOG is autoriteit voor de neutrale LEX-doelrij.
+- Bronanker → bepaald einddoel is één verplaatsing langs de LEX-as, met één
+  brontrace.
+- De voorbeeldzin levert geen layoutcoördinaten.
+- Topic en V2 worden logisch na LOG opgelost, maar veroorzaken geen tweede
+  zichtbare tussensprong.
+- Gevulde TOPIC- en V2-rijen tonen geen onderliggend vak `vrij slot`.
+- De normatieve details staan in `projectie-master-spec.md`.
 
-- `Syntax` is de eerste centrale view.
-- `Functional` is de tweede centrale functionele view.
-- `LOG` is uitsluitend de zuidas/projectie en nooit een centrale view.
-- Syntax ↔ Functional behoudt viewport, schaal en handmatige pan/zoom.
+## Views en assen
 
-## Projecties en groei
+- Centrale views: `Syntax` en `FT`.
+- Named projections: LEX west, SYNT oost, LOG zuid.
+- LOG is geen centrale view.
+- Standaard zijn alle drie named projections zichtbaar.
+- Iedere projectiecombinatie en Syntax ↔ FT gebruikt hetzelfde stabiele
+  viewport.
 
-- LEX: west/links.
-- SYNT: oost/rechts.
-- LOG: zuid/onder.
-- Standaard zijn LEX + SYNT + LOG zichtbaar.
-- Iedere as kan afzonderlijk worden uitgezet; `Alle` herstelt alle assen en `Geen` toont alleen de centrale view.
-- Bij groei verschijnt iedere geldige gekozen projectie direct met haar gerenderde bronknoop.
-- LEX-Wissels volgen pas na de structurele groei.
+## Configuratie
 
-## Responsieve grid-layout
+De Config-UI heeft vier tabbladen:
 
-`Boomruimte: Auto` gebruikt vanaf rc.20 geen vaste portrait-, landscape- of desktopafmetingen meer. De actuele canvasverhouding bepaalt continu:
+- `Beeld`: de twee zichtbare MAX-defaults, Syntax/FT, boomlayout en kleuren;
+- `LOG & LEX`: minors, LOG-interval, LEX-volgorde en regels;
+- `Bestanden`: Config-snapshot, OPN, graph/social-export en voorbeeldbeheer;
+- `Geavanceerd`: compatibiliteitsopties voor tak- en menuplaatsing.
 
-- horizontale en verticale celafstand;
-- afstand van centrale boom tot LEX- en SYNT-as;
-- maximale breedte van de regelprojectie;
-- de verhouding van raster en viewBox.
+`structure-config.html#opengraph-log-config` definieert:
 
-Portrait wordt smaller en hoger; landscape breder en lager; desktop volgt de feitelijke vensterverhouding. Alle centrale views en projectiecombinaties delen binnen dezelfde viewport exact hetzelfde profiel. Doel is maximale schermvulling zonder clipping of verspringing.
+- majors en lexicale sources;
+- LOG-intervallen met `after` en `before`;
+- standaardintervallen per bijwoordklasse;
+- vaste LOG- en LEX-slotstappen;
+- `LOG` als plaatsingsautoriteit;
+- `lex-projection-origin=SOURCE-Y`;
+- `lex-placement-mode=horizontal-then-move`;
+- `example-controls-layout=false`;
+- `play-phases="LOG SPACE LEX"`;
+- `play-space-mode="reserve-empty-lex-rows"`.
+
+De Config-UI kan het interval automatisch uit de klasse kiezen of expliciet
+op `before-S`, `S-O`, `O-V` of `after-V` zetten. De vroegere hostkeuze is
+alleen nog scope-/compatibiliteitsmetadata.
+
+## Play
+
+Na de bestaande knoop-voor-knoopopbouw van de centrale boom:
+
+1. verschijnt de LOG-as met majors en minors;
+2. reserveert LEX ruimte volgens de LOG-slots, zichtbaar als één sobere band;
+3. verschijnen de lexicale bronnen horizontaal op hun bronhoogte en verhuizen
+   zij elk eenmaal naar het bepaalde einddoel.
+
+LOG bepaalt eerst de neutrale doelrij; een expliciete topic-/V2-regel kan dat
+doel vóór het tekenen vervangen. SYNT en de overige projectiepanelen
+verschijnen in de eindstap.
+
+De vorige-stapknoppen gebruiken dezelfde stapnummers achteruit. De eindlaag is
+alleen ontgrendeld op exact de laatste stap. Eén stap terug verwijdert daarom
+meteen de eindprojecties; daarna verdwijnen achtereenvolgens LEX-Wissels,
+LEX-inhoud, gereserveerde LEX-ruimte, LOG en de boomknopen.
+
+## OPN-opslag
+
+`.opn` is het primaire round-tripformaat. Het scheidt `metadata`, `data` en
+optionele `paradata`. De data bewaart de LOG-sequentie, minorintervallen,
+slotnummers, majorafstanden en `lex_position_source=LOG`. Daarnaast bewaart
+zij `lex_projection_origin=SOURCE-Y` en
+`lex_placement_mode=horizontal-then-move`.
+
+## Graph- en Play-export
+
+- `Graph als SVG` maakt een zelfstandig vectorbestand met ingebedde
+  vormgeving.
+- `LinkedIn-PNG` maakt een wit beeld van 1200 × 627 pixels.
+- `Play als WebM` neemt de volledige gefaseerde Play automatisch op in
+  1200 × 627 bij 30 fps.
+- De WebM kan op LinkedIn rechtstreeks als native video worden geüpload.
+- De uitvoer blijft lokaal; er wordt niets automatisch gepubliceerd.
+
+## Voorbeelden en controle
+
+- 14 voorbeeldzinnen.
+- Twee meervoudige bijwoordvoorbeelden met klassegestuurde minors:
+  `MODALITEIT → S-O` en `FREQUENTIE → O-V`.
+- De Bijwoord-dropdown bevat 25 voorbeelden plus `Geen bijwoord`.
+- Vier beperkte meerwoordige eenheden vormen elk voorlopig één LOG-minor:
+  `MISSCHIEN WEL`, `AF EN TOE`, `OP DIT MOMENT` en
+  `MET VEEL AANDACHT`. Interne syntaxis valt buiten deze eerste uitbreiding.
+- `tools/check_log_slot_distance.py` bewaakt de afstandsinvariant.
+- `tools/check_lex_horizontal_projection.py` bewaakt de horizontale bronlijn
+  en één rechtstreekse eindverplaatsing per bronwoord.
+- `tools/check_projection_cleanup.py` bewaakt de volledige bijwoordfallback,
+  één introbeeld, rechte LOG-projecties, vrije-slotopruiming en de zinkop.
+- `tools/check_desktop_max_view.py` bewaakt full-window MAX en de leesbare
+  desktopfontschaal.
+- `tools/check_social_and_linguistic_export.py` bewaakt de vier talige
+  uitbreidingen en de SVG/PNG/WebM-export.
+- `tools/check_play_reverse.py` bewaakt dat de eindlaag niet blijft staan en
+  dat de fasevolgorde ook achteruit geldig blijft.
+- `tools/check_examples_roundtrip.py` bewaakt voorbeeld-round-trips.
+- `tools/check_release.py` bewaakt releasebestanden en contractmarkers.
 
 ## Topmenu
 
 ```text
-Rij 1: Zin · Bijwoord · Syntax / Functional · Interface · Projecties · LOG-volgorde
-Rij 2: Taal/Language · README/LEESMIJ · Config
+Zin · Bijwoord · Syntax/FT · Projecties · LOG-volgorde · NL/EN · Lees mij / README · Config
 ```
 
-- Geen algemene knop `Menu`.
-- Geen geneste submenu’s.
-- De tweede rij is zichtbaar op desktop en mobile.
-
-## Raster
-
-- Raster staat standaard aan.
-- Instelling: `Config → Boom → Weergave → Raster zichtbaar`.
-- Het raster is zichtbaar binnen en buiten de subtree-boxen.
-- De rasterlaag en viewBox volgen de actuele schermverhouding.
-
-## Publicatie-reset
-
-- `publish_checked.bat` opent na een geslaagde push de resetpagina.
-- Geen push of mislukte push betekent geen automatische reset.
-
-## Controle
-
-```bat
-node --check viewer.js
-check_release.bat
-```
-
-## Mobile rastercorrectie rc.21
-
-- Op compacte fysieke schermen is de rasterbreedte inhoudsgebonden: centrale boom plus zichtbare projectielijnen.
-- Een geforceerde interfacekeuze mag de rastergrens niet tot de volledige canvas-aspectratio verbreden.
-- Desktopgedrag blijft gelijk aan rc.20.
-
-## Mobile landscape
-
-- Een echte telefoon blijft in landscape mobile, ook wanneer de CSS-breedte groter is dan 760 px.
-- Compact landscape gebruikt een platter/breder gridprofiel en compacte top-/Play-balken.
-- Oriëntatiewissel luistert ook naar `visualViewport.resize` en voert na stabilisatie opnieuw FIT uit.
-
-## TODO
-
-- Niet-binaire, meertakkige bomen.
-- JaN (Just another Notation): `S:np-VP`, niet `S:NP-VP`.
-- Werknotatie in onderzoek: `S+ np-VP`; eerst voor binaire bomen, later voor meertakkigheid.
-- Flip van het verbale cluster: `heeft gebeten` ↔ `gebeten heeft`.
-
-
-
-## Config-overzicht (rc.24)
-
-- Config opent met een compact sectieoverzicht; uitgebreide instellingen zijn standaard ingeklapt.
-- Secties: Basisweergave, JaN-notatie (TODO), Boom & layout, LEX & bijwoorden, Projecties, Voorbeelden & editors en Geavanceerd.
-- Terugnavigatie gebruikt steeds de vorm `Terug naar: Main` of `Terug naar: Config`.
-- De bestaande save-werkwijze blijft ongewijzigd: `Ja · bewaar config`, `Nee · herstel laatst bewaarde config`, en download van het lokale config-log.
-- JaN is de werknaam voor Just another Notation. TODO: `S:np-VP` (niet `S:NP-VP`); werkvorm `S+ np-VP`; binaire bomen eerst, meertakkigheid later.
-
-
-## Config-uitleg
-
-- Config opent als compact sectieoverzicht.
-- Binnen geopende secties staat bij instellingen waar mogelijk een korte uitleg: wat doet de optie en welke laag blijft ongewijzigd.
-- De bestaande `Ja · bewaar config` / `Nee · herstel laatst bewaarde config`-werkwijze blijft behouden.
-
-## Eenvoudige lokale release-installatie
-
-- Pak de bronzip buiten Git uit.
-- Kopieer de inhoud rechtstreeks over `C:\git\graphlite`; behoud `.git`.
-- Test lokaal via `start-local-viewer.bat` en `reset-cache.html`.
-- Publiceer daarna met `publish_checked.bat`.
-- De publicatie-BAT vraagt een commitbericht, commit en pusht direct na geslaagde controles.
-- Geen `graphlite-next`, clone, bundle, promotie, `git pull` of force-push.
-
-## Talen
-
-- English is de standaardtaal bij een nieuwe installatie.
-- Beschikbaar: English, Nederlands, Deutsch, Français en Español.
-- Een eerder gekozen taal blijft lokaal bewaard.
-- De taalkeuze vertaalt de interface; de voorbeeldzinnen blijven Nederlands en demonstreren Nederlandse woordvolgorde.
-- Niet vertaalde technische teksten in Duits, Frans en Spaans vallen terug op Engels.
-
-## v2.0.6 — LEESMIJ/README eerste view
-
-Mobile portrait toont de onderwerpenboom en de actieve itemtekst direct in twee gelijke hoogtezones. Desktop en landscape blijven links-rechts.
-
-## v2.0.10 — LEESMIJ/README eerste view in alle modi
-
-- Desktop, mobile landscape en mobile portrait gebruiken één boven/onder-indeling.
-- Onderwerpen staan in de bovenste helft; tekst van het actieve item staat direct in de onderste helft.
-- Beide delen scrollen onafhankelijk.
+Er is geen algemene Menu-knop en er zijn geen geneste submenu’s.

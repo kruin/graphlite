@@ -1,5 +1,10 @@
 # LEX-bijwoordinsertie: gecontroleerde plaatsingsregels per bijwoord
 
+> Actueel rc.18-contract: deze tabellen leveren klasse, scope en mogelijke
+> gemarkeerde variant. De klasse kiest een LOG-interval; een bijwoord wordt
+> eerst LOG-minor en projecteert daarna naar LEX. `host` is geen
+> layoutautoriteit meer. Zie `../projectie-master-spec.md`.
+
 Versie: v4551
 
 

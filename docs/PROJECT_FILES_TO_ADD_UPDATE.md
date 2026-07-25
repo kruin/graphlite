@@ -5,35 +5,38 @@ Bestanden om als leidende projectbronnen toe te voegen of te vervangen.
 ## Volledige projectzip
 
 ```text
-OpenGraph_Lite_Viewer_v2.0.10_full_source.zip
+OpenGraph_Lite_Viewer_v2.0.0-rc.23_full_source.zip
 ```
+
+De zip bevat de volledige bronset, documentatie, referenties, voorbeelden, OPN-voorbeeldbestand en releasecontroles.
 
 ## Leidende losse bestanden
 
 ```text
 VERSION.txt
 README.md
+LEESMIJ.md
 PROJECT_STATE_CURRENT.md
+projectie-master-spec.md
+OPN_STORAGE_FORMAT.md
 LAYOUT_RULES.md
 LINGUISTIC_ACTIONS.md
 DOCUMENTATION_RULES.md
 HANDOVER_FOR_COLLABORATORS.md
 DEPLOY_GITHUB_PAGES.md
-EENVOUDIGE_RELEASE_WERKWIJZE.md
+SOURCE_CHANGES_V2.0.0-rc.20.md
+structure-config.html
+viewer.js
+index.html
+viewer.html
+images/readme/traditional-sentence-tree-examples.svg
+images/readme/log-minor-spacing.svg
+images/readme/play-log-space-lex.svg
+tools/check_log_slot_distance.py
+tools/check_lex_horizontal_projection.py
+tools/check_desktop_max_view.py
 ```
 
-## v2.0.10
+## Niet als leidende bron gebruiken
 
-Toevoegen of vervangen:
-
-- `publish_checked.bat`;
-- `EENVOUDIGE_RELEASE_WERKWIJZE.md`;
-- `EENVOUDIGE_RELEASE_WERKWIJZE_TEST.md`;
-- `SOURCE_CHANGES_V2.0.5.md`;
-- alle versiegebonden app-, cache- en manifestbestanden.
-
-Niet meer als actuele workflow gebruiken:
-
-- `graphlite_safe_update.bat`;
-- `LOCAL_GIT_SAFE_WORKFLOW.md`;
-- A/B-clone-, bundle- en promotiescripts.
+Oude projectzips, losse screenshots en historische release notes. Historische bestanden mogen in de volledige bronzip aanwezig blijven, maar de bovenstaande bestanden zijn normatief.

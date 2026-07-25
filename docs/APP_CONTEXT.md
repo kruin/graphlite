@@ -1,6 +1,13 @@
-# Actuele contractlaag · v2.0.0-rc.22
+# Actuele contractlaag · v2.0.0-rc.23
 
-De leidende actuele indeling is: `Syntax → Functional` in het View-menu en `LEX / SYNT / LOG` als named projections. Functional is de tweede centrale view; LOG is uitsluitend de zuidas. Onderstaande tekst bevat historische ontwikkelnotities en is niet normatief waar zij hiermee botst.
+De kern is nu `bronknoop → horizontale LEX-projectie → LOG-doel via
+LEX-Wissel → expliciete Wissels → voorbeeldzin als validatie`. LOG gebruikt
+vaste slots; iedere bijwoord-minor vergroot de relevante majorafstand. LOG
+bepaalt doelrijen, nooit de bronhoogte van de projectie. De voorbeeldzin
+stuurt de layout niet. Bij automatische plaatsing bepaalt `.log-class-config`
+het interval; oude voorbeeldpositiehints worden genegeerd.
+`Syntax → FT` zijn centrale views en `LEX / SYNT / LOG` named
+projections. Onderstaande tekst is historisch waar zij hiermee botst.
 
 ---
 
@@ -8,7 +15,7 @@ De leidende actuele indeling is: `Syntax → Functional` in het View-menu en `LE
 
 ## v4430 · bronpositie blijft zichtbaar op de LEX-as
 
-OpenGraph/JaN behandelt de LEX-as als projectieruimte met lokale plaatsingsregels. De boom levert bronposities; de LEX-as voert Wissels uit met vrije slots. Daarom blijven projecties horizontaal en verschuift een bronitem niet door de projectie zelf.
+OpenGraph/JAN behandelt de LEX-as als projectieruimte met lokale plaatsingsregels. De boom levert bronposities; de LEX-as voert Wissels uit met vrije slots. Daarom blijven projecties horizontaal en verschuift een bronitem niet door de projectie zelf.
 
 
 ---
@@ -23,7 +30,7 @@ De viewer noteert Nederlandse V2 niet als wijziging van de centrale boom, maar a
 
 ## Doel
 
-OpenGraph Lite Viewer is een lokale demo van JaN / Open Notation voor taalbomen.
+OpenGraph Lite Viewer is een lokale demo van JAN / Open Notation voor taalbomen.
 De viewer toont hoe een taalstructuur eerst als OPN-bron wordt opgebouwd en daarna naar LEX wordt geprojecteerd.
 
 Hoofdzin van de app:
@@ -42,10 +49,6 @@ Redesign: eerst syntax-tree, daarna LEX-projectie, daarna lokale LEX-regel.
 | lexicon | voorraad woorden, thematische rollen en eenvoudige selectieframes |
 | lexicon-editor | beheer en uitbreiding van `lexicon-config.html` |
 | examples-input | concrete voorbeeldzinnen met subject/object-markering |
-
-## Plaatsingsprincipe
-
-De viewer berekent vóór de rendering één volledig plaatsingsplan. De input bestaat uit structuur, lexicale inserties, plaatsingsregels, Wissels en actieve projecties. Nadat alle posities en corridors zijn gereserveerd, vult de kernzin dit frame. Groei is uitsluitend een zichtbaarheidspresentatie van dat vaste resultaat.
 
 ## Hoofdprincipe
 
@@ -77,7 +80,7 @@ De viewer kan de vooraf berekende centrale boom stapsgewijs tonen. Dit is een pr
 layout volledig berekenen → growthStep per element → gedeeltelijk renderen
 ```
 
-Daarmee kan JaN/Open Notation didactisch worden getoond als een groeiende vrije boom, zonder dat knopen tijdens het afspelen verspringen.
+Daarmee kan JAN/Open Notation didactisch worden getoond als een groeiende vrije boom, zonder dat knopen tijdens het afspelen verspringen.
 
 
 ## Lexicon-editor vanaf v4430

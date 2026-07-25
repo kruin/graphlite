@@ -1,28 +1,19 @@
 # SOURCE_CHANGES_V2.0.0-rc.12
 
-## Herstel
+## OPN-opslag
 
-- Publieke `Interface`-keuze toegevoegd aan het zichtbare topmenu.
-- Dezelfde keuze toegevoegd onder `Config → Boom → Interface`.
-- Keuzes: `Automatisch`, `Desktop`, `Mobiel staand`, `Mobiel liggend`.
-- Engelse labels: `Automatic`, `Desktop`, `Mobile portrait`, `Mobile landscape`.
-- De keuze gebruikt de bestaande `viewportMode`-laag en schrijft de gekozen modus in de URL.
+- `.opn` vervangen door een herlaadbaar JSON-gecodeerd OpenGraph-document.
+- Topniveau gescheiden in `metadata`, `data` en `paradata`.
+- Syntax- en FT-graphsnapshots, LEX/SYNT/LOG-projecties en LOG-volgorde in `data`.
+- Centrale view, zichtbare projecties, pan/zoom, Play-status en sessie-events in `paradata`.
+- Automatische metadata met document-id, tijdstippen, taal en generatorversie.
+- Maximaal 250 paradata-events per export.
+- Exportcheckbox toegevoegd om paradata volledig weg te laten.
+- Oude vlakke JSON-import blijft ondersteund.
+- Legacy JSON-export blijft tijdelijk beschikbaar voor debugging.
+- UI aangepast naar `OPN/JSON openen`, `Download OPN` en `Legacy JSON`.
 
-## Mobile full view
+## Documentatie
 
-- De stabiele projectie-fitbox reserveert geen ruimte meer voor de verwijderde Projecties-box en SOV-box in het canvas.
-- De oude vaste ondergrenzen `2180 × 1120` zijn verwijderd.
-- Mobile gebruikt compactere afstanden tussen centrale boom en LEX-/SYNT-as.
-- SYNT-/FT-regelboxen gebruiken op mobile een kleinere maximale breedte.
-- De veiligheidsrand rond de full view is op mobile sterk teruggebracht.
-- Syntax, FT en alle combinaties van LEX/SYNT/LOG blijven dezelfde fitbox gebruiken.
-- Een geforceerde mobile-interface op een echt smal scherm gebruikt de echte viewport; het desktop-telefoonframe wordt daar onderdrukt.
-
-## Ongewijzigd
-
-- Syntax is de eerste centrale view.
-- FT is de tweede centrale view.
-- LOG is uitsluitend de zuidas.
-- Standaard zijn LEX + SYNT + LOG zichtbaar.
-- Projectiewissels veroorzaken geen horizontale of verticale verspringing.
-- De dunne lijnhiërarchie blijft behouden.
+- `OPN_STORAGE_FORMAT.md` toegevoegd aan root en docs.
+- README, projectstatus, overdracht en documentatieregels bijgewerkt.

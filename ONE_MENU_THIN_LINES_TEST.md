@@ -1,4 +1,4 @@
-# ONE_MENU_THIN_LINES_TEST — v2.0.0-rc.19
+# ONE_MENU_THIN_LINES_TEST — v2.0.0-rc.23
 
 ## Statische controles
 

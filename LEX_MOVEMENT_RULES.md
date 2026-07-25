@@ -1,106 +1,45 @@
-# LEX-plaatsingsregels
+# LEX-plaatsingsregels · v2.0.0-rc.23
 
-De viewer gebruikt de LEX-as om de zichtbare woordvolgorde van de voorbeeldzin te maken.
+## Logische lagen, één zichtbare stap
 
-De centrale graph blijft staan. LEX-projectie en LEX-verplaatsing zijn asbewerkingen.
-
-## Projectiemerkers
-
-Eerst projecteren lexicale bronknopen horizontaal naar de LEX-as. De positie op de LEX-as heet een projectiemerker.
+LEX lost twee lagen op voordat het traject wordt getekend:
 
 ```text
-bronknoop → projectielijn → projectiemerker
+1. neutrale basis uit LOG-majors/minors
+2. een eventueel expliciet topic-/V2-doel
 ```
 
-LEX en de LEX-projectielijnen zijn blauw.
+Daarna verschijnt per bronwoord hoogstens één rechtstreekse verplaatsing naar
+het bepaalde einddoel. De voorbeeldzin is de verwachte surface-uitkomst en
+levert geen basiscoördinaten.
 
-## Hoofdregel
+## Neutrale basis
 
-```text
-1. Plaats alle centrale bronknopen.
-2. Projecteer lexicale bronknopen naar LEX-projectiemerkers.
-3. Activeer daarna LEX-verplaatsingen.
-4. Verplaats alleen naar een gereserveerde lege plek.
-5. Een verplaatste projectiemerker laat op de oude basisplek een trace achter.
-6. Lees de zichtbare woorden; traces lees je niet mee.
-```
+- LOG-slots bepalen de LEX-rijen.
+- Een bijwoord-minor bezet dezelfde relatieve rij als op LOG.
+- Een major met meerdere sources, bijvoorbeeld `pv` en `vdw`, gebruikt
+  opeenvolgende rijen binnen de majorzone.
+- De bronprojectielijn is altijd horizontaal en blijft op de bronhoogte.
 
-## Lege plekken
+## Wissels
 
-```text
-slot 0 = Comp / voegwoord, bijvoorbeeld OMDAT of DAT
-slot 1 = vooropplaatsing / topic / eerste zinsdeel
-slot 2 = V2 / persoonsvorm
-slot 3+ = post-V2 of extra LEX-posities
-bijwoordslot = extern slot boven hostbox
-trace = oude basisplek na Wissel
-```
+Een expliciete regel vervangt zo nodig het neutrale doel:
 
-## Ruimte maken
+- `Comp` gebruikt slot 0;
+- topic/vooropplaatsing gebruikt slot 1;
+- V2/persoonsvorm gebruikt slot 2;
+- een verplaatst item laat één trace op de horizontale bronrij.
 
-Lege plekken kunnen ontstaan door:
-
-```text
-vrije rij                         extra gridruimte
-verlengde tak                     langere tak naar een subboom of grens
-host-subboom lager plaatsen       ruimte boven S, NP, VP, V, PP of AP
-```
-
-## Hoofdzin
-
-Voorbeeld:
-
-```text
-HOND BIJT MAN
-```
-
-Basisprojectie:
-
-```text
-HOND  MAN  BIJT
-```
-
-Plaatsingsregels:
-
-```text
-HOND  → slot 1  vooropplaatsing/topic
-BIJT  → slot 2  V2 / persoonsvorm
-MAN   blijft op de basisprojectiemerker
-```
-
-Resultaat:
-
-```text
-HOND BIJT MAN
-```
-
-Traces:
-
-```text
-t[subject] blijft op de oude HOND-basisplek
-t[V]       blijft op de oude BIJT/V-basisplek
-```
-
-## Bijzin met OMDAT
-
-Voorbeeld:
-
-```text
-OMDAT DE HOND DE MAN HEEFT GEBETEN
-```
-
-```text
-OMDAT → slot 0 / Comp
-subject, object en werkwoordcluster blijven in de bijzinvolgorde
-geen V2-wissel
-```
+Er is geen tweede pijl of LOG-tussentrace. De centrale Syntax- of FT-graph en
+de LOG-sequentie veranderen niet.
 
 ## Bijwoorden
 
-Bijwoorden zijn externe LEX-inserties. Het lege bijwoordslot wordt eerst aangebracht op hosthoogte. Daarna pas werken LEX-Wissels.
+Een bijwoord is geen vrij LEX-hostslot meer. Het is eerst een LOG-minor.
+Alleen een expliciete regel zoals `fronted-v2` vervangt het neutrale
+LEX-einddoel. Een scopehost is semantische metadata.
 
-```text
-bijwoordslot boven S / NP / VP / V / PP / AP
-hostbox of host-subboom maakt ruimte
-syntaxstructuur blijft gelijk
-```
+## Gemarkeerde majorvolgorden
+
+`OSV-!`, `VSO-!` en `VOS-!` geven aan dat de huidige regelset nog een
+expliciete Wissel nodig heeft voor een volledig surface-resultaat.

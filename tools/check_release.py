@@ -1,246 +1,135 @@
 from __future__ import annotations
-import json, re, sys
+import json,re,sys
 from pathlib import Path
-
-ROOT = Path(__file__).resolve().parents[1]
-VERSION = (ROOT / 'VERSION.txt').read_text(encoding='utf-8').strip()
-errors: list[str] = []
-
-required_files = [
-    'index.html','viewer.html','viewer.js','styles.css','reset-cache.html','sw.js',
-    'manifest.webmanifest','structure-config.html','examples-input.html','lexicon-config.html',
-    '.nojekyll','PROJECT_STATE_CURRENT.md','LAYOUT_RULES.md','LINGUISTIC_ACTIONS.md',
-    'SOV_NOTATION_OPTIONS.md','EENVOUDIGE_RELEASE_WERKWIJZE.md','publish_checked.bat',
-    'check_release.bat','start-local-viewer.bat','README.md','SOURCE_CHANGES_V2.0.5.md',
-    'LANGUAGE_MENU_TEST.md','EENVOUDIGE_RELEASE_WERKWIJZE_TEST.md',
-    'RELEASE_MANIFEST_GIT_EXCLUSION_TEST.md','README_FIRST_VIEW_HALF_HEIGHT_TEST.md','SOURCE_CHANGES_V2.0.8.md',
-    'SOURCE_CHANGES_V2.0.9.md','LEXICAL_PLACEMENT_PLAN_TEST.md','SOURCE_CHANGES_V2.0.10.md','LEX_INSERTION_LINEAR_ORDER_TEST.md','RELEASE_MANIFEST.txt'
-]
-for rel in required_files:
-    if not (ROOT / rel).is_file():
-        errors.append(f'ontbreekt: {rel}')
-
-index = (ROOT/'index.html').read_text(encoding='utf-8', errors='ignore')
-js = (ROOT/'viewer.js').read_text(encoding='utf-8', errors='ignore')
-css = (ROOT/'styles.css').read_text(encoding='utf-8', errors='ignore')
-
-for rel in ['index.html','viewer.html','viewer.js','reset-cache.html','sw.js','manifest.webmanifest']:
-    if VERSION not in (ROOT/rel).read_text(encoding='utf-8', errors='ignore'):
-        errors.append(f'versie ontbreekt in {rel}')
-if (ROOT/'index.html').read_bytes() != (ROOT/'viewer.html').read_bytes():
-    errors.append('viewer.html verschilt van index.html')
-
-# Main contract.
-for token in [
-    'id="mainSentenceMenu"','id="mainAdverbMenu"','id="mainViewMenu"',
-    'id="mainInterfaceMenu"','id="sourceAxisMenu"','id="mainExtraMenu"',
-    'id="mainLanguageMenu"','id="openHelpButton"','id="openConfigButton"',
-    'id="growthProjectionImmediateInput"','data-source-axis="lex"',
-    'data-source-axis="synt"','data-source-axis="log"'
-]:
-    if token not in index: errors.append(f'UI mist {token}')
+ROOT=Path(__file__).resolve().parents[1]
+VERSION=(ROOT/'VERSION.txt').read_text(encoding='utf-8').strip()
+errors=[]
+for rel in ['index.html','viewer.html','viewer.js','styles.css','reset-cache.html','sw.js','structure-config.html','examples-input.html','examples-adverbs.html','lexicon-config.html','.nojekyll','README.md','LEESMIJ.md','PROJECT_STATE_CURRENT.md','LAYOUT_RULES.md','LINGUISTIC_ACTIONS.md','SOV_NOTATION_OPTIONS.md','OPN_STORAGE_FORMAT.md','projectie-master-spec.md','SOURCE_CHANGES_V2.0.0-rc.23.md','docs/TALIGE_UITBREIDINGEN.md','docs/SOCIAL_EXPORT.md','images/readme/traditional-sentence-tree-examples.svg','images/readme/log-minor-spacing.svg','images/readme/play-log-space-lex.svg','tools/check_log_slot_distance.py','tools/check_lex_horizontal_projection.py','tools/check_projection_cleanup.py','tools/check_play_reverse.py','tools/check_desktop_max_view.py','tools/check_config_tabs_and_menus.py','tools/check_social_and_linguistic_export.py']:
+    if not (ROOT/rel).is_file(): errors.append(f'ontbreekt: {rel}')
+index=(ROOT/'index.html').read_text(encoding='utf-8',errors='ignore')
+js=(ROOT/'viewer.js').read_text(encoding='utf-8',errors='ignore')
+css=(ROOT/'styles.css').read_text(encoding='utf-8',errors='ignore')
+for rel in ['index.html','viewer.html','viewer.js','reset-cache.html','sw.js']:
+    if VERSION not in (ROOT/rel).read_text(encoding='utf-8',errors='ignore'): errors.append(f'versie ontbreekt in {rel}')
+if (ROOT/'index.html').read_bytes()!=(ROOT/'viewer.html').read_bytes(): errors.append('viewer.html verschilt van index.html')
+for f in ['id="mainSentenceMenu"','id="mainAdverbMenu"','id="mainViewMenu"','id="sourceAxisMenu"','id="mainExtraMenu"','id="mainSentenceOptions"','id="mainAdverbOptions"','id="mainViewOptions"','id="sourceAxisSummaryLabel"','data-source-axis="lex"','data-source-axis="synt"','data-source-axis="log"','data-language-toggle','id="openHelpButton"','id="openConfigButton"','Venstervulling']:
+    if f not in index: errors.append(f'UI mist {f}')
 if 'id="mainActionsMenu"' in index or '>Menu</summary>' in index:
     errors.append('algemene Menu-knop staat nog in Main')
-if ('Kies Syntax of Functional' not in index and 'Choose Syntax or Functional' not in index) or "{ id: 'ft', label: 'Functional' }" not in js:
-    errors.append('zichtbare viewnaam Functional ontbreekt')
-if 'Syntax / FT' in index or '>FT<' in index:
-    errors.append('oude zichtbare viewnaam FT staat nog in Main')
-
-# Language contract.
-for lang in ['English','Nederlands','Deutsch','Français','Español']:
-    if lang not in index: errors.append(f'talenmenu mist {lang}')
-if index.count('data-language-option=') != 15:
-    errors.append('verwacht vijf talen in elk van drie talenmenu’s')
-for token in [
-    "const DEFAULT_LANGUAGE = 'en';",
-    "{ id: 'de', label: 'Deutsch' }",
-    "{ id: 'fr', label: 'Français' }",
-    "{ id: 'es', label: 'Español' }",
-    "localStorage.getItem('opengraph_language')",
-    'The sentence examples are Dutch and illustrate Dutch sentence word order.',
-    'De voorbeeldzinnen zijn Nederlands en tonen de Nederlandse woordvolgorde.',
-    'Die Beispielsätze sind niederländisch',
-    'Les phrases d’exemple sont néerlandaises',
-    'Las frases de ejemplo están en neerlandés'
-]:
-    if token not in js and token not in index:
-        errors.append(f'taalcontract mist {token!r}')
-for menu_id in ['mainLanguageMenu','configLanguageMenu','helpLanguageMenu']:
-    if f'id="{menu_id}"' not in index: errors.append(f'talenmenu ontbreekt: {menu_id}')
-if 'language-option-list' not in css or 'language-sentence-note' not in css:
-    errors.append('talenmenu-opmaak ontbreekt')
-
-# README first-view contract.
-for token in [
-    'v2.0.10: README/LEESMIJ first view in every interface mode',
-    'grid-template-rows: minmax(0, 1fr) minmax(0, 1fr)',
-    'body.help-screen-active .help-tree-screen',
-    'grid-template-columns: minmax(0, 1fr)',
-    "if (stage) stage.scrollTop = 0;"
-]:
-    if token not in css and token not in js:
-        errors.append(f'LEESMIJ-eerste-view mist {token!r}')
-if not (ROOT/'README_FIRST_VIEW_HALF_HEIGHT_TEST.md').is_file():
-    errors.append('ontbreekt: README_FIRST_VIEW_HALF_HEIGHT_TEST.md')
-
-# Fixed two-row top menu: six choices, then language/readme/config.
-top = re.search(r'<nav[^>]*class=["\'][^"\']*\bmain-top-menu\b[^"\']*["\'][^>]*>.*?</nav>', index, re.S)
-if not top:
+if '>NL/EN</button>' not in index:
+    errors.append('topmenu mist zichtbare optie NL/EN')
+top_menu=re.search(r'<nav class="main-top-menu".*?</nav>',index,re.S)
+if not top_menu:
     errors.append('zichtbare topmenubalk ontbreekt')
 else:
-    block=top.group(0)
-    if block.count('<details') != 7:
-        errors.append('topmenu moet zeven details-keuzes bevatten: zes op rij 1 en taal op rij 2')
-    for item in ['mainSentenceMenu','mainAdverbMenu','mainViewMenu','mainInterfaceMenu','sourceAxisMenu','mainExtraMenu','mainLanguageMenu','openHelpButton','openConfigButton']:
+    block=top_menu.group(0)
+    required=['mainSentenceMenu','mainAdverbMenu','mainViewMenu','sourceAxisMenu','mainExtraMenu','data-language-toggle','openHelpButton','openConfigButton']
+    for item in required:
         if item not in block: errors.append(f'topmenu mist {item}')
-
-# Config and JaN contract.
-for token in ['id="config-overview"','id="config-basic"','id="config-jan"','id="config-tree"','id="config-lex"','id="config-projections"','id="config-examples"','id="config-advanced"','S:np-VP','S:NP-VP','S+ np-VP']:
-    if token not in index: errors.append(f'Config/JaN mist {token}')
-for token in ['config-item-help','config-action-help-list','config-toggle-title']:
-    if token not in index and token not in css: errors.append(f'Config-toelichting mist {token}')
-
-# Placement-plan documentation contract.
-placement_docs = {
-    'README.md': ['plaatsingsplan vóór rendering', 'kernzin lexicaal invullen'],
-    'PROJECT_STATE_CURRENT.md': ['plaatsingsplan vóór rendering', 'layoutinput'],
-    'LAYOUT_RULES.md': ['layoutinput = structuur + lexicale inserties', 'render het vaste resultaat'],
-    'LINGUISTIC_ACTIONS.md': ['Lexicale insertie als voorafgaande layoutactie', 'volledig plaatsingsplan'],
-    'DOCUMENTATION_RULES.md': ['plaatsingsplan berekenen → kernzin invullen → groei/rendering'],
-    'HANDOVER_FOR_COLLABORATORS.md': ['Plaatsingsplancontract'],
-    'docs/LAYOUT_SPEC.md': ['Actuele architectuur — plaatsingsplan vóór rendering'],
-    'docs/RENDER_EXPLANATION.md': ['Plaatsings- en render-volgorde'],
-    'docs/RENDER_EXPLANATION_EN.md': ['Placement before render'],
-}
-for rel, tokens in placement_docs.items():
-    content=(ROOT/rel).read_text(encoding='utf-8', errors='ignore')
-    for token in tokens:
-        if token not in content:
-            errors.append(f'plaatsingsplan-documentatie mist {token!r} in {rel}')
-for token in [
-    'vóór de rendering één volledig plaatsingsplan berekend',
-    'Before the central tree is rendered, the placement plan reserves',
-    'Alle insertiegroepen worden vóór de centrale boomplaatsing',
-    'All insertion groups enter the placement plan before the central tree is placed'
-]:
-    if token not in index:
-        errors.append(f'ingebouwde README mist plaatsingsplanregel {token!r}')
-
-# Multiple insertion linear-order contract.
-for token in [
-    "OMDAT DE HOND DE MAN MISSCHIEN WEL VAAK GEBETEN HEEFT",
-    "host: 'V-CLUSTER'",
-    "linear: 'post-object-pre-vcluster'",
-    "function insertionLinearZone(spec = {})",
-    "na object · vóór V-CLUSTER"
-]:
-    if token not in js and token not in index:
-        errors.append(f'LEX-insertievolgorde mist {token!r}')
-if "OMDAT DE HOND DE MAN MISSCHIEN WEL VAAK HEEFT GEBETEN" in js:
-    errors.append('foutieve bijzinsvolgorde HEEFT GEBETEN staat nog in viewer.js')
-examples_html=(ROOT/'examples-input.html').read_text(encoding='utf-8', errors='ignore')
-for token in ['data-host="V-CLUSTER"','data-linear="post-object-pre-vcluster"','MISSCHIEN WEL VAAK GEBETEN HEEFT']:
-    if token not in examples_html:
-        errors.append(f'voorbeeldspecificatie mist {token!r}')
-
-# Existing layout/growth safety contract.
-for token in [
-    "projection: 'axes'",'function activeProjectionAxisSet()','function setViewportMode(',
-    'function viewportGridProfile()','function projectionStableFrameBox()',
-    'function stableProjectionViewBox()','function physicalViewportMetrics()',
-    'actual-compact-landscape',"window.visualViewport?.addEventListener('resize'",
-    'growthProjectionImmediate: true','function projectionSourceVisible(',
-    'function executedLexMovementCount('
-]:
-    if token not in js: errors.append(f'JS mist {token!r}')
-if not re.search(r'<input[^>]*id=["\']growthProjectionImmediateInput["\'][^>]*checked|<input[^>]*checked[^>]*id=["\']growthProjectionImmediateInput["\']', index):
-    errors.append('directe projectiegroei is niet standaard aangevinkt')
-for token in ['stroke-width: .72 !important','stroke-width: 1.42 !important','stroke-width: .50 !important']:
-    if token not in css: errors.append(f'lijnhiërarchie mist {token}')
-
-# Simple direct release workflow.
-removed_scripts=['graphlite_safe_update.bat','prepare_release_clone.bat','promote_release_clone.bat','recover_git_bundle.bat']
-for rel in removed_scripts:
-    if (ROOT/rel).exists(): errors.append(f'verwijderd releasescript staat nog in bron: {rel}')
-bat=(ROOT/'publish_checked.bat').read_text(encoding='utf-8', errors='ignore')
-for token in ['call check_release.bat','Geef commit message','git commit -m','git push -u origin','automatic_reset','reset-cache.html?ogv=%APP_VERSION%','pause >nul']:
-    if token.lower() not in bat.lower(): errors.append(f'publish_checked.bat mist {token}')
-if re.search(r'(?mi)^\s*git\s+pull\b', bat): errors.append('publish_checked.bat voert git pull uit')
-if re.search(r'(?mi)^\s*git\s+push\b.*(?:--force|-f\b)', bat): errors.append('publish_checked.bat voert force-push uit')
-workflow=(ROOT/'EENVOUDIGE_RELEASE_WERKWIJZE.md').read_text(encoding='utf-8', errors='ignore')
-for token in [r'C:\git\graphlite','publish_checked.bat','start-local-viewer.bat','reset-cache.html','geen `graphlite-next`','geen `git pull`']:
-    if token.lower() not in workflow.lower(): errors.append(f'eenvoudige releasewerkwijze mist {token}')
-
-# Docs copies.
-for rel in ['README.md','EENVOUDIGE_RELEASE_WERKWIJZE.md','PROJECT_STATE_CURRENT.md','HANDOVER_FOR_COLLABORATORS.md']:
-    doc=ROOT/'docs'/rel
-    if not doc.is_file(): errors.append(f'docskopie ontbreekt: docs/{rel}')
-    elif (ROOT/rel).read_bytes()!=doc.read_bytes(): errors.append(f'docskopie wijkt af: docs/{rel}')
-
-# Links and JSON.
+    if block.count('<details') != 5:
+        errors.append('topmenu moet vijf directe keuze-items bevatten')
+canvas=re.search(r'<section id="canvasWrap".*?</section>',index,re.S)
+if canvas and ('mainSouthModeButton' in canvas.group(0) or 'language-action-box' in canvas.group(0)): errors.append('SOV staat nog in canvas')
+if 'id="southBoxDraggableInput"' in index: errors.append('oude SOV-dragoptie staat nog in Config')
+for f in ["projection: 'axes'","const parsed = raw ? JSON.parse(raw) : SOURCE_AXIS_IDS;","function activeProjectionAxisSet()","function applyProjectionAxes(","applyProjectionAxes(SOURCE_AXIS_IDS); resetForNewExample(); render();","function renderMainChoiceMenus()","function buildOpnDocument(","schema: 'data-metadata-paradata'","function applyOpnDocument(","lex_insertions:","applyExampleAdverbDefaults();","function buildLogicalSlotSequence(","function logicalSlotDistance(","function activeLogicalSlotSequence(","function logicalLexPlan(","function horizontalLexProjectionEnabled()","function logicalPlacementMovementForItem(","function appliedLogicalPlacementForItem(","stage: 'combined'","const topicOccupied = topicIndex >= 0","const v2Occupied = v2Index >= 0","d: `M ${startX} ${p.py} H ${endX}`","d: `M ${sourceX} ${item.sourceTopY} V ${y}`","class: 'graph-sentence-heading'","'data-north-axis-clearance': '64'","const ADVERB_FALLBACK_ROWS = [","...ADVERB_FALLBACK_ROWS.map(","if (activeLogConfig().exampleControlsLayout)","const exampleMayControlLayout = activeLogConfig().exampleControlsLayout","position_source: logicalAuthorityEnabled() ? 'LOG'","projection_origin: activeLogConfig().lexProjectionOrigin","placement_mode: activeLogConfig().lexPlacementMode","example_controls_layout: !!activeLogConfig().exampleControlsLayout","play_phases: logLexPlayPhases()","play_space_mode: activeLogConfig().playSpaceMode"]:
+    if f not in js: errors.append(f'JS mist {f!r}')
+for f in ['Lees mij / README','data-help-topic-button="readme"','data-help-topic="readme"','Boom, gek','images/readme/traditional-sentence-tree-examples.svg','data-readme-carousel-controls','data-readme-external-window']:
+    if f not in index: errors.append(f'README-intro mist {f!r}')
+if index.count('data-readme-slide') != 1:
+    errors.append('README-intro moet in rc.23 exact het eerste beeld tonen')
+for stale_image in ['images/readme/log-minor-spacing.svg','images/readme/play-log-space-lex.svg']:
+    if stale_image in index: errors.append(f'README-intro toont te vroeg later beeld {stale_image}')
+for f in ["function registerReadmeCarousel()","if (slides.length < 2)","function registerReadmeExternalWindows()","window.open(","if (open) setHelpTopic('readme')"]:
+    if f not in js: errors.append(f'README-carrouselgedrag mist {f!r}')
+for f in ["function logLexPlayPhases()","const logStep = phaseStep('LOG')","const spaceStep = phaseStep('SPACE')","const lexBaseStep = phaseStep('LEX')","spaceOnly: true","1/3 LOG","2/3 ruimte","3/3 horizontale LEX-projectie"]:
+    if f not in js: errors.append(f'Play-fasering mist {f!r}')
+if "state.projectionBlockUnlocked = maxStep > 0 && state.growthStep >= maxStep;" not in js:
+    errors.append('Play-min ontgrendelt de eindlaag niet reversibel')
+for f in ["{ id: 'max', label: 'MAX · groot letterbeeld / lage boom · standaard' }","{ id: 'max', label: 'MAX · volledig venster benut · standaard' }","layoutDensity: 'max'","viewFitMode: 'max'","function computeMaximumContentFitBox()","state.maximumContentFit"]:
+    if f not in js: errors.append(f'desktop-MAX mist {f!r}')
+for f in ['body.main-screen-active.main-window-max .workspace','font-size: .88rem !important']:
+    if f not in css: errors.append(f'desktop-MAX CSS mist {f!r}')
+if '.lex-space-reservation' not in css:
+    errors.append('sobere LEX-ruimtestap mist CSS')
+if 'vrije LEX-rij' in js:
+    errors.append('oude herhaalde vrije-LEX-labels staan nog in de renderer')
+for f in ["const CONFIG_TAB_DEFINITIONS = [","function setupConfigTabs()","function activateConfigTab(","dataset.configTabButton","config-max-callout"]:
+    if f not in js: errors.append(f'Config-tabbladen missen {f!r}')
+for f in ['body.config-screen-active .config-tab-list','body.config-screen-active .config-tab-panel.active','body.main-screen-active .top-menu-item[open]']:
+    if f not in css: errors.append(f'UI-laag/tab-CSS mist {f!r}')
+if 'body.help-screen-active .help-screen.help-tree-screen' not in css or 'display: grid !important' not in css:
+    errors.append('directe links/rechts-README-layout ontbreekt')
+for f in ['id="logInsertionIntervalSelect"','id="mobileLogInsertionIntervalSelect"']:
+    if f not in index: errors.append(f'LOG-intervalbediening mist {f}')
+structure=(ROOT/'structure-config.html').read_text(encoding='utf-8',errors='ignore')
+for f in ['id="opengraph-log-config"','data-authority="LOG"','data-position-unit="slot"','data-lex-position-source="LOG"','data-lex-projection-origin="SOURCE-Y"','data-lex-placement-mode="horizontal-then-move"','data-example-controls-layout="false"','data-play-phases="LOG SPACE LEX"','data-play-space-mode="reserve-empty-lex-rows"','class="log-major-config"','class="log-interval-config"','class="log-class-config"','data-category="MODALITEIT" data-interval="S-O"','data-category="FREQUENTIE" data-interval="O-V"']:
+    if f not in structure: errors.append(f'LOG-config mist {f}')
+structure_editor=(ROOT/'structure-editor.html').read_text(encoding='utf-8',errors='ignore')
+for f in ['id="logText"','const defaultLogSection','${els.log.value.trim() || defaultLogSection}']:
+    if f not in structure_editor: errors.append(f'structure-editor LOG-round-trip mist {f}')
+for editor_name in ['examples-editor.html','lexicon-editor.html']:
+    editor=(ROOT/editor_name).read_text(encoding='utf-8',errors='ignore')
+    for f in ['normalizeLexInsertions','data-log-interval=','data-log-after=','data-log-before=','aria-label="LOG-minors"']:
+        if f not in editor: errors.append(f'{editor_name} LOG-minor-round-trip mist {f}')
+for f in ['id="configDownloadOpnButton"','id="configFileInput"','id="mobileDownloadOpnButton"','id="mobileFileInput"']:
+    if f not in index: errors.append(f'OPN-bediening mist {f}')
+for f in ['id="downloadGraphSvgButton"','id="downloadGraphPngButton"','id="recordPlayWebmButton"','id="graphExportStatus"']:
+    if f not in index: errors.append(f'graph/social-exportbediening mist {f}')
+for f in ['function standaloneSvgText(','function inlineStandaloneSvgPresentation(','function downloadGraphSvg(','async function downloadGraphPng(','async function recordPlayWebm(','canvas.captureStream(30)',"'video/webm;codecs=vp9'"]:
+    if f not in js: errors.append(f'graph/social-export mist {f!r}')
+adverb_examples=(ROOT/'examples-adverbs.html').read_text(encoding='utf-8',errors='ignore')
+tbody=re.search(r'<tbody>(.*?)</tbody>',adverb_examples,re.S)
+if not tbody or len(re.findall(r'<tr\b',tbody.group(1))) != 25:
+    errors.append('bijwoordtabel moet exact 25 voorbeelden bevatten')
+for phrase in ['MISSCHIEN WEL','AF EN TOE','OP DIT MOMENT','MET VEEL AANDACHT']:
+    if phrase not in js or phrase not in adverb_examples:
+        errors.append(f'meerwoordige bijwoordelijke eenheid ontbreekt: {phrase}')
+example_input=(ROOT/'examples-input.html').read_text(encoding='utf-8',errors='ignore')
+if example_input.count('class="example-input"') != 14:
+    errors.append('voorbeeldset moet exact 14 zinnen uit v2.0.10 bevatten')
+for example_id in ['de-hond-heeft-de-man-misschien-wel-vaak-gebeten','omdat-de-hond-de-man-misschien-wel-vaak-gebeten-heeft']:
+    match=re.search(rf'<article class="example-input" data-id="{re.escape(example_id)}".*?</article>',example_input,re.S)
+    if not match:
+        errors.append(f'meervoudig LEX-voorbeeld ontbreekt: {example_id}')
+        continue
+    block=match.group(0)
+    for marker in ['data-category="MODALITEIT"','data-category="FREQUENTIE"']:
+        if marker not in block: errors.append(f'{example_id} mist klassemarker {marker}')
+    for stale in ['data-log-interval=','data-log-after=','data-log-before=']:
+        if stale in block: errors.append(f'{example_id} bevat nog oude voorbeeldpositie {stale}')
+for f in ['.main-top-menu','.top-menu-popover','.main-control-select-compat','lichte belijning; alleen named projections krijgen nadruk']:
+    if f not in css: errors.append(f'CSS mist {f}')
+for f in ['stroke-width: .72 !important','stroke-width: 1.42 !important','stroke-width: .50 !important']:
+    if f not in css: errors.append(f'lijnhiërarchie mist {f}')
+readme=(ROOT/'README.md').read_text(encoding='utf-8',errors='ignore')
+leesmij=(ROOT/'LEESMIJ.md').read_text(encoding='utf-8',errors='ignore')
+if 'Dutch documentation' not in readme or 'Play sequence' not in readme:
+    errors.append('README.md is niet de actuele Engelse versie')
+if 'Engelse documentatie' not in leesmij or 'Play-volgorde' not in leesmij:
+    errors.append('LEESMIJ.md is niet de actuele Nederlandse versie')
+if 'class="main-projection-field"' in index: errors.append('oude zichtbare projectieselect staat nog in Main')
+if 'Standaard zijn alle assen zichtbaar.' not in index: errors.append('default alle assen niet vermeld')
+for bad in ['LOG/FT','FT/LOG']:
+    for p in ROOT.rglob('*'):
+        if p.name == 'check_release.py':
+            continue
+        if p.is_file() and p.suffix.lower() in {'.html','.js','.css','.md','.txt','.py','.bat'} and bad in p.read_text(encoding='utf-8',errors='ignore'):
+            errors.append(f'verboden term {bad} in {p.relative_to(ROOT)}')
 attr=re.compile(r'(?:href|src)=["\']([^"\'#?]+)')
 for p in ROOT.rglob('*.html'):
-    for target in attr.findall(p.read_text(encoding='utf-8', errors='ignore')):
+    for target in attr.findall(p.read_text(encoding='utf-8',errors='ignore')):
         if target.startswith(('http:','https:','mailto:','data:','javascript:','/')): continue
-        resolved=(p.parent/target).resolve()
-        try: resolved.relative_to(ROOT.resolve())
+        r=(p.parent/target).resolve()
+        try: r.relative_to(ROOT.resolve())
         except ValueError: continue
-        if not resolved.exists(): errors.append(f'gebroken link {p.relative_to(ROOT)} -> {target}')
-for p in ROOT.rglob('*.json'):
-    try: json.loads(p.read_text(encoding='utf-8'))
-    except Exception as exc: errors.append(f'ongeldige JSON {p.relative_to(ROOT)}: {exc}')
-
-# The checker itself must keep repository metadata outside the product manifest.
-checker_source = (ROOT/'tools/check_release.py').read_text(encoding='utf-8', errors='ignore')
-for token in [
-    "EXCLUDED_RELEASE_DIRS = {'.git', '__pycache__'}",
-    "entry.startswith('.git/')",
-    "if is_release_file(path)"
-]:
-    if token not in checker_source:
-        errors.append(f'manifest-.git-uitsluiting mist {token!r}')
-
-# Manifest is the sorted product-source file list, including itself.
-# Repository metadata and local runtime artifacts are deliberately outside the
-# release manifest. This lets the same check run both in an extracted source
-# folder and inside C:\\git\\graphlite without ever scanning .git.
-EXCLUDED_RELEASE_DIRS = {'.git', '__pycache__'}
-EXCLUDED_RELEASE_NAMES = {'.DS_Store', 'Thumbs.db'}
-
-def is_release_file(path: Path) -> bool:
-    rel = path.relative_to(ROOT)
-    if any(part in EXCLUDED_RELEASE_DIRS for part in rel.parts):
-        return False
-    name = path.name
-    if name in EXCLUDED_RELEASE_NAMES or name.endswith(('.pyc', '.pyo')):
-        return False
-    if re.fullmatch(r'OpenGraph_Lite_Viewer_v.*_full_source\.zip(?:\.sha256)?', name, re.I):
-        return False
-    if re.fullmatch(r'(?:opengraph-)?local-config-log.*\.txt', name, re.I):
-        return False
-    return path.is_file()
-
-manifest = [
-    line.strip().replace('\\', '/')
-    for line in (ROOT/'RELEASE_MANIFEST.txt').read_text(encoding='utf-8').splitlines()
-    if line.strip()
-]
-if any(entry == '.git' or entry.startswith('.git/') for entry in manifest):
-    errors.append('manifest mag geen .git-bestanden bevatten; herstel RELEASE_MANIFEST.txt uit de bronzip')
-actual = sorted(
-    str(path.relative_to(ROOT)).replace('\\', '/')
-    for path in ROOT.rglob('*')
-    if is_release_file(path)
-)
-if manifest != actual:
-    missing=sorted(set(actual)-set(manifest))
-    extra=sorted(set(manifest)-set(actual))
-    if missing: errors.append('manifest mist: '+', '.join(missing[:8]))
-    if extra: errors.append('manifest bevat niet-bestaand: '+', '.join(extra[:8]))
-    if not missing and not extra: errors.append('manifest is niet alfabetisch gesorteerd')
-
+        if not r.exists(): errors.append(f'gebroken link {p.relative_to(ROOT)} -> {target}')
+for p in list(ROOT.rglob('*.json')) + list(ROOT.rglob('*.opn')):
+    try:
+        doc=json.loads(p.read_text(encoding='utf-8'))
+        if p.suffix.lower()=='.opn':
+            if doc.get('document_type')!='opengraph-document': errors.append(f'ongeldig OPN-documenttype {p.relative_to(ROOT)}')
+            if doc.get('metadata',{}).get('schema')!='data-metadata-paradata': errors.append(f'OPN-scheiding ontbreekt {p.relative_to(ROOT)}')
+    except Exception as e: errors.append(f'ongeldige JSON/OPN {p.relative_to(ROOT)}: {e}')
 if errors:
-    print('RELEASE CHECK: FOUT')
-    for error in errors: print('-',error)
-    sys.exit(1)
+    print('RELEASE CHECK: FOUT'); [print('-',e) for e in errors]; sys.exit(1)
 print(f'RELEASE CHECK: OK ({VERSION})')

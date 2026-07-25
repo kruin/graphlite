@@ -1,10 +1,10 @@
 # SOURCE_BASE
 
-- Release: `v2.0.10`.
-- Volledige functionele basis: `OpenGraph_Lite_Viewer_v1.0.16_stable_central_tree_views.zip`.
-- Overnamebeleid: bestanden uit v1.0.16 blijven behouden waar technisch mogelijk.
-- Centrale views: Syntax, daarna Functional.
-- Named projections: LEX west, SYNT oost, LOG zuid.
+- Release: `v2.0.0-rc.23`
+- Volledige basis: `OpenGraph_Lite_Viewer_v1.0.16_stable_central_tree_views.zip`
+- Overnamebeleid: alle bestanden uit de bijlage behouden waar technisch mogelijk.
+- Functionele correctie: `FT` is de tweede centrale view na `Syntax`; `LOG` blijft uitsluitend de zuidas/named projection.
+- Plaatsingscontract: LOG-majors/minors bepalen via vaste slotafstand de neutrale LEX-basis; de voorbeeldzin valideert alleen.
+- Normatieve specificatie: `projectie-master-spec.md`.
 - Compatibiliteit: oude opgeslagen waarde `functional` wordt als `ft` gelezen.
-- Actuele UI: één zichtbaar tweerijig topmenu; geen algemene Menu-knop en geen geneste submenu’s.
-- Actuele layout: het standaardraster en de centrale graph volgen continu de werkelijke canvasverhouding om portrait, landscape en desktop maximaal te vullen.
+- Gekozen UI-oplossing: bij `Bron` verschijnt de combineerbare keuze `Assen`; de bovenbalk is in rc.6 gecomprimeerd.

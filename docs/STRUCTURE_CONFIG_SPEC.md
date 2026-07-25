@@ -1,4 +1,42 @@
-# Structure-config-specificatie v4414
+# Structure-config-specificatie · v2.0.0-rc.23
+
+## LOG-slotconfig
+
+`#opengraph-log-config` is de plaatsingsautoriteit voor de neutrale
+LOG→LEX-afleiding. De sectie definieert:
+
+```text
+authority=LOG
+position-unit=slot
+major-gap=1
+minor-width=1
+expands-major-gap=true
+lex-position-source=LOG
+lex-projection-origin=SOURCE-Y
+lex-placement-mode=horizontal-then-move
+example-controls-layout=false
+```
+
+`.log-major-config` definieert S/O/V en hun sources.
+`.log-interval-config` definieert `after` plus `before`.
+`.log-class-config` koppelt bijwoordklassen aan een standaardinterval.
+
+Een minor in `S-O` verhoogt `dLOG(S,O)` met één; een minor in `O-V`
+verhoogt alleen `dLOG(O,V)`. Zie `../projectie-master-spec.md`.
+
+`lex-position-source=LOG` bepaalt de doelrij. Het bepaalt niet de oorsprong
+van de projectie. `lex-projection-origin=SOURCE-Y` dwingt af dat ieder
+lexicaal bronitem eerst exact horizontaal naar LEX projecteert;
+`horizontal-then-move` verplaatst het daarna uitsluitend langs de LEX-as.
+
+Bij `example-controls-layout=false` zijn de klassekoppelingen leidend.
+Lineaire voorbeeldvolgorde en oude `data-log-*`-positiehints worden dan niet
+als layoutinvoer gelezen. Een expliciete intervalkeuze in de Config-UI houdt
+altijd voorrang.
+
+---
+
+## Historische syntax- en FT-config
 
 ## Bestand
 

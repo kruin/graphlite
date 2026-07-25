@@ -1,19 +1,15 @@
-# SOURCE_CHANGES_V2.0.0-rc.13
+# SOURCE_CHANGES v2.0.0-rc.13
 
-## Git-uploadprocedure
+## Voorbeeldzinnen
 
-- De bevestigingsvraag `Reset-cache openen` is verwijderd.
-- De resetpagina opent automatisch na een geslaagde `git push`.
-- Zonder wijzigingen, zonder staged wijzigingen of na een mislukte push wordt geen reset gestart.
-- De reset opent maximaal eenmaal per versie op dezelfde computer.
-- De lokale marker staat buiten de repository in `%LOCALAPPDATA%\OpenGraphLiteViewer\last-reset-version.txt`.
-- De automatische opening wordt kort uitgesteld zodat GitHub Pages de push kan verwerken.
-- `RELEASE_ZIP` wordt voortaan uit `VERSION.txt` opgebouwd in plaats van hard gecodeerd.
+- De volledige voorbeeldset uit `v2.0.10` is hersteld: 14 zinnen.
+- Toegevoegd/hersteld: hoofdzin en omdat-bijzin met de twee zelfstandige LEX-insertiegroepen `MISSCHIEN WEL` en `VAAK`.
+- De volledige set is ook ingebouwd als fallback; rechtstreeks openen via `file://` valt niet meer terug op slechts vier voorbeelden.
+- `examples-input.html`-import leest nu ook `.lex-insertion`-groepen.
 
-## Ongewijzigd
+## OPN-bestand
 
-- Mobile full view en automatische interfacekeuze uit rc.12 blijven behouden.
-- Syntax is de eerste centrale view; FT de tweede.
-- LOG blijft uitsluitend de zuidas.
-- Standaard zijn LEX + SYNT + LOG zichtbaar.
-- De topmenustructuur en dunne lijnhiërarchie blijven gelijk.
+- Config heeft een zichtbaar blok `OPN-document`.
+- Desktop en mobiel bieden `Opslaan als .opn` en `Importeer .opn`.
+- Paradata kan bij export worden in- of uitgeschakeld.
+- Voorbeeldgebonden LEX-insertiegroepen worden opgenomen in `data.example.lex_insertions` en bij import hersteld.

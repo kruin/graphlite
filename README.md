@@ -1,46 +1,33 @@
-# OpenGraph Lite Viewer v2.0.10
+# OpenGraph Lite Viewer v2.0.0-rc.23
 
-Demo/viewer voor JaN / OPN / OpenGraph-taalstructuren.
+OpenGraph Lite Viewer is a demo/viewer for JAN, OPN and OpenGraph linguistic
+structures. This release uses the complete v1.0.16 source set as its functional
+base.
 
-## v2.0.10 — plaatsingsplan vóór rendering
+Dutch documentation: [`LEESMIJ.md`](LEESMIJ.md).
 
-Lexicale inserties worden niet achteraf aan een reeds geplaatste kernboom toegevoegd. De layout leest eerst de structuur, alle insertiegroepen, plaatsingsregels, wissels en actieve projecties. Daarna reserveert zij de benodigde major-/minor-gridposities en corridors en plaatst zij de centrale boom in het resterende veld.
-
-De kernzin levert vervolgens de structurele en lexicale invulling van dit vooraf berekende plaatsingsplan. Play/Groei en de gewone renderer onthullen hetzelfde vaste resultaat stapsgewijs; rendering maakt geen nieuwe ruimte en verplaatst geen reeds berekende onderdelen.
-
-Vaste architectuurvolgorde:
+## Projection contract
 
 ```text
-1. structurele hosts bepalen
-2. lexicale inserties en landingsplaatsen bepalen
-3. gridruimte en wisselcorridors reserveren
-4. centrale boom plaatsen
-5. kernzin lexicaal invullen
-6. wisselpaden en projecties vastleggen
-7. groei-/renderstappen toekennen
-8. renderen
+source node → horizontal LEX projection → one direct move to the resolved LEX target
 ```
 
-## v2.0.8 — meervoudige lexicale inserties
-
-Voorbeeldzinnen kunnen nu meerdere zelfstandige LEX-insertiegroepen bevatten. De landingszone is een lineaire eigenschap en staat los van scope: in de perfectumvoorbeelden landen `MISSCHIEN WEL` en `VAAK` na het object en vóór het V-CLUSTER. `MISSCHIEN WEL` telt als één meerwoordige groep; `VAAK` krijgt een tweede slot. De slotcentra liggen op minor-gridankers, maar de renderer bewaakt minimaal 72 pixels centrumafstand. Daardoor overlappen de grote insertieboxen niet, ook niet in mobile landscape.
-
-Toegevoegde voorbeeldzinnen:
-
-```text
-DE HOND HEEFT DE MAN MISSCHIEN WEL VAAK GEBETEN
-OMDAT DE HOND DE MAN MISSCHIEN WEL VAAK GEBETEN HEEFT
-```
+`S`, `O` and `V` are majors. An adverb is a minor in a configurable LOG
+interval. Every minor adds one fixed slot to the distance between its bounding
+majors. LOG determines the neutral target row, but never the projection
+origin: every lexical source first projects horizontally at its source height.
+An explicit topic or V2 rule may replace that neutral target before drawing.
+The viewer therefore shows at most one LEX-axis move and one source trace per
+source word, without an intermediate LOG trace. The example sentence does not
+determine layout. See `projectie-master-spec.md`.
 
 ## Start
-
-Open:
 
 ```text
 index.html
 ```
 
-Of start lokaal met:
+Or run locally:
 
 ```bat
 start-local-viewer.bat
@@ -49,102 +36,173 @@ start-local-viewer.bat
 GitHub Pages:
 
 ```text
-https://kruin.github.io/graphlite/index.html?ogv=v2.0.10
+https://kruin.github.io/graphlite/index.html?ogv=v2.0.0-rc.23
 ```
 
-## Talen
-
-De app start bij een nieuwe installatie in **English**. Een eerder bewust gekozen taal blijft lokaal bewaard.
-
-Beschikbare interfacetalen:
+Cache reset:
 
 ```text
-English · Nederlands · Deutsch · Français · Español
+https://kruin.github.io/graphlite/reset-cache.html?ogv=v2.0.0-rc.23
 ```
 
-Nederlands en Engels hebben de volledige interface- en uitle laag. In Duits, Frans en Spaans zijn de hoofdlabels vertaald; nog niet vertaalde technische uitleg valt terug op Engels.
+## Desktop view
 
-**De voorbeeldzinnen zijn Nederlands en tonen Nederlandse woordvolgorde.** De gekozen interfacetaal vertaalt dus de bediening, niet de taalkundige voorbeelddata.
-
-## Centrale views en projecties
+The readable full-window view is the default. It is shown first under
+`Config → View`:
 
 ```text
-Views:       Syntax, Functional
-Projecties:  LEX west, SYNT oost, LOG zuid
-Default:     LEX + SYNT + LOG zichtbaar
+Tree spacing = MAX · large text / low tree
+Window fit   = MAX · use full window
 ```
 
-LOG is geen centrale view. LOG-volgorde wijzigt uitsluitend de zuidprojectie.
+MAX fits the actually drawn tree and projections to all available desktop
+space. The invisible stability frame, grid and helper labels no longer make
+the graph and its text artificially small. The same MAX frame remains stable
+throughout the phased Play sequence.
 
-## Topmenu
+## Config tabs
+
+Config is divided into four tabs:
+
+1. `View`: MAX, Syntax/FT, tree layout and projection colours;
+2. `LOG & LEX`: LOG minors, interval selection, LEX order and rules;
+3. `Files`: save/restore Config, OPN import/export and example management;
+4. `Advanced`: legacy branch-extension and top-menu placement options.
+
+`Window fit` means how the tree uses the available app window. It is not a
+second application window.
+
+## Social export
+
+`Config → Files → Publish graph` provides three local exports:
+
+- `Graph as SVG`: a self-contained vector file of the complete current graph;
+- `LinkedIn PNG`: a white 1200 × 627 image for an image post;
+- `Play as WebM`: an automatic 1200 × 627 recording of the complete phased
+  Play sequence.
+
+LinkedIn currently accepts PNG images and native WebM video. Keep the browser
+window active until Play recording has downloaded. Upload the `.webm` through
+LinkedIn's Video action, rather than as a document. See
+[`docs/SOCIAL_EXPORT.md`](docs/SOCIAL_EXPORT.md).
+
+## Read me / README
+
+The `Lees mij / README` button opens immediately on the `Boom, gek` /
+`A tree. Odd, really` introduction. Topic navigation is on the left and the
+active text appears directly in the right-hand panel.
+
+The introduction currently shows only the first image: traditional
+sentence-tree examples. Carousel support remains ready for later
+specification images, but no controls are shown while there is only one image.
+
+The external example-search link opens in a separate browser window. Closing
+that window returns the user to the still-open app.
+
+## Play sequence
+
+After the central tree has been built, Play presents the projection process in
+three explicit phases:
 
 ```text
-Rij 1: Sentence/Zin · Adverb/Bijwoord · Syntax/Functional · Interface · Projections/Projecties · LOG order/LOG-volgorde
-Rij 2: Language/Taal · README/LEESMIJ · Config
+1. draw the LOG axis and place majors/minors
+2. reserve the LOG-derived space on the LEX axis
+3. project lexical sources horizontally onto LEX and move each source once to
+   its resolved target
 ```
 
-## Responsieve maximale view
+The target is the LOG-derived row unless an explicit topic/V2 rule replaces
+it. SYNT and the remaining projection panels appear in the final step.
+The previous-step button now reverses the same sequence exactly: the final
+projection layer disappears first, followed by LEX moves, LEX space, LOG and
+then the central tree.
 
-Met `Boomruimte: Auto` volgt de grid-layout continu het werkelijk beschikbare canvas:
-
-- portrait wordt smaller en hoger;
-- landscape wordt breder en lager;
-- desktop volgt de actuele vensterverhouding;
-- viewBox en raster krijgen dezelfde schermverhouding;
-- Syntax, Functional en alle projectiecombinaties behouden dezelfde positie en schaal binnen die viewport.
-
-De volledige graph plus gekozen assen wordt zo groot mogelijk weergegeven zonder clipping.
-
-## Interface
-
-`Interface` en `Config → Boom → Interface` bieden Automatisch, Desktop, Mobiel staand en Mobiel liggend. Automatisch kiest op telefoon zelf de passende stand en herfit na oriëntatiewissel.
-
-## Raster
-
-Het raster staat standaard aan via:
+## Central views
 
 ```text
-Config → Boom → Weergave → Raster zichtbaar
+1. Syntax
+2. FT
 ```
 
-Op compacte schermen eindigt het raster bij de centrale boom en de uiteinden van de zichtbare projectielijnen. Handmatige interfacekeuzes veranderen deze inhoudsgrens niet.
+Syntax shows the syntactic tree. FT shows the functional structure for the same
+example sentence. LOG is not a central view.
 
-## Groei en projecties
+## Named projections
 
-Met **Projecties groeien direct mee** verschijnt bij iedere nieuw gerenderde bronknoop meteen de geldige gekozen LEX-, SYNT- en/of LOG-projectie. LEX-Wissels volgen pas na de structurele knoopgroei.
+```text
+LEX    west axis
+SYNT   east axis
+LOG    south axis
+```
 
-## Eenvoudige releasewerkwijze
+LEX, SYNT and LOG are visible by default. Each projection can be disabled
+independently. `Geen` shows only the central Syntax or FT view; `Alle` and Reset
+restore every projection. Switching projections does not alter the central
+graph, viewport or scale.
 
-1. Pak de bronzip buiten Git uit.
-2. Kopieer de inhoud over `C:\git\graphlite`; laat `.git` staan.
-3. Start `start-local-viewer.bat` en test lokaal via `reset-cache.html`.
-4. Start pas daarna `publish_checked.bat`.
-5. Vul het commitbericht in; de BAT controleert, commit, pusht en opent na een geslaagde push de online resetpagina.
+Adverb insertions first become minors on the LOG axis and do not mutate Syntax
+or FT. Major source items project vertically to LOG without being pulled
+towards the centre; minors use their own compact lower row. Source nodes still
+project horizontally to LEX. LOG supplies each neutral target and an explicit
+topic/V2 rule can replace it before one direct visible move is drawn.
 
-Er is geen `graphlite-next`, clone, bundle of promotiefase. De BAT gebruikt geen `git pull` en geen force-push. Zie `EENVOUDIGE_RELEASE_WERKWIJZE.md`.
+The active sentence is printed above the graph, with clear space below it for
+a possible future north axis.
 
-## Controle
+## Limited multiword adverbials
+
+The adverb list now includes four deliberately bounded multiword units:
+`MISSCHIEN WEL`, `AF EN TOE`, `OP DIT MOMENT`, and
+`MET VEEL AANDACHT`. Each complete phrase currently acts as one LOG minor and
+one LEX unit; its internal syntax is not expanded yet. The set samples
+modality, frequency, time, and manner without claiming a complete inventory of
+adverbial phrases. See
+[`docs/TALIGE_UITBREIDINGEN.md`](docs/TALIGE_UITBREIDINGEN.md).
+
+## Top menu
+
+```text
+Zin · Bijwoord · Syntax/FT · Projecties · LOG-volgorde · NL/EN · Lees mij / README · Config
+```
+
+There is no generic `Menu` button and there are no nested submenus. Choice
+items open their own wide panel directly.
+
+## OPN storage
+
+`.opn` is the primary round-trip document format. It separates:
+
+```text
+metadata    document identity, format and generator
+
+data        graph, projections and analysis choices
+
+paradata    optional workspace and local session events
+```
+
+Paradata may be omitted during export. Older JSON files remain readable as a
+migration format; Legacy JSON export remains temporarily available for
+debugging. See `OPN_STORAGE_FORMAT.md`.
+
+## Version source
+
+`VERSION.txt` is authoritative for HTML, JavaScript, the service worker, cache
+queries, the publication script and the release ZIP name.
+
+## Validation
 
 ```bat
 node --check viewer.js
 check_release.bat
 ```
 
-## Mobile landscape
+## Examples and file controls (rc.18)
 
-Automatisch herkent een liggende telefoon via de korte viewportzijde en touch/coarse-pointer. Het landscapeprofiel maakt de graph platter en breder en voert na draaien opnieuw FIT uit.
-
-## TODO
-
-- Niet-binaire, meertakkige bomen.
-- JaN (Just another Notation): `S:np-VP`, niet `S:NP-VP`.
-- Werknotatie in onderzoek: `S+ np-VP`; eerst voor binaire bomen, later voor meertakkigheid.
-- Flip van het verbale cluster: `heeft gebeten` ↔ `gebeten heeft`.
-
-## v2.0.6 — LEESMIJ eerste weergave
-
-Op mobile portrait zijn bij het openen van LEESMIJ/README de onderwerpenlijst en de tekst van het actieve eerste item meteen samen zichtbaar. Beide gebruiken ongeveer de helft van de beschikbare documentatiehoogte en scrollen onafhankelijk.
-
-## v2.0.7 — LEESMIJ eerste weergave in alle modi
-
-Desktop, mobile landscape en mobile portrait tonen bij het openen van LEESMIJ/README direct twee gelijke hoogtezones: onderwerpen boven en de tekst van het geselecteerde item onder. Beide zones scrollen onafhankelijk.
+- The viewer contains 14 example sentences, including two examples with
+  multiple LOG minors.
+- With automatic placement, class configuration is authoritative:
+  `MODALITEIT → S-O` and `FREQUENTIE → O-V`. Example-sentence order and
+  legacy position hints cannot override it.
+- `Opslaan als .opn` downloads the current analysis.
+- `Importeer .opn` opens a previously exported document.
+- Paradata is optional.

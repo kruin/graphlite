@@ -1,42 +1,63 @@
-# SOURCE_CHANGES_V2.0.0-rc.20
+# Source changes · v2.0.0-rc.20
 
-## Doel
+## Config in vier tabbladen
 
-Het grid en de graph passen hun geometrie aan de werkelijke schermverhouding aan, zodat portrait, landscape en desktop zoveel mogelijk van de beschikbare ruimte gebruiken.
+De lange Config-pagina is opgesplitst in:
 
-## Wijzigingen
+1. `Beeld`;
+2. `LOG & LEX`;
+3. `Bestanden`;
+4. `Geavanceerd`.
 
-### Continue viewportcurve
+De bestaande besturingselementen worden bij initialisatie naar deze panelen
+verplaatst. Hun ids en eventhandlers blijven behouden. De tabbladen gebruiken
+`role=tab`, `role=tabpanel`, `aria-selected`, pijltoetsnavigatie en één actief
+paneel.
 
-De vaste presets voor mobile portrait, mobile landscape en desktop zijn vervangen door één continue berekening op basis van de actuele verhouding van `canvasWrap`.
+`Beeld` opent standaard. Een zichtbare MAX-kaart en de drie primaire keuzes
+staan bovenaan:
 
-De automatische profielberekening stuurt:
+```text
+Boomruimte     = MAX
+Venstervulling = MAX
+Boom vrije rijen
+```
 
-- horizontale celafstand `cellX`;
-- verticale celafstand `cellY`;
-- fontscale;
-- afstand tot LEX- en SYNT-as;
-- minimale westaspositie;
-- maximale breedte van de SYNT-/FT-regelboxen.
+`Venstervulling` vervangt de onduidelijke naam `Hoofdvenster`; het veld bepaalt
+hoe de boom het beschikbare appvenster benut.
 
-Portrait wordt smaller/hoger; landscape breder/lager; desktop volgt de actuele vensterverhouding.
+## Topmenu boven Play
 
-### Raster en viewBox
+De vaste Play-balk had een hogere stacking context dan het hoofdmenu. Daardoor
+konden de wel gevulde popovers van `Zin`, `Bijwoord`, `Syntax / FT` en
+`Projecties` leeg lijken of achter `LOG-volgorde` vallen.
 
-- `stableProjectionViewBox()` wordt aan de canvasverhouding aangepast.
-- Het dynamische raster gebruikt dezelfde verhouding.
-- De inhoudsgeometrie wordt vóór de aspectcorrectie aangepast, zodat aspectmatching niet alleen lege rasterbanden toevoegt.
-- Alle projectiecombinaties en beide centrale views delen binnen één viewport hetzelfde profiel.
+De volledige hoofdmenubalk staat nu boven Play. Binnen die balk krijgt het
+geopende `details`-element bovendien voorrang boven zijn latere siblings.
 
-### Herfit
+## Sobere LEX-ruimtestap
 
-Resize en oriëntatiewissel wissen een handmatige fit en voeren één volledige herberekening uit. Projectiewissels zelf blijven stabiel.
+Play-fase `2/3 ruimte` bewaart dezelfde LOG-afgeleide reserveringscoördinaten,
+maar tekent niet langer voor iedere major een groot vak met het label
+`vrije LEX-rij`. De volledige gereserveerde reeks wordt als één smalle band
+met begin- en eindmarkering weergegeven.
 
-## Ongewijzigd
+De volgorde blijft:
 
-- Syntax blijft de eerste centrale view.
-- FT blijft de tweede centrale view.
-- LOG blijft uitsluitend de zuidas.
-- Raster staat standaard aan.
-- Projecties groeien standaard direct mee.
-- LEX-Wissels volgen na de structurele groei.
+```text
+LOG → ruimte reserveren → horizontaal naar LEX projecteren → langs LEX verplaatsen
+```
+
+## Regressiecontrole
+
+`tools/check_config_tabs_and_menus.py` controleert:
+
+- de vier tabdefinities en hun opbouw bij initialisatie;
+- de zichtbare MAX-kaart en primaire MAX-keuzes;
+- de verhoogde topmenu- en open-popoverlagen;
+- de drie keuzecontainers voor Zin, Bijwoord en Syntax/FT;
+- de afwezigheid van de oude herhaalde tekst `vrije LEX-rij`;
+- en de enkele LEX-ruimtereservering.
+
+De DOM-rendertest controleert aanvullend dat de tabs wisselen, de drie
+keuzelijsten niet leeg zijn en fase 2 precies één reserveringsband tekent.

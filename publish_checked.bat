@@ -3,32 +3,29 @@ setlocal EnableExtensions DisableDelayedExpansion
 
 cd /d "%~dp0"
 
-set "PUSH_DONE=0"
-set "RESET_DELAY_SECONDS=30"
-
 echo.
 echo ==============================
-echo OpenGraph Lite Viewer - publiceren
+echo OpenGraph publish - checked
 echo ==============================
 echo.
 
 where git >nul 2>nul
 if errorlevel 1 (
     echo FOUT: git is niet gevonden in PATH.
-    goto :failed
+    exit /b 1
 )
 
 git rev-parse --is-inside-work-tree >nul 2>nul
 if errorlevel 1 (
     echo FOUT: deze map is geen Git repository.
     echo Map: %CD%
-    goto :failed
+    exit /b 1
 )
 
 for /f "delims=" %%b in ('git branch --show-current') do set "BRANCH=%%b"
 if "%BRANCH%"=="" (
     echo FOUT: kon actieve branch niet bepalen.
-    goto :failed
+    exit /b 1
 )
 
 echo Huidige branch: %BRANCH%
@@ -40,21 +37,21 @@ echo.
 for %%f in (index.html viewer.html viewer.js styles.css reset-cache.html) do (
     if not exist "%%f" (
         echo FOUT: %%f ontbreekt in deze map.
-        goto :failed
+        exit /b 1
     )
 )
 
 set "APP_VERSION="
 if not exist "VERSION.txt" (
     echo FOUT: VERSION.txt ontbreekt.
-    goto :failed
+    exit /b 1
 )
 set /p APP_VERSION=<VERSION.txt
 if "%APP_VERSION%"=="" (
     echo FOUT: VERSION.txt is leeg.
-    goto :failed
+    exit /b 1
 )
-set "RELEASE_ZIP=OpenGraph_Lite_Viewer_%APP_VERSION%_full_source.zip"
+set "RELEASE_ZIP=OpenGraph_Lite_Viewer_v2.0.0-rc.23_full_source.zip"
 echo App-versie: %APP_VERSION%
 echo Release-zip: %RELEASE_ZIP%
 echo.
@@ -62,7 +59,7 @@ echo.
 call check_release.bat
 if errorlevel 1 (
     echo FOUT: releasecontrole mislukt.
-    goto :failed
+    exit /b 1
 )
 
 echo.
@@ -83,7 +80,7 @@ if "%STATUS_SIZE%"=="0" (
     echo Geen wijzigingen om te committen voor %APP_VERSION%.
     del "%STATUS_ALL%" >nul 2>nul
     del "%STATUS_SITE%" >nul 2>nul
-    goto :no_push
+    goto :after_push_info
 )
 
 del "%STATUS_ALL%" >nul 2>nul
@@ -93,7 +90,7 @@ set /p "COMMITMSG=Geef commit message: "
 if "%COMMITMSG%"=="" (
     echo.
     echo Geen commit message opgegeven. Afgebroken.
-    goto :failed
+    exit /b 1
 )
 
 echo.
@@ -101,7 +98,7 @@ echo Staging tracked wijzigingen en verwijderingen voor %APP_VERSION%...
 git add -u -- .
 if errorlevel 1 (
     echo FOUT: git add -u mislukt.
-    goto :failed
+    exit /b 1
 )
 
 echo Verwijder release-zips en lokale testhulp uit Git-index als ze eerder getrackt waren...
@@ -120,7 +117,7 @@ for /f "delims=" %%f in ('git ls-files --others --exclude-standard') do (
         git add -- "%%f"
         if errorlevel 1 (
             echo FOUT: git add mislukt voor %%f
-            goto :failed
+            exit /b 1
         )
     )
 )
@@ -128,7 +125,7 @@ for /f "delims=" %%f in ('git ls-files --others --exclude-standard') do (
 git diff --cached --quiet
 if not errorlevel 1 (
     echo Geen staged wijzigingen om te committen.
-    goto :no_push
+    goto :after_push_info
 )
 
 echo.
@@ -136,7 +133,7 @@ echo Committen...
 git commit -m "%COMMITMSG%"
 if errorlevel 1 (
     echo FOUT: git commit mislukt.
-    goto :failed
+    exit /b 1
 )
 
 echo.
@@ -144,80 +141,31 @@ echo Push naar origin/%BRANCH% ...
 git push -u origin "%BRANCH%"
 if errorlevel 1 (
     echo FOUT: git push mislukt.
-    goto :failed
+    exit /b 1
 )
-set "PUSH_DONE=1"
 
+:after_push_info
 echo.
-echo Push geslaagd.
+echo Klaar.
 echo Branch: %BRANCH%
-echo Commit : %COMMITMSG%
-
-goto :automatic_reset
-
-:no_push
+if defined COMMITMSG echo Commit : %COMMITMSG%
 echo.
-echo Geen push uitgevoerd; cache-reset wordt niet geopend.
-goto :show_urls
-
-:automatic_reset
+echo Reset-cache heeft zin als browser/PWA-cache nog oude assets toont.
+echo Het wist GEEN GitHub Pages deploy-cache op afstand; het opent alleen de client-resetpagina.
+echo Wacht na push meestal 30-90 seconden tot GitHub Pages klaar is.
+echo.
 set "USER_RESET_URL=https://kruin.github.io/graphlite/reset-cache.html?ogv=%APP_VERSION%^&nocache=%RANDOM%%RANDOM%"
 set "USER_INDEX_URL=https://kruin.github.io/graphlite/index.html?ogv=%APP_VERSION%^&nocache=%RANDOM%%RANDOM%"
-
-set "RESET_STATE_DIR=%LOCALAPPDATA%\OpenGraphLiteViewer"
-if not defined LOCALAPPDATA set "RESET_STATE_DIR=%TEMP%\OpenGraphLiteViewer"
-if not exist "%RESET_STATE_DIR%" mkdir "%RESET_STATE_DIR%" >nul 2>nul
-set "RESET_MARKER=%RESET_STATE_DIR%\last-reset-version.txt"
-set "LAST_RESET_VERSION="
-if exist "%RESET_MARKER%" set /p LAST_RESET_VERSION=<"%RESET_MARKER%"
-
-if /I "%LAST_RESET_VERSION%"=="%APP_VERSION%" (
-    echo.
-    echo Cache-reset voor %APP_VERSION% is op deze computer al eenmalig geopend.
-    goto :show_urls
-)
-
-where powershell.exe >nul 2>nul
-if errorlevel 1 (
-    echo.
-    echo WAARSCHUWING: PowerShell ontbreekt; resetpagina kan niet automatisch worden geopend.
-    echo Open de onderstaande reset-URL handmatig.
-    goto :show_urls
-)
-
-echo.
-echo Cache-reset voor %APP_VERSION% wordt na %RESET_DELAY_SECONDS% seconden automatisch eenmalig geopend.
-set "PS_RESET_COMMAND=Start-Sleep -Seconds %RESET_DELAY_SECONDS%; Start-Process '%USER_RESET_URL%'; Set-Content -LiteralPath '%RESET_MARKER%' -Value '%APP_VERSION%' -Encoding ASCII"
-start "" powershell.exe -NoProfile -WindowStyle Hidden -Command "%PS_RESET_COMMAND%"
-if errorlevel 1 (
-    echo WAARSCHUWING: automatisch openen kon niet worden gestart.
-    echo Open de onderstaande reset-URL handmatig.
-) else (
-    echo Geen bevestigingsvraag nodig. De reset loopt alleen na een geslaagde push en maximaal eenmaal per versie.
-)
-
-:show_urls
-if not defined USER_RESET_URL set "USER_RESET_URL=https://kruin.github.io/graphlite/reset-cache.html?ogv=%APP_VERSION%^&nocache=HANDMATIG"
-if not defined USER_INDEX_URL set "USER_INDEX_URL=https://kruin.github.io/graphlite/index.html?ogv=%APP_VERSION%"
-
-echo.
 echo GitHub Pages reset:
 echo %USER_RESET_URL%
 echo.
 echo GitHub Pages index:
 echo %USER_INDEX_URL%
 echo.
-echo Klaar.
-echo.
-echo Druk op een toets om dit venster te sluiten.
-pause >nul
-endlocal
-exit /b 0
+choice /C JN /M "Reset-cache openen"
+if errorlevel 2 goto :done
+if errorlevel 1 start "" "%USER_RESET_URL%"
 
-:failed
+:done
 echo.
-echo Publicatie afgebroken. Controleer de melding hierboven.
-echo Druk op een toets om dit venster te sluiten.
-pause >nul
 endlocal
-exit /b 1
