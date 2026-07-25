@@ -1,6 +1,6 @@
 # LINGUISTIC_ACTIONS
 
-Taalkundige acties in OpenGraph Lite Viewer `v2.0.0-rc.23`.
+Taalkundige acties in OpenGraph Lite Viewer `v2.0.0-rc.26`.
 
 ## Basisafleiding
 

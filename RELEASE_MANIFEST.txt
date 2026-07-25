@@ -30,6 +30,9 @@ SOURCE_CHANGES_V2.0.0-rc.20.md
 SOURCE_CHANGES_V2.0.0-rc.21.md
 SOURCE_CHANGES_V2.0.0-rc.22.md
 SOURCE_CHANGES_V2.0.0-rc.23.md
+SOURCE_CHANGES_V2.0.0-rc.24.md
+SOURCE_CHANGES_V2.0.0-rc.25.md
+SOURCE_CHANGES_V2.0.0-rc.26.md
 SOURCE_CHANGES_V2.0.0-rc.6.md
 SOURCE_CHANGES_V2.0.0-rc.9.md
 SOV_NOTATION_OPTIONS.md
@@ -104,6 +107,7 @@ lex-movement-rules.html
 lexicon-config.html
 lexicon-editor.html
 local-mobile-test.js
+maak-volledige-zip.bat
 manifest.webmanifest
 portrait-test.html
 projectie-master-spec.md
@@ -141,11 +145,14 @@ tools/check_examples_roundtrip.py
 tools/check_desktop_max_view.py
 tools/check_config_tabs_and_menus.py
 tools/check_lex_horizontal_projection.py
+tools/check_linkedin_video_export.py
+tools/check_linkedin_video_runtime.js
 tools/check_log_slot_distance.py
 tools/check_opn_storage.py
 tools/check_play_reverse.py
 tools/check_projection_cleanup.py
 tools/check_release.py
+tools/check_release_zip_batch.py
 tools/check_social_and_linguistic_export.py
 viewer.html
 viewer.js

@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'v2.0.0-rc.23';
+  const VERSION = 'v2.0.0-rc.26';
   const OPN_FORMAT_VERSION = '1.0';
   const OPN_DOCUMENT_TYPE = 'opengraph-document';
   const PARADATA_EVENT_LIMIT = 250;
@@ -7380,14 +7380,87 @@
     return new Promise(resolve => window.setTimeout(resolve, milliseconds));
   }
 
-  function preferredWebmMimeType() {
-    if (!window.MediaRecorder) return '';
-    const candidates = [
-      'video/webm;codecs=vp9',
-      'video/webm;codecs=vp8',
-      'video/webm'
+  const PLAY_VIDEO_FRAME_RATE = 30;
+
+  function playRecordingFormatCandidates() {
+    return [
+      { mimeType: 'video/mp4;codecs=avc1.424028', extension: 'mp4', label: 'MP4/H.264' },
+      { mimeType: 'video/mp4;codecs=avc1.4D4028', extension: 'mp4', label: 'MP4/H.264' },
+      { mimeType: 'video/mp4', extension: 'mp4', label: 'MP4' },
+      { mimeType: 'video/webm;codecs=vp9', extension: 'webm', label: 'WebM/VP9' },
+      { mimeType: 'video/webm;codecs=vp8', extension: 'webm', label: 'WebM/VP8' },
+      { mimeType: 'video/webm', extension: 'webm', label: 'WebM' }
     ];
-    return candidates.find(type => !MediaRecorder.isTypeSupported || MediaRecorder.isTypeSupported(type)) || '';
+  }
+
+  function createPlayMediaRecorder(stream) {
+    if (!window.MediaRecorder) throw new Error('MediaRecorder ontbreekt.');
+    for (const format of playRecordingFormatCandidates()) {
+      if (MediaRecorder.isTypeSupported && !MediaRecorder.isTypeSupported(format.mimeType)) continue;
+      try {
+        const recorder = new MediaRecorder(stream, {
+          mimeType: format.mimeType,
+          videoBitsPerSecond: 4000000
+        });
+        const actualMimeType = recorder.mimeType || format.mimeType;
+        const extension = actualMimeType.toLowerCase().includes('mp4') ? 'mp4' : format.extension;
+        return {
+          recorder,
+          mimeType: actualMimeType,
+          extension,
+          label: extension === 'mp4' ? 'MP4/H.264' : format.label
+        };
+      } catch (_unsupportedFormat) {
+        // Probeer de volgende container/codec die deze browser aanbiedt.
+      }
+    }
+    const recorder = new MediaRecorder(stream, { videoBitsPerSecond: 4000000 });
+    const actualMimeType = recorder.mimeType || 'video/webm';
+    const extension = actualMimeType.toLowerCase().includes('mp4') ? 'mp4' : 'webm';
+    return {
+      recorder,
+      mimeType: actualMimeType,
+      extension,
+      label: extension === 'mp4' ? 'MP4' : 'WebM'
+    };
+  }
+
+  function canvasRecordingFrameSource(canvas) {
+    let stream = canvas.captureStream(0);
+    let track = stream.getVideoTracks?.()[0];
+    if (track && typeof track.requestFrame === 'function') {
+      return {
+        stream,
+        requestFrame: () => {
+          if (track.readyState !== 'ended') track.requestFrame();
+        },
+        mode: 'request-frame'
+      };
+    }
+
+    stream.getTracks?.().forEach(item => item.stop());
+    stream = canvas.captureStream(PLAY_VIDEO_FRAME_RATE);
+    track = stream.getVideoTracks?.()[0];
+    const context = canvas.getContext('2d');
+    let lightPixel = false;
+    return {
+      stream,
+      requestFrame: () => {
+        if (!context || track?.readyState === 'ended') return;
+        lightPixel = !lightPixel;
+        context.save();
+        context.fillStyle = lightPixel ? '#ffffff' : '#fefefe';
+        context.fillRect(canvas.width - 1, canvas.height - 1, 1, 1);
+        context.restore();
+      },
+      mode: 'canvas-touch'
+    };
+  }
+
+  function startCanvasRecordingFramePump(requestFrame, frameRate = PLAY_VIDEO_FRAME_RATE) {
+    requestFrame();
+    const timer = window.setInterval(requestFrame, Math.round(1000 / frameRate));
+    return () => window.clearInterval(timer);
   }
 
   async function recordPlayWebm() {
@@ -7412,12 +7485,14 @@
       maximumContentFit: validStoredViewBox(state.maximumContentFit)
     };
     const width = 1200;
-    const height = 627;
+    const height = 628;
     const frameBox = graphExportViewBox(width / height);
     const styleText = collectStandaloneSvgStyles();
     let recorder = null;
     let stream = null;
+    let stopFramePump = null;
     let completedBlob = null;
+    let recordingOutput = null;
 
     setGraphExportBusy(true);
     stopGrowthPlayback();
@@ -7445,19 +7520,17 @@
         styleText
       }));
 
-      stream = canvas.captureStream(30);
-      const mimeType = preferredWebmMimeType();
-      recorder = new MediaRecorder(stream, {
-        ...(mimeType ? { mimeType } : {}),
-        videoBitsPerSecond: 4000000
-      });
+      const frameSource = canvasRecordingFrameSource(canvas);
+      stream = frameSource.stream;
+      recordingOutput = createPlayMediaRecorder(stream);
+      recorder = recordingOutput.recorder;
       const chunks = [];
       const stopped = new Promise((resolve, reject) => {
         recorder.addEventListener('dataavailable', event => {
           if (event.data?.size) chunks.push(event.data);
         });
         recorder.addEventListener('stop', () => {
-          resolve(new Blob(chunks, { type: recorder.mimeType || mimeType || 'video/webm' }));
+          resolve(new Blob(chunks, { type: recorder.mimeType || recordingOutput.mimeType || 'video/webm' }));
         }, { once: true });
         recorder.addEventListener('error', event => {
           reject(event.error || new Error('MediaRecorder-fout.'));
@@ -7465,6 +7538,7 @@
       });
 
       recorder.start(250);
+      stopFramePump = startCanvasRecordingFramePump(frameSource.requestFrame);
       await waitMilliseconds(900);
       for (let step = 1; step <= maxStep; step += 1) {
         state.growthStep = step;
@@ -7484,15 +7558,20 @@
         );
         await waitMilliseconds(step === maxStep ? 1200 : 700);
       }
+      stopFramePump?.();
+      stopFramePump = null;
       recorder.stop();
       completedBlob = await stopped;
-      if (!completedBlob.size) throw new Error('De WebM-opname is leeg.');
-      downloadBlob(`${graphExportFileStem('play-linkedin')}.webm`, completedBlob);
-      recordParadata('export-play-webm', {
+      if (!completedBlob.size) throw new Error('De video-opname is leeg.');
+      downloadBlob(`${graphExportFileStem('play-linkedin')}.${recordingOutput.extension}`, completedBlob);
+      recordParadata('export-play-video', {
         width,
         height,
+        frame_rate: PLAY_VIDEO_FRAME_RATE,
         steps: maxStep,
         mime_type: completedBlob.type,
+        container: recordingOutput.extension,
+        capture_mode: frameSource.mode,
         platform: 'linkedin',
         example: state.example?.id
       });
@@ -7502,11 +7581,12 @@
         try { recorder.stop(); } catch (_stopError) {}
       }
       setGraphExportStatus(
-        'Play-opname is mislukt. Laat het browservenster actief en probeer opnieuw.',
-        'Play recording failed. Keep the browser window active and try again.',
+        'Play-video is mislukt. Laat het browservenster actief en probeer opnieuw.',
+        'Play video failed. Keep the browser window active and try again.',
         true
       );
     } finally {
+      stopFramePump?.();
       stream?.getTracks?.().forEach(track => track.stop());
       state.projection = snapshot.projection;
       state.sourceAxes = snapshot.sourceAxes;
@@ -7519,9 +7599,10 @@
       render();
       setGraphExportBusy(false);
       if (completedBlob?.size) {
+        const outputName = recordingOutput?.extension === 'mp4' ? 'MP4/H.264' : 'WebM';
         setGraphExportStatus(
-          'Play-WebM gedownload. Upload dit bestand op LinkedIn als video, niet als document.',
-          'Play WebM downloaded. Upload this file to LinkedIn as a video, not as a document.'
+          `Play-video als ${outputName} met ${PLAY_VIDEO_FRAME_RATE} fps gedownload. Upload als video, niet als document.`,
+          `Play video downloaded as ${outputName} at ${PLAY_VIDEO_FRAME_RATE} fps. Upload it as a video, not as a document.`
         );
       }
     }
@@ -8266,15 +8347,15 @@
   }
 
   const CONFIG_TAB_DEFINITIONS = [
+    { id: 'files', nl: 'Opslaan & exporteren', en: 'Save & export' },
     { id: 'view', nl: 'Beeld', en: 'View' },
     { id: 'log-lex', nl: 'LOG & LEX', en: 'LOG & LEX' },
-    { id: 'files', nl: 'Bestanden', en: 'Files' },
     { id: 'advanced', nl: 'Geavanceerd', en: 'Advanced' }
   ];
-  let activeConfigTab = 'view';
+  let activeConfigTab = 'files';
 
-  function activateConfigTab(tabId = 'view', focusTab = false) {
-    const validId = CONFIG_TAB_DEFINITIONS.some(tab => tab.id === tabId) ? tabId : 'view';
+  function activateConfigTab(tabId = 'files', focusTab = false) {
+    const validId = CONFIG_TAB_DEFINITIONS.some(tab => tab.id === tabId) ? tabId : 'files';
     activeConfigTab = validId;
     document.querySelectorAll('[data-config-tab-button]').forEach(button => {
       const active = button.dataset.configTabButton === validId;
@@ -8391,9 +8472,9 @@
     const oldViewGrid = treeCard.querySelector('.view-config-grid');
     if (oldViewGrid && !oldViewGrid.children.length) oldViewGrid.remove();
 
+    panels.get('files').append(graphExportCard, opnCard, saveCard, examplesCard);
     panels.get('view').appendChild(treeCard);
     panels.get('log-lex').append(logSettingsCard, lexCard, relationCard);
-    panels.get('files').append(saveCard, opnCard, graphExportCard, examplesCard);
     panels.get('advanced').appendChild(advancedCard);
     sidePanel.replaceChildren(tabList, ...panels.values());
     sidePanel.dataset.configTabsReady = '1';
@@ -8447,7 +8528,7 @@
     setText('.main-projection-field span', en ? 'Proj.' : 'Proj.');
     setText('.mobile-adverb-field span', en ? 'Adverbs' : 'Bijwoorden');
     setText('.config-topbar h2', en ? 'All settings' : 'Alle instellingen');
-    setText('.config-topbar p', en ? 'Start under View with Tree spacing and Window fit at MAX. LOG & LEX, files and advanced settings each have their own tab.' : 'Start bij Beeld met Boomruimte en Venstervulling op MAX. LOG & LEX, bestanden en geavanceerde opties hebben elk een eigen tab.');
+    setText('.config-topbar p', en ? 'Save & export opens first. Download the graph, LinkedIn image or Play video here; View still contains Tree spacing and Window fit at MAX.' : 'Opslaan & exporteren opent als eerste. Download hier de graph, LinkedIn-afbeelding of Play-video; onder Beeld blijven Boomruimte en Venstervulling op MAX staan.');
     document.querySelectorAll('[data-config-tab-button]').forEach(button => {
       button.textContent = en ? button.dataset.labelEn : button.dataset.labelNl;
     });
@@ -8455,7 +8536,8 @@
     setText('[data-config-card="log-settings"] > h2', en ? 'LOG placement authority' : 'LOG als plaatsingsautoriteit');
     setText('[data-config-card="lex"] > h2', en ? 'LEX axis - utterance type' : 'LEX-as · uitingtype');
     setText('[data-config-card="relations"] > h2', en ? 'Relations / rules' : 'Relaties / regels');
-    setText('[data-config-card="graph-export"] > h2', en ? 'Publish graph' : 'Graph publiceren');
+    setText('.config-save-menu-kicker', en ? 'SAVE OR SHARE NOW' : 'DIRECT OPSLAAN OF DELEN');
+    setText('[data-config-card="graph-export"] > h2', en ? 'Save, export and share' : 'Opslaan, exporteren en delen');
     setText('[data-config-card="advanced"] > h2', en ? 'Advanced settings' : 'Geavanceerde instellingen');
     setText('[data-config-max-text]', en
       ? 'Default: Tree spacing MAX and Window fit MAX — large type, a lower tree and full use of the app window.'
@@ -8491,15 +8573,15 @@
     setText('#discardConfigButton', en ? 'No · restore last saved config' : 'Nee · herstel laatst bewaarde config');
     setText('#downloadConfigLogButton', en ? 'Download local config log' : 'Download lokaal config-log');
     setText('.graph-export-card > .inline-help', en
-      ? 'Export the current graph as a self-contained vector image, a 1200 × 627 LinkedIn image, or record the complete phased Play sequence as a WebM video.'
-      : 'Exporteer de huidige graph als zelfstandige vectorafbeelding, als LinkedIn-beeld van 1200 × 627 pixels of neem de volledige gefaseerde Play op als WebM-video.');
-    setText('#downloadGraphSvgButton', en ? 'Graph as SVG' : 'Graph als SVG');
+      ? 'Choose a ready-to-share LinkedIn image, record the complete phased Play sequence as video, or save the current graph as a self-contained vector file.'
+      : 'Kies een kant-en-klare LinkedIn-afbeelding, neem de volledige gefaseerde Play als video op of bewaar de huidige graph als zelfstandig vectorbestand.');
     setText('#downloadGraphPngButton', en ? 'LinkedIn PNG' : 'LinkedIn-PNG');
-    setText('#recordPlayWebmButton', en ? 'Play as WebM' : 'Play als WebM');
+    setText('#recordPlayWebmButton', en ? 'Play video' : 'Play-video');
+    setText('#downloadGraphSvgButton', en ? 'Graph as SVG' : 'Graph als SVG');
     if (!els.graphExportStatus?.dataset.statusNl && !graphExportBusy) {
       setGraphExportStatus(
-        'PNG is voor een beeldpost; WebM kan als native LinkedIn-video worden geüpload. Houd dit scherm open tijdens de opname.',
-        'PNG is for an image post; WebM can be uploaded as native LinkedIn video. Keep this window open while recording.'
+        'PNG is voor een beeldpost. Play-video kiest waar mogelijk MP4/H.264 en legt altijd 30 fps vast. Houd dit scherm open tijdens de opname.',
+        'PNG is for an image post. Play video selects MP4/H.264 where available and always captures 30 fps. Keep this window open while recording.'
       );
     } else {
       refreshGraphExportStatusLanguage();
@@ -8591,7 +8673,7 @@
 
     setText('.config-topbar .intro-kicker', 'Config');
     setText('.config-topbar h2', en ? 'All settings' : 'Alle instellingen');
-    setText('.config-topbar p', en ? 'Use the tabs below. View starts with Tree spacing and Window fit at MAX; the Back to main bar stays fixed while this page scrolls.' : 'Gebruik de tabbladen hieronder. Beeld begint met Boomruimte en Venstervulling op MAX; de Terug-naar-main-balk blijft vast staan bij scrollen.');
+    setText('.config-topbar p', en ? 'Save & export opens first. Download the graph, LinkedIn image or Play video here; the Back to main bar stays fixed while this page scrolls.' : 'Opslaan & exporteren opent als eerste. Download hier de graph, LinkedIn-afbeelding of Play-video; de Terug-naar-main-balk blijft vast staan bij scrollen.');
     setText('.help-topbar .intro-kicker', 'README');
     setText('.help-topbar h2', en ? 'Read me' : 'Lees mij');
     setText('.help-topbar p', en ? 'The introduction and text appear immediately on the right. Choose another topic on the left.' : 'De intro en tekst staan meteen rechts in beeld. Links kies je een volgend onderwerp.');

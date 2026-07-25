@@ -1,4 +1,4 @@
-# OpenGraph Lite Viewer v2.0.0-rc.23
+# OpenGraph Lite Viewer v2.0.0-rc.26
 
 OpenGraph Lite Viewer is een demo/viewer voor JAN-, OPN- en
 OpenGraph-taalstructuren. Bronknopen projecteren horizontaal naar LEX; LOG
@@ -45,9 +45,11 @@ daarvan blijft de app open.
 
 ## Social-export en beperkte groepen
 
-`Config → Bestanden → Graph publiceren` exporteert een zelfstandige SVG, een
-LinkedIn-PNG van 1200 × 627 of een WebM-opname van de volledige Play.
-LinkedIn accepteert WebM als native video. Zie `SOCIAL_EXPORT.md`.
+`Config → Opslaan & exporteren` opent direct en exporteert een zelfstandige
+SVG, een LinkedIn-PNG van 1200 × 627 of een Play-video met vaste 30 fps. De
+recorder kiest eerst MP4/H.264 en valt terug op WebM; hij veronderstelt niet
+meer dat een browser-WebM met te weinig frames door LinkedIn wordt aanvaard.
+Zie `SOCIAL_EXPORT.md`.
 
 De bijwoordlijst bevat nu ook `MISSCHIEN WEL`, `AF EN TOE`,
 `OP DIT MOMENT` en `MET VEEL AANDACHT`. Iedere volledige groep geldt
@@ -64,7 +66,7 @@ start-local-viewer.bat
 GitHub Pages:
 
 ```text
-https://kruin.github.io/graphlite/index.html?ogv=v2.0.0-rc.23
+https://kruin.github.io/graphlite/index.html?ogv=v2.0.0-rc.26
 ```
 
 ## Centrale views en named projections

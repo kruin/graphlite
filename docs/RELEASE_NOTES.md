@@ -1,4 +1,47 @@
 
+## v2.0.0-rc.26 — LinkedIn-video met echte 30 fps
+
+- De aangeleverde rc.24-WebM bleek slechts 16 frames over circa 11,8 seconden
+  te bevatten: ongeveer 2,6 fps en een bitrate onder 192 kbps.
+- LinkedIn noemt WebM als ondersteund, maar vereist daarnaast 10–60 fps en
+  minimaal 192 kbps. De oude uitvoer viel dus buiten de videovoorwaarden.
+- De recorder probeert nu eerst MP4/H.264 en valt alleen terug op WebM wanneer
+  de browser geen MP4-recorder aanbiedt.
+- Een nieuwe canvas-framepomp vraagt tijdens de hele opname actief 30 frames
+  per seconde op, ook wanneer een Play-stap kort stilstaat.
+- Het videobeeld is 1200 × 628: vrijwel dezelfde LinkedIn-verhouding, maar met
+  een even hoogte die geschikt is voor H.264/YUV420.
+- De zichtbare knop heet voortaan `Play-video`.
+- Nieuwe controle: `tools/check_linkedin_video_export.py`; deze kan ook een
+  concreet videobestand met `ffprobe` toetsen.
+
+## v2.0.0-rc.25 — ZIP-naam volgt automatisch de mapnaam
+
+- Nieuw: `maak-volledige-zip.bat` voor Windows.
+- De BAT leest zijn eigen projectmapnaam uit. Na het handmatig hernoemen van
+  bijvoorbeeld `...rc.24` naar `...rc.25` wordt de uitvoer automatisch
+  `...rc.25_full_source.zip`.
+- De ZIP komt naast de projectmap te staan en bevat die projectmap als
+  bovenste map.
+- Een bestaande ZIP met dezelfde naam wordt pas door de volledig opgebouwde
+  nieuwe ZIP vervangen. De BAT maakt zelf nooit een naam met `(1)`.
+- `publish_checked.bat` gebruikt eveneens de actuele projectmapnaam en bevat
+  geen hardgecodeerde release-ZIP meer.
+- Nieuwe controle: `tools/check_release_zip_batch.py`.
+
+## v2.0.0-rc.24 — Opslaan en exporteren direct zichtbaar
+
+- Config opent voortaan op `Opslaan & exporteren`, dat ook als eerste tab
+  staat.
+- De prominente eerste kaart bevat direct `LinkedIn-PNG`, `Play als WebM` en
+  `Graph als SVG`, in die volgorde.
+- Binnen hetzelfde tabblad volgen OPN, Config bewaren/herstellen en pas daarna
+  het beheer van voorbeeldzinnen.
+- `Beeld`, `LOG & LEX` en `Geavanceerd` blijven afzonderlijke tabbladen; de
+  MAX-instellingen zijn dus nog steeds onder `Beeld` beschikbaar.
+- De Nederlandse en Engelse interface en documentatie gebruiken overal het
+  nieuwe pad `Config → Opslaan & exporteren` / `Config → Save & export`.
+
 ## v2.0.0-rc.23 — Play loopt ook exact achteruit
 
 - De ontgrendeling van de volledige eindlaag geldt alleen nog op precies de

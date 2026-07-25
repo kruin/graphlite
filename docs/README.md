@@ -1,4 +1,4 @@
-# OpenGraph Lite Viewer v2.0.0-rc.23
+# OpenGraph Lite Viewer v2.0.0-rc.26
 
 OpenGraph Lite Viewer is a demo/viewer for JAN, OPN and OpenGraph linguistic
 structures. Source nodes project horizontally to LEX; LOG supplies later
@@ -45,9 +45,10 @@ the app open.
 
 ## Social export and limited phrases
 
-`Config → Files → Publish graph` exports a self-contained SVG, a
-1200 × 627 LinkedIn PNG, or a WebM recording of the complete Play sequence.
-LinkedIn accepts WebM as native video. See `SOCIAL_EXPORT.md`.
+`Config → Save & export` opens directly and exports a self-contained SVG, a
+1200 × 627 LinkedIn PNG, or a fixed-30-fps Play video. The recorder prefers
+MP4/H.264 and falls back to WebM; it no longer assumes that a low-frame-rate
+browser WebM will pass LinkedIn validation. See `SOCIAL_EXPORT.md`.
 
 The adverb list now also contains `MISSCHIEN WEL`, `AF EN TOE`,
 `OP DIT MOMENT`, and `MET VEEL AANDACHT`. Each complete phrase currently
@@ -64,7 +65,7 @@ start-local-viewer.bat
 GitHub Pages:
 
 ```text
-https://kruin.github.io/graphlite/index.html?ogv=v2.0.0-rc.23
+https://kruin.github.io/graphlite/index.html?ogv=v2.0.0-rc.26
 ```
 
 ## Central views and named projections

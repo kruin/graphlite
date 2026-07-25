@@ -1,5 +1,5 @@
 
-## Actueel contract · v2.0.0-rc.23
+## Actueel contract · v2.0.0-rc.26
 
 LOG gebruikt vaste major/minor-slots. Een extra minor maakt de LOG-as één
 vaste stap langer en vergroot uitsluitend de relevante majorafstand. De

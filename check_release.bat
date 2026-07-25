@@ -29,7 +29,13 @@ python tools\check_desktop_max_view.py
 if errorlevel 1 exit /b 1
 python tools\check_social_and_linguistic_export.py
 if errorlevel 1 exit /b 1
+python tools\check_linkedin_video_export.py
+if errorlevel 1 exit /b 1
+node tools\check_linkedin_video_runtime.js
+if errorlevel 1 exit /b 1
 python tools\check_play_reverse.py
+if errorlevel 1 exit /b 1
+python tools\check_release_zip_batch.py
 if errorlevel 1 exit /b 1
 python tools\check_opn_storage.py samples\hond-bijt-man.v1.opn
 exit /b %errorlevel%

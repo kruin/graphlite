@@ -5,10 +5,13 @@ Bestanden om als leidende projectbronnen toe te voegen of te vervangen.
 ## Volledige projectzip
 
 ```text
-OpenGraph_Lite_Viewer_v2.0.0-rc.23_full_source.zip
+OpenGraph_Lite_Viewer_v2.0.0-rc.26_full_source.zip
 ```
 
 De zip bevat de volledige bronset, documentatie, referenties, voorbeelden, OPN-voorbeeldbestand en releasecontroles.
+
+Maak hem op Windows met `maak-volledige-zip.bat`. De ZIP-naam volgt altijd de
+actuele projectmapnaam; een versienummer staat niet in de BAT vastgezet.
 
 ## Leidende losse bestanden
 
@@ -35,6 +38,10 @@ images/readme/play-log-space-lex.svg
 tools/check_log_slot_distance.py
 tools/check_lex_horizontal_projection.py
 tools/check_desktop_max_view.py
+tools/check_linkedin_video_export.py
+tools/check_linkedin_video_runtime.js
+tools/check_release_zip_batch.py
+maak-volledige-zip.bat
 ```
 
 ## Niet als leidende bron gebruiken

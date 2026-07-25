@@ -1,6 +1,6 @@
 # LAYOUT_RULES
 
-Harde layoutregels voor OpenGraph Lite Viewer `v2.0.0-rc.23`.
+Harde layoutregels voor OpenGraph Lite Viewer `v2.0.0-rc.26`.
 
 ## Vaste projectieposities
 

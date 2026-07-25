@@ -1,5 +1,5 @@
 
-## Actuele beslissingen · v2.0.0-rc.23
+## Actuele beslissingen · v2.0.0-rc.26
 
 1. LOG is autoriteit voor de neutrale plaatsing.
 2. S, O en V zijn majors; bijwoorden zijn minors.

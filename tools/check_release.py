@@ -4,7 +4,7 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 VERSION=(ROOT/'VERSION.txt').read_text(encoding='utf-8').strip()
 errors=[]
-for rel in ['index.html','viewer.html','viewer.js','styles.css','reset-cache.html','sw.js','structure-config.html','examples-input.html','examples-adverbs.html','lexicon-config.html','.nojekyll','README.md','LEESMIJ.md','PROJECT_STATE_CURRENT.md','LAYOUT_RULES.md','LINGUISTIC_ACTIONS.md','SOV_NOTATION_OPTIONS.md','OPN_STORAGE_FORMAT.md','projectie-master-spec.md','SOURCE_CHANGES_V2.0.0-rc.23.md','docs/TALIGE_UITBREIDINGEN.md','docs/SOCIAL_EXPORT.md','images/readme/traditional-sentence-tree-examples.svg','images/readme/log-minor-spacing.svg','images/readme/play-log-space-lex.svg','tools/check_log_slot_distance.py','tools/check_lex_horizontal_projection.py','tools/check_projection_cleanup.py','tools/check_play_reverse.py','tools/check_desktop_max_view.py','tools/check_config_tabs_and_menus.py','tools/check_social_and_linguistic_export.py']:
+for rel in ['index.html','viewer.html','viewer.js','styles.css','reset-cache.html','sw.js','structure-config.html','examples-input.html','examples-adverbs.html','lexicon-config.html','.nojekyll','README.md','LEESMIJ.md','PROJECT_STATE_CURRENT.md','LAYOUT_RULES.md','LINGUISTIC_ACTIONS.md','SOV_NOTATION_OPTIONS.md','OPN_STORAGE_FORMAT.md','projectie-master-spec.md','SOURCE_CHANGES_V2.0.0-rc.26.md','docs/TALIGE_UITBREIDINGEN.md','docs/SOCIAL_EXPORT.md','images/readme/traditional-sentence-tree-examples.svg','images/readme/log-minor-spacing.svg','images/readme/play-log-space-lex.svg','maak-volledige-zip.bat','tools/check_log_slot_distance.py','tools/check_lex_horizontal_projection.py','tools/check_projection_cleanup.py','tools/check_play_reverse.py','tools/check_desktop_max_view.py','tools/check_config_tabs_and_menus.py','tools/check_social_and_linguistic_export.py','tools/check_linkedin_video_export.py','tools/check_linkedin_video_runtime.js','tools/check_release_zip_batch.py']:
     if not (ROOT/rel).is_file(): errors.append(f'ontbreekt: {rel}')
 index=(ROOT/'index.html').read_text(encoding='utf-8',errors='ignore')
 js=(ROOT/'viewer.js').read_text(encoding='utf-8',errors='ignore')
@@ -36,7 +36,7 @@ for f in ["projection: 'axes'","const parsed = raw ? JSON.parse(raw) : SOURCE_AX
 for f in ['Lees mij / README','data-help-topic-button="readme"','data-help-topic="readme"','Boom, gek','images/readme/traditional-sentence-tree-examples.svg','data-readme-carousel-controls','data-readme-external-window']:
     if f not in index: errors.append(f'README-intro mist {f!r}')
 if index.count('data-readme-slide') != 1:
-    errors.append('README-intro moet in rc.23 exact het eerste beeld tonen')
+    errors.append('README-intro moet in rc.26 exact het eerste beeld tonen')
 for stale_image in ['images/readme/log-minor-spacing.svg','images/readme/play-log-space-lex.svg']:
     if stale_image in index: errors.append(f'README-intro toont te vroeg later beeld {stale_image}')
 for f in ["function registerReadmeCarousel()","if (slides.length < 2)","function registerReadmeExternalWindows()","window.open(","if (open) setHelpTopic('readme')"]:
@@ -55,8 +55,12 @@ if 'vrije LEX-rij' in js:
     errors.append('oude herhaalde vrije-LEX-labels staan nog in de renderer')
 for f in ["const CONFIG_TAB_DEFINITIONS = [","function setupConfigTabs()","function activateConfigTab(","dataset.configTabButton","config-max-callout"]:
     if f not in js: errors.append(f'Config-tabbladen missen {f!r}')
+for f in ["{ id: 'files', nl: 'Opslaan & exporteren', en: 'Save & export' }","let activeConfigTab = 'files';","panels.get('files').append(graphExportCard, opnCard, saveCard, examplesCard);"]:
+    if f not in js: errors.append(f'prominente save-tab mist {f!r}')
 for f in ['body.config-screen-active .config-tab-list','body.config-screen-active .config-tab-panel.active','body.main-screen-active .top-menu-item[open]']:
     if f not in css: errors.append(f'UI-laag/tab-CSS mist {f!r}')
+for f in ['class="config-save-menu-kicker"','<h2>Opslaan, exporteren en delen</h2>']:
+    if f not in index: errors.append(f'prominente exportkaart mist {f!r}')
 if 'body.help-screen-active .help-screen.help-tree-screen' not in css or 'display: grid !important' not in css:
     errors.append('directe links/rechts-README-layout ontbreekt')
 for f in ['id="logInsertionIntervalSelect"','id="mobileLogInsertionIntervalSelect"']:
@@ -75,8 +79,12 @@ for f in ['id="configDownloadOpnButton"','id="configFileInput"','id="mobileDownl
     if f not in index: errors.append(f'OPN-bediening mist {f}')
 for f in ['id="downloadGraphSvgButton"','id="downloadGraphPngButton"','id="recordPlayWebmButton"','id="graphExportStatus"']:
     if f not in index: errors.append(f'graph/social-exportbediening mist {f}')
-for f in ['function standaloneSvgText(','function inlineStandaloneSvgPresentation(','function downloadGraphSvg(','async function downloadGraphPng(','async function recordPlayWebm(','canvas.captureStream(30)',"'video/webm;codecs=vp9'"]:
+for f in ['function standaloneSvgText(','function inlineStandaloneSvgPresentation(','function downloadGraphSvg(','async function downloadGraphPng(','async function recordPlayWebm(','video/mp4;codecs=avc1.424028',"'video/webm;codecs=vp9'",'canvas.captureStream(0)','track.requestFrame()','PLAY_VIDEO_FRAME_RATE = 30','const height = 628;']:
     if f not in js: errors.append(f'graph/social-export mist {f!r}')
+if 'stream = canvas.captureStream(30);' in js:
+    errors.append('oude alleen-bij-wijziging Play-opname staat nog in viewer.js')
+if '>Play-video</button>' not in index:
+    errors.append('algemene Play-videoknop ontbreekt')
 adverb_examples=(ROOT/'examples-adverbs.html').read_text(encoding='utf-8',errors='ignore')
 tbody=re.search(r'<tbody>(.*?)</tbody>',adverb_examples,re.S)
 if not tbody or len(re.findall(r'<tr\b',tbody.group(1))) != 25:
@@ -109,6 +117,16 @@ if 'Engelse documentatie' not in leesmij or 'Play-volgorde' not in leesmij:
     errors.append('LEESMIJ.md is niet de actuele Nederlandse versie')
 if 'class="main-projection-field"' in index: errors.append('oude zichtbare projectieselect staat nog in Main')
 if 'Standaard zijn alle assen zichtbaar.' not in index: errors.append('default alle assen niet vermeld')
+zip_bat=(ROOT/'maak-volledige-zip.bat').read_text(encoding='utf-8',errors='ignore')
+publish_bat=(ROOT/'publish_checked.bat').read_text(encoding='utf-8',errors='ignore')
+for f in ['%~dp0.','%%~nxI','%OG_ZIP_PROJECT_NAME%_full_source.zip','CreateFromDirectory','move /Y "%OG_ZIP_TEMP%" "%OG_ZIP_PATH%"']:
+    if f not in zip_bat: errors.append(f'mapnaamgestuurde ZIP-BAT mist {f!r}')
+if re.search(r'v2\.0\.0-rc\.\d+',zip_bat,re.I):
+    errors.append('ZIP-BAT bevat een hardgecodeerde releaseversie')
+if 'set "RELEASE_ZIP=%OG_PUBLISH_PROJECT_NAME%_full_source.zip"' not in publish_bat:
+    errors.append('publish_checked.bat gebruikt de actuele projectmapnaam niet')
+if re.search(r'set "RELEASE_ZIP=.*v2\.0\.0-rc\.\d+',publish_bat,re.I):
+    errors.append('publish_checked.bat bevat nog een hardgecodeerde release-ZIP')
 for bad in ['LOG/FT','FT/LOG']:
     for p in ROOT.rglob('*'):
         if p.name == 'check_release.py':

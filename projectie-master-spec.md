@@ -1,6 +1,6 @@
 # Projectie-master-spec · horizontale LEX-projectie → één bepaald einddoel
 
-Normatieve projectiespecificatie voor OpenGraph Lite Viewer `v2.0.0-rc.23`.
+Normatieve projectiespecificatie voor OpenGraph Lite Viewer `v2.0.0-rc.26`.
 
 ## 1. Autoriteit en afleidingsrichting
 

@@ -1,6 +1,6 @@
 # HANDOVER_FOR_COLLABORATORS
 
-Overdracht voor OpenGraph Lite Viewer v2.0.0-rc.23.
+Overdracht voor OpenGraph Lite Viewer v2.0.0-rc.26.
 
 ## Bronbasis
 
@@ -45,14 +45,16 @@ Intern schrijft de viewer `central_opn: "ft"`. Invoer met de oude waarde `functi
 3. Wijzig app en leidende instructies samen.
 4. Voer ook `tools/check_log_slot_distance.py` uit.
 5. Voer `check_release.bat` uit.
-6. Maak een zip met exact hetzelfde versienummer als `VERSION.txt`.
+6. Hernoem de projectmap naar de bedoelde release en voer
+   `maak-volledige-zip.bat` uit. De ZIP neemt automatisch de actuele mapnaam
+   over.
 
 ## Publiceren
 
 Gebruik `publish_checked.bat`. Releasezips en lokale mobile-testbestanden horen niet in de GitHub Pages-root.
 
 
-## Topmenu v2.0.0-rc.23
+## Topmenu v2.0.0-rc.26
 
 Main toont één topmenubalk met acht zichtbare hoofditems: Zin, Bijwoord, Syntax/FT, Projecties, LOG-volgorde, NL/EN, Help en Config. Er is geen algemene knop `Menu` en er zijn geen geneste submenu’s. Keuze-items openen direct hun eigen brede uitklappaneel.
 

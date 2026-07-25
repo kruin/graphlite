@@ -11,7 +11,7 @@
     "schema": "data-metadata-paradata",
     "generator": {
       "name": "OpenGraph Lite Viewer",
-      "version": "v2.0.0-rc.23"
+      "version": "v2.0.0-rc.26"
     },
     "source": {
       "kind": "sample",

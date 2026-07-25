@@ -1,4 +1,4 @@
-# Actuele contractlaag · v2.0.0-rc.23
+# Actuele contractlaag · v2.0.0-rc.26
 
 De kern is nu `bronknoop → horizontale LEX-projectie → LOG-doel via
 LEX-Wissel → expliciete Wissels → voorbeeldzin als validatie`. LOG gebruikt

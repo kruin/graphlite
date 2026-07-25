@@ -53,11 +53,14 @@ required_js = [
     "async function downloadGraphPng(",
     "async function recordPlayWebm(",
     "width = 1200",
-    "height = 627",
+    "height = 628",
+    "video/mp4;codecs=avc1.424028",
     "'video/webm;codecs=vp9'",
-    "canvas.captureStream(30)",
+    "canvas.captureStream(0)",
+    "track.requestFrame()",
+    "PLAY_VIDEO_FRAME_RATE = 30",
     "videoBitsPerSecond: 4000000",
-    "export-play-webm",
+    "export-play-video",
 ]
 for marker in required_js:
     if marker not in JS:
@@ -68,7 +71,7 @@ if not social_doc.is_file():
     errors.append("docs/SOCIAL_EXPORT.md ontbreekt")
 else:
     social_text = social_doc.read_text(encoding="utf-8")
-    for marker in ["1200 × 627", "WebM", "Video", "linkedin.com/help/linkedin"]:
+    for marker in ["1200 × 628", "MP4/H.264", "WebM", "30 fps", "Video", "linkedin.com/help/linkedin"]:
         if marker not in social_text:
             errors.append(f"SOCIAL_EXPORT.md mist {marker!r}")
 
@@ -88,5 +91,5 @@ if errors:
 
 print(
     "SOCIAL/TALIG-CHECK: OK "
-    "(25 bijwoordvoorbeelden; 4 beperkte groepen; SVG + LinkedIn-PNG + Play-WebM)"
+    "(25 bijwoordvoorbeelden; 4 beperkte groepen; SVG + LinkedIn-PNG + Play-video)"
 )

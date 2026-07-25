@@ -1,4 +1,4 @@
-# OpenGraph Lite Viewer v2.0.0-rc.23
+# OpenGraph Lite Viewer v2.0.0-rc.26
 
 OpenGraph Lite Viewer is een demo/viewer voor JAN-, OPN- en
 OpenGraph-taalstructuren. Deze versie gebruikt de volledige v1.0.16-bronset als
@@ -33,16 +33,30 @@ Of lokaal:
 start-local-viewer.bat
 ```
 
+## Volledige bron-ZIP maken in Windows
+
+Hernoem de projectmap naar de bedoelde releasenaam en dubbelklik daarna op:
+
+```bat
+maak-volledige-zip.bat
+```
+
+De BAT leidt de ZIP-naam af uit de map waarin hij zelf staat. De map
+`OpenGraph_Lite_Viewer_v2.0.0-rc.26` maakt dus daarnaast automatisch
+`OpenGraph_Lite_Viewer_v2.0.0-rc.26_full_source.zip`. Een bestaande ZIP met
+precies die naam wordt veilig vervangen; het script verzint nooit zelf een
+achtervoegsel `(1)`.
+
 GitHub Pages:
 
 ```text
-https://kruin.github.io/graphlite/index.html?ogv=v2.0.0-rc.23
+https://kruin.github.io/graphlite/index.html?ogv=v2.0.0-rc.26
 ```
 
 Cache-reset:
 
 ```text
-https://kruin.github.io/graphlite/reset-cache.html?ogv=v2.0.0-rc.23
+https://kruin.github.io/graphlite/reset-cache.html?ogv=v2.0.0-rc.26
 ```
 
 ## Desktopweergave
@@ -62,11 +76,12 @@ Play-volgorde blijft hetzelfde MAX-kader stabiel.
 
 ## Config-tabbladen
 
-Config is verdeeld over vier tabbladen:
+Config opent op het eerste van vier tabbladen:
 
-1. `Beeld`: MAX, Syntax/FT, boomlayout en projectiekleuren;
-2. `LOG & LEX`: LOG-minors, intervalkeuze, LEX-volgorde en regels;
-3. `Bestanden`: Config bewaren/herstellen, OPN import/export en voorbeelden;
+1. `Opslaan & exporteren`: eerst LinkedIn/Play/SVG, daarna OPN, Config
+   bewaren/herstellen en voorbeeldbeheer;
+2. `Beeld`: MAX, Syntax/FT, boomlayout en projectiekleuren;
+3. `LOG & LEX`: LOG-minors, intervalkeuze, LEX-volgorde en regels;
 4. `Geavanceerd`: oude takverlenging en plaatsing van menu’s.
 
 `Venstervulling` betekent hoe de boom het beschikbare appvenster gebruikt.
@@ -74,17 +89,20 @@ Het is dus geen tweede venster.
 
 ## Publiceren op sociale media
 
-Onder `Config → Bestanden → Graph publiceren` staan drie lokale exports:
+Open `Config → Opslaan & exporteren`. De eerste, duidelijk gemarkeerde kaart
+bevat drie lokale exports:
 
-- `Graph als SVG`: een zelfstandig vectorbestand van de volledige actuele
-  graph;
 - `LinkedIn-PNG`: een witte afbeelding van 1200 × 627 voor een beeldpost;
-- `Play als WebM`: een automatische opname van de volledige gefaseerde
-  Play-reeks in 1200 × 627.
+- `Play-video`: een automatische opname van de volledige gefaseerde
+  Play-reeks in 1200 × 628 en een vaste 30 fps;
+- `Graph als SVG`: een zelfstandig vectorbestand van de volledige actuele
+  graph.
 
-LinkedIn accepteert momenteel PNG en native WebM-video. Houd het
-browservenster actief totdat de Play-opname is gedownload. Upload het
-`.webm`-bestand via de Video-actie van LinkedIn, niet als document. Zie
+De recorder kiest waar de browser dat ondersteunt eerst MP4/H.264 en gebruikt
+anders WebM. Hij vraagt nu actief alle 30 frames per seconde op; de oude
+recorder bewaarde alleen gewijzigde canvasframes en kon daardoor onder
+LinkedIns minimum van 10 fps vallen. Houd het browservenster actief tot de
+download klaar is en upload de uitvoer via LinkedIns Video-actie. Zie
 [`docs/SOCIAL_EXPORT.md`](docs/SOCIAL_EXPORT.md).
 
 ## Lees mij / README

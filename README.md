@@ -1,4 +1,4 @@
-# OpenGraph Lite Viewer v2.0.0-rc.23
+# OpenGraph Lite Viewer v2.0.0-rc.26
 
 OpenGraph Lite Viewer is a demo/viewer for JAN, OPN and OpenGraph linguistic
 structures. This release uses the complete v1.0.16 source set as its functional
@@ -33,16 +33,30 @@ Or run locally:
 start-local-viewer.bat
 ```
 
+## Build the full source ZIP on Windows
+
+Rename the project directory to the intended release name and double-click:
+
+```bat
+maak-volledige-zip.bat
+```
+
+The batch file derives the ZIP name from its own containing directory. A
+directory named `OpenGraph_Lite_Viewer_v2.0.0-rc.26` therefore produces the
+sibling file `OpenGraph_Lite_Viewer_v2.0.0-rc.26_full_source.zip`. An existing
+ZIP with that exact name is replaced safely; the script never invents a
+`(1)` suffix.
+
 GitHub Pages:
 
 ```text
-https://kruin.github.io/graphlite/index.html?ogv=v2.0.0-rc.23
+https://kruin.github.io/graphlite/index.html?ogv=v2.0.0-rc.26
 ```
 
 Cache reset:
 
 ```text
-https://kruin.github.io/graphlite/reset-cache.html?ogv=v2.0.0-rc.23
+https://kruin.github.io/graphlite/reset-cache.html?ogv=v2.0.0-rc.26
 ```
 
 ## Desktop view
@@ -62,11 +76,12 @@ throughout the phased Play sequence.
 
 ## Config tabs
 
-Config is divided into four tabs:
+Config opens on the first of four tabs:
 
-1. `View`: MAX, Syntax/FT, tree layout and projection colours;
-2. `LOG & LEX`: LOG minors, interval selection, LEX order and rules;
-3. `Files`: save/restore Config, OPN import/export and example management;
+1. `Save & export`: LinkedIn/Play/SVG first, followed by OPN, Config
+   save/restore and example management;
+2. `View`: MAX, Syntax/FT, tree layout and projection colours;
+3. `LOG & LEX`: LOG minors, interval selection, LEX order and rules;
 4. `Advanced`: legacy branch-extension and top-menu placement options.
 
 `Window fit` means how the tree uses the available app window. It is not a
@@ -74,16 +89,19 @@ second application window.
 
 ## Social export
 
-`Config → Files → Publish graph` provides three local exports:
+Open `Config → Save & export`. The first, highlighted card provides three
+local exports:
 
-- `Graph as SVG`: a self-contained vector file of the complete current graph;
 - `LinkedIn PNG`: a white 1200 × 627 image for an image post;
-- `Play as WebM`: an automatic 1200 × 627 recording of the complete phased
-  Play sequence.
+- `Play video`: an automatic 1200 × 628, fixed-30-fps recording of the
+  complete phased Play sequence;
+- `Graph as SVG`: a self-contained vector file of the complete current graph.
 
-LinkedIn currently accepts PNG images and native WebM video. Keep the browser
-window active until Play recording has downloaded. Upload the `.webm` through
-LinkedIn's Video action, rather than as a document. See
+The recorder now prefers MP4/H.264 when the browser supports it and otherwise
+uses WebM. It actively requests all 30 frames per second; the old recorder
+captured only changed canvas frames and could therefore fall below LinkedIn's
+10-fps minimum. Keep the browser window active until the recording downloads,
+then upload it through LinkedIn's Video action. See
 [`docs/SOCIAL_EXPORT.md`](docs/SOCIAL_EXPORT.md).
 
 ## Read me / README

@@ -1,6 +1,6 @@
 # PROJECT_STATE_CURRENT
 
-Leidende status van OpenGraph Lite Viewer `v2.0.0-rc.23`.
+Leidende status van OpenGraph Lite Viewer `v2.0.0-rc.26`.
 
 ## Lees mij / README
 
@@ -66,12 +66,21 @@ structure-config
 
 ## Configuratie
 
-De Config-UI heeft vier tabbladen:
+De Config-UI opent op het eerste van vier tabbladen:
 
+- `Opslaan & exporteren`: prominente graph/social-export, daarna OPN,
+  Config-snapshot en voorbeeldbeheer;
 - `Beeld`: de twee zichtbare MAX-defaults, Syntax/FT, boomlayout en kleuren;
 - `LOG & LEX`: minors, LOG-interval, LEX-volgorde en regels;
-- `Bestanden`: Config-snapshot, OPN, graph/social-export en voorbeeldbeheer;
 - `Geavanceerd`: compatibiliteitsopties voor tak- en menuplaatsing.
+
+## Volledige bron-ZIP
+
+- `maak-volledige-zip.bat` gebruikt de actuele projectmapnaam.
+- `<projectmap>` wordt automatisch `<projectmap>_full_source.zip`.
+- De ZIP staat naast de projectmap en bevat die map als bovenste map.
+- Een bestaande gelijknamige ZIP wordt pas na geslaagde compressie vervangen.
+- Er staat geen releaseversie hardgecodeerd in de BAT.
 
 `structure-config.html#opengraph-log-config` definieert:
 
@@ -121,9 +130,13 @@ zij `lex_projection_origin=SOURCE-Y` en
 - `Graph als SVG` maakt een zelfstandig vectorbestand met ingebedde
   vormgeving.
 - `LinkedIn-PNG` maakt een wit beeld van 1200 × 627 pixels.
-- `Play als WebM` neemt de volledige gefaseerde Play automatisch op in
-  1200 × 627 bij 30 fps.
-- De WebM kan op LinkedIn rechtstreeks als native video worden geüpload.
+- `Play-video` neemt de volledige gefaseerde Play automatisch op in
+  1200 × 628 bij een actief vastgelegde 30 fps.
+- De recorder kiest MP4/H.264 als de browser dit aanbiedt en anders WebM.
+- De canvas-framepomp schrijft ook tijdens stilstaande Play-fasen frames; de
+  oude uitvoer van circa 2,6 fps kan daardoor niet terugkeren.
+- LinkedIn noemt WebM als ondersteund, maar toetst daarnaast minimaal 10 fps
+  en 192 kbps. Daarom krijgt MP4/H.264 voorrang.
 - De uitvoer blijft lokaal; er wordt niets automatisch gepubliceerd.
 
 ## Voorbeelden en controle
@@ -143,7 +156,11 @@ zij `lex_projection_origin=SOURCE-Y` en
 - `tools/check_desktop_max_view.py` bewaakt full-window MAX en de leesbare
   desktopfontschaal.
 - `tools/check_social_and_linguistic_export.py` bewaakt de vier talige
-  uitbreidingen en de SVG/PNG/WebM-export.
+  uitbreidingen en de SVG/PNG/video-export.
+- `tools/check_linkedin_video_export.py` bewaakt MP4-voorkeur, de 30-fps-pomp
+  en desgewenst een concreet uitvoerbestand met `ffprobe`.
+- `tools/check_linkedin_video_runtime.js` voert formaatkeuze, requestFrame en
+  de canvasfallback daadwerkelijk uit.
 - `tools/check_play_reverse.py` bewaakt dat de eindlaag niet blijft staan en
   dat de fasevolgorde ook achteruit geldig blijft.
 - `tools/check_examples_roundtrip.py` bewaakt voorbeeld-round-trips.
