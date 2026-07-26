@@ -13,7 +13,7 @@ Een andere volgorde wijzigt alleen de slots op de LOG-as. Gemarkeerde varianten 
 
 ## Optie 2 — genummerde projectiemerkers
 
-De LOG-as toont projectiemerkers `1`, `2`, `3`; ieder markerlabel vermeldt de rol en bronknoop. Dit maakt zichtbaar dat de centrale Syntax- of FT-graph niet verandert.
+De LOG-as toont projectiemerkers `1`, `2`, `3`; ieder markerlabel vermeldt de rol en bronknoop. Dit maakt zichtbaar dat de centrale Syntax- of Functional-graph niet verandert.
 
 ## Voorlopige UI
 

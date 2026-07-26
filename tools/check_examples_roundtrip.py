@@ -87,7 +87,7 @@ for (const id of wanted) {{
     throw new Error(`oude voorbeeldpositie bestuurt LOG nog: ${{id}}`);
   }}
 }}
-console.log('EXAMPLES ROUNDTRIP: OK (14 voorbeelden; klassegestuurde multi-inserties)');
+console.log('EXAMPLES ROUNDTRIP: OK (14 voorbeelden; zinsgebonden lineaire multi-inserties)');
 """
 
 with tempfile.NamedTemporaryFile("w", suffix=".js", encoding="utf-8", delete=False) as handle:

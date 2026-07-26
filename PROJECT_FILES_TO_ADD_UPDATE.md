@@ -5,7 +5,7 @@ Bestanden om als leidende projectbronnen toe te voegen of te vervangen.
 ## Volledige projectzip
 
 ```text
-OpenGraph_Lite_Viewer_v2.0.0-rc.26_full_source.zip
+OpenGraph_Lite_Viewer_v2.0.0-rc.33_full_source.zip
 ```
 
 De zip bevat de volledige bronset, documentatie, referenties, voorbeelden, OPN-voorbeeldbestand en releasecontroles.
@@ -32,7 +32,8 @@ structure-config.html
 viewer.js
 index.html
 viewer.html
-images/readme/traditional-sentence-tree-examples.svg
+images/readme/traditional-tree-flexible-wide.png
+images/readme/traditional-tree-flexible-narrow.png
 images/readme/log-minor-spacing.svg
 images/readme/play-log-space-lex.svg
 tools/check_log_slot_distance.py
@@ -47,3 +48,9 @@ maak-volledige-zip.bat
 ## Niet als leidende bron gebruiken
 
 Oude projectzips, losse screenshots en historische release notes. Historische bestanden mogen in de volledige bronzip aanwezig blijven, maar de bovenstaande bestanden zijn normatief.
+
+- `LEXICON_USAGE_PROFILES_AND_DISAMBIGUATION.md`
+
+- `LEXICON_USAGE_PROFILE_TEST.md`
+
+- `SOURCE_CHANGES_V2.0.0-rc.29.md`

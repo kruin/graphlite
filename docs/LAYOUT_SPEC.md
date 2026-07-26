@@ -1,5 +1,5 @@
 
-## Actueel contract · v2.0.0-rc.26
+## Actueel contract · v2.0.0-rc.33
 
 LOG gebruikt vaste major/minor-slots. Een extra minor maakt de LOG-as één
 vaste stap langer en vergroot uitsluitend de relevante majorafstand. De
@@ -355,3 +355,7 @@ Zie ook: `docs/LEX_ADVERB_INSERT_SLOTS.md`.
 ## v4535 - LEX slot 0 boven S
 
 Slot 0 op de LEX-as staat in de gecombineerde Assen-weergave weer boven de centrale S/CLAUSE-root. Bronknopen blijven op hun eigen hoogte; alleen de lokale LEX-systeemslots starten hoger.
+
+## Actuele architectuur — plaatsingsplan vóór rendering
+
+De layoutinput omvat structuur, lexicale inserties, gebruiksprofielen, plaatsingsregels, Wissels en projecties. Eerst wordt één vast plan berekend; rendering mag geen nieuwe plaats kiezen.

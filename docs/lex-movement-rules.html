@@ -1,11 +1,12 @@
-<!doctype html>
+<!DOCTYPE html>
+
 <html lang="nl">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>LEX-plaatsingsregels</title>
-  <link rel="stylesheet" href="../styles.css?v4506">
-  <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>LEX-plaatsingsregels</title>
+<link href="../styles.css?v4506" rel="stylesheet"/>
+<style>
     body { margin: 0; background: #f8fafc; color: #0f172a; }
     main { max-width: 920px; margin: 0 auto; padding: 28px 22px 56px; line-height: 1.55; }
     h1, h2 { line-height: 1.15; }
@@ -16,15 +17,14 @@
     .note { padding: 12px 14px; border: 1px solid #cbd5e1; border-radius: 12px; background: #fff; }
   </style>
 </head>
-<body>
+<body><nav class="opengraph-return-nav" style="display:flex;gap:.5rem;flex-wrap:wrap;padding:.55rem .7rem;border-bottom:1px solid #cbd5e1;background:#f8fafc;position:sticky;top:0;z-index:50"><a href="../index.html?screen=config" style="font-weight:800">← Terug naar: Config</a><a href="../index.html" style="font-weight:800">← Terug naar: Main</a></nav>
 <section><h2>v4536 bijwoordhost</h2><p>Bijwoorden worden niet tussen boxen geplaatst. Zij staan boven een geldige syntactische categoriebox: S, NP, VP, V, PP of AP.</p></section>
-
-  <nav class="topbar">
-    <a href="../index.html?v4506">Viewer</a>
-    <a href="docs-home.html?v4506">Docs</a>
-    <a href="LEX_MOVEMENT_RULES.md?v4506">Markdown</a>
-  </nav>
-  <main>
+<nav class="topbar">
+<a href="../index.html?v4506">Viewer</a>
+<a href="docs-home.html?v4506">Docs</a>
+<a href="LEX_MOVEMENT_RULES.md?v4506">Markdown</a>
+</nav>
+<main>
 <h1>LEX-plaatsingsregels — simpel overzicht</h1>
 <p>Deze viewer gebruikt de LEX-as om de woordvolgorde van de voorbeeldzin te maken.</p>
 <p>De boom zelf blijft de basisstructuur. Verplaatsingen worden niet vanuit de boom getekend. Ze staan alleen lokaal op de LEX-as.</p>
@@ -54,7 +54,7 @@ slot 2 = V2 / persoonsvorm
 
 </code></pre>
 <p>Een gewone NP of V mag dus niet zomaar ergens heen. Er is alleen een Wissel als een van deze slots gevuld moet worden.</p>
-<hr>
+<hr/>
 <h2>1. Hoofdzin</h2>
 <p>Voorbeeld:</p>
 <pre><code>
@@ -94,7 +94,7 @@ t[subject] blijft op de oude HOND-basisplek
 t[V]       blijft op de oude BIJT/V-basisplek
 
 </code></pre>
-<hr>
+<hr/>
 <h2>2. Bijzin met OMDAT</h2>
 <p>Voorbeeld:</p>
 <pre><code>
@@ -125,7 +125,7 @@ OMDAT HOND MAN BIJT
 
 </code></pre>
 <p>Geen V2-Wissel. Geen extra traces.</p>
-<hr>
+<hr/>
 <h2>3. Topicalisatie</h2>
 <p>Voorbeeld:</p>
 <pre><code>
@@ -165,7 +165,7 @@ t[object] blijft op de oude TRUI/object-basisplek
 t[V]      blijft op de oude BREIT/V-basisplek
 
 </code></pre>
-<hr>
+<hr/>
 <h2>4. Perfectum</h2>
 <p>Voorbeeld:</p>
 <pre><code>
@@ -195,7 +195,7 @@ t[subject] blijft op de oude HOND-basisplek
 t[pv]      blijft op de oude HEEFT/PV-basisplek
 
 </code></pre>
-<hr>
+<hr/>
 <h2>5. Vraagzin</h2>
 <p>Nog niet volledig uitgewerkt in de voorbeelden.</p>
 <p>Eenvoudige voorlopige regel voor een ja/nee-vraag:</p>
@@ -211,7 +211,7 @@ BIJT HOND MAN?
 
 </code></pre>
 <p>Daarvoor moet de viewer nog een apart vraagzin-type krijgen. Tot die tijd wordt vraagzin niet als volwaardig zinstype gevalideerd.</p>
-<hr>
+<hr/>
 <h2>Wat niet mag</h2>
 <pre><code>
 Niet: woorden automatisch naar gewone woordrijen schuiven.
@@ -234,18 +234,15 @@ oude plek wordt trace
 resultaat = voorbeeldzin
 
 </code></pre>
-  
 <section>
 <h2>v4506 · Configureerbare vrije LEX-slots</h2>
 <p><strong>Boom vrije rijen</strong> reserveren lege ruimte in de centrale boom. <strong>LEX vrije slots</strong> zijn bijwoordboxen boven syntactische categorieboxen. Ze zijn bedoeld voor latere insertie van materiaal uit andere LEX-assen/andere bomen, zoals bijwoordelijke onthoofde zinnen, en voor anaforische elementen uit andere zinnen of uitingen. De NOORD-as blijft mogelijk, maar is nog niet actief.</p>
 </section>
-
 <section>
 <h2>v4506 - OSV-! en LEX-rendering</h2>
 <p><strong>OSV-!</strong> is geen basis-alternatief. De box-aanpak kan nooit OSV opleveren: VP blijft object en werkwoord als subtree groeperen.</p>
 <p>Voor een correcte LEX-as moet dus altijd een expliciete verplaatsingsregel werken. OSV-! is een waarschuwing/testlabel, geen taalkundige basisboom.</p>
 </section>
-
 <section>
 <h2>v4506 - LEX-bijwoordslots</h2>
 <p>Bijwoord-inserts krijgen niet één algemene plaats. De LEX-as reserveert vrije slots tussen boxen; bij verticale overlap komt het slot op de overlap. Daarna bepaalt de scope het domein.</p>
@@ -259,7 +256,6 @@ resultaat = voorbeeldzin
 </ul>
 <p>De centrale boom blijft bronstructuur. Bijwoorden horen in deze fase in de LEX-renderlaag of in phrase-interne slots.</p>
 </section>
-
 <section>
 <h2>v4535 - OVT / onvoltooid verleden tijd</h2>
 <p><strong>BEET</strong> is de OVT van <strong>BIJT/BIJTEN</strong>. <strong>BREIDE</strong> is de OVT van <strong>BREIT/BREIEN</strong>.</p>
@@ -270,8 +266,6 @@ VROUW BREIDE TRUI
 OMDAT VROUW TRUI BREIDE</code></pre>
 <p>VDW blijft apart: <strong>GEBETEN</strong> en <strong>GEBREID</strong> horen bij het perfectumtype met <strong>HEEFT</strong>.</p>
 </section>
-
-
 <section class="card">
 <h2>v4535 - OSV-!, VSO-! en VOS-!</h2>
 <p><strong>VSO-!</strong> en <strong>VOS-!</strong> zijn nu net als <strong>OSV-!</strong> gemarkeerd. De box-aanpak kan deze volgordes niet als basisalternatief opleveren.</p>

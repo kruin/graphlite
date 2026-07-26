@@ -23,7 +23,7 @@ Bij elke nieuwe versie:
 1. update `VERSION` in `viewer.js`
 2. update querystrings in HTML-links
 3. update titels/headers in HTML-bestanden
-4. update `start-local-viewer.bat`
+4. update `start_local_viewer.bat`
 5. update `README.md`
 6. update `docs/CURRENT_STATE.md`
 7. update `docs/RELEASE_NOTES.md`

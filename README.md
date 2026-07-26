@@ -1,10 +1,29 @@
-# OpenGraph Lite Viewer v2.0.0-rc.26
+# OpenGraph Lite Viewer v2.0.0-rc.33
 
-OpenGraph Lite Viewer is a demo/viewer for JAN, OPN and OpenGraph linguistic
-structures. This release uses the complete v1.0.16 source set as its functional
-base.
+OpenGraph Lite Viewer is a demo/viewer for JaN, OPN and OpenGraph linguistic structures. This release is
+built exclusively on the uploaded `v2.0.0-rc.26` source through rc.27; rc.28
+restores the documented OGN/UI contracts without importing source files from
+the abandoned alternate version line.
 
 Dutch documentation: [`LEESMIJ.md`](LEESMIJ.md).
+
+## Lexical usage profiles and user disambiguation
+
+OGN does not store an ambiguous form as uncontrolled duplicate dictionary
+entries. The lexicon stores one lemma with multiple possible **usage
+profiles**; the concrete sentence instance selects the applicable profile.
+
+A profile records origin, function, scope and preferred interval. Origin is
+`LOG`, `LEX` or `LOG+LEX`. Only LOG-containing profiles create a south-axis
+minor, while all origins receive a destination in the precomputed LEX plan.
+
+Multiword constructions such as `misschien wel` refer to existing lemmas and
+may retain one visible LEX slot. When alternatives change OGN notation, the
+viewer asks the user. The choice applies only to that sentence instance and
+does not rewrite the global lexicon. Config can clear the choices for the
+active example.
+
+See `LEXICON_USAGE_PROFILES_AND_DISAMBIGUATION.md`.
 
 ## Projection contract
 
@@ -12,8 +31,7 @@ Dutch documentation: [`LEESMIJ.md`](LEESMIJ.md).
 source node → horizontal LEX projection → one direct move to the resolved LEX target
 ```
 
-`S`, `O` and `V` are majors. An adverb is a minor in a configurable LOG
-interval. Every minor adds one fixed slot to the distance between its bounding
+`S`, `O` and `V` are majors. An adverbial insertion may be a LOG minor, a direct LEX insertion, or a group combining both origins. Every minor adds one fixed slot to the distance between its bounding
 majors. LOG determines the neutral target row, but never the projection
 origin: every lexical source first projects horizontally at its source height.
 An explicit topic or V2 rule may replace that neutral target before drawing.
@@ -30,7 +48,7 @@ index.html
 Or run locally:
 
 ```bat
-start-local-viewer.bat
+start_local_viewer.bat
 ```
 
 ## Build the full source ZIP on Windows
@@ -42,21 +60,21 @@ maak-volledige-zip.bat
 ```
 
 The batch file derives the ZIP name from its own containing directory. A
-directory named `OpenGraph_Lite_Viewer_v2.0.0-rc.26` therefore produces the
-sibling file `OpenGraph_Lite_Viewer_v2.0.0-rc.26_full_source.zip`. An existing
+directory named `OpenGraph_Lite_Viewer_v2.0.0-rc.33` therefore produces the
+sibling file `OpenGraph_Lite_Viewer_v2.0.0-rc.33_full_source.zip`. An existing
 ZIP with that exact name is replaced safely; the script never invents a
 `(1)` suffix.
 
 GitHub Pages:
 
 ```text
-https://kruin.github.io/graphlite/index.html?ogv=v2.0.0-rc.26
+https://kruin.github.io/graphlite/index.html?ogv=v2.0.0-rc.33
 ```
 
 Cache reset:
 
 ```text
-https://kruin.github.io/graphlite/reset-cache.html?ogv=v2.0.0-rc.26
+https://kruin.github.io/graphlite/reset-cache.html?ogv=v2.0.0-rc.33
 ```
 
 ## Desktop view
@@ -76,13 +94,14 @@ throughout the phased Play sequence.
 
 ## Config tabs
 
-Config opens on the first of four tabs:
+Config opens on a compact overview. It links to these focused sections:
 
-1. `Save & export`: LinkedIn/Play/SVG first, followed by OPN, Config
+1. `Overview` and `JaN · TODO`;
+2. `Save & export`: LinkedIn/Play/SVG first, followed by OPN, Config
    save/restore and example management;
-2. `View`: MAX, Syntax/FT, tree layout and projection colours;
-3. `LOG & LEX`: LOG minors, interval selection, LEX order and rules;
-4. `Advanced`: legacy branch-extension and top-menu placement options.
+3. `View`: MAX, Syntax / Functional, tree layout and projection colours;
+4. `LOG & LEX`: LOG minors, interval selection, LEX order and rules;
+5. `Advanced`: legacy branch-extension and top-menu placement options.
 
 `Window fit` means how the tree uses the available app window. It is not a
 second application window.
@@ -106,13 +125,18 @@ then upload it through LinkedIn's Video action. See
 
 ## Read me / README
 
-The `Lees mij / README` button opens immediately on the `Boom, gek` /
-`A tree. Odd, really` introduction. Topic navigation is on the left and the
-active text appears directly in the right-hand panel.
+The language-dependent `README` / `LEESMIJ` button opens immediately on the `Boom, gek` /
+`A tree. Odd, really` introduction. The topic list occupies the upper half and the active text the lower half in every interface mode. Both halves scroll independently.
 
-The introduction currently shows only the first image: traditional
-sentence-tree examples. Carousel support remains ready for later
-specification images, but no controls are shown while there is only one image.
+The first item is titled **Problem trees**. Its first two images show what happens when every leaf is forced onto one baseline: the tree becomes too wide or is compressed until it becomes unreadable. The third and fourth trees fit better through flexible branch angles, unequal branch lengths and leaves at different heights, but they are only graphically motivated apparent solutions. The underlying problem remains: syntactic structure and lexical word order are entangled in one tree drawing. The next item introduces **OpenGraph Notation**, which represents structural relations and linear word order separately.
+
+![Problem: traditional tree too wide](images/readme/traditional-tree-problem-too-wide.png)
+
+![Problem: compressed traditional tree becomes unreadable](images/readme/traditional-tree-problem-unreadable.png)
+
+![Apparent graphical solution: wide flexible traditional tree](images/readme/traditional-tree-flexible-wide.png)
+
+![Apparent graphical solution: narrow flexible traditional tree](images/readme/traditional-tree-flexible-narrow.png)
 
 The external example-search link opens in a separate browser window. Closing
 that window returns the user to the still-open app.
@@ -139,10 +163,10 @@ then the central tree.
 
 ```text
 1. Syntax
-2. FT
+2. Functional
 ```
 
-Syntax shows the syntactic tree. FT shows the functional structure for the same
+Syntax shows the syntactic tree. Functional shows the functional structure for the same
 example sentence. LOG is not a central view.
 
 ## Named projections
@@ -154,15 +178,15 @@ LOG    south axis
 ```
 
 LEX, SYNT and LOG are visible by default. Each projection can be disabled
-independently. `Geen` shows only the central Syntax or FT view; `Alle` and Reset
+independently. `Geen` shows only the central Syntax or Functional view; `Alle` and Reset
 restore every projection. Switching projections does not alter the central
 graph, viewport or scale.
 
-Adverb insertions first become minors on the LOG axis and do not mutate Syntax
-or FT. Major source items project vertically to LOG without being pulled
-towards the centre; minors use their own compact lower row. Source nodes still
-project horizontally to LEX. LOG supplies each neutral target and an explicit
-topic/V2 rule can replace it before one direct visible move is drawn.
+Adverbial insertions do not mutate Syntax or Functional. The selected usage profile
+determines origin: LOG and LOG+LEX produce a south-axis minor, while a direct
+LEX insertion does not. Source nodes project horizontally to LEX and every
+origin receives a precomputed neutral LEX target. An explicit topic/V2 rule can
+replace that target before one direct visible move is drawn.
 
 The active sentence is printed above the graph, with clear space below it for
 a possible future north axis.
@@ -171,8 +195,9 @@ a possible future north axis.
 
 The adverb list now includes four deliberately bounded multiword units:
 `MISSCHIEN WEL`, `AF EN TOE`, `OP DIT MOMENT`, and
-`MET VEEL AANDACHT`. Each complete phrase currently acts as one LOG minor and
-one LEX unit; its internal syntax is not expanded yet. The set samples
+`MET VEEL AANDACHT`. Each complete phrase currently acts as one visible LEX
+unit. Its usage profile determines whether it also has a LOG minor, a direct
+LEX origin, or a mixed origin; internal syntax is not expanded yet. The set samples
 modality, frequency, time, and manner without claiming a complete inventory of
 adverbial phrases. See
 [`docs/TALIGE_UITBREIDINGEN.md`](docs/TALIGE_UITBREIDINGEN.md).
@@ -180,7 +205,7 @@ adverbial phrases. See
 ## Top menu
 
 ```text
-Zin · Bijwoord · Syntax/FT · Projecties · LOG-volgorde · NL/EN · Lees mij / README · Config
+Sentence · Adverb · Syntax/Functional · Interface · Projections · LOG order · Language · README · Config
 ```
 
 There is no generic `Menu` button and there are no nested submenus. Choice
@@ -218,9 +243,46 @@ check_release.bat
 
 - The viewer contains 14 example sentences, including two examples with
   multiple LOG minors.
-- With automatic placement, class configuration is authoritative:
-  `MODALITEIT → S-O` and `FREQUENTIE → O-V`. Example-sentence order and
-  legacy position hints cannot override it.
+- With automatic placement, an explicit sentence-instance landing position such as `post-object-pre-vcluster` takes priority over a broad class default. Scope and linear position remain separate.
 - `Opslaan als .opn` downloads the current analysis.
 - `Importeer .opn` opens a previously exported document.
 - Paradata is optional.
+
+## What problem OGN solves
+
+A classical constituent tree often makes horizontal branch order perform two
+representational tasks at once: it encodes structural relations and also
+suggests the linear order in which the sentence is pronounced. OGN separates
+those tasks.
+
+```text
+central branching under S = structural relations
+LEX projection           = linear sentence word order
+```
+
+The same central structure can therefore support different surface strings
+without mirroring or rebuilding the tree, or treating word order as a
+transformation of the central tree.
+
+## Placement plan before rendering
+
+The viewer calculates one complete placement plan before drawing:
+
+1. determine structural hosts;
+2. determine lexical insertions and landing positions;
+3. reserve grid space and exchange corridors;
+4. place the central tree;
+5. fill the core sentence lexically;
+6. fix projections, traces and exchange paths;
+7. assign growth/render steps;
+8. render the fixed result.
+
+The renderer does not choose new positions or reserve new space. Play/Growth
+reveals the precomputed layout step by step.
+
+## JaN TODO
+
+- Working notation: `S:np-VP`, explicitly not `S:NP-VP`.
+- Research notation: `S+ np-VP`.
+- Binary trees first; non-binary multi-branching trees later.
+- Verbal-cluster flip: `heeft gebeten` ↔ `gebeten heeft`.

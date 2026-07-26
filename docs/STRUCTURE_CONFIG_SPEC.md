@@ -1,4 +1,4 @@
-# Structure-config-specificatie · v2.0.0-rc.26
+# Structure-config-specificatie · v2.0.0-rc.33
 
 ## LOG-slotconfig
 
@@ -36,7 +36,7 @@ altijd voorrang.
 
 ---
 
-## Historische syntax- en FT-config
+## Historische syntax- en Functional-config
 
 ## Bestand
 

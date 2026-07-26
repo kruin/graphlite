@@ -170,3 +170,7 @@ De verbale lexemen hebben nu naast de tegenwoordige persoonsvorm en het voltooid
 | `breien` | `BREIT` | `BREIDE` | `GEBREID` |
 
 De OVT-vorm blijft een predicate/PV-token op de LEX-as. Zij verandert het selectieframe niet: `BEET` gebruikt het frame van `bijt`; `BREIDE` gebruikt het frame van `breit`.
+
+## rc.28 · één lemma, meerdere gebruiksprofielen
+
+Een lexicon-entry mag geneste `.usage-profile`-elementen bevatten. Meerwoordconstructies verwijzen naar lemma's en bieden groepsprofielen. `examples-input.html` legt de gekozen of nog te kiezen analyse per `.lex-insertion` vast met `data-usage-profile`, `data-origin`, `data-analysis-status`, `data-candidate-profiles` en `data-ambiguity-affects`. De viewer vraagt alleen als de keuze de OGN-notatie wijzigt.

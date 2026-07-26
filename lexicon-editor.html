@@ -1,13 +1,14 @@
-<!doctype html>
+<!DOCTYPE html>
+
 <html lang="nl">
 <head>
-  <meta charset="utf-8">
-  <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
-  <meta http-equiv="Pragma" content="no-cache">
-  <meta http-equiv="Expires" content="0">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>OpenGraph lexicon- en uitingeneditor v2.0.0-rc.26</title>
-  <style>
+<meta charset="utf-8"/>
+<meta content="no-store, no-cache, must-revalidate, max-age=0" http-equiv="Cache-Control"/>
+<meta content="no-cache" http-equiv="Pragma"/>
+<meta content="0" http-equiv="Expires"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>OpenGraph lexicon- en uitingeneditor v2.0.0-rc.33</title>
+<style>
     :root{color-scheme:light;--bg:#f8fafc;--panel:#fff;--text:#0f172a;--muted:#64748b;--line:#cbd5e1;--soft:#eef2f7;--accent:#1d4ed8;--danger:#b91c1c;--ok:#166534;--warn:#9a3412;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
     *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text)}
     header{padding:22px 28px;background:#0f172a;color:white}header h1{margin:0 0 6px;font-size:clamp(1.35rem,2.5vw,2rem)}header p{margin:0;color:#cbd5e1;line-height:1.45;max-width:1220px}code{background:#e2e8f0;border-radius:6px;padding:2px 5px;color:#0f172a}
@@ -19,99 +20,109 @@
     .check-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}@media(max-width:1100px){.check-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}.check-grid label{border:1px solid var(--line);border-radius:10px;padding:8px 9px;background:#fff;font-weight:750}.validation{white-space:pre-wrap;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.88rem;background:#0f172a;color:#e2e8f0;border-radius:14px;padding:12px;min-height:72px}.output{width:100%;min-height:220px;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.82rem}.split{display:grid;grid-template-columns:1fr;gap:14px}.toolbar-line{display:flex;gap:10px;align-items:end;flex-wrap:wrap}.toolbar-line .field{min-width:160px;flex:1}.preview{font-size:1.45rem;letter-spacing:.03em;border:1px solid var(--line);background:#fff;border-radius:14px;padding:14px}.preview strong{font-weight:950;color:#166534}.preview em{font-style:italic;color:#7c2d12}.lex-sequence{display:flex;gap:7px;flex-wrap:wrap}.lex-token{border:1px solid var(--line);background:#f8fafc;border-radius:999px;padding:5px 8px;font-size:.85rem;font-weight:800}.status-ok{color:var(--ok);font-weight:900}.status-bad{color:var(--danger);font-weight:900}
   </style>
 </head>
-<body>
-  <header>
-    <h1>OpenGraph lexicon- en uitingeneditor <span>v2.0.0-rc.26</span></h1>
-    <p>Beheerlaag voor <code>lexicon-config.html</code> én <code>examples-input.html</code>. De voorbeeldzin valideert de LOG→LEX-afleiding en bepaalt de layout niet. Bestaande <code>data-log-*</code>-minorannotaties worden bij import/export behouden; intervaldefaults staan in <code>structure-config.html</code>.</p>
-  </header>
-
-  <main>
-    <aside class="panel" aria-label="Lexemenlijst">
-      <div class="panel-header">
-        <h2>Lexemen <span id="countLabel" class="muted">—</span></h2>
-        <div class="button-row"><button id="newNounButton" type="button">+ N</button><button id="newVerbButton" type="button">+ V</button></div>
-      </div>
-      <div class="panel-body split">
-        <div class="toolbar-line">
-          <label class="field"><span>Zoek</span><input id="searchInput" type="search" placeholder="label, lemma, id"></label>
-          <label class="field"><span>Filter</span><select id="kindFilter"><option value="">alle</option><option value="noun">noun</option><option value="verb">verb</option><option value="aux">aux</option><option value="comp">comp</option><option value="adj">adj</option><option value="prep">prep</option><option value="other">other</option></select></label>
-        </div>
-        <div class="button-row"><button id="newAuxButton" type="button">+ AUX</button><button id="newCompButton" type="button">+ COMP</button><button id="duplicateButton" type="button">Dupliceer</button><button id="deleteButton" class="danger" type="button">Verwijder</button></div>
-        <div id="entryList" class="entry-list" aria-label="Lexiconentries"></div>
-      </div>
-    </aside>
-
-    <section class="split">
-      <section class="panel" aria-label="Lexeme bewerken">
-        <div class="panel-header"><h2>Lexeme</h2><div class="button-row"><a class="button-link" href="index.html?v2.0.0-rc.26">Viewer</a><a class="button-link" href="lexicon-config.html?v2.0.0-rc.26">Lexicon</a><a class="button-link" href="examples-input.html?v2.0.0-rc.26">Uitingen</a><a class="button-link" href="structure-editor.html?v2.0.0-rc.26">Structure-editor</a></div></div>
-        <div class="panel-body split">
-          <div class="form-grid three"><label class="field"><span>ID</span><input id="idInput" type="text" placeholder="hond"></label><label class="field"><span>Label</span><input id="labelInput" type="text" placeholder="HOND"></label><label class="field"><span>Lemma</span><input id="lemmaInput" type="text" placeholder="hond"></label></div>
-          <div class="form-grid three"><label class="field"><span>Kind</span><select id="kindInput"><option>noun</option><option>verb</option><option>aux</option><option>comp</option><option>adj</option><option>adv</option><option>prep</option><option>other</option></select></label><label class="field"><span>Cat</span><input id="catInput" type="text" placeholder="N / V / AUX / COMP"></label><label class="field"><span>Phrase</span><input id="phraseInput" type="text" placeholder="NP / VP / PP"></label></div>
-          <div class="form-grid three"><label class="field"><span>Default role</span><select id="defaultRoleInput"></select></label><label class="field"><span>Source default</span><select id="sourceDefaultInput"></select></label><label class="field"><span>Slot default</span><select id="slotDefaultInput"></select></label></div>
-          <div class="help"><strong>Syntactische rollen:</strong> bepalen of een lexeme als subject, object, predicaat enz. kan worden gebruikt.</div>
-          <div class="check-grid" aria-label="Syntactische rollen"><label><input type="checkbox" name="role" value="subject"> subject</label><label><input type="checkbox" name="role" value="object"> object</label><label><input type="checkbox" name="role" value="predicate"> predicate</label><label><input type="checkbox" name="role" value="aux"> aux</label><label><input type="checkbox" name="role" value="participle"> participle</label><label><input type="checkbox" name="role" value="comp"> comp</label><label><input type="checkbox" name="role" value="topic"> topic</label><label><input type="checkbox" name="role" value="modifier"> modifier</label></div>
-          <div class="help"><strong>Thematische rollen:</strong> bepalen of een lexeme inhoudelijk als agens, patiens enz. voor de hand ligt. In korte actieve zinnen geldt: subject = agens, object = patiens.</div>
-          <div class="check-grid" aria-label="Thematische rollen"><label><input type="checkbox" name="theme" value="agens"> agens</label><label><input type="checkbox" name="theme" value="patiens"> patiens</label><label><input type="checkbox" name="theme" value="experiens"> experiens</label><label><input type="checkbox" name="theme" value="thema"> thema</label><label><input type="checkbox" name="theme" value="doel"> doel</label><label><input type="checkbox" name="theme" value="bron"> bron</label><label><input type="checkbox" name="theme" value="instrument"> instrument</label><label><input type="checkbox" name="theme" value="locatie"> locatie</label></div>
-          <div class="form-grid"><label class="field"><span>Frame subjects / agens-lexemen</span><input id="frameSubjectsInput" type="text" placeholder="vrouw hond man"></label><label class="field"><span>Frame objects / patiens-lexemen</span><input id="frameObjectsInput" type="text" placeholder="trui man hond"></label></div>
-          <div class="form-grid three"><label class="field"><span>Infinitive</span><input id="infinitiveInput" type="text" placeholder="BIJTEN"></label><label class="field"><span>Imperfectum / OVT</span><input id="imperfectumInput" type="text" placeholder="BEET"></label><label class="field"><span>Participle / VDW</span><input id="participleInput" type="text" placeholder="GEBETEN"></label></div>
-          <label class="field"><span>Notitie</span><textarea id="noteInput" placeholder="vrije notitie"></textarea></label>
-          <div class="button-row"><button id="applyButton" class="primary" type="button">Pas toe</button><button id="slugButton" class="soft" type="button">Maak ID uit lemma/label</button><button id="validateButton" type="button">Valideer alles</button></div>
-        </div>
-      </section>
-
-      <section class="panel" aria-label="Voorbeelduitingen beheren">
-        <div class="panel-header"><h2>Voorbeelduitingen <span id="exampleCountLabel" class="muted">—</span></h2><div class="button-row"><button id="newShortExampleButton" class="primary" type="button">+ korte zin</button><button id="replaceExampleButton" type="button">Vervang geselecteerde</button></div></div>
-        <div class="panel-body split">
-          <div class="help warn"><strong>Scope v2.0.0-rc.26:</strong> deze editor beheert voorlopig korte zinnen. Subject wordt als <code>agens</code> gelezen; object als <code>patiens</code>. Hoofdzinnen gebruiken nu de LEX-plaatsingsregel <code>Wissel V2</code>: persoonsvorm naar vrij slot 2, oude plek = trace. De bouwer toont geen combinaties zoals <code>trui</code> als agens.</div>
-          <div class="form-grid four">
-            <label class="field"><span>Type</span><select id="exampleTypeInput"><option value="main">hoofdzin: S V O</option><option value="past">OVT: S OVT O</option><option value="sub">bijzin: omdat S O V</option><option value="perfect">perfectum: S AUX O VDW</option></select></label>
-            <label class="field"><span>Subject</span><select id="exampleSubjectInput"></select></label>
-            <label class="field"><span>Predicaat</span><select id="exampleVerbInput"></select></label>
-            <label class="field"><span>Object</span><select id="exampleObjectInput"></select></label>
-          </div>
-          <div class="form-grid"><label class="field"><span>Complementizer</span><select id="exampleCompInput"></select></label><label class="field"><span>Aux</span><select id="exampleAuxInput"></select></label></div>
-          <div class="form-grid three"><label class="field"><span>ID</span><input id="exampleIdInput" type="text"></label><label class="field"><span>Fase</span><input id="examplePhaseInput" type="text"></label><label class="field"><span>LEX-regel</span><input id="exampleRuleInput" type="text"></label></div>
-          <label class="field"><span>Meta</span><input id="exampleMetaInput" type="text"></label>
-          <div class="preview" id="examplePreview">—</div>
-          <div id="exampleTokens" class="lex-sequence" aria-label="LEX-volgorde"></div>
-          <div class="button-row"><button id="duplicateExampleButton" type="button">Dupliceer uiting</button><button id="deleteExampleButton" class="danger" type="button">Verwijder uiting</button><button id="syncBuilderButton" type="button">Lees geselecteerde in bouwer</button></div>
-          <div id="exampleList" class="example-list" aria-label="Voorbeelduitingen"></div>
-        </div>
-      </section>
-
-      <section class="panel" aria-label="Bestanden en export">
-        <div class="panel-header"><h2>Export / import</h2><span id="statusLabel" class="muted">geladen</span></div>
-        <div class="panel-body split">
-          <div class="help"><strong>Werkwijze:</strong> beheer lexemen en korte voorbeeldzinnen in dit scherm. Download daarna <code>lexicon-config.html</code> én <code>examples-input.html</code> en vervang beide bestanden in de viewer-map.</div>
-          <div class="button-row"><button id="saveDraftButton" type="button">Bewaar concept</button><button id="loadDraftButton" type="button">Laad concept</button><button id="resetButton" type="button">Herlaad uit configs</button><label class="file-button">Importeer lexicon<input id="fileInput" type="file" accept="text/html,.html"></label><label class="file-button">Importeer uitingen<input id="examplesFileInput" type="file" accept="text/html,.html"></label></div>
-          <div class="button-row"><button id="downloadLexiconButton" class="primary" type="button">Download lexicon-config.html</button><button id="downloadExamplesButton" class="primary" type="button">Download examples-input.html</button><button id="saveLexiconAsButton" type="button">Lexicon opslaan als…</button><button id="saveExamplesAsButton" type="button">Uitingen opslaan als…</button></div>
-          <div id="validationOutput" class="validation">Nog niet gevalideerd.</div>
-          <label class="field"><span>lexicon-config.html-output</span><textarea id="htmlOutput" class="output" spellcheck="false"></textarea></label>
-          <label class="field"><span>examples-input.html-output</span><textarea id="examplesHtmlOutput" class="output" spellcheck="false"></textarea></label>
-        </div>
-      </section>
-    </section>
-  </main>
-
+<body><nav class="opengraph-return-nav" style="display:flex;gap:.5rem;flex-wrap:wrap;padding:.55rem .7rem;border-bottom:1px solid #cbd5e1;background:#f8fafc;position:sticky;top:0;z-index:50"><a href="index.html?screen=config" style="font-weight:800">← Terug naar: Config</a><a href="index.html" style="font-weight:800">← Terug naar: Main</a></nav>
+<header>
+<h1>OpenGraph lexicon- en uitingeneditor <span>v2.0.0-rc.33</span></h1>
+<p>Beheerlaag voor <code>lexicon-config.html</code> én <code>examples-input.html</code>. De voorbeeldzin valideert de LOG→LEX-afleiding en bepaalt de layout niet. Gebruiksprofielen en meerwoordconstructies worden bij import/export behouden. De zinsinstantie kiest een profiel; het lexicon bewaart de mogelijkheden. Intervaldefaults staan in <code>structure-config.html</code>.</p>
+</header>
+<main>
+<aside aria-label="Lexemenlijst" class="panel">
+<div class="panel-header">
+<h2>Lexemen <span class="muted" id="countLabel">—</span></h2>
+<div class="button-row"><button id="newNounButton" type="button">+ N</button><button id="newVerbButton" type="button">+ V</button></div>
+</div>
+<div class="panel-body split">
+<div class="toolbar-line">
+<label class="field"><span>Zoek</span><input id="searchInput" placeholder="label, lemma, id" type="search"/></label>
+<label class="field"><span>Filter</span><select id="kindFilter"><option value="">alle</option><option value="noun">noun</option><option value="verb">verb</option><option value="aux">aux</option><option value="comp">comp</option><option value="adj">adj</option><option value="adv">adv</option><option value="prep">prep</option><option value="other">other</option></select></label>
+</div>
+<div class="button-row"><button id="newAdvButton" type="button">+ ADV</button><button id="newAuxButton" type="button">+ AUX</button><button id="newCompButton" type="button">+ COMP</button><button id="duplicateButton" type="button">Dupliceer</button><button class="danger" id="deleteButton" type="button">Verwijder</button></div>
+<div aria-label="Lexiconentries" class="entry-list" id="entryList"></div>
+</div>
+</aside>
+<section class="split">
+<section aria-label="Lexeme bewerken" class="panel">
+<div class="panel-header"><h2>Lexeme</h2><div class="button-row"><a class="button-link" href="index.html?v2.0.0-rc.33">Viewer</a><a class="button-link" href="lexicon-config.html?v2.0.0-rc.33">Lexicon</a><a class="button-link" href="examples-input.html?v2.0.0-rc.33">Uitingen</a><a class="button-link" href="structure-editor.html?v2.0.0-rc.33">Structure-editor</a></div></div>
+<div class="panel-body split">
+<div class="form-grid three"><label class="field"><span>ID</span><input id="idInput" placeholder="hond" type="text"/></label><label class="field"><span>Label</span><input id="labelInput" placeholder="HOND" type="text"/></label><label class="field"><span>Lemma</span><input id="lemmaInput" placeholder="hond" type="text"/></label></div>
+<div class="form-grid three"><label class="field"><span>Kind</span><select id="kindInput"><option>noun</option><option>verb</option><option>aux</option><option>comp</option><option>adj</option><option>adv</option><option>prep</option><option>other</option></select></label><label class="field"><span>Cat</span><input id="catInput" placeholder="N / V / AUX / COMP" type="text"/></label><label class="field"><span>Phrase</span><input id="phraseInput" placeholder="NP / VP / PP" type="text"/></label></div>
+<div class="form-grid three"><label class="field"><span>Default role</span><select id="defaultRoleInput"></select></label><label class="field"><span>Source default</span><select id="sourceDefaultInput"></select></label><label class="field"><span>Slot default</span><select id="slotDefaultInput"></select></label></div>
+<div class="help"><strong>Syntactische rollen:</strong> bepalen of een lexeme als subject, object, predicaat enz. kan worden gebruikt.</div>
+<div aria-label="Syntactische rollen" class="check-grid"><label><input name="role" type="checkbox" value="subject"/> subject</label><label><input name="role" type="checkbox" value="object"/> object</label><label><input name="role" type="checkbox" value="predicate"/> predicate</label><label><input name="role" type="checkbox" value="aux"/> aux</label><label><input name="role" type="checkbox" value="participle"/> participle</label><label><input name="role" type="checkbox" value="comp"/> comp</label><label><input name="role" type="checkbox" value="topic"/> topic</label><label><input name="role" type="checkbox" value="modifier"/> modifier</label></div>
+<div class="help"><strong>Thematische rollen:</strong> bepalen of een lexeme inhoudelijk als agens, patiens enz. voor de hand ligt. In korte actieve zinnen geldt: subject = agens, object = patiens.</div>
+<div aria-label="Thematische rollen" class="check-grid"><label><input name="theme" type="checkbox" value="agens"/> agens</label><label><input name="theme" type="checkbox" value="patiens"/> patiens</label><label><input name="theme" type="checkbox" value="experiens"/> experiens</label><label><input name="theme" type="checkbox" value="thema"/> thema</label><label><input name="theme" type="checkbox" value="doel"/> doel</label><label><input name="theme" type="checkbox" value="bron"/> bron</label><label><input name="theme" type="checkbox" value="instrument"/> instrument</label><label><input name="theme" type="checkbox" value="locatie"/> locatie</label></div>
+<div class="form-grid"><label class="field"><span>Frame subjects / agens-lexemen</span><input id="frameSubjectsInput" placeholder="vrouw hond man" type="text"/></label><label class="field"><span>Frame objects / patiens-lexemen</span><input id="frameObjectsInput" placeholder="trui man hond" type="text"/></label></div>
+<div class="form-grid three"><label class="field"><span>Infinitive</span><input id="infinitiveInput" placeholder="BIJTEN" type="text"/></label><label class="field"><span>Imperfectum / OVT</span><input id="imperfectumInput" placeholder="BEET" type="text"/></label><label class="field"><span>Participle / VDW</span><input id="participleInput" placeholder="GEBETEN" type="text"/></label></div>
+<label class="field"><span>Gebruiksprofielen</span><textarea id="profilesInput" placeholder="één profiel per regel: id | LOG/LEX/LOG+LEX | functie | scope | interval | effects | default true/false | label"></textarea></label>
+<div class="help"><strong>Gebruiksprofielen:</strong> één lemma kan meerdere analyses aanbieden. De zinsinstantie kiest één profiel; het lexicon bewaart de mogelijkheden en het voorgestelde profiel.</div>
+<label class="field"><span>Notitie</span><textarea id="noteInput" placeholder="vrije notitie"></textarea></label>
+<div class="button-row"><button class="primary" id="applyButton" type="button">Pas toe</button><button class="soft" id="slugButton" type="button">Maak ID uit lemma/label</button><button id="validateButton" type="button">Valideer alles</button></div>
+</div>
+</section>
+<section aria-label="Meerwoordconstructies beheren" class="panel">
+<div class="panel-header"><h2>Meerwoordconstructies</h2></div>
+<div class="panel-body split">
+<div class="help"><strong>Constructies:</strong> verwijzen naar lemma's en kunnen groepsprofielen aanbieden. Eén constructie kan één zichtbaar LEX-slot behouden terwijl componenten LOG, LEX of beide als bron hebben.</div>
+<label class="field"><span>Constructies (JSON)</span><textarea id="constructionsInput" spellcheck="false" style="min-height:18rem"></textarea></label>
+<div class="button-row"><button id="formatConstructionsButton" type="button">Formatteer JSON</button></div>
+</div>
+</section>
+<section aria-label="Voorbeelduitingen beheren" class="panel">
+<div class="panel-header"><h2>Voorbeelduitingen <span class="muted" id="exampleCountLabel">—</span></h2><div class="button-row"><button class="primary" id="newShortExampleButton" type="button">+ korte zin</button><button id="replaceExampleButton" type="button">Vervang geselecteerde</button></div></div>
+<div class="panel-body split">
+<div class="help warn"><strong>Scope v2.0.0-rc.33:</strong> deze editor beheert voorlopig korte zinnen. Subject wordt als <code>agens</code> gelezen; object als <code>patiens</code>. Hoofdzinnen gebruiken nu de LEX-plaatsingsregel <code>Wissel V2</code>: persoonsvorm naar vrij slot 2, oude plek = trace. De bouwer toont geen combinaties zoals <code>trui</code> als agens.</div>
+<div class="form-grid four">
+<label class="field"><span>Type</span><select id="exampleTypeInput"><option value="main">hoofdzin: S V O</option><option value="past">OVT: S OVT O</option><option value="sub">bijzin: omdat S O V</option><option value="perfect">perfectum: S AUX O VDW</option></select></label>
+<label class="field"><span>Subject</span><select id="exampleSubjectInput"></select></label>
+<label class="field"><span>Predicaat</span><select id="exampleVerbInput"></select></label>
+<label class="field"><span>Object</span><select id="exampleObjectInput"></select></label>
+</div>
+<div class="form-grid"><label class="field"><span>Complementizer</span><select id="exampleCompInput"></select></label><label class="field"><span>Aux</span><select id="exampleAuxInput"></select></label></div>
+<div class="form-grid three"><label class="field"><span>ID</span><input id="exampleIdInput" type="text"/></label><label class="field"><span>Fase</span><input id="examplePhaseInput" type="text"/></label><label class="field"><span>LEX-regel</span><input id="exampleRuleInput" type="text"/></label></div>
+<label class="field"><span>Meta</span><input id="exampleMetaInput" type="text"/></label>
+<div class="preview" id="examplePreview">—</div>
+<div aria-label="LEX-volgorde" class="lex-sequence" id="exampleTokens"></div>
+<div class="button-row"><button id="duplicateExampleButton" type="button">Dupliceer uiting</button><button class="danger" id="deleteExampleButton" type="button">Verwijder uiting</button><button id="syncBuilderButton" type="button">Lees geselecteerde in bouwer</button></div>
+<div aria-label="Voorbeelduitingen" class="example-list" id="exampleList"></div>
+</div>
+</section>
+<section aria-label="Bestanden en export" class="panel">
+<div class="panel-header"><h2>Export / import</h2><span class="muted" id="statusLabel">geladen</span></div>
+<div class="panel-body split">
+<div class="help"><strong>Werkwijze:</strong> beheer lexemen en korte voorbeeldzinnen in dit scherm. Download daarna <code>lexicon-config.html</code> én <code>examples-input.html</code> en vervang beide bestanden in de viewer-map.</div>
+<div class="button-row"><button id="saveDraftButton" type="button">Bewaar concept</button><button id="loadDraftButton" type="button">Laad concept</button><button id="resetButton" type="button">Herlaad uit configs</button><label class="file-button">Importeer lexicon<input accept="text/html,.html" id="fileInput" type="file"/></label><label class="file-button">Importeer uitingen<input accept="text/html,.html" id="examplesFileInput" type="file"/></label></div>
+<div class="button-row"><button class="primary" id="downloadLexiconButton" type="button">Download lexicon-config.html</button><button class="primary" id="downloadExamplesButton" type="button">Download examples-input.html</button><button id="saveLexiconAsButton" type="button">Lexicon opslaan als…</button><button id="saveExamplesAsButton" type="button">Uitingen opslaan als…</button></div>
+<div class="validation" id="validationOutput">Nog niet gevalideerd.</div>
+<label class="field"><span>lexicon-config.html-output</span><textarea class="output" id="htmlOutput" spellcheck="false"></textarea></label>
+<label class="field"><span>examples-input.html-output</span><textarea class="output" id="examplesHtmlOutput" spellcheck="false"></textarea></label>
+</div>
+</section>
+</section>
+</main>
 <script>
-const VERSION='v2.0.0-rc.26';
-const STORAGE_KEY='opengraph.lexicon.examples.editor.v2.0.0-rc.26';
+const VERSION='v2.0.0-rc.33';
+const STORAGE_KEY='opengraph.lexicon.examples.editor.v2.0.0-rc.33';
 const DEFAULT_ROLES=['subject','object','predicate','aux','participle','comp','topic','modifier'];
 const DEFAULT_THEMES=['agens','patiens','experiens','thema','doel','bron','instrument','locatie'];
-let entries=[]; let selected=0; let examples=[]; let selectedExample=0;
+let entries=[]; let constructions=[]; let selected=0; let examples=[]; let selectedExample=0;
 let env={sources:[{id:'subject',label:'subject · N'},{id:'predicate',label:'predicate · V'},{id:'object',label:'object · N'},{id:'pv',label:'pv · AUX'},{id:'vdw',label:'vdw · V'}],slots:[{id:'comp',label:'slot 0 · Comp/(om)dat'},{id:'topic',label:'slot 1 · topicalisatie'},{id:'aux',label:'AUX / pv'}]};
 const els={
   list:document.getElementById('entryList'),count:document.getElementById('countLabel'),search:document.getElementById('searchInput'),filter:document.getElementById('kindFilter'),status:document.getElementById('statusLabel'),
-  id:document.getElementById('idInput'),label:document.getElementById('labelInput'),lemma:document.getElementById('lemmaInput'),kind:document.getElementById('kindInput'),cat:document.getElementById('catInput'),phrase:document.getElementById('phraseInput'),defaultRole:document.getElementById('defaultRoleInput'),sourceDefault:document.getElementById('sourceDefaultInput'),slotDefault:document.getElementById('slotDefaultInput'),frameSubjects:document.getElementById('frameSubjectsInput'),frameObjects:document.getElementById('frameObjectsInput'),infinitive:document.getElementById('infinitiveInput'),imperfectum:document.getElementById('imperfectumInput'),participle:document.getElementById('participleInput'),note:document.getElementById('noteInput'),validation:document.getElementById('validationOutput'),html:document.getElementById('htmlOutput'),fileInput:document.getElementById('fileInput'),
+  id:document.getElementById('idInput'),label:document.getElementById('labelInput'),lemma:document.getElementById('lemmaInput'),kind:document.getElementById('kindInput'),cat:document.getElementById('catInput'),phrase:document.getElementById('phraseInput'),defaultRole:document.getElementById('defaultRoleInput'),sourceDefault:document.getElementById('sourceDefaultInput'),slotDefault:document.getElementById('slotDefaultInput'),frameSubjects:document.getElementById('frameSubjectsInput'),frameObjects:document.getElementById('frameObjectsInput'),infinitive:document.getElementById('infinitiveInput'),imperfectum:document.getElementById('imperfectumInput'),participle:document.getElementById('participleInput'),profiles:document.getElementById('profilesInput'),constructions:document.getElementById('constructionsInput'),note:document.getElementById('noteInput'),validation:document.getElementById('validationOutput'),html:document.getElementById('htmlOutput'),fileInput:document.getElementById('fileInput'),
   exampleCount:document.getElementById('exampleCountLabel'),exampleList:document.getElementById('exampleList'),exampleType:document.getElementById('exampleTypeInput'),exampleSubject:document.getElementById('exampleSubjectInput'),exampleVerb:document.getElementById('exampleVerbInput'),exampleObject:document.getElementById('exampleObjectInput'),exampleComp:document.getElementById('exampleCompInput'),exampleAux:document.getElementById('exampleAuxInput'),exampleId:document.getElementById('exampleIdInput'),examplePhase:document.getElementById('examplePhaseInput'),exampleRule:document.getElementById('exampleRuleInput'),exampleMeta:document.getElementById('exampleMetaInput'),examplePreview:document.getElementById('examplePreview'),exampleTokens:document.getElementById('exampleTokens'),examplesHtml:document.getElementById('examplesHtmlOutput'),examplesFileInput:document.getElementById('examplesFileInput')
 };
 function esc(s){return String(s??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));}
 function attr(s){return esc(s).replace(/`/g,'&#96;');}
 function slugify(s){return String(s||'item').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'item';}
 function words(s){return String(s||'').split(/\s+/).map(x=>x.trim()).filter(Boolean);}
+function normalizeOrigin(value){const v=String(value||'LOG').toUpperCase().replace('MIXED','LOG+LEX');return ['LOG','LEX','LOG+LEX'].includes(v)?v:'LOG';}
+function profileLines(profiles){return (profiles||[]).map(p=>[p.id,p.origin,p.function,p.scope,p.interval,(p.effects||[]).join(' '),p.recommended?'true':'false',p.label||''].join(' | ')).join('\n');}
+function parseProfileLines(text){return String(text||'').split(/\r?\n/).map(line=>line.trim()).filter(Boolean).map(line=>{const parts=line.split('|').map(x=>x.trim());return {id:slugify(parts[0]||'profile'),origin:normalizeOrigin(parts[1]),function:parts[2]||'',scope:parts[3]||'',interval:parts[4]||'',effects:words(parts[5]),recommended:String(parts[6]||'').toLowerCase()==='true',label:parts[7]||parts[0]||'profile'};});}
+function normalizeConstruction(c){return {id:slugify(c.id||'construction'),members:Array.isArray(c.members)?c.members:words(c.members),visibleSlots:Math.max(1,Number(c.visibleSlots)||1),defaultProfile:c.defaultProfile||'',profiles:(c.profiles||[]).map(p=>({id:slugify(p.id||'profile'),origin:normalizeOrigin(p.origin),components:p.components||'',function:p.function||'',scope:p.scope||'',interval:p.interval||'',effects:Array.isArray(p.effects)?p.effects:words(p.effects),recommended:!!p.recommended,label:p.label||p.id||'profile'}))};}
+
 function uniqueId(base){let id=slugify(base), n=2; const ids=new Set(entries.map(e=>e.id)); while(ids.has(id)){id=`${slugify(base)}-${n++}`;} return id;}
 function uniqueExampleId(base){let id=slugify(base), n=2; const ids=new Set(examples.map(e=>e.id)); while(ids.has(id)){id=`${slugify(base)}-${n++}`;} return id;}
-function normalize(e){return {id:e.id||uniqueId(e.lemma||e.label||'lexeme'),label:(e.label||e.lemma||e.id||'LEXEME').toUpperCase(),lemma:e.lemma||'',cat:e.cat||'',phrase:e.phrase||'',kind:e.kind||'other',roles:[...new Set(e.roles||[])],themes:[...new Set(e.themes||e.thematicRoles||[])],defaultRole:e.defaultRole||'',sourceDefault:e.sourceDefault||'',slotDefault:e.slotDefault||'',slots:[...new Set(e.slots||[])],frameSubjects:[...new Set(e.frameSubjects||[])],frameObjects:[...new Set(e.frameObjects||[])],infinitive:e.infinitive||'',imperfectum:e.imperfectum||e.past||e.ovt||'',participle:e.participle||'',note:e.note||''};}
+function normalize(e){return {id:e.id||uniqueId(e.lemma||e.label||'lexeme'),label:(e.label||e.lemma||e.id||'LEXEME').toUpperCase(),lemma:e.lemma||'',cat:e.cat||'',phrase:e.phrase||'',kind:e.kind||'other',roles:[...new Set(e.roles||[])],themes:[...new Set(e.themes||e.thematicRoles||[])],defaultRole:e.defaultRole||'',sourceDefault:e.sourceDefault||'',slotDefault:e.slotDefault||'',slots:[...new Set(e.slots||[])],frameSubjects:[...new Set(e.frameSubjects||[])],frameObjects:[...new Set(e.frameObjects||[])],infinitive:e.infinitive||'',imperfectum:e.imperfectum||e.past||e.ovt||'',participle:e.participle||'',profiles:(e.profiles||[]).map(p=>({id:slugify(p.id||'profile'),origin:normalizeOrigin(p.origin),function:p.function||'',scope:p.scope||'',interval:p.interval||'',effects:Array.isArray(p.effects)?p.effects:words(p.effects),recommended:!!p.recommended,label:p.label||p.id||'profile'})),note:e.note||''};}
 function fallbackEntries(){return [
   {id:'man',label:'MAN',lemma:'man',cat:'N',phrase:'NP',kind:'noun',roles:['subject','object'],themes:['agens','patiens']},
   {id:'hond',label:'HOND',lemma:'hond',cat:'N',phrase:'NP',kind:'noun',roles:['subject','object'],themes:['agens','patiens']},
@@ -123,7 +134,7 @@ function fallbackEntries(){return [
   {id:'heeft',label:'HEEFT',lemma:'hebben',cat:'AUX',kind:'aux',roles:['aux'],slotDefault:'aux'},{id:'hebben',label:'HEBBEN',lemma:'hebben',cat:'AUX',kind:'aux',roles:['aux'],slotDefault:'aux'},{id:'is',label:'IS',lemma:'zijn',cat:'AUX',kind:'aux',roles:['aux'],slotDefault:'aux'},
   {id:'omdat',label:'OMDAT',lemma:'omdat',cat:'COMP',kind:'comp',slotDefault:'comp',roles:['comp']},{id:'dat',label:'DAT',lemma:'dat',cat:'COMP',kind:'comp',slotDefault:'comp',roles:['comp']}
 ].map(normalize);}
-function parseLexiconHtml(html){const doc=new DOMParser().parseFromString(html,'text/html'); const out=[...doc.querySelectorAll('#opengraph-lexicon-config .lexicon-entry')].map(el=>normalize({id:el.dataset.id||'',label:(el.dataset.label||el.textContent.trim()).toUpperCase(),lemma:el.dataset.lemma||'',cat:el.dataset.cat||'',phrase:el.dataset.phrase||'',kind:el.dataset.kind||'',roles:words(el.dataset.roles),themes:words(el.dataset.thematicRoles||el.dataset.themes),defaultRole:el.dataset.defaultRole||'',sourceDefault:el.dataset.sourceDefault||'',slotDefault:el.dataset.slotDefault||'',slots:words(el.dataset.slots),frameSubjects:words(el.dataset.frameSubjects),frameObjects:words(el.dataset.frameObjects),infinitive:el.dataset.infinitive||'',imperfectum:el.dataset.imperfectum||el.dataset.past||el.dataset.ovt||'',participle:el.dataset.participle||'',note:el.dataset.note||''})); return out.filter(e=>e.id);}
+function parseLexiconHtml(html){const doc=new DOMParser().parseFromString(html,'text/html'); const out=[...doc.querySelectorAll('#opengraph-lexicon-config .lexicon-entry')].map(el=>normalize({id:el.dataset.id||'',label:(el.dataset.label||el.querySelector('.entry-line')?.textContent||el.textContent.trim()).toUpperCase(),lemma:el.dataset.lemma||'',cat:el.dataset.cat||'',phrase:el.dataset.phrase||'',kind:el.dataset.kind||'',roles:words(el.dataset.roles),themes:words(el.dataset.thematicRoles||el.dataset.themes),defaultRole:el.dataset.defaultRole||'',sourceDefault:el.dataset.sourceDefault||'',slotDefault:el.dataset.slotDefault||'',slots:words(el.dataset.slots),frameSubjects:words(el.dataset.frameSubjects),frameObjects:words(el.dataset.frameObjects),infinitive:el.dataset.infinitive||'',imperfectum:el.dataset.imperfectum||el.dataset.past||el.dataset.ovt||'',participle:el.dataset.participle||'',profiles:[...el.querySelectorAll('.usage-profile')].map(p=>({id:p.dataset.id||'',origin:p.dataset.origin||'LOG',function:p.dataset.function||'',scope:p.dataset.scope||'',interval:p.dataset.interval||'',effects:words(p.dataset.effects),recommended:String(p.dataset.default||'').toLowerCase()==='true',label:p.textContent.trim()})),note:el.dataset.note||''})); constructions=[...doc.querySelectorAll('#opengraph-lexicon-config .lexicon-construction')].map(el=>normalizeConstruction({id:el.dataset.id||'',members:words(el.dataset.members),visibleSlots:el.dataset.visibleSlots||1,defaultProfile:el.dataset.defaultProfile||'',profiles:[...el.querySelectorAll('.construction-profile')].map(p=>({id:p.dataset.id||'',origin:p.dataset.origin||'LOG',components:p.dataset.components||'',function:p.dataset.function||'',scope:p.dataset.scope||'',interval:p.dataset.interval||'',effects:words(p.dataset.effects),recommended:String(p.dataset.recommended||'').toLowerCase()==='true',label:p.textContent.trim()}))})); return out.filter(e=>e.id);}
 async function loadStructure(){try{const res=await fetch(`structure-config.html?${Date.now()}`,{cache:'no-store'}); if(!res.ok) throw new Error('fetch'); const doc=new DOMParser().parseFromString(await res.text(),'text/html'); const sourceMap=new Map(); doc.querySelectorAll('#opengraph-lexical-config .lexical-config').forEach(el=>{const id=el.dataset.source||''; if(id) sourceMap.set(id,{id,label:`${id}${el.dataset.role?' · '+el.dataset.role:''}${el.dataset.cat?' · '+el.dataset.cat:''}`});}); doc.querySelectorAll('#opengraph-syntax-config .node-config,#opengraph-functional-config .node-config').forEach(el=>{const id=el.dataset.source||''; if(id&&!sourceMap.has(id)) sourceMap.set(id,{id,label:`${id}${el.dataset.role?' · '+el.dataset.role:''}${el.dataset.cat?' · '+el.dataset.cat:''}`});}); const slots=[...doc.querySelectorAll('#opengraph-lex-config .lex-slot-config')].map(el=>({id:el.dataset.id||'',label:el.dataset.label||el.textContent.trim()})).filter(x=>x.id); if(sourceMap.size) env.sources=[...sourceMap.values()]; if(slots.length) env.slots=slots;}catch(err){}}
 async function loadLexicon(){try{const res=await fetch(`lexicon-config.html?${Date.now()}`,{cache:'no-store'}); if(!res.ok) throw new Error('fetch'); const parsed=parseLexiconHtml(await res.text()); entries=parsed.length?parsed:fallbackEntries(); els.status.textContent=`geladen uit configs · ${entries.length} lexemen`; }catch(err){entries=fallbackEntries(); els.status.textContent='fallbacklexicon geladen';}}
 function optionHtml(items,value,empty='—'){return `<option value="">${esc(empty)}</option>`+items.map(i=>`<option value="${attr(i.id)}" ${i.id===value?'selected':''}>${esc(i.label||i.id)}</option>`).join('');}
@@ -131,12 +142,50 @@ function fillEnvSelects(){els.defaultRole.innerHTML=optionHtml(DEFAULT_ROLES.map
 function current(){return entries[selected]||null;}
 function visibleEntries(){const q=els.search.value.trim().toLowerCase(); const k=els.filter.value; return entries.map((e,i)=>({e,i})).filter(({e})=>(!k||e.kind===k)&&(!q||[e.id,e.label,e.lemma,e.cat,e.kind,(e.roles||[]).join(' '),(e.themes||[]).join(' '),(e.frameSubjects||[]).join(' '),(e.frameObjects||[]).join(' ')].join(' ').toLowerCase().includes(q)));}
 function renderList(){const visible=visibleEntries(); els.count.textContent=`${entries.length}`; els.list.innerHTML=visible.map(({e,i})=>`<button class="entry-button ${i===selected?'active':''}" type="button" data-index="${i}"><div class="top"><strong>${esc(e.label||e.id)}</strong><span class="pill">${esc(e.kind||'other')}</span></div><div class="meta">${esc(e.id)} · ${esc(e.cat||'—')} ${e.phrase?'/ '+esc(e.phrase):''}<br>${esc([(e.roles||[]).join(' '),(e.themes||[]).join(' '),e.frameSubjects?.length?'agens='+e.frameSubjects.join(','):'',e.frameObjects?.length?'patiens='+e.frameObjects.join(','):''].filter(Boolean).join(' · ')||e.slotDefault||e.sourceDefault||'geen rol')}</div></button>`).join('') || '<div class="muted">Geen lexemen in filter.</div>'; els.list.querySelectorAll('.entry-button').forEach(btn=>btn.addEventListener('click',()=>{applyForm(false); selected=Number(btn.dataset.index); renderAll(false);}));}
-function renderForm(){const e=current(); if(!e)return; fillEnvSelects(); els.id.value=e.id; els.label.value=e.label; els.lemma.value=e.lemma; els.kind.value=e.kind||'other'; els.cat.value=e.cat; els.phrase.value=e.phrase; els.defaultRole.value=e.defaultRole; els.sourceDefault.value=e.sourceDefault; els.slotDefault.value=e.slotDefault; els.frameSubjects.value=(e.frameSubjects||[]).join(' '); els.frameObjects.value=(e.frameObjects||[]).join(' '); els.infinitive.value=e.infinitive; els.imperfectum.value=e.imperfectum; els.participle.value=e.participle; els.note.value=e.note||''; document.querySelectorAll('input[name="role"]').forEach(cb=>{cb.checked=(e.roles||[]).includes(cb.value);}); document.querySelectorAll('input[name="theme"]').forEach(cb=>{cb.checked=(e.themes||[]).includes(cb.value);});}
-function applyForm(render=true){const e=current(); if(!e)return; e.id=slugify(els.id.value); e.label=els.label.value.trim().toUpperCase(); e.lemma=els.lemma.value.trim(); e.kind=els.kind.value; e.cat=els.cat.value.trim().toUpperCase(); e.phrase=els.phrase.value.trim().toUpperCase(); e.defaultRole=els.defaultRole.value; e.sourceDefault=els.sourceDefault.value; e.slotDefault=els.slotDefault.value; e.roles=[...document.querySelectorAll('input[name="role"]:checked')].map(cb=>cb.value); e.themes=[...document.querySelectorAll('input[name="theme"]:checked')].map(cb=>cb.value); e.frameSubjects=words(els.frameSubjects.value); e.frameObjects=words(els.frameObjects.value); e.infinitive=els.infinitive.value.trim().toUpperCase(); e.imperfectum=els.imperfectum.value.trim().toUpperCase(); e.participle=els.participle.value.trim().toUpperCase(); e.note=els.note.value.trim(); if(render)renderAll(false);}
-function addEntry(kind){applyForm(false); const templates={noun:{kind:'noun',cat:'N',phrase:'NP',roles:['subject','object'],themes:['agens','patiens'],label:'NIEUW',lemma:'nieuw'},verb:{kind:'verb',cat:'V',roles:['predicate'],defaultRole:'predicate',sourceDefault:'predicate',frameSubjects:[],frameObjects:[],label:'DOET',lemma:'doen',infinitive:'DOEN',imperfectum:'DEED',participle:'GEDAAN'},aux:{kind:'aux',cat:'AUX',roles:['aux'],slotDefault:'aux',label:'HEEFT',lemma:'hebben'},comp:{kind:'comp',cat:'COMP',roles:['comp'],slotDefault:'comp',label:'DAT',lemma:'dat'}}; const e=normalize(templates[kind]||{kind:'other',label:'NIEUW',lemma:'nieuw'}); e.id=uniqueId(e.lemma||kind); entries.push(e); selected=entries.length-1; renderAll();}
+function renderForm(){const e=current(); if(!e)return; fillEnvSelects(); els.id.value=e.id; els.label.value=e.label; els.lemma.value=e.lemma; els.kind.value=e.kind||'other'; els.cat.value=e.cat; els.phrase.value=e.phrase; els.defaultRole.value=e.defaultRole; els.sourceDefault.value=e.sourceDefault; els.slotDefault.value=e.slotDefault; els.frameSubjects.value=(e.frameSubjects||[]).join(' '); els.frameObjects.value=(e.frameObjects||[]).join(' '); els.infinitive.value=e.infinitive; els.imperfectum.value=e.imperfectum; els.participle.value=e.participle; els.profiles.value=profileLines(e.profiles); els.constructions.value=JSON.stringify(constructions,null,2); els.note.value=e.note||''; document.querySelectorAll('input[name="role"]').forEach(cb=>{cb.checked=(e.roles||[]).includes(cb.value);}); document.querySelectorAll('input[name="theme"]').forEach(cb=>{cb.checked=(e.themes||[]).includes(cb.value);});}
+function applyForm(render=true){const e=current(); if(!e)return; e.id=slugify(els.id.value); e.label=els.label.value.trim().toUpperCase(); e.lemma=els.lemma.value.trim(); e.kind=els.kind.value; e.cat=els.cat.value.trim().toUpperCase(); e.phrase=els.phrase.value.trim().toUpperCase(); e.defaultRole=els.defaultRole.value; e.sourceDefault=els.sourceDefault.value; e.slotDefault=els.slotDefault.value; e.roles=[...document.querySelectorAll('input[name="role"]:checked')].map(cb=>cb.value); e.themes=[...document.querySelectorAll('input[name="theme"]:checked')].map(cb=>cb.value); e.frameSubjects=words(els.frameSubjects.value); e.frameObjects=words(els.frameObjects.value); e.infinitive=els.infinitive.value.trim().toUpperCase(); e.imperfectum=els.imperfectum.value.trim().toUpperCase(); e.participle=els.participle.value.trim().toUpperCase(); e.profiles=parseProfileLines(els.profiles.value); try{constructions=JSON.parse(els.constructions.value||'[]').map(normalizeConstruction);}catch(_err){} e.note=els.note.value.trim(); if(render)renderAll(false);}
+function addEntry(kind){applyForm(false); const templates={noun:{kind:'noun',cat:'N',phrase:'NP',roles:['subject','object'],themes:['agens','patiens'],label:'NIEUW',lemma:'nieuw'},verb:{kind:'verb',cat:'V',roles:['predicate'],defaultRole:'predicate',sourceDefault:'predicate',frameSubjects:[],frameObjects:[],label:'DOET',lemma:'doen',infinitive:'DOEN',imperfectum:'DEED',participle:'GEDAAN'},adv:{kind:'adv',cat:'ADV',phrase:'AdvP',roles:['modifier'],label:'MISSCHIEN',lemma:'misschien',profiles:[{id:'default-lex',origin:'LEX',function:'modifier',scope:'lokale-groep',interval:'S-O',effects:['origin'],recommended:true,label:'directe LEX-insertie'}]},aux:{kind:'aux',cat:'AUX',roles:['aux'],slotDefault:'aux',label:'HEEFT',lemma:'hebben'},comp:{kind:'comp',cat:'COMP',roles:['comp'],slotDefault:'comp',label:'DAT',lemma:'dat'}}; const e=normalize(templates[kind]||{kind:'other',label:'NIEUW',lemma:'nieuw'}); e.id=uniqueId(e.lemma||kind); entries.push(e); selected=entries.length-1; renderAll();}
 function sectionTitle(kind){return kind==='noun'?'NP / N':kind==='verb'?'V':kind==='aux'?'AUX':kind==='comp'?'COMP':kind.toUpperCase();}
-function entryLine(e){const attrs={id:e.id,label:e.label,lemma:e.lemma,cat:e.cat,phrase:e.phrase,kind:e.kind,roles:(e.roles||[]).join(' '),thematicRoles:(e.themes||[]).join(' '),defaultRole:e.defaultRole,sourceDefault:e.sourceDefault,slotDefault:e.slotDefault,slots:(e.slots||[]).join(' '),frameSubjects:(e.frameSubjects||[]).join(' '),frameObjects:(e.frameObjects||[]).join(' '),infinitive:e.infinitive,imperfectum:e.imperfectum,past:e.imperfectum,ovt:e.imperfectum,participle:e.participle,note:e.note}; const attrText=Object.entries(attrs).filter(([,v])=>String(v||'').trim()).map(([k,v])=>` data-${k.replace(/[A-Z]/g,m=>'-'+m.toLowerCase())}="${attr(v)}"`).join(''); const forms=[e.label,e.imperfectum?`OVT ${e.imperfectum}`:'',e.infinitive,e.participle?`VDW ${e.participle}`:''].filter(Boolean); const line=e.kind==='verb'&&forms.length>1?`${esc(e.lemma||e.id)} → ${forms.map(esc).join(' / ')}`:`${esc(e.lemma||e.id)} → ${esc(e.label)}`; const meta=[e.phrase||e.cat,e.cat&&e.phrase?e.cat:'',e.roles?.join('/'),e.themes?.length?`them=${e.themes.join('/')}`:'',e.frameSubjects?.length?`agens=${e.frameSubjects.join(',')}`:'',e.frameObjects?.length?`patiens=${e.frameObjects.join(',')}`:'',e.imperfectum?`OVT=${e.imperfectum}`:'',e.participle?`VDW=${e.participle}`:'',e.sourceDefault?`source=${e.sourceDefault}`:'',e.slotDefault?`slot=${e.slotDefault}`:''].filter(Boolean).join(' · '); return `      <div class="lexicon-entry"${attrText}><div class="entry-line">${line}</div><div class="meta">${esc(meta||e.kind)}</div></div>`;}
-function buildLexiconHtml(){applyForm(false); const groups=[]; const order=['noun','verb','aux','comp','adj','adv','prep','other']; const byKind=new Map(); entries.forEach(e=>{const k=e.kind||'other'; if(!byKind.has(k))byKind.set(k,[]); byKind.get(k).push(e);}); for(const k of order.concat([...byKind.keys()].filter(k=>!order.includes(k)))){const arr=byKind.get(k); if(!arr?.length)continue; groups.push(`      <h2>${esc(sectionTitle(k))}</h2>\n${arr.map(entryLine).join('\n')}`);} return `<!doctype html>\n<html lang="nl">\n<head>\n  <meta charset="utf-8">\n  <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">\n  <meta http-equiv="Pragma" content="no-cache">\n  <meta http-equiv="Expires" content="0">\n  <meta name="viewport" content="width=device-width, initial-scale=1">\n  <title>OpenGraph lexicon-config ${VERSION}</title>\n  <style>\n    :root { font-family: system-ui, -apple-system, Segoe UI, sans-serif; color:#0f172a; background:#f8fafc; } body { margin:0; padding:24px; } main { max-width:1100px; margin:0 auto; } h1 { margin:0 0 8px; } h2 { margin-top:28px; } .note { color:#475569; line-height:1.5; } .button-link { border:1px solid #94a3b8; background:white; border-radius:10px; padding:8px 12px; color:#0f172a; text-decoration:none; display:inline-flex; font-weight:800; } .lexicon-entry { background:white; border:1px solid #cbd5e1; border-radius:14px; padding:10px 12px; margin:8px 0; display:grid; gap:4px; } .entry-line { font-weight:900; } .meta { color:#64748b; font-size:.94rem; } code { background:#e2e8f0; border-radius:6px; padding:2px 5px; }\n  </style>\n</head>\n<body>\n  <main>\n    <h1>OpenGraph lexicon-config ${VERSION}</h1>\n    <p class="note">Lexicon voor korte voorbeeldzinnen en V2/Wissel-regels. De structure-config blijft de boom- en projectiebron met abstracte sources zoals subject/predicate/object; dit lexicon levert lexicale vulling, thematische rollen en eenvoudige selectieframes. Lidwoorden zijn verwijderd. Beheer lexemen én voorbeeldzinnen via <a class="button-link" href="lexicon-editor.html?${VERSION}">lexicon-editor.html</a>.</p>\n\n    <section id="opengraph-lexicon-config" aria-label="Lexicon">\n${groups.join('\n\n')}\n    </section>\n  </main>\n</body>\n</html>\n`;}
+function entryLine(e){const attrs={id:e.id,label:e.label,lemma:e.lemma,cat:e.cat,phrase:e.phrase,kind:e.kind,roles:(e.roles||[]).join(' '),thematicRoles:(e.themes||[]).join(' '),defaultRole:e.defaultRole,sourceDefault:e.sourceDefault,slotDefault:e.slotDefault,slots:(e.slots||[]).join(' '),frameSubjects:(e.frameSubjects||[]).join(' '),frameObjects:(e.frameObjects||[]).join(' '),infinitive:e.infinitive,imperfectum:e.imperfectum,past:e.imperfectum,ovt:e.imperfectum,participle:e.participle,note:e.note}; const attrText=Object.entries(attrs).filter(([,v])=>String(v||'').trim()).map(([k,v])=>` data-${k.replace(/[A-Z]/g,m=>'-'+m.toLowerCase())}="${attr(v)}"`).join(''); const forms=[e.label,e.imperfectum?`OVT ${e.imperfectum}`:'',e.infinitive,e.participle?`VDW ${e.participle}`:''].filter(Boolean); const line=e.kind==='verb'&&forms.length>1?`${esc(e.lemma||e.id)} → ${forms.map(esc).join(' / ')}`:`${esc(e.lemma||e.id)} → ${esc(e.label)}`; const meta=[e.phrase||e.cat,e.cat&&e.phrase?e.cat:'',e.roles?.join('/'),e.themes?.length?`them=${e.themes.join('/')}`:'',e.frameSubjects?.length?`agens=${e.frameSubjects.join(',')}`:'',e.frameObjects?.length?`patiens=${e.frameObjects.join(',')}`:'',e.imperfectum?`OVT=${e.imperfectum}`:'',e.participle?`VDW=${e.participle}`:'',e.sourceDefault?`source=${e.sourceDefault}`:'',e.slotDefault?`slot=${e.slotDefault}`:''].filter(Boolean).join(' · '); const profiles=(e.profiles||[]).length?`
+        <ol class="usage-profiles" aria-label="Gebruiksprofielen voor ${attr(e.lemma||e.id)}">
+${e.profiles.map(p=>`          <li class="usage-profile" data-id="${attr(p.id)}" data-origin="${attr(p.origin)}" data-function="${attr(p.function)}" data-scope="${attr(p.scope)}" data-interval="${attr(p.interval)}" data-effects="${attr((p.effects||[]).join(' '))}" data-default="${p.recommended?'true':'false'}">${esc(p.label||p.id)}</li>`).join('\n')}
+        </ol>`:''; return `      <div class="lexicon-entry"${attrText}><div class="entry-line">${line}</div><div class="meta">${esc(meta||e.kind)}</div>${profiles}</div>`;}
+function constructionLine(c){const profiles=(c.profiles||[]).map(p=>`          <li class="construction-profile" data-id="${attr(p.id)}" data-origin="${attr(p.origin)}" data-components="${attr(p.components)}" data-function="${attr(p.function)}" data-scope="${attr(p.scope)}" data-interval="${attr(p.interval)}" data-effects="${attr((p.effects||[]).join(' '))}" data-recommended="${p.recommended?'true':'false'}">${esc(p.label||p.id)}</li>`).join('\n');return `      <div class="lexicon-construction" data-id="${attr(c.id)}" data-members="${attr((c.members||[]).join(' '))}" data-visible-slots="${attr(c.visibleSlots||1)}" data-default-profile="${attr(c.defaultProfile||'')}">
+        <div class="entry-line">${esc((c.members||[]).join(' + '))} → ${esc(c.visibleSlots||1)} zichtbaar LEX-slot</div>
+        <div class="meta">zinsinstantie kiest groepsprofiel; lemma's blijven afzonderlijk</div>
+        <ol class="construction-profiles" aria-label="Groepsprofielen voor ${attr(c.id)}">
+${profiles}
+        </ol>
+      </div>`;}
+function buildLexiconHtml(){applyForm(false); const groups=[]; const order=['noun','verb','aux','comp','adj','adv','prep','other']; const byKind=new Map(); entries.forEach(e=>{const k=e.kind||'other'; if(!byKind.has(k))byKind.set(k,[]); byKind.get(k).push(e);}); for(const k of order.concat([...byKind.keys()].filter(k=>!order.includes(k)))){const arr=byKind.get(k); if(!arr?.length)continue; groups.push(`      <h2>${esc(sectionTitle(k))}</h2>
+${arr.map(entryLine).join('\n')}`);} const constructionSection=constructions.length?`
+
+      <h2>Meerwoordconstructies</h2>
+${constructions.map(constructionLine).join('\n')}`:''; return `<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>OpenGraph lexicon-config ${VERSION}</title>
+  <style>
+    :root { font-family: system-ui, -apple-system, Segoe UI, sans-serif; color:#0f172a; background:#f8fafc; } body { margin:0; padding:24px; } main { max-width:1100px; margin:0 auto; } h1 { margin:0 0 8px; } h2 { margin-top:28px; } .note { color:#475569; line-height:1.5; } .button-link { border:1px solid #94a3b8; background:white; border-radius:10px; padding:8px 12px; color:#0f172a; text-decoration:none; display:inline-flex; font-weight:800; } .lexicon-entry,.lexicon-construction { background:white; border:1px solid #cbd5e1; border-radius:14px; padding:10px 12px; margin:8px 0; display:grid; gap:4px; } .entry-line { font-weight:900; } .usage-profiles,.construction-profiles{margin:.35rem 0 0;padding-left:1.35rem}.usage-profile,.construction-profile{margin:.2rem 0;color:#334155} .meta { color:#64748b; font-size:.94rem; } code { background:#e2e8f0; border-radius:6px; padding:2px 5px; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>OpenGraph lexicon-config ${VERSION}</h1>
+    <p class="note">Eén lemma kan meerdere gebruiksprofielen hebben. Meerwoordconstructies verwijzen naar lemma's; de concrete zinsinstantie kiest het profiel. Die keuze herschrijft het globale lexicon niet. Beheer via <a class="button-link" href="lexicon-editor.html?${VERSION}">lexicon-editor.html</a>.</p>
+
+    <section id="opengraph-lexicon-config" aria-label="Lexicon">
+${groups.join('\n\n')}${constructionSection}
+    </section>
+  </main>
+</body>
+</html>
+`;}
 function byId(id){return entries.find(e=>e.id===id)||null;}
 function roleEntries(role){return entries.filter(e=>(e.roles||[]).includes(role));}
 function kindEntries(kind){return entries.filter(e=>e.kind===kind);}
@@ -212,6 +261,7 @@ function download(name,text,type='text/html'){const blob=new Blob([text],{type})
 async function saveAs(name,text){if(!window.showSaveFilePicker){download(name,text); return;} const handle=await showSaveFilePicker({suggestedName:name,types:[{description:'HTML',accept:{'text/html':['.html']}}]}); const writable=await handle.createWritable(); await writable.write(text); await writable.close();}
 document.getElementById('newNounButton').addEventListener('click',()=>addEntry('noun'));
 document.getElementById('newVerbButton').addEventListener('click',()=>addEntry('verb'));
+document.getElementById('newAdvButton').addEventListener('click',()=>addEntry('adv'));
 document.getElementById('newAuxButton').addEventListener('click',()=>addEntry('aux'));
 document.getElementById('newCompButton').addEventListener('click',()=>addEntry('comp'));
 document.getElementById('duplicateButton').addEventListener('click',()=>{applyForm(false); const copy=normalize(JSON.parse(JSON.stringify(current()))); copy.id=uniqueId(copy.id+'-kopie'); entries.splice(selected+1,0,copy); selected++; renderAll();});
@@ -224,8 +274,9 @@ document.getElementById('replaceExampleButton').addEventListener('click',replace
 document.getElementById('duplicateExampleButton').addEventListener('click',()=>{applyExampleForm(false); const copy=normalizeExample(JSON.parse(JSON.stringify(currentExample()))); copy.id=uniqueExampleId(copy.id+'-kopie'); examples.splice(selectedExample+1,0,copy); selectedExample++; renderAll();});
 document.getElementById('deleteExampleButton').addEventListener('click',()=>{if(examples.length<=1)return; examples.splice(selectedExample,1); selectedExample=Math.max(0,selectedExample-1); renderAll();});
 document.getElementById('syncBuilderButton').addEventListener('click',()=>{readExampleIntoBuilder(); renderExampleForm(false); refreshOutput();});
-document.getElementById('saveDraftButton').addEventListener('click',()=>{applyForm(false); applyExampleForm(false); localStorage.setItem(STORAGE_KEY,JSON.stringify({entries,examples})); els.status.textContent='concept bewaard in browser';});
-document.getElementById('loadDraftButton').addEventListener('click',()=>{try{const obj=JSON.parse(localStorage.getItem(STORAGE_KEY)||'{}'); if(obj.entries?.length){entries=obj.entries.map(normalize); selected=0;} if(obj.examples?.length){examples=obj.examples.map(normalizeExample); selectedExample=0;} renderAll(); els.status.textContent='concept geladen';}catch(err){els.validation.textContent='Kon concept niet laden';}});
+document.getElementById('saveDraftButton').addEventListener('click',()=>{applyForm(false); applyExampleForm(false); localStorage.setItem(STORAGE_KEY,JSON.stringify({entries,constructions,examples})); els.status.textContent='concept bewaard in browser';});
+document.getElementById('loadDraftButton').addEventListener('click',()=>{try{const obj=JSON.parse(localStorage.getItem(STORAGE_KEY)||'{}'); if(obj.entries?.length){entries=obj.entries.map(normalize); selected=0;} if(Array.isArray(obj.constructions)){constructions=obj.constructions.map(normalizeConstruction);} if(obj.examples?.length){examples=obj.examples.map(normalizeExample); selectedExample=0;} renderAll(); els.status.textContent='concept geladen';}catch(err){els.validation.textContent='Kon concept niet laden';}});
+document.getElementById('formatConstructionsButton').addEventListener('click',()=>{try{constructions=JSON.parse(els.constructions.value||'[]').map(normalizeConstruction);els.constructions.value=JSON.stringify(constructions,null,2);refreshOutput();}catch(err){els.validation.textContent='Constructie-JSON ongeldig: '+err.message;}});
 document.getElementById('resetButton').addEventListener('click',async()=>{await loadLexicon(); await loadExamples(); selected=0; selectedExample=0; renderAll();});
 document.getElementById('downloadLexiconButton').addEventListener('click',()=>{validateAll(); download('lexicon-config.html',buildLexiconHtml());});
 document.getElementById('downloadExamplesButton').addEventListener('click',()=>{validateAll(); download('examples-input.html',buildExamplesHtml());});

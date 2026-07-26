@@ -39,6 +39,7 @@ def extract_function(name: str) -> str:
 functions = "\n".join(
     extract_function(name)
     for name in (
+        "normalizeInsertionOrigin",
         "resolveLogicalInsertionBoundary",
         "buildLogicalSlotSequence",
         "logicalSlotDistance",
@@ -74,6 +75,7 @@ function activeLogConfig() {{ return testConfig; }}
 function activeAdverbData() {{ return null; }}
 function activeLexInsertionSpecs() {{ return testSpecs; }}
 function activeLogicalSlotSequence() {{ return activeSequence; }}
+function activeLexPlacementSequence() {{ return activeSequence; }}
 function insertionContentForSpec(spec) {{
   return {{ text: spec.text || spec.id || 'ADV', label: spec.text || spec.id || 'ADV' }};
 }}
@@ -128,18 +130,18 @@ testSpecs = [
     order: 2
   }}
 ];
-const classDrivenSpecs = activeLogicalInsertionSpecs();
-if (classDrivenSpecs.map(item => item.logInterval).join('|') !== 'S-O|O-V') {{
-  throw new Error('LOG-config moet MODALITEIT naar S-O en FREQUENTIE naar O-V sturen');
+const explicitDrivenSpecs = activeLogicalInsertionSpecs();
+if (explicitDrivenSpecs.map(item => item.logInterval).join('|') !== 'O-V|O-V') {{
+  throw new Error('expliciete zinsplaats moet in auto-modus voorrang hebben op brede klasse-defaults');
 }}
-if (classDrivenSpecs.some(item => item.intervalDef)) {{
-  throw new Error('voorbeeldhints mogen bij exampleControlsLayout=false geen intervalgrenzen afdwingen');
+if (explicitDrivenSpecs.some(item => item.intervalDef)) {{
+  throw new Error('exampleControlsLayout=false mag geen eigen intervalgrenzen afdwingen');
 }}
-const classDriven = buildLogicalSlotSequence(majors, classDrivenSpecs, intervals);
-if (classDriven.map(item => item.short).join('-') !== 'S-m1-O-m2-V') {{
-  throw new Error('klassegestuurde volgorde moet S-m1-O-m2-V zijn');
+const explicitDriven = buildLogicalSlotSequence(majors, explicitDrivenSpecs, intervals);
+if (explicitDriven.map(item => item.short).join('-') !== 'S-O-m1-m2-V') {{
+  throw new Error('expliciete post-object-volgorde moet S-O-m1-m2-V zijn');
 }}
-activeSequence = classDriven;
+activeSequence = explicitDriven;
 const lexItems = [
   {{ label: 'DE HOND', source: 'subject', role: 'subject' }},
   {{ label: 'DE MAN', source: 'object', role: 'object' }},
@@ -147,11 +149,11 @@ const lexItems = [
   {{ label: 'HEEFT', source: 'pv', role: 'aux' }}
 ];
 const lexPlan = logicalLexPlan(lexItems, majors);
-if (lexItems.map((_item, index) => lexPlan.byIndex.get(index)).join('|') !== '0|2|4|5') {{
-  throw new Error('LEX-majorrijen moeten LOG-afgeleid 0|2|4|5 zijn');
+if (lexItems.map((_item, index) => lexPlan.byIndex.get(index)).join('|') !== '0|1|4|5') {{
+  throw new Error('LEX-majorrijen moeten met post-object-minors 0|1|4|5 zijn');
 }}
-if (lexPlan.minorRows.map(item => `${{item.word}}@${{item.row}}`).join('|') !== 'MISSCHIEN WEL@1|VAAK@3') {{
-  throw new Error('LEX-minorrijen moeten MISSCHIEN WEL@1 en VAAK@3 zijn');
+if (lexPlan.minorRows.map(item => `${{item.word}}@${{item.row}}`).join('|') !== 'MISSCHIEN WEL@2|VAAK@3') {{
+  throw new Error('LEX-minorrijen moeten MISSCHIEN WEL@2 en VAAK@3 zijn');
 }}
 
 testConfig.exampleControlsLayout = true;
@@ -172,7 +174,7 @@ if (manualSpecs.some(item => item.intervalDef)) {{
   throw new Error('voorbeeldgrenzen mogen een expliciete Config-keuze niet terugdraaien');
 }}
 
-console.log('LOG SLOT DISTANCE: OK (afstand, klasseautoriteit en overrides)');
+console.log('LOG SLOT DISTANCE: OK (afstand, expliciete zinsplaats, klassefallback en overrides)');
 """
 
 with tempfile.NamedTemporaryFile("w", suffix=".js", encoding="utf-8", delete=False) as handle:

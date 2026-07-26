@@ -1,20 +1,22 @@
 # HANDOVER_FOR_COLLABORATORS
 
-Overdracht voor OpenGraph Lite Viewer v2.0.0-rc.26.
+Overdracht voor OpenGraph Lite Viewer v2.0.0-rc.33.
 
 ## Bronbasis
 
-Deze release neemt de volledige bronset van v1.0.16 over en corrigeert de centrale view-indeling.
+Deze release is uitsluitend opgebouwd op de door de gebruiker geüploade
+`v2.0.0-rc.26` via rc.27. rc.28 herstelt contracten uit het vergelijkingsrapport
+zonder bronbestanden uit de alternatieve v2.0.x-lijn terug te kopiëren.
 
 ## Niet wijzigen zonder expliciete opdracht
 
 ```text
-View-menu:       Syntax → FT
+View-menu:       Syntax → Functional
 Projectiekeuze:  Alle → Bron → LEX → SYNT → LOG
 Assen:           LEX west, SYNT oost, LOG zuid
 ```
 
-FT is de tweede centrale view. LOG is uitsluitend de zuidas.
+Functional is de tweede centrale view. LOG is uitsluitend de zuidas.
 
 Bronassen: LEX, SYNT en LOG zijn bij Bron onafhankelijk combineerbaar. De bediening staat buiten het canvas.
 
@@ -23,20 +25,20 @@ Bronassen: LEX, SYNT en LOG zijn bij Bron onafhankelijk combineerbaar. De bedien
 Lees vóór plaatsingswijzigingen `projectie-master-spec.md`.
 
 ```text
-bronknoop → horizontale LEX-projectie → LOG-doel via LEX-Wissel → expliciete Wissels
+LOG-majors/minors → neutrale LEX-basis → expliciete Wissels → zinsvalidatie
 ```
 
-- S/O/V zijn majors; bijwoorden zijn minors.
+- S/O/V zijn majors. Alleen inserties met `origin=LOG` of `origin=LOG+LEX`
+  zijn minors; `origin=LEX` is een directe LEX-insertie.
 - Iedere minor vergroot de begrensde majorafstand met één vast slot.
-- De bronhoogte bepaalt het horizontale LEX-projectieanker.
-- LOG is autoriteit voor de neutrale LEX-doelrij.
-- Bronanker → LOG-doel gebeurt als zichtbare Wissel langs LEX.
-- De voorbeeldzin bepaalt geen layoutcoördinaat.
+- LOG is autoriteit voor de neutrale LEX-rij.
+- De surface-string bepaalt geen layoutcoördinaat. Expliciete
+  zinsinstantiemetadata kan wel een vooraf berekende landingsplaats vastleggen.
 - Oude hostvelden zijn alleen scope-/compatibiliteitsmetadata.
 
 ## Compatibiliteit
 
-Intern schrijft de viewer `central_opn: "ft"`. Invoer met de oude waarde `functional` blijft leesbaar en wordt naar FT gemigreerd. Implementatienamen zoals `functionalNodes` mogen blijven bestaan zolang zij niet als viewnaam aan de gebruiker worden getoond.
+Intern schrijft de viewer `central_opn: "ft"`. Invoer met de oude waarde `functional` blijft leesbaar en wordt naar Functional gemigreerd. Implementatienamen zoals `functionalNodes` mogen blijven bestaan zolang zij niet als viewnaam aan de gebruiker worden getoond.
 
 ## Werkwijze
 
@@ -54,11 +56,39 @@ Intern schrijft de viewer `central_opn: "ft"`. Invoer met de oude waarde `functi
 Gebruik `publish_checked.bat`. Releasezips en lokale mobile-testbestanden horen niet in de GitHub Pages-root.
 
 
-## Topmenu v2.0.0-rc.26
+## Topmenu v2.0.0-rc.33
 
-Main toont één topmenubalk met acht zichtbare hoofditems: Zin, Bijwoord, Syntax/FT, Projecties, LOG-volgorde, NL/EN, Help en Config. Er is geen algemene knop `Menu` en er zijn geen geneste submenu’s. Keuze-items openen direct hun eigen brede uitklappaneel.
+Main toont negen zichtbare hoofditems in twee vaste rijen:
+
+```text
+Zin · Bijwoord · Syntax / Functional · Interface · Projecties · LOG-volgorde
+Taal · LEESMIJ/README · Config
+```
+
+Er is geen algemene knop `Menu` en er zijn geen geneste submenu’s. Keuze-items
+openen direct hun eigen brede uitklappaneel.
 
 
 ## Opslagcontract
 
 Werk bij opslagwijzigingen altijd volgens `OPN_STORAGE_FORMAT.md`. Meng graphdata, documentmetadata en paradata niet opnieuw in één vlak object. `.opn` is leidend; Legacy JSON is alleen compatibiliteit.
+
+## Lexiconprofielen niet terugdraaien
+
+`lexicon-config.html` bevat geneste `.usage-profile`-elementen en `.lexicon-construction`-elementen. `examples-input.html` kiest per insertie een profiel. Houd de LOG-sequentie en de volledige LEX-plaatsingssequentie gescheiden. Een gebruikerskeuze geldt per zinsinstantie en mag het globale lexicon niet muteren.
+
+## Plaatsingsplancontract
+
+De renderer is geen layoutautoriteit. Voor iedere render wordt één plan gemaakt
+met structurele hosts, lexicale inserties, LOG/LEX-bronnen, landingsplaatsen,
+Wissel-corridors, projecties en groei-indexen. De kernzin vult dit plan in. De
+renderer tekent en animeert alleen de vastgelegde posities.
+
+Zichtbare viewnaam: `Functional`. Interne waarden zoals `ft` blijven leesbaar
+voor compatibiliteit.
+
+## JaN-contract
+
+Behoud de werknotatie `S:np-VP` (niet `S:NP-VP`) en de onderzoeksnotatie
+`S+ np-VP`. De eerste implementatie geldt voor binaire bomen; meertakkigheid
+volgt later.

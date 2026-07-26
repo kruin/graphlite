@@ -9,7 +9,7 @@
 - `Projecties → Alle` schakelt naar LEX + SYNT + LOG.
 - Main Reset, mobile Reset en Config Reset herstellen alle assen.
 - Een config-snapshot uit een oudere versie migreert de projectiestand naar alle assen en behoudt overige instellingen.
-- Syntax blijft eerste centrale view; FT blijft tweede centrale view.
+- Syntax blijft eerste centrale view; Functional blijft tweede centrale view.
 - SOV/LOG-volgorde staat onder `Menu → Extra`, niet in het canvas.
 - `index.html` en `viewer.html` zijn identiek.
 - Alle HTML-id's zijn uniek.

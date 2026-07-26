@@ -4,7 +4,7 @@ Te controleren hoofditems:
 
 1. Zin
 2. Bijwoord
-3. Syntax / FT
+3. Syntax / Functional
 4. Projecties
 5. LOG-volgorde
 6. NL/EN

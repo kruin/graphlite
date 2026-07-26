@@ -1,13 +1,14 @@
 # PROJECT_STATE_CURRENT
 
-Leidende status van OpenGraph Lite Viewer `v2.0.0-rc.26`.
+Leidende status van OpenGraph Lite Viewer `v2.0.0-rc.33`.
 
 ## Lees mij / README
 
 - `Help` is hernoemd tot `Lees mij / README`.
 - Openen activeert altijd de intro `Boom, gek`.
-- De README gebruikt een vaste links/rechts-indeling: onderwerpen links,
-  actieve tekst onmiddellijk rechts.
+- De README gebruikt in iedere interfacevorm twee verticale helften:
+  onderwerpen boven en de actieve tekst onmiddellijk onder.
+- Beide helften scrollen onafhankelijk.
 - `README.md` is Engels; `LEESMIJ.md` is Nederlands.
 - De intro toont alleen het eerste SVG-beeld met traditionele zinsbomen.
 - De generieke carrouselcode blijft beschikbaar voor latere
@@ -23,7 +24,7 @@ Leidende status van OpenGraph Lite Viewer `v2.0.0-rc.26`.
   SVG-fontschaal van `1.70`.
 - Raster, hulplabel en het historische ruime stabiliteitskader tellen niet
   mee in de MAX-fit.
-- Een compacte Syntax/FT- en projectie-unie houdt schaal en positie stabiel
+- Een compacte Syntax / Functional- en projectie-unie houdt schaal en positie stabiel
   tijdens projectiewissels en Play.
 - De westelijke LEX-laag reserveert haar volledige zichtbare breedte vóór de
   buitenste S/CLAUSE-box. Daardoor kan de LEX-as niet meer over S/CLAUSE heen
@@ -42,14 +43,18 @@ structure-config
 ```
 
 - `S`, `O` en `V` zijn LOG-majors.
-- Een bijwoord(groep) is een LOG-minor.
-- Iedere minor bezet één vast slot en vergroot de afstand tussen zijn
-  begrenzende majors met één.
+- Een insertie met `origin=LOG` of `origin=LOG+LEX` levert een LOG-minor.
+- Een insertie met `origin=LEX` wordt rechtstreeks in het LEX-plan geplaatst
+  en levert geen LOG-minor.
+- Iedere werkelijke LOG-minor bezet één vast slot en vergroot de afstand tussen
+  zijn begrenzende majors met één.
 - De bronknoop bepaalt altijd de hoogte van het LEX-projectieanker.
 - LOG is autoriteit voor de neutrale LEX-doelrij.
 - Bronanker → bepaald einddoel is één verplaatsing langs de LEX-as, met één
   brontrace.
-- De voorbeeldzin levert geen layoutcoördinaten.
+- De losse surface-string levert geen layoutcoördinaten. Expliciete
+  zinsinstantiemetadata, zoals `post-object-pre-vcluster`, is wel layoutinput
+  en heeft in automatische modus voorrang op een brede klasse-default.
 - Topic en V2 worden logisch na LOG opgelost, maar veroorzaken geen tweede
   zichtbare tussensprong.
 - Gevulde TOPIC- en V2-rijen tonen geen onderliggend vak `vrij slot`.
@@ -57,22 +62,25 @@ structure-config
 
 ## Views en assen
 
-- Centrale views: `Syntax` en `FT`.
+- Centrale views: `Syntax` en `Functional`.
 - Named projections: LEX west, SYNT oost, LOG zuid.
 - LOG is geen centrale view.
 - Standaard zijn alle drie named projections zichtbaar.
-- Iedere projectiecombinatie en Syntax ↔ FT gebruikt hetzelfde stabiele
+- Iedere projectiecombinatie en Syntax ↔ Functional gebruikt hetzelfde stabiele
   viewport.
 
 ## Configuratie
 
-De Config-UI opent op het eerste van vier tabbladen:
+Config opent op een compact overzicht met deze gerichte secties:
 
-- `Opslaan & exporteren`: prominente graph/social-export, daarna OPN,
-  Config-snapshot en voorbeeldbeheer;
-- `Beeld`: de twee zichtbare MAX-defaults, Syntax/FT, boomlayout en kleuren;
-- `LOG & LEX`: minors, LOG-interval, LEX-volgorde en regels;
-- `Geavanceerd`: compatibiliteitsopties voor tak- en menuplaatsing.
+- `Overzicht` en `JaN · TODO`;
+- `Opslaan & exporteren`;
+- `Beeld`;
+- `LOG & LEX`;
+- `Geavanceerd`.
+
+Bij zoveel mogelijk instellingen staat direct een korte effecttoelichting. De
+bestaande Ja/Nee-save-werkwijze blijft ongewijzigd.
 
 ## Volledige bron-ZIP
 
@@ -142,10 +150,13 @@ zij `lex_projection_origin=SOURCE-Y` en
 ## Voorbeelden en controle
 
 - 14 voorbeeldzinnen.
-- Twee meervoudige bijwoordvoorbeelden met klassegestuurde minors:
-  `MODALITEIT → S-O` en `FREQUENTIE → O-V`.
+- Twee meervoudige bijwoordvoorbeelden met zinsgebonden lineaire
+  landingsplaatsen. `post-object-pre-vcluster` heeft in automatische modus
+  voorrang op de brede klasse-default.
 - De Bijwoord-dropdown bevat 25 voorbeelden plus `Geen bijwoord`.
-- Vier beperkte meerwoordige eenheden vormen elk voorlopig één LOG-minor:
+- Vier beperkte meerwoordige eenheden vormen elk voorlopig één zichtbaar
+  LEX-slot. Het gekozen gebruiksprofiel bepaalt of daarnaast een LOG-minor
+  bestaat:
   `MISSCHIEN WEL`, `AF EN TOE`, `OP DIT MOMENT` en
   `MET VEEL AANDACHT`. Interne syntaxis valt buiten deze eerste uitbreiding.
 - `tools/check_log_slot_distance.py` bewaakt de afstandsinvariant.
@@ -169,7 +180,36 @@ zij `lex_projection_origin=SOURCE-Y` en
 ## Topmenu
 
 ```text
-Zin · Bijwoord · Syntax/FT · Projecties · LOG-volgorde · NL/EN · Lees mij / README · Config
+Zin · Bijwoord · Syntax / Functional · Interface · Projecties · LOG-volgorde
+Taal · LEESMIJ/README · Config
 ```
 
+De app start bij een nieuwe installatie in het Engels. Het talenmenu bevat
+English, Nederlands, Deutsch, Français en Español en vermeldt dat de
+voorbeeldzinnen Nederlands zijn en Nederlandse woordvolgorde tonen.
+
 Er is geen algemene Menu-knop en er zijn geen geneste submenu’s.
+
+## Lexiconprofielen rc.28
+
+- Eén lemma kan meerdere gebruiksprofielen bevatten.
+- Een zinsinstantie kiest één profiel; de keuze herschrijft het lexicon niet.
+- `origin=LOG` en `origin=LOG+LEX` leveren een LOG-minor.
+- `origin=LEX` reserveert uitsluitend een directe LEX-plaats.
+- `misschien wel` is één constructie met één zichtbaar slot en drie kandidaatprofielen.
+- De viewer vraagt alleen wanneer de keuze oorsprong, LOG-projectie, scope, groepering of componentanalyse verandert.
+
+## OGN-kernprobleem en plaatsingsplancontract
+
+OGN ontkoppelt de structurele vertakkingsvolgorde onder `S` van de lineaire
+woordvolgorde van de zin. De centrale boom representeert structuur; LEX
+representeert de oppervlaktestring.
+
+De layoutinput bestaat uit structuur, lexicale inserties, gebruiksprofielen,
+plaatsingsregels, Wissels en actieve projecties. Eerst wordt één volledig
+plaatsingsplan berekend; daarna wordt de kernzin lexicaal ingevuld en pas daarna
+wordt gerenderd. De renderer mag geen nieuwe ruimte reserveren.
+
+JaN is de werknaam voor Just another Notation. TODO: `S:np-VP` (niet
+`S:NP-VP`), onderzoeksnotatie `S+ np-VP`, binaire bomen eerst en
+meertakkigheid later, plus `heeft gebeten` ↔ `gebeten heeft`.

@@ -6990,3 +6990,174 @@ body.main-screen-active.main-window-max #graphSvg {
     font-size: .92rem !important;
   }
 }
+
+
+/* v2.0.0-rc.33 · zinsgebonden lexicale disambiguatie */
+.canvas-wrap { position: relative; }
+.lex-ambiguity-panel {
+  position:absolute; z-index:24; top:.7rem; right:.7rem; width:min(25rem,calc(100% - 1.4rem));
+  padding:.75rem .8rem; border:1px solid #f59e0b; border-radius:1rem; background:rgba(255,251,235,.97);
+  box-shadow:0 12px 28px rgba(15,23,42,.18); color:#422006; backdrop-filter:blur(5px);
+}
+.lex-ambiguity-panel.hidden { display:none !important; }
+.lex-ambiguity-kicker { font-size:.69rem; font-weight:950; letter-spacing:.09em; text-transform:uppercase; color:#92400e; }
+.lex-ambiguity-panel h3 { margin:.15rem 0 .25rem; font-size:1rem; }
+.lex-ambiguity-panel p { margin:.25rem 0; font-size:.8rem; line-height:1.35; }
+.lex-ambiguity-options { display:grid; gap:.35rem; margin-top:.55rem; }
+.lex-ambiguity-options button { text-align:left; border:1px solid #fbbf24; background:white; border-radius:.7rem; padding:.46rem .55rem; font-weight:800; line-height:1.25; }
+.lex-ambiguity-options button:hover,.lex-ambiguity-options button:focus-visible { border-color:#b45309; outline:2px solid rgba(245,158,11,.2); }
+.lex-ambiguity-options .recommended::after { content:' · voorstel'; font-size:.7rem; color:#92400e; }
+.lex-ambiguity-help { color:#78350f; }
+@media (max-width:760px), (max-height:480px) {
+  .lex-ambiguity-panel { top:.35rem; right:.35rem; width:calc(100% - .7rem); max-height:46%; overflow:auto; padding:.55rem .6rem; }
+  .lex-ambiguity-panel p { font-size:.72rem; }
+  .lex-ambiguity-options { grid-template-columns:1fr; }
+}
+
+/* v2.0.0-rc.33: fixed semantic two-row top menu.
+   Row 1: Sentence, Adverb, Syntax/Functional, Interface, Projections, LOG.
+   Row 2: Language, README/LEESMIJ, Config. */
+body.main-screen-active .main-topbar {
+  min-height: 3.78rem !important;
+}
+body.main-screen-active .main-top-menu {
+  display: grid !important;
+  grid-template-columns: repeat(6, max-content) !important;
+  grid-template-rows: auto auto !important;
+  align-items: center !important;
+  justify-content: start !important;
+  column-gap: .22rem !important;
+  row-gap: .24rem !important;
+}
+body.main-screen-active .main-top-menu > :nth-child(-n+6) { grid-row: 1 !important; }
+body.main-screen-active .main-top-menu > :nth-child(7) { grid-row: 2 !important; grid-column: 1 !important; }
+body.main-screen-active .main-top-menu > :nth-child(8) { grid-row: 2 !important; grid-column: 2 !important; }
+body.main-screen-active .main-top-menu > :nth-child(9) { grid-row: 2 !important; grid-column: 3 !important; }
+body.main-screen-active .main-top-menu > :nth-child(-n+6) .top-menu-popover {
+  top: calc(200% + .46rem) !important;
+}
+@media (max-width: 760px), (orientation: portrait) {
+  body.main-screen-active .main-top-menu,
+  body.viewport-mobile-test.main-screen-active .main-top-menu {
+    grid-template-columns: repeat(6, minmax(0,1fr)) !important;
+    width: 100% !important;
+  }
+  body.main-screen-active .main-top-menu > :nth-child(7),
+  body.viewport-mobile-test.main-screen-active .main-top-menu > :nth-child(7) { grid-column: 1 / span 2 !important; }
+  body.main-screen-active .main-top-menu > :nth-child(8),
+  body.viewport-mobile-test.main-screen-active .main-top-menu > :nth-child(8) { grid-column: 3 / span 2 !important; }
+  body.main-screen-active .main-top-menu > :nth-child(9),
+  body.viewport-mobile-test.main-screen-active .main-top-menu > :nth-child(9) { grid-column: 5 / span 2 !important; }
+  body.main-screen-active .top-menu-item > summary,
+  body.main-screen-active .top-menu-action,
+  body.viewport-mobile-test.main-screen-active .top-menu-item > summary,
+  body.viewport-mobile-test.main-screen-active .top-menu-action {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+}
+
+/* Five-language menu. English is the default; non-Dutch technical help falls
+   back to English. The examples remain Dutch and state that explicitly. */
+.language-menu { position: relative; }
+.language-menu > summary { list-style: none; }
+.language-menu > summary::-webkit-details-marker { display: none; }
+.language-menu > summary::after { content: '▾'; margin-left: .24rem; color: var(--muted); font-size: .62rem; }
+.language-menu[open] > summary::after { content: '▴'; }
+.language-popover { width: min(20rem, calc(100vw - .7rem)) !important; }
+.language-option-list { display: grid; gap: .26rem; }
+.language-option-list button {
+  min-height: 2rem; padding: .34rem .52rem;
+  border: .55px solid color-mix(in srgb, var(--line), transparent 18%);
+  border-radius: .52rem; background: color-mix(in srgb, var(--panel), var(--bg) 7%);
+  color: var(--text); font-weight: 800; text-align: left; cursor: pointer;
+}
+.language-option-list button:hover,
+.language-option-list button:focus-visible,
+.language-option-list button.is-selected {
+  background: color-mix(in srgb, var(--accent), var(--panel) 84%);
+  border-color: color-mix(in srgb, var(--accent), var(--line) 38%);
+}
+.language-option-list button.is-selected::after { content: ' ✓'; }
+.language-sentence-note { margin: .45rem .06rem 0; line-height: 1.35; }
+.config-language-menu > summary,
+.help-language-menu > summary {
+  box-sizing: border-box; min-height: 2.35rem; display: flex; align-items: center;
+  justify-content: center; padding: .36rem .72rem; border: 1px solid var(--line);
+  border-radius: .8rem; background: color-mix(in srgb, var(--panel), var(--bg) 6%);
+  color: var(--text); font-weight: 900; cursor: pointer;
+}
+.config-language-menu .language-popover,
+.help-language-menu .language-popover {
+  position: absolute; z-index: 900; top: calc(100% + .3rem); left: 0;
+  box-sizing: border-box; max-height: min(70vh,28rem); overflow: auto;
+  padding: .42rem; border: 1px solid var(--line); border-radius: .66rem;
+  background: var(--panel); box-shadow: 0 .55rem 1.5rem rgba(15,23,42,.18);
+}
+@media (max-width:760px), (orientation:portrait) {
+  body.main-screen-active .language-menu > summary::after,
+  body.viewport-mobile-test.main-screen-active .language-menu > summary::after { display:none !important; }
+  body.main-screen-active .language-popover,
+  body.viewport-mobile-test.main-screen-active .language-popover {
+    position:fixed !important; left:.35rem !important; right:.35rem !important;
+    width:auto !important; top:calc(max(.35rem, env(safe-area-inset-top)) + 3.98rem) !important;
+  }
+}
+
+/* README/LEESMIJ first view in every interface mode: topic tree above, active
+   text below. Both halves scroll independently. */
+body.help-screen-active .app-shell {
+  box-sizing: border-box !important; height:100dvh !important; min-height:100dvh !important;
+  max-height:100dvh !important; overflow:hidden !important;
+}
+body.help-screen-active .help-topbar { flex:0 0 auto !important; }
+body.help-screen-active .help-screen {
+  flex:1 1 auto !important; height:auto !important; min-height:0 !important; overflow:hidden !important;
+}
+body.help-screen-active .help-screen.help-tree-screen,
+body.help-screen-active .help-tree-screen {
+  display:grid !important; grid-template-columns:minmax(0,1fr) !important;
+  grid-template-rows:minmax(0,1fr) minmax(0,1fr) !important;
+  height:100% !important; min-height:0 !important; overflow:hidden !important;
+}
+body.help-screen-active .help-tree-nav,
+body.help-screen-active .help-topic-stage {
+  box-sizing:border-box !important; width:100% !important; height:auto !important;
+  min-height:0 !important; max-height:none !important; overflow:auto !important;
+}
+body.help-screen-active .help-topic-stage { scroll-padding-top:.6rem !important; }
+
+/* Compact Config overview added without changing save/restore semantics. */
+.config-dashboard {
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(13rem,1fr)); gap:.58rem; margin-top:.7rem;
+}
+.config-dashboard > button {
+  display:grid; gap:.28rem; min-height:5rem; padding:.7rem; text-align:left;
+  border:1px solid var(--line); border-radius:.8rem; background:color-mix(in srgb,var(--panel),var(--bg) 9%);
+  color:var(--text); cursor:pointer;
+}
+.config-dashboard > button:hover,.config-dashboard > button:focus-visible {
+  border-color:var(--accent); background:color-mix(in srgb,var(--accent),var(--panel) 90%);
+}
+.config-dashboard > button strong { font-size:.95rem; }
+.config-dashboard > button span { color:var(--muted); font-size:.78rem; line-height:1.35; }
+body.config-screen-active .config-item-help {
+  display:block; margin-top:.28rem; color:var(--muted); font-size:.73rem; line-height:1.35;
+}
+
+
+/* v2.0.0-rc.33: twee traditionele bomen in het eerste README-item.
+   De smalle variant krijgt een staand kader zodat labels leesbaar blijven. */
+.readme-tree-carousel[data-active-shape="narrow"] .readme-carousel-viewport {
+  aspect-ratio: 4 / 5;
+  min-height: 34rem;
+}
+@media (max-width: 760px) {
+  .readme-tree-carousel[data-active-shape="narrow"] .readme-carousel-viewport {
+    aspect-ratio: 4 / 5;
+    min-height: 27rem;
+  }
+}

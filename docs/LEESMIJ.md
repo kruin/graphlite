@@ -1,10 +1,39 @@
-# OpenGraph Lite Viewer v2.0.0-rc.26
+# OpenGraph Lite Viewer v2.0.0-rc.33
 
 OpenGraph Lite Viewer is een demo/viewer voor JAN-, OPN- en
-OpenGraph-taalstructuren. Bronknopen projecteren horizontaal naar LEX; LOG
-levert daarna doelrijen voor plaatsing langs de as.
+OpenGraph-taalstructuren. Deze versie gebruikt de volledige v1.0.16-bronset als
+functionele basis.
 
 Engelse documentatie: [`README.md`](README.md).
+
+## Lexicale gebruiksprofielen en gebruikerskeuze
+
+OGN bewaart een woord niet meerdere keren als losse woordenboekregel. Het
+lexicon bevat één lemma met meerdere mogelijke **gebruiksprofielen**. De
+concrete zinsinstantie kiest het passende profiel.
+
+```text
+lemma → gebruiksprofielen → keuze per zinsinstantie
+```
+
+Een profiel legt onder meer bron, functie, scope en voorkeursinterval vast. De
+bron is `LOG`, `LEX` of `LOG+LEX`:
+
+- `LOG`: semantische operator op de zuidas met realisatie op LEX;
+- `LEX`: directe lexicale insertie zonder LOG-minor;
+- `LOG+LEX`: één zichtbare groep met componenten uit beide bronnen.
+
+Meerwoordconstructies, zoals `misschien wel`, verwijzen naar bestaande lemma's
+en kunnen één zichtbaar LEX-slot houden. De woorden worden dus niet
+verdubbeld in het lexicon.
+
+Wanneer meerdere analyses mogelijk zijn en de keuze de OGN-notatie werkelijk
+verandert, vraagt de viewer de gebruiker. Het voorgestelde profiel wordt tot
+dan voorlopig getekend. De keuze geldt alleen voor die voorbeeldzin en kan in
+Config met **Vraag profielkeuze opnieuw** worden gewist. Zij herschrijft het
+globale lexicon niet.
+
+Zie `LEXICON_USAGE_PROFILES_AND_DISAMBIGUATION.md`.
 
 ## Projectiecontract
 
@@ -12,79 +41,208 @@ Engelse documentatie: [`README.md`](README.md).
 bronknoop → horizontale LEX-projectie → één rechtstreekse verplaatsing naar het bepaalde LEX-doel
 ```
 
-`S`, `O` en `V` zijn majors. Een bijwoord-minor bezet een configureerbaar
-LOG-interval en vergroot de afstand tussen zijn begrenzende majors met één vast
-slot. Iedere lexicale bron projecteert eerst op zijn bronhoogte. LOG bepaalt
-de neutrale doelrij, nooit het projectieanker. Een expliciete topic-/V2-regel
-mag die rij vóór het tekenen vervangen, zodat ieder bronwoord hoogstens één
-zichtbare verplaatsing en één brontrace heeft. De voorbeeldzin valideert het
-resultaat en levert geen layoutcoördinaten.
-
-## Play-volgorde
-
-Na de opbouw van de centrale boom gebruikt Play drie afzonderlijke fasen:
-
-```text
-1. LOG-as
-2. LOG-afgeleide ruimte op LEX reserveren
-3. lexicale bronnen horizontaal projecteren en elk eenmaal naar het doel verplaatsen
-```
-
-SYNT en de overige projectiepanelen verschijnen in de laatste stap.
-De vorige-stapknop voert dit proces exact omgekeerd uit; de laatste
-projectielaag verdwijnt onmiddellijk bij de eerste stap terug.
-
-## Carrousel en externe link
-
-De intro toont voorlopig alleen het eerste beeld met traditionele bomen.
-De carrouselbediening blijft gereed voor latere specificatiebeelden en blijft
-verborgen zolang er één beeld is.
-
-De voorbeeldzoekopdracht opent in een apart browservenster. Na het sluiten
-daarvan blijft de app open.
-
-## Social-export en beperkte groepen
-
-`Config → Opslaan & exporteren` opent direct en exporteert een zelfstandige
-SVG, een LinkedIn-PNG van 1200 × 627 of een Play-video met vaste 30 fps. De
-recorder kiest eerst MP4/H.264 en valt terug op WebM; hij veronderstelt niet
-meer dat een browser-WebM met te weinig frames door LinkedIn wordt aanvaard.
-Zie `SOCIAL_EXPORT.md`.
-
-De bijwoordlijst bevat nu ook `MISSCHIEN WEL`, `AF EN TOE`,
-`OP DIT MOMENT` en `MET VEEL AANDACHT`. Iedere volledige groep geldt
-voorlopig als één LOG-minor; de interne syntaxis volgt pas na afzonderlijke
-specificatie. Zie `TALIGE_UITBREIDINGEN.md`.
+`S`, `O` en `V` zijn majors. Een bijwoordelijke insertie kan een LOG-minor zijn, een directe LEX-insertie zijn, of beide bronnen combineren. Iedere minor vergroot de afstand tussen de begrenzende majors met
+één vast slot. LOG bepaalt de neutrale doelrij, maar nooit de oorsprong van de
+projectie: iedere lexicale bron projecteert eerst horizontaal op zijn
+bronhoogte. Een expliciete topic- of V2-regel mag dat neutrale doel vóór het
+tekenen vervangen. Daardoor toont de viewer per bronwoord hoogstens één
+LEX-verplaatsing en één brontrace, zonder LOG-tussentrace. De voorbeeldzin
+bepaalt de layout niet. Zie `projectie-master-spec.md`.
 
 ## Start
 
 ```text
 index.html
-start-local-viewer.bat
 ```
+
+Of lokaal:
+
+```bat
+start_local_viewer.bat
+```
+
+## Volledige bron-ZIP maken in Windows
+
+Hernoem de projectmap naar de bedoelde releasenaam en dubbelklik daarna op:
+
+```bat
+maak-volledige-zip.bat
+```
+
+De BAT leidt de ZIP-naam af uit de map waarin hij zelf staat. De map
+`OpenGraph_Lite_Viewer_v2.0.0-rc.33` maakt dus daarnaast automatisch
+`OpenGraph_Lite_Viewer_v2.0.0-rc.33_full_source.zip`. Een bestaande ZIP met
+precies die naam wordt veilig vervangen; het script verzint nooit zelf een
+achtervoegsel `(1)`.
 
 GitHub Pages:
 
 ```text
-https://kruin.github.io/graphlite/index.html?ogv=v2.0.0-rc.26
+https://kruin.github.io/graphlite/index.html?ogv=v2.0.0-rc.33
 ```
 
-## Centrale views en named projections
+Cache-reset:
 
 ```text
-centraal: Syntax, FT
-west:     LEX
-oost:     SYNT
-zuid:     LOG
+https://kruin.github.io/graphlite/reset-cache.html?ogv=v2.0.0-rc.33
 ```
 
-LOG is een named projection op de zuidas en geen centrale view. LEX, SYNT en
-LOG zijn standaard zichtbaar en delen één stabiel viewport.
+## Desktopweergave
+
+De leesbare weergave over het volledige venster is de standaard. Deze staat
+direct bovenaan onder `Config → Beeld`:
+
+```text
+Boomruimte   = MAX · groot letterbeeld / lage boom
+Venstervulling = MAX · volledig venster benut
+```
+
+MAX past alleen de werkelijk getekende boom en projecties in alle beschikbare
+desktopruimte. Het onzichtbare stabiliteitskader, raster en hulplabels maken
+de graph en tekst dus niet meer kunstmatig klein. Tijdens de gefaseerde
+Play-volgorde blijft hetzelfde MAX-kader stabiel.
+
+## Config-tabbladen
+
+Config opent op een compact overzicht met gerichte secties:
+
+1. `Overzicht` en `JaN · TODO`;
+2. `Opslaan & exporteren`: eerst LinkedIn/Play/SVG, daarna OPN, Config
+   bewaren/herstellen en voorbeeldbeheer;
+3. `Beeld`: MAX, Syntax / Functional, boomlayout en projectiekleuren;
+4. `LOG & LEX`: LOG-minors, intervalkeuze, LEX-volgorde en regels;
+5. `Geavanceerd`: compatibiliteitsopties voor tak- en menuplaatsing.
+
+Bij zoveel mogelijk instellingen staat direct een korte uitleg van het effect.
+De bestaande save-werkwijze blijft ongewijzigd.
+
+`Venstervulling` betekent hoe de boom het beschikbare appvenster gebruikt.
+Het is dus geen tweede venster.
+
+## Publiceren op sociale media
+
+Open `Config → Opslaan & exporteren`. De eerste, duidelijk gemarkeerde kaart
+bevat drie lokale exports:
+
+- `LinkedIn-PNG`: een witte afbeelding van 1200 × 627 voor een beeldpost;
+- `Play-video`: een automatische opname van de volledige gefaseerde
+  Play-reeks in 1200 × 628 en een vaste 30 fps;
+- `Graph als SVG`: een zelfstandig vectorbestand van de volledige actuele
+  graph.
+
+De recorder kiest waar de browser dat ondersteunt eerst MP4/H.264 en gebruikt
+anders WebM. Hij vraagt nu actief alle 30 frames per seconde op; de oude
+recorder bewaarde alleen gewijzigde canvasframes en kon daardoor onder
+LinkedIns minimum van 10 fps vallen. Houd het browservenster actief tot de
+download klaar is en upload de uitvoer via LinkedIns Video-actie. Zie
+[`docs/SOCIAL_EXPORT.md`](docs/SOCIAL_EXPORT.md).
+
+## Lees mij / README
+
+De taalafhankelijke knop `README` / `LEESMIJ` opent onmiddellijk op de intro `Boom, gek`.
+De onderwerpenlijst staat in de bovenste helft; de actieve itemtekst staat
+meteen in de onderste helft. Beide helften scrollen onafhankelijk. Dit geldt
+voor desktop, mobiel staand en mobiel liggend.
+
+De intro toont nu alleen het eerste beeld met traditionele voorbeeldbomen.
+De carrouselcode blijft gereed voor latere specificatiebeelden, maar bij één
+beeld worden geen bedieningsknoppen getoond.
+
+De externe voorbeeldzoekopdracht opent in een apart browservenster. Na het
+sluiten van dat venster staat de app nog open.
+
+## Play-volgorde
+
+Na de opbouw van de centrale boom toont Play het projectieproces in drie
+afzonderlijke fasen:
+
+```text
+1. LOG-as tekenen en majors/minors plaatsen
+2. LOG-afgeleide ruimte op de LEX-as reserveren
+3. lexicale bronnen horizontaal naar LEX projecteren en iedere bron eenmaal
+   naar het bepaalde doel verplaatsen
+```
+
+Het doel is de LOG-afgeleide rij, tenzij een expliciete topic-/V2-regel die rij
+vervangt. SYNT en de overige projectiepanelen verschijnen in de laatste stap.
+De knop voor de vorige stap keert exact dezelfde volgorde om: eerst verdwijnt
+de laatste projectielaag, daarna volgen de LEX-verplaatsingen, de LEX-ruimte,
+LOG en ten slotte de centrale boom.
+
+## Centrale views
+
+```text
+1. Syntax
+2. Functional
+```
+
+Syntax toont de syntactische boom. Functional toont de functionele structuur van
+dezelfde voorbeeldzin. LOG is geen centrale view.
+
+## Named projections
+
+```text
+LEX    westas
+SYNT   oostas
+LOG    zuidas
+```
+
+Standaard zijn LEX, SYNT en LOG zichtbaar. Iedere projectie kan afzonderlijk
+worden uitgezet. `Geen` toont alleen de centrale Syntax- of Functional-view; `Alle` en
+Reset herstellen alle projecties. Projectiewissels veranderen de centrale
+graph, viewport en schaal niet.
+
+Bijwoordelijke inserties muteren Syntax en Functional niet. Het gekozen gebruiksprofiel
+bepaalt de bron: LOG en LOG+LEX leveren een minor op de zuidas; een directe
+LEX-insertie niet. Bronknopen projecteren horizontaal naar LEX en alle origins
+krijgen vooraf een neutraal LEX-doel. Een expliciete topic-/V2-regel kan dit
+vóór het tekenen vervangen, waarna één rechtstreekse zichtbare verplaatsing
+volgt.
+
+De actieve zin staat boven de graph. Daaronder blijft ruimte vrij voor een
+mogelijke latere noord-as.
+
+## Beperkte meerwoordige bijwoordelijke eenheden
+
+De bijwoordlijst bevat nu bewust vier beperkte meerwoordige eenheden:
+`MISSCHIEN WEL`, `AF EN TOE`, `OP DIT MOMENT` en
+`MET VEEL AANDACHT`. Iedere volledige groep geldt voorlopig als één zichtbare
+LEX-eenheid. Het gebruiksprofiel bepaalt of de groep daarnaast een LOG-minor,
+een directe LEX-insertie of een gemengde bron heeft; de interne syntaxis wordt
+nog niet uitgewerkt. De set
+illustreert modaliteit, frequentie, tijd en wijze, maar is geen volledige
+inventaris van bijwoordelijke bepalingen. Zie
+[`docs/TALIGE_UITBREIDINGEN.md`](docs/TALIGE_UITBREIDINGEN.md).
+
+## Topmenu
+
+```text
+Sentence · Adverb · Syntax/Functional · Interface · Projections · LOG order · Language · README · Config
+```
+
+Er is geen algemene knop `Menu` en er zijn geen geneste submenu’s. Keuze-items
+openen rechtstreeks hun eigen brede paneel.
 
 ## OPN-opslag
 
-`.opn` is het primaire round-trip documentformaat en scheidt metadata, data en
-optionele paradata. Zie `OPN_STORAGE_FORMAT.md`.
+`.opn` is het primaire round-trip documentformaat. Het document scheidt:
+
+```text
+metadata    documentidentiteit, formaat en generator
+
+data        graph, projecties en analysekeuzes
+
+paradata    optionele workspace en lokale sessie-events
+```
+
+Paradata kan bij export worden weggelaten. Oudere JSON-bestanden blijven als
+migratieformaat leesbaar; Legacy JSON-export blijft tijdelijk beschikbaar voor
+debugging. Zie `OPN_STORAGE_FORMAT.md`.
+
+## Versiebron
+
+`VERSION.txt` is leidend voor HTML, JavaScript, service worker, cachequery,
+publicatiescript en zipnaam.
 
 ## Controle
 
@@ -92,3 +250,55 @@ optionele paradata. Zie `OPN_STORAGE_FORMAT.md`.
 node --check viewer.js
 check_release.bat
 ```
+
+## Voorbeeldset en bestandsbediening (rc.18)
+
+- De viewer bevat 14 voorbeeldzinnen, inclusief twee voorbeelden met meerdere
+  LOG-minors.
+- Bij automatische plaatsing heeft een expliciete zinsgebonden landingsplaats,
+  zoals `post-object-pre-vcluster`, voorrang op een brede klasse-default.
+  Zonder zo’n expliciete plaats gelden de klasse-defaults
+  `MODALITEIT → S-O` en `FREQUENTIE → O-V`. Scope en lineaire plaats blijven
+  afzonderlijke eigenschappen.
+- `Opslaan als .opn` downloadt de huidige analyse.
+- `Importeer .opn` opent een eerder geëxporteerd document.
+- Paradata is optioneel.
+
+## Welk probleem lost OGN op?
+
+Een klassieke constituentboom laat de horizontale volgorde van vertakkingen
+vaak twee representatietaken tegelijk uitvoeren: zij legt structurele relaties
+vast en suggereert tevens de lineaire woordvolgorde van de zin. OGN ontkoppelt
+die taken.
+
+```text
+centrale vertakkingen onder S = structurele relaties
+LEX-projectie             = lineaire woordvolgorde
+```
+
+Dezelfde centrale structuur kan daardoor verschillende oppervlaktestrings
+krijgen zonder de boom te spiegelen, opnieuw op te bouwen of woordvolgorde als
+transformatie van de centrale boom te behandelen.
+
+## Plaatsingsplan vóór rendering
+
+De viewer berekent vóór het tekenen één volledig plaatsingsplan:
+
+1. structurele hosts bepalen;
+2. lexicale inserties en landingsplaatsen bepalen;
+3. gridruimte en Wissel-corridors reserveren;
+4. de centrale boom plaatsen;
+5. de kernzin lexicaal invullen;
+6. projecties, traces en Wisselpaden vastleggen;
+7. groei- en renderstappen toekennen;
+8. het vaste resultaat renderen.
+
+De renderer kiest geen nieuwe posities en reserveert geen nieuwe ruimte.
+Play/Groei onthult de vooraf berekende layout stap voor stap.
+
+## JaN · TODO
+
+- Werknotatie: `S:np-VP`, nadrukkelijk niet `S:NP-VP`.
+- Onderzoeksnotatie: `S+ np-VP`.
+- Eerst binaire bomen; later niet-binaire, meertakkige bomen.
+- Flip van het verbale cluster: `heeft gebeten` ↔ `gebeten heeft`.

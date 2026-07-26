@@ -10,7 +10,7 @@ Iedere bijwoord-minor vergroot de LOG-afstand tussen zijn begrenzende majors
 met één vast slot. LOG bepaalt daarna neutrale LEX-doelrijen. De
 projectieoorsprong blijft altijd de bronknoophoogte; bron → LEX is exact
 horizontaal en verplaatsingen gebeuren pas langs de LEX-as. De voorbeeldzin
-bepaalt de layout niet. `Syntax → FT` zijn de centrale views; `LEX / SYNT /
+bepaalt de layout niet. `Syntax → Functional` zijn de centrale views; `LEX / SYNT /
 LOG` zijn named projections en LOG blijft de zuidas. Zie
 `../projectie-master-spec.md`.
 

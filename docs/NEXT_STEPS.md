@@ -1,6 +1,6 @@
 # NEXT_STEPS
 
-Vervolgpunten na `v2.0.0-rc.26`:
+Vervolgpunten na `v2.0.0-rc.33`:
 
 1. Een editor toevoegen voor LOG-majors, intervallen en klassekoppelingen.
 2. De voorbeeldvalidator expliciet laten melden wanneer surface en

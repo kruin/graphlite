@@ -30,7 +30,7 @@ Current axes:
 - LEX: west axis, surface order and local placement rules
 - SYNTAX: east axis, syntax rules projected at source-node height
 - LOG: south axis, logical S-O-V order projection
-- FT: functional/thematic view next to the standard syntax-tree view
+- Functional: functional/thematic view next to the standard syntax-tree view
 
 ## LEX placement rules
 
@@ -83,6 +83,3 @@ The Dutch linguistic test material remains Dutch. The lexicon now also records O
   - `slides.json`
   - zelfstandige `index.html`
 - Engelse knoppen/tooltips en Engelstalige toelichting zijn mee bijgewerkt.
-
-
-

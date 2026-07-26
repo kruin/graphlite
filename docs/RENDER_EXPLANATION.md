@@ -1,8 +1,8 @@
-# Render-uitleg · v2.0.0-rc.26
+# Render-uitleg · v2.0.0-rc.33
 
 ## Volgorde
 
-1. Bereken de centrale Syntax- of FT-graph.
+1. Bereken de centrale Syntax- of Functional-graph.
 2. Bouw de LOG-sequentie met majors en minors.
 3. Geef ieder element een vast `logicalSlot`.
 4. Teken LOG met één vaste pixelstap per slot.
@@ -32,3 +32,7 @@ Vooropplaatsing of V2 is een latere Wissel, geen nieuwe basiscoördinaat.
 `OSV-!`, `VSO-!` en `VOS-!` geven aan dat een aanvullende
 LEX-verplaatsingsregel nodig kan zijn. De LOG-majorvolgorde zelf blijft wel
 geldig en levert de basisrijen.
+
+## Plaatsings- en render-volgorde
+
+Eerst wordt het volledige plaatsingsplan berekend: hosts, inserties, landingsplaatsen, gridruimte, corridors, projecties en traces. Daarna wordt de kernzin lexicaal ingevuld. De renderer tekent uitsluitend het vaste resultaat en reserveert geen ruimte.

@@ -38,3 +38,6 @@ Examples:
 
 `VSO` and `VOS` are now marked like `OSV`: `VSO-!` and `VOS-!`. The exclamation mark means that the box approach cannot produce the order as a base alternative. Correct rendering above syntax boxes requires an explicit movement rule. Existing trees and existing flip behaviour remain unchanged.
 
+## Placement before render
+
+The complete placement plan is calculated first: hosts, insertions, landing positions, grid space, corridors, projections and traces. The core sentence is then filled lexically. The renderer draws only the fixed result and reserves no space.

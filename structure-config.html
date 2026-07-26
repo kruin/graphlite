@@ -1,13 +1,14 @@
-<!doctype html>
+<!DOCTYPE html>
+
 <html lang="nl">
 <head>
-  <meta charset="utf-8">
-  <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
-  <meta http-equiv="Pragma" content="no-cache">
-  <meta http-equiv="Expires" content="0">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>OpenGraph structure-config v2.0.0-rc.26</title>
-  <style>
+<meta charset="utf-8"/>
+<meta content="no-store, no-cache, must-revalidate, max-age=0" http-equiv="Cache-Control"/>
+<meta content="no-cache" http-equiv="Pragma"/>
+<meta content="0" http-equiv="Expires"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>OpenGraph structure-config v2.0.0-rc.33</title>
+<style>
     :root { font-family: system-ui, -apple-system, Segoe UI, sans-serif; color: #0f172a; background: #f8fafc; }
     body { margin: 0; padding: 24px; }
     main { max-width: 1100px; margin: 0 auto; }
@@ -19,112 +20,88 @@
     .button-link { border: 1px solid #94a3b8; background: white; border-radius: 10px; padding: 8px 12px; color: #0f172a; text-decoration: none; display: inline-flex; font-weight: 800; }
   </style>
 </head>
-<body>
-  <main>
-    <h1>OpenGraph structure-config v2.0.0-rc.26</h1>
-    <p class="note">Deze HTML-file is de structurele bron voor viewer en voorbeeldeditor. De structure-config bevat géén lexicale woorden zoals hond/man/bijt en géén lidwoordposities. Die staan in <a class="button-link" href="lexicon-config.html">lexicon-config.html</a>. Bewerk bij voorkeur via <a class="button-link" href="structure-editor.html">structure-editor.html</a>.</p>
-
-    <section id="opengraph-syntax-config" data-root="s" aria-label="Syntax-config">
-      <h2>Syntax-config</h2>
-      <p class="note">Actieve basisstructuur. Leaves zijn abstracte projectieposities: <code>subject</code>, <code>predicate</code>, <code>object</code>. Voor perfectum kan de structure-editor de VP-regelset vervangen door <code>VP → NP VP</code> en <code>VP → pv VDW</code>.</p>
-      <div class="node-config" data-id="s" data-label="S" data-cat="S" data-kind="cat" data-children="np-subj vp">s:S → np-subj vp</div>
-      <div class="node-config" data-id="np-subj" data-label="NP" data-cat="NP" data-kind="cat" data-children="subj">np-subj:NP → subj</div>
-      <div class="node-config" data-id="subj" data-label="{subject}" data-cat="N" data-kind="leaf" data-role="subject" data-source="subject">subj:{subject} [leaf role=subject source=subject cat=N]</div>
-      <div class="node-config" data-id="vp" data-label="VP" data-cat="VP" data-kind="cat" data-children="np-obj v">vp:VP → np-obj v</div>
-      <div class="node-config" data-id="np-obj" data-label="NP" data-cat="NP" data-kind="cat" data-children="obj">np-obj:NP → obj</div>
-      <div class="node-config" data-id="obj" data-label="{object}" data-cat="N" data-kind="leaf" data-role="object" data-source="object">obj:{object} [leaf role=object source=object cat=N]</div>
-      <div class="node-config" data-id="v" data-label="V" data-cat="V" data-kind="cat" data-children="pred">v:V → pred</div>
-      <div class="node-config" data-id="pred" data-label="{predicate}" data-cat="V" data-kind="leaf" data-role="predicate" data-source="predicate">pred:{predicate} [leaf role=predicate source=predicate cat=V]</div>
-    </section>
-
-    <section id="opengraph-syntax-rulesets" aria-label="Optionele syntax-regelsets">
-      <h2>Optionele syntax-regelsets</h2>
-      <p class="note">Deze regelset is toegevoegd voor perfectum <code>heeft gebeten</code>. De structure-editor kan hem als actieve syntax-config zetten.</p>
-      <div class="rule-config" data-id="perfectum" data-label="Perfectum: VP → NP VP; VP → pv VDW" data-sources="pv vdw">
-        <code>vp:VP → np-obj vp-perfectum</code><br>
-        <code>vp-perfectum:VP → pv vdw</code><br>
-        <code>pv:{pv} [leaf role=aux source=pv cat=AUX]</code><br>
-        <code>vdw:{vdw} [leaf role=participle source=vdw cat=V]</code>
-      </div>
-    </section>
-
-    <section id="opengraph-functional-config" data-root="ft-clause" data-order="left-first" aria-label="Functional-config">
-      <h2>Functional-config</h2>
-      <p class="note">Functionele structuur scheidt het predicaat van de thematische argumentstructuur: <code>CLAUSE → PRED ARG-STRUCT</code>. Het predicaat staat in een eigen PRED-subtree; subject/object worden functioneel getoond als <code>AGENS</code> en <code>PATIENS</code> in de ARG-STRUCT-subtree. Daardoor kunnen PRED en ARG-STRUCT als vrije boxen apart geplaatst worden. Perfectum blijft vormelijk in syntax/LEX: <code>pv/vdw</code>. Lidwoorden zijn niet opgenomen in syntax, functional, lexicon of voorbeeldzinnen.</p>
-      <div class="node-config" data-id="ft-clause" data-label="CLAUSE" data-cat="CLAUSE" data-kind="role-root" data-role="top" data-children="ft-pred ft-argstruct">ft-clause:CLAUSE → ft-pred ft-argstruct</div>
-      <div class="node-config" data-id="ft-pred" data-label="PRED" data-cat="PRED" data-kind="role" data-role="pred" data-children="f-root">ft-pred:PRED → f-root</div>
-      <div class="node-config" data-id="f-root" data-label="{predicate}" data-cat="V" data-kind="leaf" data-role="predicate" data-source="predicate">f-root:{predicate} [leaf role=predicate source=predicate cat=V]</div>
-      <div class="node-config" data-id="ft-argstruct" data-label="ARG-STRUCT" data-cat="ARG-STRUCT" data-kind="role" data-role="arguments" data-children="ft-arg1 ft-arg2">ft-argstruct:ARG-STRUCT → ft-arg1 ft-arg2</div>
-      <div class="node-config" data-id="ft-arg1" data-label="AGENS" data-cat="ROLE" data-kind="role" data-role="agens" data-children="f-subj-np">ft-arg1:AGENS → f-subj-np</div>
-      <div class="node-config" data-id="f-subj-np" data-label="NP" data-cat="NP" data-kind="role" data-role="agens-np" data-children="f-subj">f-subj-np:NP → f-subj</div>
-      <div class="node-config" data-id="f-subj" data-label="{subject}" data-cat="N" data-kind="leaf" data-role="agens" data-source="subject">f-subj:{subject} [leaf role=subject source=subject cat=N]</div>
-      <div class="node-config" data-id="ft-arg2" data-label="PATIENS" data-cat="ROLE" data-kind="role" data-role="patiens" data-children="f-obj-np">ft-arg2:PATIENS → f-obj-np</div>
-      <div class="node-config" data-id="f-obj-np" data-label="NP" data-cat="NP" data-kind="role" data-role="patiens-np" data-children="f-obj">f-obj-np:NP → f-obj</div>
-      <div class="node-config" data-id="f-obj" data-label="{object}" data-cat="N" data-kind="leaf" data-role="patiens" data-source="object">f-obj:{object} [leaf role=object source=object cat=N]</div>
-    </section>
-
-    <section id="opengraph-lexical-config" aria-label="Structurele sources">
-      <h2>Structurele sources</h2>
-      <p class="note">Dit zijn projectiebronnen/posities, geen lexicale items. Voorbeeld: <code>lexeme=HEEFT</code> projecteert op <code>source=pv</code>; <code>lexeme=GEBETEN</code> projecteert op <code>source=vdw</code>.</p>
-      <div class="lexical-config" data-source="subject" data-label="{subject}" data-role="subject" data-cat="N" data-from="syntax functional">subject:{subject} [syntax-role=subject functional-role=agens cat=N]</div>
-      <div class="lexical-config" data-source="predicate" data-label="{predicate}" data-role="predicate" data-cat="V" data-from="syntax functional">predicate:{predicate} [role=predicate cat=V from=syntax+functional]</div>
-      <div class="lexical-config" data-source="object" data-label="{object}" data-role="object" data-cat="N" data-from="syntax functional">object:{object} [syntax-role=object functional-role=patiens cat=N]</div>
-      <div class="lexical-config" data-source="pv" data-label="{pv}" data-role="aux" data-cat="AUX" data-from="syntax-perfectum">pv:{pv} [role=aux cat=AUX from=syntax-perfectum]</div>
-      <div class="lexical-config" data-source="vdw" data-label="{vdw}" data-role="participle" data-cat="V" data-from="syntax-perfectum">vdw:{vdw} [role=participle cat=V from=syntax-perfectum]</div>
-    </section>
-
-    <section
-      id="opengraph-log-config"
-      data-authority="LOG"
-      data-position-unit="slot"
-      data-major-gap="1"
-      data-minor-width="1"
-      data-expands-major-gap="true"
-      data-axis-slot-pixels="176"
-      data-lex-slot-pixels="64"
-      data-lex-position-source="LOG"
-      data-lex-projection-origin="SOURCE-Y"
-      data-lex-placement-mode="horizontal-then-move"
-      data-example-controls-layout="false"
-      data-play-phases="LOG SPACE LEX"
-      data-play-space-mode="reserve-empty-lex-rows"
-      aria-label="LOG-slotconfig">
-      <h2>LOG-slotconfig</h2>
-      <p class="note">LOG bepaalt de neutrale doelrijen, maar niet de bronhoogte van de projectie. Iedere lexicale bron wordt eerst exact horizontaal naar LEX geprojecteerd (SOURCE-Y) en wordt pas daarna langs de LEX-as naar de LOG-afgeleide doelrij verplaatst. S, O en V zijn major-posities. Een bijwoord krijgt een minor-slot in een LOG-interval; ieder minor-slot vergroot de afstand tussen de begrenzende majors met één vaste stap. De voorbeeldzin valideert alleen en bestuurt de layout niet. Play toont na de boom eerst LOG, reserveert dan lege LEX-doelrijen, toont daarna de horizontale projecties en voert vervolgens de LEX-verplaatsingen uit.</p>
-
-      <div class="log-major-config" data-id="S" data-label="Subject" data-source="subject" data-role="subject">S [major source=subject]</div>
-      <div class="log-major-config" data-id="O" data-label="Object" data-source="object" data-role="object">O [major source=object]</div>
-      <div class="log-major-config" data-id="V" data-label="Verb" data-sources="predicate pv vdw" data-role="predicate">V [major sources=predicate+pv+vdw]</div>
-
-      <div class="log-interval-config" data-id="before-S" data-label="vóór S" data-label-en="before S" data-after="START" data-before="S">vóór S [START → S]</div>
-      <div class="log-interval-config" data-id="S-O" data-label="na S · vóór O" data-label-en="after S · before O" data-after="S" data-before="O">tussen S en O [S → O]</div>
-      <div class="log-interval-config" data-id="O-V" data-label="na O · vóór V" data-label-en="after O · before V" data-after="O" data-before="V">tussen O en V [O → V]</div>
-      <div class="log-interval-config" data-id="after-V" data-label="na V" data-label-en="after V" data-after="V" data-before="END">na V [V → END]</div>
-
-      <div class="log-class-config" data-category="DEFAULT" data-interval="S-O">DEFAULT → S-O</div>
-      <div class="log-class-config" data-category="MODALITEIT" data-interval="S-O">MODALITEIT → S-O</div>
-      <div class="log-class-config" data-category="SCHAKEERPARTIKEL" data-interval="S-O">SCHAKEERPARTIKEL → S-O</div>
-      <div class="log-class-config" data-category="FOCUSPARTIKEL" data-interval="S-O">FOCUSPARTIKEL → S-O</div>
-      <div class="log-class-config" data-category="TIJD" data-interval="O-V">TIJD → O-V</div>
-      <div class="log-class-config" data-category="FREQUENTIE" data-interval="O-V">FREQUENTIE → O-V</div>
-      <div class="log-class-config" data-category="PLAATS" data-interval="O-V">PLAATS → O-V</div>
-      <div class="log-class-config" data-category="NEGATIE" data-interval="O-V">NEGATIE → O-V</div>
-      <div class="log-class-config" data-category="NEG_FREQ" data-interval="O-V">NEG_FREQ → O-V</div>
-      <div class="log-class-config" data-category="NEG_PLACE" data-interval="O-V">NEG_PLACE → O-V</div>
-      <div class="log-class-config" data-category="GRAAD" data-interval="O-V">GRAAD → O-V</div>
-      <div class="log-class-config" data-category="WIJZE" data-interval="O-V">WIJZE → O-V</div>
-      <div class="log-class-config" data-category="REDEN_OORZAAK" data-interval="before-S">REDEN_OORZAAK → vóór S</div>
-      <div class="log-class-config" data-category="VOORWAARDE_GEVOLG" data-interval="before-S">VOORWAARDE_GEVOLG → vóór S</div>
-    </section>
-
-    <section id="opengraph-lex-config" aria-label="LEX-config">
-      <h2>LEX-slots</h2>
-      <div class="lex-slot-config" data-id="comp" data-label="slot 0 · Comp/(om)dat">slot 0 · Comp/(om)dat</div>
-      <div class="lex-slot-config" data-id="topic" data-label="slot 1 · vooropplaatsing/topicalisatie">slot 1 · vooropplaatsing/topicalisatie</div>
-      <div class="lex-slot-config" data-id="v2" data-label="slot 2 · V2 / persoonsvorm">slot 2 · V2 / persoonsvorm</div>
-      <div class="lex-slot-config" data-id="trace" data-label="trace · lege inhoud van gewisseld slot">trace · lege inhoud van gewisseld slot</div>
-      <div class="lex-slot-config" data-id="aux" data-label="AUX / pv">AUX / pv</div>
-    </section>
-  </main>
+<body><nav class="opengraph-return-nav" style="display:flex;gap:.5rem;flex-wrap:wrap;padding:.55rem .7rem;border-bottom:1px solid #cbd5e1;background:#f8fafc;position:sticky;top:0;z-index:50"><a href="index.html?screen=config" style="font-weight:800">← Terug naar: Config</a><a href="index.html" style="font-weight:800">← Terug naar: Main</a></nav>
+<main>
+<h1>OpenGraph structure-config v2.0.0-rc.33</h1>
+<p class="note">Deze HTML-file is de structurele bron voor viewer en voorbeeldeditor. De structure-config bevat géén lexicale woorden zoals hond/man/bijt en géén lidwoordposities. Die staan in <a class="button-link" href="lexicon-config.html">lexicon-config.html</a>. Bewerk bij voorkeur via <a class="button-link" href="structure-editor.html">structure-editor.html</a>.</p>
+<section aria-label="Syntax-config" data-root="s" id="opengraph-syntax-config">
+<h2>Syntax-config</h2>
+<p class="note">Actieve basisstructuur. Leaves zijn abstracte projectieposities: <code>subject</code>, <code>predicate</code>, <code>object</code>. Voor perfectum kan de structure-editor de VP-regelset vervangen door <code>VP → NP VP</code> en <code>VP → pv VDW</code>.</p>
+<div class="node-config" data-cat="S" data-children="np-subj vp" data-id="s" data-kind="cat" data-label="S">s:S → np-subj vp</div>
+<div class="node-config" data-cat="NP" data-children="subj" data-id="np-subj" data-kind="cat" data-label="NP">np-subj:NP → subj</div>
+<div class="node-config" data-cat="N" data-id="subj" data-kind="leaf" data-label="{subject}" data-role="subject" data-source="subject">subj:{subject} [leaf role=subject source=subject cat=N]</div>
+<div class="node-config" data-cat="VP" data-children="np-obj v" data-id="vp" data-kind="cat" data-label="VP">vp:VP → np-obj v</div>
+<div class="node-config" data-cat="NP" data-children="obj" data-id="np-obj" data-kind="cat" data-label="NP">np-obj:NP → obj</div>
+<div class="node-config" data-cat="N" data-id="obj" data-kind="leaf" data-label="{object}" data-role="object" data-source="object">obj:{object} [leaf role=object source=object cat=N]</div>
+<div class="node-config" data-cat="V" data-children="pred" data-id="v" data-kind="cat" data-label="V">v:V → pred</div>
+<div class="node-config" data-cat="V" data-id="pred" data-kind="leaf" data-label="{predicate}" data-role="predicate" data-source="predicate">pred:{predicate} [leaf role=predicate source=predicate cat=V]</div>
+</section>
+<section aria-label="Optionele syntax-regelsets" id="opengraph-syntax-rulesets">
+<h2>Optionele syntax-regelsets</h2>
+<p class="note">Deze regelset is toegevoegd voor perfectum <code>heeft gebeten</code>. De structure-editor kan hem als actieve syntax-config zetten.</p>
+<div class="rule-config" data-id="perfectum" data-label="Perfectum: VP → NP VP; VP → pv VDW" data-sources="pv vdw">
+<code>vp:VP → np-obj vp-perfectum</code><br/>
+<code>vp-perfectum:VP → pv vdw</code><br/>
+<code>pv:{pv} [leaf role=aux source=pv cat=AUX]</code><br/>
+<code>vdw:{vdw} [leaf role=participle source=vdw cat=V]</code>
+</div>
+</section>
+<section aria-label="Functional-config" data-order="left-first" data-root="ft-clause" id="opengraph-functional-config">
+<h2>Functional-config</h2>
+<p class="note">Functionele structuur scheidt het predicaat van de thematische argumentstructuur: <code>CLAUSE → PRED ARG-STRUCT</code>. Het predicaat staat in een eigen PRED-subtree; subject/object worden functioneel getoond als <code>AGENS</code> en <code>PATIENS</code> in de ARG-STRUCT-subtree. Daardoor kunnen PRED en ARG-STRUCT als vrije boxen apart geplaatst worden. Perfectum blijft vormelijk in syntax/LEX: <code>pv/vdw</code>. Lidwoorden zijn niet opgenomen in syntax, functional, lexicon of voorbeeldzinnen.</p>
+<div class="node-config" data-cat="CLAUSE" data-children="ft-pred ft-argstruct" data-id="ft-clause" data-kind="role-root" data-label="CLAUSE" data-role="top">ft-clause:CLAUSE → ft-pred ft-argstruct</div>
+<div class="node-config" data-cat="PRED" data-children="f-root" data-id="ft-pred" data-kind="role" data-label="PRED" data-role="pred">ft-pred:PRED → f-root</div>
+<div class="node-config" data-cat="V" data-id="f-root" data-kind="leaf" data-label="{predicate}" data-role="predicate" data-source="predicate">f-root:{predicate} [leaf role=predicate source=predicate cat=V]</div>
+<div class="node-config" data-cat="ARG-STRUCT" data-children="ft-arg1 ft-arg2" data-id="ft-argstruct" data-kind="role" data-label="ARG-STRUCT" data-role="arguments">ft-argstruct:ARG-STRUCT → ft-arg1 ft-arg2</div>
+<div class="node-config" data-cat="ROLE" data-children="f-subj-np" data-id="ft-arg1" data-kind="role" data-label="AGENS" data-role="agens">ft-arg1:AGENS → f-subj-np</div>
+<div class="node-config" data-cat="NP" data-children="f-subj" data-id="f-subj-np" data-kind="role" data-label="NP" data-role="agens-np">f-subj-np:NP → f-subj</div>
+<div class="node-config" data-cat="N" data-id="f-subj" data-kind="leaf" data-label="{subject}" data-role="agens" data-source="subject">f-subj:{subject} [leaf role=subject source=subject cat=N]</div>
+<div class="node-config" data-cat="ROLE" data-children="f-obj-np" data-id="ft-arg2" data-kind="role" data-label="PATIENS" data-role="patiens">ft-arg2:PATIENS → f-obj-np</div>
+<div class="node-config" data-cat="NP" data-children="f-obj" data-id="f-obj-np" data-kind="role" data-label="NP" data-role="patiens-np">f-obj-np:NP → f-obj</div>
+<div class="node-config" data-cat="N" data-id="f-obj" data-kind="leaf" data-label="{object}" data-role="patiens" data-source="object">f-obj:{object} [leaf role=object source=object cat=N]</div>
+</section>
+<section aria-label="Structurele sources" id="opengraph-lexical-config">
+<h2>Structurele sources</h2>
+<p class="note">Dit zijn projectiebronnen/posities, geen lexicale items. Voorbeeld: <code>lexeme=HEEFT</code> projecteert op <code>source=pv</code>; <code>lexeme=GEBETEN</code> projecteert op <code>source=vdw</code>.</p>
+<div class="lexical-config" data-cat="N" data-from="syntax functional" data-label="{subject}" data-role="subject" data-source="subject">subject:{subject} [syntax-role=subject functional-role=agens cat=N]</div>
+<div class="lexical-config" data-cat="V" data-from="syntax functional" data-label="{predicate}" data-role="predicate" data-source="predicate">predicate:{predicate} [role=predicate cat=V from=syntax+functional]</div>
+<div class="lexical-config" data-cat="N" data-from="syntax functional" data-label="{object}" data-role="object" data-source="object">object:{object} [syntax-role=object functional-role=patiens cat=N]</div>
+<div class="lexical-config" data-cat="AUX" data-from="syntax-perfectum" data-label="{pv}" data-role="aux" data-source="pv">pv:{pv} [role=aux cat=AUX from=syntax-perfectum]</div>
+<div class="lexical-config" data-cat="V" data-from="syntax-perfectum" data-label="{vdw}" data-role="participle" data-source="vdw">vdw:{vdw} [role=participle cat=V from=syntax-perfectum]</div>
+</section>
+<section aria-label="LOG-slotconfig" data-authority="LOG" data-axis-slot-pixels="176" data-example-controls-layout="false" data-expands-major-gap="true" data-lex-placement-mode="horizontal-then-move" data-lex-position-source="LOG" data-lex-projection-origin="SOURCE-Y" data-lex-slot-pixels="64" data-major-gap="1" data-minor-width="1" data-play-phases="LOG SPACE LEX" data-play-space-mode="reserve-empty-lex-rows" data-position-unit="slot" id="opengraph-log-config">
+<h2>LOG-slotconfig</h2>
+<p class="note">LOG bepaalt de neutrale doelrijen, maar niet de bronhoogte van de projectie. Iedere lexicale bron wordt eerst exact horizontaal naar LEX geprojecteerd (SOURCE-Y) en wordt pas daarna langs de LEX-as naar de LOG-afgeleide doelrij verplaatst. S, O en V zijn major-posities. Een bijwoord krijgt een minor-slot in een LOG-interval; ieder minor-slot vergroot de afstand tussen de begrenzende majors met één vaste stap. De voorbeeldzin valideert alleen en bestuurt de layout niet. Play toont na de boom eerst LOG, reserveert dan lege LEX-doelrijen, toont daarna de horizontale projecties en voert vervolgens de LEX-verplaatsingen uit.</p>
+<div class="log-major-config" data-id="S" data-label="Subject" data-role="subject" data-source="subject">S [major source=subject]</div>
+<div class="log-major-config" data-id="O" data-label="Object" data-role="object" data-source="object">O [major source=object]</div>
+<div class="log-major-config" data-id="V" data-label="Verb" data-role="predicate" data-sources="predicate pv vdw">V [major sources=predicate+pv+vdw]</div>
+<div class="log-interval-config" data-after="START" data-before="S" data-id="before-S" data-label="vóór S" data-label-en="before S">vóór S [START → S]</div>
+<div class="log-interval-config" data-after="S" data-before="O" data-id="S-O" data-label="na S · vóór O" data-label-en="after S · before O">tussen S en O [S → O]</div>
+<div class="log-interval-config" data-after="O" data-before="V" data-id="O-V" data-label="na O · vóór V" data-label-en="after O · before V">tussen O en V [O → V]</div>
+<div class="log-interval-config" data-after="V" data-before="END" data-id="after-V" data-label="na V" data-label-en="after V">na V [V → END]</div>
+<div class="log-class-config" data-category="DEFAULT" data-interval="S-O">DEFAULT → S-O</div>
+<div class="log-class-config" data-category="MODALITEIT" data-interval="S-O">MODALITEIT → S-O</div>
+<div class="log-class-config" data-category="SCHAKEERPARTIKEL" data-interval="S-O">SCHAKEERPARTIKEL → S-O</div>
+<div class="log-class-config" data-category="FOCUSPARTIKEL" data-interval="S-O">FOCUSPARTIKEL → S-O</div>
+<div class="log-class-config" data-category="TIJD" data-interval="O-V">TIJD → O-V</div>
+<div class="log-class-config" data-category="FREQUENTIE" data-interval="O-V">FREQUENTIE → O-V</div>
+<div class="log-class-config" data-category="PLAATS" data-interval="O-V">PLAATS → O-V</div>
+<div class="log-class-config" data-category="NEGATIE" data-interval="O-V">NEGATIE → O-V</div>
+<div class="log-class-config" data-category="NEG_FREQ" data-interval="O-V">NEG_FREQ → O-V</div>
+<div class="log-class-config" data-category="NEG_PLACE" data-interval="O-V">NEG_PLACE → O-V</div>
+<div class="log-class-config" data-category="GRAAD" data-interval="O-V">GRAAD → O-V</div>
+<div class="log-class-config" data-category="WIJZE" data-interval="O-V">WIJZE → O-V</div>
+<div class="log-class-config" data-category="REDEN_OORZAAK" data-interval="before-S">REDEN_OORZAAK → vóór S</div>
+<div class="log-class-config" data-category="VOORWAARDE_GEVOLG" data-interval="before-S">VOORWAARDE_GEVOLG → vóór S</div>
+</section>
+<section aria-label="LEX-config" id="opengraph-lex-config">
+<h2>LEX-slots</h2>
+<div class="lex-slot-config" data-id="comp" data-label="slot 0 · Comp/(om)dat">slot 0 · Comp/(om)dat</div>
+<div class="lex-slot-config" data-id="topic" data-label="slot 1 · vooropplaatsing/topicalisatie">slot 1 · vooropplaatsing/topicalisatie</div>
+<div class="lex-slot-config" data-id="v2" data-label="slot 2 · V2 / persoonsvorm">slot 2 · V2 / persoonsvorm</div>
+<div class="lex-slot-config" data-id="trace" data-label="trace · lege inhoud van gewisseld slot">trace · lege inhoud van gewisseld slot</div>
+<div class="lex-slot-config" data-id="aux" data-label="AUX / pv">AUX / pv</div>
+</section>
+</main>
 </body>
 </html>

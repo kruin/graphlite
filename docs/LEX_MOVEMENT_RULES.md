@@ -1,4 +1,4 @@
-# LEX-plaatsingsregels · v2.0.0-rc.26
+# LEX-plaatsingsregels · v2.0.0-rc.33
 
 ## Logische lagen, één zichtbare stap
 
@@ -30,7 +30,7 @@ Een expliciete regel vervangt zo nodig het neutrale doel:
 - V2/persoonsvorm gebruikt slot 2;
 - een verplaatst item laat één trace op de horizontale bronrij.
 
-Er is geen tweede pijl of LOG-tussentrace. De centrale Syntax- of FT-graph en
+Er is geen tweede pijl of LOG-tussentrace. De centrale Syntax- of Functional-graph en
 de LOG-sequentie veranderen niet.
 
 ## Bijwoorden

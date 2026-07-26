@@ -48,7 +48,7 @@ Vooralsnog ondersteunt de editor korte zinnen: hoofdzin, omdat-bijzin en perfect
 ## Starten
 
 1. Pak de ZIP uit.
-2. Open `start-local-viewer.bat`.
+2. Open `start_local_viewer.bat`.
 3. Open `http://localhost:8088`.
 4. Gebruik een harde reload als een oude tab nog actief is.
 

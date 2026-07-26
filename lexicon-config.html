@@ -1,13 +1,14 @@
-<!doctype html>
+<!DOCTYPE html>
+
 <html lang="nl">
 <head>
-  <meta charset="utf-8">
-  <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
-  <meta http-equiv="Pragma" content="no-cache">
-  <meta http-equiv="Expires" content="0">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>OpenGraph lexicon-config v4537</title>
-  <style>
+<meta charset="utf-8"/>
+<meta content="no-store, no-cache, must-revalidate, max-age=0" http-equiv="Cache-Control"/>
+<meta content="no-cache" http-equiv="Pragma"/>
+<meta content="0" http-equiv="Expires"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>OpenGraph lexicon-config v2.0.0-rc.33</title>
+<style>
     :root { font-family: system-ui, -apple-system, Segoe UI, sans-serif; color:#0f172a; background:#f8fafc; }
     body { margin:0; padding:24px; }
     main { max-width:1100px; margin:0 auto; }
@@ -15,38 +16,66 @@
     h2 { margin-top:28px; }
     .note { color:#475569; line-height:1.5; }
     .button-link { border:1px solid #94a3b8; background:white; border-radius:10px; padding:8px 12px; color:#0f172a; text-decoration:none; display:inline-flex; font-weight:800; }
-    .lexicon-entry { background:white; border:1px solid #cbd5e1; border-radius:14px; padding:10px 12px; margin:8px 0; display:grid; gap:4px; }
-    .entry-line { font-weight:900; }
+    .lexicon-entry, .lexicon-construction { background:white; border:1px solid #cbd5e1; border-radius:14px; padding:10px 12px; margin:8px 0; display:grid; gap:4px; }
+    .entry-line { font-weight:900; } .usage-profiles,.construction-profiles{margin:.35rem 0 0;padding-left:1.35rem}.usage-profile,.construction-profile{margin:.2rem 0;color:#334155}
     .meta { color:#64748b; font-size:.94rem; }
     code { background:#e2e8f0; border-radius:6px; padding:2px 5px; }
   </style>
 </head>
-<body>
-  <main>
-    <h1>OpenGraph lexicon-config v4537</h1>
-    <p class="note">Bescheiden lexicon voor de voorbeeldzinnen-editor. De structure-config blijft de boom- en projectiebron met abstracte sources zoals subject/predicate/object; dit lexicon levert lexicale vulling, thematische rollen en eenvoudige selectieframes. Subject wordt in korte actieve zinnen als agens gelezen; object als patiens. V2/Wissel is een LEX-plaatsingsregel: de persoonsvorm vult slot 2; de oude basisplek wordt trace. Lidwoorden zijn verwijderd: de man → man; de hond → hond. Bewerk via <a class="button-link" href="lexicon-editor.html?v4537">lexicon-editor.html</a>; gebruik in <a class="button-link" href="examples-editor.html?v4537">examples-editor.html</a>.</p>
-
-    <section id="opengraph-lexicon-config" aria-label="Lexicon">
-      <h2>NP / N</h2>
-      <div class="lexicon-entry" data-id="man" data-label="MAN" data-lemma="man" data-cat="N" data-phrase="NP" data-kind="noun" data-roles="subject object" data-thematic-roles="agens patiens"><div class="entry-line">man → MAN</div><div class="meta">NP/N · subject/object · agens/patiens</div></div>
-      <div class="lexicon-entry" data-id="hond" data-label="HOND" data-lemma="hond" data-cat="N" data-phrase="NP" data-kind="noun" data-roles="subject object" data-thematic-roles="agens patiens"><div class="entry-line">hond → HOND</div><div class="meta">NP/N · subject/object · agens/patiens</div></div>
-      <div class="lexicon-entry" data-id="kat" data-label="KAT" data-lemma="kat" data-cat="N" data-phrase="NP" data-kind="noun" data-roles="subject object" data-thematic-roles="agens patiens"><div class="entry-line">kat → KAT</div><div class="meta">NP/N · subject/object · agens/patiens</div></div>
-      <div class="lexicon-entry" data-id="vrouw" data-label="VROUW" data-lemma="vrouw" data-cat="N" data-phrase="NP" data-kind="noun" data-roles="subject" data-thematic-roles="agens"><div class="entry-line">vrouw → VROUW</div><div class="meta">NP/N · subject · agens</div></div>
-      <div class="lexicon-entry" data-id="trui" data-label="TRUI" data-lemma="trui" data-cat="N" data-phrase="NP" data-kind="noun" data-roles="object" data-thematic-roles="patiens"><div class="entry-line">trui → TRUI</div><div class="meta">NP/N · object · patiens</div></div>
-
-      <h2>V</h2>
-      <div class="lexicon-entry" data-id="bijt" data-label="BIJT" data-lemma="bijten" data-cat="V" data-kind="verb" data-roles="predicate" data-default-role="predicate" data-source-default="predicate" data-frame-subjects="hond kat man vrouw" data-frame-objects="man hond kat vrouw" data-infinitive="BIJTEN" data-imperfectum="BEET" data-past="BEET" data-ovt="BEET" data-participle="GEBETEN"><div class="entry-line">bijt(en) → BIJT / OVT BEET / BIJTEN / VDW GEBETEN</div><div class="meta">V · predicaat · OVT=BEET · VDW=GEBETEN · agens=hond/kat/man/vrouw · patiens=man/hond/kat/vrouw</div></div>
-      <div class="lexicon-entry" data-id="breit" data-label="BREIT" data-lemma="breien" data-cat="V" data-kind="verb" data-roles="predicate" data-default-role="predicate" data-source-default="predicate" data-frame-subjects="vrouw" data-frame-objects="trui" data-infinitive="BREIEN" data-imperfectum="BREIDE" data-past="BREIDE" data-ovt="BREIDE" data-participle="GEBREID"><div class="entry-line">brei(en) → BREIT / OVT BREIDE / BREIEN / VDW GEBREID</div><div class="meta">V · predicaat · OVT=BREIDE · VDW=GEBREID · agens=vrouw · patiens=trui</div></div>
-
-      <h2>AUX</h2>
-      <div class="lexicon-entry" data-id="heeft" data-label="HEEFT" data-lemma="hebben" data-cat="AUX" data-kind="aux" data-slot-default="aux" data-roles="aux"><div class="entry-line">heeft</div><div class="meta">AUX · lokaal LEX-token</div></div>
-      <div class="lexicon-entry" data-id="hebben" data-label="HEBBEN" data-lemma="hebben" data-cat="AUX" data-kind="aux" data-slot-default="aux" data-roles="aux"><div class="entry-line">hebben</div><div class="meta">AUX · lokaal LEX-token</div></div>
-      <div class="lexicon-entry" data-id="is" data-label="IS" data-lemma="zijn" data-cat="AUX" data-kind="aux" data-slot-default="aux" data-roles="aux"><div class="entry-line">is</div><div class="meta">AUX · lokaal LEX-token</div></div>
-
-      <h2>COMP</h2>
-      <div class="lexicon-entry" data-id="omdat" data-label="OMDAT" data-lemma="omdat" data-cat="COMP" data-kind="comp" data-slot-default="comp"><div class="entry-line">omdat</div><div class="meta">COMP · slot 0</div></div>
-      <div class="lexicon-entry" data-id="dat" data-label="DAT" data-lemma="dat" data-cat="COMP" data-kind="comp" data-slot-default="comp"><div class="entry-line">dat</div><div class="meta">COMP · slot 0</div></div>
-    </section>
-  </main>
+<body><nav class="opengraph-return-nav" style="display:flex;gap:.5rem;flex-wrap:wrap;padding:.55rem .7rem;border-bottom:1px solid #cbd5e1;background:#f8fafc;position:sticky;top:0;z-index:50"><a href="index.html?screen=config" style="font-weight:800">← Terug naar: Config</a><a href="index.html" style="font-weight:800">← Terug naar: Main</a></nav>
+<main>
+<h1>OpenGraph lexicon-config v2.0.0-rc.33</h1>
+<p class="note">Bescheiden lexicon voor de voorbeeldzinnen-editor. De structure-config blijft de boom- en projectiebron met abstracte sources zoals subject/predicate/object; dit lexicon levert lexicale vulling, thematische rollen en eenvoudige selectieframes. Subject wordt in korte actieve zinnen als agens gelezen; object als patiens. V2/Wissel is een LEX-plaatsingsregel: de persoonsvorm vult slot 2; de oude basisplek wordt trace. Lidwoorden zijn verwijderd: de man → man; de hond → hond. Bewerk via <a class="button-link" href="lexicon-editor.html?v2.0.0-rc.33">lexicon-editor.html</a>; gebruik in <a class="button-link" href="examples-editor.html?v2.0.0-rc.33">examples-editor.html</a>.</p>
+<section aria-label="Lexicon" id="opengraph-lexicon-config">
+<h2>NP / N</h2>
+<div class="lexicon-entry" data-cat="N" data-id="man" data-kind="noun" data-label="MAN" data-lemma="man" data-phrase="NP" data-roles="subject object" data-thematic-roles="agens patiens"><div class="entry-line">man → MAN</div><div class="meta">NP/N · subject/object · agens/patiens</div></div>
+<div class="lexicon-entry" data-cat="N" data-id="hond" data-kind="noun" data-label="HOND" data-lemma="hond" data-phrase="NP" data-roles="subject object" data-thematic-roles="agens patiens"><div class="entry-line">hond → HOND</div><div class="meta">NP/N · subject/object · agens/patiens</div></div>
+<div class="lexicon-entry" data-cat="N" data-id="kat" data-kind="noun" data-label="KAT" data-lemma="kat" data-phrase="NP" data-roles="subject object" data-thematic-roles="agens patiens"><div class="entry-line">kat → KAT</div><div class="meta">NP/N · subject/object · agens/patiens</div></div>
+<div class="lexicon-entry" data-cat="N" data-id="vrouw" data-kind="noun" data-label="VROUW" data-lemma="vrouw" data-phrase="NP" data-roles="subject" data-thematic-roles="agens"><div class="entry-line">vrouw → VROUW</div><div class="meta">NP/N · subject · agens</div></div>
+<div class="lexicon-entry" data-cat="N" data-id="trui" data-kind="noun" data-label="TRUI" data-lemma="trui" data-phrase="NP" data-roles="object" data-thematic-roles="patiens"><div class="entry-line">trui → TRUI</div><div class="meta">NP/N · object · patiens</div></div>
+<h2>V</h2>
+<div class="lexicon-entry" data-cat="V" data-default-role="predicate" data-frame-objects="man hond kat vrouw" data-frame-subjects="hond kat man vrouw" data-id="bijt" data-imperfectum="BEET" data-infinitive="BIJTEN" data-kind="verb" data-label="BIJT" data-lemma="bijten" data-ovt="BEET" data-participle="GEBETEN" data-past="BEET" data-roles="predicate" data-source-default="predicate"><div class="entry-line">bijt(en) → BIJT / OVT BEET / BIJTEN / VDW GEBETEN</div><div class="meta">V · predicaat · OVT=BEET · VDW=GEBETEN · agens=hond/kat/man/vrouw · patiens=man/hond/kat/vrouw</div></div>
+<div class="lexicon-entry" data-cat="V" data-default-role="predicate" data-frame-objects="trui" data-frame-subjects="vrouw" data-id="breit" data-imperfectum="BREIDE" data-infinitive="BREIEN" data-kind="verb" data-label="BREIT" data-lemma="breien" data-ovt="BREIDE" data-participle="GEBREID" data-past="BREIDE" data-roles="predicate" data-source-default="predicate"><div class="entry-line">brei(en) → BREIT / OVT BREIDE / BREIEN / VDW GEBREID</div><div class="meta">V · predicaat · OVT=BREIDE · VDW=GEBREID · agens=vrouw · patiens=trui</div></div>
+<h2>AUX</h2>
+<div class="lexicon-entry" data-cat="AUX" data-id="heeft" data-kind="aux" data-label="HEEFT" data-lemma="hebben" data-roles="aux" data-slot-default="aux"><div class="entry-line">heeft</div><div class="meta">AUX · lokaal LEX-token</div></div>
+<div class="lexicon-entry" data-cat="AUX" data-id="hebben" data-kind="aux" data-label="HEBBEN" data-lemma="hebben" data-roles="aux" data-slot-default="aux"><div class="entry-line">hebben</div><div class="meta">AUX · lokaal LEX-token</div></div>
+<div class="lexicon-entry" data-cat="AUX" data-id="is" data-kind="aux" data-label="IS" data-lemma="zijn" data-roles="aux" data-slot-default="aux"><div class="entry-line">is</div><div class="meta">AUX · lokaal LEX-token</div></div>
+<h2>ADV / PARTIKEL</h2>
+<div class="lexicon-entry" data-cat="ADV" data-id="misschien" data-kind="adv" data-label="MISSCHIEN" data-lemma="misschien" data-phrase="AdvP" data-roles="modifier">
+<div class="entry-line">misschien → MISSCHIEN</div><div class="meta">één lemma · meerdere analyses mogelijk per zinsinstantie</div>
+<ol aria-label="Gebruiksprofielen voor misschien" class="usage-profiles">
+<li class="usage-profile" data-default="true" data-effects="origin scope log-projection" data-function="modaliteit" data-id="modal-proposition" data-interval="S-O" data-origin="LOG" data-scope="propositie">modale propositie-operator · LOG</li>
+<li class="usage-profile" data-effects="origin scope" data-function="discourse-hedge" data-id="discourse-hedge" data-interval="before-S" data-origin="LEX" data-scope="uiting">discourse-hedge · directe LEX-insertie</li>
+</ol>
+</div>
+<div class="lexicon-entry" data-cat="PART" data-id="wel" data-kind="adv" data-label="WEL" data-lemma="wel" data-phrase="AdvP" data-roles="modifier">
+<div class="entry-line">wel → WEL</div><div class="meta">partikel, polariteit of focus; keuze is contextgebonden</div>
+<ol aria-label="Gebruiksprofielen voor wel" class="usage-profiles">
+<li class="usage-profile" data-default="true" data-effects="origin grouping" data-function="schakeringspartikel" data-id="particle-local" data-interval="S-O" data-origin="LEX" data-scope="lokale-groep">lokaal partikel · directe LEX-insertie</li>
+<li class="usage-profile" data-effects="origin scope log-projection" data-function="polariteit" data-id="polarity-operator" data-interval="O-V" data-origin="LOG" data-scope="propositie">polariteitsoperator · LOG→LEX</li>
+<li class="usage-profile" data-effects="scope grouping" data-function="focus" data-id="focus-particle" data-interval="S-O" data-origin="LEX" data-scope="focus-target">focuspartikel · directe LEX-insertie</li>
+</ol>
+</div>
+<div class="lexicon-entry" data-cat="ADV" data-id="vaak" data-kind="adv" data-label="VAAK" data-lemma="vaak" data-phrase="AdvP" data-roles="modifier">
+<div class="entry-line">vaak → VAAK</div><div class="meta">frequentie van de gebeurtenis</div>
+<ol aria-label="Gebruiksprofielen voor vaak" class="usage-profiles">
+<li class="usage-profile" data-default="true" data-effects="scope log-projection" data-function="frequentie" data-id="frequency-event" data-interval="O-V" data-origin="LOG" data-scope="gebeurtenis">gebeurtenisfrequentie · LOG→LEX</li>
+</ol>
+</div>
+<h2>Meerwoordconstructies</h2>
+<div class="lexicon-construction" data-default-profile="mixed-modal-particle" data-id="misschien-wel" data-members="misschien wel" data-visible-slots="1">
+<div class="entry-line">misschien + wel → één zichtbare LEX-groep</div>
+<div class="meta">de zinsinstantie kiest één groepsprofiel; de lemma's blijven afzonderlijk beschikbaar</div>
+<ol aria-label="Groepsprofielen voor misschien wel" class="construction-profiles">
+<li class="construction-profile" data-components="misschien:LOG wel:LEX" data-effects="origin log-projection components" data-function="modale-groep" data-id="mixed-modal-particle" data-interval="S-O" data-origin="LOG+LEX" data-recommended="true" data-scope="propositie">voorstel: misschien=LOG, wel=LEX</li>
+<li class="construction-profile" data-components="misschien:LOG wel:LOG" data-effects="origin log-projection components" data-function="modale-operator" data-id="group-modal-log" data-interval="S-O" data-origin="LOG" data-scope="propositie">hele groep als LOG-operator</li>
+<li class="construction-profile" data-components="misschien:LEX wel:LEX" data-effects="origin scope components" data-function="lexicale-schakeringsgroep" data-id="group-lexical-particle" data-interval="S-O" data-origin="LEX" data-scope="lokale-groep">hele groep direct in LEX</li>
+</ol>
+</div>
+<h2>COMP</h2>
+<div class="lexicon-entry" data-cat="COMP" data-id="omdat" data-kind="comp" data-label="OMDAT" data-lemma="omdat" data-slot-default="comp"><div class="entry-line">omdat</div><div class="meta">COMP · slot 0</div></div>
+<div class="lexicon-entry" data-cat="COMP" data-id="dat" data-kind="comp" data-label="DAT" data-lemma="dat" data-slot-default="comp"><div class="entry-line">dat</div><div class="meta">COMP · slot 0</div></div>
+</section>
+</main>
 </body>
 </html>

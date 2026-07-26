@@ -1,5 +1,5 @@
 
-## v2.0.0-rc.26 — LinkedIn-video met echte 30 fps
+## v2.0.0-rc.29 — LinkedIn-video met echte 30 fps
 
 - De aangeleverde rc.24-WebM bleek slechts 16 frames over circa 11,8 seconden
   te bevatten: ongeveer 2,6 fps en een bitrate onder 192 kbps.
@@ -61,7 +61,7 @@
 - De westelijke LEX-as wordt niet meer met een vaste minimum-x naar de boom
   teruggeduwd. De volledige zichtbare LEX-laag reserveert nu een eigen strook
   plus 48 SVG-eenheden tussenruimte vóór de buitenste S/CLAUSE-box.
-- De geometrische rendercontrole bevestigt deze goot voor zowel Syntax als FT,
+- De geometrische rendercontrole bevestigt deze goot voor zowel Syntax als Functional,
   ook bij de lange zin met `MISSCHIEN WEL` en `VAAK`.
 - De Bijwoord-dropdown bevat 25 voorbeelden plus `Geen bijwoord`.
   `MISSCHIEN WEL`, `AF EN TOE`, `OP DIT MOMENT` en
@@ -104,7 +104,7 @@
   `Beeld`, met een korte uitleg van MAX.
 - `Hoofdvenster` heet voortaan `Venstervulling`: dit is de benutting van het
   beschikbare appvenster, geen apart venster.
-- De dropdowns `Zin`, `Bijwoord`, `Syntax / FT` en `Projecties` staan boven de
+- De dropdowns `Zin`, `Bijwoord`, `Syntax / Functional` en `Projecties` staan boven de
   vaste Play-balk en boven latere topmenu-items; hun inhoud wordt niet meer
   visueel afgedekt.
 - Play-fase `2/3 ruimte` reserveert intern dezelfde LOG-afgeleide LEX-ruimte,
@@ -444,7 +444,7 @@
 - `__pycache__` en `.pyc` uit de ZIP verwijderd.
 - `.gitignore` toegevoegd voor lokale cachebestanden.
 - `server_nocache.py` accepteert optioneel een poortargument en stuurt extra no-cache/nosniff headers.
-- `start-local-viewer.bat` zet `PYTHONDONTWRITEBYTECODE=1`.
+- `start_local_viewer.bat` zet `PYTHONDONTWRITEBYTECODE=1`.
 - Inline startdiagnose toegevoegd.
 
 ## v4402

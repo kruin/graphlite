@@ -46,8 +46,8 @@ if "Math.max(120, leftTreePx - 168)" in JS:
     errors.append("oude LEX-klem kan de S/CLAUSE-vrijstrook nog overschrijven")
 if "querySelectorAll('[data-readme-slide]')" not in JS:
     errors.append("generieke README-slideafhandeling ontbreekt")
-if INDEX.count("data-readme-slide") != 1:
-    errors.append("de README-intro moet precies één zichtbaar specificatiebeeld bevatten")
+if INDEX.count("data-readme-slide") != 4:
+    errors.append("de README-intro moet twee probleembomen en twee oplossingsbomen bevatten")
 
 required_css = [
     ".lex-trace-tick",
@@ -69,6 +69,6 @@ if errors:
 
 print(
     "PROJECTIE-OPRUIMCHECK: OK "
-    f"({fallback_count + 1} bijwoordkeuzes; 1 introbeeld; directe LOG; "
+    f"({fallback_count + 1} bijwoordkeuzes; 4 introbeelden; directe LOG; "
     "gecombineerde LEX met 48 px S/CLAUSE-vrijstrook)"
 )

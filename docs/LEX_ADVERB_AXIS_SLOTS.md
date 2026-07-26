@@ -1,4 +1,4 @@
-# Bijwoorden als LOG-minors · v2.0.0-rc.26
+# Bijwoorden als LOG-minors · v2.0.0-rc.33
 
 ## Regel
 
@@ -13,7 +13,7 @@ De minor:
 - bezet één vast LOG-slot;
 - vergroot de afstand tussen O en V met één;
 - projecteert naar dezelfde neutrale LEX-rij;
-- is geen centrale Syntax- of FT-knoop.
+- is geen centrale Syntax- of Functional-knoop.
 
 ## Configuratie
 

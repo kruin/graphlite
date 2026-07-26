@@ -1,13 +1,14 @@
-<!doctype html>
+<!DOCTYPE html>
+
 <html lang="nl">
 <head>
-  <meta charset="utf-8">
-  <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
-  <meta http-equiv="Pragma" content="no-cache">
-  <meta http-equiv="Expires" content="0">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>OpenGraph structure-editor v2.0.0-rc.26</title>
-  <style>
+<meta charset="utf-8"/>
+<meta content="no-store, no-cache, must-revalidate, max-age=0" http-equiv="Cache-Control"/>
+<meta content="no-cache" http-equiv="Pragma"/>
+<meta content="0" http-equiv="Expires"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>OpenGraph structure-editor v2.0.0-rc.33</title>
+<style>
     :root { color-scheme: light; --bg:#f8fafc; --panel:#fff; --text:#0f172a; --muted:#64748b; --line:#cbd5e1; --accent:#1d4ed8; --danger:#b91c1c; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
     * { box-sizing:border-box; }
     body { margin:0; background:var(--bg); color:var(--text); }
@@ -35,66 +36,62 @@
     code { background:#e2e8f0; border-radius:6px; padding:2px 5px; }
   </style>
 </head>
-<body>
-  <header>
-    <h1>OpenGraph structure-editor <span>v2.0.0-rc.26</span></h1>
-    <p>Bewerk eerst de structure-config. De viewer én de voorbeeldzinnen-editor lezen daarna dezelfde syntax-, functional- en LOG-config. LOG-majors/minors bepalen met vaste slotafstand de neutrale LEX-basis; de voorbeeldzin valideert alleen.</p>
-  </header>
-
-  <main>
-    <section class="panel">
-      <div class="panel-header">
-        <h2>Config-bron</h2>
-        <div class="button-row">
-          <a class="button-link" href="index.html?v2.0.0-rc.26">Viewer</a>
-          <a class="button-link" href="examples-editor.html?v2.0.0-rc.26">Voorbeeldeditor</a>
-          <a class="button-link" href="structure-config.html?v2.0.0-rc.26">structure-config.html</a>
-          <a class="button-link" href="lexicon-config.html?v2.0.0-rc.26">lexicon-config.html</a>
-        </div>
-      </div>
-      <div class="panel-body">
-        <div class="notice">Regelformaat: <code>id:LABEL [cat=X] -> child1 child2</code>. Structurele leaf: <code>subj:{subject} [leaf role=subject source=subject cat=N]</code>. De LOG-slotconfig blijft als leesbare HTML bewerkbaar en wordt bij export round-trip behouden. Zichtbare woorden komen uit lexicon-config.html.</div>
-        <div class="button-row" style="margin-top:12px">
-          <button id="loadButton" type="button">Laad actuele structure-config</button>
-          <button id="defaultButton" type="button">Reset basisconfig</button>
-          <button id="vpClusterButton" type="button">Regelset perfectum: VP → NP VP; VP → pv VDW</button>
-          <label class="file-button">Importeer HTML<input id="fileInput" type="file" accept="text/html,.html"></label>
-          <button id="downloadButton" class="primary" type="button">Download structure-config.html</button>
-          <button id="saveAsButton" type="button">Opslaan als...</button>
-        </div>
-      </div>
-    </section>
-
-    <section class="grid">
-      <div class="panel">
-        <div class="panel-header"><h2>Syntax-config</h2></div>
-        <div class="panel-body">
-          <label class="field"><span>Syntaxregels</span><textarea id="syntaxText" spellcheck="false"></textarea></label>
-          <p class="help">Perfectum-regelset: <code>vp:VP -> np-obj vp-perfectum</code> en <code>vp-perfectum:VP -> pv vdw</code>. <code>pv</code> projecteert op het hulpwerkwoord, <code>vdw</code> op het voltooid deelwoord. Lexicale vulling zoals <code>heeft</code> en <code>gebeten</code> staat in lexicon-config.html.</p>
-        </div>
-      </div>
-      <div class="panel">
-        <div class="panel-header"><h2>Functional-config</h2></div>
-        <div class="panel-body">
-          <label class="field"><span>Functionele regels</span><textarea id="functionalText" spellcheck="false"></textarea></label>
-          <p class="help">Functioneel: <code>CLAUSE -> PRED ARG-STRUCT</code>. Het predicaat staat dus in een eigen PRED-subtree; de argumenten staan samen in een eigen ARG-STRUCT-subtree. Daardoor kunnen PRED en argumentstructuur afzonderlijk vrij geplaatst worden. Functionele leaves leveren dezelfde abstracte LEX-sources: <code>subject</code>, <code>predicate</code>, <code>object</code>.</p>
-        </div>
-      </div>
-    </section>
-
-    <section class="panel">
-      <div class="panel-header"><h2>LOG, LEX-slots en validatie</h2><input id="status" value="—" disabled></div>
-      <div class="panel-body grid">
-        <label class="field"><span>LOG-slotconfig (HTML)</span><textarea id="logText" spellcheck="false"></textarea></label>
-        <label class="field"><span>LEX-slots</span><textarea id="slotsText" spellcheck="false"></textarea></label>
-        <label class="field"><span>Structurele sources uit syntax/functional-config</span><textarea id="lexiconText" spellcheck="false" readonly></textarea></label>
-        <label class="field"><span>HTML-preview</span><textarea id="htmlOutput" spellcheck="false"></textarea></label>
-      </div>
-    </section>
-  </main>
-
-  <script>
-    const VERSION = 'v2.0.0-rc.26';
+<body><nav class="opengraph-return-nav" style="display:flex;gap:.5rem;flex-wrap:wrap;padding:.55rem .7rem;border-bottom:1px solid #cbd5e1;background:#f8fafc;position:sticky;top:0;z-index:50"><a href="index.html?screen=config" style="font-weight:800">← Terug naar: Config</a><a href="index.html" style="font-weight:800">← Terug naar: Main</a></nav>
+<header>
+<h1>OpenGraph structure-editor <span>v2.0.0-rc.33</span></h1>
+<p>Bewerk eerst de structure-config. De viewer én de voorbeeldzinnen-editor lezen daarna dezelfde syntax-, functional- en LOG-config. LOG-majors/minors bepalen met vaste slotafstand de neutrale LEX-basis; de voorbeeldzin valideert alleen.</p>
+</header>
+<main>
+<section class="panel">
+<div class="panel-header">
+<h2>Config-bron</h2>
+<div class="button-row">
+<a class="button-link" href="index.html?v2.0.0-rc.33">Viewer</a>
+<a class="button-link" href="examples-editor.html?v2.0.0-rc.33">Voorbeeldeditor</a>
+<a class="button-link" href="structure-config.html?v2.0.0-rc.33">structure-config.html</a>
+<a class="button-link" href="lexicon-config.html?v2.0.0-rc.33">lexicon-config.html</a>
+</div>
+</div>
+<div class="panel-body">
+<div class="notice">Regelformaat: <code>id:LABEL [cat=X] -&gt; child1 child2</code>. Structurele leaf: <code>subj:{subject} [leaf role=subject source=subject cat=N]</code>. De LOG-slotconfig blijft als leesbare HTML bewerkbaar en wordt bij export round-trip behouden. Zichtbare woorden komen uit lexicon-config.html.</div>
+<div class="button-row" style="margin-top:12px">
+<button id="loadButton" type="button">Laad actuele structure-config</button>
+<button id="defaultButton" type="button">Reset basisconfig</button>
+<button id="vpClusterButton" type="button">Regelset perfectum: VP → NP VP; VP → pv VDW</button>
+<label class="file-button">Importeer HTML<input accept="text/html,.html" id="fileInput" type="file"/></label>
+<button class="primary" id="downloadButton" type="button">Download structure-config.html</button>
+<button id="saveAsButton" type="button">Opslaan als...</button>
+</div>
+</div>
+</section>
+<section class="grid">
+<div class="panel">
+<div class="panel-header"><h2>Syntax-config</h2></div>
+<div class="panel-body">
+<label class="field"><span>Syntaxregels</span><textarea id="syntaxText" spellcheck="false"></textarea></label>
+<p class="help">Perfectum-regelset: <code>vp:VP -&gt; np-obj vp-perfectum</code> en <code>vp-perfectum:VP -&gt; pv vdw</code>. <code>pv</code> projecteert op het hulpwerkwoord, <code>vdw</code> op het voltooid deelwoord. Lexicale vulling zoals <code>heeft</code> en <code>gebeten</code> staat in lexicon-config.html.</p>
+</div>
+</div>
+<div class="panel">
+<div class="panel-header"><h2>Functional-config</h2></div>
+<div class="panel-body">
+<label class="field"><span>Functionele regels</span><textarea id="functionalText" spellcheck="false"></textarea></label>
+<p class="help">Functioneel: <code>CLAUSE -&gt; PRED ARG-STRUCT</code>. Het predicaat staat dus in een eigen PRED-subtree; de argumenten staan samen in een eigen ARG-STRUCT-subtree. Daardoor kunnen PRED en argumentstructuur afzonderlijk vrij geplaatst worden. Functionele leaves leveren dezelfde abstracte LEX-sources: <code>subject</code>, <code>predicate</code>, <code>object</code>.</p>
+</div>
+</div>
+</section>
+<section class="panel">
+<div class="panel-header"><h2>LOG, LEX-slots en validatie</h2><input disabled="" id="status" value="—"/></div>
+<div class="panel-body grid">
+<label class="field"><span>LOG-slotconfig (HTML)</span><textarea id="logText" spellcheck="false"></textarea></label>
+<label class="field"><span>LEX-slots</span><textarea id="slotsText" spellcheck="false"></textarea></label>
+<label class="field"><span>Structurele sources uit syntax/functional-config</span><textarea id="lexiconText" readonly="" spellcheck="false"></textarea></label>
+<label class="field"><span>HTML-preview</span><textarea id="htmlOutput" spellcheck="false"></textarea></label>
+</div>
+</section>
+</main>
+<script>
+    const VERSION = 'v2.0.0-rc.33';
     const els = {
       syntax: document.getElementById('syntaxText'),
       functional: document.getElementById('functionalText'),
@@ -266,7 +263,7 @@ aux:AUX / pv`;
 <body>
   <main>
     <h1>OpenGraph structure-config ${VERSION}</h1>
-    <p class="note">Deze HTML-file is de structurele bron voor viewer en voorbeeldeditor. De structure-config bevat structurele posities plus de normatieve LOG-slotconfig; lexicale vulling staat in lexicon-config.html. Bewerk bij voorkeur via <a class="button-link" href="structure-editor.html?v2.0.0-rc.26">structure-editor.html</a>.</p>
+    <p class="note">Deze HTML-file is de structurele bron voor viewer en voorbeeldeditor. De structure-config bevat structurele posities plus de normatieve LOG-slotconfig; lexicale vulling staat in lexicon-config.html. Bewerk bij voorkeur via <a class="button-link" href="structure-editor.html?v2.0.0-rc.33">structure-editor.html</a>.</p>
 
     <section id="opengraph-syntax-config" data-root="${escapeHtml(syntaxRoot)}" aria-label="Syntax-config">
       <h2>Syntax-config</h2>

@@ -1,6 +1,6 @@
 # Projectie-master-spec · horizontale LEX-projectie → één bepaald einddoel
 
-Normatieve projectiespecificatie voor OpenGraph Lite Viewer `v2.0.0-rc.26`.
+Normatieve projectiespecificatie voor OpenGraph Lite Viewer `v2.0.0-rc.33`.
 
 ## 1. Autoriteit en afleidingsrichting
 
@@ -91,7 +91,7 @@ Pas daarna worden expliciete LEX-regels logisch toegepast:
 De presentatie voegt deze twee logische beslissingen samen: het woord
 verplaatst rechtstreeks van zijn bronanker naar het uiteindelijke doel. Een
 expliciete topic-/V2-regel veroorzaakt dus geen tweede pijl en geen tweede
-trace. De SYNT- en FT-bronstructuren worden niet gemuteerd.
+trace. De SYNT- en Functional-bronstructuren worden niet gemuteerd.
 
 ## 5. Configuratiecontract
 
@@ -215,3 +215,7 @@ scope-/compatibiliteitsmetadata gelezen, maar zijn niet langer
 plaatsingsautoriteit zodra `data-authority="LOG"` en
 `data-lex-position-source="LOG"` actief zijn. Ook dan blijft
 `data-lex-projection-origin="SOURCE-Y"` de projectieoorsprong bepalen.
+
+## Profielbron en projectieselectie
+
+Voor iedere insertie wordt eerst het effectieve gebruiksprofiel bepaald. `origin=LOG` en `origin=LOG+LEX` worden in de LOG-slotsequentie opgenomen; `origin=LEX` niet. De afzonderlijke LEX-plaatsingssequentie bevat alle origins. Hierdoor kan dezelfde lineaire bestemming twee verschillende afleidingsmechanismen hebben zonder dat de centrale boom verandert.

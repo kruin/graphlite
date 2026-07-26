@@ -24,4 +24,4 @@ Een lokale Chromium-render kon in deze container niet worden uitgevoerd: lokale 
 2. `Assen` verschijnt alleen na keuze `Bron`.
 3. `Menu` toont NL/EN, Help en Config volledig leesbaar.
 4. Openen/sluiten van `Assen` en `Menu` verandert de boompositie niet.
-5. Syntax en FT behouden dezelfde viewport bij alle projectiekeuzes.
+5. Syntax en Functional behouden dezelfde viewport bij alle projectiekeuzes.

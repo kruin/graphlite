@@ -1,4 +1,4 @@
-# Actuele contractlaag · v2.0.0-rc.26
+# Actuele contractlaag · v2.0.0-rc.33
 
 De kern is nu `bronknoop → horizontale LEX-projectie → LOG-doel via
 LEX-Wissel → expliciete Wissels → voorbeeldzin als validatie`. LOG gebruikt
@@ -6,7 +6,7 @@ vaste slots; iedere bijwoord-minor vergroot de relevante majorafstand. LOG
 bepaalt doelrijen, nooit de bronhoogte van de projectie. De voorbeeldzin
 stuurt de layout niet. Bij automatische plaatsing bepaalt `.log-class-config`
 het interval; oude voorbeeldpositiehints worden genegeerd.
-`Syntax → FT` zijn centrale views en `LEX / SYNT / LOG` named
+`Syntax → Functional` zijn centrale views en `LEX / SYNT / LOG` named
 projections. Onderstaande tekst is historisch waar zij hiermee botst.
 
 ---
