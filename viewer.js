@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'v2.0.0-rc.33';
+  const VERSION = 'v2.0.0-rc.37';
   const OPN_FORMAT_VERSION = '1.0';
   const OPN_DOCUMENT_TYPE = 'opengraph-document';
   const PARADATA_EVENT_LIMIT = 250;
@@ -17,6 +17,32 @@
   const CANVAS_GUIDE_TEXT_VISIBLE = false;
   const CONFIG_STORAGE_KEY = 'opengraph_saved_config_v1014';
   const CONFIG_LOG_KEY = 'opengraph_local_config_log_v1014';
+  const INSERTION_AXIS_DEFINITIONS = Object.freeze({
+    lex: Object.freeze({ id: 'lex', label: 'LEX', defaultEnabled: false }),
+    synt: Object.freeze({ id: 'synt', label: 'SYNT', defaultEnabled: false }),
+    log: Object.freeze({ id: 'log', label: 'LOG', defaultEnabled: false })
+  });
+  const DEFAULT_INSERTION_AXES = Object.freeze(
+    Object.fromEntries(Object.values(INSERTION_AXIS_DEFINITIONS).map(axis => [axis.id, axis.defaultEnabled]))
+  );
+  const PRECONFIG_CANDIDATES = Object.freeze([
+    Object.freeze({ id: 'movement', label: 'Verplaatsing per as', labelEn: 'Movement per axis' }),
+    Object.freeze({ id: 'empty-positions', label: 'Lege posities en sporen per as', labelEn: 'Empty positions and traces per axis' }),
+    Object.freeze({ id: 'axis-routes', label: 'Bron-naar-doel-koppelingen', labelEn: 'Source-to-target axis routes' }),
+    Object.freeze({ id: 'host-scope', label: 'Host- en scoperegels', labelEn: 'Host and scope rules' })
+  ]);
+  const FEATURE_DEFINITIONS = Object.freeze({
+    adverbs: Object.freeze({
+      id: 'adverbs',
+      label: 'Bijwoorden',
+      labelEn: 'Adverbs',
+      defaultEnabled: false,
+      insertionAxes: Object.freeze(['lex', 'log'])
+    })
+  });
+  const DEFAULT_FEATURES = Object.freeze(
+    Object.fromEntries(Object.values(FEATURE_DEFINITIONS).map(feature => [feature.id, feature.defaultEnabled]))
+  );
 
 
   const LANGUAGE_OPTIONS = [
@@ -961,6 +987,8 @@
     }
   ];
 
+  let ALL_EXAMPLES = EXAMPLES.slice();
+
   const LEX_RULES = [
     { id: 'hoofdzininvariant', label: 'hoofdzin V2: subject/topic – pv/predicaat – object · Wissel' },
     { id: 'bijzin-omdat', label: 'bijzin: Comp/(om)dat + subject + object + predicaat · geen V2' },
@@ -1567,10 +1595,7 @@
     ['adv-focus-alleen-np', 'ALLEEN HOND BIJT MAN', 'FOCUSPARTIKEL', 'FOCUS_TARGET', 'NP', 'functional:focus-default'],
     ['adv-focus-ook-np', 'OOK HOND BIJT MAN', 'FOCUSPARTIKEL', 'FOCUS_TARGET', 'NP', 'functional:focus-default']
   ];
-  let ADVERB_OPTIONS = [
-    NO_ADVERB_OPTION,
-    ...ADVERB_FALLBACK_ROWS.map((record, index) => makeAdverbOptionFromRecord(record, index)).filter(Boolean)
-  ];
+  let ADVERB_OPTIONS = [NO_ADVERB_OPTION];
 
   function baseStructureConfig() {
     return {
@@ -1655,7 +1680,7 @@
 
   const LEXICON_USAGE_PROFILES = new Map();
   const LEXICON_CONSTRUCTIONS = new Map();
-  const LEX_ANALYSIS_STORAGE_KEY = 'opengraph_lex_analysis_choices_v2.0.0-rc.33';
+  const LEX_ANALYSIS_STORAGE_KEY = 'opengraph_lex_analysis_choices_v2.0.0-rc.37';
 
   function normalizeInsertionOrigin(value) {
     const origin = String(value || 'LOG').trim().toUpperCase().replace('MIXED', 'LOG+LEX');
@@ -1708,6 +1733,8 @@
 
   const state = {
     example: EXAMPLES[0],
+    preconfig: { insertion: { ...DEFAULT_INSERTION_AXES } },
+    features: { ...DEFAULT_FEATURES },
     language: (function(){ try { return normalizeLanguage(localStorage.getItem('opengraph_language')); } catch (_err) { return DEFAULT_LANGUAGE; } })(),
     projection: 'axes',
     sourceAxes: (function(){
@@ -1768,6 +1795,7 @@
     paneSplitManual: false,
     rightMenuWidth: null,
     viewportMode: initialViewportMode(),
+    helpLayoutMode: (function(){ try { const value = localStorage.getItem('opengraph_help_layout_mode'); return ['auto','stacked','side'].includes(value) ? value : 'auto'; } catch (_err) { return 'auto'; } })(),
     paneSplitDrag: null,
     canvasPanEnabled: true,
     documentMetadata: null,
@@ -1775,6 +1803,193 @@
     paradataSessionId: (globalThis.crypto?.randomUUID?.() || `session-${Date.now()}-${Math.random().toString(16).slice(2)}`),
     paradataStartedAt: new Date().toISOString()
   };
+
+  function insertionAxisEnabled(axisId) {
+    return state.preconfig?.insertion?.[axisId] === true;
+  }
+
+  function enabledInsertionAxes() {
+    return Object.keys(INSERTION_AXIS_DEFINITIONS).filter(insertionAxisEnabled);
+  }
+
+  function insertionPreconfigSnapshot() {
+    return {
+      insertion: Object.fromEntries(
+        Object.keys(INSERTION_AXIS_DEFINITIONS).map(axisId => [axisId, insertionAxisEnabled(axisId)])
+      )
+    };
+  }
+
+  function featureInsertionAxes(featureId) {
+    const axes = FEATURE_DEFINITIONS[featureId]?.insertionAxes;
+    return Array.isArray(axes) ? axes : [];
+  }
+
+  function featureRequirementsMet(featureId) {
+    return featureInsertionAxes(featureId).every(insertionAxisEnabled);
+  }
+
+  function featureEnabled(featureId) {
+    return state.features?.[featureId] === true && featureRequirementsMet(featureId);
+  }
+
+  function exampleRequiresAdverbs(example = {}) {
+    return !!example?.adverb?.word
+      || (Array.isArray(example?.lexInsertions) && example.lexInsertions.length > 0);
+  }
+
+  function refreshExamplesForFeatures(preferredId = state.example?.id) {
+    const available = featureEnabled('adverbs')
+      ? ALL_EXAMPLES
+      : ALL_EXAMPLES.filter(example => !exampleRequiresAdverbs(example));
+    EXAMPLES = available.length ? available : ALL_EXAMPLES.slice(0, 1);
+    state.example = EXAMPLES.find(example => example.id === preferredId) || EXAMPLES[0];
+  }
+
+  function resetAdverbFeatureState() {
+    state.selectedAdverbId = 'none';
+    state.useExampleLexInsertions = false;
+    state.lexFreeSlotCount = 0;
+    state.lexInsertionContent = 'empty';
+    state.lexFreeSlotPlacement = 'above-vp';
+    state.logInsertionInterval = 'auto';
+    state.lexAnalysisChoices = {};
+    state.documentMetadata = null;
+    ADVERB_OPTIONS = [NO_ADVERB_OPTION];
+    LEXICON_USAGE_PROFILES.clear();
+    LEXICON_CONSTRUCTIONS.clear();
+    try { localStorage.removeItem(LEX_ANALYSIS_STORAGE_KEY); } catch (_err) {}
+    const ambiguityPanel = document.getElementById('lexAmbiguityPanel');
+    if (ambiguityPanel) ambiguityPanel.classList.add('hidden');
+  }
+
+  function syncFeatureDocumentationLinks() {
+    const profile = featureEnabled('adverbs') ? 'extras' : 'base';
+    document.querySelectorAll('a[href*="docs/docs-home.html"]').forEach(link => {
+      link.href = `docs/docs-home.html?ogv=${encodeURIComponent(VERSION)}&profile=${profile}`;
+    });
+    document.querySelectorAll('a[href]').forEach(link => {
+      const raw = link.getAttribute('href') || '';
+      const path = raw.split('?')[0];
+      if (!/(?:^|\/)(?:examples-input|examples-editor|lexicon-config|lexicon-editor|structure-config|structure-editor)\.html$/i.test(path)) return;
+      link.href = `${path}?ogv=${encodeURIComponent(VERSION)}&profile=${profile}`;
+    });
+  }
+
+  function syncPreconfigControls() {
+    const enabledAxes = enabledInsertionAxes();
+    Object.keys(INSERTION_AXIS_DEFINITIONS).forEach(axisId => {
+      const input = document.getElementById(`insertionAxis${axisId.toUpperCase()}Input`);
+      if (input) input.checked = insertionAxisEnabled(axisId);
+      document.body.classList.toggle(`insertion-${axisId}-on`, insertionAxisEnabled(axisId));
+      document.body.classList.toggle(`insertion-${axisId}-off`, !insertionAxisEnabled(axisId));
+    });
+    const status = document.getElementById('preconfigInsertionStatus');
+    if (status) {
+      const list = enabledAxes.map(axisId => INSERTION_AXIS_DEFINITIONS[axisId].label).join(' + ');
+      status.textContent = list
+        ? (isEnglish() ? `Insertion enabled on: ${list}.` : `Insertie ingeschakeld op: ${list}.`)
+        : (isEnglish() ? 'Insertion disabled on every axis.' : 'Insertie staat op alle assen uit.');
+    }
+    const presetButton = document.getElementById('insertionLexLogPresetButton');
+    if (presetButton) presetButton.disabled = insertionAxisEnabled('lex') && insertionAxisEnabled('log');
+    const allOffButton = document.getElementById('insertionAllOffButton');
+    if (allOffButton) allOffButton.disabled = enabledAxes.length === 0;
+  }
+
+  function applyFeatureVisibility() {
+    const adverbsEnabled = featureEnabled('adverbs');
+    syncPreconfigControls();
+    document.body.classList.toggle('feature-adverbs-on', adverbsEnabled);
+    document.body.classList.toggle('feature-adverbs-off', !adverbsEnabled);
+    document.querySelectorAll('[data-feature="adverbs"]').forEach(node => {
+      node.hidden = !adverbsEnabled;
+      node.setAttribute('aria-hidden', String(!adverbsEnabled));
+    });
+    document.querySelectorAll('[data-feature-absent="adverbs"]').forEach(node => {
+      node.hidden = adverbsEnabled;
+      node.setAttribute('aria-hidden', String(adverbsEnabled));
+    });
+    const featureInput = document.getElementById('featureAdverbsInput');
+    const adverbRequirementsMet = featureRequirementsMet('adverbs');
+    if (featureInput) {
+      featureInput.checked = adverbsEnabled;
+      featureInput.disabled = !adverbRequirementsMet;
+    }
+    const featureChoice = featureInput?.closest('.feature-extra-choice');
+    if (featureChoice) featureChoice.classList.toggle('requirements-missing', !adverbRequirementsMet);
+    const requirementStatus = document.getElementById('featureAdverbsRequirementStatus');
+    if (requirementStatus) {
+      requirementStatus.textContent = adverbRequirementsMet
+        ? (isEnglish() ? 'Pre-config ready: LEX + LOG insertion.' : 'Voorconfig gereed: insertie LEX + LOG.')
+        : (isEnglish() ? 'First enable insertion on LEX and LOG in Pre-config.' : 'Schakel eerst insertie op LEX en LOG in bij Voorconfig.');
+    }
+    const status = document.getElementById('featureProfileStatus');
+    if (status) {
+      status.textContent = adverbsEnabled
+        ? (isEnglish() ? 'Custom profile · Adverbs enabled' : 'Eigen profiel · Bijwoorden ingeschakeld')
+        : (isEnglish() ? 'OGN Base active · no applications enabled' : 'OGN Basis actief · geen toepassingen ingeschakeld');
+    }
+    const logLexDashboardTitle = document.querySelector('[data-config-log-lex-title]');
+    if (logLexDashboardTitle) {
+      logLexDashboardTitle.textContent = adverbsEnabled ? 'LEX & bijwoorden' : 'LEX';
+    }
+    syncFeatureDocumentationLinks();
+  }
+
+  async function setFeatureEnabled(featureId, enabled, options = {}) {
+    if (!FEATURE_DEFINITIONS[featureId]) return false;
+    if (enabled && !featureRequirementsMet(featureId)) {
+      state.features[featureId] = false;
+      applyFeatureVisibility();
+      return false;
+    }
+    state.features[featureId] = !!enabled;
+    if (featureId === 'adverbs') {
+      if (enabled) {
+        ADVERB_OPTIONS = [
+          NO_ADVERB_OPTION,
+          ...ADVERB_FALLBACK_ROWS.map((record, index) => makeAdverbOptionFromRecord(record, index)).filter(Boolean)
+        ];
+        if (options.loadResources !== false) {
+          await loadLexiconUsageProfiles();
+          await loadAdverbOptionsFromHtml();
+        }
+      } else {
+        resetAdverbFeatureState();
+      }
+      refreshExamplesForFeatures();
+      applyExampleAdverbDefaults();
+      stopGrowthPlayback();
+      state.growthStep = 0;
+      state.growthEnabled = false;
+      resetManualViewBox();
+    }
+    applyFeatureVisibility();
+    syncControls();
+    applyLanguage();
+    if (options.render !== false) render();
+    return true;
+  }
+
+  async function setInsertionAxes(axisIds = [], enabled = true, options = {}) {
+    const validAxes = [...new Set(axisIds)].filter(axisId => INSERTION_AXIS_DEFINITIONS[axisId]);
+    if (!validAxes.length) return false;
+    validAxes.forEach(axisId => {
+      state.preconfig.insertion[axisId] = !!enabled;
+    });
+    for (const featureId of Object.keys(FEATURE_DEFINITIONS)) {
+      if (state.features[featureId] && !featureRequirementsMet(featureId)) {
+        await setFeatureEnabled(featureId, false, { render: false });
+      }
+    }
+    applyFeatureVisibility();
+    syncControls();
+    applyLanguage();
+    recordParadata('set-insertion-preconfig', { axes: validAxes, enabled: !!enabled });
+    if (options.render !== false) render();
+    return true;
+  }
 
   recordParadata('session-start', { app_version: VERSION });
 
@@ -1797,10 +2012,12 @@
   }
 
   function activeAdverbOption() {
+    if (!featureEnabled('adverbs')) return NO_ADVERB_OPTION;
     return ADVERB_OPTIONS.find(option => option.id === state.selectedAdverbId) || ADVERB_OPTIONS[0];
   }
 
   function activeAdverbData() {
+    if (!featureEnabled('adverbs')) return null;
     const selected = activeAdverbOption();
     if (selected?.adverb) return selected.adverb;
     return state.example?.adverb || null;
@@ -1949,7 +2166,8 @@
   }
 
   function exampleLexInsertionsActive(ex = state.example) {
-    return !!state.useExampleLexInsertions
+    return featureEnabled('adverbs')
+      && !!state.useExampleLexInsertions
       && state.selectedAdverbId === 'none'
       && Array.isArray(ex?.lexInsertions)
       && ex.lexInsertions.length > 0;
@@ -2022,6 +2240,7 @@
   async function loadLexiconUsageProfiles() {
     LEXICON_USAGE_PROFILES.clear();
     LEXICON_CONSTRUCTIONS.clear();
+    if (!featureEnabled('adverbs')) return;
     // Fallback voor file:// of een mislukte fetch; geladen HTML overschrijft per lemma/constructie.
     seedLexiconUsageFallbacks();
     try {
@@ -2160,8 +2379,8 @@
         }
         if (messages.length) state.exampleValidationMessages = messages;
         if (accepted.length) {
-          EXAMPLES = accepted;
-          state.example = EXAMPLES.find(ex => ex.id === currentId) || EXAMPLES[0];
+          ALL_EXAMPLES = accepted;
+          refreshExamplesForFeatures(currentId);
         }
       }
     } catch (err) {
@@ -2217,6 +2436,14 @@
   }
 
   async function loadAdverbOptionsFromHtml() {
+    if (!featureEnabled('adverbs')) {
+      ADVERB_OPTIONS = [NO_ADVERB_OPTION];
+      return;
+    }
+    ADVERB_OPTIONS = [
+      NO_ADVERB_OPTION,
+      ...ADVERB_FALLBACK_ROWS.map((record, index) => makeAdverbOptionFromRecord(record, index)).filter(Boolean)
+    ];
     try {
       const response = await fetch(`examples-adverbs.html?${VERSION}`, { cache: 'no-store' });
       if (!response.ok) return;
@@ -2856,6 +3083,7 @@
   }
 
   function lexFreeSlotCount() {
+    if (!featureEnabled('adverbs')) return 0;
     if (exampleLexInsertionsActive()) return Math.min(8, state.example.lexInsertions.length);
     const n = Number(state.lexFreeSlotCount);
     if (!Number.isFinite(n)) return 2;
@@ -2938,6 +3166,7 @@
   }
 
   function activeLexInsertionSpecs() {
+    if (!featureEnabled('adverbs') || !insertionAxisEnabled('lex')) return [];
     if (exampleLexInsertionsActive()) {
       return [...state.example.lexInsertions]
         .sort((a, b) => (Number(a.order) || 0) - (Number(b.order) || 0))
@@ -3048,6 +3277,7 @@
   }
 
   function activeLogicalInsertionSpecs() {
+    if (!insertionAxisEnabled('log')) return [];
     return activeLexInsertionSpecs().filter(spec => normalizeInsertionOrigin(spec.origin) !== 'LEX').map((spec, index) => {
       const content = spec.content || insertionContentForSpec(spec);
       const logInterval = inferredLogIntervalId(spec);
@@ -3182,6 +3412,15 @@
   }
 
   function applyExampleAdverbDefaults() {
+    if (!featureEnabled('adverbs')) {
+      state.selectedAdverbId = 'none';
+      state.useExampleLexInsertions = false;
+      state.lexFreeSlotCount = 0;
+      state.lexInsertionContent = 'empty';
+      state.lexFreeSlotPlacement = 'above-vp';
+      state.logInsertionInterval = 'auto';
+      return;
+    }
     if (state.selectedAdverbId === 'none' && Array.isArray(state.example?.lexInsertions) && state.example.lexInsertions.length) {
       state.useExampleLexInsertions = true;
       const first = [...state.example.lexInsertions].sort((a, b) => (Number(a.order) || 0) - (Number(b.order) || 0))[0];
@@ -4724,7 +4963,7 @@
     drawTreeEdges(g, layout, origin, growthPlan);
     drawOpnTopicalizationSlot(g, layout, origin, growthPlan);
     drawTreeNodes(g, layout, origin, options.selectable === true, growthPlan);
-    drawHostedAdverbSlots(g, layout, origin, growthPlan);
+    if (featureEnabled('adverbs')) drawHostedAdverbSlots(g, layout, origin, growthPlan);
     return layout;
   }
 
@@ -5496,10 +5735,12 @@
     if (v2SlotY !== null && !v2Occupied) drawLexV2Slot(g, x, v2SlotY);
 
     const ruleText = logicalAuthorityEnabled()
-      ? `Bronknoop → horizontale LEX-projectie → één doelrij; LOG berekent de neutrale rij en topic/V2 kan die vervangen. Per bronwoord volgt hoogstens één zichtbare LEX-verplaatsing. ${lexFreeSlotCount()} minor(s) vergroten de logische afstand (${logInsertionIntervalLabel()}).`
+      ? (featureEnabled('adverbs')
+        ? `Bronknoop → horizontale LEX-projectie → één doelrij; LOG berekent de neutrale rij en topic/V2 kan die vervangen. Per bronwoord volgt hoogstens één zichtbare LEX-verplaatsing. ${lexFreeSlotCount()} minor(s) vergroten de logische afstand (${logInsertionIntervalLabel()}).`
+        : 'Bronknoop → horizontale LEX-projectie → één doelrij; LOG-majors bepalen de neutrale rij en topic/V2 kan die vervangen. Per bronwoord volgt hoogstens één zichtbare LEX-verplaatsing.')
       : (isMainV2Rule()
-        ? `Projectie: bronknopen → blauwe projectiemerkers. Daarna Wissels naar lege plekken 0/1/2; bijwoordslots (${lexFreeSlotCount()} · ${lexSlotPlacementLabel()}) staan eerst op de LEX-as; de hostbox wordt lager gezet om ruimte te maken.`
-        : `Projectie: bronknopen → blauwe projectiemerkers. Daarna plaatsingsregels; Comp gebruikt slot 0; bijwoordslots (${lexFreeSlotCount()} · ${lexSlotPlacementLabel()}) staan eerst op de LEX-as; de hostbox wordt lager gezet om ruimte te maken.`);
+        ? 'Projectie: bronknopen → blauwe projectiemerkers. Daarna Wissels naar lege plekken 0/1/2.'
+        : 'Projectie: bronknopen → blauwe projectiemerkers. Daarna plaatsingsregels; Comp gebruikt slot 0.');
     drawCanvasGuideText(g, x + 150, axisMinY + 18, ruleText, 'wissel-label');
 
     // De bronprojectie zelf blijft horizontaal. LOG en eventuele expliciete
@@ -5900,12 +6141,18 @@
     if (state.projection === 'log') {
       const sequence = activeLogicalSlotSequence();
       const order = logicalSequenceCode(sequence);
-      return [
+      const rows = [
         `LOG · zuidas · ${southLogicalModeLabel(state.southLogicalMode || 'SOV')}`,
         `LOG → ${order}`,
-        `${logicalDistanceSummary(sequence)} · interval ${logInsertionIntervalLabel()}`,
-        'LOG-majors en -minors bepalen de neutrale LEX-rijen; de voorbeeldzin valideert alleen.'
+        logicalDistanceSummary(sequence)
       ];
+      if (featureEnabled('adverbs')) {
+        rows[2] += ` · interval ${logInsertionIntervalLabel()}`;
+        rows.push('LOG-majors en -minors bepalen de neutrale LEX-rijen; de voorbeeldzin valideert alleen.');
+      } else {
+        rows.push('De LOG-majors S/O/V bepalen de neutrale LEX-rijen; de voorbeeldzin valideert alleen.');
+      }
+      return rows;
     }
     const useFunctional = state.centerMode === 'ft';
     const title = useFunctional ? 'Functional · functionele rollen' : 'SYNT · syntaxregels';
@@ -5922,14 +6169,16 @@
       .map(id => functionalNodes.find(n => n.id === id)?.label || id)
       .join(' + ') || 'role-boxen';
     if (options.showTitle !== false) drawAxisTitle(g, origin.x - 180, origin.y - 70, `Functional · functionele structuur · ${rootLabel} → ${roleNames} · ${state.functionalOrder}`);
-    drawAxisTitle(g, origin.x - 176, origin.y - 48, `v4547 · ${branchModeLabel()} · vrije plaatsing + LEX-bijwoordslots`);
+    drawAxisTitle(g, origin.x - 176, origin.y - 48, featureEnabled('adverbs')
+      ? `v4547 · ${branchModeLabel()} · vrije plaatsing + LEX-bijwoordslots`
+      : `${branchModeLabel()} · vrije plaatsing`);
     const growthPlan = growthPlanForLayout(layout);
     layout.__growthPlan = growthPlan;
     drawSubtreeBoxes(g, layout, origin, growthPlan);
     drawTreeEdges(g, layout, origin, growthPlan);
     drawOpnTopicalizationSlot(g, layout, origin, growthPlan);
     drawTreeNodes(g, layout, origin, options.selectable === true, growthPlan);
-    drawHostedAdverbSlots(g, layout, origin, growthPlan);
+    if (featureEnabled('adverbs')) drawHostedAdverbSlots(g, layout, origin, growthPlan);
     return layout;
   }
 
@@ -6111,7 +6360,9 @@
       drawLogicalProjection(g, ctx.southAxisX1, ctx.southAxisX2, ctx.southAxisY, getFunctionalLayout(), {
         cls: 'log',
         title: 'LOG · geselecteerde named projection op vaste zuidaspositie',
-        subtitle: `LOG ordent majors en bijwoord-minors op vaste slots; de LOG-volgorde bepaalt daarna de neutrale LEX-rijen.${southModeWarningText()}`,
+        subtitle: featureEnabled('adverbs')
+          ? `LOG ordent majors en bijwoord-minors op vaste slots; de LOG-volgorde bepaalt daarna de neutrale LEX-rijen.${southModeWarningText()}`
+          : `LOG ordent S/O/V-majors op vaste slots; de LOG-volgorde bepaalt daarna de neutrale LEX-rijen.${southModeWarningText()}`,
         badgeText: southLogicalModeLabel(state.southLogicalMode || 'SOV'),
         order: southLogicalOrder(),
         items: ctx.southItems,
@@ -6153,7 +6404,9 @@
       drawLexAxis(g, westAxisX, 126, activeLexItems(), sourceMap);
       if (state.centerMode === 'ft') drawFunctionalRules(g, eastAxisX, centralLayout, origin, plan);
       else drawSyntaxRules(g, eastAxisX, 126, centralLayout, origin, plan);
-      drawLogPhase(`Majors en minors staan op vaste LOG-slots; elke minor vergroot de afstand en schuift de neutrale LEX-basis mee.${southModeWarningText()}`);
+      drawLogPhase(featureEnabled('adverbs')
+        ? `Majors en minors staan op vaste LOG-slots; elke minor vergroot de afstand en schuift de neutrale LEX-basis mee.${southModeWarningText()}`
+        : `De majors S, O en V staan op vaste LOG-slots en bepalen de neutrale LEX-basis.${southModeWarningText()}`);
     };
     if (!growthPlan?.active || state.projectionBlockUnlocked) {
       // Projecties > Alle betekent: centrale view met alle named projections.
@@ -6183,7 +6436,9 @@
     } else if (showLogStep) {
       drawAxisTitle(g, westAxisX - 45, 116, 'LEX verschijnt na het reserveren van ruimte');
       drawAxisTitle(g, eastAxisX, 116, 'SYNT-projectie verschijnt in de laatste stap');
-      drawLogPhase(`Fase 1/3: plaats majors en minors eerst op de LOG-as.${southModeWarningText()}`);
+      drawLogPhase(featureEnabled('adverbs')
+        ? `Fase 1/3: plaats majors en minors eerst op de LOG-as.${southModeWarningText()}`
+        : `Fase 1/3: plaats de majors S, O en V eerst op de LOG-as.${southModeWarningText()}`);
     } else {
       drawAxisTitle(g, westAxisX - 45, 116, `Groei-presentatie · ${growthLabel()}`);
       drawAxisTitle(g, eastAxisX, 116, 'SYNT-projectie verschijnt in de laatste stap');
@@ -6222,7 +6477,9 @@
       drawLogicalProjection(g, ctx.southAxisX1, ctx.southAxisX2, ctx.southAxisY, getFunctionalLayout(), {
         cls: 'log',
         title: 'LOG · zuidas bij Bron',
-        subtitle: `Gekozen bronas: LOG-majors + minors op vaste afstand; LEX volgt deze basis vóór eventuele Wissels.${southModeWarningText()}`,
+        subtitle: featureEnabled('adverbs')
+          ? `Gekozen bronas: LOG-majors + minors op vaste afstand; LEX volgt deze basis vóór eventuele Wissels.${southModeWarningText()}`
+          : `Gekozen bronas: de LOG-majors S/O/V staan op vaste afstand; LEX volgt deze basis vóór eventuele Wissels.${southModeWarningText()}`,
         badgeText: southLogicalModeLabel(state.southLogicalMode || 'SOV'),
         order: southLogicalOrder(),
         items: ctx.southItems,
@@ -7009,21 +7266,25 @@
     const functionalModeLabel = isEnglish() ? 'Functional structure' : 'Functional functionele structuur';
     els.titleLine.textContent = `${activeSentenceText()} · ${state.projectionLabel || projectionLabel()} · ${state.centerMode === 'syntax' ? syntaxModeLabel : functionalModeLabel}`;
     const noticeText = state.example.notice ? ` · NOTICE=${state.example.notice}` : '';
-    const adverbText = activeAdverbStatusLabel();
     const logicalSequence = activeLogicalSlotSequence();
     const directLexCount = activeLexInsertionSpecs().filter(spec => normalizeInsertionOrigin(spec.origin) === 'LEX').length;
     const logStatus = `LOG=${logicalSequenceCode(logicalSequence)} · ${logicalDistanceSummary(logicalSequence)}${directLexCount ? ` · direct-LEX=${directLexCount}` : ''}`;
+    const featureStatus = featureEnabled('adverbs') ? ` · ${activeAdverbStatusLabel()}` : '';
     els.metaLine.textContent = isEnglish()
-      ? `${state.example.phase} · ${movementSummaryLabel()} · ${adverbText} · ${logStatus} → neutral LEX · sentence validation=${activeSentenceText()}${noticeText}`
-      : `${state.example.phase} · ${movementSummaryLabel()} · ${adverbText} · ${logStatus} → neutrale LEX · zinsvalidatie=${activeSentenceText()}${noticeText}`;
+      ? `${state.example.phase} · ${movementSummaryLabel()}${featureStatus} · ${logStatus} → neutral LEX · sentence validation=${activeSentenceText()}${noticeText}`
+      : `${state.example.phase} · ${movementSummaryLabel()}${featureStatus} · ${logStatus} → neutrale LEX · zinsvalidatie=${activeSentenceText()}${noticeText}`;
     if (els.sentencePreview) els.sentencePreview.innerHTML = activeSentenceHtml();
     const baseFeedback = isEnglish()
       ? (state.projection === 'source'
         ? 'Source shows the selected OPN source from structure-config.html. At Source, LEX, SYNT and LOG axes can be combined independently. The View menu switches between the Syntax view and the Functional view (functional CLAUSE roles). Syntax and Functional views use bottom-up recursive box layout; left/right controls both layouts; branch order can be global, compact-auto or align-auto.'
-        : 'Derivation: structure config → lexical usage profile → LOG minors and/or direct LEX insertions → complete LEX placement plan → optional topic/V2 target override. The sample sentence selects an instance analysis; it does not rewrite the lexicon.')
+        : (featureEnabled('adverbs')
+          ? 'Derivation: structure config → lexical usage profile → LOG minors and/or direct LEX insertions → complete LEX placement plan → optional topic/V2 target override. The sample sentence selects an instance analysis; it does not rewrite the lexicon.'
+          : 'Derivation: structure config → LOG majors → neutral LEX rows → optional topic/V2 target override. The sample sentence selects the lexical items; it does not rewrite the structure.'))
       : (state.projection === 'source'
         ? 'Bron toont de gekozen OPN-bron uit structure-config.html; LEX-, SYNT- en LOG-as zijn daar onafhankelijk combineerbaar. Het View-menu wisselt tussen de Syntax-view en de Functional-view (functionele CLAUSE/rollen). Syntax en Functional gebruiken bottom-up recursieve box-layout; left/right stuurt beide layouts; takvolgorde kan globaal, compact-auto of align-auto zijn.'
-        : 'Afleiding: structure-config → lexicaal gebruiksprofiel → LOG-minors en/of directe LEX-inserties → volledig LEX-plaatsingsplan → eventuele topic/V2-doelvervanging. De voorbeeldzin kiest een zinsanalyse en herschrijft het lexicon niet.');
+        : (featureEnabled('adverbs')
+          ? 'Afleiding: structure-config → lexicaal gebruiksprofiel → LOG-minors en/of directe LEX-inserties → volledig LEX-plaatsingsplan → eventuele topic/V2-doelvervanging. De voorbeeldzin kiest een zinsanalyse en herschrijft het lexicon niet.'
+          : 'Afleiding: structure-config → LOG-majors → neutrale LEX-rijen → eventuele topic/V2-doelvervanging. De voorbeeldzin kiest de lexicale items en herschrijft de structuur niet.'));
     const validationMsg = state.exampleValidationMessages?.length ? ` · ${state.exampleValidationMessages[0]}` : '';
     const noticeMsg = state.example.notice ? ` · ${state.example.notice}` : '';
     const osvMsg = SOUTH_LOGICAL_MOVEMENT_REQUIRED_MODES.has(state.southLogicalMode || 'SOV')
@@ -7032,9 +7293,13 @@
     els.actionFeedback.textContent = state.growthEnabled ? `${baseFeedback} · ${growthLabel()}${noticeMsg}${validationMsg}${osvMsg}` : `${baseFeedback}${noticeMsg}${validationMsg}${osvMsg}`;
     els.projectionHelp.textContent = helpText();
     els.explainHeading.textContent = `${isEnglish() ? 'Explanation' : 'Uitleg'} · ${activeSentenceText()}`;
-    els.explainText.textContent = isEnglish()
-      ? `LOG supplies semantic placement for LOG profiles. Current LOG sequence: ${logicalSequenceCode(logicalSequence)} (${logicalDistanceSummary(logicalSequence)}). Every LOG minor increases the distance between its bounding majors by one slot. Direct LEX profiles reserve a LEX row without a LOG minor; topic/V2 may replace a target before one visible move and one source trace are drawn. The sample sentence validates the surface result and does not determine the layout.`
-      : `LOG levert de semantische plaatsing voor LOG-profielen. Huidige LOG-sequentie: ${logicalSequenceCode(logicalSequence)} (${logicalDistanceSummary(logicalSequence)}). Iedere LOG-minor vergroot de afstand tussen zijn begrenzende majors met één slot. Directe LEX-profielen reserveren een LEX-rij zonder LOG-minor; topic/V2 kan een doel vervangen vóór één zichtbare verplaatsing en één brontrace worden getekend. De voorbeeldzin valideert de surface-uitkomst en bepaalt de layout niet.`;
+    els.explainText.textContent = featureEnabled('adverbs')
+      ? (isEnglish()
+        ? `LOG supplies semantic placement for LOG profiles. Current LOG sequence: ${logicalSequenceCode(logicalSequence)} (${logicalDistanceSummary(logicalSequence)}). Every LOG minor increases the distance between its bounding majors by one slot. Direct LEX profiles reserve a LEX row without a LOG minor; topic/V2 may replace a target before one visible move and one source trace are drawn. The sample sentence validates the surface result and does not determine the layout.`
+        : `LOG levert de semantische plaatsing voor LOG-profielen. Huidige LOG-sequentie: ${logicalSequenceCode(logicalSequence)} (${logicalDistanceSummary(logicalSequence)}). Iedere LOG-minor vergroot de afstand tussen zijn begrenzende majors met één slot. Directe LEX-profielen reserveren een LEX-rij zonder LOG-minor; topic/V2 kan een doel vervangen vóór één zichtbare verplaatsing en één brontrace worden getekend. De voorbeeldzin valideert de surface-uitkomst en bepaalt de layout niet.`)
+      : (isEnglish()
+        ? `Current LOG sequence: ${logicalSequenceCode(logicalSequence)} (${logicalDistanceSummary(logicalSequence)}). The S/O/V majors determine neutral LEX rows; topic/V2 may replace a target before one visible move and one source trace are drawn. The sample sentence validates the surface result and does not determine the layout.`
+        : `Huidige LOG-sequentie: ${logicalSequenceCode(logicalSequence)} (${logicalDistanceSummary(logicalSequence)}). De majors S/O/V bepalen de neutrale LEX-rijen; topic/V2 kan een doel vervangen vóór één zichtbare verplaatsing en één brontrace worden getekend. De voorbeeldzin valideert de surface-uitkomst en bepaalt de layout niet.`);
   }
 
   function projectionLabel() {
@@ -7050,15 +7315,23 @@
   function helpText() {
     if (isEnglish()) {
       if (state.projection === 'source') return `Source: the Syntax and Functional structures are read from structure-config.html. Selected axes at Source: ${sourceAxesShortLabel()}. LEX, SYNT and LOG can be combined without moving or rescaling the central view.`;
-      if (state.projection === 'lex') return 'LEX: west named projection. LOG profiles project from the south axis; direct LEX profiles do not. Both enter one precomputed placement plan before topic/V2 may replace a target.';
+      if (state.projection === 'lex') return featureEnabled('adverbs')
+        ? 'LEX: west named projection. LOG profiles project from the south axis; direct LEX profiles do not. Both enter one precomputed placement plan before topic/V2 may replace a target.'
+        : 'LEX: west named projection. Lexical sources project horizontally to neutral rows derived from the LOG majors; topic/V2 may replace a target.';
       if (state.projection === 'synt') return 'SYNT: isolated syntax-rule set. Rules are placed at their source height; the central tree is only used as a hidden height anchor.';
-      if (state.projection === 'log') return 'LOG: south named projection. S, O and V are majors. Only insertions with a LOG or LOG+LEX profile appear as minors; direct LEX profiles remain absent from this axis.';
+      if (state.projection === 'log') return featureEnabled('adverbs')
+        ? 'LOG: south named projection. S, O and V are majors. Only insertions with a LOG or LOG+LEX profile appear as minors; direct LEX profiles remain absent from this axis.'
+        : 'LOG: south named projection. S, O and V are majors on fixed slots and determine the neutral LEX rows.';
       return 'All: central view selected by the View menu. LEX, SYNT and LOG use named projections with their own projection markers and selection rules.';
     }
     if (state.projection === 'source') return `Bron: de Syntax- en Functional-structuren worden gelezen uit structure-config.html. Gekozen assen bij Bron: ${sourceAxesShortLabel()}. LEX, SYNT en LOG kunnen gecombineerd worden zonder de centrale view te verplaatsen of te herschalen.`;
-    if (state.projection === 'lex') return 'LEX: westelijke named projection. LOG-profielen projecteren vanaf de zuidas; directe LEX-profielen niet. Beide komen vooraf in één plaatsingsplan voordat topic/V2 een doel kan vervangen.';
+    if (state.projection === 'lex') return featureEnabled('adverbs')
+      ? 'LEX: westelijke named projection. LOG-profielen projecteren vanaf de zuidas; directe LEX-profielen niet. Beide komen vooraf in één plaatsingsplan voordat topic/V2 een doel kan vervangen.'
+      : 'LEX: westelijke named projection. Lexicale bronnen projecteren horizontaal naar neutrale rijen uit de LOG-majors; topic/V2 kan een doel vervangen.';
     if (state.projection === 'synt') return 'SYNT: geïsoleerde syntax-regelset. Regels staan op bronhoogte; de centrale boom dient alleen als verborgen hoogteanker.';
-    if (state.projection === 'log') return 'LOG: named projection op de zuidas. S, O en V zijn majors. Alleen inserties met een LOG- of LOG+LEX-profiel verschijnen als minor; directe LEX-profielen ontbreken op deze as.';
+    if (state.projection === 'log') return featureEnabled('adverbs')
+      ? 'LOG: named projection op de zuidas. S, O en V zijn majors. Alleen inserties met een LOG- of LOG+LEX-profiel verschijnen als minor; directe LEX-profielen ontbreken op deze as.'
+      : 'LOG: named projection op de zuidas. S, O en V zijn majors op vaste slots en bepalen de neutrale LEX-rijen.';
     return 'Alle: centrale view via View-menu. LEX, SYNT en LOG gebruiken named projections met eigen projectiemerkers en selectieregels.';
   }
 
@@ -7186,7 +7459,7 @@
       els.mainSentenceSummary.textContent = isEnglish() ? 'Sentence' : 'Zin';
       els.mainSentenceSummary.title = isEnglish() ? 'Choose the sample sentence' : 'Kies de voorbeeldzin';
     }
-    if (els.mainAdverbSummary) {
+    if (featureEnabled('adverbs') && els.mainAdverbSummary) {
       els.mainAdverbSummary.textContent = isEnglish() ? 'Adverb' : 'Bijwoord';
       els.mainAdverbSummary.title = isEnglish() ? 'Choose an adverb' : 'Kies een bijwoord';
     }
@@ -7224,14 +7497,18 @@
       closeMainChoiceMenus();
       render();
     });
-    fillCompactChoiceMenu(els.mainAdverbOptions, ADVERB_OPTIONS, state.selectedAdverbId, els.mainAdverbSelect, id => {
-      state.selectedAdverbId = id || 'none';
-      state.useExampleLexInsertions = state.selectedAdverbId === 'none';
-      applyExampleAdverbDefaults();
-      resetManualViewBox();
-      closeMainChoiceMenus();
-      render();
-    });
+    if (featureEnabled('adverbs')) {
+      fillCompactChoiceMenu(els.mainAdverbOptions, ADVERB_OPTIONS, state.selectedAdverbId, els.mainAdverbSelect, id => {
+        state.selectedAdverbId = id || 'none';
+        state.useExampleLexInsertions = state.selectedAdverbId === 'none';
+        applyExampleAdverbDefaults();
+        resetManualViewBox();
+        closeMainChoiceMenus();
+        render();
+      });
+    } else if (els.mainAdverbOptions) {
+      els.mainAdverbOptions.replaceChildren();
+    }
     fillCompactChoiceMenu(els.mainViewOptions, CENTER_MODES, state.centerMode, els.mainViewSelect, id => {
       state.centerMode = (id === 'ft' || id === 'functional') ? 'ft' : 'syntax';
       closeMainChoiceMenus();
@@ -7239,6 +7516,7 @@
     });
     fillCompactChoiceMenu(els.mainInterfaceOptions, VIEWPORT_TEST_MODES, validViewportMode(state.viewportMode), null, id => {
       state.viewportMode = validViewportMode(id);
+      applyHelpLayoutMode();
       syncViewportTestClasses();
       resetManualViewBox();
       closeMainChoiceMenus();
@@ -7257,13 +7535,17 @@
       const wrapper = input.closest('label');
       if (wrapper) wrapper.title = input.title;
     });
-    const text = selected.size
-      ? (isEnglish()
-        ? `Legacy branch extension: ${[...selected].map(lexInsertionTargetLabel).join(' + ')}. Under LOG authority this is metadata only; adverb distance comes from LOG minors.`
-        : `Oude takverlenging: ${[...selected].map(lexInsertionTargetLabel).join(' + ')}. Onder LOG-autoriteit is dit alleen metadata; bijwoordafstand komt uit LOG-minors.`)
-      : (isEnglish()
-        ? 'No branch extension. LOG minors determine adverb distance and project to neutral LEX rows.'
-        : 'Geen takverlenging. LOG-minors bepalen de bijwoordafstand en projecteren naar neutrale LEX-rijen.');
+    const text = featureEnabled('adverbs')
+      ? (selected.size
+        ? (isEnglish()
+          ? `Legacy branch extension: ${[...selected].map(lexInsertionTargetLabel).join(' + ')}. Under LOG authority this is metadata only; adverb distance comes from LOG minors.`
+          : `Oude takverlenging: ${[...selected].map(lexInsertionTargetLabel).join(' + ')}. Onder LOG-autoriteit is dit alleen metadata; bijwoordafstand komt uit LOG-minors.`)
+        : (isEnglish()
+          ? 'No branch extension. LOG minors determine adverb distance and project to neutral LEX rows.'
+          : 'Geen takverlenging. LOG-minors bepalen de bijwoordafstand en projecteren naar neutrale LEX-rijen.'))
+      : (selected.size
+        ? (isEnglish() ? `Branch extension: ${[...selected].map(lexInsertionTargetLabel).join(' + ')}.` : `Takverlenging: ${[...selected].map(lexInsertionTargetLabel).join(' + ')}.`)
+        : (isEnglish() ? 'No branch extension.' : 'Geen takverlenging.'));
     document.querySelectorAll('[data-lex-extension-help]').forEach(node => {
       node.textContent = text;
       node.title = [...selected].map(lexInsertionTargetTip).join(' ');
@@ -7275,8 +7557,13 @@
     fillSelect(els.desktopExampleSelect, EXAMPLES, state.example.id);
     fillSelect(els.mobileExampleSelect, EXAMPLES, state.example.id);
     fillSelect(els.mainExampleSelect, EXAMPLES, state.example.id);
-    fillSelect(els.mainAdverbSelect, ADVERB_OPTIONS, state.selectedAdverbId);
-    fillSelect(els.mobileAdverbSelect, ADVERB_OPTIONS, state.selectedAdverbId);
+    if (featureEnabled('adverbs')) {
+      fillSelect(els.mainAdverbSelect, ADVERB_OPTIONS, state.selectedAdverbId);
+      fillSelect(els.mobileAdverbSelect, ADVERB_OPTIONS, state.selectedAdverbId);
+    } else {
+      els.mainAdverbSelect?.replaceChildren();
+      els.mobileAdverbSelect?.replaceChildren();
+    }
     syncExampleSelectSizing();
     fillSelect(els.centralModeSelect, CENTER_MODES, state.centerMode);
     fillSelect(els.mainViewSelect, CENTER_MODES, state.centerMode);
@@ -7308,14 +7595,23 @@
     fillSelect(els.syntProjectionColorSelect, PROJECTION_COLOR_OPTIONS, state.syntProjectionColor);
     fillSelect(els.logProjectionColorSelect, PROJECTION_COLOR_OPTIONS, state.logProjectionColor);
     fillSelect(els.freeSlotCountSelect, FREE_SLOT_COUNTS, String(reservedFreeSlotCount()));
-    fillSelect(els.lexFreeSlotCountSelect, LEX_FREE_SLOT_COUNTS, String(lexFreeSlotCount()));
-    fillSelect(els.mobileLexFreeSlotCountSelect, LEX_FREE_SLOT_COUNTS, String(lexFreeSlotCount()));
-    fillSelect(els.lexFreeSlotPlacementSelect, LEX_SLOT_PLACEMENTS, validLexSlotPlacement());
-    fillSelect(els.mobileLexFreeSlotPlacementSelect, LEX_SLOT_PLACEMENTS, validLexSlotPlacement());
-    fillSelect(els.lexInsertionContentSelect, LEX_INSERTION_CONTENTS, validLexInsertionContent());
-    fillSelect(els.mobileLexInsertionContentSelect, LEX_INSERTION_CONTENTS, validLexInsertionContent());
-    fillSelect(els.logInsertionIntervalSelect, logInsertionIntervalOptions(), validLogInsertionInterval());
-    fillSelect(els.mobileLogInsertionIntervalSelect, logInsertionIntervalOptions(), validLogInsertionInterval());
+    if (featureEnabled('adverbs')) {
+      fillSelect(els.lexFreeSlotCountSelect, LEX_FREE_SLOT_COUNTS, String(lexFreeSlotCount()));
+      fillSelect(els.mobileLexFreeSlotCountSelect, LEX_FREE_SLOT_COUNTS, String(lexFreeSlotCount()));
+      fillSelect(els.lexFreeSlotPlacementSelect, LEX_SLOT_PLACEMENTS, validLexSlotPlacement());
+      fillSelect(els.mobileLexFreeSlotPlacementSelect, LEX_SLOT_PLACEMENTS, validLexSlotPlacement());
+      fillSelect(els.lexInsertionContentSelect, LEX_INSERTION_CONTENTS, validLexInsertionContent());
+      fillSelect(els.mobileLexInsertionContentSelect, LEX_INSERTION_CONTENTS, validLexInsertionContent());
+      fillSelect(els.logInsertionIntervalSelect, logInsertionIntervalOptions(), validLogInsertionInterval());
+      fillSelect(els.mobileLogInsertionIntervalSelect, logInsertionIntervalOptions(), validLogInsertionInterval());
+    } else {
+      [
+        els.lexFreeSlotCountSelect, els.mobileLexFreeSlotCountSelect,
+        els.lexFreeSlotPlacementSelect, els.mobileLexFreeSlotPlacementSelect,
+        els.lexInsertionContentSelect, els.mobileLexInsertionContentSelect,
+        els.logInsertionIntervalSelect, els.mobileLogInsertionIntervalSelect
+      ].forEach(select => select?.replaceChildren());
+    }
     [els.lexFreeSlotPlacementSelect, els.mobileLexFreeSlotPlacementSelect].forEach(select => { if (select) select.title = lexSlotPlacementTip(); });
     [els.lexInsertionContentSelect, els.mobileLexInsertionContentSelect].forEach(select => { if (select) select.title = lexInsertionContentTip(); });
     renderLexInsertionTargetControls();
@@ -8014,10 +8310,12 @@
       object_default: ex.objectDefault || null,
       predicate: roleLabels().predicate,
       lex_rule: ex.lexRule || null,
-      lex_insertions: Array.isArray(ex.lexInsertions) ? ex.lexInsertions.map(spec => {
-        const analysis = resolvedInsertionAnalysis(spec);
-        return { ...jsonClone(spec, {}), usageProfile: analysis.id, origin: analysis.origin, originComponents: analysis.components, scope: analysis.scope || spec.scope || '', analysisStatus: analysis.unresolved ? 'ask' : 'resolved' };
-      }) : [],
+      ...(featureEnabled('adverbs') ? {
+        lex_insertions: Array.isArray(ex.lexInsertions) ? ex.lexInsertions.map(spec => {
+          const analysis = resolvedInsertionAnalysis(spec);
+          return { ...jsonClone(spec, {}), usageProfile: analysis.id, origin: analysis.origin, originComponents: analysis.components, scope: analysis.scope || spec.scope || '', analysisStatus: analysis.unresolved ? 'ask' : 'resolved' };
+        }) : []
+      } : {}),
       lex_items: activeLexItems()
     };
   }
@@ -8025,7 +8323,8 @@
   function buildOpnDocument(includeParadata = true) {
     const baseMetadata = ensureDocumentMetadata();
     const now = new Date().toISOString();
-    const adverb = activeAdverbData();
+    const adverbsEnabled = featureEnabled('adverbs');
+    const adverb = adverbsEnabled ? activeAdverbData() : null;
     const syntaxLayout = getSyntaxLayout();
     const ftLayout = getFunctionalLayout();
     const markedLog = SOUTH_LOGICAL_MOVEMENT_REQUIRED_MODES.has(state.southLogicalMode);
@@ -8049,6 +8348,9 @@
         language: state.language || baseMetadata.language || 'nl',
         modified_at: now,
         schema: 'data-metadata-paradata',
+        profile: adverbsEnabled ? 'custom' : 'base',
+        extras: adverbsEnabled ? ['adverbs'] : [],
+        preconfig: insertionPreconfigSnapshot(),
         generator: { name: 'OpenGraph Lite Viewer', version: VERSION }
       },
       data: {
@@ -8066,13 +8368,15 @@
             sentence: activeSentenceText(),
             rule: state.example?.lexRule || null,
             items: activeLexItems(),
-            free_slot_count: lexFreeSlotCount(),
-            free_slot_placement: validLexSlotPlacement(),
-            insertion_content: validLexInsertionContent(),
-            insertion_extension_targets: validLexInsertionTargets(),
-            free_slots: lexFreeSlotDescriptors(),
             logical_sequence: serializedLogicalSequence,
-            adverb: adverb ? jsonClone(adverb, null) : null
+            ...(adverbsEnabled ? {
+              free_slot_count: lexFreeSlotCount(),
+              free_slot_placement: validLexSlotPlacement(),
+              insertion_content: validLexInsertionContent(),
+              insertion_extension_targets: validLexInsertionTargets(),
+              free_slots: lexFreeSlotDescriptors(),
+              adverb: adverb ? jsonClone(adverb, null) : null
+            } : {})
           },
           synt: {
             axis: 'east',
@@ -8084,7 +8388,7 @@
             order: state.southLogicalMode,
             marked: markedLog,
             position_unit: activeLogConfig().positionUnit || 'slot',
-            insertion_interval: validLogInsertionInterval(),
+            ...(adverbsEnabled ? { insertion_interval: validLogInsertionInterval() } : {}),
             sequence: serializedLogicalSequence,
             distances: {
               S_O: logicalSlotDistance(logicalSequence, 'S', 'O'),
@@ -8130,15 +8434,23 @@
             view_fit: state.viewFitMode
           }
         },
-        events: jsonClone(state.paradataEvents, [])
+        events: jsonClone(
+          adverbsEnabled
+            ? state.paradataEvents
+            : state.paradataEvents.filter(event => !/adverb|bijwoord/i.test(`${event?.action || ''} ${JSON.stringify(event?.details || {})}`)),
+          []
+        )
       } : { included: false }
     };
     return document;
   }
 
   function legacyJsonPayload() {
-    return {
+    const payload = {
       version: VERSION,
+      profile: featureEnabled('adverbs') ? 'custom' : 'base',
+      extras: featureEnabled('adverbs') ? ['adverbs'] : [],
+      preconfig: insertionPreconfigSnapshot(),
       example: state.example.id,
       central_opn: state.centerMode,
       projection: state.projection,
@@ -8148,10 +8460,6 @@
       branch_order: state.branchOrder,
       branch_overrides: state.branchOverrides,
       free_slot_count: reservedFreeSlotCount(),
-      lex_free_slot_count: lexFreeSlotCount(),
-      lex_free_slot_placement: validLexSlotPlacement(),
-      lex_insertion_content: validLexInsertionContent(),
-      log_insertion_interval: validLogInsertionInterval(),
       log_sequence: activeLogicalSlotSequence().map(item => ({
         id: item.id || null,
         kind: item.kind,
@@ -8159,8 +8467,6 @@
         logical_slot: Number(item.logicalSlot),
         interval: item.kind === 'minor' ? (item.logInterval || item.interval || null) : null
       })),
-      lex_insertion_extension_targets: validLexInsertionTargets(),
-      lex_free_slots: lexFreeSlotDescriptors(),
       top_menus_above_grid: normalizeTopMenusAbove(),
       right_menu_width: validRightMenuMode(),
       canvas_pan_enabled: !!state.canvasPanEnabled,
@@ -8168,6 +8474,15 @@
       structure_config: 'structure-config.html',
       lex: activeLexItems()
     };
+    if (featureEnabled('adverbs')) {
+      payload.lex_free_slot_count = lexFreeSlotCount();
+      payload.lex_free_slot_placement = validLexSlotPlacement();
+      payload.lex_insertion_content = validLexInsertionContent();
+      payload.log_insertion_interval = validLogInsertionInterval();
+      payload.lex_insertion_extension_targets = validLexInsertionTargets();
+      payload.lex_free_slots = lexFreeSlotDescriptors();
+    }
+    return payload;
   }
 
   function downloadJson() {
@@ -8218,14 +8533,46 @@
 
   function installImportedExample(example) {
     if (!example) return false;
-    const index = EXAMPLES.findIndex(item => item.id === example.id);
-    if (index >= 0) EXAMPLES[index] = example;
-    else EXAMPLES.push(example);
-    state.example = example;
+    const index = ALL_EXAMPLES.findIndex(item => item.id === example.id);
+    if (index >= 0) ALL_EXAMPLES[index] = example;
+    else ALL_EXAMPLES.push(example);
+    refreshExamplesForFeatures(example.id);
     return true;
   }
 
+  function declaredInsertionAxes(preconfig = {}) {
+    const insertion = preconfig?.insertion;
+    if (!insertion || typeof insertion !== 'object') return [];
+    return Object.keys(INSERTION_AXIS_DEFINITIONS).filter(axisId => insertion[axisId] === true);
+  }
+
+  function missingInsertionAxes(requiredAxes = []) {
+    return [...new Set(requiredAxes)].filter(axisId => INSERTION_AXIS_DEFINITIONS[axisId] && !insertionAxisEnabled(axisId));
+  }
+
+  function insertionRequirementMessage(missingAxes = [], documentKind = 'OPN') {
+    const labels = missingAxes.map(axisId => INSERTION_AXIS_DEFINITIONS[axisId].label).join(' + ');
+    return isEnglish()
+      ? `This ${documentKind} document requires insertion on ${labels}. Enable it first in Config · Pre-config.`
+      : `Dit ${documentKind}-document vereist insertie op ${labels}. Schakel die eerst in via Config · Voorconfig.`;
+  }
+
   function applyLegacyPayload(payload) {
+    const legacyRequiresAdverbs = Number(payload?.lex_free_slot_count) > 0
+      || !!payload?.lex_insertion_content && payload.lex_insertion_content !== 'empty'
+      || (Array.isArray(payload?.log_sequence) && payload.log_sequence.some(item => item?.kind === 'minor'));
+    const legacyRequiredInsertionAxes = new Set(declaredInsertionAxes(payload?.preconfig));
+    if (legacyRequiresAdverbs) {
+      legacyRequiredInsertionAxes.add('lex');
+      legacyRequiredInsertionAxes.add('log');
+    }
+    const missingAxes = missingInsertionAxes([...legacyRequiredInsertionAxes]);
+    if (missingAxes.length) throw new Error(insertionRequirementMessage(missingAxes, 'legacy'));
+    if (!featureEnabled('adverbs') && legacyRequiresAdverbs) {
+      throw new Error(isEnglish()
+        ? 'This legacy document requires the disabled Adverbs application. Enable it in Config · Applications first.'
+        : 'Dit legacy-document vereist de uitgeschakelde toepassing Bijwoorden. Schakel die eerst in via Config · Toepassingen.');
+    }
     state.logInsertionInterval = 'auto';
     const nextExample = EXAMPLES.find(example => example.id === payload.example);
     if (nextExample) state.example = nextExample;
@@ -8237,11 +8584,13 @@
     if (payload.functional_order === 'left-first' || payload.functional_order === 'right-first') state.functionalOrder = payload.functional_order;
     if (payload.branch_order && BRANCH_ORDERS.some(order => order.id === payload.branch_order)) state.branchOrder = payload.branch_order;
     if (Number.isFinite(Number(payload.free_slot_count))) state.freeSlotCount = Math.max(0, Math.min(6, Number(payload.free_slot_count)));
-    if (Number.isFinite(Number(payload.lex_free_slot_count))) state.lexFreeSlotCount = Math.max(0, Math.min(8, Number(payload.lex_free_slot_count)));
-    if (payload.lex_free_slot_placement) state.lexFreeSlotPlacement = validLexSlotPlacement(payload.lex_free_slot_placement);
-    if (payload.lex_insertion_content) state.lexInsertionContent = validLexInsertionContent(payload.lex_insertion_content);
-    if (payload.log_insertion_interval) state.logInsertionInterval = validLogInsertionInterval(payload.log_insertion_interval);
-    if (Array.isArray(payload.lex_insertion_extension_targets)) state.lexInsertionExtensionTargets = validLexInsertionTargets(payload.lex_insertion_extension_targets);
+    if (featureEnabled('adverbs')) {
+      if (Number.isFinite(Number(payload.lex_free_slot_count))) state.lexFreeSlotCount = Math.max(0, Math.min(8, Number(payload.lex_free_slot_count)));
+      if (payload.lex_free_slot_placement) state.lexFreeSlotPlacement = validLexSlotPlacement(payload.lex_free_slot_placement);
+      if (payload.lex_insertion_content) state.lexInsertionContent = validLexInsertionContent(payload.lex_insertion_content);
+      if (payload.log_insertion_interval) state.logInsertionInterval = validLogInsertionInterval(payload.log_insertion_interval);
+      if (Array.isArray(payload.lex_insertion_extension_targets)) state.lexInsertionExtensionTargets = validLexInsertionTargets(payload.lex_insertion_extension_targets);
+    }
     if (Array.isArray(payload.top_menus_above_grid)) state.topMenusAbove = normalizeTopMenusAbove(payload.top_menus_above_grid);
     if (payload.right_menu_width) state.rightMenuMode = validRightMenuMode(payload.right_menu_width);
     else if (Number.isFinite(Number(payload.portrait_menu_slots))) state.topMenusAbove = [];
@@ -8255,7 +8604,49 @@
     recordParadata('import-legacy-json', { source_version: payload.version || null });
   }
 
+  function opnDocumentRequiresAdverbs(payload = {}) {
+    const data = payload.data || {};
+    const projections = data.projections || {};
+    const lex = projections.lex || {};
+    const log = projections.log || {};
+    const extras = Array.isArray(payload.metadata?.extras) ? payload.metadata.extras : [];
+    const insertions = Array.isArray(data.example?.lex_insertions) ? data.example.lex_insertions : [];
+    const logSequence = Array.isArray(log.sequence) ? log.sequence : [];
+    return extras.includes('adverbs')
+      || !!lex.adverb
+      || insertions.length > 0
+      || logSequence.some(item => item?.kind === 'minor');
+  }
+
+  function opnDocumentRequiredInsertionAxes(payload = {}) {
+    const required = new Set(declaredInsertionAxes(payload.metadata?.preconfig));
+    const data = payload.data || {};
+    const projections = data.projections || {};
+    const lex = projections.lex || {};
+    const synt = projections.synt || {};
+    const log = projections.log || {};
+    if (opnDocumentRequiresAdverbs(payload)
+      || Array.isArray(data.example?.lex_insertions)
+      || ['free_slot_count', 'free_slots', 'insertion_content', 'adverb'].some(key => key in lex)) {
+      required.add('lex');
+    }
+    if (opnDocumentRequiresAdverbs(payload)
+      || 'insertion_interval' in log
+      || (Array.isArray(log.sequence) && log.sequence.some(item => item?.kind === 'minor'))) {
+      required.add('log');
+    }
+    if (Array.isArray(synt.insertions) && synt.insertions.length) required.add('synt');
+    return [...required];
+  }
+
   function applyOpnDocument(payload, filename = '') {
+    const missingAxes = missingInsertionAxes(opnDocumentRequiredInsertionAxes(payload));
+    if (missingAxes.length) throw new Error(insertionRequirementMessage(missingAxes, 'OPN'));
+    if (!featureEnabled('adverbs') && opnDocumentRequiresAdverbs(payload)) {
+      throw new Error(isEnglish()
+        ? 'This OPN document requires the disabled Adverbs application. Enable it in Config · Applications first.'
+        : 'Dit OPN-document vereist de uitgeschakelde toepassing Bijwoorden. Schakel die eerst in via Config · Toepassingen.');
+    }
     state.logInsertionInterval = 'auto';
     const data = payload.data || {};
     const notation = data.notation || {};
@@ -8296,12 +8687,14 @@
     state.roleSwap = !!notation.role_swap;
     if (Number.isFinite(Number(notation.free_slot_count))) state.freeSlotCount = Math.max(0, Math.min(6, Number(notation.free_slot_count)));
 
-    if (Number.isFinite(Number(lex.free_slot_count))) state.lexFreeSlotCount = Math.max(0, Math.min(8, Number(lex.free_slot_count)));
-    if (lex.free_slot_placement) state.lexFreeSlotPlacement = validLexSlotPlacement(lex.free_slot_placement);
-    if (lex.insertion_content) state.lexInsertionContent = validLexInsertionContent(lex.insertion_content);
-    if (Array.isArray(lex.insertion_extension_targets)) state.lexInsertionExtensionTargets = validLexInsertionTargets(lex.insertion_extension_targets);
+    if (featureEnabled('adverbs')) {
+      if (Number.isFinite(Number(lex.free_slot_count))) state.lexFreeSlotCount = Math.max(0, Math.min(8, Number(lex.free_slot_count)));
+      if (lex.free_slot_placement) state.lexFreeSlotPlacement = validLexSlotPlacement(lex.free_slot_placement);
+      if (lex.insertion_content) state.lexInsertionContent = validLexInsertionContent(lex.insertion_content);
+      if (Array.isArray(lex.insertion_extension_targets)) state.lexInsertionExtensionTargets = validLexInsertionTargets(lex.insertion_extension_targets);
+    }
     if (log.order && SOUTH_LOGICAL_MODES.includes(log.order)) state.southLogicalMode = log.order;
-    if (log.insertion_interval) state.logInsertionInterval = validLogInsertionInterval(log.insertion_interval);
+    if (featureEnabled('adverbs') && log.insertion_interval) state.logInsertionInterval = validLogInsertionInterval(log.insertion_interval);
 
     state.centerMode = (workspace.central_view === 'ft' || workspace.central_view === 'functional') ? 'ft' : 'syntax';
     if (PROJECTION_OPTIONS.some(option => option.id === workspace.projection_mode)) state.projection = workspace.projection_mode;
@@ -8681,6 +9074,8 @@
   }
 
   const CONFIG_TAB_DEFINITIONS = [
+    { id: 'preconfig', nl: 'Voorconfig', en: 'Pre-config' },
+    { id: 'features', nl: 'Toepassingen', en: 'Applications' },
     { id: 'overview', nl: 'Overzicht', en: 'Overview' },
     { id: 'jan', nl: 'JaN · TODO', en: 'JaN · TODO' },
     { id: 'files', nl: 'Opslaan & exporteren', en: 'Save & export' },
@@ -8688,10 +9083,10 @@
     { id: 'log-lex', nl: 'LOG & LEX', en: 'LOG & LEX' },
     { id: 'advanced', nl: 'Geavanceerd', en: 'Advanced' }
   ];
-  let activeConfigTab = 'overview';
+  let activeConfigTab = 'preconfig';
 
-  function activateConfigTab(tabId = 'overview', focusTab = false) {
-    const validId = CONFIG_TAB_DEFINITIONS.some(tab => tab.id === tabId) ? tabId : 'overview';
+  function activateConfigTab(tabId = 'preconfig', focusTab = false) {
+    const validId = CONFIG_TAB_DEFINITIONS.some(tab => tab.id === tabId) ? tabId : 'preconfig';
     activeConfigTab = validId;
     document.querySelectorAll('[data-config-tab-button]').forEach(button => {
       const active = button.dataset.configTabButton === validId;
@@ -8772,9 +9167,22 @@
     const primaryViewGrid = document.createElement('div');
     primaryViewGrid.className = 'config-primary-view-grid';
     primaryViewGrid.setAttribute('aria-label', 'Primaire beeldinstellingen');
+    const helpLayoutLabel = document.createElement('label');
+    helpLayoutLabel.className = 'select-field';
+    helpLayoutLabel.innerHTML = `<span><span class="help-lang-nl">LEESMIJ-indeling</span><span class="help-lang-en">README layout</span></span><select id="helpLayoutModeSelect"><option value="auto">Automatic</option><option value="stacked">List above text</option><option value="side">List left, text right</option></select><small class="config-item-help"><span class="help-lang-nl">Automatisch gebruikt links-rechts alleen op mobiel liggend; elders staat de lijst boven de tekst.</span><span class="help-lang-en">Automatic uses side-by-side only on mobile landscape; elsewhere the list is above the text.</span></small>`;
     [els.layoutDensitySelect, els.viewFitSelect, els.freeSlotCountSelect].forEach(select => {
       const label = select?.closest?.('label');
       if (label) primaryViewGrid.appendChild(label);
+    });
+    primaryViewGrid.appendChild(helpLayoutLabel);
+    const helpLayoutSelect = helpLayoutLabel.querySelector('select');
+    helpLayoutSelect.value = state.helpLayoutMode;
+    helpLayoutSelect.addEventListener('change', event => {
+      state.helpLayoutMode = ['auto','stacked','side'].includes(event.target.value) ? event.target.value : 'auto';
+      try { localStorage.setItem('opengraph_help_layout_mode', state.helpLayoutMode); } catch (_err) {}
+      applyHelpLayoutMode();
+      appendConfigLog('change-help-layout', { helpLayoutMode: state.helpLayoutMode });
+      markConfigDirty('LEESMIJ-indeling');
     });
 
     const treeHeading = treeCard.querySelector(':scope > h2');
@@ -8814,21 +9222,117 @@
     overviewCard.innerHTML = `<h2><span class="help-lang-nl">Config-overzicht</span><span class="help-lang-en">Configuration overview</span></h2>
       <p class="inline-help"><span class="help-lang-nl">Open één onderdeel. De bestaande save-werkwijze blijft ongewijzigd.</span><span class="help-lang-en">Open one section. The existing save workflow remains unchanged.</span></p>
       <div class="config-dashboard">
+        <button type="button" data-config-jump="preconfig"><strong>Voorconfig</strong><span>Algemene mogelijkheden vóór toepassingen.</span></button>
+        <button type="button" data-config-jump="features"><strong>Toepassingen</strong><span>Bijwoorden en volgende uitbreidingen.</span></button>
         <button type="button" data-config-jump="view"><strong>Basisweergave</strong><span>View, interface, raster en vulling.</span></button>
         <button type="button" data-config-jump="jan"><strong>JaN-notatie · TODO</strong><span>S:np-VP; binair eerst, meertakkig later.</span></button>
         <button type="button" data-config-jump="view"><strong>Boom & layout</strong><span>Takvolgorde, ruimte en fit.</span></button>
-        <button type="button" data-config-jump="log-lex"><strong>LEX & bijwoorden</strong><span>Profielen, inserties en LOG→LEX.</span></button>
+        <button type="button" data-config-jump="log-lex"><strong data-config-log-lex-title>LEX</strong><span>LEX-plaatsing en, indien ingeschakeld, extra insertieprofielen.</span></button>
         <button type="button" data-config-jump="view"><strong>Projecties</strong><span>LEX, SYNT en LOG.</span></button>
         <button type="button" data-config-jump="files"><strong>Voorbeelden & editors</strong><span>Bestanden, export en voorbeelden.</span></button>
         <button type="button" data-config-jump="advanced"><strong>Geavanceerd</strong><span>Regels en technische opties.</span></button>
       </div>`;
     overviewCard.querySelectorAll('[data-config-jump]').forEach(button => button.addEventListener('click', () => activateConfigTab(button.dataset.configJump)));
 
+    const preconfigCard = document.createElement('section');
+    preconfigCard.className = 'panel-card config-preconfig-card';
+    preconfigCard.id = 'config-preconfig';
+    preconfigCard.innerHTML = `
+      <div class="help-lang-nl">
+        <h2>Voorconfig · infrastructuur</h2>
+        <p class="inline-help">Een voorconfig schakelt een algemene mogelijkheid in, maar voegt zelf nog geen taalinhoud toe. Toepassingen gebruiken daarna alleen de mogelijkheden die hier gereedstaan.</p>
+      </div>
+      <div class="help-lang-en">
+        <h2>Pre-config · infrastructure</h2>
+        <p class="inline-help">A pre-config enables a general capability without adding linguistic content. Applications then use only capabilities enabled here.</p>
+      </div>
+      <fieldset class="preconfig-capability-list">
+        <legend><span class="help-lang-nl">Insertie per as</span><span class="help-lang-en">Insertion per axis</span></legend>
+        <p class="preconfig-intro help-lang-nl">Elke as staat onafhankelijk aan of uit. Bijwoorden gebruikt de combinatie LEX + LOG; SYNT blijft beschikbaar voor een latere toepassing.</p>
+        <p class="preconfig-intro help-lang-en">Each axis is enabled independently. Adverbs uses the LEX + LOG combination; SYNT is available for a future application.</p>
+        <div class="preconfig-axis-grid">
+          ${Object.values(INSERTION_AXIS_DEFINITIONS).map(axis => `
+            <label class="preconfig-axis-choice" for="insertionAxis${axis.label}Input">
+              <input data-insertion-axis="${axis.id}" id="insertionAxis${axis.label}Input" type="checkbox"/>
+              <span><strong>${axis.label}</strong><small class="help-lang-nl">Insertie op de ${axis.label}-as</small><small class="help-lang-en">Insertion on the ${axis.label} axis</small></span>
+            </label>`).join('')}
+        </div>
+        <div class="preconfig-actions">
+          <button id="insertionLexLogPresetButton" type="button"><span class="help-lang-nl">LEX + LOG aan</span><span class="help-lang-en">Enable LEX + LOG</span></button>
+          <button id="insertionAllOffButton" type="button"><span class="help-lang-nl">Alle insertie uit</span><span class="help-lang-en">Disable all insertion</span></button>
+        </div>
+        <div class="preconfig-status" id="preconfigInsertionStatus" role="status"></div>
+      </fieldset>
+      <section class="preconfig-candidates" aria-labelledby="preconfigCandidatesHeading">
+        <h3 id="preconfigCandidatesHeading"><span class="help-lang-nl">Volgende voorconfig-kandidaten</span><span class="help-lang-en">Next pre-config candidates</span></h3>
+        <p><span class="help-lang-nl">Ontwerpvoorraad; in rc.37 nog niet schakelbaar.</span><span class="help-lang-en">Design backlog; not switchable in rc.37 yet.</span></p>
+        <ul>${PRECONFIG_CANDIDATES.map(candidate => `<li><span class="help-lang-nl">${candidate.label}</span><span class="help-lang-en">${candidate.labelEn}</span></li>`).join('')}</ul>
+      </section>`;
+    preconfigCard.querySelectorAll('[data-insertion-axis]').forEach(input => {
+      input.addEventListener('change', async event => {
+        const axisId = event.target.dataset.insertionAxis;
+        const enabled = !!event.target.checked;
+        event.target.disabled = true;
+        await setInsertionAxes([axisId], enabled);
+        event.target.disabled = false;
+        appendConfigLog('change-insertion-axis', { axis: axisId, enabled });
+        markConfigDirty(`${String(axisId || '').toUpperCase()}-insertie`);
+      });
+    });
+    preconfigCard.querySelector('#insertionLexLogPresetButton')?.addEventListener('click', async event => {
+      event.currentTarget.disabled = true;
+      await setInsertionAxes(['lex', 'log'], true);
+      appendConfigLog('enable-insertion-preset', { axes: ['lex', 'log'] });
+      markConfigDirty('LEX + LOG-insertie');
+    });
+    preconfigCard.querySelector('#insertionAllOffButton')?.addEventListener('click', async event => {
+      event.currentTarget.disabled = true;
+      await setInsertionAxes(Object.keys(INSERTION_AXIS_DEFINITIONS), false);
+      appendConfigLog('disable-all-insertion', { axes: Object.keys(INSERTION_AXIS_DEFINITIONS) });
+      markConfigDirty(isEnglish() ? 'all insertion disabled' : 'alle insertie uit');
+    });
+
+    const featuresCard = document.createElement('section');
+    featuresCard.className = 'panel-card config-features-card';
+    featuresCard.id = 'config-features';
+    featuresCard.innerHTML = `
+      <div class="help-lang-nl">
+        <h2>OGN Basis & toepassingen</h2>
+        <p class="inline-help">OGN Basis bevat de gewone boom, het raster, LEX/SYNT/LOG met S/O/V-majors en voorbeeldzinnen zonder extra inserties. Een toepassing wordt pas beschikbaar wanneer haar voorconfig gereed is.</p>
+      </div>
+      <div class="help-lang-en">
+        <h2>OGN Base & applications</h2>
+        <p class="inline-help">OGN Base contains the ordinary tree, grid, LEX/SYNT/LOG with S/O/V majors, and samples without extra insertions. An application becomes available only after its pre-config is ready.</p>
+      </div>
+      <div class="feature-profile-status" id="featureProfileStatus" role="status"></div>
+      <fieldset class="feature-extra-list">
+        <legend><span class="help-lang-nl">Extra’s</span><span class="help-lang-en">Extras</span></legend>
+        <label class="feature-extra-choice" for="featureAdverbsInput">
+          <input id="featureAdverbsInput" type="checkbox"/>
+          <span>
+            <strong><span class="help-lang-nl">Bijwoorden</span><span class="help-lang-en">Adverbs</span></strong>
+            <small class="help-lang-nl">Voorbeeldzinnen, LOG-minors, directe LEX-inserties, gebruiksprofielen, bediening en documentatie.</small>
+            <small class="help-lang-en">Sample sentences, LOG minors, direct LEX insertions, usage profiles, controls, and documentation.</small>
+            <small class="feature-requirement-status" id="featureAdverbsRequirementStatus"></small>
+          </span>
+        </label>
+      </fieldset>`;
+    featuresCard.querySelector('#featureAdverbsInput')?.addEventListener('change', async event => {
+      const enabled = !!event.target.checked;
+      event.target.disabled = true;
+      await setFeatureEnabled('adverbs', enabled);
+      event.target.disabled = !featureRequirementsMet('adverbs');
+      appendConfigLog('change-feature-adverbs', { enabled });
+      markConfigDirty(isEnglish() ? 'Adverbs application' : 'Toepassing Bijwoorden');
+    });
+
     const janCard = document.createElement('section');
     janCard.className = 'panel-card config-jan-card';
     janCard.id = 'config-jan';
     janCard.innerHTML = `<div class="help-lang-nl"><h2>JaN · Just another Notation</h2><p><code>S:np-VP</code>, nadrukkelijk niet <code>S:NP-VP</code>.</p><p>Onderzoeksnotatie: <code>S+ np-VP</code>. Eerst voor binaire bomen; later voor niet-binaire, meertakkige bomen.</p><p>TODO: <code>heeft gebeten</code> ↔ <code>gebeten heeft</code>.</p></div><div class="help-lang-en"><h2>JaN · Just another Notation</h2><p><code>S:np-VP</code>, explicitly not <code>S:NP-VP</code>.</p><p>Research notation: <code>S+ np-VP</code>. Binary trees first; non-binary multi-branching trees later.</p><p>TODO: <code>heeft gebeten</code> ↔ <code>gebeten heeft</code>.</p></div>`;
 
+    panels.get('preconfig').appendChild(preconfigCard);
+    panels.get('features').appendChild(featuresCard);
     panels.get('overview').appendChild(overviewCard);
     panels.get('jan').appendChild(janCard);
     panels.get('files').append(graphExportCard, opnCard, saveCard, examplesCard);
@@ -8863,6 +9367,7 @@
     sidePanel.replaceChildren(tabList, ...panels.values());
     sidePanel.dataset.configTabsReady = '1';
     activateConfigTab(activeConfigTab);
+    applyFeatureVisibility();
   }
 
   function setText(selector, text) {
@@ -8912,7 +9417,7 @@
     setText('.main-projection-field span', en ? 'Proj.' : 'Proj.');
     setText('.mobile-adverb-field span', en ? 'Adverbs' : 'Bijwoorden');
     setText('.config-topbar h2', en ? 'All settings' : 'Alle instellingen');
-    setText('.config-topbar p', en ? 'Save & export opens first. Download the graph, LinkedIn image or Play video here; View still contains Tree spacing and Window fit at MAX.' : 'Opslaan & exporteren opent als eerste. Download hier de graph, LinkedIn-afbeelding of Play-video; onder Beeld blijven Boomruimte en Venstervulling op MAX staan.');
+    setText('.config-topbar p', en ? 'Pre-config opens first. Enable infrastructure per axis before selecting an application.' : 'Voorconfig opent als eerste. Schakel infrastructuur per as in voordat je een toepassing kiest.');
     document.querySelectorAll('[data-config-tab-button]').forEach(button => {
       button.textContent = en ? button.dataset.labelEn : button.dataset.labelNl;
     });
@@ -8988,7 +9493,7 @@
     });
     setLabelSpan('lexRuleSelect', en ? 'Utterance-type rule' : 'Uitingtype-regel');
 
-    document.querySelectorAll('.lex-extension-field legend').forEach(node => { node.textContent = en ? 'Branch extension (not for adverbs)' : (node.closest('.mobile-sheet') ? 'Takverlenging' : 'Takverlenging (niet voor bijwoorden)'); });
+    document.querySelectorAll('.lex-extension-field legend').forEach(node => { node.textContent = en ? 'Branch extension · compatibility' : 'Takverlenging · compatibiliteit'; });
     document.querySelectorAll('.top-menu-choice-field:not(.lex-extension-field) legend').forEach(node => {
       const count = node.querySelector('[data-top-menu-count]')?.textContent || '0/4';
       node.textContent = en ? 'Menus above grid ' : 'Menu’s boven grid ';
@@ -9099,16 +9604,19 @@
     setText('#openConfigButton, #openConfigFromHelpButton', 'Config');
     setText('#openHelpButton, #openHelpFromConfigButton', en ? 'README' : 'LEESMIJ');
     setText('.config-topbar h2', en ? 'Configuration overview' : 'Config-overzicht');
-    setText('.config-topbar p', en ? 'Choose a section. Save still uses Yes · save config / No · restore last saved config.' : 'Kies een sectie. Opslaan blijft Ja · bewaar config / Nee · herstel laatst bewaarde config.');
+    setText('.config-topbar p', en ? 'First set the pre-config, then choose an application. Save still uses Yes · save config / No · restore last saved config.' : 'Stel eerst de Voorconfig in en kies daarna een toepassing. Opslaan blijft Ja · bewaar config / Nee · herstel laatst bewaarde config.');
     setText('.help-topbar .intro-kicker', en ? 'README' : 'LEESMIJ');
     setText('.help-topbar h2', en ? 'Project information' : 'Projectinformatie');
-    setText('.help-topbar p', en ? 'README topics and the selected text are both visible immediately; each uses about half the available height.' : 'LEESMIJ-onderwerpen en de geselecteerde tekst zijn direct zichtbaar; elk gebruikt ongeveer de halve beschikbare hoogte.');
-    setText('.header-subtitle', en ? 'Top menu with Sentence, Adverb, Syntax / Functional, Interface, Projections, LOG order, Language, README and Config.' : 'Topmenu met Zin, Bijwoord, Syntax / Functional, Interface, Projecties, LOG-volgorde, taal, LEESMIJ en Config.');
+    setText('.help-topbar p', en ? 'README topics and the selected text are both visible immediately. Drag the divider to enlarge or reduce the text panel.' : 'LEESMIJ-onderwerpen en de geselecteerde tekst zijn direct zichtbaar. Sleep de scheidingslijn om het tekstscherm groter of kleiner te maken.');
+    setText('.header-subtitle', featureEnabled('adverbs')
+      ? (en ? 'Top menu with Sentence, Adverb, Syntax / Functional, Interface, Projections, LOG order, Language, README and Config.' : 'Topmenu met Zin, Bijwoord, Syntax / Functional, Interface, Projecties, LOG-volgorde, taal, LEESMIJ en Config.')
+      : (en ? 'Top menu with Sentence, Syntax / Functional, Interface, Projections, LOG order, Language, README and Config.' : 'Topmenu met Zin, Syntax / Functional, Interface, Projecties, LOG-volgorde, taal, LEESMIJ en Config.'));
     setText('[data-projection="axes"], [data-main-projection="axes"]', en ? 'All' : 'Alle');
     document.querySelectorAll('[data-source-axis-action="all"]').forEach(node => { node.textContent = en ? 'All' : 'Alle'; });
     document.querySelectorAll('[data-source-axis-action="none"]').forEach(node => { node.textContent = en ? 'None' : 'Geen'; });
     if (els.sourceAxisSummaryLabel) els.sourceAxisSummaryLabel.textContent = en ? 'Projections' : 'Projecties';
     renderMainChoiceMenus();
+    applyFeatureVisibility();
     applySelectedLanguageTexts();
   }
 
@@ -9147,6 +9655,108 @@
       button.addEventListener('click', () => setHelpTopic(button.getAttribute('data-help-topic-button') || 'readme'));
     });
     setHelpTopic('readme');
+  }
+
+  function effectiveHelpLayoutMode() {
+    if (state.helpLayoutMode === 'stacked' || state.helpLayoutMode === 'side') return state.helpLayoutMode;
+    const forced = validViewportMode(state.viewportMode);
+    if (forced === 'mobile-landscape') return 'side';
+    if (forced === 'desktop' || forced === 'mobile-portrait') return 'stacked';
+    return isMobileViewport() && !isPortraitGridFirstViewport() ? 'side' : 'stacked';
+  }
+
+  function applyHelpLayoutMode() {
+    const screen = document.querySelector('.help-tree-screen');
+    const resizer = document.getElementById('helpPanelResizer');
+    if (!screen) return;
+    const mode = effectiveHelpLayoutMode();
+    screen.dataset.helpLayout = mode;
+    document.body?.classList.toggle('help-layout-side', mode === 'side');
+    document.body?.classList.toggle('help-layout-stacked', mode === 'stacked');
+    if (resizer) {
+      resizer.setAttribute('aria-orientation', mode === 'side' ? 'vertical' : 'horizontal');
+      resizer.title = mode === 'side'
+        ? (isEnglish() ? 'Drag left or right to resize the README panels.' : 'Sleep links of rechts om de LEESMIJ-panelen te vergroten of verkleinen.')
+        : (isEnglish() ? 'Drag up or down to resize the README panels.' : 'Sleep omhoog of omlaag om de LEESMIJ-panelen te vergroten of verkleinen.');
+    }
+  }
+
+  function registerHelpPanelResizer() {
+    const screen = document.querySelector('.help-tree-screen');
+    const resizer = document.getElementById('helpPanelResizer');
+    if (!screen || !resizer || resizer.dataset.resizeBound === '1') return;
+    resizer.dataset.resizeBound = '1';
+
+    const storageKey = 'opengraph_help_panel_size_session';
+    const isStacked = () => effectiveHelpLayoutMode() === 'stacked';
+    const limits = () => {
+      const rect = screen.getBoundingClientRect();
+      const stacked = isStacked();
+      const total = stacked ? rect.height : rect.width;
+      const min = stacked ? 116 : 176;
+      const max = Math.max(min, total - (stacked ? 150 : 260));
+      return { stacked, rect, min, max };
+    };
+    const applySize = raw => {
+      const { min, max } = limits();
+      const size = Math.max(min, Math.min(max, Number(raw) || min));
+      screen.style.setProperty('--help-nav-size', `${Math.round(size)}px`);
+      resizer.setAttribute('aria-valuemin', String(Math.round(min)));
+      resizer.setAttribute('aria-valuemax', String(Math.round(max)));
+      resizer.setAttribute('aria-valuenow', String(Math.round(size)));
+      return size;
+    };
+    const saveSize = size => {
+      try { sessionStorage.setItem(storageKey, String(Math.round(size))); } catch (_err) {}
+    };
+    const restoreSize = () => {
+      let saved = '';
+      try { saved = sessionStorage.getItem(storageKey) || ''; } catch (_err) {}
+      if (saved) applySize(saved);
+    };
+
+    let activePointer = null;
+    const finish = event => {
+      if (activePointer === null) return;
+      if (event && event.pointerId !== undefined && event.pointerId !== activePointer) return;
+      activePointer = null;
+      resizer.classList.remove('is-dragging');
+      document.body.classList.remove('help-resizing');
+      saveSize(parseFloat(getComputedStyle(screen).getPropertyValue('--help-nav-size')) || 0);
+    };
+    resizer.addEventListener('pointerdown', event => {
+      if (event.button !== undefined && event.button !== 0) return;
+      activePointer = event.pointerId;
+      resizer.setPointerCapture?.(event.pointerId);
+      resizer.classList.add('is-dragging');
+      document.body.classList.add('help-resizing');
+      event.preventDefault();
+    });
+    resizer.addEventListener('pointermove', event => {
+      if (activePointer !== event.pointerId) return;
+      const { stacked, rect } = limits();
+      applySize(stacked ? event.clientY - rect.top : event.clientX - rect.left);
+    });
+    resizer.addEventListener('pointerup', finish);
+    resizer.addEventListener('pointercancel', finish);
+    resizer.addEventListener('lostpointercapture', finish);
+    resizer.addEventListener('keydown', event => {
+      const { stacked } = limits();
+      const relevant = stacked ? ['ArrowUp', 'ArrowDown'] : ['ArrowLeft', 'ArrowRight'];
+      if (!relevant.includes(event.key) && event.key !== 'Home' && event.key !== 'End') return;
+      const current = parseFloat(getComputedStyle(screen).getPropertyValue('--help-nav-size')) || (stacked ? screen.clientHeight / 2 : screen.clientWidth / 4);
+      const { min, max } = limits();
+      let next = current;
+      if (event.key === 'Home') next = min;
+      else if (event.key === 'End') next = max;
+      else if (event.key === 'ArrowUp' || event.key === 'ArrowLeft') next -= 16;
+      else next += 16;
+      saveSize(applySize(next));
+      event.preventDefault();
+    });
+    window.addEventListener('resize', () => { applyHelpLayoutMode(); applySize(parseFloat(getComputedStyle(screen).getPropertyValue('--help-nav-size')) || 0); }, { passive: true });
+    applyHelpLayoutMode();
+    restoreSize();
   }
 
   function registerReadmeCarousel() {
@@ -9233,6 +9843,9 @@
   function currentConfigSnapshot() {
     return {
       version: VERSION,
+      profile: featureEnabled('adverbs') ? 'custom' : 'base',
+      preconfig: insertionPreconfigSnapshot(),
+      features: { ...state.features },
       language: state.language,
       centerMode: state.centerMode,
       projection: state.projection,
@@ -9242,6 +9855,7 @@
       branchOrder: state.branchOrder,
       layoutDensity: state.layoutDensity,
       viewFitMode: state.viewFitMode,
+      helpLayoutMode: state.helpLayoutMode,
       showGrid: !!state.showGrid,
       showRelations: !!state.showRelations,
       showLabels: !!state.showLabels,
@@ -9252,10 +9866,12 @@
       southBoxDraggable: !!state.southBoxDraggable,
       southBoxManual: state.southBoxManual || null,
       freeSlotCount: state.freeSlotCount,
-      lexFreeSlotCount: state.lexFreeSlotCount,
-      lexFreeSlotPlacement: state.lexFreeSlotPlacement,
-      lexInsertionContent: state.lexInsertionContent,
-      logInsertionInterval: state.logInsertionInterval,
+      ...(featureEnabled('adverbs') ? {
+        lexFreeSlotCount: state.lexFreeSlotCount,
+        lexFreeSlotPlacement: state.lexFreeSlotPlacement,
+        lexInsertionContent: state.lexInsertionContent,
+        logInsertionInterval: state.logInsertionInterval
+      } : {}),
       topMenuChoices: Array.isArray(state.topMenuChoices) ? state.topMenuChoices.slice() : []
     };
   }
@@ -9302,6 +9918,23 @@
   function applyConfigSnapshot(snapshot = {}) {
     if (!snapshot || typeof snapshot !== 'object') return false;
     const currentVersionSnapshot = snapshot.version === VERSION;
+    state.preconfig = { insertion: { ...DEFAULT_INSERTION_AXES } };
+    if (currentVersionSnapshot && snapshot.preconfig?.insertion && typeof snapshot.preconfig.insertion === 'object') {
+      for (const axisId of Object.keys(INSERTION_AXIS_DEFINITIONS)) {
+        if (typeof snapshot.preconfig.insertion[axisId] === 'boolean') {
+          state.preconfig.insertion[axisId] = snapshot.preconfig.insertion[axisId];
+        }
+      }
+    }
+    state.features = { ...DEFAULT_FEATURES };
+    if (currentVersionSnapshot && snapshot.features && typeof snapshot.features === 'object') {
+      for (const featureId of Object.keys(FEATURE_DEFINITIONS)) {
+        if (typeof snapshot.features[featureId] === 'boolean') state.features[featureId] = snapshot.features[featureId];
+      }
+    }
+    for (const featureId of Object.keys(FEATURE_DEFINITIONS)) {
+      if (!featureRequirementsMet(featureId)) state.features[featureId] = false;
+    }
     if (typeof snapshot.language === 'string') state.language = normalizeLanguage(snapshot.language);
     if (typeof snapshot.centerMode === 'string') state.centerMode = (snapshot.centerMode === 'ft' || snapshot.centerMode === 'functional') ? 'ft' : 'syntax';
     if (currentVersionSnapshot) {
@@ -9331,6 +9964,7 @@
     if (typeof snapshot.southBoxDraggable === 'boolean') state.southBoxDraggable = snapshot.southBoxDraggable;
     if (snapshot.southBoxManual && Number.isFinite(snapshot.southBoxManual.left) && Number.isFinite(snapshot.southBoxManual.top)) state.southBoxManual = snapshot.southBoxManual;
     else if ('southBoxManual' in snapshot) state.southBoxManual = null;
+    if (typeof snapshot.helpLayoutMode === 'string' && ['auto','stacked','side'].includes(snapshot.helpLayoutMode)) state.helpLayoutMode = snapshot.helpLayoutMode;
     if (typeof snapshot.showGrid === 'boolean') state.showGrid = snapshot.showGrid;
     if (typeof snapshot.showRelations === 'boolean') state.showRelations = snapshot.showRelations;
     if (typeof snapshot.showLabels === 'boolean') state.showLabels = snapshot.showLabels;
@@ -9351,6 +9985,9 @@
       if (state.southBoxManual) localStorage.setItem('opengraph_south_box_manual_v4578', JSON.stringify(state.southBoxManual));
       else localStorage.removeItem('opengraph_south_box_manual_v4578');
     } catch (_err) {}
+    if (!featureEnabled('adverbs')) resetAdverbFeatureState();
+    refreshExamplesForFeatures();
+    applyFeatureVisibility();
     resetManualViewBox();
     return true;
   }
@@ -9370,12 +10007,19 @@
     syncConfigSaveStatus(true);
   }
 
-  function discardConfigChanges() {
+  async function discardConfigChanges() {
     let ok = false;
     try {
       const raw = localStorage.getItem(CONFIG_STORAGE_KEY);
       if (raw) ok = applyConfigSnapshot(JSON.parse(raw));
     } catch (_err) {}
+    if (featureEnabled('adverbs')) {
+      await loadLexiconUsageProfiles();
+      await loadAdverbOptionsFromHtml();
+    }
+    refreshExamplesForFeatures();
+    applyExampleAdverbDefaults();
+    applyFeatureVisibility();
     appendConfigLog(ok ? 'restore-config' : 'restore-config-missing', currentConfigSnapshot());
     syncConfigSaveStatus(ok ? false : null);
     syncControls();
@@ -9657,6 +10301,7 @@
       render();
     });
     const updateMainAdverb = event => {
+      if (!featureEnabled('adverbs')) return;
       state.selectedAdverbId = event.target.value || 'none';
       state.useExampleLexInsertions = state.selectedAdverbId === 'none';
       recordParadata('select-adverb', { adverb: state.selectedAdverbId });
@@ -9692,6 +10337,8 @@
     els.openHelpFromConfigButton?.addEventListener('click', () => setHelpScreen(true));
     els.closeHelpButton?.addEventListener('click', () => setHelpScreen(false));
     registerHelpTopicTree();
+    registerHelpPanelResizer();
+    applyHelpLayoutMode();
     document.querySelectorAll('[data-language-option]').forEach(button => {
       button.addEventListener('click', event => {
         setLanguage(event.currentTarget.dataset.languageOption || DEFAULT_LANGUAGE);
@@ -9980,10 +10627,14 @@
     registerCanvasPan();
     registerPaneSplitter();
     await loadStructureConfig();
-    await loadLexiconUsageProfiles();
-    await loadExamplesFromHtml();
-    await loadAdverbOptionsFromHtml();
     loadSavedConfigSnapshot();
+    if (featureEnabled('adverbs')) await loadLexiconUsageProfiles();
+    await loadExamplesFromHtml();
+    refreshExamplesForFeatures();
+    if (featureEnabled('adverbs')) await loadAdverbOptionsFromHtml();
+    else resetAdverbFeatureState();
+    applyExampleAdverbDefaults();
+    applyFeatureVisibility();
     syncConfigSaveStatus();
     render();
     applyLanguage();

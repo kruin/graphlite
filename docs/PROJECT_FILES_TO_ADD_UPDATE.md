@@ -5,7 +5,7 @@ Bestanden om als leidende projectbronnen toe te voegen of te vervangen.
 ## Volledige projectzip
 
 ```text
-OpenGraph_Lite_Viewer_v2.0.0-rc.33_full_source.zip
+OpenGraph_Lite_Viewer_v2.0.0-rc.37_full_source.zip
 ```
 
 De zip bevat de volledige bronset, documentatie, referenties, voorbeelden, OPN-voorbeeldbestand en releasecontroles.
@@ -22,12 +22,15 @@ LEESMIJ.md
 PROJECT_STATE_CURRENT.md
 projectie-master-spec.md
 OPN_STORAGE_FORMAT.md
+PRECONFIG_ARCHITECTURE.md
 LAYOUT_RULES.md
 LINGUISTIC_ACTIONS.md
 DOCUMENTATION_RULES.md
 HANDOVER_FOR_COLLABORATORS.md
 DEPLOY_GITHUB_PAGES.md
-SOURCE_CHANGES_V2.0.0-rc.20.md
+SOURCE_CHANGES_V2.0.0-rc.37.md
+RC36_BASE_PROFILE_TEST.md
+RC37_PRECONFIG_TEST.md
 structure-config.html
 viewer.js
 index.html
@@ -37,6 +40,10 @@ images/readme/traditional-tree-flexible-narrow.png
 images/readme/log-minor-spacing.svg
 images/readme/play-log-space-lex.svg
 tools/check_log_slot_distance.py
+tools/check_feature_profiles.py
+tools/check_feature_profiles_runtime.js
+docs/OGN_BASE_PROFILE.md
+docs/PRECONFIG_ARCHITECTURE.md
 tools/check_lex_horizontal_projection.py
 tools/check_desktop_max_view.py
 tools/check_linkedin_video_export.py

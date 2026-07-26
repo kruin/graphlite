@@ -7,7 +7,7 @@
 <meta content="no-cache" http-equiv="Pragma"/>
 <meta content="0" http-equiv="Expires"/>
 <meta content="width=device-width, initial-scale=1" name="viewport"/>
-<title>OpenGraph structure-editor v2.0.0-rc.33</title>
+<title>OpenGraph structure-editor v2.0.0-rc.37</title>
 <style>
     :root { color-scheme: light; --bg:#f8fafc; --panel:#fff; --text:#0f172a; --muted:#64748b; --line:#cbd5e1; --accent:#1d4ed8; --danger:#b91c1c; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
     * { box-sizing:border-box; }
@@ -38,18 +38,18 @@
 </head>
 <body><nav class="opengraph-return-nav" style="display:flex;gap:.5rem;flex-wrap:wrap;padding:.55rem .7rem;border-bottom:1px solid #cbd5e1;background:#f8fafc;position:sticky;top:0;z-index:50"><a href="index.html?screen=config" style="font-weight:800">← Terug naar: Config</a><a href="index.html" style="font-weight:800">← Terug naar: Main</a></nav>
 <header>
-<h1>OpenGraph structure-editor <span>v2.0.0-rc.33</span></h1>
-<p>Bewerk eerst de structure-config. De viewer én de voorbeeldzinnen-editor lezen daarna dezelfde syntax-, functional- en LOG-config. LOG-majors/minors bepalen met vaste slotafstand de neutrale LEX-basis; de voorbeeldzin valideert alleen.</p>
+<h1>OpenGraph structure-editor <span>v2.0.0-rc.37</span></h1>
+<p id="profileDescription">Bewerk eerst de structure-config. De viewer én de voorbeeldzinnen-editor lezen daarna dezelfde syntax-, functional- en LOG-config. LOG-majors/minors bepalen met vaste slotafstand de neutrale LEX-basis; de voorbeeldzin valideert alleen.</p>
 </header>
 <main>
 <section class="panel">
 <div class="panel-header">
 <h2>Config-bron</h2>
 <div class="button-row">
-<a class="button-link" href="index.html?v2.0.0-rc.33">Viewer</a>
-<a class="button-link" href="examples-editor.html?v2.0.0-rc.33">Voorbeeldeditor</a>
-<a class="button-link" href="structure-config.html?v2.0.0-rc.33">structure-config.html</a>
-<a class="button-link" href="lexicon-config.html?v2.0.0-rc.33">lexicon-config.html</a>
+<a class="button-link" href="index.html?v2.0.0-rc.37">Viewer</a>
+<a class="button-link" href="examples-editor.html?v2.0.0-rc.37">Voorbeeldeditor</a>
+<a class="button-link" href="structure-config.html?v2.0.0-rc.37">structure-config.html</a>
+<a class="button-link" href="lexicon-config.html?v2.0.0-rc.37">lexicon-config.html</a>
 </div>
 </div>
 <div class="panel-body">
@@ -83,7 +83,7 @@
 <section class="panel">
 <div class="panel-header"><h2>LOG, LEX-slots en validatie</h2><input disabled="" id="status" value="—"/></div>
 <div class="panel-body grid">
-<label class="field"><span>LOG-slotconfig (HTML)</span><textarea id="logText" spellcheck="false"></textarea></label>
+<label class="field"><span id="logFieldLabel">LOG-slotconfig (HTML)</span><textarea id="logText" spellcheck="false"></textarea></label>
 <label class="field"><span>LEX-slots</span><textarea id="slotsText" spellcheck="false"></textarea></label>
 <label class="field"><span>Structurele sources uit syntax/functional-config</span><textarea id="lexiconText" readonly="" spellcheck="false"></textarea></label>
 <label class="field"><span>HTML-preview</span><textarea id="htmlOutput" spellcheck="false"></textarea></label>
@@ -91,7 +91,8 @@
 </section>
 </main>
 <script>
-    const VERSION = 'v2.0.0-rc.33';
+    const VERSION = 'v2.0.0-rc.37';
+    const BASE_PROFILE = new URLSearchParams(location.search).get('profile') === 'base';
     const els = {
       syntax: document.getElementById('syntaxText'),
       functional: document.getElementById('functionalText'),
@@ -164,6 +165,20 @@ aux:AUX / pv`;
       <div class="log-class-config" data-category="REDEN_OORZAAK" data-interval="before-S">REDEN_OORZAAK → vóór S</div>
       <div class="log-class-config" data-category="VOORWAARDE_GEVOLG" data-interval="before-S">VOORWAARDE_GEVOLG → vóór S</div>
     </section>`;
+
+    function logSectionForProfile(html) {
+      if (!BASE_PROFILE) return html;
+      const doc = new DOMParser().parseFromString(html || defaultLogSection, 'text/html');
+      const section = doc.getElementById('opengraph-log-config');
+      if (!section) return html;
+      section.querySelectorAll('.log-class-config').forEach(node => node.remove());
+      const note = section.querySelector('.note');
+      if (note) {
+        note.textContent = 'S, O en V zijn de LOG-majors. LOG bepaalt hun neutrale LEX-rijen; de voorbeeldzin valideert alleen. Play gebruikt de fasen LOG → SPACE → LEX.';
+      }
+      section.dataset.profile = 'base';
+      return section.outerHTML;
+    }
 
     function escapeHtml(value) {
       return String(value ?? '').replace(/[&<>"']/g, ch => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[ch]));
@@ -263,7 +278,7 @@ aux:AUX / pv`;
 <body>
   <main>
     <h1>OpenGraph structure-config ${VERSION}</h1>
-    <p class="note">Deze HTML-file is de structurele bron voor viewer en voorbeeldeditor. De structure-config bevat structurele posities plus de normatieve LOG-slotconfig; lexicale vulling staat in lexicon-config.html. Bewerk bij voorkeur via <a class="button-link" href="structure-editor.html?v2.0.0-rc.33">structure-editor.html</a>.</p>
+    <p class="note">Deze HTML-file is de structurele bron voor viewer en voorbeeldeditor. De structure-config bevat structurele posities plus de normatieve LOG-slotconfig; lexicale vulling staat in lexicon-config.html. Bewerk bij voorkeur via <a class="button-link" href="structure-editor.html?${VERSION}${BASE_PROFILE ? '&profile=base' : ''}">structure-editor.html</a>.</p>
 
     <section id="opengraph-syntax-config" data-root="${escapeHtml(syntaxRoot)}" aria-label="Syntax-config">
       <h2>Syntax-config</h2>
@@ -280,7 +295,7 @@ ${functionalNodes.map(n => nodeDiv(n, true)).join('\n')}
 ${lexEntries.map(entry => `      <div class="lexical-config" data-source="${escapeHtml(entry.source)}" data-label="${escapeHtml(entry.label)}" data-role="${escapeHtml(entry.role || '')}" data-cat="${escapeHtml(entry.cat || '')}" data-from="${escapeHtml(entry.from.join(' '))}">${escapeHtml(entry.source)}:${escapeHtml(entry.label)} [role=${escapeHtml(entry.role || '-')} cat=${escapeHtml(entry.cat || '-')} from=${escapeHtml(entry.from.join('+'))}]</div>`).join('\n')}
     </section>
 
-    ${els.log.value.trim() || defaultLogSection}
+    ${logSectionForProfile(els.log.value.trim() || defaultLogSection)}
 
     <section id="opengraph-lex-config" aria-label="LEX-config">
       <h2>LEX-slots</h2>
@@ -314,7 +329,7 @@ ${slots.map(s => `      <div class="lex-slot-config" data-id="${escapeHtml(s.id)
       }
       els.syntax.value = nodesToLines('opengraph-syntax-config') || defaultSyntax;
       els.functional.value = nodesToLines('opengraph-functional-config') || defaultFunctional;
-      els.log.value = doc.getElementById('opengraph-log-config')?.outerHTML || defaultLogSection;
+      els.log.value = logSectionForProfile(doc.getElementById('opengraph-log-config')?.outerHTML || defaultLogSection);
       els.slots.value = [...doc.querySelectorAll('#opengraph-lex-config .lex-slot-config')].map(s => `${s.dataset.id}:${s.dataset.label || s.textContent.trim()}`).join('\n') || defaultSlots;
       buildHtml();
     }
@@ -340,7 +355,7 @@ ${slots.map(s => `      <div class="lex-slot-config" data-id="${escapeHtml(s.id)
       } catch (err) {
         els.syntax.value = defaultSyntax;
         els.functional.value = defaultFunctional;
-        els.log.value = defaultLogSection;
+        els.log.value = logSectionForProfile(defaultLogSection);
         els.slots.value = defaultSlots;
         buildHtml();
         els.status.value = 'Fallback basisconfig geladen';
@@ -348,7 +363,7 @@ ${slots.map(s => `      <div class="lex-slot-config" data-id="${escapeHtml(s.id)
     }
 
     document.getElementById('loadButton').addEventListener('click', loadCurrent);
-    document.getElementById('defaultButton').addEventListener('click', () => { els.syntax.value = defaultSyntax; els.functional.value = defaultFunctional; els.log.value = defaultLogSection; els.slots.value = defaultSlots; buildHtml(); });
+    document.getElementById('defaultButton').addEventListener('click', () => { els.syntax.value = defaultSyntax; els.functional.value = defaultFunctional; els.log.value = logSectionForProfile(defaultLogSection); els.slots.value = defaultSlots; buildHtml(); });
     document.getElementById('vpClusterButton').addEventListener('click', () => { els.syntax.value = clusterSyntax; buildHtml(); els.status.value = 'Perfectum-regelset actief: VP -> NP VP; VP -> pv VDW'; });
     document.getElementById('downloadButton').addEventListener('click', () => download('structure-config.html', buildHtml()));
     document.getElementById('saveAsButton').addEventListener('click', async () => {
@@ -370,6 +385,19 @@ ${slots.map(s => `      <div class="lex-slot-config" data-id="${escapeHtml(s.id)
     });
     [els.syntax, els.functional, els.log, els.slots].forEach(el => el.addEventListener('input', () => { try { buildHtml(); } catch (err) { els.status.value = err.message; } }));
 
+    if (BASE_PROFILE) {
+      document.documentElement.dataset.profile = 'base';
+      const description = document.getElementById('profileDescription');
+      if (description) description.textContent = 'Bewerk de basisstructuur voor syntax, functional, LOG en LEX. In OGN Basis bestaat LOG uitsluitend uit de majors S, O en V.';
+      const label = document.getElementById('logFieldLabel');
+      if (label) label.textContent = 'LOG-slotconfig basis (S, O en V)';
+      document.querySelectorAll('a[href]').forEach(link => {
+        const url = new URL(link.getAttribute('href'), location.href);
+        if (url.origin !== location.origin) return;
+        url.searchParams.set('profile', 'base');
+        link.setAttribute('href', `${url.pathname.split('/').pop()}?${url.searchParams}`);
+      });
+    }
     loadCurrent();
   </script>
 </body>

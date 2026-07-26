@@ -1,6 +1,10 @@
-# Actuele contractlaag · v2.0.0-rc.33
+# Actuele contractlaag · v2.0.0-rc.37
 
-De kern is nu `bronknoop → horizontale LEX-projectie → LOG-doel via
+Config scheidt nu `Voorconfig → Toepassingen`. Insertie is vooraf en
+onafhankelijk schakelbaar op LEX, SYNT en LOG. Bijwoorden vereist LEX + LOG;
+een asschakelaar voegt zonder toepassing geen taalinhoud toe.
+
+De projectiekern is `bronknoop → horizontale LEX-projectie → LOG-doel via
 LEX-Wissel → expliciete Wissels → voorbeeldzin als validatie`. LOG gebruikt
 vaste slots; iedere bijwoord-minor vergroot de relevante majorafstand. LOG
 bepaalt doelrijen, nooit de bronhoogte van de projectie. De voorbeeldzin

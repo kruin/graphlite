@@ -14,6 +14,44 @@ paradata    optionele workspace en lokale sessie-events
 
 Graphinhoud mag niet afhangen van de aanwezigheid van paradata.
 
+## Profiel en extra's
+
+Vanaf `v2.0.0-rc.36` legt metadata vast welk functieprofiel het document gebruikt:
+
+```json
+{
+  "profile": "base",
+  "extras": []
+}
+```
+
+Het basisprofiel bevat alleen de kernanalyse. Velden voor een uitgeschakelde extra
+worden niet als lege compatibiliteitsvelden bewaard, maar volledig weggelaten.
+Met de extra Bijwoorden ingeschakeld wordt dit `"profile": "custom"` met
+`"extras": ["adverbs"]`; pas dan mogen bijwoordinserties, LOG-minors en de
+bijbehorende LEX- en LOG-velden voorkomen.
+
+## Voorconfig
+
+Vanaf `v2.0.0-rc.37` bewaart metadata de algemene insertiecapaciteit per as:
+
+```json
+{
+  "preconfig": {
+    "insertion": {
+      "lex": false,
+      "synt": false,
+      "log": false
+    }
+  }
+}
+```
+
+Deze schakelaars voegen zelf geen taalkundige inhoud toe. Ze moeten vooraf
+actief zijn wanneer een toepassing insertiedata gebruikt. De toepassing
+Bijwoorden vereist de combinatie `lex: true` en `log: true`. `synt` is
+onafhankelijk gereserveerd voor een latere toepassing.
+
 ## LOG- en LEX-data
 
 `data.projections.log` bewaart minimaal:
@@ -24,13 +62,12 @@ Graphinhoud mag niet afhangen van de aanwezigheid van paradata.
   "authority": "LOG",
   "order": "SOV",
   "position_unit": "slot",
-  "insertion_interval": "auto",
   "sequence": [
     {"kind": "major", "short": "S", "logical_slot": 0},
-    {"kind": "minor", "short": "m1", "logical_slot": 1, "interval": "S-O"},
-    {"kind": "major", "short": "O", "logical_slot": 2}
+    {"kind": "major", "short": "O", "logical_slot": 1},
+    {"kind": "major", "short": "V", "logical_slot": 2}
   ],
-  "distances": {"S_O": 2, "O_V": 1, "S_V": 3},
+  "distances": {"S_O": 1, "O_V": 1, "S_V": 2},
   "lex_position_source": "LOG",
   "lex_projection_origin": "SOURCE-Y",
   "lex_placement_mode": "horizontal-then-move",
@@ -42,7 +79,8 @@ Graphinhoud mag niet afhangen van de aanwezigheid van paradata.
 `data.projections.lex.projection_origin` is `SOURCE-Y`.
 `data.projections.lex.placement_mode` is `horizontal-then-move`.
 `data.projections.lex.logical_sequence` bewaart dezelfde doelvolgorde.
-Vrije slots en bijwoordmetadata blijven voor compatibiliteit aanwezig.
+Bij het basisprofiel ontbreken vrije LEX-insertieslots, bijwoordmetadata en
+`log.insertion_interval` volledig.
 
 ## Metadata en paradata
 

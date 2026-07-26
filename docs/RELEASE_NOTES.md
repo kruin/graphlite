@@ -1,4 +1,38 @@
 
+## v2.0.0-rc.37 — Voorconfig vóór toepassingen
+
+- Config opent op `Voorconfig`; `Toepassingen` volgt als tweede stap.
+- Insertie kan afzonderlijk aan of uit op LEX, SYNT en LOG.
+- Een actieve insertie-as levert alleen infrastructuur en maakt zonder
+  toepassing geen taalinhoud.
+- Bijwoorden vereist de combinatie LEX + LOG en blijft tot die tijd
+  geblokkeerd.
+- LEX of LOG uitzetten schakelt Bijwoorden automatisch uit en wist de
+  bijbehorende staat.
+- SYNT is onafhankelijk voorbereid voor een volgende toepassing.
+- OPN, Legacy JSON en Config-snapshots bewaren de asgebonden voorconfig.
+- Import meldt ontbrekende insertie-assen voordat toepassingsdata wordt
+  geladen.
+- Nieuwe documentatie: `PRECONFIG_ARCHITECTURE.md`; nieuwe test:
+  `RC37_PRECONFIG_TEST.md`.
+- De automatische README-indeling gebruikt weer de bestaande viewportfunctie;
+  de oude verwijzing naar `isActualCompactScreen()` blokkeert de viewer niet
+  meer bij het starten.
+
+## v2.0.0-rc.36 — OGN Basis en schakelbare extra’s
+
+- `OGN Basis` is het standaardprofiel en bevat de gewone boom, raster,
+  LEX/SYNT/LOG met S/O/V-majors en basisvoorbeelden.
+- Config opent op `Basis & extra’s`.
+- `Bijwoorden` is de eerste extra en staat standaard uit.
+- Uitgeschakeld betekent dat bijwoordvoorbeelden, LOG-minors, directe
+  LEX-inserties, gebruiksprofielen, bediening, featuredocumentatie en
+  featurevelden in export ontbreken.
+- Voorbeelden-, lexicon- en structuureditors ondersteunen `profile=base`.
+- OPN legt het profiel en de actieve extra’s expliciet vast en blokkeert een
+  feature-import zolang de benodigde extra niet actief is.
+- Nieuwe controle: `tools/check_feature_profiles.py`.
+
 ## v2.0.0-rc.29 — LinkedIn-video met echte 30 fps
 
 - De aangeleverde rc.24-WebM bleek slechts 16 frames over circa 11,8 seconden

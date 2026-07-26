@@ -1,12 +1,33 @@
 # HANDOVER_FOR_COLLABORATORS
 
-Overdracht voor OpenGraph Lite Viewer v2.0.0-rc.33.
+Overdracht voor OpenGraph Lite Viewer v2.0.0-rc.37.
 
 ## Bronbasis
 
 Deze release is uitsluitend opgebouwd op de door de gebruiker geüploade
 `v2.0.0-rc.26` via rc.27. rc.28 herstelt contracten uit het vergelijkingsrapport
 zonder bronbestanden uit de alternatieve v2.0.x-lijn terug te kopiëren.
+
+## Voorconfig vóór toepassingen
+
+`INSERTION_AXIS_DEFINITIONS` is de algemene infrastructuurlaag. LEX, SYNT en
+LOG zijn afzonderlijk schakelbaar en staan standaard uit. Een toepassing
+declareert haar vereiste assen in `FEATURE_DEFINITIONS`. `Bijwoorden` vereist
+LEX + LOG. Maak een toepassing nooit actief als haar voorconfig ontbreekt;
+uitschakelen van een vereiste as moet de afhankelijke toepassing en haar staat
+ook uitschakelen.
+
+Nieuwe algemene mogelijkheden horen eerst in Voorconfig. Voeg pas daarna een
+taalkundige toepassing toe. De volgende kandidaten zijn vastgelegd in
+`PRECONFIG_ARCHITECTURE.md`.
+
+## Profielcontract
+
+`OGN Basis` is het standaardprofiel. De featurecatalogus staat centraal in
+`FEATURE_DEFINITIONS`; voeg uitbreidingen via dezelfde schakel-, reset-,
+import/export- en zichtbaarheidsroute toe. `Bijwoorden` is de eerste
+toepassing en staat standaard uit. Uitgeschakelde featuredata mag niet worden
+geladen, uitgevoerd, zichtbaar gemaakt of geëxporteerd.
 
 ## Niet wijzigen zonder expliciete opdracht
 
@@ -45,7 +66,8 @@ Intern schrijft de viewer `central_opn: "ft"`. Invoer met de oude waarde `functi
 1. Werk vanaf de nieuwste volledige projectzip.
 2. Lees `VERSION.txt`.
 3. Wijzig app en leidende instructies samen.
-4. Voer ook `tools/check_log_slot_distance.py` uit.
+4. Voer ook `tools/check_feature_profiles.py` en
+   `tools/check_log_slot_distance.py` uit.
 5. Voer `check_release.bat` uit.
 6. Hernoem de projectmap naar de bedoelde release en voer
    `maak-volledige-zip.bat` uit. De ZIP neemt automatisch de actuele mapnaam
@@ -56,12 +78,13 @@ Intern schrijft de viewer `central_opn: "ft"`. Invoer met de oude waarde `functi
 Gebruik `publish_checked.bat`. Releasezips en lokale mobile-testbestanden horen niet in de GitHub Pages-root.
 
 
-## Topmenu v2.0.0-rc.33
+## Topmenu v2.0.0-rc.37
 
-Main toont negen zichtbare hoofditems in twee vaste rijen:
+Main toont in Basis acht zichtbare hoofditems en met Bijwoorden aan negen:
 
 ```text
-Zin · Bijwoord · Syntax / Functional · Interface · Projecties · LOG-volgorde
+OGN Basis: Zin · Syntax / Functional · Interface · Projecties · LOG-volgorde
+Bijwoorden aan: Zin · Bijwoord · Syntax / Functional · Interface · Projecties · LOG-volgorde
 Taal · LEESMIJ/README · Config
 ```
 

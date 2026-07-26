@@ -5737,6 +5737,8 @@ body.viewport-mobile-landscape-test.main-screen-active .main-view-field {
 body.lang-en .help-lang-nl { display: none !important; }
 body.lang-en span.help-lang-en { display: inline !important; }
 body.lang-en div.help-lang-en { display: block !important; }
+body.lang-en p.help-lang-en,
+body.lang-en small.help-lang-en { display: block !important; }
 body.lang-en .help-carousel-frame .help-lang-en { display: inline !important; }
 body.lang-en .help-topic-panel > .help-lang-en { display: block !important; }
 @media (max-width: 860px) {
@@ -6992,7 +6994,7 @@ body.main-screen-active.main-window-max #graphSvg {
 }
 
 
-/* v2.0.0-rc.33 · zinsgebonden lexicale disambiguatie */
+/* v2.0.0-rc.36 · zinsgebonden lexicale disambiguatie */
 .canvas-wrap { position: relative; }
 .lex-ambiguity-panel {
   position:absolute; z-index:24; top:.7rem; right:.7rem; width:min(25rem,calc(100% - 1.4rem));
@@ -7014,7 +7016,7 @@ body.main-screen-active.main-window-max #graphSvg {
   .lex-ambiguity-options { grid-template-columns:1fr; }
 }
 
-/* v2.0.0-rc.33: fixed semantic two-row top menu.
+/* v2.0.0-rc.36: fixed semantic two-row top menu.
    Row 1: Sentence, Adverb, Syntax/Functional, Interface, Projections, LOG.
    Row 2: Language, README/LEESMIJ, Config. */
 body.main-screen-active .main-topbar {
@@ -7149,7 +7151,7 @@ body.config-screen-active .config-item-help {
 }
 
 
-/* v2.0.0-rc.33: twee traditionele bomen in het eerste README-item.
+/* v2.0.0-rc.36: twee traditionele bomen in het eerste README-item.
    De smalle variant krijgt een staand kader zodat labels leesbaar blijven. */
 .readme-tree-carousel[data-active-shape="narrow"] .readme-carousel-viewport {
   aspect-ratio: 4 / 5;
@@ -7159,5 +7161,231 @@ body.config-screen-active .config-item-help {
   .readme-tree-carousel[data-active-shape="narrow"] .readme-carousel-viewport {
     aspect-ratio: 4 / 5;
     min-height: 27rem;
+  }
+}
+
+/* v2.0.0-rc.36: README layout follows the selected or automatic orientation.
+   Automatic: side-by-side only on actual/forced mobile landscape; stacked elsewhere. */
+body.help-screen-active .help-screen.help-tree-screen,
+.help-tree-screen {
+  --help-nav-size: clamp(10rem, 42dvh, 24rem);
+  min-height: 0 !important;
+}
+.help-tree-screen[data-help-layout="stacked"] {
+  grid-template-columns: minmax(0, 1fr) !important;
+  grid-template-rows: var(--help-nav-size) .7rem minmax(0, 1fr) !important;
+}
+.help-tree-screen[data-help-layout="side"] {
+  --help-nav-size: clamp(13rem, 32vw, 24rem);
+  grid-template-columns: var(--help-nav-size) .7rem minmax(0, 1fr) !important;
+  grid-template-rows: minmax(0, 1fr) !important;
+}
+.help-tree-nav,
+.help-topic-stage {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  overflow: auto !important;
+}
+.help-panel-resizer {
+  position: relative;
+  align-self: stretch;
+  border: 0;
+  border-radius: .55rem;
+  touch-action: none;
+  background: transparent;
+  outline: none;
+}
+.help-tree-screen[data-help-layout="side"] .help-panel-resizer {
+  min-width: .7rem;
+  min-height: 2rem;
+  cursor: col-resize;
+}
+.help-tree-screen[data-help-layout="stacked"] .help-panel-resizer {
+  min-width: 2rem;
+  min-height: .7rem;
+  cursor: row-resize;
+}
+.help-panel-resizer::before {
+  content: "";
+  position: absolute;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--line), var(--accent) 18%);
+  transition: background .15s ease, box-shadow .15s ease;
+}
+.help-tree-screen[data-help-layout="side"] .help-panel-resizer::before { inset: .35rem .25rem; }
+.help-tree-screen[data-help-layout="stacked"] .help-panel-resizer::before { inset: .25rem .35rem; }
+.help-panel-resizer:hover::before,
+.help-panel-resizer:focus-visible::before,
+.help-panel-resizer.is-dragging::before {
+  background: color-mix(in srgb, var(--accent), var(--line) 32%);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent), transparent 82%);
+}
+.help-panel-resizer span::after {
+  position: absolute;
+  top: 50%; left: 50%; translate: -50% -50%;
+  color: var(--muted); font-size: .9rem; font-weight: 900; line-height: 1;
+}
+.help-tree-screen[data-help-layout="side"] .help-panel-resizer span::after { content: "⋮"; }
+.help-tree-screen[data-help-layout="stacked"] .help-panel-resizer span::after { content: "⋯"; }
+body.help-layout-side.help-resizing { cursor: col-resize !important; user-select:none !important; }
+body.help-layout-stacked.help-resizing { cursor: row-resize !important; user-select:none !important; }
+[hidden] {
+  display: none !important;
+}
+
+.config-features-card {
+  max-width: 980px;
+}
+
+.config-preconfig-card {
+  max-width: 980px;
+}
+
+.preconfig-capability-list {
+  display: grid;
+  gap: .9rem;
+  padding: 1rem;
+  border: 2px solid #2563eb;
+  border-radius: 14px;
+  background: #eff6ff;
+}
+
+.preconfig-intro {
+  margin: 0;
+  color: #334155;
+  line-height: 1.5;
+}
+
+.preconfig-axis-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: .7rem;
+}
+
+.preconfig-axis-choice {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: .65rem;
+  align-items: start;
+  padding: .85rem;
+  border: 1px solid #93c5fd;
+  border-radius: 12px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.preconfig-axis-choice input {
+  width: 1.2rem;
+  height: 1.2rem;
+  margin-top: .12rem;
+}
+
+.preconfig-axis-choice span,
+.preconfig-axis-choice small {
+  display: block;
+}
+
+.preconfig-axis-choice small {
+  margin-top: .25rem;
+  color: #475569;
+}
+
+.preconfig-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .55rem;
+}
+
+.preconfig-status {
+  padding: .7rem .85rem;
+  border-radius: 10px;
+  background: #dbeafe;
+  color: #1e3a8a;
+  font-weight: 850;
+}
+
+.preconfig-candidates {
+  margin-top: 1rem;
+  padding: .9rem 1rem;
+  border: 1px dashed #94a3b8;
+  border-radius: 12px;
+  background: #f8fafc;
+}
+
+.preconfig-candidates h3,
+.preconfig-candidates p {
+  margin-top: 0;
+}
+
+.preconfig-candidates ul {
+  margin-bottom: 0;
+  padding-left: 1.2rem;
+}
+
+.feature-profile-status {
+  margin: 1rem 0;
+  padding: .9rem 1rem;
+  border: 2px solid #0f766e;
+  border-radius: 14px;
+  background: #ecfdf5;
+  color: #134e4a;
+  font-weight: 900;
+  font-size: 1.05rem;
+}
+
+.feature-extra-list {
+  display: grid;
+  gap: .8rem;
+  padding: 1rem;
+  border: 1px solid #94a3b8;
+  border-radius: 14px;
+}
+
+.feature-extra-choice {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: .8rem;
+  align-items: start;
+  padding: .9rem 1rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.feature-extra-choice input {
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-top: .15rem;
+}
+
+.feature-extra-choice span,
+.feature-extra-choice small {
+  display: block;
+}
+
+.feature-extra-choice small {
+  margin-top: .3rem;
+  color: #475569;
+  line-height: 1.45;
+}
+
+.feature-extra-choice.requirements-missing {
+  border-style: dashed;
+  background: #f8fafc;
+  cursor: not-allowed;
+  opacity: .82;
+}
+
+.feature-extra-choice .feature-requirement-status {
+  color: #9a3412;
+  font-weight: 800;
+}
+
+@media (max-width: 700px) {
+  .preconfig-axis-grid {
+    grid-template-columns: 1fr;
   }
 }

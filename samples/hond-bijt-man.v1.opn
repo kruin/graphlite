@@ -9,9 +9,18 @@
     "created_at": "2026-07-25T00:00:00+02:00",
     "modified_at": "2026-07-25T00:00:00+02:00",
     "schema": "data-metadata-paradata",
+    "profile": "base",
+    "extras": [],
+    "preconfig": {
+      "insertion": {
+        "lex": false,
+        "synt": false,
+        "log": false
+      }
+    },
     "generator": {
       "name": "OpenGraph Lite Viewer",
-      "version": "v2.0.0-rc.33"
+      "version": "v2.0.0-rc.37"
     },
     "source": {
       "kind": "sample",
@@ -238,19 +247,11 @@
             "thematicRole": "patiens"
           }
         ],
-        "free_slot_count": 0,
-        "free_slot_placement": "above-vp",
-        "insertion_content": "empty",
-        "insertion_extension_targets": [
-          "vp-boundary"
-        ],
-        "free_slots": [],
         "logical_sequence": [
           {"id": "S", "kind": "major", "short": "S", "word": "HOND", "logical_slot": 0, "width": 1, "interval": null},
           {"id": "O", "kind": "major", "short": "O", "word": "MAN", "logical_slot": 1, "width": 1, "interval": null},
           {"id": "V", "kind": "major", "short": "V", "word": "BIJT", "logical_slot": 2, "width": 1, "interval": null}
-        ],
-        "adverb": null
+        ]
       },
       "synt": {
         "axis": "east",
@@ -266,7 +267,6 @@
         "order": "SOV",
         "marked": false,
         "position_unit": "slot",
-        "insertion_interval": "auto",
         "sequence": [
           {"id": "S", "kind": "major", "short": "S", "word": "HOND", "logical_slot": 0, "width": 1, "interval": null},
           {"id": "O", "kind": "major", "short": "O", "word": "MAN", "logical_slot": 1, "width": 1, "interval": null},

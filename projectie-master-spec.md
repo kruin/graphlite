@@ -1,6 +1,6 @@
 # Projectie-master-spec · horizontale LEX-projectie → één bepaald einddoel
 
-Normatieve projectiespecificatie voor OpenGraph Lite Viewer `v2.0.0-rc.33`.
+Normatieve projectiespecificatie voor OpenGraph Lite Viewer `v2.0.0-rc.37`.
 
 ## 1. Autoriteit en afleidingsrichting
 
@@ -22,8 +22,9 @@ voorbeeldzin levert geen coördinaten en bepaalt geen basisvolgorde.
 
 ## 2. Majors, minors en logische afstand
 
-De basisposities `S`, `O` en `V` zijn **majors**. Een bijwoord of
-bijwoordgroep is een **minor**.
+De basisposities `S`, `O` en `V` zijn **majors**. Een insertie met
+`origin=LOG` of `origin=LOG+LEX` is een **minor**. Een insertie met
+`origin=LEX` krijgt wel een LEX-doel, maar geen LOG-minor.
 
 Iedere major en minor bezet een LOG-slot met een vaste breedte. De logische
 afstand tussen twee majors is:
@@ -94,6 +95,19 @@ expliciete topic-/V2-regel veroorzaakt dus geen tweede pijl en geen tweede
 trace. De SYNT- en Functional-bronstructuren worden niet gemuteerd.
 
 ## 5. Configuratiecontract
+
+De gebruikersconfig gaat aan de toepassing vooraf:
+
+```text
+Voorconfig · Insertie LEX + LOG
+→ Toepassing · Bijwoorden
+→ LOG-minors en/of directe LEX-inserties
+```
+
+LEX, SYNT en LOG zijn in Voorconfig onafhankelijk schakelbaar. De toepassing
+Bijwoorden vereist LEX + LOG. De asschakelaars voegen zelf geen inserties toe;
+ze stellen alleen de infrastructuur beschikbaar. SYNT is in rc.37 nog niet
+aan een insertietoepassing gekoppeld.
 
 De normatieve HTML-config staat in `structure-config.html`:
 

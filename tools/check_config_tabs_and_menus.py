@@ -16,17 +16,22 @@ def require(source: str, marker: str, label: str) -> None:
 # Compact Config overview and the focused sections restored in rc.28.
 for marker, label in [
     ("const CONFIG_TAB_DEFINITIONS = [", "tabdefinities"),
+    ("{ id: 'preconfig', nl: 'Voorconfig', en: 'Pre-config' }", "tab Voorconfig"),
+    ("{ id: 'features', nl: 'Toepassingen', en: 'Applications' }", "tab Toepassingen"),
     ("{ id: 'overview', nl: 'Overzicht', en: 'Overview' }", "tab Overzicht"),
     ("{ id: 'jan', nl: 'JaN · TODO', en: 'JaN · TODO' }", "tab JaN"),
     ("{ id: 'files', nl: 'Opslaan & exporteren', en: 'Save & export' }", "tab Opslaan & exporteren"),
     ("{ id: 'view', nl: 'Beeld', en: 'View' }", "tab Beeld"),
     ("{ id: 'log-lex', nl: 'LOG & LEX', en: 'LOG & LEX' }", "tab LOG & LEX"),
     ("{ id: 'advanced', nl: 'Geavanceerd', en: 'Advanced' }", "tab Geavanceerd"),
-    ("let activeConfigTab = 'overview';", "Overzicht standaard actief"),
-    ("function activateConfigTab(tabId = 'overview'", "Overzicht als tabfallback"),
+    ("let activeConfigTab = 'preconfig';", "Voorconfig standaard actief"),
+    ("function activateConfigTab(tabId = 'preconfig'", "Voorconfig als tabfallback"),
     ("function setupConfigTabs()", "Config-opbouw"),
+    ("return isMobileViewport() && !isPortraitGridFirstViewport() ? 'side' : 'stacked';", "werkende automatische README-indeling"),
     ("config-dashboard", "compact Config-dashboard"),
     ("data-config-jump=\"jan\"", "JaN-overzichtskaart"),
+    ("panels.get('preconfig').appendChild(preconfigCard);", "voorconfigpaneel"),
+    ("panels.get('features').appendChild(featuresCard);", "toepassingenpaneel"),
     ("panels.get('overview').appendChild(overviewCard);", "overzichtspaneel"),
     ("panels.get('jan').appendChild(janCard);", "JaN-paneel"),
     ("panels.get('files').append(graphExportCard, opnCard, saveCard, examplesCard);", "bestandssectie"),
@@ -49,6 +54,7 @@ for marker, label in [
 for marker, label in [
     ('id="mainSentenceOptions"', "Zin-keuzelijst"),
     ('id="mainAdverbOptions"', "Bijwoord-keuzelijst"),
+    ('data-feature="adverbs" hidden="" id="mainAdverbMenu"', "Bijwoordmenu standaard verborgen"),
     ('id="mainViewOptions"', "Syntax/Functional-keuzelijst"),
     ('id="mainInterfaceOptions"', "Interface-keuzelijst"),
     ('id="mainLanguageMenu"', "vijftalig menu"),
@@ -76,6 +82,8 @@ if "data-language-toggle" in INDEX:
     errors.append("oude NL/EN-toggle staat nog in index.html")
 if "vrije LEX-rij" in JS:
     errors.append("oude herhaalde tekst 'vrije LEX-rij' staat nog in viewer.js")
+if "isActualCompactScreen" in JS:
+    errors.append("niet-bestaande schermhelper isActualCompactScreen staat nog in viewer.js")
 
 # Export order stays LinkedIn, Play, SVG.
 png_index = INDEX.find('id="downloadGraphPngButton"')
@@ -93,4 +101,4 @@ if errors:
         print("-", error)
     raise SystemExit(1)
 
-print("CONFIG/MENU CHECK: OK (overzicht, JaN, uitleg, Functional, interface en talen)")
+print("CONFIG/MENU CHECK: OK (Voorconfig, toepassingen, overzicht, JaN, Functional, interface en talen)")

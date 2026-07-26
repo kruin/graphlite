@@ -73,6 +73,7 @@ let testConfig = {{
 function validLogInsertionInterval() {{ return configuredInterval; }}
 function activeLogConfig() {{ return testConfig; }}
 function activeAdverbData() {{ return null; }}
+function insertionAxisEnabled(axis) {{ return axis === 'log'; }}
 function activeLexInsertionSpecs() {{ return testSpecs; }}
 function activeLogicalSlotSequence() {{ return activeSequence; }}
 function activeLexPlacementSequence() {{ return activeSequence; }}

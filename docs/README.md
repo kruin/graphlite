@@ -1,4 +1,4 @@
-# OpenGraph Lite Viewer v2.0.0-rc.33
+# OpenGraph Lite Viewer v2.0.0-rc.37
 
 OpenGraph Lite Viewer is a demo/viewer for JaN, OPN and OpenGraph linguistic structures. This release is
 built exclusively on the uploaded `v2.0.0-rc.26` source through rc.27; rc.28
@@ -7,7 +7,24 @@ the abandoned alternate version line.
 
 Dutch documentation: [`LEESMIJ.md`](LEESMIJ.md).
 
+## OGN Base, pre-config and applications
+
+The viewer now starts in **OGN Base**. This profile contains the ordinary
+Syntax/Functional tree, grid, the LEX/SYNT/LOG projections with S/O/V majors,
+and examples without optional insertions. Insertion defaults to off on LEX,
+SYNT and LOG.
+
+`Config → Pre-config` enables insertion independently per axis without adding
+linguistic content. `Config → Applications` then provides **Adverbs** as the
+first application. It becomes available only after insertion on **LEX + LOG**
+is enabled. When Adverbs is off, its examples, LOG minors, direct LEX
+insertions, controls, runtime data, documentation links, and export fields are
+absent. OPN exports record `profile: "base"`, `extras: []`, and all three axis
+switches.
+
 ## Lexical usage profiles and user disambiguation
+
+This section applies when the Adverbs application is enabled.
 
 OGN does not store an ambiguous form as uncontrolled duplicate dictionary
 entries. The lexicon stores one lemma with multiple possible **usage
@@ -60,21 +77,21 @@ maak-volledige-zip.bat
 ```
 
 The batch file derives the ZIP name from its own containing directory. A
-directory named `OpenGraph_Lite_Viewer_v2.0.0-rc.33` therefore produces the
-sibling file `OpenGraph_Lite_Viewer_v2.0.0-rc.33_full_source.zip`. An existing
+directory named `OpenGraph_Lite_Viewer_v2.0.0-rc.37` therefore produces the
+sibling file `OpenGraph_Lite_Viewer_v2.0.0-rc.37_full_source.zip`. An existing
 ZIP with that exact name is replaced safely; the script never invents a
 `(1)` suffix.
 
 GitHub Pages:
 
 ```text
-https://kruin.github.io/graphlite/index.html?ogv=v2.0.0-rc.33
+https://kruin.github.io/graphlite/index.html?ogv=v2.0.0-rc.37
 ```
 
 Cache reset:
 
 ```text
-https://kruin.github.io/graphlite/reset-cache.html?ogv=v2.0.0-rc.33
+https://kruin.github.io/graphlite/reset-cache.html?ogv=v2.0.0-rc.37
 ```
 
 ## Desktop view
@@ -94,14 +111,16 @@ throughout the phased Play sequence.
 
 ## Config tabs
 
-Config opens on a compact overview. It links to these focused sections:
+Config follows the dependency order and links to these focused sections:
 
-1. `Overview` and `JaN · TODO`;
-2. `Save & export`: LinkedIn/Play/SVG first, followed by OPN, Config
+1. `Pre-config`: insertion independently on LEX, SYNT and LOG;
+2. `Applications`: Adverbs requires LEX + LOG;
+3. `Overview` and `JaN · TODO`;
+4. `Save & export`: LinkedIn/Play/SVG first, followed by OPN, Config
    save/restore and example management;
-3. `View`: MAX, Syntax / Functional, tree layout and projection colours;
-4. `LOG & LEX`: LOG minors, interval selection, LEX order and rules;
-5. `Advanced`: legacy branch-extension and top-menu placement options.
+5. `View`: MAX, Syntax / Functional, tree layout and projection colours;
+6. `LOG & LEX`: core LEX order and, when enabled, optional insertions;
+7. `Advanced`: legacy branch-extension and top-menu placement options.
 
 `Window fit` means how the tree uses the available app window. It is not a
 second application window.
@@ -199,7 +218,8 @@ adverbial phrases. See
 ## Top menu
 
 ```text
-Sentence · Adverb · Syntax/Functional · Interface · Projections · LOG order · Language · README · Config
+OGN Base: Sentence · Syntax/Functional · Interface · Projections · LOG order · Language · README · Config
+Adverbs on: Sentence · Adverb · Syntax/Functional · Interface · Projections · LOG order · Language · README · Config
 ```
 
 There is no generic `Menu` button and there are no nested submenus. Choice

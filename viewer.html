@@ -1,7 +1,7 @@
 <!doctype html>
 
-<!-- OPENGRAPH_ROOT_VIEWER_INDEX_v2.0.0-rc.33: this root index is the app, not docs. -->
-<html data-opengraph-app="viewer" data-version="v2.0.0-rc.33" lang="en">
+<!-- OPENGRAPH_ROOT_VIEWER_INDEX_v2.0.0-rc.37: this root index is the app, not docs. -->
+<html data-opengraph-app="viewer" data-version="v2.0.0-rc.37" lang="en">
 <head>
 <meta charset="utf-8"/>
 <meta content="no-store, no-cache, must-revalidate, max-age=0" http-equiv="Cache-Control"/>
@@ -10,10 +10,10 @@
 <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport"/>
 <meta content="#0f172a" name="theme-color"/>
 <meta content="OpenGraph Lite Viewer: vrije JAN-bronknopen, edits, LEX-plaatsingsregels en projecties." name="description"/>
-<title>OpenGraph Lite Viewer v2.0.0-rc.33</title>
+<title>OpenGraph Lite Viewer v2.0.0-rc.37</title>
 <script>
     (function() {
-      var VERSION = 'v2.0.0-rc.33';
+      var VERSION = 'v2.0.0-rc.37';
       window.__OPENGRAPH_EXPECTED_VERSION__ = VERSION;
       function runCacheCleanupOnce() {
         var flag = 'opengraph-cache-cleaned-' + VERSION;
@@ -52,14 +52,14 @@
 <link href="icons/icon-192.svg" rel="icon" type="image/svg+xml"/>
 <!-- v4552: manifest disabled in local/dev build to avoid PWA/service-worker confusion. -->
 <!-- <link rel="manifest" href="manifest.webmanifest"> -->
-<link href="styles.css?v2.0.0-rc.33" rel="stylesheet"/>
+<link href="styles.css?v2.0.0-rc.37" rel="stylesheet"/>
 </head>
 <body class="main-screen-active">
 <header class="app-header">
 <div>
 <div class="eyebrow">OpenGraph · JaN · Open Notation</div>
-<h1>OpenGraph Lite Viewer <span class="version-tag">v2.0.0-rc.33</span></h1>
-<p class="header-subtitle">Top menu with Sentence, Adverb, Syntax / Functional, Interface, Projections, LOG order, Language, README and Config.</p>
+<h1>OpenGraph Lite Viewer <span class="version-tag">v2.0.0-rc.37</span></h1>
+<p class="header-subtitle">Top menu with Sentence, Syntax / Functional, Interface, Projections, LOG order, Language, README and Config.</p>
 </div>
 <button class="ghost hidden" id="installButton" type="button">Install</button>
 </header>
@@ -72,7 +72,7 @@
 <div aria-label="Voorbeeldzin kiezen" class="compact-choice-list main-menu-option-list" id="mainSentenceOptions" role="listbox"></div>
 </div>
 </details>
-<details class="compact-choice-menu main-adverb-menu top-menu-item" id="mainAdverbMenu">
+<details class="compact-choice-menu main-adverb-menu top-menu-item" data-feature="adverbs" hidden="" id="mainAdverbMenu">
 <summary id="mainAdverbSummary" title="Kies een bijwoord">Bijwoord</summary>
 <div aria-label="Bijwoord kiezen" class="compact-choice-popover top-menu-popover top-menu-adverb-popover">
 <div aria-label="Bijwoord kiezen" class="compact-choice-list main-menu-option-list" id="mainAdverbOptions" role="listbox"></div>
@@ -160,7 +160,7 @@
 <div>
 <div class="intro-kicker">README</div>
 <h2>Project information</h2>
-<p>README topics and the selected text are both visible immediately; each uses about half the available height.</p>
+<p>README topics and the selected text are both visible immediately. Drag the divider to enlarge or reduce the text panel.</p>
 </div>
 </section>
 <section aria-label="Lees mij / README en uitleg" class="help-screen help-tree-screen" id="helpScreen">
@@ -219,9 +219,9 @@
 </button>
 <ul>
 <li><button class="help-topic-button" data-help-topic-button="lex-movement" type="button"><span class="help-lang-nl">LEX-wissels</span><span class="help-lang-en">LEX exchanges</span></button></li>
-<li><button class="help-topic-button" data-help-topic-button="adverbs" type="button"><span class="help-lang-nl">Bijwoorden</span><span class="help-lang-en">Adverbs</span></button></li>
-<li><button class="help-topic-button" data-help-topic-button="lexical-profiles" type="button"><span class="help-lang-nl">Lexicale profielen</span><span class="help-lang-en">Lexical profiles</span></button></li>
-<li><button class="help-topic-button" data-help-topic-button="adverb-origins" type="button"><span class="help-lang-nl">Bijwoordbronnen</span><span class="help-lang-en">Adverb origins</span></button></li></ul>
+<li data-feature="adverbs" hidden=""><button class="help-topic-button" data-help-topic-button="adverbs" type="button"><span class="help-lang-nl">Bijwoorden</span><span class="help-lang-en">Adverbs</span></button></li>
+<li data-feature="adverbs" hidden=""><button class="help-topic-button" data-help-topic-button="lexical-profiles" type="button"><span class="help-lang-nl">Lexicale profielen</span><span class="help-lang-en">Lexical profiles</span></button></li>
+<li data-feature="adverbs" hidden=""><button class="help-topic-button" data-help-topic-button="adverb-origins" type="button"><span class="help-lang-nl">Bijwoordbronnen</span><span class="help-lang-en">Adverb origins</span></button></li></ul>
 </li>
 <li><button class="help-topic-button" data-help-topic-button="jan-todo" type="button"><span class="help-lang-nl">JaN · TODO</span><span class="help-lang-en">JaN · TODO</span></button></li><li>
 <button class="help-topic-button" data-help-topic-button="gitignore" type="button">
@@ -238,6 +238,7 @@
 </ul>
 </nav>
 </aside>
+<div aria-label="Resize README panels" aria-orientation="vertical" class="help-panel-resizer" id="helpPanelResizer" role="separator" tabindex="0" title="Drag to resize the README text panel."><span aria-hidden="true"></span></div>
 <section aria-live="polite" class="help-topic-stage">
 <article class="help-topic-panel readme-intro-panel is-active" data-help-topic="readme">
 <div class="help-lang-nl">
@@ -359,12 +360,12 @@
 <div class="help-lang-nl">
 <h3>Named projections</h3>
 <p>Een named projection geeft een projectie een naam en eigen selectieregels.</p>
-<ul><li><strong>LEX</strong>: toont horizontale bronprojecties en één eindverplaatsing per bronwoord; de projectie en projectiemerkers zijn blauw.</li><li><strong>SYNT</strong>: selecteert syntactische categorieën en regels.</li><li><strong>LOG</strong>: ordent S/O/V-majors en bijwoord-minors op vaste slots.</li></ul>
+<ul><li><strong>LEX</strong>: toont horizontale bronprojecties en één eindverplaatsing per bronwoord; de projectie en projectiemerkers zijn blauw.</li><li><strong>SYNT</strong>: selecteert syntactische categorieën en regels.</li><li><strong>LOG</strong>: ordent S/O/V-majors op vaste slots<span data-feature="adverbs" hidden="">, samen met ingeschakelde minors</span>.</li></ul>
 </div>
 <div class="help-lang-en">
 <h3>Named projections</h3>
 <p>A named projection gives a projection a name and its own selection rules.</p>
-<ul><li><strong>LEX</strong>: shows LOG-derived neutral rows and later exchanges; its projection and projection markers are blue.</li><li><strong>SYNT</strong>: selects syntactic categories and rules.</li><li><strong>LOG</strong>: orders S/O/V majors and adverb minors on fixed slots.</li></ul>
+<ul><li><strong>LEX</strong>: shows LOG-derived neutral rows and later exchanges; its projection and projection markers are blue.</li><li><strong>SYNT</strong>: selects syntactic categories and rules.</li><li><strong>LOG</strong>: orders S/O/V majors on fixed slots<span data-feature="adverbs" hidden="">, together with enabled minors</span>.</li></ul>
 </div>
 </article>
 <article class="help-topic-panel" data-help-topic="lex-axis">
@@ -376,8 +377,8 @@
 <div class="help-lang-en"><h3>SYNT</h3><p>SYNT is the named projection for syntactic rules. Rules are shown at source height, for example <code>S → NP VP</code> and <code>VP → V NP</code>.</p></div>
 </article>
 <article class="help-topic-panel" data-help-topic="log-axis">
-<div class="help-lang-nl"><h3>LOG</h3><p>LOG is de named projection op de zuidas. S, O en V zijn majors; bijwoorden zijn minors. Iedere minor vergroot de afstand tussen zijn begrenzende majors met één vast slot. De volledige LOG-volgorde bepaalt de neutrale LEX-rijen.</p></div>
-<div class="help-lang-en"><h3>LOG</h3><p>LOG is the named projection on the south axis. S, O and V are majors; adverbs are minors. Each minor increases the distance between its bounding majors by one fixed slot. The full LOG order determines the neutral LEX rows.</p></div>
+<div class="help-lang-nl"><h3>LOG</h3><p data-feature-absent="adverbs">LOG is de named projection op de zuidas. S, O en V zijn majors op vaste slots. Hun volledige LOG-volgorde bepaalt de neutrale LEX-rijen.</p><p data-feature="adverbs" hidden="">LOG is de named projection op de zuidas. S, O en V zijn majors; ingeschakelde inserties kunnen minors toevoegen. Iedere minor vergroot de afstand tussen zijn begrenzende majors met één vast slot. De volledige LOG-volgorde bepaalt de neutrale LEX-rijen.</p></div>
+<div class="help-lang-en"><h3>LOG</h3><p data-feature-absent="adverbs">LOG is the named projection on the south axis. S, O and V are majors on fixed slots. Their complete LOG order determines the neutral LEX rows.</p><p data-feature="adverbs" hidden="">LOG is the named projection on the south axis. S, O and V are majors; enabled insertions may add minors. Each minor increases the distance between its bounding majors by one fixed slot. The full LOG order determines the neutral LEX rows.</p></div>
 </article>
 <article class="help-topic-panel" data-help-topic="tree-notation">
 <div class="help-lang-nl">
@@ -435,14 +436,14 @@
 <div class="help-lang-nl"><h3>LEX-wissels</h3><p>Een LEX-wissel verandert het bepaalde einddoel op de LEX-projectie. De centrale graph transformeert niet.</p><p>LOG bepaalt eerst de neutrale basis; Comp, vooropplaatsing/topic en V2/PV kunnen daarna logisch een ander doel kiezen. De tekening combineert dit tot één pijl en één trace op de bronrij.</p></div>
 <div class="help-lang-en"><h3>LEX exchanges</h3><p>A LEX exchange changes the resolved final target on the LEX projection. The central graph does not transform.</p><p>LOG determines the neutral basis first; Comp, fronting/topic and V2/finite verb may then logically select another target. The drawing combines this into one arrow and one trace on the source row.</p></div>
 </article>
-<article class="help-topic-panel" data-help-topic="adverbs">
+<article class="help-topic-panel" data-feature="adverbs" data-help-topic="adverbs" hidden="">
 <div class="help-lang-nl"><h3>Bijwoorden</h3><p>Een bijwoordelijke realisatie eindigt op LEX, maar heeft niet altijd dezelfde bron. Een semantische operator kan als <strong>LOG→LEX</strong>-realisatie worden geplaatst; een partikel of lokaal focus-/graadelement kan als <strong>directe LEX-insertie</strong> worden geplaatst. Een gemengde groep, zoals <code>misschien wel</code>, kan één zichtbaar slot gebruiken met componenten uit beide bronnen.</p><p>De bron, scope en lineaire LEX-plaats zijn afzonderlijke eigenschappen. Alleen LOG-profielen verschijnen als minor op de zuidas; directe LEX-profielen reserveren uitsluitend een LEX-plaats.</p></div>
 <div class="help-lang-en"><h3>Adverbs</h3><p>An adverbial realization ends on LEX, but it does not always have the same origin. A semantic operator may be placed as a <strong>LOG→LEX</strong> realization; a particle or local focus/degree item may be placed as a <strong>direct LEX insertion</strong>. A mixed group such as <code>misschien wel</code> may use one visible slot with components from both origins.</p><p>Origin, scope and linear LEX position are separate properties. Only LOG profiles appear as minors on the south axis; direct LEX profiles reserve a LEX position only.</p></div>
 </article>
-<article class="help-topic-panel" data-help-topic="lexical-profiles">
+<article class="help-topic-panel" data-feature="adverbs" data-help-topic="lexical-profiles" hidden="">
 <div class="help-lang-nl"><h3>Lexicale profielen en disambiguatie</h3><p>Het lexicon bevat één lemma met nul, één of meer <strong>gebruiksprofielen</strong>. Een profiel beschrijft functie, oorsprong (<code>LOG</code>, <code>LEX</code> of <code>LOG+LEX</code>), standaardscope, voorkeursinterval en welke OGN-onderdelen door de keuze veranderen.</p><p>Meerwoordconstructies verwijzen naar lemma's en bieden eigen groepsprofielen. <code>misschien wel</code> blijft bijvoorbeeld één zichtbaar LEX-slot, maar kan intern als <code>misschien:LOG + wel:LEX</code> worden geanalyseerd.</p><p>De concrete zin kiest een profiel per zinsinstantie. Wanneer meerdere analyses mogelijk zijn en de keuze de OGN-notatie verandert, vraagt de viewer de gebruiker. De voorgestelde analyse wordt voorlopig getekend; pas de keuze van de gebruiker maakt de zinsanalyse definitief. De keuze wijzigt het globale lexicon niet.</p></div>
 <div class="help-lang-en"><h3>Lexical profiles and disambiguation</h3><p>The lexicon stores one lemma with zero, one or more <strong>usage profiles</strong>. A profile records function, origin (<code>LOG</code>, <code>LEX</code> or <code>LOG+LEX</code>), default scope, preferred interval and which OGN parts change with the choice.</p><p>Multiword constructions refer to lemmas and provide their own group profiles. For example, <code>misschien wel</code> remains one visible LEX slot while its internal analysis may be <code>misschien:LOG + wel:LEX</code>.</p><p>The concrete sentence selects one profile per instance. When several analyses are possible and the choice changes the OGN notation, the viewer asks the user. The suggested analysis is drawn provisionally; the user's choice finalizes the sentence analysis. It does not change the global lexicon.</p></div>
-</article><article class="help-topic-panel" data-help-topic="adverb-origins">
+</article><article class="help-topic-panel" data-feature="adverbs" data-help-topic="adverb-origins" hidden="">
 <div class="help-lang-nl"><h3>Bijwoordbronnen</h3><p>LEX is de bestemming, maar niet altijd de bron. <strong>LOG→LEX</strong> realiseert een semantische operator, zoals modaliteit of gebeurtenisfrequentie. Een <strong>directe LEX-insertie</strong> plaatst een partikel, lokaal focusitem of interne graadmodificeerder zonder zelfstandige LOG-node.</p><p>Een gemengde groep kan één zichtbaar slot gebruiken: <code>misschien:LOG + wel:LEX</code>. Oorsprong, scope, groepering en lineaire landingsplaats worden per zinsinstantie opgeslagen.</p></div>
 <div class="help-lang-en"><h3>Adverb origins</h3><p>LEX is the destination, but not always the origin. <strong>LOG→LEX</strong> realizes a semantic operator such as modality or event frequency. A <strong>direct LEX insertion</strong> places a particle, local focus item or internal degree modifier without an independent LOG node.</p><p>A mixed group can use one visible slot: <code>misschien:LOG + wel:LEX</code>. Origin, scope, grouping and linear landing position are stored per sentence instance.</p></div></article>
 <article class="help-topic-panel" data-help-topic="gitignore">
@@ -493,7 +494,7 @@
 <span>Zinnen</span>
 <select aria-label="Zinnen kiezen" id="mobileExampleSelect"></select>
 </label>
-<label class="mobile-adverb-field" for="mobileAdverbSelect">
+<label class="mobile-adverb-field" data-feature="adverbs" for="mobileAdverbSelect" hidden="">
 <span>Bijwoorden</span>
 <select aria-label="Bijwoorden kiezen" id="mobileAdverbSelect"></select>
 </label>
@@ -501,17 +502,17 @@
 </section>
 <section aria-label="Hoofdbediening" class="toolbar">
 <div aria-label="Zin-input" class="input-sentence-tools">
-<a class="button-link" href="examples-input.html?v2.0.0-rc.33" title="Open de HTML-inputfile met voorbeeldzinnen, subject vet en object cursief">HTML-input</a>
-<a class="button-link" href="examples-adverbs.html?v2.0.0-rc.33" title="Voorbeeldset met één bijwoord per zin en default-host per categorie">Bijwoordvoorbeelden</a>
-<a class="button-link" href="docs/LEX_ADVERB_PLACEMENT_RULES_CHECKED.md?v2.0.0-rc.33" title="Bijwoordklasse en scope als input voor LOG-minors; default en gemarkeerd">Bijwoordregels</a>
-<a class="button-link" href="examples-adverb-rules-v4552.html?v2.0.0-rc.33" title="Controle per bijwoord: uitzonderingen en eigen regels">Bijwoordcheck</a>
-<a class="button-link" href="examples-adverb-rules-v4552.html?v2.0.0-rc.33" title="Controle per bijwoord: uitzonderingen en eigen regels">Bijwoordcheck</a>
-<a class="button-link" href="lexicon-config.html?v2.0.0-rc.33" title="Leesbare lexicon-config voor voorbeeldzinnen">Lexicon</a>
-<a class="button-link" href="lexicon-editor.html?v2.0.0-rc.33" title="Lexicon én korte voorbeelduitingen beheren; exporteert lexicon-config.html en examples-input.html">Lexicon+uitingen-editor</a>
-<a class="button-link" href="structure-editor.html?v2.0.0-rc.33" title="Bewerk syntax-, functional- en LOG-slotconfig">Structure-editor</a>
-<a class="button-link" href="docs/docs-home.html?v2.0.0-rc.33" title="Projectcontext, layoutspec en release notes">Docs</a>
-<a class="button-link" href="lex-movement-rules.html?v2.0.0-rc.33" title="Simpele uitleg van de LEX-Wissels per zinstype">Plaatsingsregels</a>
-<a class="button-link" href="reset-cache.html?v2.0.0-rc.33" title="Verwijder browsercache/service worker en open de viewer opnieuw">Reset cache</a>
+<a class="button-link" href="examples-input.html?v2.0.0-rc.37" title="Open de HTML-inputfile met voorbeeldzinnen, subject vet en object cursief">HTML-input</a>
+<a class="button-link" data-feature="adverbs" hidden="" href="examples-adverbs.html?v2.0.0-rc.37" title="Voorbeeldset met één bijwoord per zin en default-host per categorie">Bijwoordvoorbeelden</a>
+<a class="button-link" data-feature="adverbs" hidden="" href="docs/LEX_ADVERB_PLACEMENT_RULES_CHECKED.md?v2.0.0-rc.37" title="Bijwoordklasse en scope als input voor LOG-minors; default en gemarkeerd">Bijwoordregels</a>
+<a class="button-link" data-feature="adverbs" hidden="" href="examples-adverb-rules-v4552.html?v2.0.0-rc.37" title="Controle per bijwoord: uitzonderingen en eigen regels">Bijwoordcheck</a>
+<a class="button-link" data-feature="adverbs" hidden="" href="examples-adverb-rules-v4552.html?v2.0.0-rc.37" title="Controle per bijwoord: uitzonderingen en eigen regels">Bijwoordcheck</a>
+<a class="button-link" href="lexicon-config.html?v2.0.0-rc.37" title="Leesbare lexicon-config voor voorbeeldzinnen">Lexicon</a>
+<a class="button-link" href="lexicon-editor.html?v2.0.0-rc.37" title="Lexicon én korte voorbeelduitingen beheren; exporteert lexicon-config.html en examples-input.html">Lexicon+uitingen-editor</a>
+<a class="button-link" href="structure-editor.html?v2.0.0-rc.37" title="Bewerk syntax-, functional- en LOG-slotconfig">Structure-editor</a>
+<a class="button-link" href="docs/docs-home.html?v2.0.0-rc.37" title="Projectcontext, layoutspec en release notes">Docs</a>
+<a class="button-link" href="lex-movement-rules.html?v2.0.0-rc.37" title="Simpele uitleg van de LEX-Wissels per zinstype">Plaatsingsregels</a>
+<a class="button-link" href="reset-cache.html?v2.0.0-rc.37" title="Verwijder browsercache/service worker en open de viewer opnieuw">Reset cache</a>
 </div>
 <div class="button-row compact-actions">
 <button id="resetExampleButton" title="Herlaad het gekozen voorbeeld" type="button">Reset voorbeeld</button>
@@ -551,7 +552,7 @@
 <label class="field mini-field"><span>Boomruimte</span><select id="layoutDensitySelect"></select></label>
 <label class="field mini-field"><span>Venstervulling</span><select id="viewFitSelect"></select></label>
 <label class="field mini-field" title="Boom vrije rijen: lege ruimte onder de wortel in de centrale OPN-boom."><span>Boom vrije rijen</span><select id="freeSlotCountSelect"></select></label>
-<fieldset aria-label="Bijwoord als minor op de LOG-as" class="lex-adverb-insert-field">
+<fieldset aria-label="Bijwoord als minor op de LOG-as" class="lex-adverb-insert-field" data-feature="adverbs" hidden="">
 <legend>LOG-minors voor bijwoorden</legend>
 <p class="top-menu-choice-help">Kies per zinsinstantie een lexicaal gebruiksprofiel. LOG- en LOG+LEX-profielen leveren een LOG-minor; directe LEX-profielen reserveren alleen een LEX-plaats. De voorbeeldzin valideert de gekozen analyse.</p>
 <div class="button-row"><button id="clearLexAnalysisButton" title="Wis alleen de gebruiksprofielkeuzes van de actieve voorbeeldzin; het globale lexicon blijft ongewijzigd." type="button">Vraag profielkeuze opnieuw</button></div>
@@ -583,8 +584,8 @@
 <p class="top-menu-choice-help"><strong>Notatie:</strong> <code>LEX-INSERTION[lemma=..., profile=..., origin=LOG|LEX|LOG+LEX, after=O, before=V]</code>. LOG-profielen projecteren vanaf de zuidas; directe LEX-profielen niet. Klikbare gemarkeerde varianten kunnen daarna een expliciete LEX-Wissel activeren.</p>
 </details>
 </fieldset>
-<fieldset aria-label="Takverlenging (niet voor bijwoorden)" class="lex-extension-field" title="Niet meer leidend voor bijwoorden: bijwoorden staan boven een syntactische categoriebox, niet tussen boxen.">
-<legend>Takverlenging (niet voor bijwoorden)</legend>
+<fieldset aria-label="Takverlenging voor compatibiliteit" class="lex-extension-field" title="Compatibiliteitsoptie voor oudere taklayouts.">
+<legend>Takverlenging · compatibiliteit</legend>
 <label title="Standaard voor VANDAAG: de insertie tussen werkwoord en object verlengt de VP-zone/grens, zonder VANDAAG als boomknoop toe te voegen."><input data-lex-extension-target="vp-boundary" type="checkbox"/> VP-grens V ↔ object</label>
 <label title="Verlengt de grens tussen subject en VP. Nuttig als de insertie tussen zinsdelen ligt."><input data-lex-extension-target="s-boundary" type="checkbox"/> S-grens subject ↔ VP</label>
 <label title="Verlengt de objecttak; bruikbaar als de insertie vlak vóór het object staat."><input data-lex-extension-target="object-branch" type="checkbox"/> objecttak / NP obj / patiens</label>
@@ -651,11 +652,11 @@
 <h2>Voorbeeldzinnen</h2>
 <p class="inline-help">Voeg voorbeeldzinnen toe via de editor. Start lokaal met <code>start_local_viewer.bat</code>; dan schrijft <strong>Opslaan</strong> direct naar <code>examples-input.html</code>. Daarna kun je hier de lijst herladen.</p>
 <div class="button-row">
-<a class="button-link primary" href="examples-editor.html?v2.0.0-rc.33" title="Voorbeeldzinnen toevoegen en opslaan">Voorbeeldzinnen-editor</a>
-<a class="button-link" href="examples-input.html?v2.0.0-rc.33" title="Leesbare HTML-input met voorbeeldzinnen">HTML-input</a>
-<a class="button-link" href="examples-adverbs.html?v2.0.0-rc.33" title="Bijwoordvoorbeelden met default-host en gemarkeerde host">Bijwoordvoorbeelden</a>
-<a class="button-link" href="docs/LEX_ADVERB_PLACEMENT_RULES_CHECKED.md?v2.0.0-rc.33" title="Bijwoordklasse en scope als input voor LOG-minors; default en gemarkeerd">Bijwoordregels</a>
-<a class="button-link" href="examples-adverb-rules-v4552.html?v2.0.0-rc.33" title="Controle per bijwoord: uitzonderingen en eigen regels">Bijwoordcheck</a>
+<a class="button-link primary" href="examples-editor.html?v2.0.0-rc.37" title="Voorbeeldzinnen toevoegen en opslaan">Voorbeeldzinnen-editor</a>
+<a class="button-link" href="examples-input.html?v2.0.0-rc.37" title="Leesbare HTML-input met voorbeeldzinnen">HTML-input</a>
+<a class="button-link" data-feature="adverbs" hidden="" href="examples-adverbs.html?v2.0.0-rc.37" title="Bijwoordvoorbeelden met default-host en gemarkeerde host">Bijwoordvoorbeelden</a>
+<a class="button-link" data-feature="adverbs" hidden="" href="docs/LEX_ADVERB_PLACEMENT_RULES_CHECKED.md?v2.0.0-rc.37" title="Bijwoordklasse en scope als input voor LOG-minors; default en gemarkeerd">Bijwoordregels</a>
+<a class="button-link" data-feature="adverbs" hidden="" href="examples-adverb-rules-v4552.html?v2.0.0-rc.37" title="Controle per bijwoord: uitzonderingen en eigen regels">Bijwoordcheck</a>
 <button id="reloadExamplesButton" title="Herlees examples-input.html zonder de hele pagina opnieuw te openen" type="button">Herlaad zinnen</button>
 </div>
 </section>
@@ -724,7 +725,7 @@
 <label class="mobile-sheet-field" title="Kies de centrale view: syntaxboom of functionele structuur."><span>View</span><select id="mobileViewSelect"></select></label>
 <p class="top-menu-choice-help">Standaard: syntaxboom. Alternatief: functionele structuur met CLAUSE, PRED, AGENS en PATIENS.</p>
 </div>
-<div aria-label="Bijwoorden als LOG-minors" class="mobile-sheet-section">
+<div aria-label="Bijwoorden als LOG-minors" class="mobile-sheet-section" data-feature="adverbs" hidden="">
 <h3>LOG-minors voor bijwoorden</h3>
 <label class="mobile-sheet-field" title="Aantal bijwoord-minors op de LOG-as."><span>Aantal</span><select id="mobileLexFreeSlotCountSelect"></select></label>
 <label class="mobile-sheet-field" title="Automatisch volgens klasse, of expliciet vóór/tussen/na LOG-majors."><span>LOG-interval</span><select id="mobileLogInsertionIntervalSelect"></select></label>
@@ -755,15 +756,15 @@
 <div aria-label="Documentatie" class="mobile-sheet-section">
 <h3>Documentatie</h3>
 <div class="mobile-link-grid">
-<a href="docs/docs-home.html?v2.0.0-rc.33">Docs</a>
-<a href="lex-movement-rules.html?v2.0.0-rc.33">Plaatsingsregels</a>
-<a href="reset-cache.html?v2.0.0-rc.33">Reset cache</a>
+<a href="docs/docs-home.html?v2.0.0-rc.37">Docs</a>
+<a href="lex-movement-rules.html?v2.0.0-rc.37">Plaatsingsregels</a>
+<a href="reset-cache.html?v2.0.0-rc.37">Reset cache</a>
 </div>
 </div>
 <p class="mobile-sheet-note">Sleep met één vinger om te pannen. Knijp met twee vingers om te zoomen. FIT past het zichtvenster aan de huidige boom en named projections aan; de boom zelf verandert niet.</p>
 </section>
 <script>
-    window.__opengraphBoot = { version: 'v2.0.0-rc.33', loaded: false, marker: 'viewer-index' };
+    window.__opengraphBoot = { version: 'v2.0.0-rc.37', loaded: false, marker: 'viewer-index' };
     function ogStatus(message) {
       var target = document.getElementById('actionFeedback') || document.body;
       if (target) target.textContent = message;
@@ -776,7 +777,7 @@
     });
     setTimeout(function() {
       if (!window.__opengraphBoot || !window.__opengraphBoot.loaded) {
-        ogStatus('Viewer start niet volledig. Gebruik Reset cache of open http://127.0.0.1:8088/reset-cache.html?v2.0.0-rc.33.');
+        ogStatus('Viewer start niet volledig. Gebruik Reset cache of open http://127.0.0.1:8088/reset-cache.html?v2.0.0-rc.37.');
       }
     }, 2500);
   </script>
@@ -786,11 +787,11 @@
       var isLocal = window.location.protocol === 'file:' || !host || host === 'localhost' || host === '127.0.0.1';
       if (!isLocal) return;
       var script = document.createElement('script');
-      script.src = 'local-mobile-test.js?v2.0.0-rc.33';
+      script.src = 'local-mobile-test.js?v2.0.0-rc.37';
       script.defer = true;
       document.head.appendChild(script);
     })();
   </script>
-<script defer="" src="viewer.js?v2.0.0-rc.33&amp;cb=4"></script>
+<script defer="" src="viewer.js?v2.0.0-rc.37&amp;cb=4"></script>
 </body>
 </html>

@@ -15,11 +15,16 @@ LEX_MOVEMENT_RULES.md
 LINGUISTIC_ACTIONS.md
 ONE_MENU_THIN_LINES_TEST.md
 OPN_STORAGE_FORMAT.md
+PRECONFIG_ARCHITECTURE.md
 PROJECT_FILES_TO_ADD_UPDATE.md
 PROJECT_STATE_CURRENT.md
 RC29_LOCAL_START_RESET_TEST.md
 RC32_README_PROBLEM_SOLUTION_TREES_TEST.md
 RC33_README_PROBLEM_TREES_TEST.md
+RC34_RESIZABLE_README_PANEL_TEST.md
+RC35_README_LAYOUT_TEST.md
+RC36_BASE_PROFILE_TEST.md
+RC37_PRECONFIG_TEST.md
 README.md
 SOURCE_BASE.md
 SOURCE_CHANGES_V2.0.0-rc.10.md
@@ -43,6 +48,10 @@ SOURCE_CHANGES_V2.0.0-rc.27.md
 SOURCE_CHANGES_V2.0.0-rc.29.md
 SOURCE_CHANGES_V2.0.0-rc.32.md
 SOURCE_CHANGES_V2.0.0-rc.33.md
+SOURCE_CHANGES_V2.0.0-rc.34.md
+SOURCE_CHANGES_V2.0.0-rc.35.md
+SOURCE_CHANGES_V2.0.0-rc.36.md
+SOURCE_CHANGES_V2.0.0-rc.37.md
 SOURCE_CHANGES_V2.0.0-rc.6.md
 SOURCE_CHANGES_V2.0.0-rc.9.md
 SOV_NOTATION_OPTIONS.md
@@ -76,7 +85,9 @@ docs/LEX_ADVERB_PLACEMENT_RULES_V4552.md
 docs/LEX_MOVEMENT_RULES.md
 docs/LINGUISTIC_ACTIONS.md
 docs/NEXT_STEPS.md
+docs/OGN_BASE_PROFILE.md
 docs/OPN_STORAGE_FORMAT.md
+docs/PRECONFIG_ARCHITECTURE.md
 docs/OpenGraph_Lite_Viewer_EN_v4499.pdf
 docs/OpenGraph_Lite_Viewer_EN_v4500.pdf
 docs/OpenGraph_Lite_Viewer_EN_v4503.pdf
@@ -158,6 +169,8 @@ sw.js
 tools/check_config_tabs_and_menus.py
 tools/check_desktop_max_view.py
 tools/check_examples_roundtrip.py
+tools/check_feature_profiles.py
+tools/check_feature_profiles_runtime.js
 tools/check_lex_horizontal_projection.py
 tools/check_lexicon_usage_profiles.py
 tools/check_linkedin_video_export.py

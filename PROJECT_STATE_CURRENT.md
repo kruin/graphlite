@@ -1,6 +1,34 @@
 # PROJECT_STATE_CURRENT
 
-Leidende status van OpenGraph Lite Viewer `v2.0.0-rc.33`.
+Leidende status van OpenGraph Lite Viewer `v2.0.0-rc.37`.
+
+## Voorconfigcontract rc.37
+
+- Config begint bij `Voorconfig`; concrete toepassingen volgen pas daarna.
+- Insertie heeft onafhankelijke schakelaars voor LEX, SYNT en LOG. Alle drie
+  staan standaard uit.
+- Een actieve as levert alleen infrastructuur en maakt zelf geen insertiedata.
+- `Bijwoorden` vereist insertie op LEX én LOG.
+- Zolang die combinatie niet gereed is, blijft de toepassing niet aanklikbaar.
+- LEX of LOG uitzetten schakelt een actieve toepassing Bijwoorden onmiddellijk
+  uit en wist haar staat.
+- SYNT-insertie is onafhankelijk en in rc.37 nog niet aan een toepassing
+  gekoppeld.
+- OPN, Legacy JSON en Config-snapshots bewaren de drie asschakelaars.
+
+## Profielcontract
+
+- Nieuwe installaties starten in `OGN Basis`.
+- Basis bevat Syntax/Functional, raster, LEX/SYNT/LOG met S/O/V-majors en
+  voorbeelden zonder optionele inserties.
+- `Config → Toepassingen` bevat de centrale toepassingsschakelaars.
+- De eerste extra is `Bijwoorden` en staat standaard uit.
+- Uit betekent: geen bijwoordvoorbeelden, LOG-minors, directe LEX-inserties,
+  gebruiksprofielen, bediening, featuredocumentatie of featurevelden in
+  OPN/Legacy JSON.
+- Een basis-OPN vermeldt `profile=base` en een lege lijst `extras`.
+- Een import die de uitgeschakelde extra nodig heeft, wordt niet gedeeltelijk
+  geladen maar vraagt eerst om activering via Config.
 
 ## Lees mij / README
 
@@ -71,8 +99,10 @@ structure-config
 
 ## Configuratie
 
-Config opent op een compact overzicht met deze gerichte secties:
+Config opent op de infrastructuur met deze gerichte secties:
 
+- `Voorconfig`;
+- `Toepassingen`;
 - `Overzicht` en `JaN · TODO`;
 - `Opslaan & exporteren`;
 - `Beeld`;
@@ -180,7 +210,8 @@ zij `lex_projection_origin=SOURCE-Y` en
 ## Topmenu
 
 ```text
-Zin · Bijwoord · Syntax / Functional · Interface · Projecties · LOG-volgorde
+OGN Basis: Zin · Syntax / Functional · Interface · Projecties · LOG-volgorde
+Bijwoorden aan: Zin · Bijwoord · Syntax / Functional · Interface · Projecties · LOG-volgorde
 Taal · LEESMIJ/README · Config
 ```
 

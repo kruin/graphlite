@@ -7,7 +7,7 @@
 <meta content="no-cache" http-equiv="Pragma"/>
 <meta content="0" http-equiv="Expires"/>
 <meta content="width=device-width, initial-scale=1" name="viewport"/>
-<title>OpenGraph lexicon-config v2.0.0-rc.33</title>
+<title>OpenGraph lexicon-config v2.0.0-rc.37</title>
 <style>
     :root { font-family: system-ui, -apple-system, Segoe UI, sans-serif; color:#0f172a; background:#f8fafc; }
     body { margin:0; padding:24px; }
@@ -20,12 +20,13 @@
     .entry-line { font-weight:900; } .usage-profiles,.construction-profiles{margin:.35rem 0 0;padding-left:1.35rem}.usage-profile,.construction-profile{margin:.2rem 0;color:#334155}
     .meta { color:#64748b; font-size:.94rem; }
     code { background:#e2e8f0; border-radius:6px; padding:2px 5px; }
+    [hidden] { display:none!important; }
   </style>
 </head>
 <body><nav class="opengraph-return-nav" style="display:flex;gap:.5rem;flex-wrap:wrap;padding:.55rem .7rem;border-bottom:1px solid #cbd5e1;background:#f8fafc;position:sticky;top:0;z-index:50"><a href="index.html?screen=config" style="font-weight:800">← Terug naar: Config</a><a href="index.html" style="font-weight:800">← Terug naar: Main</a></nav>
 <main>
-<h1>OpenGraph lexicon-config v2.0.0-rc.33</h1>
-<p class="note">Bescheiden lexicon voor de voorbeeldzinnen-editor. De structure-config blijft de boom- en projectiebron met abstracte sources zoals subject/predicate/object; dit lexicon levert lexicale vulling, thematische rollen en eenvoudige selectieframes. Subject wordt in korte actieve zinnen als agens gelezen; object als patiens. V2/Wissel is een LEX-plaatsingsregel: de persoonsvorm vult slot 2; de oude basisplek wordt trace. Lidwoorden zijn verwijderd: de man → man; de hond → hond. Bewerk via <a class="button-link" href="lexicon-editor.html?v2.0.0-rc.33">lexicon-editor.html</a>; gebruik in <a class="button-link" href="examples-editor.html?v2.0.0-rc.33">examples-editor.html</a>.</p>
+<h1>OpenGraph lexicon-config v2.0.0-rc.37</h1>
+<p class="note">Bescheiden lexicon voor de voorbeeldzinnen-editor. De structure-config blijft de boom- en projectiebron met abstracte sources zoals subject/predicate/object; dit lexicon levert lexicale vulling, thematische rollen en eenvoudige selectieframes. Subject wordt in korte actieve zinnen als agens gelezen; object als patiens. V2/Wissel is een LEX-plaatsingsregel: de persoonsvorm vult slot 2; de oude basisplek wordt trace. Lidwoorden zijn verwijderd: de man → man; de hond → hond. Bewerk via <a class="button-link" href="lexicon-editor.html?v2.0.0-rc.37">lexicon-editor.html</a>; gebruik in <a class="button-link" href="examples-editor.html?v2.0.0-rc.37">examples-editor.html</a>.</p>
 <section aria-label="Lexicon" id="opengraph-lexicon-config">
 <h2>NP / N</h2>
 <div class="lexicon-entry" data-cat="N" data-id="man" data-kind="noun" data-label="MAN" data-lemma="man" data-phrase="NP" data-roles="subject object" data-thematic-roles="agens patiens"><div class="entry-line">man → MAN</div><div class="meta">NP/N · subject/object · agens/patiens</div></div>
@@ -77,5 +78,19 @@
 <div class="lexicon-entry" data-cat="COMP" data-id="dat" data-kind="comp" data-label="DAT" data-lemma="dat" data-slot-default="comp"><div class="entry-line">dat</div><div class="meta">COMP · slot 0</div></div>
 </section>
 </main>
+<script>
+  (() => {
+    const base = new URLSearchParams(location.search).get('profile') === 'base';
+    if (!base) return;
+    document.querySelectorAll('.lexicon-entry[data-kind="adv"], .lexicon-construction').forEach(node => { node.hidden = true; });
+    document.querySelectorAll('h2').forEach(heading => {
+      if (/^(ADV \/ PARTIKEL|Meerwoordconstructies)$/i.test(heading.textContent.trim())) heading.hidden = true;
+    });
+    document.querySelectorAll('a[href]').forEach(link => {
+      const path = (link.getAttribute('href') || '').split('?')[0];
+      if (/(?:examples-editor|lexicon-editor)\.html$/i.test(path)) link.href = `${path}?profile=base`;
+    });
+  })();
+</script>
 </body>
 </html>

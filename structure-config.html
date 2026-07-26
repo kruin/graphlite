@@ -7,7 +7,7 @@
 <meta content="no-cache" http-equiv="Pragma"/>
 <meta content="0" http-equiv="Expires"/>
 <meta content="width=device-width, initial-scale=1" name="viewport"/>
-<title>OpenGraph structure-config v2.0.0-rc.33</title>
+<title>OpenGraph structure-config v2.0.0-rc.37</title>
 <style>
     :root { font-family: system-ui, -apple-system, Segoe UI, sans-serif; color: #0f172a; background: #f8fafc; }
     body { margin: 0; padding: 24px; }
@@ -18,11 +18,12 @@
     .node-config, .lexical-config, .lex-slot-config, .rule-config, .log-major-config, .log-interval-config, .log-class-config { background: white; border: 1px solid #cbd5e1; border-radius: 14px; padding: 10px 12px; margin: 8px 0; }
     code { background: #e2e8f0; border-radius: 6px; padding: 2px 5px; }
     .button-link { border: 1px solid #94a3b8; background: white; border-radius: 10px; padding: 8px 12px; color: #0f172a; text-decoration: none; display: inline-flex; font-weight: 800; }
+    [hidden] { display: none !important; }
   </style>
 </head>
 <body><nav class="opengraph-return-nav" style="display:flex;gap:.5rem;flex-wrap:wrap;padding:.55rem .7rem;border-bottom:1px solid #cbd5e1;background:#f8fafc;position:sticky;top:0;z-index:50"><a href="index.html?screen=config" style="font-weight:800">← Terug naar: Config</a><a href="index.html" style="font-weight:800">← Terug naar: Main</a></nav>
 <main>
-<h1>OpenGraph structure-config v2.0.0-rc.33</h1>
+<h1>OpenGraph structure-config v2.0.0-rc.37</h1>
 <p class="note">Deze HTML-file is de structurele bron voor viewer en voorbeeldeditor. De structure-config bevat géén lexicale woorden zoals hond/man/bijt en géén lidwoordposities. Die staan in <a class="button-link" href="lexicon-config.html">lexicon-config.html</a>. Bewerk bij voorkeur via <a class="button-link" href="structure-editor.html">structure-editor.html</a>.</p>
 <section aria-label="Syntax-config" data-root="s" id="opengraph-syntax-config">
 <h2>Syntax-config</h2>
@@ -71,7 +72,7 @@
 </section>
 <section aria-label="LOG-slotconfig" data-authority="LOG" data-axis-slot-pixels="176" data-example-controls-layout="false" data-expands-major-gap="true" data-lex-placement-mode="horizontal-then-move" data-lex-position-source="LOG" data-lex-projection-origin="SOURCE-Y" data-lex-slot-pixels="64" data-major-gap="1" data-minor-width="1" data-play-phases="LOG SPACE LEX" data-play-space-mode="reserve-empty-lex-rows" data-position-unit="slot" id="opengraph-log-config">
 <h2>LOG-slotconfig</h2>
-<p class="note">LOG bepaalt de neutrale doelrijen, maar niet de bronhoogte van de projectie. Iedere lexicale bron wordt eerst exact horizontaal naar LEX geprojecteerd (SOURCE-Y) en wordt pas daarna langs de LEX-as naar de LOG-afgeleide doelrij verplaatst. S, O en V zijn major-posities. Een bijwoord krijgt een minor-slot in een LOG-interval; ieder minor-slot vergroot de afstand tussen de begrenzende majors met één vaste stap. De voorbeeldzin valideert alleen en bestuurt de layout niet. Play toont na de boom eerst LOG, reserveert dan lege LEX-doelrijen, toont daarna de horizontale projecties en voert vervolgens de LEX-verplaatsingen uit.</p>
+<p class="note" id="logConfigDescription">LOG bepaalt de neutrale doelrijen, maar niet de bronhoogte van de projectie. Iedere lexicale bron wordt eerst exact horizontaal naar LEX geprojecteerd (SOURCE-Y) en wordt pas daarna langs de LEX-as naar de LOG-afgeleide doelrij verplaatst. S, O en V zijn major-posities. Een bijwoord krijgt een minor-slot in een LOG-interval; ieder minor-slot vergroot de afstand tussen de begrenzende majors met één vaste stap. De voorbeeldzin valideert alleen en bestuurt de layout niet. Play toont na de boom eerst LOG, reserveert dan lege LEX-doelrijen, toont daarna de horizontale projecties en voert vervolgens de LEX-verplaatsingen uit.</p>
 <div class="log-major-config" data-id="S" data-label="Subject" data-role="subject" data-source="subject">S [major source=subject]</div>
 <div class="log-major-config" data-id="O" data-label="Object" data-role="object" data-source="object">O [major source=object]</div>
 <div class="log-major-config" data-id="V" data-label="Verb" data-role="predicate" data-sources="predicate pv vdw">V [major sources=predicate+pv+vdw]</div>
@@ -79,20 +80,20 @@
 <div class="log-interval-config" data-after="S" data-before="O" data-id="S-O" data-label="na S · vóór O" data-label-en="after S · before O">tussen S en O [S → O]</div>
 <div class="log-interval-config" data-after="O" data-before="V" data-id="O-V" data-label="na O · vóór V" data-label-en="after O · before V">tussen O en V [O → V]</div>
 <div class="log-interval-config" data-after="V" data-before="END" data-id="after-V" data-label="na V" data-label-en="after V">na V [V → END]</div>
-<div class="log-class-config" data-category="DEFAULT" data-interval="S-O">DEFAULT → S-O</div>
-<div class="log-class-config" data-category="MODALITEIT" data-interval="S-O">MODALITEIT → S-O</div>
-<div class="log-class-config" data-category="SCHAKEERPARTIKEL" data-interval="S-O">SCHAKEERPARTIKEL → S-O</div>
-<div class="log-class-config" data-category="FOCUSPARTIKEL" data-interval="S-O">FOCUSPARTIKEL → S-O</div>
-<div class="log-class-config" data-category="TIJD" data-interval="O-V">TIJD → O-V</div>
-<div class="log-class-config" data-category="FREQUENTIE" data-interval="O-V">FREQUENTIE → O-V</div>
-<div class="log-class-config" data-category="PLAATS" data-interval="O-V">PLAATS → O-V</div>
-<div class="log-class-config" data-category="NEGATIE" data-interval="O-V">NEGATIE → O-V</div>
-<div class="log-class-config" data-category="NEG_FREQ" data-interval="O-V">NEG_FREQ → O-V</div>
-<div class="log-class-config" data-category="NEG_PLACE" data-interval="O-V">NEG_PLACE → O-V</div>
-<div class="log-class-config" data-category="GRAAD" data-interval="O-V">GRAAD → O-V</div>
-<div class="log-class-config" data-category="WIJZE" data-interval="O-V">WIJZE → O-V</div>
-<div class="log-class-config" data-category="REDEN_OORZAAK" data-interval="before-S">REDEN_OORZAAK → vóór S</div>
-<div class="log-class-config" data-category="VOORWAARDE_GEVOLG" data-interval="before-S">VOORWAARDE_GEVOLG → vóór S</div>
+<div class="log-class-config" data-feature="adverbs" data-category="DEFAULT" data-interval="S-O">DEFAULT → S-O</div>
+<div class="log-class-config" data-feature="adverbs" data-category="MODALITEIT" data-interval="S-O">MODALITEIT → S-O</div>
+<div class="log-class-config" data-feature="adverbs" data-category="SCHAKEERPARTIKEL" data-interval="S-O">SCHAKEERPARTIKEL → S-O</div>
+<div class="log-class-config" data-feature="adverbs" data-category="FOCUSPARTIKEL" data-interval="S-O">FOCUSPARTIKEL → S-O</div>
+<div class="log-class-config" data-feature="adverbs" data-category="TIJD" data-interval="O-V">TIJD → O-V</div>
+<div class="log-class-config" data-feature="adverbs" data-category="FREQUENTIE" data-interval="O-V">FREQUENTIE → O-V</div>
+<div class="log-class-config" data-feature="adverbs" data-category="PLAATS" data-interval="O-V">PLAATS → O-V</div>
+<div class="log-class-config" data-feature="adverbs" data-category="NEGATIE" data-interval="O-V">NEGATIE → O-V</div>
+<div class="log-class-config" data-feature="adverbs" data-category="NEG_FREQ" data-interval="O-V">NEG_FREQ → O-V</div>
+<div class="log-class-config" data-feature="adverbs" data-category="NEG_PLACE" data-interval="O-V">NEG_PLACE → O-V</div>
+<div class="log-class-config" data-feature="adverbs" data-category="GRAAD" data-interval="O-V">GRAAD → O-V</div>
+<div class="log-class-config" data-feature="adverbs" data-category="WIJZE" data-interval="O-V">WIJZE → O-V</div>
+<div class="log-class-config" data-feature="adverbs" data-category="REDEN_OORZAAK" data-interval="before-S">REDEN_OORZAAK → vóór S</div>
+<div class="log-class-config" data-feature="adverbs" data-category="VOORWAARDE_GEVOLG" data-interval="before-S">VOORWAARDE_GEVOLG → vóór S</div>
 </section>
 <section aria-label="LEX-config" id="opengraph-lex-config">
 <h2>LEX-slots</h2>
@@ -103,5 +104,23 @@
 <div class="lex-slot-config" data-id="aux" data-label="AUX / pv">AUX / pv</div>
 </section>
 </main>
+<script>
+  (() => {
+    const params = new URLSearchParams(location.search);
+    if (params.get('profile') !== 'base') return;
+    document.documentElement.dataset.profile = 'base';
+    document.querySelectorAll('[data-feature="adverbs"]').forEach(node => { node.hidden = true; });
+    const description = document.getElementById('logConfigDescription');
+    if (description) {
+      description.textContent = 'LOG bepaalt de neutrale doelrijen voor de majors S, O en V. Iedere lexicale bron wordt eerst horizontaal naar LEX geprojecteerd en daarna langs de LEX-as naar de LOG-afgeleide doelrij verplaatst. De voorbeeldzin valideert alleen en bestuurt de layout niet.';
+    }
+    document.querySelectorAll('a[href]').forEach(link => {
+      const url = new URL(link.getAttribute('href'), location.href);
+      if (url.origin !== location.origin) return;
+      url.searchParams.set('profile', 'base');
+      link.setAttribute('href', `${url.pathname.split('/').pop()}?${url.searchParams}`);
+    });
+  })();
+</script>
 </body>
 </html>

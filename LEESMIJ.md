@@ -1,4 +1,4 @@
-# OpenGraph Lite Viewer v2.0.0-rc.33
+# OpenGraph Lite Viewer v2.0.0-rc.37
 
 OpenGraph Lite Viewer is een demo/viewer voor JAN-, OPN- en
 OpenGraph-taalstructuren. Deze versie gebruikt de volledige v1.0.16-bronset als
@@ -6,7 +6,24 @@ functionele basis.
 
 Engelse documentatie: [`README.md`](README.md).
 
+## OGN Basis, voorconfig en toepassingen
+
+De viewer start voortaan in **OGN Basis**. Dit profiel bevat de gewone
+Syntax-/Functional-boom, het raster, de projecties LEX/SYNT/LOG met de majors
+S/O/V en voorbeelden zonder optionele inserties. Insertie staat standaard uit
+op LEX, SYNT en LOG.
+
+`Config → Voorconfig` schakelt insertie per as onafhankelijk aan of uit. Deze
+voorconfig voegt zelf nog geen taalinhoud toe. Daarna bevat
+`Config → Toepassingen` als eerste toepassing **Bijwoorden**. Die wordt pas
+beschikbaar wanneer insertie op **LEX + LOG** actief is. Staat Bijwoorden uit,
+dan ontbreken de bijbehorende voorbeelden, LOG-minors, directe LEX-inserties,
+bediening, runtimegegevens, documentatielinks en exportvelden. Een OPN-export
+vermeldt dan `profile: "base"`, `extras: []` en de drie asschakelaars.
+
 ## Lexicale gebruiksprofielen en gebruikerskeuze
+
+Dit onderdeel geldt wanneer de toepassing Bijwoorden is ingeschakeld.
 
 OGN bewaart een woord niet meerdere keren als losse woordenboekregel. Het
 lexicon bevat één lemma met meerdere mogelijke **gebruiksprofielen**. De
@@ -70,21 +87,21 @@ maak-volledige-zip.bat
 ```
 
 De BAT leidt de ZIP-naam af uit de map waarin hij zelf staat. De map
-`OpenGraph_Lite_Viewer_v2.0.0-rc.33` maakt dus daarnaast automatisch
-`OpenGraph_Lite_Viewer_v2.0.0-rc.33_full_source.zip`. Een bestaande ZIP met
+`OpenGraph_Lite_Viewer_v2.0.0-rc.37` maakt dus daarnaast automatisch
+`OpenGraph_Lite_Viewer_v2.0.0-rc.37_full_source.zip`. Een bestaande ZIP met
 precies die naam wordt veilig vervangen; het script verzint nooit zelf een
 achtervoegsel `(1)`.
 
 GitHub Pages:
 
 ```text
-https://kruin.github.io/graphlite/index.html?ogv=v2.0.0-rc.33
+https://kruin.github.io/graphlite/index.html?ogv=v2.0.0-rc.37
 ```
 
 Cache-reset:
 
 ```text
-https://kruin.github.io/graphlite/reset-cache.html?ogv=v2.0.0-rc.33
+https://kruin.github.io/graphlite/reset-cache.html?ogv=v2.0.0-rc.37
 ```
 
 ## Desktopweergave
@@ -104,14 +121,17 @@ Play-volgorde blijft hetzelfde MAX-kader stabiel.
 
 ## Config-tabbladen
 
-Config opent op een compact overzicht met gerichte secties:
+Config volgt de afhankelijkheidsvolgorde en bevat daarna gerichte secties:
 
-1. `Overzicht` en `JaN · TODO`;
-2. `Opslaan & exporteren`: eerst LinkedIn/Play/SVG, daarna OPN, Config
+1. `Voorconfig`: insertie afzonderlijk op LEX, SYNT en LOG;
+2. `Toepassingen`: Bijwoorden vereist LEX + LOG;
+3. `Overzicht` en `JaN · TODO`;
+4. `Opslaan & exporteren`: eerst LinkedIn/Play/SVG, daarna OPN, Config
    bewaren/herstellen en voorbeeldbeheer;
-3. `Beeld`: MAX, Syntax / Functional, boomlayout en projectiekleuren;
-4. `LOG & LEX`: LOG-minors, intervalkeuze, LEX-volgorde en regels;
-5. `Geavanceerd`: compatibiliteitsopties voor tak- en menuplaatsing.
+5. `Beeld`: MAX, Syntax / Functional, boomlayout en projectiekleuren;
+6. `LOG & LEX`: de kernvolgorde van LEX en, indien actief, optionele
+   inserties;
+7. `Geavanceerd`: compatibiliteitsopties voor tak- en menuplaatsing.
 
 Bij zoveel mogelijk instellingen staat direct een korte uitleg van het effect.
 De bestaande save-werkwijze blijft ongewijzigd.
@@ -223,7 +243,11 @@ inventaris van bijwoordelijke bepalingen. Zie
 ## Topmenu
 
 ```text
-Sentence · Adverb · Syntax/Functional · Interface · Projections · LOG order · Language · README · Config
+OGN Basis: Zin · Syntax / Functional · Interface · Projecties · LOG-volgorde
+Taal · LEESMIJ/README · Config
+
+Bijwoorden aan: Zin · Bijwoord · Syntax / Functional · Interface · Projecties · LOG-volgorde
+Taal · LEESMIJ/README · Config
 ```
 
 Er is geen algemene knop `Menu` en er zijn geen geneste submenu’s. Keuze-items
@@ -308,3 +332,7 @@ Play/Groei onthult de vooraf berekende layout stap voor stap.
 - Onderzoeksnotatie: `S+ np-VP`.
 - Eerst binaire bomen; later niet-binaire, meertakkige bomen.
 - Flip van het verbale cluster: `heeft gebeten` ↔ `gebeten heeft`.
+
+## Verstelbaar LEESMIJ-tekstscherm
+
+Sleep in de ingebouwde LEESMIJ de scheidingslijn tussen de onderwerpenlijst en de geselecteerde tekst om het tekstscherm groter of kleiner te maken. Op desktop/landscape werkt dit horizontaal; op portrait verticaal.

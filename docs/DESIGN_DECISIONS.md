@@ -1,14 +1,20 @@
 
-## Actuele beslissingen · v2.0.0-rc.33
+## Actuele beslissingen · v2.0.0-rc.37
 
 1. LOG is autoriteit voor de neutrale plaatsing.
-2. S, O en V zijn majors; bijwoorden zijn minors.
+2. S, O en V zijn majors; alleen bijwoordinserties met `origin=LOG` of
+   `origin=LOG+LEX` zijn minors.
 3. Logische afstand is de absolute LOG-slotafstand.
 4. Iedere minor vergroot de begrensde majorafstand met zijn vaste breedte.
 5. LOG bepaalt de neutrale LEX-rijen.
 6. De voorbeeldzin valideert en levert geen layoutcoördinaten.
 7. Topic/V2 zijn latere LEX-Wissels met traces.
 8. Oude hostvelden blijven alleen scope-/compatibiliteitsmetadata.
+9. Algemene infrastructuur wordt in Voorconfig ingesteld vóór een concrete
+   toepassing.
+10. Insertie is onafhankelijk schakelbaar op LEX, SYNT en LOG.
+11. Bijwoorden vereist LEX + LOG; een ontbrekende vereiste as schakelt de
+    toepassing uit.
 
 Onderstaande eerdere beslissingen zijn historische notities en niet
 normatief waar zij hiermee botsen.

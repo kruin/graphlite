@@ -1,0 +1,43 @@
+# OGN Basis
+
+`OGN Basis` is het standaardprofiel van OpenGraph Lite Viewer.
+
+## Inhoud
+
+- de centrale Syntax- en Functional-view;
+- het vaste raster en het projectiemechanisme;
+- de named projections LEX, SYNT en LOG;
+- S, O en V als LOG-majors;
+- horizontale bronprojectie naar LEX;
+- Comp-, topic- en V2-plaatsing;
+- voorbeeldzinnen die uitsluitend de basisanalyse gebruiken;
+- Play/Groei, beeldinstellingen en OPN-import/export voor de basisanalyse.
+
+## Config
+
+Open `Config`. De volgorde is:
+
+1. `Voorconfig` — algemene mogelijkheden per as;
+2. `Toepassingen` — concrete uitbreidingen.
+
+Insertie op LEX, SYNT en LOG staat standaard uit. Het inschakelen van een as
+voegt op zichzelf geen taalinhoud toe. Bijwoorden wordt pas beschikbaar als
+LEX en LOG beide voor insertie zijn ingeschakeld.
+
+Zolang geen toepassing is aangevinkt, blijft `OGN Basis` actief. Toepassingen
+gelden voor de hele viewer: bediening, voorbeelddata, rendering, Play,
+documentatie en export volgen steeds dezelfde profielkeuze.
+
+## OPN
+
+Een export vanuit dit profiel bevat:
+
+```text
+metadata.profile = base
+metadata.extras  = []
+metadata.preconfig.insertion = {lex:false, synt:false, log:false}
+```
+
+Alleen gegevens die voor de actieve basisanalyse nodig zijn, worden
+weggeschreven. Een document dat een niet-ingeschakelde uitbreiding vereist,
+wordt pas geopend nadat die uitbreiding in Config is geactiveerd.

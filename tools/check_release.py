@@ -28,9 +28,11 @@ required_files = [
     "README.md", "LEESMIJ.md", "PROJECT_STATE_CURRENT.md", "LAYOUT_RULES.md",
     "LINGUISTIC_ACTIONS.md", "DOCUMENTATION_RULES.md", "HANDOVER_FOR_COLLABORATORS.md",
     "ADVERB_ORIGIN_MECHANISMS.md", "LEXICON_USAGE_PROFILES_AND_DISAMBIGUATION.md",
-    "LEXICON_USAGE_PROFILE_TEST.md", "SOURCE_CHANGES_V2.0.0-rc.33.md",
-    "RC33_README_PROBLEM_TREES_TEST.md", "OPN_STORAGE_FORMAT.md", "projectie-master-spec.md",
-    "docs/ADVERB_ORIGIN_MECHANISMS.md", "docs/LAYOUT_SPEC.md", "docs/RENDER_EXPLANATION.md",
+    "LEXICON_USAGE_PROFILE_TEST.md", "SOURCE_CHANGES_V2.0.0-rc.37.md",
+    "RC35_README_LAYOUT_TEST.md", "RC36_BASE_PROFILE_TEST.md", "RC37_PRECONFIG_TEST.md",
+    "OPN_STORAGE_FORMAT.md", "PRECONFIG_ARCHITECTURE.md", "projectie-master-spec.md",
+    "docs/ADVERB_ORIGIN_MECHANISMS.md", "docs/OGN_BASE_PROFILE.md", "docs/PRECONFIG_ARCHITECTURE.md",
+    "docs/LAYOUT_SPEC.md", "docs/RENDER_EXPLANATION.md",
     "docs/RENDER_EXPLANATION_EN.md", "docs/TALIGE_UITBREIDINGEN.md", "docs/SOCIAL_EXPORT.md",
     "images/readme/traditional-tree-problem-too-wide.png", "images/readme/traditional-tree-problem-unreadable.png",
     "images/readme/traditional-tree-flexible-wide.png", "images/readme/traditional-tree-flexible-narrow.png", "manifest.webmanifest",
@@ -42,6 +44,7 @@ required_files = [
     "tools/check_linkedin_video_export.py", "tools/check_linkedin_video_runtime.js",
     "tools/check_play_reverse.py", "tools/check_release_zip_batch.py",
     "tools/check_opn_storage.py", "tools/check_lexicon_usage_profiles.py",
+    "tools/check_feature_profiles.py", "tools/check_feature_profiles_runtime.js",
 ]
 for rel in required_files:
     if not (ROOT / rel).is_file():
@@ -61,8 +64,8 @@ start_bat = read("start_local_viewer.bat")
 debug_html = read("debug.html")
 
 # Version identity and the paired entry pages.
-if not VERSION or VERSION != "v2.0.0-rc.33":
-    errors.append(f"VERSION.txt moet v2.0.0-rc.33 bevatten, gevonden: {VERSION!r}")
+if not VERSION or VERSION != "v2.0.0-rc.37":
+    errors.append(f"VERSION.txt moet v2.0.0-rc.37 bevatten, gevonden: {VERSION!r}")
 for rel in ["index.html", "viewer.html", "viewer.js", "reset-cache.html", "sw.js"]:
     if VERSION not in read(rel):
         errors.append(f"versie ontbreekt in {rel}")
@@ -86,7 +89,8 @@ for rel in ["index.html", "viewer.html"]:
     if duplicates:
         errors.append(f"dubbele HTML-id's in {rel}: {', '.join(duplicates)}")
 
-# Main menu: six choices on row 1, Language/README/Config on row 2.
+# Main menu: five base choices plus the optional Adverb choice on row 1,
+# Language/README/Config on row 2.
 nav_match = re.search(r'<nav[^>]*class="[^"]*main-top-menu[^"]*"[^>]*>.*?</nav>', index, flags=re.S)
 if not nav_match:
     errors.append("main-top-menu ontbreekt")
@@ -99,6 +103,7 @@ else:
         require(nav, f'id="{item}"', f"topmenu-item {item}")
     if nav.count("<details") != 7:
         errors.append("topmenu moet zeven directe choice-details bevatten")
+    require(nav, 'data-feature="adverbs" hidden="" id="mainAdverbMenu"', "optioneel verborgen Bijwoordmenu")
 
 # Functional naming, interface selector, languages and English default.
 for marker, label in [
@@ -120,13 +125,22 @@ for stale in ["data-language-toggle", ">NL/EN</button>", "Syntax/FT", "Syntax / 
     if stale in index:
         errors.append(f"oude zichtbare UI-term staat nog in index.html: {stale}")
 
-# README/LEESMIJ in two vertical half-height panes in all modes.
+# README/LEESMIJ with a user-resizable topic/text split.
 for marker, label in [
-    ("grid-template-rows:minmax(0,1fr) minmax(0,1fr)", "halve-hoogte README-layout"),
-    ("body.help-screen-active .help-tree-nav", "scrollbare onderwerpenlijst"),
+    ("help-panel-resizer", "sleepbare README-scheidingslijn"),
+    ("--help-nav-size", "verstelbare README-paneelmaat"),
+    ("cursor: col-resize", "horizontale resize"),
+    ("cursor: row-resize", "verticale resize"),
     ("body.help-screen-active .help-topic-stage", "scrollbaar tekstvlak"),
 ]:
     require(css, marker, label)
+for marker, label in [
+    ("function registerHelpPanelResizer()", "README-resizerlogica"),
+    ("sessionStorage.setItem(storageKey", "sessiebehoud paneelmaat"),
+    ("ArrowUp", "toetsenbordbediening"),
+]:
+    require(js, marker, label)
+require(index, 'id="helpPanelResizer"', "README-resizer in HTML")
 for marker in ['data-help-topic="opengraph"', 'data-help-topic="jan-todo"', 'data-help-topic="adverb-origins"']:
     require(index, marker, f"LEESMIJ-onderwerp {marker}")
 require(js, "if (stage) stage.scrollTop = 0;", "README-item start bovenaan")
@@ -173,7 +187,12 @@ for rel in ["PROJECT_STATE_CURRENT.md", "LAYOUT_RULES.md", "LINGUISTIC_ACTIONS.m
 
 # Config overview, explanatory help and unchanged save semantics.
 for marker, label in [
-    ("let activeConfigTab = 'overview';", "Config start op overzicht"),
+    ("let activeConfigTab = 'preconfig';", "Config start op Voorconfig"),
+    ("{ id: 'preconfig', nl: 'Voorconfig', en: 'Pre-config' }", "Config-voorconfigsectie"),
+    ("{ id: 'features', nl: 'Toepassingen', en: 'Applications' }", "Config-toepassingensectie"),
+    ("const INSERTION_AXIS_DEFINITIONS = Object.freeze({", "insertie per as"),
+    ("insertionAxes: Object.freeze(['lex', 'log'])", "Bijwoorden vereist LEX + LOG"),
+    ("defaultEnabled: false", "Bijwoorden standaard uit"),
     ("{ id: 'jan', nl: 'JaN · TODO', en: 'JaN · TODO' }", "JaN-configsectie"),
     ("config-dashboard", "Config-overzichtskaarten"),
     ("const CONFIG_ITEM_HELP = {", "Config-uitleg per instelling"),

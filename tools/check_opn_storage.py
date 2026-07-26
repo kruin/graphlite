@@ -26,9 +26,43 @@ def validate(path: Path) -> list[str]:
         if axis not in data.get("projections",{}): errors.append(f"data.projections.{axis} ontbreekt")
     generator_version=str(doc.get("metadata",{}).get("generator",{}).get("version",""))
     if generator_version == CURRENT_VERSION:
+        metadata=doc.get("metadata",{})
         projections=data.get("projections",{})
         log=projections.get("log",{})
         lex=projections.get("lex",{})
+        example=data.get("example",{})
+        profile=metadata.get("profile")
+        extras=metadata.get("extras")
+        preconfig=metadata.get("preconfig")
+        insertion=preconfig.get("insertion") if isinstance(preconfig,dict) else None
+        if profile not in {"base","custom"}: errors.append("metadata.profile moet base of custom zijn")
+        if not isinstance(extras,list): errors.append("metadata.extras moet een lijst zijn")
+        if not isinstance(insertion,dict):
+            errors.append("metadata.preconfig.insertion moet een object zijn")
+            insertion={}
+        for axis in ["lex","synt","log"]:
+            if not isinstance(insertion.get(axis),bool):
+                errors.append(f"metadata.preconfig.insertion.{axis} moet true of false zijn")
+        if isinstance(extras,list) and "adverbs" in extras:
+            if insertion.get("lex") is not True or insertion.get("log") is not True:
+                errors.append("extra adverbs vereist metadata.preconfig.insertion.lex en .log")
+        lex_feature_keys=["free_slot_count","free_slot_placement","insertion_content","insertion_extension_targets","free_slots","adverb"]
+        if ("lex_insertions" in example or any(key in lex for key in lex_feature_keys)) and insertion.get("lex") is not True:
+            errors.append("LEX-insertiedata vereist metadata.preconfig.insertion.lex=true")
+        sequence=log.get("sequence")
+        if ("insertion_interval" in log or isinstance(sequence,list) and any(item.get("kind")=="minor" for item in sequence if isinstance(item,dict))) and insertion.get("log") is not True:
+            errors.append("LOG-insertiedata vereist metadata.preconfig.insertion.log=true")
+        synt=projections.get("synt",{})
+        if isinstance(synt.get("insertions"),list) and synt.get("insertions") and insertion.get("synt") is not True:
+            errors.append("SYNT-insertiedata vereist metadata.preconfig.insertion.synt=true")
+        if profile=="base":
+            if extras != []: errors.append("metadata.extras moet leeg zijn voor profiel base")
+            if "lex_insertions" in example: errors.append("data.example.lex_insertions hoort niet in profiel base")
+            for key in lex_feature_keys:
+                if key in lex: errors.append(f"data.projections.lex.{key} hoort niet in profiel base")
+            if "insertion_interval" in log: errors.append("data.projections.log.insertion_interval hoort niet in profiel base")
+            if isinstance(sequence,list) and any(item.get("kind")=="minor" for item in sequence if isinstance(item,dict)):
+                errors.append("data.projections.log.sequence mag geen minors bevatten in profiel base")
         if log.get("authority")!="LOG": errors.append("data.projections.log.authority moet LOG zijn")
         if log.get("position_unit")!="slot": errors.append("data.projections.log.position_unit moet slot zijn")
         if not isinstance(log.get("sequence"),list) or not log.get("sequence"): errors.append("data.projections.log.sequence ontbreekt")
