@@ -1,5 +1,19 @@
 # Source changes v2.0.0-rc.41
 
+## Lokale starter
+
+- `start_local_viewer.bat` bevat geen serverprobe, `FOR`-wachtroutine of
+  browserlogica meer. Zij kiest alleen Python 3 en controleert of de volledige
+  ZIP is uitgepakt.
+- Het nieuwe `start_local_viewer.py` regelt serverdetectie, starten, wachten,
+  `VERSION.txt`-controle en browseropening.
+- Probe en server gebruiken hetzelfde `sys.executable`.
+- `startlocalviewer.bat` is toegevoegd als compatibiliteitsnaam zonder
+  underscores.
+- Een startfout blijft volledig zichtbaar voordat de minimale BAT pauzeert.
+- `tools/check_local_start.py` controleert de volledige startorkestratie en
+  beide BAT-namen.
+
 ## Publicatie en full-source-zipkopieën
 
 - `tools/check_release.py` herkent nu ieder `*_full_source*.zip`-bestand als

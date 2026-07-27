@@ -15,6 +15,8 @@ if errorlevel 1 (
 )
 python tools\check_release.py
 if errorlevel 1 exit /b 1
+python tools\check_local_start.py
+if errorlevel 1 exit /b 1
 python tools\check_examples_roundtrip.py
 if errorlevel 1 exit /b 1
 python tools\check_log_slot_distance.py

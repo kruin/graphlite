@@ -111,6 +111,16 @@ Or run locally:
 start_local_viewer.bat
 ```
 
+`startlocalviewer.bat` is an equivalent compatibility name. The starter uses
+one detected Python 3 installation. First choose **Extract all** for the
+downloaded ZIP; do not run either BAT from inside the compressed folder. The
+BAT only checks that extraction is complete and starts
+`start_local_viewer.py`. That Python launcher controls server detection,
+starting, waiting, version validation and opening the browser. It opens
+`reset-cache.html` only after port 8088 serves the exact version from the
+current folder. If startup fails, the concrete reason remains visible before
+`Press any key`.
+
 On a large screen, the local `LOKAAL` selector appears at the bottom right.
 `mobile portrait` stays inside a 390 × 844 frame and `mobile landscape`
 inside an 844 × 390 frame. The large automatic view returns only after

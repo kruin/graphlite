@@ -43,6 +43,10 @@ structure-config.html
 viewer.js
 index.html
 viewer.html
+server_nocache.py
+start_local_viewer.bat
+start_local_viewer.py
+startlocalviewer.bat
 images/readme/traditional-tree-flexible-wide.png
 images/readme/traditional-tree-flexible-narrow.png
 images/readme/log-minor-spacing.svg
@@ -55,6 +59,7 @@ tools/check_mobile_layout_runtime.js
 tools/check_viewport_switch_runtime.js
 tools/check_landscape_composition_runtime.js
 tools/check_recursive_box_fit_runtime.js
+tools/check_local_start.py
 docs/OGN_BASE_PROFILE.md
 docs/PRECONFIG_ARCHITECTURE.md
 docs/RECURSIVE_LAYOUT_AND_APPLICATION_CONTRACT.md

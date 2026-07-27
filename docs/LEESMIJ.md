@@ -122,6 +122,15 @@ Of lokaal:
 start_local_viewer.bat
 ```
 
+`startlocalviewer.bat` is een gelijkwaardige compatibiliteitsnaam. De starter
+gebruikt één gevonden Python 3-installatie. Kies bij de gedownloade ZIP eerst
+**Alles uitpakken**; start de BAT niet vanuit de gecomprimeerde map. De BAT
+controleert alleen of alles is uitgepakt en start daarna
+`start_local_viewer.py`. Die Python-launcher regelt serverdetectie, starten,
+wachten, versiecontrole en browseropening. `reset-cache.html` opent pas wanneer
+poort 8088 exact de versie uit de huidige map bedient. Mislukt de start, dan
+blijft de concrete reden zichtbaar vóór `Press any key`.
+
 Op een groot scherm verschijnt lokaal rechtsonder de keuzeknop `LOKAAL`.
 `mobile staand` toont blijvend een frame van 390 × 844 en `mobile liggend`
 een frame van 844 × 390. Het grote scherm keert pas terug na `auto`.

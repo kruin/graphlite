@@ -12,6 +12,9 @@ examples-input.html
 examples-editor.html
 lexicon-config.html
 server_nocache.py
+start_local_viewer.bat
+start_local_viewer.py
+startlocalviewer.bat
 sw.js
 docs/
 ```
@@ -35,7 +38,8 @@ Minimaal:
 
 ```bash
 node --check viewer.js
-python3 -m py_compile server_nocache.py
+python3 -m py_compile server_nocache.py start_local_viewer.py
+python3 tools/check_local_start.py
 unzip -tq OpenGraph_Lite_Viewer_vXXXX.zip
 ```
 

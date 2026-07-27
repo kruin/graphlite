@@ -95,8 +95,8 @@ Intern schrijft de viewer `central_opn: "ft"`. Invoer met de oude waarde `functi
 1. Werk vanaf de nieuwste volledige projectzip.
 2. Lees `VERSION.txt`.
 3. Wijzig app en leidende instructies samen.
-4. Voer ook `tools/check_feature_profiles.py` en
-   `tools/check_log_slot_distance.py` uit.
+4. Voer ook `tools/check_local_start.py`,
+   `tools/check_feature_profiles.py` en `tools/check_log_slot_distance.py` uit.
 5. Voer `check_release.bat` uit.
 6. Hernoem de projectmap naar de bedoelde release en voer
    `maak-volledige-zip.bat` uit. De ZIP neemt automatisch de actuele mapnaam

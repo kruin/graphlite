@@ -172,6 +172,8 @@ samples/short_demo.json
 samples/space3_gridH20W20_grow_demo.json
 server_nocache.py
 start_local_viewer.bat
+start_local_viewer.py
+startlocalviewer.bat
 structure-config.html
 structure-editor.html
 styles.css
@@ -182,6 +184,7 @@ tools/check_examples_roundtrip.py
 tools/check_feature_profiles.py
 tools/check_feature_profiles_runtime.js
 tools/check_landscape_composition_runtime.js
+tools/check_local_start.py
 tools/check_lex_horizontal_projection.py
 tools/check_lexicon_usage_profiles.py
 tools/check_linkedin_video_export.py

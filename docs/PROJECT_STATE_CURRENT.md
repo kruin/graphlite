@@ -188,6 +188,23 @@ bestaande Ja/Nee-save-werkwijze blijft ongewijzigd.
   release-artefacten: manifest, publicatie en nieuwe bronzip sluiten ze uit.
 - Er staat geen releaseversie hardgecodeerd in de BAT.
 
+## Lokale start
+
+- `start_local_viewer.bat` en `startlocalviewer.bat` starten dezelfde actuele
+  workflow.
+- De BAT is alleen nog een minimale Python-kiezer en controleert expliciet of
+  de volledige zip is uitgepakt.
+- `start_local_viewer.py` bedient serverdetectie, starten, wachten,
+  versiecontrole en browseropening; complexe CMD-probelogica is verwijderd.
+- Eén Python 3-installatie bedient zowel `server_nocache.py` als de versieprobe
+  op poort 8088.
+- Alleen wanneer `VERSION.txt` exact met de huidige map overeenkomt, opent de
+  BAT `reset-cache.html`; anders wordt de gevonden toestand vóór de pauze
+  zichtbaar gemeld.
+- `tools/check_local_start.py` toetst bestaande en nieuw gestarte server,
+  juiste/verkeerde versie, gesloten poort, minimale BAT en
+  compatibiliteitsstarter.
+
 `structure-config.html#opengraph-log-config` definieert:
 
 - majors en lexicale sources;

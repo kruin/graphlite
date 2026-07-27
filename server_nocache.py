@@ -1,5 +1,8 @@
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+from urllib.error import HTTPError, URLError
+from urllib.parse import urlencode
+from urllib.request import Request, urlopen
 import json
 import sys
 
@@ -48,15 +51,37 @@ class NoCacheHandler(SimpleHTTPRequestHandler):
         except Exception as exc:
             self._json_response(500, {'ok': False, 'error': str(exc)})
 
-if __name__ == '__main__':
+
+def probe_server_state(host, port, expected_version, nonce):
+    query = urlencode({'nocache': nonce})
+    url = f'http://{host}:{port}/VERSION.txt?{query}'
+    request = Request(url, headers={'Cache-Control': 'no-cache'})
+    try:
+        with urlopen(request, timeout=2) as response:
+            served_version = response.read(4096).decode('utf-8-sig', errors='replace').strip()
+    except HTTPError as exc:
+        return 'wrong', f'HTTP {exc.code}'
+    except (URLError, TimeoutError, OSError):
+        return 'down', ''
+
+    if served_version == expected_version:
+        return 'ok', served_version
+    return 'wrong', served_version or '<lege VERSION.txt>'
+
+
+def probe_server(host, port, expected_version, nonce):
+    state, served_version = probe_server_state(
+        host,
+        port,
+        expected_version,
+        nonce,
+    )
+    print(f'{state}|{served_version}', flush=True)
+    return 0
+
+
+def run_server(port):
     host = '0.0.0.0'
-    port = 8088
-    if len(sys.argv) > 1:
-        try:
-            port = int(sys.argv[1])
-        except ValueError:
-            print(f'Ongeldige poort: {sys.argv[1]!r}. Gebruik 8088.')
-            port = 8088
     httpd = ThreadingHTTPServer((host, port), NoCacheHandler)
     print(f'Serving HTTP on {host} port {port} (http://{host}:{port}/) ...', flush=True)
     print('OpenGraph save endpoint actief: POST /__opengraph_save_file', flush=True)
@@ -64,3 +89,32 @@ if __name__ == '__main__':
         httpd.serve_forever()
     except KeyboardInterrupt:
         print('\nServer stopped.')
+    finally:
+        httpd.server_close()
+    return 0
+
+
+def main(argv):
+    if len(argv) > 1 and argv[1] == '--probe':
+        if len(argv) != 6:
+            print('down|', flush=True)
+            return 0
+        try:
+            port = int(argv[3])
+        except ValueError:
+            print('down|', flush=True)
+            return 0
+        return probe_server(argv[2], port, argv[4], argv[5])
+
+    port = 8088
+    if len(argv) > 1:
+        try:
+            port = int(argv[1])
+        except ValueError:
+            print(f'Ongeldige poort: {argv[1]!r}. Gebruik 8088.')
+            port = 8088
+    return run_server(port)
+
+
+if __name__ == '__main__':
+    raise SystemExit(main(sys.argv))

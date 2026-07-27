@@ -40,8 +40,10 @@ required_files = [
     "docs/RENDER_EXPLANATION_EN.md", "docs/TALIGE_UITBREIDINGEN.md", "docs/SOCIAL_EXPORT.md",
     "images/readme/traditional-tree-problem-too-wide.png", "images/readme/traditional-tree-problem-unreadable.png",
     "images/readme/traditional-tree-flexible-wide.png", "images/readme/traditional-tree-flexible-narrow.png", "manifest.webmanifest",
-    "maak-volledige-zip.bat", "start_local_viewer.bat", "check_release.bat", "publish_checked.bat",
-    "tools/check_release.py", "tools/check_config_tabs_and_menus.py",
+    "maak-volledige-zip.bat", "start_local_viewer.bat", "startlocalviewer.bat",
+    "start_local_viewer.py",
+    "check_release.bat", "publish_checked.bat",
+    "tools/check_release.py", "tools/check_local_start.py", "tools/check_config_tabs_and_menus.py",
     "tools/check_examples_roundtrip.py", "tools/check_log_slot_distance.py",
     "tools/check_lex_horizontal_projection.py", "tools/check_projection_cleanup.py",
     "tools/check_desktop_max_view.py", "tools/check_social_and_linguistic_export.py",
@@ -69,6 +71,7 @@ examples = read("examples-input.html")
 lexicon = read("lexicon-config.html")
 publish_bat = read("publish_checked.bat")
 start_bat = read("start_local_viewer.bat")
+start_alias_bat = read("startlocalviewer.bat")
 debug_html = read("debug.html")
 local_mobile = read("local-mobile-test.js")
 
@@ -330,14 +333,29 @@ if (ROOT / "start-local-viewer.bat").exists():
     errors.append("verwarrende tweede start-BAT bestaat nog: start-local-viewer.bat")
 
 for marker, label in [
-    ('set /p OG_APP_VERSION=<"VERSION.txt"', "lokale versie uit VERSION.txt"),
-    ('VERSION.txt?nocache=', "serverversiecontrole"),
-    ('reset-cache.html?ogv=', "verplichte reset-cache-start"),
-    ('nocache=!OG_NONCE!', "unieke lokale cache-bust"),
-    ('OG_PROBE_STATE', "controle op oude server"),
-    ('Bronmap    : %CD%', "zichtbare bronmap"),
+    ('if not exist "VERSION.txt" goto :not_extracted', "controle op volledig uitpakken"),
+    ('py.exe -3 start_local_viewer.py', "Python-launcher via py.exe"),
+    ('python.exe start_local_viewer.py', "Python-launcher via python.exe"),
+    ("Pak de gedownloade ZIP eerst volledig uit", "zichtbare uitpakinstructie"),
 ]:
     require(start_bat, marker, label)
+if "Invoke-WebRequest" in start_bat:
+    errors.append("start_local_viewer.bat gebruikt nog de foutgevoelige PowerShell-probe")
+if "for /f" in start_bat.lower():
+    errors.append("start_local_viewer.bat bevat nog complexe FOR-probelogica")
+require(
+    start_alias_bat,
+    'call "%~dp0start_local_viewer.bat"',
+    "compatibiliteitsstarter zonder underscores",
+)
+local_launcher = read("start_local_viewer.py")
+for marker, label in [
+    ("from server_nocache import probe_server_state", "gedeelde Python-probe"),
+    ('creationflags"] = getattr(subprocess, "CREATE_NEW_CONSOLE", 0)', "zichtbaar Windows-servervenster"),
+    ("/reset-cache.html?", "verplichte reset-cache-URL"),
+    ("Sluit het oude venster", "diagnose verkeerde serverversie"),
+]:
+    require(local_launcher, marker, label)
 for stale in ['v4537', 'v2.0.0-rc.24']:
     if stale in start_bat or stale in debug_html:
         errors.append(f"oude lokale startversie staat nog in actieve start/debugbestanden: {stale}")

@@ -6,6 +6,12 @@
 - Publicatie wordt niet meer geblokkeerd door een lokaal gedownloade
   `*_full_source (1).zip`. Full-source-zipkopieën zijn release-artefacten en
   worden consequent uitgesloten van manifest, GitHub Pages en nieuwe bronzip.
+- De BAT kiest alleen nog Python en controleert of de ZIP volledig is
+  uitgepakt. `start_local_viewer.py` regelt serverdetectie, starten, wachten,
+  versiecontrole en browseropening zonder complexe CMD-probelogica.
+- `startlocalviewer.bat` is een echte compatibiliteitsnaam.
+- `tools/check_local_start.py` toetst automatisch bestaande/nieuwe server,
+  juiste/verkeerde versie, gesloten poort en beide starters.
 - Subtree-boxen worden bottom-up gemeten uit nodevormen, labels, child-boxen
   en caption.
 - Kleine unary boxen, waaronder `NP → HOND`, gebruiken alleen de werkelijk

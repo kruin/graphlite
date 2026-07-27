@@ -3,13 +3,15 @@
 ## Normale start
 
 1. Sluit een eventueel oud lokaal servervenster.
-2. Start `start_local_viewer.bat` of `start_local_viewer.bat`.
-3. Controleer in het BAT-venster:
+2. Pak de ZIP volledig uit; start niet vanuit de gecomprimeerde map.
+3. Start `start_local_viewer.bat` of de compatibiliteitsnaam
+   `startlocalviewer.bat`.
+4. Controleer in het BAT-venster:
    - de bronmap is de actuele projectmap;
    - de app-versie is `v2.0.0-rc.29`.
-4. Controleer dat eerst `reset-cache.html` opent met `ogv=v2.0.0-rc.29` en een
+5. Controleer dat eerst `reset-cache.html` opent met `ogv=v2.0.0-rc.29` en een
    wisselende `nocache`-waarde.
-5. Controleer dat daarna de viewer `v2.0.0-rc.29` toont.
+6. Controleer dat daarna de viewer `v2.0.0-rc.29` toont.
 
 ## Oude server op poort 8088
 
@@ -25,5 +27,17 @@
 
 - De lokale BAT opent nooit direct `index.html`.
 - Iedere start gebruikt een nieuwe cache-bustwaarde.
+- De BAT kiest alleen Python en start `start_local_viewer.py`; de Python-launcher
+  regelt server, wachtroutine, versieprobe en browser.
 - `v4537` mag niet voorkomen in `start_local_viewer.bat`,
-  `start_local_viewer.bat` of `debug.html`.
+  `startlocalviewer.bat` of `debug.html`.
+
+## Automatische controle
+
+```text
+python tools/check_local_start.py
+```
+
+Deze controle toetst achtereenvolgens een bestaande en een nieuw gestarte
+lokale server, een juiste versie, een verkeerde versie, een gesloten poort, de
+minimale BAT en de compatibiliteitsstarter.
