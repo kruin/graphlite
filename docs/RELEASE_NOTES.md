@@ -1,17 +1,20 @@
 
 ## v2.0.0-rc.41 — Recursief gemeten boxen en volledige projecties
 
-- Status: release candidate voor handmatige visuele controle; nog niet
-  handmatig goedgekeurd.
+- Status: op 28 juli 2026 handmatig door de gebruiker goedgekeurd. De
+  vastgelegde technische afbakening van rc.41 blijft van kracht.
 - Publicatie wordt niet meer geblokkeerd door een lokaal gedownloade
   `*_full_source (1).zip`. Full-source-zipkopieën zijn release-artefacten en
   worden consequent uitgesloten van manifest, GitHub Pages en nieuwe bronzip.
+- De reset-URL na een geslaagde push wordt nu in een afzonderlijke
+  `:open_reset_after_push`-subroutine opgebouwd. Daardoor krijgt `start` geen
+  lege URL meer en opent Verkenner niet onbedoeld op `C:\git\graphlite`.
 - De BAT kiest alleen nog Python en controleert of de ZIP volledig is
   uitgepakt. `start_local_viewer.py` regelt serverdetectie, starten, wachten,
   versiecontrole en browseropening zonder complexe CMD-probelogica.
-- `startlocalviewer.bat` is een echte compatibiliteitsnaam.
 - `tools/check_local_start.py` toetst automatisch bestaande/nieuwe server,
-  juiste/verkeerde versie, gesloten poort en beide starters.
+  juiste/verkeerde versie, gesloten poort en de enige starter
+  `start_local_viewer.bat`.
 - Subtree-boxen worden bottom-up gemeten uit nodevormen, labels, child-boxen
   en caption.
 - Kleine unary boxen, waaronder `NP → HOND`, gebruiken alleen de werkelijk

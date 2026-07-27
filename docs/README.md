@@ -7,9 +7,10 @@ the abandoned alternate version line.
 
 Dutch documentation: [`LEESMIJ.md`](LEESMIJ.md).
 
-> **Validation status:** rc.41 is a release candidate awaiting manual visual
-> approval. Automated checks verify geometry and feature invariants; they do
-> not replace a human judgement about readability and explanatory clarity.
+> **Validation status:** rc.41 was manually approved by the user on 28 July
+> 2026. Automated checks verify geometry and feature invariants; the recorded
+> approval covers the human judgement about readability and explanatory
+> clarity.
 
 ## OGN Base, pre-config and applications
 
@@ -111,10 +112,10 @@ Or run locally:
 start_local_viewer.bat
 ```
 
-`startlocalviewer.bat` is an equivalent compatibility name. The starter uses
-one detected Python 3 installation. First choose **Extract all** for the
-downloaded ZIP; do not run either BAT from inside the compressed folder. The
-BAT only checks that extraction is complete and starts
+`start_local_viewer.bat` is the only starter. It uses one detected Python 3
+installation. First choose **Extract all** for the downloaded ZIP; do not run
+the BAT from inside the compressed folder. The BAT only checks that extraction
+is complete and starts
 `start_local_viewer.py`. That Python launcher controls server detection,
 starting, waiting, version validation and opening the browser. It opens
 `reset-cache.html` only after port 8088 serves the exact version from the

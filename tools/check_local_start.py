@@ -16,7 +16,6 @@ import start_local_viewer as launcher
 SERVER = ROOT / "server_nocache.py"
 VERSION = (ROOT / "VERSION.txt").read_text(encoding="utf-8").strip()
 START_BAT = (ROOT / "start_local_viewer.bat").read_text(encoding="utf-8")
-ALIAS_BAT = (ROOT / "startlocalviewer.bat").read_text(encoding="utf-8")
 
 
 def free_port() -> int:
@@ -55,10 +54,7 @@ def main() -> None:
     require("for /f" not in START_BAT.lower(), "BAT bevat nog complexe FOR-probelogica")
     require("Invoke-WebRequest" not in START_BAT, "oude PowerShell-probe staat nog in BAT")
     require("Pak de gedownloade ZIP eerst volledig uit" in START_BAT, "uitpakinstructie ontbreekt")
-    require(
-        'call "%~dp0start_local_viewer.bat"' in ALIAS_BAT,
-        "startlocalviewer.bat verwijst niet naar de canonieke starter",
-    )
+    require(not (ROOT / "startlocalviewer.bat").exists(), "tweede start-BAT bestaat nog")
 
     port = free_port()
     process = subprocess.Popen(
@@ -158,7 +154,7 @@ def main() -> None:
     print(
         "LOCAL START CHECK: OK "
         "(minimale BAT; Python-launcher; bestaande/nieuwe server; "
-        "juiste/verkeerde versie; gesloten poort; alias)"
+        "juiste/verkeerde versie; gesloten poort; één starter)"
     )
 
 

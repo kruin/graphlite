@@ -6,10 +6,10 @@ functionele basis.
 
 Engelse documentatie: [`README.md`](README.md).
 
-> **Controlestatus:** rc.41 is een releasekandidaat die nog handmatig visueel
-> moet worden goedgekeurd. De automatische controles bewaken geometrie en
-> feature-invarianten, maar vervangen geen menselijk oordeel over leesbaarheid
-> en duidelijkheid.
+> **Controlestatus:** rc.41 is op 28 juli 2026 handmatig door de gebruiker
+> goedgekeurd. De automatische controles bewaken geometrie en
+> feature-invarianten; het vastgelegde akkoord omvat het menselijke oordeel
+> over leesbaarheid en duidelijkheid.
 
 ## OGN Basis, voorconfig en toepassingen
 
@@ -122,10 +122,10 @@ Of lokaal:
 start_local_viewer.bat
 ```
 
-`startlocalviewer.bat` is een gelijkwaardige compatibiliteitsnaam. De starter
-gebruikt één gevonden Python 3-installatie. Kies bij de gedownloade ZIP eerst
-**Alles uitpakken**; start de BAT niet vanuit de gecomprimeerde map. De BAT
-controleert alleen of alles is uitgepakt en start daarna
+`start_local_viewer.bat` is de enige starter en gebruikt één gevonden Python
+3-installatie. Kies bij de gedownloade ZIP eerst **Alles uitpakken**; start de
+BAT niet vanuit de gecomprimeerde map. De BAT controleert alleen of alles is
+uitgepakt en start daarna
 `start_local_viewer.py`. Die Python-launcher regelt serverdetectie, starten,
 wachten, versiecontrole en browseropening. `reset-cache.html` opent pas wanneer
 poort 8088 exact de versie uit de huidige map bedient. Mislukt de start, dan

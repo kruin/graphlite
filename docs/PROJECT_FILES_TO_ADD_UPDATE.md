@@ -46,7 +46,7 @@ viewer.html
 server_nocache.py
 start_local_viewer.bat
 start_local_viewer.py
-startlocalviewer.bat
+publish_checked.bat
 images/readme/traditional-tree-flexible-wide.png
 images/readme/traditional-tree-flexible-narrow.png
 images/readme/log-minor-spacing.svg

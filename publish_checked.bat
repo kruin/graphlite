@@ -129,19 +129,8 @@ echo.
 echo Klaar.
 echo Branch: %BRANCH%
 if defined COMMITMSG echo Commit : %COMMITMSG%
-if "%DID_PUSH%"=="1" (
-  set "USER_RESET_URL=https://kruin.github.io/graphlite/reset-cache.html?ogv=%APP_VERSION%^&nocache=%RANDOM%%RANDOM%"
-  set "RESET_MARKER=.git\opengraph-reset-%APP_VERSION%.flag"
-  if not exist "%RESET_MARKER%" (
-    echo Reset-cache wordt eenmaal automatisch geopend voor %APP_VERSION%.
-    > "%RESET_MARKER%" echo %DATE% %TIME%
-    start "" "%USER_RESET_URL%"
-  ) else (
-    echo Reset-cache is voor %APP_VERSION% al eenmaal geopend.
-  )
-) else (
-  echo Geen succesvolle nieuwe push; reset-cache wordt niet geopend.
-)
+if "%DID_PUSH%"=="1" call :open_reset_after_push
+if not "%DID_PUSH%"=="1" echo Geen succesvolle nieuwe push; reset-cache wordt niet geopend.
 echo.
 pause
 endlocal
@@ -153,3 +142,21 @@ echo Publicatie afgebroken. Geen succesvolle push bevestigd.
 pause
 endlocal
 exit /b 1
+
+:open_reset_after_push
+set "USER_RESET_URL=https://kruin.github.io/graphlite/reset-cache.html?ogv=%APP_VERSION%&nocache=%RANDOM%%RANDOM%"
+set "RESET_MARKER=.git\opengraph-reset-%APP_VERSION%.flag"
+if exist "%RESET_MARKER%" (
+  echo Reset-cache is voor %APP_VERSION% al eenmaal geopend.
+  exit /b 0
+)
+echo Reset-cache wordt eenmaal automatisch geopend voor %APP_VERSION%.
+start "" "%USER_RESET_URL%"
+if errorlevel 1 (
+  echo WAARSCHUWING: de browser kon niet automatisch worden geopend.
+  echo Open handmatig: %USER_RESET_URL%
+  exit /b 0
+)
+> "%RESET_MARKER%" echo %DATE% %TIME%
+if errorlevel 1 echo WAARSCHUWING: resetmarkering kon niet worden geschreven.
+exit /b 0

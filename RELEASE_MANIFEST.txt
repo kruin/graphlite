@@ -173,7 +173,6 @@ samples/space3_gridH20W20_grow_demo.json
 server_nocache.py
 start_local_viewer.bat
 start_local_viewer.py
-startlocalviewer.bat
 structure-config.html
 structure-editor.html
 styles.css

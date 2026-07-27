@@ -33,8 +33,10 @@ De test draait met een echte Chromium-browser en controleert:
 ## Handmatige controle en jouw akkoord
 
 Een groene automatische test betekent alleen dat de vastgelegde geometrische
-invarianten kloppen. rc.41 is pas goedgekeurd nadat onderstaande visuele en
-functionele punten handmatig zijn beoordeeld.
+invarianten kloppen. De gebruiker heeft rc.41 op 28 juli 2026 als geheel
+goedgekeurd. Onderstaande lijst blijft staan als reproduceerbare procedure
+voor een latere hercontrole; lege vakjes zijn daarom geen openstaande
+afkeurpunten.
 
 ### A. Basis en subtree-boxen
 
@@ -103,10 +105,10 @@ portretlayout; het is niet met nog smallere subtree-boxen alleen op te lossen.
 ## Handmatig resultaat
 
 ```text
-Datum/tijd:
-Getest op:
-Akkoord rc.41: ja / nee
-Nog te herstellen:
+Datum: 2026-07-28
+Beoordeling: door gebruiker
+Akkoord rc.41: ja
+Blokkerende herstelpunten: geen opgegeven
 ```
 
 ## Verwacht resultaat

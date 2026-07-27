@@ -4,8 +4,7 @@
 
 1. Sluit een eventueel oud lokaal servervenster.
 2. Pak de ZIP volledig uit; start niet vanuit de gecomprimeerde map.
-3. Start `start_local_viewer.bat` of de compatibiliteitsnaam
-   `startlocalviewer.bat`.
+3. Start de enige starter: `start_local_viewer.bat`.
 4. Controleer in het BAT-venster:
    - de bronmap is de actuele projectmap;
    - de app-versie is `v2.0.0-rc.29`.
@@ -29,8 +28,7 @@
 - Iedere start gebruikt een nieuwe cache-bustwaarde.
 - De BAT kiest alleen Python en start `start_local_viewer.py`; de Python-launcher
   regelt server, wachtroutine, versieprobe en browser.
-- `v4537` mag niet voorkomen in `start_local_viewer.bat`,
-  `startlocalviewer.bat` of `debug.html`.
+- `v4537` mag niet voorkomen in `start_local_viewer.bat` of `debug.html`.
 
 ## Automatische controle
 
@@ -39,5 +37,5 @@ python tools/check_local_start.py
 ```
 
 Deze controle toetst achtereenvolgens een bestaande en een nieuw gestarte
-lokale server, een juiste versie, een verkeerde versie, een gesloten poort, de
-minimale BAT en de compatibiliteitsstarter.
+lokale server, een juiste versie, een verkeerde versie, een gesloten poort en
+de enige minimale BAT.

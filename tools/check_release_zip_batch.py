@@ -48,11 +48,20 @@ for marker, label in [
     ("set \"RELEASE_ZIP=%OG_PUBLISH_PROJECT_NAME%_full_source.zip\"", "dynamische publish-zipnaam"),
     ('/C:".*_full_source.*\\.zip"', "statusfilter voor release-zipkopieën"),
     ('git rm --cached --ignore-unmatch -- "*_full_source*.zip"', "stagingfilter voor release-zipkopieën"),
+    ('if "%DID_PUSH%"=="1" call :open_reset_after_push', "reset-subroutine na push"),
+    (':open_reset_after_push', "veilige reset-subroutine"),
+    ('start "" "%USER_RESET_URL%"', "browseropening met gevulde URL"),
 ]:
     require(PUBLISH, marker, label)
 
 if re.search(r'set "RELEASE_ZIP=.*v2\.0\.0-rc\.\d+', PUBLISH, flags=re.I):
     errors.append("publish_checked.bat bevat nog een hardgecodeerde release-zipnaam")
+if re.search(
+    r'if\s+"%DID_PUSH%"=="1"\s*\(\s*set\s+"USER_RESET_URL=',
+    PUBLISH,
+    flags=re.I | re.S,
+):
+    errors.append("reset-URL staat nog in hetzelfde CMD-haakjesblok als DID_PUSH")
 
 for marker, label in [
     ("def is_generated_release_archive(name: str)", "centrale manifestfilter"),

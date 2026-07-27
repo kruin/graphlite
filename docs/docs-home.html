@@ -25,7 +25,7 @@
 <body><nav class="opengraph-return-nav" style="display:flex;gap:.5rem;flex-wrap:wrap;padding:.55rem .7rem;border-bottom:1px solid #cbd5e1;background:#f8fafc;position:sticky;top:0;z-index:50"><a href="../index.html?screen=config" style="font-weight:800">← Terug naar: Config</a><a href="../index.html" style="font-weight:800">← Terug naar: Main</a></nav>
 <main>
 <h1>OpenGraph Lite Viewer · docs v2.0.0-rc.41</h1>
-<p id="docsProfileText">Leidende projectdocumentatie voor de actuele viewer. rc.41 blijft een testkandidaat totdat de handmatige akkoordlijst is ingevuld.</p>
+<p id="docsProfileText">Leidende projectdocumentatie voor de actuele viewer. rc.41 is op 28 juli 2026 handmatig door de gebruiker goedgekeurd.</p>
 <div class="toplinks">
 <a class="button-link" href="../index.html?ogv=v2.0.0-rc.41">Viewer</a>
 <a class="button-link" href="../reset-cache.html?ogv=v2.0.0-rc.41">Reset cache</a>
@@ -68,7 +68,7 @@
       section.hidden = base ? section.dataset.profileSection !== 'base' : section.dataset.profileSection === 'base';
     });
     const profileText = document.getElementById('docsProfileText');
-    if (profileText && base) profileText.textContent = 'Documentatie voor het actieve profiel OGN Basis. rc.41 blijft een testkandidaat totdat de handmatige akkoordlijst is ingevuld.';
+    if (profileText && base) profileText.textContent = 'Documentatie voor het actieve profiel OGN Basis. rc.41 is op 28 juli 2026 handmatig door de gebruiker goedgekeurd.';
     if (base) {
       document.querySelectorAll('a[href]').forEach(link => {
         const url = new URL(link.getAttribute('href'), location.href);

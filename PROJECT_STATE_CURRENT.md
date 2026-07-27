@@ -2,6 +2,9 @@
 
 Leidende status van OpenGraph Lite Viewer `v2.0.0-rc.41`.
 
+Controlestatus: rc.41 is op 28 juli 2026 handmatig door de gebruiker
+goedgekeurd.
+
 ## Recursieve layout en volledige projecties rc.41
 
 - Structurele gridplaatsing blijft recursief; daarna meet een tweede bottom-up
@@ -190,8 +193,7 @@ bestaande Ja/Nee-save-werkwijze blijft ongewijzigd.
 
 ## Lokale start
 
-- `start_local_viewer.bat` en `startlocalviewer.bat` starten dezelfde actuele
-  workflow.
+- `start_local_viewer.bat` is de enige lokale starter.
 - De BAT is alleen nog een minimale Python-kiezer en controleert expliciet of
   de volledige zip is uitgepakt.
 - `start_local_viewer.py` bedient serverdetectie, starten, wachten,
@@ -202,8 +204,18 @@ bestaande Ja/Nee-save-werkwijze blijft ongewijzigd.
   BAT `reset-cache.html`; anders wordt de gevonden toestand vóór de pauze
   zichtbaar gemeld.
 - `tools/check_local_start.py` toetst bestaande en nieuw gestarte server,
-  juiste/verkeerde versie, gesloten poort, minimale BAT en
-  compatibiliteitsstarter.
+  juiste/verkeerde versie, gesloten poort en de enige minimale BAT.
+
+## Publicatie
+
+- `publish_checked.bat` voert controles, commit en push uit vóór een
+  browseractie.
+- Alleen na een bevestigde nieuwe push wordt
+  `:open_reset_after_push` aangeroepen.
+- De reset-URL en resetmarkering worden in die subroutine vóór gebruik
+  ingevuld. Hierdoor kan CMD geen lege URL aan `start` doorgeven en opent
+  Verkenner niet onbedoeld.
+- Zonder nieuwe push wordt geen cache-reset geopend.
 
 `structure-config.html#opengraph-log-config` definieert:
 

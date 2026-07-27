@@ -2,6 +2,10 @@
 
 Overdracht voor OpenGraph Lite Viewer v2.0.0-rc.41.
 
+Releasebesluit: de gebruiker heeft rc.41 op 28 juli 2026 handmatig
+goedgekeurd. Behandel de beschreven technische grenzen als onderdeel van deze
+goedgekeurde versie.
+
 ## Bronbasis
 
 Deze release is uitsluitend opgebouwd op de door de gebruiker geüploade
@@ -108,6 +112,11 @@ Gebruik `publish_checked.bat`. Bestanden met patroon `*_full_source*.zip`,
 inclusief browserkopieën met `(1)`, zijn lokale release-artefacten en horen
 niet in het manifest of de GitHub Pages-root. De publicatiecontrole en
 `maak-volledige-zip.bat` sluiten ze automatisch uit.
+
+Na een bevestigde push opent `:open_reset_after_push` eenmaal de volledig
+ingevulde GitHub Pages-reset-URL. Houd URL-opbouw buiten het
+`if "%DID_PUSH%"=="1"`-haakjesblok; anders kan CMD de nog lege waarde
+vooruitexpanderen en Verkenner openen.
 
 
 ## Topmenu v2.0.0-rc.37

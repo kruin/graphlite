@@ -8,14 +8,20 @@
 - Het nieuwe `start_local_viewer.py` regelt serverdetectie, starten, wachten,
   `VERSION.txt`-controle en browseropening.
 - Probe en server gebruiken hetzelfde `sys.executable`.
-- `startlocalviewer.bat` is toegevoegd als compatibiliteitsnaam zonder
-  underscores.
+- De tijdelijke compatibiliteitsnaam `startlocalviewer.bat` is weer verwijderd;
+  `start_local_viewer.bat` is de enige starter.
 - Een startfout blijft volledig zichtbaar voordat de minimale BAT pauzeert.
 - `tools/check_local_start.py` controleert de volledige startorkestratie en
-  beide BAT-namen.
+  bewaakt dat er maar één start-BAT bestaat.
 
 ## Publicatie en full-source-zipkopieën
 
+- De reset-URL werd eerder binnen hetzelfde CMD-haakjesblok gezet en gebruikt.
+  Door `%VAR%`-vooruitexpansie kon `start` daardoor een lege URL ontvangen en
+  Verkenner openen. `publish_checked.bat` gebruikt nu de afzonderlijke
+  subroutine `:open_reset_after_push`.
+- De resetmarkering en browseropening krijgen daardoor ingevulde waarden; bij
+  een browserfout wordt de handmatige URL getoond.
 - `tools/check_release.py` herkent nu ieder `*_full_source*.zip`-bestand als
   gegenereerd release-artefact, ook een browserdownload met `(1)`.
 - `.gitignore` en `publish_checked.bat` gebruiken dezelfde generieke regel.
@@ -77,6 +83,9 @@
 
 ## Documentatie en controle
 
+- De gebruiker heeft rc.41 op 28 juli 2026 handmatig goedgekeurd. README,
+  LEESMIJ, projectstatus, overdracht, docs-home, release notes en de
+  akkoordlijst leggen dat besluit eenduidig vast.
 - Nieuw normatief document:
   `RECURSIVE_LAYOUT_AND_APPLICATION_CONTRACT.md`.
 - De documentatie maakt expliciet dat rc.41 recursieve boxmeting bevat, maar

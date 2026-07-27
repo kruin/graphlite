@@ -63,11 +63,17 @@ Deze staan in `.gitignore`.
 
 ## Cache-reset
 
-De BAT kan browsercache niet op afstand wissen. Wel zinvol:
+Na een bevestigde nieuwe push roept `publish_checked.bat` een afzonderlijke
+reset-subroutine aan. De URL wordt daar vóór de `if`-blokken opgebouwd, zodat
+CMD geen lege waarde kan invullen en Verkenner niet in plaats van de browser
+opent.
+
+De BAT kan browsercache niet op afstand wissen. Zij kan wel:
 
 - controleren dat `reset-cache.html` bestaat;
-- na push de juiste reset-URL tonen;
-- eventueel die URL openen.
+- uitsluitend na een geslaagde nieuwe push de juiste reset-URL tonen;
+- die URL eenmaal per appversie automatisch openen;
+- bij mislukte browseropening de volledige handmatige URL tonen.
 
 Voorbeeld:
 

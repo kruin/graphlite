@@ -14,7 +14,6 @@ lexicon-config.html
 server_nocache.py
 start_local_viewer.bat
 start_local_viewer.py
-startlocalviewer.bat
 sw.js
 docs/
 ```

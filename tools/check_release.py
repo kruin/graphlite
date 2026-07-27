@@ -40,8 +40,7 @@ required_files = [
     "docs/RENDER_EXPLANATION_EN.md", "docs/TALIGE_UITBREIDINGEN.md", "docs/SOCIAL_EXPORT.md",
     "images/readme/traditional-tree-problem-too-wide.png", "images/readme/traditional-tree-problem-unreadable.png",
     "images/readme/traditional-tree-flexible-wide.png", "images/readme/traditional-tree-flexible-narrow.png", "manifest.webmanifest",
-    "maak-volledige-zip.bat", "start_local_viewer.bat", "startlocalviewer.bat",
-    "start_local_viewer.py",
+    "maak-volledige-zip.bat", "start_local_viewer.bat", "start_local_viewer.py",
     "check_release.bat", "publish_checked.bat",
     "tools/check_release.py", "tools/check_local_start.py", "tools/check_config_tabs_and_menus.py",
     "tools/check_examples_roundtrip.py", "tools/check_log_slot_distance.py",
@@ -71,7 +70,6 @@ examples = read("examples-input.html")
 lexicon = read("lexicon-config.html")
 publish_bat = read("publish_checked.bat")
 start_bat = read("start_local_viewer.bat")
-start_alias_bat = read("startlocalviewer.bat")
 debug_html = read("debug.html")
 local_mobile = read("local-mobile-test.js")
 
@@ -270,11 +268,29 @@ for marker, label in [
 ]:
     require(index, marker, label)
 for marker, label in [
-    ("Akkoord rc.41: ja / nee", "handmatig akkoordveld"),
+    ("Datum: 2026-07-28", "datum handmatig akkoord"),
+    ("Akkoord rc.41: ja", "vastgelegd handmatig akkoord"),
+    ("Blokkerende herstelpunten: geen opgegeven", "resultaat handmatig akkoord"),
     ("Voorconfig en toepassingen", "controle voorconfig en toepassingen"),
     ("README en bediening", "controle README en bediening"),
 ]:
     require(read("RC41_RECURSIVE_LAYOUT_TEST.md"), marker, label)
+if "Akkoord rc.41: ja / nee" in read("RC41_RECURSIVE_LAYOUT_TEST.md"):
+    errors.append("RC41-akkoordlijst bevat nog de voorlopige keuze 'ja / nee'")
+approval_markers = {
+    "README.md": "manually approved by the user on 28 July",
+    "docs/README.md": "manually approved by the user on 28 July",
+    "LEESMIJ.md": "op 28 juli 2026 handmatig door de gebruiker",
+    "docs/LEESMIJ.md": "op 28 juli 2026 handmatig door de gebruiker",
+    "PROJECT_STATE_CURRENT.md": "op 28 juli 2026 handmatig door de gebruiker",
+    "docs/PROJECT_STATE_CURRENT.md": "op 28 juli 2026 handmatig door de gebruiker",
+    "HANDOVER_FOR_COLLABORATORS.md": "op 28 juli 2026 handmatig",
+    "docs/HANDOVER_FOR_COLLABORATORS.md": "op 28 juli 2026 handmatig",
+    "docs/RELEASE_NOTES.md": "op 28 juli 2026 handmatig door de gebruiker goedgekeurd",
+    "docs/docs-home.html": "rc.41 is op 28 juli 2026 handmatig door de gebruiker goedgekeurd",
+}
+for rel, marker in approval_markers.items():
+    require(read(rel), marker, f"{rel} vastgelegde rc.41-goedkeuring")
 for rel in ["DOCUMENTATION_RULES.md", "docs/DOCUMENTATION_RULES.md"]:
     text = read(rel)
     for marker in [
@@ -331,6 +347,8 @@ for rel in [
 # Local start: exact source version, mandatory reset and stale-server guard.
 if (ROOT / "start-local-viewer.bat").exists():
     errors.append("verwarrende tweede start-BAT bestaat nog: start-local-viewer.bat")
+if (ROOT / "startlocalviewer.bat").exists():
+    errors.append("overbodige tweede start-BAT bestaat nog: startlocalviewer.bat")
 
 for marker, label in [
     ('if not exist "VERSION.txt" goto :not_extracted', "controle op volledig uitpakken"),
@@ -343,11 +361,6 @@ if "Invoke-WebRequest" in start_bat:
     errors.append("start_local_viewer.bat gebruikt nog de foutgevoelige PowerShell-probe")
 if "for /f" in start_bat.lower():
     errors.append("start_local_viewer.bat bevat nog complexe FOR-probelogica")
-require(
-    start_alias_bat,
-    'call "%~dp0start_local_viewer.bat"',
-    "compatibiliteitsstarter zonder underscores",
-)
 local_launcher = read("start_local_viewer.py")
 for marker, label in [
     ("from server_nocache import probe_server_state", "gedeelde Python-probe"),
@@ -365,11 +378,19 @@ for marker, label in [
     ("call check_release.bat", "releasecontrole vóór publiceren"),
     ("git commit -m", "commitstap"),
     ("git push -u origin", "pushstap"),
-    ("if \"%DID_PUSH%\"==\"1\"", "reset alleen na succesvolle push"),
+    ('if "%DID_PUSH%"=="1" call :open_reset_after_push', "reset alleen na succesvolle push"),
+    (":open_reset_after_push", "veilige reset-subroutine"),
+    ('start "" "%USER_RESET_URL%"', "browseropening met ingevulde reset-URL"),
     ("opengraph-reset-%APP_VERSION%.flag", "eenmalige resetmarker per versie"),
     ("pause", "zichtbare eindmelding"),
 ]:
     require(publish_bat, marker, label)
+if re.search(
+    r'if\s+"%DID_PUSH%"=="1"\s*\(\s*set\s+"USER_RESET_URL=',
+    publish_bat,
+    flags=re.I | re.S,
+):
+    errors.append("publish_checked.bat zet reset-URL nog in hetzelfde CMD-haakjesblok")
 if re.search(r"\bgit\s+pull\b", publish_bat, flags=re.I):
     errors.append("publish_checked.bat mag geen git pull uitvoeren")
 
