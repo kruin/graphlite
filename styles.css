@@ -7410,3 +7410,94 @@ body.viewport-mobile-test.main-screen-active.main-window-max .canvas-wrap {
   min-height: 100% !important;
   max-height: 100% !important;
 }
+
+/* v2.0.0-rc.40: landscape gebruikt twee compacte, volledig leesbare
+   menurijen en reserveert boven én onder echte ruimte vóór het SVG. Zo ligt
+   de graph niet meer achter menu/Play en blijven rastertop plus LOG-as
+   tegelijk zichtbaar. De JS-klasse geldt voor een echte handheld in
+   landschap én voor de desktop-simulatie. */
+body.viewport-handheld-landscape.main-screen-active .main-topbar {
+  position: absolute !important;
+  left: .42rem !important;
+  right: .42rem !important;
+  top: .42rem !important;
+  width: auto !important;
+  max-width: none !important;
+  min-height: 3.45rem !important;
+  height: 3.45rem !important;
+  padding: .12rem .22rem !important;
+  gap: .10rem !important;
+  border-radius: .82rem !important;
+  transform: none !important;
+}
+body.viewport-handheld-landscape.main-screen-active .main-top-menu {
+  display: grid !important;
+  grid-template-columns: repeat(6, max-content) !important;
+  grid-template-rows: auto auto !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  column-gap: .10rem !important;
+  row-gap: .10rem !important;
+  overflow: visible !important;
+}
+body.viewport-handheld-landscape.main-screen-active .main-top-menu > * {
+  min-width: max-content !important;
+}
+body.viewport-handheld-landscape.main-screen-active .top-menu-item > summary,
+body.viewport-handheld-landscape.main-screen-active .top-menu-action {
+  box-sizing: border-box !important;
+  min-height: 1.48rem !important;
+  height: 1.48rem !important;
+  padding: .08rem .30rem !important;
+  border-radius: .48rem !important;
+  font-size: .66rem !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+  overflow: visible !important;
+}
+body.viewport-handheld-landscape.main-screen-active .main-top-menu > :nth-child(-n+6) .top-menu-popover {
+  top: calc(200% + .28rem) !important;
+}
+body.viewport-handheld-landscape.main-screen-active #graphSvg {
+  position: absolute !important;
+  left: 0 !important;
+  right: 0 !important;
+  top: 3.90rem !important;
+  bottom: 2.45rem !important;
+  width: 100% !important;
+  height: calc(100% - 6.35rem) !important;
+  min-height: 0 !important;
+  max-height: calc(100% - 6.35rem) !important;
+}
+body.viewport-handheld-landscape.main-screen-active.main-window-max .workspace,
+body.viewport-handheld-landscape.main-screen-active.main-window-max .canvas-wrap {
+  position: absolute !important;
+  inset: 0 !important;
+  left: 0 !important;
+  top: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: 100% !important;
+  margin: 0 !important;
+  transform: none !important;
+}
+body.viewport-handheld-landscape.main-screen-active .main-play-reset-bar {
+  top: auto !important;
+  bottom: 0 !important;
+  min-height: 2.35rem !important;
+  height: 2.35rem !important;
+  padding: .10rem .24rem !important;
+}
+body.viewport-handheld-landscape.main-screen-active .main-play-reset-controls button {
+  min-height: 1.82rem !important;
+  height: 1.82rem !important;
+  padding: .08rem .42rem !important;
+  font-size: .72rem !important;
+}

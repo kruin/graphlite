@@ -29,12 +29,14 @@ required_files = [
     "LINGUISTIC_ACTIONS.md", "DOCUMENTATION_RULES.md", "HANDOVER_FOR_COLLABORATORS.md",
     "ADVERB_ORIGIN_MECHANISMS.md", "LEXICON_USAGE_PROFILES_AND_DISAMBIGUATION.md",
     "LEXICON_USAGE_PROFILE_TEST.md", "SOURCE_CHANGES_V2.0.0-rc.38.md",
-    "SOURCE_CHANGES_V2.0.0-rc.39.md",
+    "SOURCE_CHANGES_V2.0.0-rc.39.md", "SOURCE_CHANGES_V2.0.0-rc.40.md",
+    "SOURCE_CHANGES_V2.0.0-rc.41.md", "RECURSIVE_LAYOUT_AND_APPLICATION_CONTRACT.md",
     "RC35_README_LAYOUT_TEST.md", "RC36_BASE_PROFILE_TEST.md", "RC37_PRECONFIG_TEST.md",
     "RC38_MOBILE_LAYOUT_TEST.md", "RC39_VIEWPORT_SWITCH_TEST.md",
+    "RC40_LANDSCAPE_COMPOSITION_TEST.md", "RC41_RECURSIVE_LAYOUT_TEST.md",
     "OPN_STORAGE_FORMAT.md", "PRECONFIG_ARCHITECTURE.md", "projectie-master-spec.md",
     "docs/ADVERB_ORIGIN_MECHANISMS.md", "docs/OGN_BASE_PROFILE.md", "docs/PRECONFIG_ARCHITECTURE.md",
-    "docs/LAYOUT_SPEC.md", "docs/RENDER_EXPLANATION.md",
+    "docs/LAYOUT_SPEC.md", "docs/RECURSIVE_LAYOUT_AND_APPLICATION_CONTRACT.md", "docs/RENDER_EXPLANATION.md",
     "docs/RENDER_EXPLANATION_EN.md", "docs/TALIGE_UITBREIDINGEN.md", "docs/SOCIAL_EXPORT.md",
     "images/readme/traditional-tree-problem-too-wide.png", "images/readme/traditional-tree-problem-unreadable.png",
     "images/readme/traditional-tree-flexible-wide.png", "images/readme/traditional-tree-flexible-narrow.png", "manifest.webmanifest",
@@ -48,7 +50,9 @@ required_files = [
     "tools/check_opn_storage.py", "tools/check_lexicon_usage_profiles.py",
     "tools/check_feature_profiles.py", "tools/check_feature_profiles_runtime.js",
     "tools/check_mobile_layout_rc38.py", "tools/check_mobile_layout_runtime.js",
-    "tools/check_viewport_switch_runtime.js", "local-mobile-test.js",
+    "tools/check_viewport_switch_runtime.js", "tools/check_landscape_composition_runtime.js",
+    "tools/check_recursive_box_fit_runtime.js",
+    "local-mobile-test.js",
 ]
 for rel in required_files:
     if not (ROOT / rel).is_file():
@@ -69,8 +73,8 @@ debug_html = read("debug.html")
 local_mobile = read("local-mobile-test.js")
 
 # Version identity and the paired entry pages.
-if not VERSION or VERSION != "v2.0.0-rc.39":
-    errors.append(f"VERSION.txt moet v2.0.0-rc.39 bevatten, gevonden: {VERSION!r}")
+if not VERSION or VERSION != "v2.0.0-rc.41":
+    errors.append(f"VERSION.txt moet v2.0.0-rc.41 bevatten, gevonden: {VERSION!r}")
 for rel in ["index.html", "viewer.html", "viewer.js", "reset-cache.html", "sw.js"]:
     if VERSION not in read(rel):
         errors.append(f"versie ontbreekt in {rel}")
@@ -161,6 +165,21 @@ require(local_mobile, "window.__OPENGRAPH_EXPECTED_VERSION__", "actuele lokale v
 if "v2.0.0-rc.13" in local_mobile:
     errors.append("local-mobile-test.js bevat nog de oude hardgecodeerde rc.13")
 
+# Landscape uses a lower/wider contain fit with non-overlapping menu, SVG and
+# Play zones. The physical viewport remains authoritative under forced desktop.
+for marker, label in [
+    ("function isHandheldLandscapeViewport()", "landscape-handhelddetectie"),
+    ("label: 'MAX mobiel landschap'", "lagere/bredere landscape-layout"),
+    ("const svgRect = els.svg?.getBoundingClientRect?.();", "werkelijke SVG-aspectratio"),
+]:
+    require(js, marker, label)
+for marker, label in [
+    ("body.viewport-handheld-landscape.main-screen-active #graphSvg", "gereserveerde landscape-SVG-zone"),
+    ("body.viewport-handheld-landscape.main-screen-active .main-play-reset-bar", "gereserveerde landscape-Play-zone"),
+    ("body.viewport-handheld-landscape.main-screen-active.main-window-max .workspace", "schermvullende landscape-workspace"),
+]:
+    require(css, marker, label)
+
 
 # First README item: two problem trees followed by two graphically motivated apparent solutions.
 for marker, label in [
@@ -209,6 +228,7 @@ for marker, label in [
     ("const INSERTION_AXIS_DEFINITIONS = Object.freeze({", "insertie per as"),
     ("insertionAxes: Object.freeze(['lex', 'log'])", "Bijwoorden vereist LEX + LOG"),
     ("defaultEnabled: false", "Bijwoorden standaard uit"),
+    ("layoutDemand: Object.freeze({ lexContent: 'wide-insertion' })", "abstracte layout-demand"),
     ("{ id: 'jan', nl: 'JaN · TODO', en: 'JaN · TODO' }", "JaN-configsectie"),
     ("config-dashboard", "Config-overzichtskaarten"),
     ("const CONFIG_ITEM_HELP = {", "Config-uitleg per instelling"),
@@ -217,6 +237,23 @@ for marker, label in [
 ]:
     source = js if marker not in {"Ja · bewaar config", "Nee · herstel laatst bewaarde config"} else index
     require(source, marker, label)
+
+# rc.41: recursive intrinsic subtree measurement and complete handheld fit.
+for marker, label in [
+    ("const SUBTREE_MEASURE_POLICY = Object.freeze({", "centrale subtree-meetpolicy"),
+    ("function measureSubtreeBoxes(layout, origin)", "recursieve subtree-meetpass"),
+    ("data-measure-mode': 'recursive-content'", "meetdiagnose op subtree-box"),
+    ("function activeLexRenderLeftReach()", "toepassingsgestuurde LEX-reikwijdte"),
+    ("Math.max(eastAxisRight, syntaxRuleRight, functionalRuleRight)", "volledige SYNT-regelboxfit"),
+]:
+    require(js, marker, label)
+for rel in [
+    "RECURSIVE_LAYOUT_AND_APPLICATION_CONTRACT.md",
+    "docs/RECURSIVE_LAYOUT_AND_APPLICATION_CONTRACT.md",
+]:
+    text = read(rel)
+    for marker in ["layout-demand", "LOG-majors", "requiredWidth/requiredHeight"]:
+        require(text, marker, f"{rel} contractterm")
 
 # Explicit sentence landing metadata outranks a broad class default in auto mode.
 for marker, label in [

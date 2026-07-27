@@ -1,6 +1,6 @@
 # NEXT_STEPS
 
-Vervolgpunten na `v2.0.0-rc.39`:
+Vervolgpunten na `v2.0.0-rc.41`:
 
 1. `Verplaatsing per as` uitwerken als tweede functionele Voorconfig.
 2. `Lege posities en sporen per as` losmaken van concrete toepassingen.
@@ -16,3 +16,10 @@ Vervolgpunten na `v2.0.0-rc.39`:
 9. Expliciete Wisselregels voor de gemarkeerde majorvolgorden uitwerken.
 10. OPN-schema-validatie uitbreiden met LOG-sequentie en afstandsinvarianten.
 11. Tests toevoegen voor meerdere V-sources en voor `before-S`/`after-V`.
+12. De gridplaatsing gemeten pixel-demand laten meenemen wanneer een label
+    structureel breder is dan één cel.
+13. Een algemene contribution registry maken voor minors, LEX-inserties,
+    SYNT-inserties en featuredocumentatie.
+14. LOG-major- en minor-boxen met dezelfde intrinsieke tekstmeting bepalen.
+15. Een layout-diagnose tonen met `requiredWidth`, `requiredHeight`,
+    demand-bron en collisions per box.

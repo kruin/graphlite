@@ -2,7 +2,7 @@
   "name": "OpenGraph Lite Viewer",
   "short_name": "OpenGraph Lite",
   "description": "OpenGraph Lite Viewer voor JAN/Open Notation: vrije bronknopen, named projections, views en LEX-plaatsingsregels.",
-  "start_url": "./index.html?ogv=v2.0.0-rc.39",
+  "start_url": "./index.html?ogv=v2.0.0-rc.41",
   "scope": "./",
   "display": "standalone",
   "orientation": "any",

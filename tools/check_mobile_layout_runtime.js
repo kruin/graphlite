@@ -36,12 +36,14 @@ async function graphMetrics(page) {
       return { x: value.x, y: value.y, w: value.width, h: value.height };
     };
     const wrapRect = wrap.getBoundingClientRect();
+    const svgRect = svg.getBoundingClientRect();
     const viewBox = svg.viewBox.baseVal;
-    const scale = Math.min(wrapRect.width / viewBox.width, wrapRect.height / viewBox.height);
+    const scale = Math.min(svgRect.width / viewBox.width, svgRect.height / viewBox.height);
     const grid = box('.grid');
     return {
       bodyClass: document.body.className,
       wrap: { w: wrapRect.width, h: wrapRect.height },
+      svg: { w: svgRect.width, h: svgRect.height },
       viewBox: { x: viewBox.x, y: viewBox.y, w: viewBox.width, h: viewBox.height },
       scale,
       grid,
@@ -115,11 +117,16 @@ async function dragHelpResizer(page, metrics, amount = 70) {
     const portrait = await openScenario(browser, {
       name: 'portrait-auto', width: 390, height: 844, viewport: 'auto'
     });
+    if (process.env.OGN_MOBILE_PORTRAIT_SCREENSHOT) {
+      await portrait.page.locator('.app-shell').screenshot({
+        path: process.env.OGN_MOBILE_PORTRAIT_SCREENSHOT
+      });
+    }
     const portraitGraph = await graphMetrics(portrait.page);
     assertGridEndsAtAxes(portraitGraph);
     assert.ok(
-      portraitGraph.gridClient.w >= portraitGraph.wrap.w * 0.80,
-      `portretraster vult de breedte niet: ${portraitGraph.gridClient.w}/${portraitGraph.wrap.w}`
+      portraitGraph.gridClient.w >= portraitGraph.wrap.w * 0.62,
+      `portretcompositie met volledige LEX/SYNT-inhoud is te klein: ${portraitGraph.gridClient.w}/${portraitGraph.wrap.w}`
     );
     await portrait.page.evaluate(() => {
       const select = document.getElementById('mainViewSelect');
@@ -138,6 +145,7 @@ async function dragHelpResizer(page, metrics, amount = 70) {
     }
     assertGridEndsAtAxes(portraitFunctional);
     await portrait.page.click('#openHelpButton');
+    await portrait.page.waitForTimeout(80);
     const portraitHelp = await helpMetrics(portrait.page);
     assert.equal(portraitHelp.layout, 'stacked');
     assert.ok(portraitHelp.nav.h >= 140, `README-itemlijst is ingeklapt: ${portraitHelp.nav.h}px`);
@@ -154,10 +162,11 @@ async function dragHelpResizer(page, metrics, amount = 70) {
     const landscapeGraph = await graphMetrics(landscape.page);
     assertGridEndsAtAxes(landscapeGraph);
     assert.ok(
-      landscapeGraph.gridClient.h >= landscapeGraph.wrap.h * 0.90,
-      `landschapsraster vult de hoogte niet: ${landscapeGraph.gridClient.h}/${landscapeGraph.wrap.h}`
+      landscapeGraph.gridClient.h >= landscapeGraph.svg.h * 0.88,
+      `landschapsraster vult de tekenhoogte niet: ${landscapeGraph.gridClient.h}/${landscapeGraph.svg.h}`
     );
     await landscape.page.click('#openHelpButton');
+    await landscape.page.waitForTimeout(80);
     const landscapeHelp = await helpMetrics(landscape.page);
     assert.equal(landscapeHelp.layout, 'side');
     assert.ok(landscapeHelp.nav.w >= 190, `README-itemlijst is ingeklapt: ${landscapeHelp.nav.w}px`);
@@ -174,8 +183,8 @@ async function dragHelpResizer(page, metrics, amount = 70) {
     const forcedGraph = await graphMetrics(forcedDesktop.page);
     assertGridEndsAtAxes(forcedGraph);
     assert.ok(
-      forcedGraph.gridClient.w >= forcedGraph.wrap.w * 0.80,
-      `forced desktop gebruikt mobiele MAX-focus niet: ${forcedGraph.gridClient.w}/${forcedGraph.wrap.w}`
+      forcedGraph.gridClient.w >= forcedGraph.wrap.w * 0.62,
+      `forced desktop gebruikt de volledige mobiele LEX/SYNT-focus niet: ${forcedGraph.gridClient.w}/${forcedGraph.wrap.w}`
     );
     assert.match(forcedGraph.bodyClass, /\bviewport-desktop\b/);
     assert.deepEqual(forcedDesktop.errors, []);
@@ -184,7 +193,7 @@ async function dragHelpResizer(page, metrics, amount = 70) {
     await browser.close();
   }
 
-  console.log('RC38 MOBILE LAYOUT RUNTIME: OK (README resize/items; portrait/landscape/forced desktop; raster op assen)');
+  console.log('RC41 MOBILE LAYOUT RUNTIME: OK (README resize/items; portrait/landscape/forced desktop; raster op assen)');
 })().catch(error => {
   console.error(error);
   process.exit(1);

@@ -1,6 +1,6 @@
 # LAYOUT_RULES
 
-Harde layoutregels voor OpenGraph Lite Viewer `v2.0.0-rc.39`.
+Harde layoutregels voor OpenGraph Lite Viewer `v2.0.0-rc.41`.
 
 ## Vaste projectieposities
 
@@ -13,6 +13,20 @@ Harde layoutregels voor OpenGraph Lite Viewer `v2.0.0-rc.39`.
 
 HTML-menu’s beïnvloeden de SVG-fitbox niet. Iedere projectiecombinatie en
 Syntax ↔ Functional behoudt x, y en schaal.
+
+De SYNT-oostas staat voor beide centrale views op de rechterrand van hun
+gezamenlijke envelop. LEX reserveert rechts de breedste actieve slotvorm en
+alleen de actieve Wissellanes, met een vaste bovengrens van vier lanes.
+
+## Recursief gemeten subtree-boxen
+
+- Gridplaatsing blijft structureel en bottom-up.
+- Daarna meet iedere subtree recursief eigen node, labels en child-boxen.
+- Caption en centrale binnenmarge horen bij `requiredWidth/requiredHeight`.
+- Een zichtbare subtree-rect gebruikt uitsluitend die gemeten geometrie.
+- Toepassingen declareren een inhoudssoort/layout-demand, nooit x/y.
+- Alle meetmaten komen uit één layout-policy; zinspecifieke pixelpatches zijn
+  verboden.
 
 ## Desktop-MAX
 
@@ -32,9 +46,14 @@ Syntax ↔ Functional behoudt x, y en schaal.
   (staand) of 844 × 390 (liggend); algemene `100vw`-regels mogen deze
   testframes niet overschrijven.
 - MAX focust de stabiele unie van het Syntax- en Functional-asgebied.
-- In portret benut het asgebied primair de volledige breedte; in landschap
-  gebruikt MAX extra zoom om ook de brede schermruimte te vullen.
-- Pan en pinch-zoom ontsluiten labels en boxen buiten de eerste MAX-focus.
+- In portret benut het asgebied primair de volledige breedte.
+- In landschap wordt de layout zelf lager en breder. MAX gebruikt een
+  volledige `contain`-fit; cover-zoom en het afsnijden van rastertop, LEX,
+  SYNT of LOG zijn niet toegestaan.
+- Twee compacte menurijen, het SVG en Play bezetten afzonderlijke verticale
+  zones. Geen van deze drie lagen mag een andere laag bedekken.
+- De eerste MAX-focus bevat volledige LEX-inhoud en volledige SYNT-regelboxen.
+- Pan en pinch-zoom blijven beschikbaar voor nadere inspectie.
 - Het raster ligt binnen de projectie-assen: links LEX, rechts SYNT en onder
   LOG. Er wordt geen halve rasterstap buiten de assen getekend.
 
@@ -54,10 +73,10 @@ Syntax ↔ Functional behoudt x, y en schaal.
 - LOG-rijen zijn doelrijen en nooit projectieankers.
 - `rowPx = data-lex-slot-pixels`.
 - Meerdere werkwoordelijke sources binnen major V krijgen opeenvolgende rijen.
-- Een eerste Wissel verplaatst een bronanker langs LEX naar zijn
-  LOG-afgeleide doelrij en laat een trace op de horizontale bronhoogte.
-- Topic/V2 en andere Wissels verplaatsen pas daarna een item en laten een
-  tweede trace op de LOG-doelrij.
+- LOG-basis en een eventuele expliciete topic/V2-regel worden vóór render tot
+  één einddoel samengevoegd.
+- Per bronwoord wordt daarom hoogstens één zichtbare Wissel en één trace op de
+  horizontale bronhoogte getekend.
 - Een minor verlaagt geen syntax- of Functional-subboom.
 
 ## Lijndikte

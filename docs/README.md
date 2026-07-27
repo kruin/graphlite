@@ -1,4 +1,4 @@
-# OpenGraph Lite Viewer v2.0.0-rc.39
+# OpenGraph Lite Viewer v2.0.0-rc.41
 
 OpenGraph Lite Viewer is a demo/viewer for JaN, OPN and OpenGraph linguistic structures. This release is
 built exclusively on the uploaded `v2.0.0-rc.26` source through rc.27; rc.28
@@ -21,6 +21,21 @@ is enabled. When Adverbs is off, its examples, LOG minors, direct LEX
 insertions, controls, runtime data, documentation links, and export fields are
 absent. OPN exports record `profile: "base"`, `extras: []`, and all three axis
 switches.
+
+## Recursive content-sized layout
+
+The structural tree is still placed bottom-up on the HOR/VER grid. Before
+drawing, a second recursive pass measures each subtree from its actual node
+shapes, labels, child boxes and caption. A small unary box such as
+`NP → HOND` therefore uses only its required width and height; larger S, VP and
+Functional structures expand independently.
+
+Applications declare abstract layout demands rather than SVG coordinates.
+Adverbs, for example, declares that it can add wide LEX insertion content.
+The central layout policy reserves the corresponding space. Handheld MAX
+includes the complete LEX content and the complete Syntax and Functional rule
+boxes in portrait, landscape and forced desktop. See
+`RECURSIVE_LAYOUT_AND_APPLICATION_CONTRACT.md`.
 
 ## Lexical usage profiles and user disambiguation
 
@@ -82,21 +97,21 @@ maak-volledige-zip.bat
 ```
 
 The batch file derives the ZIP name from its own containing directory. A
-directory named `OpenGraph_Lite_Viewer_v2.0.0-rc.39` therefore produces the
-sibling file `OpenGraph_Lite_Viewer_v2.0.0-rc.39_full_source.zip`. An existing
+directory named `OpenGraph_Lite_Viewer_v2.0.0-rc.41` therefore produces the
+sibling file `OpenGraph_Lite_Viewer_v2.0.0-rc.41_full_source.zip`. An existing
 ZIP with that exact name is replaced safely; the script never invents a
 `(1)` suffix.
 
 GitHub Pages:
 
 ```text
-https://kruin.github.io/graphlite/index.html?ogv=v2.0.0-rc.39
+https://kruin.github.io/graphlite/index.html?ogv=v2.0.0-rc.41
 ```
 
 Cache reset:
 
 ```text
-https://kruin.github.io/graphlite/reset-cache.html?ogv=v2.0.0-rc.39
+https://kruin.github.io/graphlite/reset-cache.html?ogv=v2.0.0-rc.41
 ```
 
 ## Desktop view
@@ -116,13 +131,13 @@ throughout the phased Play sequence.
 
 ### Mobile MAX
 
-On a physical phone, MAX initially focuses the area between the projection
-axes in both portrait and landscape. That axis area fills the available width
-in portrait and receives an additional landscape zoom to use the wide phone
-screen. This also applies when
-`Interface → Desktop` is forced on the phone. Content outside the initial view
-remains available through pan and pinch zoom. Choose `full tree visible` when
-all labels and boxes outside the axes must remain visible simultaneously.
+On a physical phone, MAX includes the complete LEX content, central structure,
+SYNT axis and full rule boxes in both portrait and landscape. Landscape uses a
+genuinely lower, wider layout and a contain fit, so the grid top and the
+complete LEX, SYNT and LOG axes remain visible at the same time. Two compact
+menu rows, the SVG and the Play bar use separate vertical zones. This also
+applies when `Interface → Desktop` is forced on the phone. Pan and pinch zoom
+remain available for closer inspection.
 
 The grid itself now ends at LEX on the left, SYNT on the right and LOG at the
 bottom; it no longer continues past those axes.

@@ -1,6 +1,43 @@
 # PROJECT_STATE_CURRENT
 
-Leidende status van OpenGraph Lite Viewer `v2.0.0-rc.39`.
+Leidende status van OpenGraph Lite Viewer `v2.0.0-rc.41`.
+
+## Recursieve layout en volledige projecties rc.41
+
+- Structurele gridplaatsing blijft recursief; daarna meet een tweede bottom-up
+  pass per subtree de nodevormen, labels, child-boxen en het caption.
+- Zichtbare subtree-rects gebruiken `requiredWidth/requiredHeight` uit één
+  centrale layout-policy.
+- Kleine unary boxen, waaronder `NP → HOND`, zijn inhoudsgestuurd compact en
+  bevatten desondanks alle node- en labelgeometrie.
+- LEX-Wissellanes, trace/indexposities en de goot vóór de boom zijn compacter;
+  de rechterreserve volgt alleen de actieve slots en banen.
+- Handheld MAX bevat volledige LEX-inhoud en volledige Syntax- én
+  Functional-regelboxen, ook in landschap en forced desktop.
+- Syntax en Functional gebruiken één oostas op hun gezamenlijke envelop.
+- De README-paneelmaat blijft bij mobiele resize behouden; lijst en tekst zijn
+  in portret en landschap met de sleepgreep verstelbaar.
+- Een toepassing declareert alleen abstracte layout-demand. Bijwoorden vraagt
+  brede LEX-inhoud; de renderer bepaalt de maten.
+- De beslisregels voor voorconfig, toepassingen en LOG-majors/minors staan in
+  `RECURSIVE_LAYOUT_AND_APPLICATION_CONTRACT.md`.
+- `tools/check_recursive_box_fit_runtime.js` controleert containment, viewport,
+  majors/minors en Syntax/Functional-stabiliteit in Chromium.
+
+## Landscape-compositie rc.40
+
+- Mobiel landschap gebruikt één begrensde schermcompositie: twee compacte
+  menurijen bovenaan, het SVG-tekenvlak in het midden en Play onderaan.
+- Menu en Play hebben gereserveerde ruimte en liggen niet over de graph.
+- De landschaplayout is werkelijk lager en breder; MAX gebruikt een
+  `contain`-fit en geen cover-zoom die rastertop of assen afsnijdt.
+- LEX, SYNT en LOG blijven volledig zichtbaar. Het raster eindigt exact op
+  deze assen en benut vrijwel de volledige beschikbare tekenhoogte.
+- Dezelfde regels gelden voor een echte telefoon, de lokale
+  desktopsimulatie van 844 × 390 en een fysieke telefoon waarop de
+  Desktop-interface is geforceerd.
+- `tools/check_landscape_composition_runtime.js` controleert menu, graph,
+  Play, raster en alle drie assen in Syntax én Functional.
 
 ## Lokale viewporttest rc.39
 

@@ -1,5 +1,27 @@
 
-## Actueel contract · v2.0.0-rc.39
+## Actueel contract · v2.0.0-rc.41
+
+De discrete HOR/VER-gridplaatsing blijft structureel leidend. Voor het tekenen
+voert de viewer daarnaast één bottom-up meetpass uit:
+
+```text
+nodevorm + labels
+→ child visual bounds
+→ subtree-caption
+→ requiredWidth/requiredHeight
+```
+
+De resulterende maten zijn de enige bron voor de zichtbare subtree-rects.
+Render wijzigt die geometrie niet. Assen reserveren vervolgens ruimte op basis
+van centrale layout-policy en abstracte demands van actieve toepassingen.
+Kleine unary boxen zijn daardoor inhoudsgestuurd compact; volledige LEX-inhoud
+en SYNT-regelboxen blijven in handheld MAX zichtbaar. Zie
+`RECURSIVE_LAYOUT_AND_APPLICATION_CONTRACT.md`.
+
+LEX reserveert rechts alleen de breedste actieve slotvorm en de actieve
+Wissellanes. Syntax en Functional delen één SYNT-oostas op de rechterrand van
+hun gezamenlijke envelop; hierdoor blijft het viewport stabiel en benut ook
+de smallere Syntaxboom de beschikbare landschapbreedte.
 
 LOG gebruikt vaste major/minor-slots. Een extra minor maakt de LOG-as één
 vaste stap langer en vergroot uitsluitend de relevante majorafstand. De
@@ -11,11 +33,15 @@ topic/V2-Wissels volgen daarna. Een minor verlaagt geen host-subboom.
 Mobiele MAX gebruikt de stabiele Syntax/Functional-unie van het asgebied als
 focus, ook bij een geforceerde Desktop-interface op een telefoon. Het zichtbare
 raster wordt afzonderlijk begrensd door LEX, SYNT en LOG en loopt niet buiten
-die assen door.
+die assen door. In landschap wordt de layout zelf lager en breder. Het
+zichtvenster bevat het volledige asgebied; een cover-zoom die rastertop of
+LOG-as afsnijdt is verboden.
 
 De lokale desktop-simulatie van een mobiele viewport blijft na de MAX-render
 begrensd tot haar vaste staande of liggende telefoonframe. De algemene
 desktopregel `width: 100vw` is binnen zo'n testframe niet van toepassing.
+In het liggende frame hebben de twee menurijen, het SVG en Play elk een eigen
+verticale zone zonder onderlinge overlap.
 
 Onderstaande eerdere LEX-hostregels zijn historische notities en niet
 normatief waar zij hiermee botsen.

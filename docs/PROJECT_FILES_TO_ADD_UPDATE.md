@@ -5,7 +5,7 @@ Bestanden om als leidende projectbronnen toe te voegen of te vervangen.
 ## Volledige projectzip
 
 ```text
-OpenGraph_Lite_Viewer_v2.0.0-rc.39_full_source.zip
+OpenGraph_Lite_Viewer_v2.0.0-rc.41_full_source.zip
 ```
 
 De zip bevat de volledige bronset, documentatie, referenties, voorbeelden, OPN-voorbeeldbestand en releasecontroles.
@@ -28,12 +28,17 @@ LINGUISTIC_ACTIONS.md
 DOCUMENTATION_RULES.md
 HANDOVER_FOR_COLLABORATORS.md
 DEPLOY_GITHUB_PAGES.md
+RECURSIVE_LAYOUT_AND_APPLICATION_CONTRACT.md
+SOURCE_CHANGES_V2.0.0-rc.41.md
+SOURCE_CHANGES_V2.0.0-rc.40.md
 SOURCE_CHANGES_V2.0.0-rc.39.md
 SOURCE_CHANGES_V2.0.0-rc.38.md
 RC36_BASE_PROFILE_TEST.md
 RC37_PRECONFIG_TEST.md
 RC38_MOBILE_LAYOUT_TEST.md
 RC39_VIEWPORT_SWITCH_TEST.md
+RC40_LANDSCAPE_COMPOSITION_TEST.md
+RC41_RECURSIVE_LAYOUT_TEST.md
 structure-config.html
 viewer.js
 index.html
@@ -48,8 +53,11 @@ tools/check_feature_profiles_runtime.js
 tools/check_mobile_layout_rc38.py
 tools/check_mobile_layout_runtime.js
 tools/check_viewport_switch_runtime.js
+tools/check_landscape_composition_runtime.js
+tools/check_recursive_box_fit_runtime.js
 docs/OGN_BASE_PROFILE.md
 docs/PRECONFIG_ARCHITECTURE.md
+docs/RECURSIVE_LAYOUT_AND_APPLICATION_CONTRACT.md
 tools/check_lex_horizontal_projection.py
 tools/check_desktop_max_view.py
 tools/check_linkedin_video_export.py

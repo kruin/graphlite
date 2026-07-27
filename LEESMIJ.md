@@ -1,4 +1,4 @@
-# OpenGraph Lite Viewer v2.0.0-rc.39
+# OpenGraph Lite Viewer v2.0.0-rc.41
 
 OpenGraph Lite Viewer is een demo/viewer voor JAN-, OPN- en
 OpenGraph-taalstructuren. Deze versie gebruikt de volledige v1.0.16-bronset als
@@ -20,6 +20,23 @@ beschikbaar wanneer insertie op **LEX + LOG** actief is. Staat Bijwoorden uit,
 dan ontbreken de bijbehorende voorbeelden, LOG-minors, directe LEX-inserties,
 bediening, runtimegegevens, documentatielinks en exportvelden. Een OPN-export
 vermeldt dan `profile: "base"`, `extras: []` en de drie asschakelaars.
+
+## Recursieve layout op inhoudsmaat
+
+De structurele boom wordt nog steeds bottom-up op het HOR/VER-grid geplaatst.
+Vóór het tekenen meet een tweede recursieve pass iedere subtree uit de
+werkelijke nodevormen, labels, child-boxen en het caption. Een kleine unary box
+zoals `NP → HOND` gebruikt daardoor alleen de benodigde breedte en hoogte;
+grotere S-, VP- en Functional-structuren groeien onafhankelijk.
+
+Toepassingen declareren abstracte layout-eisen en geen SVG-coördinaten.
+Bijwoorden meldt bijvoorbeeld dat brede LEX-insertie-inhoud mogelijk is. De
+centrale layout-policy reserveert de bijbehorende ruimte. Handheld MAX bevat
+volledige LEX-inhoud en volledige Syntax- en Functional-regelboxen in portret,
+landschap en forced desktop. LEX reserveert alleen de actieve slots en
+Wissellanes; Syntax en Functional delen één stabiele oostas over hun
+gezamenlijke envelop. Zie
+`RECURSIVE_LAYOUT_AND_APPLICATION_CONTRACT.md`.
 
 ## Lexicale gebruiksprofielen en gebruikerskeuze
 
@@ -91,21 +108,21 @@ maak-volledige-zip.bat
 ```
 
 De BAT leidt de ZIP-naam af uit de map waarin hij zelf staat. De map
-`OpenGraph_Lite_Viewer_v2.0.0-rc.39` maakt dus daarnaast automatisch
-`OpenGraph_Lite_Viewer_v2.0.0-rc.39_full_source.zip`. Een bestaande ZIP met
+`OpenGraph_Lite_Viewer_v2.0.0-rc.41` maakt dus daarnaast automatisch
+`OpenGraph_Lite_Viewer_v2.0.0-rc.41_full_source.zip`. Een bestaande ZIP met
 precies die naam wordt veilig vervangen; het script verzint nooit zelf een
 achtervoegsel `(1)`.
 
 GitHub Pages:
 
 ```text
-https://kruin.github.io/graphlite/index.html?ogv=v2.0.0-rc.39
+https://kruin.github.io/graphlite/index.html?ogv=v2.0.0-rc.41
 ```
 
 Cache-reset:
 
 ```text
-https://kruin.github.io/graphlite/reset-cache.html?ogv=v2.0.0-rc.39
+https://kruin.github.io/graphlite/reset-cache.html?ogv=v2.0.0-rc.41
 ```
 
 ## Desktopweergave
@@ -127,12 +144,12 @@ Play-volgorde blijft hetzelfde MAX-kader stabiel.
 
 Op een fysieke telefoon gebruikt MAX in portret én landschap het gebied tussen
 de projectie-assen als eerste focus. In portret vult dit asgebied de beschikbare
-breedte; in landschap wordt het extra vergroot om ook de brede telefoonruimte
-te benutten. Dat blijft zo wanneer
-`Interface → Desktop` op de telefoon wordt geforceerd. Inhoud buiten het
-initiële beeld blijft met pan en pinch-zoom bereikbaar. Kies
-`volledige boom zichtbaar` wanneer alle buiten de assen geplaatste labels en
-boxen tegelijk in beeld moeten blijven.
+breedte. Landschap gebruikt een werkelijk lagere, bredere layout en een
+`contain`-fit, zodat rastertop en de volledige LEX-, SYNT- en LOG-as tegelijk
+zichtbaar blijven. Twee compacte menurijen, het SVG en de Play-balk hebben elk
+een eigen verticale zone. Dat blijft zo wanneer `Interface → Desktop` op de
+telefoon wordt geforceerd. Inhoud buiten het initiële beeld blijft met pan en
+pinch-zoom bereikbaar.
 
 Het raster zelf eindigt links op LEX, rechts op SYNT en onder op LOG. Het loopt
 niet langer voorbij die assen.

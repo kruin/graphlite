@@ -163,7 +163,7 @@ async function chooseLocalMode(page, mode) {
     if (ownedServer) await new Promise(resolve => ownedServer.close(resolve));
   }
 
-  console.log('RC39 VIEWPORT SWITCH RUNTIME: OK (staand/liggend blijft begrensd; actueel ogv; auto herstelt groot scherm)');
+  console.log('RC41 VIEWPORT SWITCH RUNTIME: OK (staand/liggend blijft begrensd; actueel ogv; auto herstelt groot scherm)');
 })().catch(error => {
   console.error(error);
   process.exit(1);

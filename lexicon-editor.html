@@ -7,7 +7,7 @@
 <meta content="no-cache" http-equiv="Pragma"/>
 <meta content="0" http-equiv="Expires"/>
 <meta content="width=device-width, initial-scale=1" name="viewport"/>
-<title>OpenGraph lexicon- en uitingeneditor v2.0.0-rc.39</title>
+<title>OpenGraph lexicon- en uitingeneditor v2.0.0-rc.41</title>
 <style>
     :root{color-scheme:light;--bg:#f8fafc;--panel:#fff;--text:#0f172a;--muted:#64748b;--line:#cbd5e1;--soft:#eef2f7;--accent:#1d4ed8;--danger:#b91c1c;--ok:#166534;--warn:#9a3412;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
     *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text)}
@@ -22,7 +22,7 @@
 </head>
 <body><nav class="opengraph-return-nav" style="display:flex;gap:.5rem;flex-wrap:wrap;padding:.55rem .7rem;border-bottom:1px solid #cbd5e1;background:#f8fafc;position:sticky;top:0;z-index:50"><a href="index.html?screen=config" style="font-weight:800">← Terug naar: Config</a><a href="index.html" style="font-weight:800">← Terug naar: Main</a></nav>
 <header>
-<h1>OpenGraph lexicon- en uitingeneditor <span>v2.0.0-rc.39</span></h1>
+<h1>OpenGraph lexicon- en uitingeneditor <span>v2.0.0-rc.41</span></h1>
 <p id="editorProfileDescription">Beheerlaag voor <code>lexicon-config.html</code> én <code>examples-input.html</code>. De voorbeeldzin valideert de LOG→LEX-afleiding en bepaalt de layout niet. Gebruiksprofielen en meerwoordconstructies worden bij import/export behouden. De zinsinstantie kiest een profiel; het lexicon bewaart de mogelijkheden. Intervaldefaults staan in <code>structure-config.html</code>.</p>
 </header>
 <main>
@@ -42,7 +42,7 @@
 </aside>
 <section class="split">
 <section aria-label="Lexeme bewerken" class="panel">
-<div class="panel-header"><h2>Lexeme</h2><div class="button-row"><a class="button-link" href="index.html?v2.0.0-rc.39">Viewer</a><a class="button-link" href="lexicon-config.html?v2.0.0-rc.39">Lexicon</a><a class="button-link" href="examples-input.html?v2.0.0-rc.39">Uitingen</a><a class="button-link" href="structure-editor.html?v2.0.0-rc.39">Structure-editor</a></div></div>
+<div class="panel-header"><h2>Lexeme</h2><div class="button-row"><a class="button-link" href="index.html?v2.0.0-rc.41">Viewer</a><a class="button-link" href="lexicon-config.html?v2.0.0-rc.41">Lexicon</a><a class="button-link" href="examples-input.html?v2.0.0-rc.41">Uitingen</a><a class="button-link" href="structure-editor.html?v2.0.0-rc.41">Structure-editor</a></div></div>
 <div class="panel-body split">
 <div class="form-grid three"><label class="field"><span>ID</span><input id="idInput" placeholder="hond" type="text"/></label><label class="field"><span>Label</span><input id="labelInput" placeholder="HOND" type="text"/></label><label class="field"><span>Lemma</span><input id="lemmaInput" placeholder="hond" type="text"/></label></div>
 <div class="form-grid three"><label class="field"><span>Kind</span><select id="kindInput"><option>noun</option><option>verb</option><option>aux</option><option>comp</option><option>adj</option><option>adv</option><option>prep</option><option>other</option></select></label><label class="field"><span>Cat</span><input id="catInput" placeholder="N / V / AUX / COMP" type="text"/></label><label class="field"><span>Phrase</span><input id="phraseInput" placeholder="NP / VP / PP" type="text"/></label></div>
@@ -70,7 +70,7 @@
 <section aria-label="Voorbeelduitingen beheren" class="panel">
 <div class="panel-header"><h2>Voorbeelduitingen <span class="muted" id="exampleCountLabel">—</span></h2><div class="button-row"><button class="primary" id="newShortExampleButton" type="button">+ korte zin</button><button id="replaceExampleButton" type="button">Vervang geselecteerde</button></div></div>
 <div class="panel-body split">
-<div class="help warn"><strong>Scope v2.0.0-rc.39:</strong> deze editor beheert voorlopig korte zinnen. Subject wordt als <code>agens</code> gelezen; object als <code>patiens</code>. Hoofdzinnen gebruiken nu de LEX-plaatsingsregel <code>Wissel V2</code>: persoonsvorm naar vrij slot 2, oude plek = trace. De bouwer toont geen combinaties zoals <code>trui</code> als agens.</div>
+<div class="help warn"><strong>Scope v2.0.0-rc.41:</strong> deze editor beheert voorlopig korte zinnen. Subject wordt als <code>agens</code> gelezen; object als <code>patiens</code>. Hoofdzinnen gebruiken nu de LEX-plaatsingsregel <code>Wissel V2</code>: persoonsvorm naar vrij slot 2, oude plek = trace. De bouwer toont geen combinaties zoals <code>trui</code> als agens.</div>
 <div class="form-grid four">
 <label class="field"><span>Type</span><select id="exampleTypeInput"><option value="main">hoofdzin: S V O</option><option value="past">OVT: S OVT O</option><option value="sub">bijzin: omdat S O V</option><option value="perfect">perfectum: S AUX O VDW</option></select></label>
 <label class="field"><span>Subject</span><select id="exampleSubjectInput"></select></label>
@@ -100,8 +100,8 @@
 </section>
 </main>
 <script>
-const VERSION='v2.0.0-rc.39';
-const STORAGE_KEY='opengraph.lexicon.examples.editor.v2.0.0-rc.39';
+const VERSION='v2.0.0-rc.41';
+const STORAGE_KEY='opengraph.lexicon.examples.editor.v2.0.0-rc.41';
 const BASE_PROFILE=new URLSearchParams(location.search).get('profile')==='base';
 if(BASE_PROFILE){
   const description=document.getElementById('editorProfileDescription');

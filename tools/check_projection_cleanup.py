@@ -30,11 +30,14 @@ required_js = [
     "class: 'graph-sentence-heading'",
     "'data-north-axis-clearance': '64'",
     "d: `M ${sourceX} ${item.sourceTopY} V ${y}`",
-    "const LEX_RENDER_RIGHT_REACH = 220",
-    "const LEX_TREE_CLEARANCE = 48",
-    "function westLexAxisX(layoutBox, origin)",
-    "return treeBoxLeft - LEX_RENDER_RIGHT_REACH - LEX_TREE_CLEARANCE",
-    "'data-render-right-reach': LEX_RENDER_RIGHT_REACH",
+    "const LEX_RENDER_RIGHT_REACH = 180",
+    "const LEX_TREE_CLEARANCE = 6",
+    "function activeLexRenderRightReach()",
+    "function measureSubtreeBoxes(layout, origin)",
+    "function stableEastProjectionAxisX(origin)",
+    "function westLexAxisX(layoutOrBox, origin)",
+    "return treeBoxLeft - activeLexRenderRightReach() - LEX_TREE_CLEARANCE",
+    "'data-render-right-reach': activeLexRenderRightReach()",
 ]
 for marker in required_js:
     if marker not in JS:
@@ -70,5 +73,5 @@ if errors:
 print(
     "PROJECTIE-OPRUIMCHECK: OK "
     f"({fallback_count + 1} bijwoordkeuzes; 4 introbeelden; directe LOG; "
-    "gecombineerde LEX met 48 px S/CLAUSE-vrijstrook)"
+    "gecombineerde LEX met recursieve boxmeting en 6 SVG-eenheden basisvrijstrook)"
 )

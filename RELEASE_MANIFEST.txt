@@ -27,7 +27,10 @@ RC36_BASE_PROFILE_TEST.md
 RC37_PRECONFIG_TEST.md
 RC38_MOBILE_LAYOUT_TEST.md
 RC39_VIEWPORT_SWITCH_TEST.md
+RC40_LANDSCAPE_COMPOSITION_TEST.md
+RC41_RECURSIVE_LAYOUT_TEST.md
 README.md
+RECURSIVE_LAYOUT_AND_APPLICATION_CONTRACT.md
 SOURCE_BASE.md
 SOURCE_CHANGES_V2.0.0-rc.10.md
 SOURCE_CHANGES_V2.0.0-rc.11.md
@@ -56,6 +59,8 @@ SOURCE_CHANGES_V2.0.0-rc.36.md
 SOURCE_CHANGES_V2.0.0-rc.37.md
 SOURCE_CHANGES_V2.0.0-rc.38.md
 SOURCE_CHANGES_V2.0.0-rc.39.md
+SOURCE_CHANGES_V2.0.0-rc.40.md
+SOURCE_CHANGES_V2.0.0-rc.41.md
 SOURCE_CHANGES_V2.0.0-rc.6.md
 SOURCE_CHANGES_V2.0.0-rc.9.md
 SOV_NOTATION_OPTIONS.md
@@ -103,6 +108,7 @@ docs/OpenGraph_Lite_Viewer_EN_v4513.pdf
 docs/PROJECT_FILES_TO_ADD_UPDATE.md
 docs/PROJECT_STATE_CURRENT.md
 docs/README.md
+docs/RECURSIVE_LAYOUT_AND_APPLICATION_CONTRACT.md
 docs/RELEASE_NOTES.md
 docs/RENDER_EXPLANATION.md
 docs/RENDER_EXPLANATION_EN.md
@@ -175,6 +181,7 @@ tools/check_desktop_max_view.py
 tools/check_examples_roundtrip.py
 tools/check_feature_profiles.py
 tools/check_feature_profiles_runtime.js
+tools/check_landscape_composition_runtime.js
 tools/check_lex_horizontal_projection.py
 tools/check_lexicon_usage_profiles.py
 tools/check_linkedin_video_export.py
@@ -185,6 +192,7 @@ tools/check_mobile_layout_runtime.js
 tools/check_opn_storage.py
 tools/check_play_reverse.py
 tools/check_projection_cleanup.py
+tools/check_recursive_box_fit_runtime.js
 tools/check_release.py
 tools/check_release_zip_batch.py
 tools/check_social_and_linguistic_export.py

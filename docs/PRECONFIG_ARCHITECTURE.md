@@ -38,6 +38,24 @@ schakelbaar:
 Een kandidaat wordt pas een actieve voorconfig wanneer bediening, opslag,
 import/export, afhankelijkheden en regressietests samen zijn geïmplementeerd.
 
+## Layout-demand van een toepassing
+
+Voorconfig bepaalt **of** een capaciteit beschikbaar is. Een toepassing mag
+daarnaast declareren **welk soort** renderinhoud zij kan toevoegen, maar geen
+pixelcoördinaten. Bijwoorden declareert in rc.41 bijvoorbeeld
+`lexContent: wide-insertion`. De centrale layout-policy vertaalt dat naar
+voldoende zichtbare ruimte op ieder viewport.
+
+Hierdoor blijft de richting van afhankelijkheid zuiver:
+
+```text
+voorconfig → toepassing → semantische bijdrage/layout-demand → layout-policy
+```
+
+De renderer leest geen bijwoord-specifieke x/y-patches. Een toekomstige
+toepassing kan hetzelfde contract gebruiken voor LEX-inhoud, SYNT-inserties of
+LOG-minors. Zie `RECURSIVE_LAYOUT_AND_APPLICATION_CONTRACT.md`.
+
 ## Opslag
 
 OPN en de lokale Config-snapshot bewaren de drie asschakelaars expliciet:

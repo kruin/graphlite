@@ -1,19 +1,46 @@
 (() => {
   'use strict';
 
-  const VERSION = 'v2.0.0-rc.39';
+  const VERSION = 'v2.0.0-rc.41';
   const OPN_FORMAT_VERSION = '1.0';
   const OPN_DOCUMENT_TYPE = 'opengraph-document';
   const PARADATA_EVENT_LIMIT = 250;
   const BASE_CELL = 74;
   const ROOT_SIDE_GAP = 1;
   const SVG_NS = 'http://www.w3.org/2000/svg';
-  // Volledige westelijke LEX-laag: brede bijwoordgroepen, brontraces en
-  // maximaal vier gestaffelde bewegingen. Houd rechts daarvan ook een
-  // zichtbare goot vrij vóór de buitenste S/CLAUSE-box.
-  const LEX_RENDER_RIGHT_REACH = 220;
-  const LEX_RENDER_LEFT_REACH = 148;
-  const LEX_TREE_CLEARANCE = 48;
+  // Bovengrens voor de westelijke LEX-laag: brontraces en maximaal vier
+  // compacte, gestaffelde bewegingen. De werkelijke reservering wordt
+  // hieronder per actieve analyse uit de getekende banen afgeleid.
+  const LEX_RENDER_RIGHT_REACH = 180;
+  const LEX_RENDER_LEFT_REACH = 96;
+  const LEX_CONTENT_REACH = Object.freeze({
+    standard: LEX_RENDER_LEFT_REACH,
+    'wide-insertion': 124
+  });
+  // SVG-eenheden schalen mee met het viewport. Zes eenheden houden de goot
+  // ook op groot desktop compact, terwijl de runtime-matrix nog steeds een
+  // zichtbare, niet-overlappende scheiding afdwingt.
+  const LEX_TREE_CLEARANCE = 6;
+  const LEX_MOVEMENT_LANE_START = 72;
+  const LEX_MOVEMENT_LANE_STEP = 14;
+  const LEX_MOVEMENT_CURVE_REACH = 42;
+  const LEX_MOVEMENT_LABEL_OFFSET = 35;
+  // De assen gebruiken een stabiele theoretische boom-envelop. De werkelijk
+  // getekende subtree-boxen worden verderop recursief uit hun inhoud gemeten.
+  const SUBTREE_AXIS_ENVELOPE_X_PAD = 0.56;
+  const SUBTREE_MEASURE_POLICY = Object.freeze({
+    inlineGap: 8,
+    blockGap: 8,
+    captionInsetX: 14,
+    captionBaseline: 24,
+    captionTailGap: 10,
+    captionFontPx: 13,
+    captionLetterSpacingEm: 0.08
+  });
+  const TREE_NODE_METRICS = Object.freeze({
+    max: Object.freeze({ leafRadius: 34, categoryWidth: 124, categoryHeight: 54, cornerRadius: 15 }),
+    standard: Object.freeze({ leafRadius: 27, categoryWidth: 104, categoryHeight: 46, cornerRadius: 13 })
+  });
   const CANVAS_GUIDE_TEXT_VISIBLE = false;
   const CONFIG_STORAGE_KEY = 'opengraph_saved_config_v1014';
   const CONFIG_LOG_KEY = 'opengraph_local_config_log_v1014';
@@ -37,7 +64,10 @@
       label: 'Bijwoorden',
       labelEn: 'Adverbs',
       defaultEnabled: false,
-      insertionAxes: Object.freeze(['lex', 'log'])
+      insertionAxes: Object.freeze(['lex', 'log']),
+      // Een toepassing declareert alleen welk soort ruimte zij nodig heeft.
+      // De renderer vertaalt dat naar maten; de toepassing levert geen x/y.
+      layoutDemand: Object.freeze({ lexContent: 'wide-insertion' })
     })
   });
   const DEFAULT_FEATURES = Object.freeze(
@@ -1680,7 +1710,7 @@
 
   const LEXICON_USAGE_PROFILES = new Map();
   const LEXICON_CONSTRUCTIONS = new Map();
-  const LEX_ANALYSIS_STORAGE_KEY = 'opengraph_lex_analysis_choices_v2.0.0-rc.39';
+  const LEX_ANALYSIS_STORAGE_KEY = 'opengraph_lex_analysis_choices_v2.0.0-rc.41';
 
   function normalizeInsertionOrigin(value) {
     const origin = String(value || 'LOG').trim().toUpperCase().replace('MIXED', 'LOG+LEX');
@@ -1831,6 +1861,62 @@
 
   function featureEnabled(featureId) {
     return state.features?.[featureId] === true && featureRequirementsMet(featureId);
+  }
+
+  function activeLexRenderLeftReach() {
+    const fontScale = layoutVisualProfile().fontScale;
+    const traceWords = activeLexItems()
+      .filter(item => item?.source)
+      .map(item => String(item.label || item.role || item.source || 'LEX').toUpperCase());
+    for (const spec of activeLexInsertionSpecs()) {
+      const content = spec?.content || insertionContentForSpec(spec);
+      const word = String(content?.text || content?.label || '').trim().toUpperCase();
+      if (word) traceWords.push(word);
+    }
+    const traceReach = traceWords.reduce(
+      (maximum, word) => Math.max(maximum, 14 + measuredTextWidth(`t[${word}]`, 12 * fontScale, 850)),
+      0
+    );
+    // Indexlabels staan op -76; een Comp-slot kan tot -86 reiken.
+    let reach = Math.max(LEX_RENDER_LEFT_REACH, 90, Math.ceil(traceReach));
+    for (const feature of Object.values(FEATURE_DEFINITIONS)) {
+      if (!featureEnabled(feature.id)) continue;
+      const demand = feature.layoutDemand?.lexContent;
+      reach = Math.max(reach, Number(LEX_CONTENT_REACH[demand] || LEX_RENDER_LEFT_REACH));
+    }
+    return reach;
+  }
+
+  function lexMovementLaneRightReach(lane = 0) {
+    const safeLane = Math.max(0, Number(lane) || 0) % 4;
+    const sideReach = LEX_MOVEMENT_LANE_START + safeLane * LEX_MOVEMENT_LANE_STEP;
+    const curveReach = sideReach + LEX_MOVEMENT_CURVE_REACH;
+    const arrowReach = sideReach + 9;
+    const label = `LEX ${safeLane + 1}`;
+    const labelReach = sideReach
+      + LEX_MOVEMENT_LABEL_OFFSET
+      + measuredTextWidth(label, 10 * layoutVisualProfile().fontScale, 900) / 2;
+    return Math.max(curveReach, arrowReach, labelReach) + 2;
+  }
+
+  function activeLexRenderRightReach() {
+    const items = activeLexItems();
+    // Gewone woordsloten reiken 62 eenheden rechts van de as. Comp en de
+    // systeemslots zijn breder; externe inserties zijn met 122 het breedst.
+    let reach = 62;
+    if (hasCompItem(items)) reach = Math.max(reach, 86);
+    if (showTopicSlot(items) || showV2Slot(items)) reach = Math.max(reach, 98);
+    if (activeLexInsertionSpecs().length) reach = Math.max(reach, 122);
+
+    const movementCount = Math.min(4, orderedLexMovements(items).length);
+    for (let lane = 0; lane < movementCount; lane += 1) {
+      reach = Math.max(reach, lexMovementLaneRightReach(lane));
+    }
+    // Een vooropgeplaatst extern bijwoord kan zelf een baan 0 tekenen.
+    if (activeAdverbIsFronted() && activeLexInsertionSpecs().length) {
+      reach = Math.max(reach, lexMovementLaneRightReach(0));
+    }
+    return Math.min(LEX_RENDER_RIGHT_REACH, Math.ceil(reach));
   }
 
   function exampleRequiresAdverbs(example = {}) {
@@ -2652,7 +2738,9 @@
     const object = phrase('np-obj', 'NP', 'NP', makeLeaf('object', 'N', 'object'));
     const predicate = phrase('v', 'V', 'V', makeLeaf('predicate', 'V', 'predicate'));
     const aux = phrase('aux', 'AUX', 'AUX', makeLeaf('pv', 'AUX', 'aux'));
-    const participle = phrase('vdw', 'VDW', 'V', makeLeaf('vdw', 'V', 'participle'));
+    // Category and lexical source need distinct identities. Reusing `vdw`
+    // for both produced a self-edge and made recursive measurement ambiguous.
+    const participle = phrase('vdw-phrase', 'VDW', 'V', makeLeaf('vdw', 'V', 'participle'));
     const hasSubject = bySource.has('subject');
     const hasObject = bySource.has('object');
     const hasPredicate = bySource.has('predicate');
@@ -4076,6 +4164,7 @@
     const mobilePortrait = mode === 'mobile-portrait';
     const mobileLandscape = mode === 'mobile-landscape';
     const mobileTest = mobilePortrait || mobileLandscape;
+    const handheldLandscape = isHandheldLandscapeViewport();
     const root = document.documentElement;
     const body = document.body;
     [root, body].forEach(node => {
@@ -4084,6 +4173,7 @@
       node.classList.toggle('viewport-mobile-test', mobileTest);
       node.classList.toggle('viewport-mobile-portrait-test', mobilePortrait);
       node.classList.toggle('viewport-mobile-landscape-test', mobileLandscape);
+      node.classList.toggle('viewport-handheld-landscape', handheldLandscape);
       node.dataset.viewportMode = mode;
     });
     const width = mobilePortrait ? 390 : (mobileLandscape ? 844 : 0);
@@ -4109,6 +4199,16 @@
     const coarsePointer = !!window.matchMedia?.('(pointer: coarse)')?.matches;
     const mobileUserAgent = /Android|iPhone|iPad|iPod|Mobile/i.test(String(window.navigator?.userAgent || ''));
     return compactSide && (touch || coarsePointer || mobileUserAgent);
+  }
+
+  function isHandheldLandscapeViewport() {
+    const forced = activeViewportMode();
+    if (forced === 'mobile-landscape') return true;
+    if (forced === 'mobile-portrait') return false;
+    const viewport = window.visualViewport;
+    const width = Number(viewport?.width || window.innerWidth || 0);
+    const height = Number(viewport?.height || window.innerHeight || 0);
+    return isPhysicalHandheldViewport() && width > height;
   }
 
   function isMobileViewport() {
@@ -4397,7 +4497,16 @@
   function layoutVisualProfile() {
     const mode = validLayoutDensity();
     const mobile = isMobileViewport();
+    const landscapeHandheld = isHandheldLandscapeViewport();
     if (mode === 'max') {
+      if (landscapeHandheld) {
+        // v2.0.0-rc.41: landschap heeft veel breedte maar weinig hoogte.
+        // Maak de projectie daarom werkelijk platter in plaats van een hoge
+        // portretlayout met cover-zoom af te snijden. Font en knopen behouden
+        // hun leesbare maat; vooral de horizontale/verticale celafstand wordt
+        // aangepast.
+        return { cellX: BASE_CELL * 1.78, cellY: BASE_CELL * 0.55, fontScale: 1.42, label: 'MAX mobiel landschap' };
+      }
       return mobile
         ? { cellX: BASE_CELL * 1.38, cellY: BASE_CELL * 0.78, fontScale: 1.42, label: 'MAX mobiel' }
         : { cellX: BASE_CELL * 1.48, cellY: BASE_CELL * 0.72, fontScale: 1.70, label: 'MAX desktop' };
@@ -4518,8 +4627,28 @@
         maxX: Math.max(...boxes.map(box => Number(box.maxX || 0))),
         maxY: Math.max(...boxes.map(box => Number(box.maxY || 0)))
       };
-      const left = westLexAxisX(union, origin);
-      const right = px(union.maxX, origin) + 118;
+      const westAxis = Math.min(...layouts.map(layout => westLexAxisX(layout, origin)));
+      // Deze focus wordt uitsluitend door handheldMaximumViewBox gebruikt.
+      // Ook landschap en een geforceerde Desktop-interface op een telefoon
+      // moeten de volledige LEX-inhoud links en regelboxen rechts bevatten.
+      const left = westAxis - activeLexRenderLeftReach();
+      const eastAxisRight = px(union.maxX, origin) + 118;
+      // v2.0.0-rc.41: in portret hoort niet alleen de groene SYNT-as, maar
+      // ook de volledige regelbox rechts ervan in de eerste MAX-fit. Gebruik
+      // de unie van Syntax en Functional zodat een viewwissel niet verspringt.
+      const syntaxRuleRight = projectedRuleRightEdge(
+        layouts[0],
+        treeSpec(),
+        origin,
+        'syntax'
+      );
+      const functionalRuleRight = projectedRuleRightEdge(
+        layouts[1],
+        functionalSpec(),
+        origin,
+        'functional'
+      );
+      const right = Math.max(eastAxisRight, syntaxRuleRight, functionalRuleRight);
       const top = py(union.minY - 3.45, origin);
       const bottom = py(union.maxY + 2.1, origin);
       if (![left, right, top, bottom].every(Number.isFinite) || right - left < 80 || bottom - top < 80) {
@@ -4549,6 +4678,147 @@
 
   function subtreeBoxArea(box) {
     return (box.maxX - box.minX + 1) * (box.maxY - box.minY + 1);
+  }
+
+  function treeNodeRenderMetrics() {
+    return validLayoutDensity() === 'max' ? TREE_NODE_METRICS.max : TREE_NODE_METRICS.standard;
+  }
+
+  let subtreeMeasureContext = null;
+
+  function measuredTextWidth(text, fontPx, weight = 800, letterSpacingEm = 0) {
+    const value = String(text || '');
+    if (!value) return 0;
+    let width = value.length * fontPx * 0.62;
+    try {
+      if (!subtreeMeasureContext) {
+        subtreeMeasureContext = document.createElement('canvas').getContext('2d');
+      }
+      if (subtreeMeasureContext) {
+        subtreeMeasureContext.font = `${weight} ${fontPx}px system-ui, -apple-system, "Segoe UI", sans-serif`;
+        const measured = subtreeMeasureContext.measureText(value).width;
+        if (Number.isFinite(measured) && measured > 0) width = measured;
+      }
+    } catch (_err) {}
+    return width + Math.max(0, value.length - 1) * fontPx * Math.max(0, letterSpacingEm);
+  }
+
+  function unionPixelBounds(first, second) {
+    if (!first) return second ? { ...second } : null;
+    if (!second) return { ...first };
+    const x = Math.min(first.x, second.x);
+    const y = Math.min(first.y, second.y);
+    const right = Math.max(first.x + first.w, second.x + second.w);
+    const bottom = Math.max(first.y + first.h, second.y + second.h);
+    return { x, y, w: right - x, h: bottom - y };
+  }
+
+  function treeNodeIntrinsicBounds(node, origin) {
+    const metrics = treeNodeRenderMetrics();
+    const fontScale = layoutVisualProfile().fontScale;
+    const cx = px(Number(node?.x || 0), origin);
+    const cy = py(Number(node?.y || 0), origin);
+    let halfWidth;
+    let halfHeight;
+
+    if (node?.kind === 'leaf') {
+      const labelWidth = state.showLabels
+        ? Math.max(
+          measuredTextWidth(node.label, 18 * fontScale, 900),
+          measuredTextWidth(node.cat, 12 * fontScale, 800)
+        )
+        : 0;
+      halfWidth = Math.max(metrics.leafRadius, labelWidth / 2 + 4);
+      halfHeight = metrics.leafRadius;
+    } else {
+      const fontPx = (node?.kind === 'role' || node?.kind === 'role-root' ? 15 : 16) * fontScale;
+      const labelWidth = state.showLabels ? measuredTextWidth(node?.label, fontPx, 900, 0.02) : 0;
+      halfWidth = Math.max(metrics.categoryWidth / 2, labelWidth / 2 + 10);
+      halfHeight = metrics.categoryHeight / 2;
+    }
+
+    return {
+      x: cx - halfWidth,
+      y: cy - halfHeight,
+      w: halfWidth * 2,
+      h: halfHeight * 2
+    };
+  }
+
+  function measureSubtreeBoxes(layout, origin) {
+    const nodes = new Map((layout?.nodes || []).map(node => [String(node.id), node]));
+    const boxes = new Map(
+      (layout?.boxes || [])
+        .filter(box => !box.leaf)
+        .map(box => [String(box.nodeId), box])
+    );
+    const children = new Map();
+    for (const edge of layout?.edges || []) {
+      const parentId = String(edge.from);
+      const childId = String(edge.to);
+      if (!children.has(parentId)) children.set(parentId, []);
+      children.get(parentId).push(childId);
+    }
+
+    const geometry = new Map();
+    const visualBounds = new Map();
+    const visiting = new Set();
+
+    function visit(nodeId) {
+      const id = String(nodeId);
+      if (visualBounds.has(id)) return visualBounds.get(id);
+      if (visiting.has(id)) return null;
+      visiting.add(id);
+
+      let content = nodes.has(id) ? treeNodeIntrinsicBounds(nodes.get(id), origin) : null;
+      for (const childId of children.get(id) || []) {
+        content = unionPixelBounds(content, visit(childId));
+      }
+
+      const box = boxes.get(id);
+      let visual = content;
+      if (box && content) {
+        const policy = SUBTREE_MEASURE_POLICY;
+        const caption = `BOX ${String(box.label || '').replace(/^BOX\s+/i, '')}`;
+        const captionWidth = measuredTextWidth(
+          caption,
+          policy.captionFontPx * layoutVisualProfile().fontScale,
+          800,
+          policy.captionLetterSpacingEm
+        );
+        const x = content.x - policy.inlineGap;
+        const y = content.y - policy.blockGap;
+        const neededRight = Math.max(
+          content.x + content.w + policy.inlineGap,
+          x + policy.captionInsetX + captionWidth + policy.captionTailGap
+        );
+        const neededBottom = Math.max(
+          content.y + content.h + policy.blockGap,
+          y + policy.captionBaseline + policy.blockGap
+        );
+        visual = {
+          x,
+          y,
+          w: neededRight - x,
+          h: neededBottom - y
+        };
+        geometry.set(id, {
+          ...visual,
+          caption,
+          captionX: x + policy.captionInsetX,
+          captionY: y + policy.captionBaseline
+        });
+      }
+
+      visiting.delete(id);
+      if (visual) visualBounds.set(id, visual);
+      return visual;
+    }
+
+    const rootId = layout?.node?.id || layout?.nodes?.[0]?.id;
+    if (rootId !== undefined) visit(rootId);
+    for (const id of nodes.keys()) visit(id);
+    return geometry;
   }
 
   function normalizedSourceAxes(value = state.sourceAxes) {
@@ -4868,21 +5138,36 @@
 
   function drawSubtreeBoxes(g, layout, origin, growthPlan = null) {
     const ordered = orderedSubtreeBoxes(layout).filter(({ box }) => visibleAt(growthPlan, boxGrowthStep(growthPlan, box)));
+    const measured = measureSubtreeBoxes(layout, origin);
     const rectLayer = svgEl('g', { class: 'subtree-box-rect-layer' });
     const captionLayer = svgEl('g', { class: 'subtree-box-caption-layer' });
 
     for (const { box } of ordered) {
-      const x = px(box.minX - 0.75, origin);
-      const y = py(box.minY - 0.55, origin);
-      const w = (box.maxX - box.minX + 1.5) * cellX();
-      const h = (box.maxY - box.minY + 1.1) * cellY();
-      rectLayer.appendChild(svgEl('rect', { x, y, width: w, height: h, rx: 18, class: 'jan-subtree-box' }));
+      const boxGeometry = measured.get(String(box.nodeId));
+      if (!boxGeometry) continue;
+      rectLayer.appendChild(svgEl('rect', {
+        x: boxGeometry.x,
+        y: boxGeometry.y,
+        width: boxGeometry.w,
+        height: boxGeometry.h,
+        rx: 18,
+        class: 'jan-subtree-box',
+        'data-box-node-id': box.nodeId,
+        'data-measure-mode': 'recursive-content',
+        'data-required-width': Math.round(boxGeometry.w * 100) / 100,
+        'data-required-height': Math.round(boxGeometry.h * 100) / 100
+      }));
     }
 
     for (const { box } of ordered) {
-      const x = px(box.minX - 0.75, origin);
-      const y = py(box.minY - 0.55, origin);
-      captionLayer.appendChild(svgEl('text', { x: x + 14, y: y + 24, class: 'jan-box-caption' }, `BOX ${box.label.replace(/^BOX\s+/i, '')}`));
+      const boxGeometry = measured.get(String(box.nodeId));
+      if (!boxGeometry) continue;
+      captionLayer.appendChild(svgEl('text', {
+        x: boxGeometry.captionX,
+        y: boxGeometry.captionY,
+        class: 'jan-box-caption',
+        'data-box-node-id': box.nodeId
+      }, boxGeometry.caption));
     }
 
     g.appendChild(rectLayer);
@@ -4902,7 +5187,9 @@
       g.appendChild(svgEl('line', {
         x1: px(edge.fromX, origin), y1: py(edge.fromY, origin) + 18,
         x2: px(edge.toX, origin), y2: py(edge.toY, origin) - 18,
-        class: 'tree-edge syntax-tree-edge'
+        class: 'tree-edge syntax-tree-edge',
+        'data-from-node-id': edge.from,
+        'data-to-node-id': edge.to
       }));
     }
   }
@@ -5016,10 +5303,8 @@
     const ordered = orderedTreeNodes(layout).filter(({ node }) => visibleAt(growthPlan, nodeGrowthStep(growthPlan, node.id)));
     const shapeLayer = svgEl('g', { class: 'node-shape-layer' });
     const labelLayer = svgEl('g', { class: 'node-label-layer' });
-    const maximumLayout = validLayoutDensity() === 'max';
-    const leafRadius = maximumLayout ? 34 : 27;
-    const categoryWidth = maximumLayout ? 124 : 104;
-    const categoryHeight = maximumLayout ? 54 : 46;
+    const metrics = treeNodeRenderMetrics();
+    const { leafRadius, categoryWidth, categoryHeight } = metrics;
 
     for (const { node } of ordered) {
       const cx = px(node.x, origin);
@@ -5034,7 +5319,7 @@
           y: cy - categoryHeight / 2,
           width: categoryWidth,
           height: categoryHeight,
-          rx: maximumLayout ? 15 : 13,
+          rx: metrics.cornerRadius,
           class: boxClass
         }));
       }
@@ -5285,7 +5570,7 @@
     const marked = slot.marked ? (isEnglish() ? ' · marked' : ' · gemarkeerd') : '';
     const toggleLabel = slot.toggleLabel || adverbMarkedToggleLabel();
     const hasToggle = !!slot.toggleTargetId;
-    const sub = slot.source === 'LOG'
+    const detail = slot.source === 'LOG'
       ? `afgeleid uit LOG · ${slot.logInterval || 'minor-slot'}${slot.movement ? ' · daarna Wissel' : ''}${marked}`
       : slot.source === 'LOG+LEX'
         ? `gemengde bron LOG+LEX · ${slot.originComponents || 'één zichtbare groep'}${marked}`
@@ -5296,6 +5581,20 @@
       : slot.hostLabel
         ? `extern · LEX-as · vóór Wissels · boven ${slot.hostLabel}${marked}`
         : (lexInsertionContentSub(content) || 'andere LEX-as / anafoor');
+    const sub = slot.source === 'LOG'
+      ? `LOG · ${slot.logInterval || 'minor'}${slot.movement ? ' → Wissel' : ''}${marked}`
+      : slot.source === 'LOG+LEX'
+        ? `LOG+LEX · één groep${marked}`
+        : slot.source === 'LEX'
+          ? `LEX · geen LOG-minor${marked}`
+          : slot.linearZone
+            ? `LEX · ${slot.linearZone}${marked}`
+            : slot.hostLabel
+              ? `LEX · boven ${slot.hostLabel}${marked}`
+              : (lexInsertionContentSub(content) || 'LEX-insertie');
+    const toggleHelp = slot.marked
+      ? (isEnglish() ? 'click: default' : 'klik: default')
+      : (isEnglish() ? 'click: marked' : 'klik: gemarkeerd');
     if (slot.movement && Number.isFinite(slot.baseY) && Math.abs(slot.baseY - slot.y) > 1) {
       drawLexTrace(g, x, slot.baseY, `t[${content.text || 'ADV'}]`, 'trace · LOG-basis');
       drawLexWissel(g, x, slot.baseY, slot.y, slot.movement);
@@ -5318,14 +5617,14 @@
         }
       });
     }
-    group.appendChild(svgEl('title', {}, hasToggle ? toggleLabel : sub));
+    group.appendChild(svgEl('title', {}, hasToggle ? `${detail}. ${toggleLabel}` : detail));
     group.appendChild(svgEl('rect', { x: x - 122, y: slot.y - 30, width: 244, height: 60, rx: 17, class: 'lex-free-slot lex-config-free-slot lex-insertion-box lex-adverb-axis-slot' }));
     group.appendChild(svgEl('text', { x, y: slot.y - 38, class: 'slot-caption' }, slot.label));
     group.appendChild(svgEl('text', { x, y: slot.y - 4, class: 'lex-local-label' }, content.text || 'INSERTIEPUNT'));
     group.appendChild(svgEl('text', { x, y: slot.y + 15, class: 'lex-free-slot-sub' }, sub));
     if (hasToggle) {
       group.appendChild(svgEl('text', { x: x + 94, y: slot.y - 10, class: 'lex-adverb-toggle-marker' }, slot.marked ? '!' : '↯'));
-      group.appendChild(svgEl('text', { x, y: slot.y + 31, class: 'lex-adverb-toggle-help' }, toggleLabel));
+      group.appendChild(svgEl('text', { x, y: slot.y + 31, class: 'lex-adverb-toggle-help' }, toggleHelp));
     }
     g.appendChild(group);
   }
@@ -5650,22 +5949,22 @@
       y2: y,
       class: 'lex-trace-tick'
     }));
-    group.appendChild(svgEl('text', { x: x - 22, y: y + 5, class: 'lex-trace-label' }, label));
+    group.appendChild(svgEl('text', { x: x - 14, y: y + 5, class: 'lex-trace-label' }, label));
     g.appendChild(group);
   }
 
   function drawLexWissel(g, x, fromY, toY, label, lane = 0) {
     const safeLane = Math.max(0, lane);
-    const sideX = x + 86 + (safeLane % 4) * 18;
+    const sideX = x + LEX_MOVEMENT_LANE_START + (safeLane % 4) * LEX_MOVEMENT_LANE_STEP;
     const group = svgEl('g', {
       class: 'lex-wissel-movement',
       'data-movement-label': label
     });
     group.appendChild(svgEl('title', {}, label));
-    group.appendChild(pathEl(`M ${sideX} ${fromY} C ${sideX + 52} ${fromY} ${sideX + 52} ${toY} ${sideX} ${toY}`, { class: 'lex-wissel-line' }));
+    group.appendChild(pathEl(`M ${sideX} ${fromY} C ${sideX + LEX_MOVEMENT_CURVE_REACH} ${fromY} ${sideX + LEX_MOVEMENT_CURVE_REACH} ${toY} ${sideX} ${toY}`, { class: 'lex-wissel-line' }));
     group.appendChild(svgEl('polygon', { points: `${sideX},${toY} ${sideX + 9},${toY - 6} ${sideX + 9},${toY + 6}`, class: 'lex-wissel-arrow' }));
     group.appendChild(svgEl('text', {
-      x: sideX + 46,
+      x: sideX + LEX_MOVEMENT_LABEL_OFFSET,
       y: (fromY + toY) / 2 + 4,
       class: 'lex-wissel-step-label'
     }, `LEX ${safeLane + 1}`));
@@ -5773,7 +6072,7 @@
       x2: x,
       y2: axisMaxY,
       class: 'lex-axis-line',
-      'data-render-right-reach': LEX_RENDER_RIGHT_REACH,
+      'data-render-right-reach': activeLexRenderRightReach(),
       'data-tree-clearance': LEX_TREE_CLEARANCE
     }));
 
@@ -5899,7 +6198,7 @@
       }
       const hasPendingLogicalMove = !!logicalPlacementMovementForItem(item, i, items) && !logicalMovement;
       const slotLabel = hasPendingLogicalMove ? 'H' : lexSlotIndex(item, i, items, explicitMovement);
-      g.appendChild(svgEl('text', { x: x - 92, y: y + 5, class: 'lex-index' }, slotLabel));
+      g.appendChild(svgEl('text', { x: x - 76, y: y + 5, class: 'lex-index' }, slotLabel));
       g.appendChild(svgEl('text', { x, y: y + 5, class: item.source ? 'lex-label' : 'lex-local-label' }, item.label));
     });
 
@@ -5961,6 +6260,29 @@
     return rows.sort((a, b) => (a.y - b.y) || String(a.id).localeCompare(String(b.id)));
   }
 
+  function projectedRuleBoxWidth(spec, layout, origin, mode = 'syntax') {
+    const rows = projectedRuleRows(spec, layout, origin, mode);
+    const maxText = rows.reduce((max, row) => Math.max(max, String(row.text || '').length), 0);
+    return Math.max(mode === 'functional' ? 250 : 210, Math.min(380, maxText * 8.2 + 34));
+  }
+
+  function stableEastProjectionAxisX(origin) {
+    const layouts = [getSouthAwareSyntaxLayout(), getSouthAwareFunctionalLayout()];
+    const maxX = Math.max(
+      ...layouts
+        .map(candidate => Number(candidate?.box?.maxX))
+        .filter(Number.isFinite)
+    );
+    return Number.isFinite(maxX) ? px(maxX, origin) + 118 : px(4, origin) + 118;
+  }
+
+  function projectedRuleRightEdge(layout, spec, origin, mode = 'syntax') {
+    if (!layout?.box || !spec || !origin) return -Infinity;
+    const eastAxisX = stableEastProjectionAxisX(origin);
+    const axisBoxGap = 22;
+    return eastAxisX + axisBoxGap + projectedRuleBoxWidth(spec, layout, origin, mode);
+  }
+
   function drawProjectedRules(g, x, layout, origin, spec, options = {}) {
     if (!layout || !origin || !spec) return;
     const mode = options.mode || 'syntax';
@@ -5973,8 +6295,7 @@
       return !plan?.active || visibleAt(plan, nodeGrowthStep(plan, row.id));
     });
     if (!rows.length) return;
-    const maxText = rows.reduce((max, row) => Math.max(max, row.text.length), 0);
-    const width = Math.max(mode === 'functional' ? 250 : 210, Math.min(380, maxText * 8.2 + 34));
+    const width = projectedRuleBoxWidth(spec, layout, origin, mode);
     // v4571: de projectie-as is een echte rechter-as. De regelboxen
     // staan rechts van de as, met een kleine vaste marge. Ze overschrijven
     // de SYNT/LOG-as dus niet meer, maar blijven wel direct aangesloten.
@@ -6285,9 +6606,17 @@
     return layout;
   }
 
-  function westLexAxisX(layoutBox, origin) {
-    const treeBoxLeft = px(Number(layoutBox?.minX || 0) - 0.75, origin);
-    return treeBoxLeft - LEX_RENDER_RIGHT_REACH - LEX_TREE_CLEARANCE;
+  function westLexAxisX(layoutOrBox, origin) {
+    const layout = Array.isArray(layoutOrBox?.nodes) ? layoutOrBox : null;
+    const layoutBox = layout?.box || layoutOrBox;
+    const rootId = String(layout?.node?.id || layout?.nodes?.[0]?.id || '');
+    const measuredRoot = layout && rootId
+      ? measureSubtreeBoxes(layout, origin).get(rootId)
+      : null;
+    const treeBoxLeft = Number.isFinite(measuredRoot?.x)
+      ? measuredRoot.x
+      : px(Number(layoutBox?.minX || 0) - SUBTREE_AXIS_ENVELOPE_X_PAD, origin);
+    return treeBoxLeft - activeLexRenderRightReach() - LEX_TREE_CLEARANCE;
   }
 
   function canonicalProjectionContext(g, options = {}) {
@@ -6308,15 +6637,17 @@
       sourceMap = layoutNodeMap(centralLayout, origin);
     }
     const southItems = southLogicalItemsFromCentralLayout(centralLayout, origin, centralKind, southLogicalOrder());
-    const westAxisX = westLexAxisX(centralLayout?.box, origin);
+    const westAxisX = westLexAxisX(centralLayout, origin);
     const southAxisY = py((centralLayout?.box?.maxY || 0) + 2.1, origin);
     const logicalSlots = southItems.map(item => Number(item.logicalSlot)).filter(Number.isFinite);
     const logicalSpan = Math.max(1, Math.max(...logicalSlots) - Math.min(...logicalSlots)) * logAxisSlotPixels();
     const centralTreeCenterPx = px(((centralLayout?.box?.minX || 0) + (centralLayout?.box?.maxX || 0)) / 2, origin);
     const southAxisX1 = centralTreeCenterPx - logicalSpan / 2;
     const southAxisX2 = centralTreeCenterPx + logicalSpan / 2;
-    const centralTreeRightPx = px((centralLayout?.box?.maxX || 0), origin);
-    const eastAxisX = centralTreeRightPx + 118;
+    // Syntax en Functional delen één oostas op de rechterrand van hun
+    // gezamenlijke layout-envelop. Vooral in landschap voorkomt dit dat de
+    // smallere Syntaxboom een smal raster in een breed stabiel frame krijgt.
+    const eastAxisX = stableEastProjectionAxisX(origin);
     return { origin, sourceMap, centralLayout, centralKind, southItems, westAxisX, eastAxisX, southAxisX1, southAxisX2, southAxisY };
   }
 
@@ -6342,7 +6673,7 @@
     const rightTreePx = px(union.maxX + 0.9, origin);
     const topTreePx = py(union.minY - 1.6, origin);
     const bottomTreePx = py(union.maxY + 2.1, origin);
-    const westAxisX = westLexAxisX(union, origin);
+    const westAxisX = Math.min(...layouts.map(layout => westLexAxisX(layout, origin)));
     const eastAxisX = rightTreePx + 118;
     const southAxisY = py(union.maxY + 2.1, origin);
     const logicalSequence = activeLogicalSlotSequence();
@@ -6375,19 +6706,13 @@
     const leftTreePx = px(union.minX - 0.9, origin);
     const topTreePx = py(union.minY - 1.6, origin);
     const bottomTreePx = py(union.maxY + 2.1, origin);
-    const westAxisX = westLexAxisX(union, origin);
+    const westAxisX = Math.min(...layouts.map(layout => westLexAxisX(layout, origin)));
     const southAxisY = py(union.maxY + 2.1, origin);
-    const projectedRuleRight = (layout, spec, mode) => {
-      const rows = projectedRuleRows(spec, layout, origin, mode);
-      const maxText = rows.reduce((max, row) => Math.max(max, String(row.text || '').length), 0);
-      const width = Math.max(mode === 'functional' ? 250 : 210, Math.min(380, maxText * 8.2 + 34));
-      const treeRight = px(Number(layout?.box?.maxX || 0), origin);
-      return treeRight + 118 + 22 + width;
-    };
-    const syntaxRuleRight = projectedRuleRight(layouts[0], treeSpec(), 'syntax');
-    const functionalRuleRight = projectedRuleRight(
+    const syntaxRuleRight = projectedRuleRightEdge(layouts[0], treeSpec(), origin, 'syntax');
+    const functionalRuleRight = projectedRuleRightEdge(
       layouts[1],
       nodeConfigToTree(STRUCTURE_CONFIG.functionalNodes, STRUCTURE_CONFIG.functionalRoot),
+      origin,
       'functional'
     );
     const logicalSequence = activeLogicalSlotSequence();
@@ -6396,7 +6721,7 @@
     const treeCenterPx = px((union.minX + union.maxX) / 2, origin);
     const logicalLeft = treeCenterPx - logicalSpan / 2;
     const logicalRight = treeCenterPx + logicalSpan / 2;
-    const left = Math.min(-12, westAxisX - LEX_RENDER_LEFT_REACH, leftTreePx - 100, logicalLeft - 96);
+    const left = Math.min(-12, westAxisX - activeLexRenderLeftReach(), leftTreePx - 100, logicalLeft - 96);
     const top = Math.min(-150, topTreePx - 150);
     const right = Math.max(1580, syntaxRuleRight, functionalRuleRight, logicalRight + 150) + 72;
     const bottom = Math.max(910, southAxisY + 150, bottomTreePx + 140);
@@ -6764,13 +7089,22 @@
 
   function canvasAspectRatio() {
     syncMainTopbarLayout();
-    const rect = els.canvasWrap?.getBoundingClientRect?.();
+    // v2.0.0-rc.41: in handheld-landscape reserveert het SVG zelf ruimte
+    // voor menu en Play. Gebruik daarom de werkelijk tekenbare SVG-maat en
+    // niet de buitenste telefoonframe/canvas-wrap-maat.
+    const svgRect = els.svg?.getBoundingClientRect?.();
+    const rect = (svgRect?.width > 0 && svgRect?.height > 0)
+      ? svgRect
+      : els.canvasWrap?.getBoundingClientRect?.();
     if (!rect || !Number.isFinite(rect.width) || !Number.isFinite(rect.height) || rect.width <= 0 || rect.height <= 0) return null;
     return rect.width / rect.height;
   }
 
   function svgMeetClientMetrics(viewBox = parseViewBox()) {
-    const rect = els.canvasWrap?.getBoundingClientRect?.();
+    const svgRect = els.svg?.getBoundingClientRect?.();
+    const rect = (svgRect?.width > 0 && svgRect?.height > 0)
+      ? svgRect
+      : els.canvasWrap?.getBoundingClientRect?.();
     if (!rect || !viewBox || !Number.isFinite(viewBox.w) || !Number.isFinite(viewBox.h) || viewBox.w <= 0 || viewBox.h <= 0 || rect.width <= 0 || rect.height <= 0) return null;
     const scale = Math.min(rect.width / viewBox.w, rect.height / viewBox.h);
     const drawnW = viewBox.w * scale;
@@ -7082,26 +7416,11 @@
       w: axes.w + padX * 2,
       h: axes.h + padY * 2
     };
-    const contained = expandBoxToAspect(focus, aspect);
-    if (aspect > 1.15) {
-      // Een brede telefoon liet met een zuivere contain-fit opnieuw grote
-      // lege zijstroken zien. MAX vergroot landschap daarom verder; de
-      // volledige, ongecropte variant blijft beschikbaar via
-      // 'volledige boom zichtbaar'. Pan/zoom ontsluit LOG en buitenlabels.
-      const coverRatio = Math.max(1, contained.w / Math.max(1, focus.w));
-      const zoom = Math.min(1.8, coverRatio);
-      const width = contained.w / zoom;
-      const height = contained.h / zoom;
-      const centerX = focus.x + focus.w / 2;
-      const centerY = focus.y + focus.h * 0.47;
-      return {
-        x: centerX - width / 2,
-        y: centerY - height / 2,
-        w: width,
-        h: height
-      };
-    }
-    return contained;
+    // v2.0.0-rc.41: ook in landschap is MAX een contain-fit. De voormalige
+    // cover-zoom vulde wel de breedte, maar sneed de rastertop en de volledige
+    // LOG-as af. De plattere landschapscellen hierboven benutten de breedte
+    // zonder semantische projecties buiten het scherm te plaatsen.
+    return expandBoxToAspect(focus, aspect);
   }
 
   function expandFitBoxForMainWindow(fit) {
@@ -9415,7 +9734,7 @@
       </fieldset>
       <section class="preconfig-candidates" aria-labelledby="preconfigCandidatesHeading">
         <h3 id="preconfigCandidatesHeading"><span class="help-lang-nl">Volgende voorconfig-kandidaten</span><span class="help-lang-en">Next pre-config candidates</span></h3>
-        <p><span class="help-lang-nl">Ontwerpvoorraad; in rc.39 nog niet schakelbaar.</span><span class="help-lang-en">Design backlog; not switchable in rc.39 yet.</span></p>
+        <p><span class="help-lang-nl">Ontwerpvoorraad; in rc.41 nog niet schakelbaar.</span><span class="help-lang-en">Design backlog; not switchable in rc.41 yet.</span></p>
         <ul>${PRECONFIG_CANDIDATES.map(candidate => `<li><span class="help-lang-nl">${candidate.label}</span><span class="help-lang-en">${candidate.labelEn}</span></li>`).join('')}</ul>
       </section>`;
     preconfigCard.querySelectorAll('[data-insertion-axis]').forEach(input => {
@@ -9843,9 +10162,16 @@
       const rect = screen.getBoundingClientRect();
       const stacked = isStacked();
       const total = stacked ? rect.height : rect.width;
-      const min = stacked ? 116 : 176;
+      const min = stacked ? 140 : 190;
       const max = Math.max(min, total - (stacked ? 150 : 260));
       return { stacked, rect, min, max };
+    };
+    const currentRenderedSize = () => {
+      const inline = parseFloat(screen.style.getPropertyValue('--help-nav-size'));
+      if (Number.isFinite(inline) && inline > 0) return inline;
+      const navRect = screen.querySelector('.help-tree-nav')?.getBoundingClientRect?.();
+      const rendered = isStacked() ? Number(navRect?.height) : Number(navRect?.width);
+      return Number.isFinite(rendered) && rendered > 0 ? rendered : 0;
     };
     const applySize = raw => {
       const { min, max } = limits();
@@ -9916,7 +10242,14 @@
       saveSize(applySize(next));
       event.preventDefault();
     });
-    window.addEventListener('resize', () => { applyHelpLayoutMode(); applySize(parseFloat(getComputedStyle(screen).getPropertyValue('--help-nav-size')) || 0); }, { passive: true });
+    window.addEventListener('resize', () => {
+      applyHelpLayoutMode();
+      if (!document.body?.classList.contains('help-screen-active')) return;
+      // Een CSS-custom-property met clamp(...) levert hier geen parseerbaar
+      // getal op. Lees daarom de werkelijk gerenderde navigatiemaat; anders
+      // klapte elke mobiele resize terug naar het absolute minimum.
+      applySize(currentRenderedSize());
+    }, { passive: true });
     applyHelpLayoutMode();
     restoreSize();
   }

@@ -1,4 +1,37 @@
 
+## v2.0.0-rc.41 — Recursief gemeten boxen en volledige projecties
+
+- Subtree-boxen worden bottom-up gemeten uit nodevormen, labels, child-boxen
+  en caption.
+- Kleine unary boxen, waaronder `NP → HOND`, gebruiken alleen de werkelijk
+  benodigde breedte en hoogte.
+- De LEX-Wissellanes en de vrije goot vóór de boom zijn compacter.
+- LEX reserveert rechts alleen de werkelijk actieve slots en Wissellanes.
+- Syntax en Functional delen één oostas op hun gezamenlijke boom-envelop.
+- Handheld MAX toont volledige LEX-inhoud én volledige Syntax/Functional-
+  regelboxen in portret, landschap en forced desktop.
+- De mobiele README bewaart bij resize de zichtbare paneelmaat; lijst,
+  tekstpaneel en sleepgreep werken in portret en landschap.
+- Toepassingen declareren een abstracte layout-demand; Bijwoorden levert geen
+  eigen pixelcoördinaten.
+- Nieuwe architectuurdocumentatie:
+  `RECURSIVE_LAYOUT_AND_APPLICATION_CONTRACT.md`.
+- Nieuwe echte Chromium-controle:
+  `tools/check_recursive_box_fit_runtime.js`.
+
+## v2.0.0-rc.40 — Volledige landscape-compositie
+
+- Mobiel landschap gebruikt een werkelijk lagere, bredere MAX-layout.
+- Het menu staat in twee compacte rijen; menu, graph en Play hebben ieder een
+  eigen verticale zone.
+- De oude cover-zoom is verwijderd: rastertop en de volledige LEX-, SYNT- en
+  LOG-as blijven nu tegelijk zichtbaar.
+- De werkelijke SVG-rechthoek bepaalt aspectratio en overlaycoördinaten.
+- Echte mobiele auto-detectie, lokale desktopsimulatie en geforceerde
+  Desktop-interface gebruiken dezelfde landschapregels.
+- Nieuwe echte Chromium-controle:
+  `tools/check_landscape_composition_runtime.js`.
+
 ## v2.0.0-rc.39 — Mobiele testweergave blijft staan
 
 - Op een groot scherm blijft `Mobiel staand` na de MAX-render begrensd tot

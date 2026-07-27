@@ -1,5 +1,5 @@
 
-## Actuele beslissingen · v2.0.0-rc.39
+## Actuele beslissingen · v2.0.0-rc.41
 
 1. LOG is autoriteit voor de neutrale plaatsing.
 2. S, O en V zijn majors; alleen bijwoordinserties met `origin=LOG` of
@@ -22,6 +22,13 @@
 15. Het raster eindigt links/rechts/onder exact op LEX/SYNT/LOG.
 16. De lokale staand/liggend-simulatie blijft ook onder MAX een vast
     telefoonframe; haar `ogv` volgt altijd de geladen viewerversie.
+17. Mobiel landschap gebruikt een lagere, bredere layout en een volledige
+    `contain`-fit; het asgebied wordt niet met cover-zoom afgesneden.
+18. De werkelijk gerenderde SVG-maat, exclusief menu en Play, bepaalt de
+    landscape-aspectratio en de clientcoördinaten van overlays.
+19. Menu, SVG en Play hebben in landschap afzonderlijke verticale zones.
+20. De landschapregels gelden ook bij geforceerde Desktop-interface op een
+    fysieke telefoon.
 
 Onderstaande eerdere beslissingen zijn historische notities en niet
 normatief waar zij hiermee botsen.

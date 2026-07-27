@@ -1,4 +1,4 @@
-# LEX-plaatsingsregels · v2.0.0-rc.39
+# LEX-plaatsingsregels · v2.0.0-rc.41
 
 ## Logische lagen, één zichtbare stap
 

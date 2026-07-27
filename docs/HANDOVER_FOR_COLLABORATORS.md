@@ -1,6 +1,6 @@
 # HANDOVER_FOR_COLLABORATORS
 
-Overdracht voor OpenGraph Lite Viewer v2.0.0-rc.39.
+Overdracht voor OpenGraph Lite Viewer v2.0.0-rc.41.
 
 ## Bronbasis
 
@@ -28,6 +28,14 @@ algemene Help-gridregels, anders klapt de onderwerpenlijst opnieuw in.
 Het dynamische raster gebruikt `projectionAxisGridBox()`: LEX is de
 linkergrens, SYNT de rechtergrens en LOG de ondergrens. Mobiele MAX gebruikt
 de stabiele Syntax/Functional-unie als focus, zodat de viewBox niet verspringt.
+
+Landschap gebruikt `isHandheldLandscapeViewport()` en de klasse
+`viewport-handheld-landscape`. Houd de twee compacte menurijen, het SVG en
+Play in afzonderlijke verticale zones. `canvasAspectRatio()` en
+`svgMeetClientMetrics()` moeten de werkelijke SVG-rechthoek gebruiken. Voeg
+geen cover-zoom toe: het volledige raster met LEX, SYNT en LOG moet tegelijk
+zichtbaar blijven in de lokale 844 × 390-simulatie, op een echte telefoon en
+bij geforceerde Desktop-interface.
 
 ## Voorconfig vóór toepassingen
 
