@@ -25,6 +25,8 @@ RC34_RESIZABLE_README_PANEL_TEST.md
 RC35_README_LAYOUT_TEST.md
 RC36_BASE_PROFILE_TEST.md
 RC37_PRECONFIG_TEST.md
+RC38_MOBILE_LAYOUT_TEST.md
+RC39_VIEWPORT_SWITCH_TEST.md
 README.md
 SOURCE_BASE.md
 SOURCE_CHANGES_V2.0.0-rc.10.md
@@ -52,6 +54,8 @@ SOURCE_CHANGES_V2.0.0-rc.34.md
 SOURCE_CHANGES_V2.0.0-rc.35.md
 SOURCE_CHANGES_V2.0.0-rc.36.md
 SOURCE_CHANGES_V2.0.0-rc.37.md
+SOURCE_CHANGES_V2.0.0-rc.38.md
+SOURCE_CHANGES_V2.0.0-rc.39.md
 SOURCE_CHANGES_V2.0.0-rc.6.md
 SOURCE_CHANGES_V2.0.0-rc.9.md
 SOV_NOTATION_OPTIONS.md
@@ -176,11 +180,14 @@ tools/check_lexicon_usage_profiles.py
 tools/check_linkedin_video_export.py
 tools/check_linkedin_video_runtime.js
 tools/check_log_slot_distance.py
+tools/check_mobile_layout_rc38.py
+tools/check_mobile_layout_runtime.js
 tools/check_opn_storage.py
 tools/check_play_reverse.py
 tools/check_projection_cleanup.py
 tools/check_release.py
 tools/check_release_zip_batch.py
 tools/check_social_and_linguistic_export.py
+tools/check_viewport_switch_runtime.js
 viewer.html
 viewer.js

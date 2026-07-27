@@ -72,13 +72,13 @@ De BAT kan browsercache niet op afstand wissen. Wel zinvol:
 Voorbeeld:
 
 ```text
-https://kruin.github.io/graphlite/reset-cache.html?ogv=v2.0.0-rc.37&nocache=TIMESTAMP
+https://kruin.github.io/graphlite/reset-cache.html?ogv=v2.0.0-rc.39&nocache=TIMESTAMP
 ```
 
 Daarna:
 
 ```text
-https://kruin.github.io/graphlite/index.html?ogv=v2.0.0-rc.37
+https://kruin.github.io/graphlite/index.html?ogv=v2.0.0-rc.39
 ```
 
 ## GitHub Pages settings

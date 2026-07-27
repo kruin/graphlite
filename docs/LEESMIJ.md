@@ -1,4 +1,4 @@
-# OpenGraph Lite Viewer v2.0.0-rc.37
+# OpenGraph Lite Viewer v2.0.0-rc.39
 
 OpenGraph Lite Viewer is een demo/viewer voor JAN-, OPN- en
 OpenGraph-taalstructuren. Deze versie gebruikt de volledige v1.0.16-bronset als
@@ -78,6 +78,10 @@ Of lokaal:
 start_local_viewer.bat
 ```
 
+Op een groot scherm verschijnt lokaal rechtsonder de keuzeknop `LOKAAL`.
+`mobile staand` toont blijvend een frame van 390 × 844 en `mobile liggend`
+een frame van 844 × 390. Het grote scherm keert pas terug na `auto`.
+
 ## Volledige bron-ZIP maken in Windows
 
 Hernoem de projectmap naar de bedoelde releasenaam en dubbelklik daarna op:
@@ -87,21 +91,21 @@ maak-volledige-zip.bat
 ```
 
 De BAT leidt de ZIP-naam af uit de map waarin hij zelf staat. De map
-`OpenGraph_Lite_Viewer_v2.0.0-rc.37` maakt dus daarnaast automatisch
-`OpenGraph_Lite_Viewer_v2.0.0-rc.37_full_source.zip`. Een bestaande ZIP met
+`OpenGraph_Lite_Viewer_v2.0.0-rc.39` maakt dus daarnaast automatisch
+`OpenGraph_Lite_Viewer_v2.0.0-rc.39_full_source.zip`. Een bestaande ZIP met
 precies die naam wordt veilig vervangen; het script verzint nooit zelf een
 achtervoegsel `(1)`.
 
 GitHub Pages:
 
 ```text
-https://kruin.github.io/graphlite/index.html?ogv=v2.0.0-rc.37
+https://kruin.github.io/graphlite/index.html?ogv=v2.0.0-rc.39
 ```
 
 Cache-reset:
 
 ```text
-https://kruin.github.io/graphlite/reset-cache.html?ogv=v2.0.0-rc.37
+https://kruin.github.io/graphlite/reset-cache.html?ogv=v2.0.0-rc.39
 ```
 
 ## Desktopweergave
@@ -118,6 +122,20 @@ MAX past alleen de werkelijk getekende boom en projecties in alle beschikbare
 desktopruimte. Het onzichtbare stabiliteitskader, raster en hulplabels maken
 de graph en tekst dus niet meer kunstmatig klein. Tijdens de gefaseerde
 Play-volgorde blijft hetzelfde MAX-kader stabiel.
+
+### Mobiele MAX
+
+Op een fysieke telefoon gebruikt MAX in portret én landschap het gebied tussen
+de projectie-assen als eerste focus. In portret vult dit asgebied de beschikbare
+breedte; in landschap wordt het extra vergroot om ook de brede telefoonruimte
+te benutten. Dat blijft zo wanneer
+`Interface → Desktop` op de telefoon wordt geforceerd. Inhoud buiten het
+initiële beeld blijft met pan en pinch-zoom bereikbaar. Kies
+`volledige boom zichtbaar` wanneer alle buiten de assen geplaatste labels en
+boxen tegelijk in beeld moeten blijven.
+
+Het raster zelf eindigt links op LEX, rechts op SYNT en onder op LOG. Het loopt
+niet langer voorbij die assen.
 
 ## Config-tabbladen
 

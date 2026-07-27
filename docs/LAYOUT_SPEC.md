@@ -1,5 +1,5 @@
 
-## Actueel contract · v2.0.0-rc.37
+## Actueel contract · v2.0.0-rc.39
 
 LOG gebruikt vaste major/minor-slots. Een extra minor maakt de LOG-as één
 vaste stap langer en vergroot uitsluitend de relevante majorafstand. De
@@ -7,6 +7,15 @@ volledige LOG-volgorde levert neutrale LEX-doelrijen, maar de projectielijn
 ernaartoe mag nooit orthogonaal worden: iedere bron projecteert eerst exact
 horizontaal naar LEX. Pas langs de LEX-as volgt een Wissel naar de LOG-doelrij;
 topic/V2-Wissels volgen daarna. Een minor verlaagt geen host-subboom.
+
+Mobiele MAX gebruikt de stabiele Syntax/Functional-unie van het asgebied als
+focus, ook bij een geforceerde Desktop-interface op een telefoon. Het zichtbare
+raster wordt afzonderlijk begrensd door LEX, SYNT en LOG en loopt niet buiten
+die assen door.
+
+De lokale desktop-simulatie van een mobiele viewport blijft na de MAX-render
+begrensd tot haar vaste staande of liggende telefoonframe. De algemene
+desktopregel `width: 100vw` is binnen zo'n testframe niet van toepassing.
 
 Onderstaande eerdere LEX-hostregels zijn historische notities en niet
 normatief waar zij hiermee botsen.

@@ -1,4 +1,29 @@
 
+## v2.0.0-rc.39 — Mobiele testweergave blijft staan
+
+- Op een groot scherm blijft `Mobiel staand` na de MAX-render begrensd tot
+  390 × 844; `Mobiel liggend` blijft 844 × 390.
+- De latere MAX-regels verbreden het gesimuleerde telefoonframe niet meer
+  opnieuw tot `100vw`.
+- De lokale schakelaar gebruikt de actuele viewerversie voor `ogv` en schrijft
+  niet langer de oude waarde `v2.0.0-rc.13`.
+- Nieuwe echte Chromium-controle:
+  `tools/check_viewport_switch_runtime.js`.
+
+## v2.0.0-rc.38 — Mobiele vulling, README en rastergrenzen
+
+- README-items zijn op mobiel weer direct zichtbaar; de onderwerpenlijst klapt
+  niet langer tot 0 px in.
+- De scheidingsbalk vergroot/verkleint de lijst en de geselecteerde tekst weer
+  in portret en landschap.
+- Een echte telefoon wordt ook in landschap herkend.
+- Mobiele MAX gebruikt het asgebied als stabiele focus en blijft actief wanneer
+  op de telefoon de Desktop-interface wordt geforceerd.
+- Het raster begint op LEX, eindigt op SYNT en stopt onderaan op LOG.
+- Nieuwe statische en echte Chromium-controles:
+  `tools/check_mobile_layout_rc38.py` en
+  `tools/check_mobile_layout_runtime.js`.
+
 ## v2.0.0-rc.37 — Voorconfig vóór toepassingen
 
 - Config opent op `Voorconfig`; `Toepassingen` volgt als tweede stap.

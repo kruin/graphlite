@@ -1,4 +1,4 @@
-# OpenGraph Lite Viewer v2.0.0-rc.37
+# OpenGraph Lite Viewer v2.0.0-rc.39
 
 OpenGraph Lite Viewer is a demo/viewer for JaN, OPN and OpenGraph linguistic structures. This release is
 built exclusively on the uploaded `v2.0.0-rc.26` source through rc.27; rc.28
@@ -68,6 +68,11 @@ Or run locally:
 start_local_viewer.bat
 ```
 
+On a large screen, the local `LOKAAL` selector appears at the bottom right.
+`mobile portrait` stays inside a 390 × 844 frame and `mobile landscape`
+inside an 844 × 390 frame. The large automatic view returns only after
+selecting `auto`.
+
 ## Build the full source ZIP on Windows
 
 Rename the project directory to the intended release name and double-click:
@@ -77,21 +82,21 @@ maak-volledige-zip.bat
 ```
 
 The batch file derives the ZIP name from its own containing directory. A
-directory named `OpenGraph_Lite_Viewer_v2.0.0-rc.37` therefore produces the
-sibling file `OpenGraph_Lite_Viewer_v2.0.0-rc.37_full_source.zip`. An existing
+directory named `OpenGraph_Lite_Viewer_v2.0.0-rc.39` therefore produces the
+sibling file `OpenGraph_Lite_Viewer_v2.0.0-rc.39_full_source.zip`. An existing
 ZIP with that exact name is replaced safely; the script never invents a
 `(1)` suffix.
 
 GitHub Pages:
 
 ```text
-https://kruin.github.io/graphlite/index.html?ogv=v2.0.0-rc.37
+https://kruin.github.io/graphlite/index.html?ogv=v2.0.0-rc.39
 ```
 
 Cache reset:
 
 ```text
-https://kruin.github.io/graphlite/reset-cache.html?ogv=v2.0.0-rc.37
+https://kruin.github.io/graphlite/reset-cache.html?ogv=v2.0.0-rc.39
 ```
 
 ## Desktop view
@@ -108,6 +113,19 @@ MAX fits the actually drawn tree and projections to all available desktop
 space. The invisible stability frame, grid and helper labels no longer make
 the graph and its text artificially small. The same MAX frame remains stable
 throughout the phased Play sequence.
+
+### Mobile MAX
+
+On a physical phone, MAX initially focuses the area between the projection
+axes in both portrait and landscape. That axis area fills the available width
+in portrait and receives an additional landscape zoom to use the wide phone
+screen. This also applies when
+`Interface → Desktop` is forced on the phone. Content outside the initial view
+remains available through pan and pinch zoom. Choose `full tree visible` when
+all labels and boxes outside the axes must remain visible simultaneously.
+
+The grid itself now ends at LEX on the left, SYNT on the right and LOG at the
+bottom; it no longer continues past those axes.
 
 ## Config tabs
 

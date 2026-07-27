@@ -1,6 +1,6 @@
 # NEXT_STEPS
 
-Vervolgpunten na `v2.0.0-rc.37`:
+Vervolgpunten na `v2.0.0-rc.39`:
 
 1. `Verplaatsing per as` uitwerken als tweede functionele Voorconfig.
 2. `Lege posities en sporen per as` losmaken van concrete toepassingen.

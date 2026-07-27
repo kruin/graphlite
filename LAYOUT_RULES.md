@@ -1,6 +1,6 @@
 # LAYOUT_RULES
 
-Harde layoutregels voor OpenGraph Lite Viewer `v2.0.0-rc.37`.
+Harde layoutregels voor OpenGraph Lite Viewer `v2.0.0-rc.39`.
 
 ## Vaste projectieposities
 
@@ -23,6 +23,20 @@ Syntax ↔ Functional behoudt x, y en schaal.
 - Het oude ruime onzichtbare stabiliteitskader, raster en hulplabels tellen
   niet mee.
 - MAX gebruikt op desktop `fontScale=1.70`; de boom is tegelijk breed en laag.
+
+## Mobiele MAX en rastergrenzen
+
+- Een fysieke telefoon blijft als handheld gelden in portret, landschap en
+  bij een geforceerde Desktop-interface.
+- De lokale desktopsimulatie blijft na de MAX-render binnen 390 × 844
+  (staand) of 844 × 390 (liggend); algemene `100vw`-regels mogen deze
+  testframes niet overschrijven.
+- MAX focust de stabiele unie van het Syntax- en Functional-asgebied.
+- In portret benut het asgebied primair de volledige breedte; in landschap
+  gebruikt MAX extra zoom om ook de brede schermruimte te vullen.
+- Pan en pinch-zoom ontsluiten labels en boxen buiten de eerste MAX-focus.
+- Het raster ligt binnen de projectie-assen: links LEX, rechts SYNT en onder
+  LOG. Er wordt geen halve rasterstap buiten de assen getekend.
 
 ## LOG-slots
 

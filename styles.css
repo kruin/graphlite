@@ -7171,11 +7171,11 @@ body.help-screen-active .help-screen.help-tree-screen,
   --help-nav-size: clamp(10rem, 42dvh, 24rem);
   min-height: 0 !important;
 }
-.help-tree-screen[data-help-layout="stacked"] {
+body.help-screen-active .help-screen.help-tree-screen[data-help-layout="stacked"] {
   grid-template-columns: minmax(0, 1fr) !important;
   grid-template-rows: var(--help-nav-size) .7rem minmax(0, 1fr) !important;
 }
-.help-tree-screen[data-help-layout="side"] {
+body.help-screen-active .help-screen.help-tree-screen[data-help-layout="side"] {
   --help-nav-size: clamp(13rem, 32vw, 24rem);
   grid-template-columns: var(--help-nav-size) .7rem minmax(0, 1fr) !important;
   grid-template-rows: minmax(0, 1fr) !important;
@@ -7388,4 +7388,25 @@ body.help-layout-stacked.help-resizing { cursor: row-resize !important; user-sel
   .preconfig-axis-grid {
     grid-template-columns: 1fr;
   }
+}
+
+/* v2.0.0-rc.39: de lokale staand/liggend-simulatie blijft ook na de
+   MAX-render begrensd tot het gekozen telefoonframe. De latere MAX-regels
+   mogen app-shell, workspace en canvas niet opnieuw naar 100vw verbreden. */
+body.viewport-mobile-test.main-screen-active.main-window-max .app-shell {
+  width: var(--viewport-test-width, 390px) !important;
+  min-width: var(--viewport-test-width, 390px) !important;
+  max-width: var(--viewport-test-width, 390px) !important;
+  height: var(--viewport-test-height, 844px) !important;
+  min-height: var(--viewport-test-height, 844px) !important;
+  max-height: var(--viewport-test-height, 844px) !important;
+}
+body.viewport-mobile-test.main-screen-active.main-window-max .workspace,
+body.viewport-mobile-test.main-screen-active.main-window-max .canvas-wrap {
+  width: 100% !important;
+  min-width: 100% !important;
+  max-width: 100% !important;
+  height: 100% !important;
+  min-height: 100% !important;
+  max-height: 100% !important;
 }

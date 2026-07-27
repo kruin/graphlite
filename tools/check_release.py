@@ -28,8 +28,10 @@ required_files = [
     "README.md", "LEESMIJ.md", "PROJECT_STATE_CURRENT.md", "LAYOUT_RULES.md",
     "LINGUISTIC_ACTIONS.md", "DOCUMENTATION_RULES.md", "HANDOVER_FOR_COLLABORATORS.md",
     "ADVERB_ORIGIN_MECHANISMS.md", "LEXICON_USAGE_PROFILES_AND_DISAMBIGUATION.md",
-    "LEXICON_USAGE_PROFILE_TEST.md", "SOURCE_CHANGES_V2.0.0-rc.37.md",
+    "LEXICON_USAGE_PROFILE_TEST.md", "SOURCE_CHANGES_V2.0.0-rc.38.md",
+    "SOURCE_CHANGES_V2.0.0-rc.39.md",
     "RC35_README_LAYOUT_TEST.md", "RC36_BASE_PROFILE_TEST.md", "RC37_PRECONFIG_TEST.md",
+    "RC38_MOBILE_LAYOUT_TEST.md", "RC39_VIEWPORT_SWITCH_TEST.md",
     "OPN_STORAGE_FORMAT.md", "PRECONFIG_ARCHITECTURE.md", "projectie-master-spec.md",
     "docs/ADVERB_ORIGIN_MECHANISMS.md", "docs/OGN_BASE_PROFILE.md", "docs/PRECONFIG_ARCHITECTURE.md",
     "docs/LAYOUT_SPEC.md", "docs/RENDER_EXPLANATION.md",
@@ -45,6 +47,8 @@ required_files = [
     "tools/check_play_reverse.py", "tools/check_release_zip_batch.py",
     "tools/check_opn_storage.py", "tools/check_lexicon_usage_profiles.py",
     "tools/check_feature_profiles.py", "tools/check_feature_profiles_runtime.js",
+    "tools/check_mobile_layout_rc38.py", "tools/check_mobile_layout_runtime.js",
+    "tools/check_viewport_switch_runtime.js", "local-mobile-test.js",
 ]
 for rel in required_files:
     if not (ROOT / rel).is_file():
@@ -62,10 +66,11 @@ lexicon = read("lexicon-config.html")
 publish_bat = read("publish_checked.bat")
 start_bat = read("start_local_viewer.bat")
 debug_html = read("debug.html")
+local_mobile = read("local-mobile-test.js")
 
 # Version identity and the paired entry pages.
-if not VERSION or VERSION != "v2.0.0-rc.37":
-    errors.append(f"VERSION.txt moet v2.0.0-rc.37 bevatten, gevonden: {VERSION!r}")
+if not VERSION or VERSION != "v2.0.0-rc.39":
+    errors.append(f"VERSION.txt moet v2.0.0-rc.39 bevatten, gevonden: {VERSION!r}")
 for rel in ["index.html", "viewer.html", "viewer.js", "reset-cache.html", "sw.js"]:
     if VERSION not in read(rel):
         errors.append(f"versie ontbreekt in {rel}")
@@ -144,6 +149,17 @@ require(index, 'id="helpPanelResizer"', "README-resizer in HTML")
 for marker in ['data-help-topic="opengraph"', 'data-help-topic="jan-todo"', 'data-help-topic="adverb-origins"']:
     require(index, marker, f"LEESMIJ-onderwerp {marker}")
 require(js, "if (stage) stage.scrollTop = 0;", "README-item start bovenaan")
+
+# Local portrait/landscape simulation must survive the later MAX rules and use
+# the version of the loaded viewer instead of a historical hardcoded value.
+require(
+    css,
+    "body.viewport-mobile-test.main-screen-active.main-window-max .app-shell",
+    "MAX-veilige lokale viewportbegrenzing",
+)
+require(local_mobile, "window.__OPENGRAPH_EXPECTED_VERSION__", "actuele lokale viewportversie")
+if "v2.0.0-rc.13" in local_mobile:
+    errors.append("local-mobile-test.js bevat nog de oude hardgecodeerde rc.13")
 
 
 # First README item: two problem trees followed by two graphically motivated apparent solutions.

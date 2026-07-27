@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'v2.0.0-rc.37';
+  const VERSION = 'v2.0.0-rc.39';
   const OPN_FORMAT_VERSION = '1.0';
   const OPN_DOCUMENT_TYPE = 'opengraph-document';
   const PARADATA_EVENT_LIMIT = 250;
@@ -1680,7 +1680,7 @@
 
   const LEXICON_USAGE_PROFILES = new Map();
   const LEXICON_CONSTRUCTIONS = new Map();
-  const LEX_ANALYSIS_STORAGE_KEY = 'opengraph_lex_analysis_choices_v2.0.0-rc.37';
+  const LEX_ANALYSIS_STORAGE_KEY = 'opengraph_lex_analysis_choices_v2.0.0-rc.39';
 
   function normalizeInsertionOrigin(value) {
     const origin = String(value || 'LOG').trim().toUpperCase().replace('MIXED', 'LOG+LEX');
@@ -4099,11 +4099,23 @@
     }
   }
 
+  function isPhysicalHandheldViewport() {
+    if (typeof window === 'undefined') return false;
+    const viewport = window.visualViewport;
+    const width = Number(viewport?.width || window.innerWidth || 0);
+    const height = Number(viewport?.height || window.innerHeight || 0);
+    const compactSide = Math.min(width || Infinity, height || Infinity) <= 760;
+    const touch = Number(window.navigator?.maxTouchPoints || 0) > 0;
+    const coarsePointer = !!window.matchMedia?.('(pointer: coarse)')?.matches;
+    const mobileUserAgent = /Android|iPhone|iPad|iPod|Mobile/i.test(String(window.navigator?.userAgent || ''));
+    return compactSide && (touch || coarsePointer || mobileUserAgent);
+  }
+
   function isMobileViewport() {
     const forced = activeViewportMode();
     if (forced === 'mobile-portrait' || forced === 'mobile-landscape') return true;
     if (forced === 'desktop') return false;
-    return typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(max-width: 760px)').matches;
+    return !!window.matchMedia?.('(max-width: 760px)')?.matches || isPhysicalHandheldViewport();
   }
 
   function isPortraitGridFirstViewport() {
@@ -4416,23 +4428,114 @@
     const maxX = minX + Number(box.w);
     const maxY = minY + Number(box.h);
     if (![minX, minY, maxX, maxY, sx, sy].every(Number.isFinite) || sx <= 0 || sy <= 0) return;
-    const startX = Math.floor(minX / sx) * sx;
-    const startY = Math.floor(minY / sy) * sy;
+    // Rasterlijnen blijven binnen de projectie-assen. floor() tekende steeds
+    // nog één lijn buiten LEX/SYNT/LOG en maakte het raster zichtbaar groter
+    // dan het eigenlijke asgebied.
+    const startX = Math.ceil(minX / sx) * sx;
+    const startY = Math.ceil(minY / sy) * sy;
     let xi = Math.round(startX / sx);
-    for (let x = startX; x <= maxX + sx * 0.5; x += sx, xi += 1) {
+    for (let x = startX; x <= maxX + 0.01; x += sx, xi += 1) {
       grid.appendChild(svgEl('line', { x1: x, y1: minY, x2: x, y2: maxY, class: xi % 2 === 0 ? 'grid-line major' : 'grid-line' }));
     }
     let yi = Math.round(startY / sy);
-    for (let y = startY; y <= maxY + sy * 0.5; y += sy, yi += 1) {
+    for (let y = startY; y <= maxY + 0.01; y += sy, yi += 1) {
       grid.appendChild(svgEl('line', { x1: minX, y1: y, x2: maxX, y2: y, class: yi % 2 === 0 ? 'grid-line major' : 'grid-line' }));
     }
     if (minY <= 0 && maxY >= 0) grid.appendChild(svgEl('line', { x1: minX, y1: 0, x2: maxX, y2: 0, class: 'grid-axis' }));
     if (minX <= 0 && maxX >= 0) grid.appendChild(svgEl('line', { x1: 0, y1: minY, x2: 0, y2: maxY, class: 'grid-axis' }));
   }
 
+  function renderedAxisLineBox(selector) {
+    const node = els.svg?.querySelector?.(selector);
+    if (!node) return null;
+    try {
+      const box = node.getBBox?.();
+      if (!box || ![box.x, box.y, box.width, box.height].every(Number.isFinite)) return null;
+      return {
+        x: Number(box.x),
+        y: Number(box.y),
+        w: Number(box.width),
+        h: Number(box.height)
+      };
+    } catch (_err) {
+      return null;
+    }
+  }
+
+  function projectionAxisGridBox(fallback = null) {
+    if (!isMainScreenActive() || !['axes', 'source', 'lex', 'synt', 'log'].includes(state.projection)) return fallback;
+    let context = null;
+    try {
+      context = canonicalProjectionContext(null, { drawCentral: false });
+    } catch (_err) {}
+
+    const fallbackBox = fallback && [fallback.x, fallback.y, fallback.w, fallback.h].every(Number.isFinite)
+      ? { x: Number(fallback.x), y: Number(fallback.y), w: Number(fallback.w), h: Number(fallback.h) }
+      : fallbackViewBox();
+    const lex = renderedAxisLineBox('.lex-axis-line');
+    const synt = renderedAxisLineBox('.projection-axis-line.synt');
+    const log = renderedAxisLineBox('.logical-axis.log');
+    const origin = context?.origin || stableCentralViewOrigin();
+    const centralBox = context?.centralLayout?.box || {};
+    const theoreticalTop = py(Number(centralBox.minY || 0) - 3.45, origin);
+    const theoreticalLeft = Number(context?.westAxisX);
+    const theoreticalRight = Number(context?.eastAxisX);
+    const theoreticalBottom = Number(context?.southAxisY);
+
+    const left = lex
+      ? lex.x
+      : (Number.isFinite(theoreticalLeft) ? theoreticalLeft : fallbackBox.x);
+    const right = synt
+      ? synt.x + synt.w
+      : (Number.isFinite(theoreticalRight) ? theoreticalRight : fallbackBox.x + fallbackBox.w);
+    const topCandidates = [
+      lex?.y,
+      synt?.y,
+      Number.isFinite(theoreticalTop) ? theoreticalTop : null
+    ].filter(Number.isFinite);
+    const top = topCandidates.length ? Math.min(...topCandidates) : fallbackBox.y;
+    const bottom = log
+      ? log.y + log.h
+      : (Number.isFinite(theoreticalBottom)
+        ? theoreticalBottom
+        : Math.max(lex ? lex.y + lex.h : top, synt ? synt.y + synt.h : top, fallbackBox.y + fallbackBox.h));
+
+    if (![left, right, top, bottom].every(Number.isFinite) || right - left < 80 || bottom - top < 80) {
+      return fallbackBox;
+    }
+    return { x: left, y: top, w: right - left, h: bottom - top };
+  }
+
+  function stableProjectionAxisFocusBox(fallback = null) {
+    try {
+      const origin = stableCentralViewOrigin();
+      const layouts = [getSouthAwareSyntaxLayout(), getSouthAwareFunctionalLayout()];
+      const boxes = layouts.map(layout => layout?.box).filter(Boolean);
+      if (!boxes.length) return fallback;
+      const union = {
+        minX: Math.min(...boxes.map(box => Number(box.minX || 0))),
+        minY: Math.min(...boxes.map(box => Number(box.minY || 0))),
+        maxX: Math.max(...boxes.map(box => Number(box.maxX || 0))),
+        maxY: Math.max(...boxes.map(box => Number(box.maxY || 0)))
+      };
+      const left = westLexAxisX(union, origin);
+      const right = px(union.maxX, origin) + 118;
+      const top = py(union.minY - 3.45, origin);
+      const bottom = py(union.maxY + 2.1, origin);
+      if (![left, right, top, bottom].every(Number.isFinite) || right - left < 80 || bottom - top < 80) {
+        return fallback;
+      }
+      return { x: left, y: top, w: right - left, h: bottom - top };
+    } catch (_err) {
+      return fallback;
+    }
+  }
+
   function sizeDynamicGridToBox(box) {
     if (!els.svg || !box) return;
-    const gridBox = (isMainScreenActive() && state.lastGridBox) ? state.lastGridBox : box;
+    const fallback = (isMainScreenActive() && state.lastGridBox) ? state.lastGridBox : box;
+    const gridBox = projectionAxisGridBox(fallback) || fallback;
+    if (isMainScreenActive()) state.lastGridBox = { ...gridBox };
     els.svg.querySelectorAll('.grid[data-dynamic-grid="true"]').forEach(grid => {
       populateGridLines(grid, gridBox);
     });
@@ -6574,7 +6677,7 @@
     if (!growthActive()) return null;
     if (validViewFitMode() === 'max') {
       if (state.maximumContentFit) {
-        return expandBoxToAspect(state.maximumContentFit, canvasAspectRatio());
+        return handheldMaximumViewBox(state.maximumContentFit);
       }
       return computeMaximumContentFitBox();
     }
@@ -6954,6 +7057,53 @@
     return { x: box.x, y: centerY - h / 2, w: box.w, h };
   }
 
+  function handheldMaximumViewBox(fit) {
+    const forced = activeViewportMode();
+    const handheld = forced === 'mobile-portrait'
+      || forced === 'mobile-landscape'
+      || isPhysicalHandheldViewport();
+    const aspect = canvasAspectRatio();
+    if (!handheld || !fit || !Number.isFinite(aspect) || aspect <= 0) {
+      return expandBoxToAspect(fit, aspect);
+    }
+    // Gebruik de Syntax/Functional-unie als focus. Daardoor blijft MAX op
+    // mobiel even groot en op dezelfde plaats bij een viewwissel, terwijl het
+    // getekende raster zelf exact op de actuele assen blijft eindigen.
+    const axes = stableProjectionAxisFocusBox(fit);
+    if (!axes) return expandBoxToAspect(fit, aspect);
+    // MAX focust op het volledige asgebied. In een smal telefoonscherm kunnen
+    // labels buiten de assen daardoor buiten beeld vallen; pan/zoom maakt ze
+    // bereikbaar. De opties 'volledige boom zichtbaar' blijven beschikbaar.
+    const padX = Math.max(12, cellX() * 0.12);
+    const padY = Math.max(12, cellY() * 0.20);
+    const focus = {
+      x: axes.x - padX,
+      y: axes.y - padY,
+      w: axes.w + padX * 2,
+      h: axes.h + padY * 2
+    };
+    const contained = expandBoxToAspect(focus, aspect);
+    if (aspect > 1.15) {
+      // Een brede telefoon liet met een zuivere contain-fit opnieuw grote
+      // lege zijstroken zien. MAX vergroot landschap daarom verder; de
+      // volledige, ongecropte variant blijft beschikbaar via
+      // 'volledige boom zichtbaar'. Pan/zoom ontsluit LOG en buitenlabels.
+      const coverRatio = Math.max(1, contained.w / Math.max(1, focus.w));
+      const zoom = Math.min(1.8, coverRatio);
+      const width = contained.w / zoom;
+      const height = contained.h / zoom;
+      const centerX = focus.x + focus.w / 2;
+      const centerY = focus.y + focus.h * 0.47;
+      return {
+        x: centerX - width / 2,
+        y: centerY - height / 2,
+        w: width,
+        h: height
+      };
+    }
+    return contained;
+  }
+
   function expandFitBoxForMainWindow(fit) {
     if (!fit || !isMainScreenActive()) return fit;
     const mode = validViewFitMode();
@@ -7043,7 +7193,7 @@
       if (!growthActive() || !state.maximumContentFit) {
         state.maximumContentFit = { ...fit };
       }
-      return expandBoxToAspect(fit, canvasAspectRatio());
+      return handheldMaximumViewBox(fit);
     } catch (_err) {
       return null;
     } finally {
@@ -9265,7 +9415,7 @@
       </fieldset>
       <section class="preconfig-candidates" aria-labelledby="preconfigCandidatesHeading">
         <h3 id="preconfigCandidatesHeading"><span class="help-lang-nl">Volgende voorconfig-kandidaten</span><span class="help-lang-en">Next pre-config candidates</span></h3>
-        <p><span class="help-lang-nl">Ontwerpvoorraad; in rc.37 nog niet schakelbaar.</span><span class="help-lang-en">Design backlog; not switchable in rc.37 yet.</span></p>
+        <p><span class="help-lang-nl">Ontwerpvoorraad; in rc.39 nog niet schakelbaar.</span><span class="help-lang-en">Design backlog; not switchable in rc.39 yet.</span></p>
         <ul>${PRECONFIG_CANDIDATES.map(candidate => `<li><span class="help-lang-nl">${candidate.label}</span><span class="help-lang-en">${candidate.labelEn}</span></li>`).join('')}</ul>
       </section>`;
     preconfigCard.querySelectorAll('[data-insertion-axis]').forEach(input => {
@@ -9712,7 +9862,19 @@
     const restoreSize = () => {
       let saved = '';
       try { saved = sessionStorage.getItem(storageKey) || ''; } catch (_err) {}
-      if (saved) applySize(saved);
+      if (!saved) return;
+      const rect = screen.getBoundingClientRect();
+      if (rect.width > 0 && rect.height > 0) {
+        applySize(saved);
+      } else {
+        // Tijdens init is README nog verborgen. Dan zijn de gemeten grenzen
+        // 0×0 en zou een geldige gebruikersmaat onterecht tot het minimum
+        // worden teruggebracht.
+        const size = Number(saved);
+        if (Number.isFinite(size) && size > 0) {
+          screen.style.setProperty('--help-nav-size', `${Math.round(size)}px`);
+        }
+      }
     };
 
     let activePointer = null;

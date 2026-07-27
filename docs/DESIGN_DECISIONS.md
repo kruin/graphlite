@@ -1,5 +1,5 @@
 
-## Actuele beslissingen · v2.0.0-rc.37
+## Actuele beslissingen · v2.0.0-rc.39
 
 1. LOG is autoriteit voor de neutrale plaatsing.
 2. S, O en V zijn majors; alleen bijwoordinserties met `origin=LOG` of
@@ -15,6 +15,13 @@
 10. Insertie is onafhankelijk schakelbaar op LEX, SYNT en LOG.
 11. Bijwoorden vereist LEX + LOG; een ontbrekende vereiste as schakelt de
     toepassing uit.
+12. Fysieke handheld-detectie staat los van de geforceerde interfacekeuze.
+13. Mobiele MAX gebruikt één stabiele Syntax/Functional-asfocus.
+14. README is gestapeld in portret en staat naast elkaar in mobiel landschap;
+    de scheidingsbalk blijft verstelbaar.
+15. Het raster eindigt links/rechts/onder exact op LEX/SYNT/LOG.
+16. De lokale staand/liggend-simulatie blijft ook onder MAX een vast
+    telefoonframe; haar `ogv` volgt altijd de geladen viewerversie.
 
 Onderstaande eerdere beslissingen zijn historische notities en niet
 normatief waar zij hiermee botsen.

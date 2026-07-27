@@ -1,6 +1,32 @@
 # PROJECT_STATE_CURRENT
 
-Leidende status van OpenGraph Lite Viewer `v2.0.0-rc.37`.
+Leidende status van OpenGraph Lite Viewer `v2.0.0-rc.39`.
+
+## Lokale viewporttest rc.39
+
+- Op een groot desktopscherm blijft `Mobiel staand` begrensd tot 390 × 844 en
+  `Mobiel liggend` tot 844 × 390, ook nadat MAX volledig is gerenderd.
+- De MAX-regels mogen het lokale telefoonframe niet opnieuw naar `100vw`
+  verbreden.
+- De lokale keuzeknop neemt `ogv` over uit de actuele viewer en bevat geen
+  afzonderlijk hardgecodeerd versienummer.
+- Het grote automatische venster keert alleen terug na een expliciete keuze
+  voor `auto`, `Automatisch` of `Desktop`.
+
+## Mobiele layout rc.38
+
+- Een fysieke telefoon wordt ook in landschap herkend; een breedte boven
+  760 px maakt de mobiele omgeving niet meer onzichtbaar.
+- README gebruikt in portret lijst boven tekst en in landschap lijst links van
+  tekst.
+- De lijst heeft een echte, verstelbare maat en klapt niet meer tot 0 px in.
+- De scheidingsbalk werkt met pointer/touch en bewaart een geldige sessiemaat,
+  ook wanneer README tijdens initialisatie nog verborgen is.
+- Mobiele MAX focust het stabiele Syntax/Functional-asgebied. In portret vult
+  dat de breedte en in landschap de hoogte.
+- De fysieke telefoonmaat blijft voor MAX gelden wanneer de interface op
+  Desktop wordt geforceerd.
+- Het raster begint op LEX, eindigt op SYNT en stopt onderaan op LOG.
 
 ## Voorconfigcontract rc.37
 

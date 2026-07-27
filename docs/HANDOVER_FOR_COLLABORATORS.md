@@ -1,12 +1,33 @@
 # HANDOVER_FOR_COLLABORATORS
 
-Overdracht voor OpenGraph Lite Viewer v2.0.0-rc.37.
+Overdracht voor OpenGraph Lite Viewer v2.0.0-rc.39.
 
 ## Bronbasis
 
 Deze release is uitsluitend opgebouwd op de door de gebruiker geüploade
 `v2.0.0-rc.26` via rc.27. rc.28 herstelt contracten uit het vergelijkingsrapport
 zonder bronbestanden uit de alternatieve v2.0.x-lijn terug te kopiëren.
+
+## Mobiele layout en raster
+
+Gebruik voor fysieke-schermdetectie `isPhysicalHandheldViewport()`. Die
+detectie blijft gelden voor MAX wanneer de gebruiker op een telefoon de
+Desktop-interface forceert. `isMobileViewport()` bepaalt de gekozen
+interfacevorm; vermeng deze twee verantwoordelijkheden niet opnieuw.
+
+De lokale desktoptest gebruikt vaste frames van 390 × 844 en 844 × 390. Houd
+de afsluitende `viewport-mobile-test + main-window-max`-regels ná de algemene
+MAX-regels; anders springt het gekozen frame tijdens renderen terug naar
+`100vw`. `local-mobile-test.js` haalt `ogv` uit de geladen viewer en mag geen
+eigen versienummer krijgen.
+
+README moet in portret gestapeld en in mobiel landschap naast elkaar staan.
+De selectors met `data-help-layout` moeten specifieker blijven dan de oudere
+algemene Help-gridregels, anders klapt de onderwerpenlijst opnieuw in.
+
+Het dynamische raster gebruikt `projectionAxisGridBox()`: LEX is de
+linkergrens, SYNT de rechtergrens en LOG de ondergrens. Mobiele MAX gebruikt
+de stabiele Syntax/Functional-unie als focus, zodat de viewBox niet verspringt.
 
 ## Voorconfig vóór toepassingen
 
