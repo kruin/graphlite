@@ -6,6 +6,11 @@ functionele basis.
 
 Engelse documentatie: [`README.md`](README.md).
 
+> **Controlestatus:** rc.41 is een releasekandidaat die nog handmatig visueel
+> moet worden goedgekeurd. De automatische controles bewaken geometrie en
+> feature-invarianten, maar vervangen geen menselijk oordeel over leesbaarheid
+> en duidelijkheid.
+
 ## OGN Basis, voorconfig en toepassingen
 
 De viewer start voortaan in **OGN Basis**. Dit profiel bevat de gewone
@@ -35,8 +40,30 @@ centrale layout-policy reserveert de bijbehorende ruimte. Handheld MAX bevat
 volledige LEX-inhoud en volledige Syntax- en Functional-regelboxen in portret,
 landschap en forced desktop. LEX reserveert alleen de actieve slots en
 Wissellanes; Syntax en Functional delen één stabiele oostas over hun
-gezamenlijke envelop. Zie
+gezamenlijke structurele grid-envelop. Zie
 `RECURSIVE_LAYOUT_AND_APPLICATION_CONTRACT.md`.
+
+### Wat is nu recursief—en wat nog niet?
+
+| Fase | Gedrag in rc.41 |
+|---|---|
+| Structuur en config | Bepalen welke knopen, assen, majors, minors en toepassingsbijdragen bestaan. |
+| Gridplaatsing | Plaatst structurele knopen en subtrees op het HOR/VER-celgrid. Dit is nog geen tekstbewuste pixelpakking. |
+| Visuele subtree-meting | Meet bottom-up nodevormen, labels, afstammelingsgrenzen, caption en centrale marge. Alleen de zichtbare subtree-rechthoek gebruikt deze uitkomst. |
+| West/LEX-plaatsing | Begint bij de gemeten linkerrand van de actieve root-subtree en reserveert daarna de actieve LEX-slots, Wissellanes en een smalle goot. |
+| Oost/SYNT-plaatsing | Gebruikt één gezamenlijke **structurele grid-envelop** voor Syntax en Functional, gevolgd door de volledige regelboxen. Zij komt niet uit de gemeten rechterrand van iedere subtree. |
+| Viewport-fit | Houdt volledige LEX-inhoud, centrale structuur, volledige regelboxen en LOG binnen één stabiel Syntax/Functional-kader. |
+| Render | Tekent het opgeloste resultaat; voegt geen taalinhoud toe en kiest geen nieuwe posities. |
+
+Dat onderscheid is belangrijk. rc.41 heeft recursieve **boxmeting**, maar nog
+geen algemene botsingssolver die bij een breder label alle knopen opnieuw
+plaatst. In portret gebruikt de volledige links-naar-rechtscompositie de
+beschikbare breedte. Omdat die compositie van nature breed is, kan tekst klein
+blijven en kan verticale witruimte overblijven. Pan/zoom blijft beschikbaar.
+Een gestapelde portretcompositie is een afzonderlijke toekomstige layoutkeuze.
+
+Gebruik voor de handmatige goedkeuring
+[`RC41_RECURSIVE_LAYOUT_TEST.md`](RC41_RECURSIVE_LAYOUT_TEST.md).
 
 ## Lexicale gebruiksprofielen en gebruikerskeuze
 
@@ -112,6 +139,14 @@ De BAT leidt de ZIP-naam af uit de map waarin hij zelf staat. De map
 `OpenGraph_Lite_Viewer_v2.0.0-rc.41_full_source.zip`. Een bestaande ZIP met
 precies die naam wordt veilig vervangen; het script verzint nooit zelf een
 achtervoegsel `(1)`.
+
+Bestanden met het patroon `*_full_source*.zip` zijn gegenereerde
+release-artefacten en geen projectbron. Daaronder valt ook een browserdownload
+als `OpenGraph_Lite_Viewer_v2.0.0-rc.41_full_source (1).zip`. Zulke kopieën
+worden genegeerd door de manifest- en publicatiecontrole, niet voor GitHub
+Pages gestaged en niet in een nieuwe volledige bronzip opgenomen. Ze mogen dus
+lokaal blijven staan zonder de publicatie te blokkeren; oude kopieën
+verwijderen houdt de projectmap wel overzichtelijker.
 
 GitHub Pages:
 

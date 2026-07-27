@@ -4,7 +4,7 @@ __pycache__/
 Thumbs.db
 
 # Release artifacts: publish via GitHub Releases, niet via Pages-root.
-OpenGraph_Lite_Viewer_v*.zip
+*_full_source*.zip
 
 # Lokale testhulp: niet publiceren naar GitHub Pages.
 local-mobile-test.js

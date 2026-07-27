@@ -1,6 +1,7 @@
 # Recursieve layout en toepassingscontract
 
-Normatief ontwerp voor OpenGraph Lite Viewer `v2.0.0-rc.41`.
+Normatief ontwerp voor OpenGraph Lite Viewer `v2.0.0-rc.41`. De versie is nog
+een handmatig te beoordelen releasekandidaat.
 
 ## Hoofdbesluit
 
@@ -54,6 +55,11 @@ Bladeren krijgen een minimale gridpositie. Een parent plaatst complete
 child-subtrees in vrije HOR/VER-corridors. De uitkomst is een structurele
 layout in cellen. Groei en render mogen deze posities niet later wijzigen.
 
+**Implementatiegrens in rc.41:** deze gridplaatsing krijgt de later gemeten
+pixelbreedtes nog niet terug als invoer. Een langer label kan dus zijn
+subtree-rechthoek verbreden, maar laat niet automatisch naburige knopen naar
+een andere gridcel verhuizen.
+
 ### 4. Recursief visueel meten
 
 Iedere node rapporteert zijn intrinsieke pixelmaat:
@@ -79,6 +85,9 @@ De tekstmeting gebeurt vóór het tekenen van de betrokken SVG-elementen via een
 canvas-meetcontext. De renderer hoeft dus geen reeds getekende SVG te meten en
 opnieuw te tekenen.
 
+`requiredWidth/requiredHeight` bestuurt in rc.41 de zichtbare subtree-rect. Het
+is nog geen algemene constraint- of collision-solver voor de hele graph.
+
 ### 5. Assen en toepassingsruimte oplossen
 
 De as-layout leest alleen **layout demands**. Voorbeeld:
@@ -100,9 +109,10 @@ stilzwijgend ruimte voor vier bewegingen.
 
 De fit gebruikt de unie van:
 
-- volledige LEX-inhoud links;
-- een stabiele Syntax/Functional-boom-envelop die alle recursief gemeten boxen
-  bevat;
+- links: de gemeten linkerrand van de actieve root-subtree plus volledige
+  actuele LEX-inhoud;
+- midden: de gezamenlijke **structurele grid-envelop** van Syntax en
+  Functional;
 - de SYNT-as plus volledige Syntax- en Functional-regelboxen rechts;
 - de LOG-as, majors en minors onderaan.
 
@@ -110,10 +120,16 @@ Syntax en Functional delen in MAX één stabiel kader, zodat een viewwissel niet
 springt. Dit geldt ook voor staand, liggend en een geforceerde
 Desktop-interface op een telefoon.
 
-De groene oostas staat op de rechterrand van de gezamenlijke
-Syntax/Functional-envelop. Daardoor gebruikt de smallere Syntaxboom in
-landschap dezelfde volle asbreedte als Functional, zonder een tweede viewport
-of zinspecifieke verschuiving.
+De groene oostas staat op de rechterrand van de gezamenlijke structurele
+Syntax/Functional-grid-envelop, met een centrale vaste asafstand. Zij wordt dus
+niet uit de gemeten rechterrand van iedere subtree afgeleid. Daardoor gebruikt
+de smallere Syntaxboom in landschap dezelfde volle asbreedte als Functional,
+zonder een tweede viewport of zinspecifieke verschuiving.
+
+In portret blijft dit een brede links-naar-rechtscompositie. `contain` houdt
+alles zichtbaar en benut de breedte, maar kan tekst klein maken en verticale
+witruimte overlaten. Een gestapelde portretvariant is een afzonderlijke
+toekomstige layoutkeuze, geen fout in de recursieve boxmeting.
 
 ### 7. Renderen
 
@@ -214,7 +230,8 @@ harde validatiefouten. De renderlaag lost zulke conflicten niet zelf op.
   de boom blijft op ieder scherm compact;
 - toepassingen declareren een abstracte LEX-contentsoort;
 - volledige LEX-inhoud en volledige SYNT-regelboxen tellen mee in handheld MAX;
-- Syntax en Functional delen één oostas op hun gezamenlijke envelop;
+- Syntax en Functional delen één oostas op hun gezamenlijke structurele
+  grid-envelop;
 - Syntax/Functional, staand/liggend en forced desktop worden in Chromium
   gecontroleerd;
 - Bijwoorden wordt met drie LOG-majors en minstens één actieve minor getest.
@@ -238,6 +255,8 @@ harde validatiefouten. De renderlaag lost zulke conflicten niet zelf op.
 5. Test iedere nieuwe toepassing in de matrix:
    uit / vereiste voorconfig ontbreekt / actief / import-export / mobiel /
    Syntax / Functional / groei.
+6. Beslis afzonderlijk of portret naast de volledige horizontale compositie
+   ook een gestapelde, beter leesbare presentatie moet krijgen.
 
 De hoofdregel blijft: **semantiek levert eisen; layout berekent ruimte; render
 tekent alleen het resultaat**.

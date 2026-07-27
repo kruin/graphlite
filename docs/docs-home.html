@@ -25,7 +25,7 @@
 <body><nav class="opengraph-return-nav" style="display:flex;gap:.5rem;flex-wrap:wrap;padding:.55rem .7rem;border-bottom:1px solid #cbd5e1;background:#f8fafc;position:sticky;top:0;z-index:50"><a href="../index.html?screen=config" style="font-weight:800">← Terug naar: Config</a><a href="../index.html" style="font-weight:800">← Terug naar: Main</a></nav>
 <main>
 <h1>OpenGraph Lite Viewer · docs v2.0.0-rc.41</h1>
-<p id="docsProfileText">Leidende projectdocumentatie voor de actuele viewer.</p>
+<p id="docsProfileText">Leidende projectdocumentatie voor de actuele viewer. rc.41 blijft een testkandidaat totdat de handmatige akkoordlijst is ingevuld.</p>
 <div class="toplinks">
 <a class="button-link" href="../index.html?ogv=v2.0.0-rc.41">Viewer</a>
 <a class="button-link" href="../reset-cache.html?ogv=v2.0.0-rc.41">Reset cache</a>
@@ -36,12 +36,15 @@
 <section class="grid" data-profile-section="base" hidden>
 <a class="card" href="OGN_BASE_PROFILE.md?ogv=v2.0.0-rc.41"><strong>OGN_BASE_PROFILE.md</strong><span>De onderdelen en werking van het actieve basisprofiel.</span></a>
 <a class="card" href="PRECONFIG_ARCHITECTURE.md?ogv=v2.0.0-rc.41"><strong>PRECONFIG_ARCHITECTURE.md</strong><span>Algemene infrastructuur per as vóór concrete toepassingen.</span></a>
-<a class="card" href="RECURSIVE_LAYOUT_AND_APPLICATION_CONTRACT.md?ogv=v2.0.0-rc.41"><strong>RECURSIVE_LAYOUT_AND_APPLICATION_CONTRACT.md</strong><span>Recursieve inhoudsmeting, configlagen, toepassingsdemands en LOG-majors/minors.</span></a>
+<a class="card" href="RECURSIVE_LAYOUT_AND_APPLICATION_CONTRACT.md?ogv=v2.0.0-rc.41"><strong>RECURSIVE_LAYOUT_AND_APPLICATION_CONTRACT.md</strong><span>Exacte grens tussen structurele gridplaatsing, recursieve boxmeting, assen, configlagen en toepassingen.</span></a>
+<a class="card" href="../RC41_RECURSIVE_LAYOUT_TEST.md?ogv=v2.0.0-rc.41"><strong>RC41_RECURSIVE_LAYOUT_TEST.md</strong><span>Handmatige akkoordlijst voor boxen, assen, mobiel beeld, voorconfig, toepassingen en README.</span></a>
 <a class="card" href="DEPLOY_GITHUB_PAGES.md?ogv=v2.0.0-rc.41"><strong>DEPLOY_GITHUB_PAGES.md</strong><span>Publiceren, preflight, reset-cache en .gitignore.</span></a>
 <a class="card" href="SOCIAL_EXPORT.md?ogv=v2.0.0-rc.41"><strong>SOCIAL_EXPORT.md</strong><span>Zelfstandige SVG, LinkedIn-PNG en native WebM-opname van Play.</span></a>
 </section>
 <section class="grid" data-profile-section="extras">
 <a class="card" href="PRECONFIG_ARCHITECTURE.md?ogv=v2.0.0-rc.41"><strong>PRECONFIG_ARCHITECTURE.md</strong><span>Insertie per LEX/SYNT/LOG en afhankelijkheden van toepassingen.</span></a>
+<a class="card" href="RECURSIVE_LAYOUT_AND_APPLICATION_CONTRACT.md?ogv=v2.0.0-rc.41"><strong>RECURSIVE_LAYOUT_AND_APPLICATION_CONTRACT.md</strong><span>Exacte grens tussen structurele gridplaatsing, recursieve boxmeting, assen, configlagen en toepassingen.</span></a>
+<a class="card" href="../RC41_RECURSIVE_LAYOUT_TEST.md?ogv=v2.0.0-rc.41"><strong>RC41_RECURSIVE_LAYOUT_TEST.md</strong><span>Handmatige akkoordlijst voor boxen, assen, mobiel beeld, voorconfig, toepassingen en README.</span></a>
 <a class="card" href="../projectie-master-spec.md?ogv=v2.0.0-rc.41"><strong>projectie-master-spec.md</strong><span>Normatief contract: LOG-majors/minors, logische slotafstand, LOG→LEX en zinsvalidatie.</span></a>
 <a class="card" href="PROJECT_STATE_CURRENT.md?ogv=v2.0.0-rc.41"><strong>PROJECT_STATE_CURRENT.md</strong><span>Actuele status: Syntax en Functional als centrale views; LOG als zuidas.</span></a>
 <a class="card" href="OPN_STORAGE_FORMAT.md?ogv=v2.0.0-rc.41"><strong>OPN_STORAGE_FORMAT.md</strong><span>Round-trip .opn met gescheiden data, metadata en paradata; oudere JSON blijft migratieformaat.</span></a>
@@ -65,7 +68,7 @@
       section.hidden = base ? section.dataset.profileSection !== 'base' : section.dataset.profileSection === 'base';
     });
     const profileText = document.getElementById('docsProfileText');
-    if (profileText && base) profileText.textContent = 'Documentatie voor het actieve profiel OGN Basis.';
+    if (profileText && base) profileText.textContent = 'Documentatie voor het actieve profiel OGN Basis. rc.41 blijft een testkandidaat totdat de handmatige akkoordlijst is ingevuld.';
     if (base) {
       document.querySelectorAll('a[href]').forEach(link => {
         const url = new URL(link.getAttribute('href'), location.href);

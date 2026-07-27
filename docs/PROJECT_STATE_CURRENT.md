@@ -14,13 +14,16 @@ Leidende status van OpenGraph Lite Viewer `v2.0.0-rc.41`.
   de rechterreserve volgt alleen de actieve slots en banen.
 - Handheld MAX bevat volledige LEX-inhoud en volledige Syntax- én
   Functional-regelboxen, ook in landschap en forced desktop.
-- Syntax en Functional gebruiken één oostas op hun gezamenlijke envelop.
+- Syntax en Functional gebruiken één oostas op hun gezamenlijke structurele
+  grid-envelop; de oostas volgt niet iedere gemeten subtree-rand.
 - De README-paneelmaat blijft bij mobiele resize behouden; lijst en tekst zijn
   in portret en landschap met de sleepgreep verstelbaar.
 - Een toepassing declareert alleen abstracte layout-demand. Bijwoorden vraagt
   brede LEX-inhoud; de renderer bepaalt de maten.
 - De beslisregels voor voorconfig, toepassingen en LOG-majors/minors staan in
   `RECURSIVE_LAYOUT_AND_APPLICATION_CONTRACT.md`.
+- De gemeten subtree-maat bestuurt de zichtbare rect, maar herplaatst in rc.41
+  nog geen knopen naar andere gridcellen.
 - `tools/check_recursive_box_fit_runtime.js` controleert containment, viewport,
   majors/minors en Syntax/Functional-stabiliteit in Chromium.
 
@@ -181,6 +184,8 @@ bestaande Ja/Nee-save-werkwijze blijft ongewijzigd.
 - `<projectmap>` wordt automatisch `<projectmap>_full_source.zip`.
 - De ZIP staat naast de projectmap en bevat die map als bovenste map.
 - Een bestaande gelijknamige ZIP wordt pas na geslaagde compressie vervangen.
+- Lokale `*_full_source*.zip`-kopieën, inclusief namen met `(1)`, zijn
+  release-artefacten: manifest, publicatie en nieuwe bronzip sluiten ze uit.
 - Er staat geen releaseversie hardgecodeerd in de BAT.
 
 `structure-config.html#opengraph-log-config` definieert:

@@ -153,6 +153,21 @@ async function dragHelpResizer(page, metrics, amount = 70) {
     assert.ok(portraitHelp.visibleItems >= 3, `README-items niet zichtbaar: ${portraitHelp.visibleItems}`);
     const portraitAfter = await dragHelpResizer(portrait.page, portraitHelp);
     assert.ok(Math.abs(portraitAfter.nav.h - portraitHelp.nav.h) >= 35, 'README-resizer verandert portrethoogte niet');
+    await portrait.page.click('[data-help-topic-button="recursive-layout"]');
+    await portrait.page.waitForTimeout(40);
+    const recursiveHelp = await portrait.page.evaluate(() => {
+      const article = document.querySelector('[data-help-topic="recursive-layout"]');
+      return {
+        hidden: article?.hidden,
+        text: article?.textContent || ''
+      };
+    });
+    assert.equal(recursiveHelp.hidden, false, 'README-onderwerp Layout rc.41 opent niet');
+    assert.match(
+      recursiveHelp.text,
+      /not yet a general collision or repacking solver/,
+      'README legt de technische grens van recursieve boxmeting niet uit'
+    );
     assert.deepEqual(portrait.errors, []);
     await portrait.context.close();
 

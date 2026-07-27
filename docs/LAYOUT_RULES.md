@@ -15,7 +15,8 @@ HTML-menu’s beïnvloeden de SVG-fitbox niet. Iedere projectiecombinatie en
 Syntax ↔ Functional behoudt x, y en schaal.
 
 De SYNT-oostas staat voor beide centrale views op de rechterrand van hun
-gezamenlijke envelop. LEX reserveert rechts de breedste actieve slotvorm en
+gezamenlijke structurele grid-envelop. Zij volgt niet de gemeten rechterrand
+van iedere subtree. LEX reserveert rechts de breedste actieve slotvorm en
 alleen de actieve Wissellanes, met een vaste bovengrens van vier lanes.
 
 ## Recursief gemeten subtree-boxen
@@ -24,6 +25,7 @@ alleen de actieve Wissellanes, met een vaste bovengrens van vier lanes.
 - Daarna meet iedere subtree recursief eigen node, labels en child-boxen.
 - Caption en centrale binnenmarge horen bij `requiredWidth/requiredHeight`.
 - Een zichtbare subtree-rect gebruikt uitsluitend die gemeten geometrie.
+- De gemeten rectmaat herplaatst in rc.41 geen knopen of naburige subtrees.
 - Toepassingen declareren een inhoudssoort/layout-demand, nooit x/y.
 - Alle meetmaten komen uit één layout-policy; zinspecifieke pixelpatches zijn
   verboden.
@@ -47,6 +49,8 @@ alleen de actieve Wissellanes, met een vaste bovengrens van vier lanes.
   testframes niet overschrijven.
 - MAX focust de stabiele unie van het Syntax- en Functional-asgebied.
 - In portret benut het asgebied primair de volledige breedte.
+- De volledige horizontale compositie kan in portret klein blijven en
+  verticale witruimte overlaten; een gestapelde portretlayout bestaat nog niet.
 - In landschap wordt de layout zelf lager en breder. MAX gebruikt een
   volledige `contain`-fit; cover-zoom en het afsnijden van rastertop, LEX,
   SYNT of LOG zijn niet toegestaan.

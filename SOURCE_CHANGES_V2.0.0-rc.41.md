@@ -1,5 +1,15 @@
 # Source changes v2.0.0-rc.41
 
+## Publicatie en full-source-zipkopieën
+
+- `tools/check_release.py` herkent nu ieder `*_full_source*.zip`-bestand als
+  gegenereerd release-artefact, ook een browserdownload met `(1)`.
+- `.gitignore` en `publish_checked.bat` gebruiken dezelfde generieke regel.
+- `maak-volledige-zip.bat` bouwt via een gefilterde tijdelijke bronmap, zodat
+  oude full-source-zipkopieën niet recursief in de nieuwe zip terechtkomen.
+- De releasecontrole bevat regressiegevallen voor de versiegebonden naam én
+  `graphlite_full_source.zip`.
+
 ## Recursieve inhoudsmeting
 
 - Subtree-boxen gebruiken niet langer één vaste marge per gridspanne.
@@ -34,8 +44,9 @@
 - Het stabiele kader geldt in portret, landschap en op een fysieke telefoon
   met geforceerde Desktop-interface.
 - Syntax ↔ Functional behoudt exact dezelfde viewBox.
-- Beide views gebruiken één oostas op de gezamenlijke boom-envelop, zodat ook
-  de smallere Syntaxboom het landschap beeldvullend benut.
+- Beide views gebruiken één oostas op de gezamenlijke structurele
+  grid-envelop, zodat ook de smallere Syntaxboom het landschap beeldvullend
+  benut. Deze oostas volgt niet de gemeten rechterrand van iedere subtree.
 - De README-resizer bewaart bij een viewportwijziging de werkelijk gerenderde
   paneelmaat; onderwerpen en tekst blijven in portret en landschap bruikbaar.
 
@@ -54,6 +65,8 @@
 
 - Nieuw normatief document:
   `RECURSIVE_LAYOUT_AND_APPLICATION_CONTRACT.md`.
+- De documentatie maakt expliciet dat rc.41 recursieve boxmeting bevat, maar
+  nog geen algemene pixelgestuurde herplaatsings- of botsingssolver.
 - Nieuw:
   `tools/check_recursive_box_fit_runtime.js`.
 - De Chromium-test controleert alle 12 basiszinnen, 14 toepassingszinnen en

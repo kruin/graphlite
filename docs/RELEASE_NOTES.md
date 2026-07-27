@@ -1,13 +1,19 @@
 
 ## v2.0.0-rc.41 — Recursief gemeten boxen en volledige projecties
 
+- Status: release candidate voor handmatige visuele controle; nog niet
+  handmatig goedgekeurd.
+- Publicatie wordt niet meer geblokkeerd door een lokaal gedownloade
+  `*_full_source (1).zip`. Full-source-zipkopieën zijn release-artefacten en
+  worden consequent uitgesloten van manifest, GitHub Pages en nieuwe bronzip.
 - Subtree-boxen worden bottom-up gemeten uit nodevormen, labels, child-boxen
   en caption.
 - Kleine unary boxen, waaronder `NP → HOND`, gebruiken alleen de werkelijk
   benodigde breedte en hoogte.
 - De LEX-Wissellanes en de vrije goot vóór de boom zijn compacter.
 - LEX reserveert rechts alleen de werkelijk actieve slots en Wissellanes.
-- Syntax en Functional delen één oostas op hun gezamenlijke boom-envelop.
+- Syntax en Functional delen één oostas op hun gezamenlijke structurele
+  grid-envelop. Dit is niet de gemeten rechterrand van iedere subtree.
 - Handheld MAX toont volledige LEX-inhoud én volledige Syntax/Functional-
   regelboxen in portret, landschap en forced desktop.
 - De mobiele README bewaart bij resize de zichtbare paneelmaat; lijst,
@@ -16,6 +22,11 @@
   eigen pixelcoördinaten.
 - Nieuwe architectuurdocumentatie:
   `RECURSIVE_LAYOUT_AND_APPLICATION_CONTRACT.md`.
+- De documentatie onderscheidt nu expliciet structurele gridplaatsing,
+  recursieve visuele boxmeting, plaatsing van assen/viewport en rendering.
+  De boxmeting is nog geen algemene collision- of repacking-solver.
+- `RC41_RECURSIVE_LAYOUT_TEST.md` bevat de handmatige akkoordlijst voor boxen,
+  assen, mobiel beeld, voorconfig, toepassingen en README.
 - Nieuwe echte Chromium-controle:
   `tools/check_recursive_box_fit_runtime.js`.
 

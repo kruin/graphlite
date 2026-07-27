@@ -34,7 +34,26 @@ if exist "%OG_ZIP_TEMP%" del /F /Q "%OG_ZIP_TEMP%" >nul 2>nul
 powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -Command ^
   "$ErrorActionPreference='Stop';" ^
   "Add-Type -AssemblyName System.IO.Compression.FileSystem;" ^
-  "[System.IO.Compression.ZipFile]::CreateFromDirectory($env:OG_ZIP_PROJECT_DIR,$env:OG_ZIP_TEMP,[System.IO.Compression.CompressionLevel]::Optimal,$true)"
+  "$source=[System.IO.Path]::GetFullPath($env:OG_ZIP_PROJECT_DIR);" ^
+  "$stageRoot=Join-Path ([System.IO.Path]::GetTempPath()) ('opengraph-zip-'+[guid]::NewGuid().ToString('N'));" ^
+  "$stageProject=Join-Path $stageRoot $env:OG_ZIP_PROJECT_NAME;" ^
+  "try {" ^
+  "  New-Item -ItemType Directory -Path $stageProject -Force | Out-Null;" ^
+  "  Get-ChildItem -LiteralPath $source -Recurse -File | Where-Object {" ^
+  "    $relative=$_.FullName.Substring($source.Length+1);" ^
+  "    $parts=$relative -split '[\\/]';" ^
+  "    -not (($parts -contains '.git') -or ($parts -contains '__pycache__') -or ($_.Name -match '(?i)_full_source.*\.zip(?:\.sha256)?$') -or ($_.Name -match '(?i)^(?:opengraph-)?local-config-log.*\.txt$') -or ($_.Name -match '(?i)\.(?:pyc|pyo|ds_store)$'))" ^
+  "  } | ForEach-Object {" ^
+  "    $relative=$_.FullName.Substring($source.Length+1);" ^
+  "    $destination=Join-Path $stageProject $relative;" ^
+  "    $destinationDir=Split-Path -Parent $destination;" ^
+  "    if (-not (Test-Path -LiteralPath $destinationDir)) { New-Item -ItemType Directory -Path $destinationDir -Force | Out-Null };" ^
+  "    Copy-Item -LiteralPath $_.FullName -Destination $destination;" ^
+  "  };" ^
+  "  [System.IO.Compression.ZipFile]::CreateFromDirectory($stageProject,$env:OG_ZIP_TEMP,[System.IO.Compression.CompressionLevel]::Optimal,$true);" ^
+  "} finally {" ^
+  "  if (Test-Path -LiteralPath $stageRoot) { Remove-Item -LiteralPath $stageRoot -Recurse -Force };" ^
+  "}"
 
 if errorlevel 1 (
   echo FOUT: het maken van de ZIP is mislukt.
@@ -57,6 +76,7 @@ echo %OG_ZIP_PATH%
 echo.
 echo Hernoem je de projectmap, dan volgt de ZIP-naam die mapnaam automatisch.
 echo Een bestaande ZIP met dezelfde naam wordt vervangen; dit script maakt geen (1)-naam.
+echo Lokale *_full_source*.zip-kopieen, ook met (1), worden niet mee ingepakt.
 echo.
 pause
 exit /b 0

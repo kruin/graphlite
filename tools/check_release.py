@@ -252,8 +252,35 @@ for rel in [
     "docs/RECURSIVE_LAYOUT_AND_APPLICATION_CONTRACT.md",
 ]:
     text = read(rel)
-    for marker in ["layout-demand", "LOG-majors", "requiredWidth/requiredHeight"]:
+    for marker in [
+        "layout-demand",
+        "LOG-majors",
+        "requiredWidth/requiredHeight",
+        "structurele grid-envelop",
+        "geen algemene constraint- of collision-solver",
+    ]:
         require(text, marker, f"{rel} contractterm")
+for marker, label in [
+    ('data-help-topic="recursive-layout"', "ingebouwde README-uitleg over rc.41"),
+    ("not yet a general collision or repacking solver", "Engelse begrenzing recursieve boxmeting"),
+    ("nog geen algemene botsings- of herplaatsingssolver", "Nederlandse begrenzing recursieve boxmeting"),
+]:
+    require(index, marker, label)
+for marker, label in [
+    ("Akkoord rc.41: ja / nee", "handmatig akkoordveld"),
+    ("Voorconfig en toepassingen", "controle voorconfig en toepassingen"),
+    ("README en bediening", "controle README en bediening"),
+]:
+    require(read("RC41_RECURSIVE_LAYOUT_TEST.md"), marker, label)
+for rel in ["DOCUMENTATION_RULES.md", "docs/DOCUMENTATION_RULES.md"]:
+    text = read(rel)
+    for marker in [
+        "Geïmplementeerd gedrag",
+        "Automatische garantie",
+        "Handmatig oordeel",
+        "Vervolgvoorstel",
+    ]:
+        require(text, marker, f"{rel} verduidelijkingsregel")
 
 # Explicit sentence landing metadata outranks a broad class default in auto mode.
 for marker, label in [
@@ -381,6 +408,30 @@ for path in ROOT.rglob("*.html"):
 
 # Exact release manifest. .git, caches, generated archives/logs and the manifest
 # itself are never product-source entries.
+GENERATED_RELEASE_ARCHIVE_RE = re.compile(
+    r".+_full_source.*\.zip(?:\.sha256)?$",
+    flags=re.I,
+)
+
+
+def is_generated_release_archive(name: str) -> bool:
+    """Recognise normal, renamed-download and temporary full-source archives."""
+    return bool(GENERATED_RELEASE_ARCHIVE_RE.fullmatch(name))
+
+
+# Browser downloads can add " (1)" before .zip. That local copy must behave
+# exactly like the canonical release archive and never become product source.
+for generated_name in [
+    "OpenGraph_Lite_Viewer_v2.0.0-rc.41_full_source.zip",
+    "OpenGraph_Lite_Viewer_v2.0.0-rc.41_full_source (1).zip",
+    "graphlite_full_source.zip",
+    "graphlite_full_source.tmp.12345.zip",
+    "graphlite_full_source.zip.sha256",
+]:
+    if not is_generated_release_archive(generated_name):
+        errors.append(f"release-archieffilter herkent niet: {generated_name}")
+
+
 def manifest_file(path: Path) -> bool:
     rel = path.relative_to(ROOT)
     parts = rel.parts
@@ -390,7 +441,7 @@ def manifest_file(path: Path) -> bool:
     lower = name.lower()
     if name == "RELEASE_MANIFEST.txt" or lower.endswith((".pyc", ".pyo", ".ds_store")):
         return False
-    if re.fullmatch(r"OpenGraph_Lite_Viewer_v.*_full_source\.zip(?:\.sha256)?", name, flags=re.I):
+    if is_generated_release_archive(name):
         return False
     if re.fullmatch(r"(?:opengraph-)?local-config-log.*\.txt", name, flags=re.I):
         return False

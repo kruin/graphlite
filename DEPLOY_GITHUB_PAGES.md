@@ -105,7 +105,7 @@ Laat `.nojekyll` in de root staan zodat GitHub Pages alle bestanden direct serve
 Deze bestanden blijven lokaal of buiten de Pages-root:
 
 ```text
-OpenGraph_Lite_Viewer_v*.zip
+*_full_source*.zip
 local-mobile-test.js
 local-mobile-test.html
 opengraph-local-config-log-*.txt
@@ -114,6 +114,7 @@ local-config-log*.txt
 
 Reden:
 
-- release-zips zijn downloadartefacten, geen sitebestanden;
+- full-source-releasezips zijn downloadartefacten, geen sitebestanden; ook een
+  browserkopie met `(1)` in de naam wordt genegeerd;
 - `local-mobile-test.*` is alleen voor lokale mobile-test op desktop;
 - config-logbestanden zijn lokale werksessie-logs.

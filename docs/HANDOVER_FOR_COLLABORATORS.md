@@ -104,7 +104,10 @@ Intern schrijft de viewer `central_opn: "ft"`. Invoer met de oude waarde `functi
 
 ## Publiceren
 
-Gebruik `publish_checked.bat`. Releasezips en lokale mobile-testbestanden horen niet in de GitHub Pages-root.
+Gebruik `publish_checked.bat`. Bestanden met patroon `*_full_source*.zip`,
+inclusief browserkopieën met `(1)`, zijn lokale release-artefacten en horen
+niet in het manifest of de GitHub Pages-root. De publicatiecontrole en
+`maak-volledige-zip.bat` sluiten ze automatisch uit.
 
 
 ## Topmenu v2.0.0-rc.37

@@ -68,7 +68,10 @@ maak-volledige-zip.bat
 
 ## Niet als leidende bron gebruiken
 
-Oude projectzips, losse screenshots en historische release notes. Historische bestanden mogen in de volledige bronzip aanwezig blijven, maar de bovenstaande bestanden zijn normatief.
+Oude projectzips en gedownloade kopieën met bijvoorbeeld `(1)` zijn
+release-artefacten, geen bronbestanden, en worden daarom niet in de volledige
+bronzip opgenomen. Losse screenshots en historische release notes mogen wel
+aanwezig blijven, maar de bovenstaande bestanden zijn normatief.
 
 - `LEXICON_USAGE_PROFILES_AND_DISAMBIGUATION.md`
 

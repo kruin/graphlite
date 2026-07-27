@@ -186,6 +186,7 @@
 <li><button class="help-topic-button" data-help-topic-button="grid-rule" type="button"><span class="help-lang-nl">Gridregel</span><span class="help-lang-en">Grid rule</span></button></li>
 <li><button class="help-topic-button" data-help-topic-button="projection-mechanism" type="button"><span class="help-lang-nl">Projectiemechanisme</span><span class="help-lang-en">Projection mechanism</span></button></li>
 <li><button class="help-topic-button" data-help-topic-button="sequential-drawing" type="button"><span class="help-lang-nl">Volgordelijk schrijven</span><span class="help-lang-en">Sequential writing</span></button></li>
+<li><button class="help-topic-button" data-help-topic-button="recursive-layout" type="button"><span class="help-lang-nl">Layout rc.41</span><span class="help-lang-en">Layout rc.41</span></button></li>
 <li><button class="help-topic-button" data-help-topic-button="west-axis" type="button"><span class="help-lang-nl">West-as</span><span class="help-lang-en">West axis</span></button></li>
 <li><button class="help-topic-button" data-help-topic-button="south-axis" type="button"><span class="help-lang-nl">Zuid-as</span><span class="help-lang-en">South axis</span></button></li>
 </ul>
@@ -330,6 +331,24 @@
 <h3>Sequential notation</h3>
 <p>Open Graph Notation can be read as a writing process. Central source nodes appear one by one. As soon as a source node is available, its projection to an axis can be written.</p>
 <p>For tree applications the layout is two-pass: boxes are computed bottom-up first; rendering then runs top-down. The result is static: the central graph is not transformed by projections or axis movements.</p>
+</div>
+</article>
+<article class="help-topic-panel" data-help-topic="recursive-layout">
+<div class="help-lang-nl">
+<h3>Layout rc.41: wat wordt recursief berekend?</h3>
+<p><strong>Structurele plaatsing:</strong> de boom plaatst knopen en complete subtrees op het HOR/VER-celgrid. Die gridposities blijven leidend.</p>
+<p><strong>Visuele meting:</strong> daarna meet een tweede bottom-up pass per subtree de nodevormen, labels, afstammelingen, caption en marge. Deze uitkomst bepaalt de zichtbare subtree-box. Daardoor kan <code>NP → HOND</code> smaller zijn dan VP.</p>
+<p><strong>Belangrijke grens:</strong> de gemeten pixelmaat verplaatst in rc.41 nog geen knopen naar andere gridcellen. Dit is dus recursieve boxmeting, nog geen algemene botsings- of herplaatsingssolver.</p>
+<p><strong>Assen:</strong> LEX gebruikt links de gemeten rootrand en rechts alleen actieve slots en Wissellanes. SYNT gebruikt één gezamenlijke structurele Syntax/Functional-grid-envelop; de volledige regelboxen tellen daarna mee voor het zichtvenster.</p>
+<p><strong>Portret:</strong> de complete horizontale compositie benut de breedte, maar kan klein blijven en verticale witruimte overlaten. Pan/zoom blijft beschikbaar; een gestapelde portretvariant is een afzonderlijke toekomstige layoutkeuze.</p>
+</div>
+<div class="help-lang-en">
+<h3>Layout rc.41: what is calculated recursively?</h3>
+<p><strong>Structural placement:</strong> the tree places nodes and complete subtrees on the HOR/VER cell grid. Those grid positions remain authoritative.</p>
+<p><strong>Visual measurement:</strong> a second bottom-up pass then measures each subtree from node shapes, labels, descendants, caption and padding. This result determines the visible subtree box, allowing <code>NP → HOND</code> to be narrower than VP.</p>
+<p><strong>Important boundary:</strong> in rc.41 the measured pixel size does not move nodes to other grid cells. This is recursive box measurement, not yet a general collision or repacking solver.</p>
+<p><strong>Axes:</strong> LEX uses the measured root edge on the left and only active slots and movement lanes on the right. SYNT uses one shared structural Syntax/Functional grid envelope; complete rule boxes are then included in the viewport.</p>
+<p><strong>Portrait:</strong> the complete horizontal composition uses the available width, but can remain small and leave vertical whitespace. Pan/zoom remains available; a stacked portrait variant is a separate future layout decision.</p>
 </div>
 </article>
 <article class="help-topic-panel" data-help-topic="west-axis">

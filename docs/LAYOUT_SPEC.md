@@ -18,17 +18,23 @@ Kleine unary boxen zijn daardoor inhoudsgestuurd compact; volledige LEX-inhoud
 en SYNT-regelboxen blijven in handheld MAX zichtbaar. Zie
 `RECURSIVE_LAYOUT_AND_APPLICATION_CONTRACT.md`.
 
+Deze pixelmeting voedt in rc.41 de structurele gridplaatsing nog niet terug.
+Zij verandert dus de zichtbare boxmaat, maar verplaatst geen knopen naar andere
+HOR/VER-cellen.
+
 LEX reserveert rechts alleen de breedste actieve slotvorm en de actieve
 Wissellanes. Syntax en Functional delen één SYNT-oostas op de rechterrand van
-hun gezamenlijke envelop; hierdoor blijft het viewport stabiel en benut ook
-de smallere Syntaxboom de beschikbare landschapbreedte.
+hun gezamenlijke structurele grid-envelop. De oostas volgt niet de gemeten
+rechterrand van iedere subtree. Hierdoor blijft het viewport stabiel en benut
+ook de smallere Syntaxboom de beschikbare landschapbreedte.
 
 LOG gebruikt vaste major/minor-slots. Een extra minor maakt de LOG-as één
 vaste stap langer en vergroot uitsluitend de relevante majorafstand. De
 volledige LOG-volgorde levert neutrale LEX-doelrijen, maar de projectielijn
 ernaartoe mag nooit orthogonaal worden: iedere bron projecteert eerst exact
-horizontaal naar LEX. Pas langs de LEX-as volgt een Wissel naar de LOG-doelrij;
-topic/V2-Wissels volgen daarna. Een minor verlaagt geen host-subboom.
+horizontaal naar LEX. LOG-basis en een eventuele topic/V2-regel worden vóór
+render tot één einddoel samengevoegd; per bronwoord volgt hoogstens één
+zichtbare LEX-Wissel. Een minor verlaagt geen host-subboom.
 
 Mobiele MAX gebruikt de stabiele Syntax/Functional-unie van het asgebied als
 focus, ook bij een geforceerde Desktop-interface op een telefoon. Het zichtbare

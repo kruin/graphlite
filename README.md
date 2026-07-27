@@ -7,6 +7,10 @@ the abandoned alternate version line.
 
 Dutch documentation: [`LEESMIJ.md`](LEESMIJ.md).
 
+> **Validation status:** rc.41 is a release candidate awaiting manual visual
+> approval. Automated checks verify geometry and feature invariants; they do
+> not replace a human judgement about readability and explanatory clarity.
+
 ## OGN Base, pre-config and applications
 
 The viewer now starts in **OGN Base**. This profile contains the ordinary
@@ -36,8 +40,30 @@ The central layout policy reserves the corresponding space. Handheld MAX
 includes the complete LEX content and the complete Syntax and Functional rule
 boxes in portrait, landscape and forced desktop. LEX reserves only its active
 slots and movement lanes, while Syntax and Functional share one stable east
-axis over their combined envelope. See
+axis over their combined structural grid envelope. See
 `RECURSIVE_LAYOUT_AND_APPLICATION_CONTRACT.md`.
+
+### What is recursive now—and what is not
+
+| Stage | rc.41 behaviour |
+|---|---|
+| Structure and config | Decide which nodes, axes, majors, minors and application contributions exist. |
+| Grid placement | Places structural nodes and subtrees on the HOR/VER cell grid. This is not yet text-aware pixel packing. |
+| Visual subtree measurement | Measures node shapes, labels, descendant bounds, caption and central padding bottom-up. Only the visible subtree rectangle uses this result. |
+| West/LEX placement | Starts from the measured left edge of the active root subtree, then reserves the active LEX slots and movement lanes plus a small clearance. |
+| East/SYNT placement | Uses one shared **structural grid envelope** for Syntax and Functional, followed by the complete rule boxes. It is not derived from the measured right edge of every subtree. |
+| Viewport fit | Keeps complete LEX content, the central structure, complete rule boxes and LOG inside a stable Syntax/Functional frame. |
+| Rendering | Draws the resolved result; it does not add linguistic content or choose new positions. |
+
+This distinction matters. rc.41 has recursive **box measurement**, but it is
+not yet a general collision solver that repositions every node when a label
+becomes wider. In portrait, the complete left-to-right composition uses the
+available width; because that composition is intrinsically wide, text can
+remain smaller and vertical whitespace can remain. Pan/zoom is available. A
+stacked portrait composition would be a separate future layout decision.
+
+For manual approval, use
+[`RC41_RECURSIVE_LAYOUT_TEST.md`](RC41_RECURSIVE_LAYOUT_TEST.md).
 
 ## Lexical usage profiles and user disambiguation
 
@@ -103,6 +129,14 @@ directory named `OpenGraph_Lite_Viewer_v2.0.0-rc.41` therefore produces the
 sibling file `OpenGraph_Lite_Viewer_v2.0.0-rc.41_full_source.zip`. An existing
 ZIP with that exact name is replaced safely; the script never invents a
 `(1)` suffix.
+
+Files matching `*_full_source*.zip` are generated release artifacts, not
+project source. This includes a browser download such as
+`OpenGraph_Lite_Viewer_v2.0.0-rc.41_full_source (1).zip`. Such copies are
+ignored by the manifest and publication checks, are not staged for GitHub
+Pages, and are excluded when a new full-source ZIP is built. They may therefore
+remain locally without blocking publication, although deleting old copies
+keeps the project folder clearer.
 
 GitHub Pages:
 

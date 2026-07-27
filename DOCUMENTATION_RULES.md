@@ -33,6 +33,41 @@ Gebruik nooit een gecombineerde aanduiding voor LOG en Functional.
 ## Actuele toestand
 
 Gewone documentatie beschrijft de huidige werking. Historische notities mogen in release- of archiefbestanden blijven staan, maar zijn niet leidend.
+
+## Verduidelijkingsregel
+
+Scheid bij iedere technische beschrijving vier zaken:
+
+1. **Geïmplementeerd gedrag:** wat de huidige code werkelijk berekent of toont.
+2. **Automatische garantie:** welke uitkomst door een controle wordt afgedwongen.
+3. **Handmatig oordeel:** wat een tester nog visueel of inhoudelijk moet beoordelen.
+4. **Vervolgvoorstel:** wat nog niet is geïmplementeerd en dus geen belofte over de
+   huidige versie is.
+
+Noem bij layout steeds de volledige keten:
+
+```text
+structurele gridplaatsing
+→ recursieve visuele subtree-meting
+→ plaatsing van assen en viewport
+→ rendering
+```
+
+Schrijf niet alleen `recursieve layout` wanneer uitsluitend de visuele
+subtree-boxen recursief worden gemeten. Vermeld dan expliciet dat de gemeten
+pixelmaat de knopen nog niet naar andere gridcellen verplaatst en dus geen
+algemene collision- of repacking-solver vormt.
+
+Leg bij iedere maat of envelop uit:
+
+- welke onderdelen erin meetellen;
+- welk layoutonderdeel ermee wordt bestuurd;
+- wat er juist niet door wordt verplaatst of gegarandeerd.
+
+Een release candidate geldt pas als handmatig akkoord wanneer de bijbehorende
+controlelijst is ingevuld. Een geslaagde automatische controle vervangt dat
+visuele akkoord niet.
+
 ## Bovenbalkterminologie
 
 - Schrijf `Projectie`, `Bron` en `Assen`; noem de oude zwevende `Projecties-box` niet als actieve UI.
