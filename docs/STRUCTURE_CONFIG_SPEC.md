@@ -1,4 +1,4 @@
-# Structure-config-specificatie · v2.0.0-rc.41
+# Structure-config-specificatie · v2.0.0-rc.42
 
 ## LOG-slotconfig
 

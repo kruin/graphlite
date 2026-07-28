@@ -1,10 +1,21 @@
 # HANDOVER_FOR_COLLABORATORS
 
-Overdracht voor OpenGraph Lite Viewer v2.0.0-rc.41.
+Overdracht voor OpenGraph Lite Viewer v2.0.0-rc.42.
 
-Releasebesluit: de gebruiker heeft rc.41 op 28 juli 2026 handmatig
-goedgekeurd. Behandel de beschreven technische grenzen als onderdeel van deze
-goedgekeurde versie.
+Releasebesluit: rc.42 wacht op handmatige goedkeuring. De formeel goedgekeurde
+rc.41-bron blijft ongewijzigd.
+
+De reserveringen Vraagzin, Nadruk en Onaffe zin zijn uitsluitend
+Config-voorraad. Voeg ze niet toe aan `FEATURE_DEFINITIONS`, state, opslag,
+export of rendering voordat hun eigen voorconfig, contract en tests zijn
+vastgelegd.
+
+LEESMIJ-carousels gebruiken `state.readmeCarousels` uitsluitend als lokale
+Config-overschrijving. Houd de ingebouwde introcarousel in de HTML als
+bronstandaard. Voeg geen losse carousel-state toe aan OPN-documentdata en laat
+onveilige beeldschema's niet door de bronfilter. Houd de onderschriftvelden
+compact en laat graph-sneltoetsen nooit reageren binnen Config/LEESMIJ of
+vanuit een actief invoerveld.
 
 ## Bronbasis
 

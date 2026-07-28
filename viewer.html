@@ -1,7 +1,7 @@
 <!doctype html>
 
-<!-- OPENGRAPH_ROOT_VIEWER_INDEX_v2.0.0-rc.41: this root index is the app, not docs. -->
-<html data-opengraph-app="viewer" data-version="v2.0.0-rc.41" lang="en">
+<!-- OPENGRAPH_ROOT_VIEWER_INDEX_v2.0.0-rc.42: this root index is the app, not docs. -->
+<html data-opengraph-app="viewer" data-version="v2.0.0-rc.42" lang="en">
 <head>
 <meta charset="utf-8"/>
 <meta content="no-store, no-cache, must-revalidate, max-age=0" http-equiv="Cache-Control"/>
@@ -10,10 +10,10 @@
 <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport"/>
 <meta content="#0f172a" name="theme-color"/>
 <meta content="OpenGraph Lite Viewer: vrije JAN-bronknopen, edits, LEX-plaatsingsregels en projecties." name="description"/>
-<title>OpenGraph Lite Viewer v2.0.0-rc.41</title>
+<title>OpenGraph Lite Viewer v2.0.0-rc.42</title>
 <script>
     (function() {
-      var VERSION = 'v2.0.0-rc.41';
+      var VERSION = 'v2.0.0-rc.42';
       window.__OPENGRAPH_EXPECTED_VERSION__ = VERSION;
       function runCacheCleanupOnce() {
         var flag = 'opengraph-cache-cleaned-' + VERSION;
@@ -52,13 +52,13 @@
 <link href="icons/icon-192.svg" rel="icon" type="image/svg+xml"/>
 <!-- v4552: manifest disabled in local/dev build to avoid PWA/service-worker confusion. -->
 <!-- <link rel="manifest" href="manifest.webmanifest"> -->
-<link href="styles.css?v2.0.0-rc.41" rel="stylesheet"/>
+<link href="styles.css?v2.0.0-rc.42" rel="stylesheet"/>
 </head>
 <body class="main-screen-active">
 <header class="app-header">
 <div>
 <div class="eyebrow">OpenGraph · JaN · Open Notation</div>
-<h1>OpenGraph Lite Viewer <span class="version-tag">v2.0.0-rc.41</span></h1>
+<h1>OpenGraph Lite Viewer <span class="version-tag">v2.0.0-rc.42</span></h1>
 <p class="header-subtitle">Top menu with Sentence, Syntax / Functional, Interface, Projections, LOG order, Language, README and Config.</p>
 </div>
 <button class="ghost hidden" id="installButton" type="button">Install</button>
@@ -186,7 +186,7 @@
 <li><button class="help-topic-button" data-help-topic-button="grid-rule" type="button"><span class="help-lang-nl">Gridregel</span><span class="help-lang-en">Grid rule</span></button></li>
 <li><button class="help-topic-button" data-help-topic-button="projection-mechanism" type="button"><span class="help-lang-nl">Projectiemechanisme</span><span class="help-lang-en">Projection mechanism</span></button></li>
 <li><button class="help-topic-button" data-help-topic-button="sequential-drawing" type="button"><span class="help-lang-nl">Volgordelijk schrijven</span><span class="help-lang-en">Sequential writing</span></button></li>
-<li><button class="help-topic-button" data-help-topic-button="recursive-layout" type="button"><span class="help-lang-nl">Layout rc.41</span><span class="help-lang-en">Layout rc.41</span></button></li>
+<li><button class="help-topic-button" data-help-topic-button="recursive-layout" type="button"><span class="help-lang-nl">Layout rc.42</span><span class="help-lang-en">Layout rc.42</span></button></li>
 <li><button class="help-topic-button" data-help-topic-button="west-axis" type="button"><span class="help-lang-nl">West-as</span><span class="help-lang-en">West axis</span></button></li>
 <li><button class="help-topic-button" data-help-topic-button="south-axis" type="button"><span class="help-lang-nl">Zuid-as</span><span class="help-lang-en">South axis</span></button></li>
 </ul>
@@ -335,18 +335,18 @@
 </article>
 <article class="help-topic-panel" data-help-topic="recursive-layout">
 <div class="help-lang-nl">
-<h3>Layout rc.41: wat wordt recursief berekend?</h3>
+<h3>Layout rc.42: wat wordt recursief berekend?</h3>
 <p><strong>Structurele plaatsing:</strong> de boom plaatst knopen en complete subtrees op het HOR/VER-celgrid. Die gridposities blijven leidend.</p>
 <p><strong>Visuele meting:</strong> daarna meet een tweede bottom-up pass per subtree de nodevormen, labels, afstammelingen, caption en marge. Deze uitkomst bepaalt de zichtbare subtree-box. Daardoor kan <code>NP → HOND</code> smaller zijn dan VP.</p>
-<p><strong>Belangrijke grens:</strong> de gemeten pixelmaat verplaatst in rc.41 nog geen knopen naar andere gridcellen. Dit is dus recursieve boxmeting, nog geen algemene botsings- of herplaatsingssolver.</p>
+<p><strong>Belangrijke grens:</strong> de gemeten pixelmaat verplaatst in rc.42 nog geen knopen naar andere gridcellen. Dit is dus recursieve boxmeting, nog geen algemene botsings- of herplaatsingssolver.</p>
 <p><strong>Assen:</strong> LEX gebruikt links de gemeten rootrand en rechts alleen actieve slots en Wissellanes. SYNT gebruikt één gezamenlijke structurele Syntax/Functional-grid-envelop; de volledige regelboxen tellen daarna mee voor het zichtvenster.</p>
 <p><strong>Portret:</strong> de complete horizontale compositie benut de breedte, maar kan klein blijven en verticale witruimte overlaten. Pan/zoom blijft beschikbaar; een gestapelde portretvariant is een afzonderlijke toekomstige layoutkeuze.</p>
 </div>
 <div class="help-lang-en">
-<h3>Layout rc.41: what is calculated recursively?</h3>
+<h3>Layout rc.42: what is calculated recursively?</h3>
 <p><strong>Structural placement:</strong> the tree places nodes and complete subtrees on the HOR/VER cell grid. Those grid positions remain authoritative.</p>
 <p><strong>Visual measurement:</strong> a second bottom-up pass then measures each subtree from node shapes, labels, descendants, caption and padding. This result determines the visible subtree box, allowing <code>NP → HOND</code> to be narrower than VP.</p>
-<p><strong>Important boundary:</strong> in rc.41 the measured pixel size does not move nodes to other grid cells. This is recursive box measurement, not yet a general collision or repacking solver.</p>
+<p><strong>Important boundary:</strong> in rc.42 the measured pixel size does not move nodes to other grid cells. This is recursive box measurement, not yet a general collision or repacking solver.</p>
 <p><strong>Axes:</strong> LEX uses the measured root edge on the left and only active slots and movement lanes on the right. SYNT uses one shared structural Syntax/Functional grid envelope; complete rule boxes are then included in the viewport.</p>
 <p><strong>Portrait:</strong> the complete horizontal composition uses the available width, but can remain small and leave vertical whitespace. Pan/zoom remains available; a stacked portrait variant is a separate future layout decision.</p>
 </div>
@@ -490,17 +490,21 @@
 <article class="help-topic-panel" data-help-topic="carousel">
 <div class="help-lang-nl">
 <h3>Carrousel</h3>
-<p>De intro toont voorlopig alleen het eerste beeld met traditionele bomen. Zodra latere specificaties eigen beelden krijgen, wordt de carrouselbediening automatisch actief.</p>
+<p>Ieder LEESMIJ-item heeft een eigen carouselruimte. Open <strong>Config → LEESMIJ-carousels</strong> om per item slides toe te voegen, te verwijderen of te herstellen. Een slide bevat een lokaal beeldpad of https-URL, een beeldvorm, alt-tekst NL/EN en een onderschrift NL/EN.</p>
+<p>De voorvertoning en LEESMIJ veranderen direct. <strong>Ja · bewaar config</strong> bewaart de eigen carousels lokaal; <strong>Herstel dit item</strong> brengt de ingebouwde broncarousel of de lege gereserveerde ruimte terug.</p>
+<p>Onderschriften zijn compacte tekstvelden. Graph-sneltoetsen staan uit zolang Config of LEESMIJ open is, zodat letters in beeldtekst geen graphactie starten.</p>
 </div>
 <div class="help-lang-en">
 <h3>Carousel</h3>
-<p>For now, the introduction shows only the first image with traditional trees. Carousel controls activate automatically when later specifications receive their own images.</p>
+<p>Every README topic has its own carousel area. Open <strong>Config → README carousels</strong> to add, remove, or reset slides per topic. A slide contains a local image path or https URL, an image shape, NL/EN alt text, and NL/EN captions.</p>
+<p>The preview and README update immediately. <strong>Yes · save config</strong> stores custom carousels locally; <strong>Reset this topic</strong> restores the built-in source carousel or the empty reserved area.</p>
+<p>Captions use compact text fields. Graph shortcuts stay inactive while Config or README is open, so letters in image text cannot trigger a graph action.</p>
 </div>
 <div aria-label="Carrouselbediening" class="help-carousel-reserved help-carousel-large">
 <div class="help-carousel-frame">
 <strong>1</strong>
-<span class="help-lang-nl">Nu zichtbaar: traditionele bomen. Latere specificatiebeelden volgen.</span>
-<span class="help-lang-en">Now visible: traditional trees. Later specification images will follow.</span>
+<span class="help-lang-nl">Bewerk de carousel van ieder LEESMIJ-item via Config.</span>
+<span class="help-lang-en">Edit every README topic carousel through Config.</span>
 </div>
 </div>
 </article>
@@ -521,17 +525,17 @@
 </section>
 <section aria-label="Hoofdbediening" class="toolbar">
 <div aria-label="Zin-input" class="input-sentence-tools">
-<a class="button-link" href="examples-input.html?v2.0.0-rc.41" title="Open de HTML-inputfile met voorbeeldzinnen, subject vet en object cursief">HTML-input</a>
-<a class="button-link" data-feature="adverbs" hidden="" href="examples-adverbs.html?v2.0.0-rc.41" title="Voorbeeldset met één bijwoord per zin en default-host per categorie">Bijwoordvoorbeelden</a>
-<a class="button-link" data-feature="adverbs" hidden="" href="docs/LEX_ADVERB_PLACEMENT_RULES_CHECKED.md?v2.0.0-rc.41" title="Bijwoordklasse en scope als input voor LOG-minors; default en gemarkeerd">Bijwoordregels</a>
-<a class="button-link" data-feature="adverbs" hidden="" href="examples-adverb-rules-v4552.html?v2.0.0-rc.41" title="Controle per bijwoord: uitzonderingen en eigen regels">Bijwoordcheck</a>
-<a class="button-link" data-feature="adverbs" hidden="" href="examples-adverb-rules-v4552.html?v2.0.0-rc.41" title="Controle per bijwoord: uitzonderingen en eigen regels">Bijwoordcheck</a>
-<a class="button-link" href="lexicon-config.html?v2.0.0-rc.41" title="Leesbare lexicon-config voor voorbeeldzinnen">Lexicon</a>
-<a class="button-link" href="lexicon-editor.html?v2.0.0-rc.41" title="Lexicon én korte voorbeelduitingen beheren; exporteert lexicon-config.html en examples-input.html">Lexicon+uitingen-editor</a>
-<a class="button-link" href="structure-editor.html?v2.0.0-rc.41" title="Bewerk syntax-, functional- en LOG-slotconfig">Structure-editor</a>
-<a class="button-link" href="docs/docs-home.html?v2.0.0-rc.41" title="Projectcontext, layoutspec en release notes">Docs</a>
-<a class="button-link" href="lex-movement-rules.html?v2.0.0-rc.41" title="Simpele uitleg van de LEX-Wissels per zinstype">Plaatsingsregels</a>
-<a class="button-link" href="reset-cache.html?v2.0.0-rc.41" title="Verwijder browsercache/service worker en open de viewer opnieuw">Reset cache</a>
+<a class="button-link" href="examples-input.html?v2.0.0-rc.42" title="Open de HTML-inputfile met voorbeeldzinnen, subject vet en object cursief">HTML-input</a>
+<a class="button-link" data-feature="adverbs" hidden="" href="examples-adverbs.html?v2.0.0-rc.42" title="Voorbeeldset met één bijwoord per zin en default-host per categorie">Bijwoordvoorbeelden</a>
+<a class="button-link" data-feature="adverbs" hidden="" href="docs/LEX_ADVERB_PLACEMENT_RULES_CHECKED.md?v2.0.0-rc.42" title="Bijwoordklasse en scope als input voor LOG-minors; default en gemarkeerd">Bijwoordregels</a>
+<a class="button-link" data-feature="adverbs" hidden="" href="examples-adverb-rules-v4552.html?v2.0.0-rc.42" title="Controle per bijwoord: uitzonderingen en eigen regels">Bijwoordcheck</a>
+<a class="button-link" data-feature="adverbs" hidden="" href="examples-adverb-rules-v4552.html?v2.0.0-rc.42" title="Controle per bijwoord: uitzonderingen en eigen regels">Bijwoordcheck</a>
+<a class="button-link" href="lexicon-config.html?v2.0.0-rc.42" title="Leesbare lexicon-config voor voorbeeldzinnen">Lexicon</a>
+<a class="button-link" href="lexicon-editor.html?v2.0.0-rc.42" title="Lexicon én korte voorbeelduitingen beheren; exporteert lexicon-config.html en examples-input.html">Lexicon+uitingen-editor</a>
+<a class="button-link" href="structure-editor.html?v2.0.0-rc.42" title="Bewerk syntax-, functional- en LOG-slotconfig">Structure-editor</a>
+<a class="button-link" href="docs/docs-home.html?v2.0.0-rc.42" title="Projectcontext, layoutspec en release notes">Docs</a>
+<a class="button-link" href="lex-movement-rules.html?v2.0.0-rc.42" title="Simpele uitleg van de LEX-Wissels per zinstype">Plaatsingsregels</a>
+<a class="button-link" href="reset-cache.html?v2.0.0-rc.42" title="Verwijder browsercache/service worker en open de viewer opnieuw">Reset cache</a>
 </div>
 <div class="button-row compact-actions">
 <button id="resetExampleButton" title="Herlaad het gekozen voorbeeld" type="button">Reset voorbeeld</button>
@@ -671,11 +675,11 @@
 <h2>Voorbeeldzinnen</h2>
 <p class="inline-help">Voeg voorbeeldzinnen toe via de editor. Start lokaal met <code>start_local_viewer.bat</code>; dan schrijft <strong>Opslaan</strong> direct naar <code>examples-input.html</code>. Daarna kun je hier de lijst herladen.</p>
 <div class="button-row">
-<a class="button-link primary" href="examples-editor.html?v2.0.0-rc.41" title="Voorbeeldzinnen toevoegen en opslaan">Voorbeeldzinnen-editor</a>
-<a class="button-link" href="examples-input.html?v2.0.0-rc.41" title="Leesbare HTML-input met voorbeeldzinnen">HTML-input</a>
-<a class="button-link" data-feature="adverbs" hidden="" href="examples-adverbs.html?v2.0.0-rc.41" title="Bijwoordvoorbeelden met default-host en gemarkeerde host">Bijwoordvoorbeelden</a>
-<a class="button-link" data-feature="adverbs" hidden="" href="docs/LEX_ADVERB_PLACEMENT_RULES_CHECKED.md?v2.0.0-rc.41" title="Bijwoordklasse en scope als input voor LOG-minors; default en gemarkeerd">Bijwoordregels</a>
-<a class="button-link" data-feature="adverbs" hidden="" href="examples-adverb-rules-v4552.html?v2.0.0-rc.41" title="Controle per bijwoord: uitzonderingen en eigen regels">Bijwoordcheck</a>
+<a class="button-link primary" href="examples-editor.html?v2.0.0-rc.42" title="Voorbeeldzinnen toevoegen en opslaan">Voorbeeldzinnen-editor</a>
+<a class="button-link" href="examples-input.html?v2.0.0-rc.42" title="Leesbare HTML-input met voorbeeldzinnen">HTML-input</a>
+<a class="button-link" data-feature="adverbs" hidden="" href="examples-adverbs.html?v2.0.0-rc.42" title="Bijwoordvoorbeelden met default-host en gemarkeerde host">Bijwoordvoorbeelden</a>
+<a class="button-link" data-feature="adverbs" hidden="" href="docs/LEX_ADVERB_PLACEMENT_RULES_CHECKED.md?v2.0.0-rc.42" title="Bijwoordklasse en scope als input voor LOG-minors; default en gemarkeerd">Bijwoordregels</a>
+<a class="button-link" data-feature="adverbs" hidden="" href="examples-adverb-rules-v4552.html?v2.0.0-rc.42" title="Controle per bijwoord: uitzonderingen en eigen regels">Bijwoordcheck</a>
 <button id="reloadExamplesButton" title="Herlees examples-input.html zonder de hele pagina opnieuw te openen" type="button">Herlaad zinnen</button>
 </div>
 </section>
@@ -775,15 +779,15 @@
 <div aria-label="Documentatie" class="mobile-sheet-section">
 <h3>Documentatie</h3>
 <div class="mobile-link-grid">
-<a href="docs/docs-home.html?v2.0.0-rc.41">Docs</a>
-<a href="lex-movement-rules.html?v2.0.0-rc.41">Plaatsingsregels</a>
-<a href="reset-cache.html?v2.0.0-rc.41">Reset cache</a>
+<a href="docs/docs-home.html?v2.0.0-rc.42">Docs</a>
+<a href="lex-movement-rules.html?v2.0.0-rc.42">Plaatsingsregels</a>
+<a href="reset-cache.html?v2.0.0-rc.42">Reset cache</a>
 </div>
 </div>
 <p class="mobile-sheet-note">Sleep met één vinger om te pannen. Knijp met twee vingers om te zoomen. FIT past het zichtvenster aan de huidige boom en named projections aan; de boom zelf verandert niet.</p>
 </section>
 <script>
-    window.__opengraphBoot = { version: 'v2.0.0-rc.41', loaded: false, marker: 'viewer-index' };
+    window.__opengraphBoot = { version: 'v2.0.0-rc.42', loaded: false, marker: 'viewer-index' };
     function ogStatus(message) {
       var target = document.getElementById('actionFeedback') || document.body;
       if (target) target.textContent = message;
@@ -796,7 +800,7 @@
     });
     setTimeout(function() {
       if (!window.__opengraphBoot || !window.__opengraphBoot.loaded) {
-        ogStatus('Viewer start niet volledig. Gebruik Reset cache of open http://127.0.0.1:8088/reset-cache.html?v2.0.0-rc.41.');
+        ogStatus('Viewer start niet volledig. Gebruik Reset cache of open http://127.0.0.1:8088/reset-cache.html?v2.0.0-rc.42.');
       }
     }, 2500);
   </script>
@@ -806,11 +810,11 @@
       var isLocal = window.location.protocol === 'file:' || !host || host === 'localhost' || host === '127.0.0.1';
       if (!isLocal) return;
       var script = document.createElement('script');
-      script.src = 'local-mobile-test.js?v2.0.0-rc.41';
+      script.src = 'local-mobile-test.js?v2.0.0-rc.42';
       script.defer = true;
       document.head.appendChild(script);
     })();
   </script>
-<script defer="" src="viewer.js?v2.0.0-rc.41&amp;cb=4"></script>
+<script defer="" src="viewer.js?v2.0.0-rc.42&amp;cb=4"></script>
 </body>
 </html>

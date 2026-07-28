@@ -1,6 +1,6 @@
 # LAYOUT_RULES
 
-Harde layoutregels voor OpenGraph Lite Viewer `v2.0.0-rc.41`.
+Harde layoutregels voor OpenGraph Lite Viewer `v2.0.0-rc.42`.
 
 ## Vaste projectieposities
 
@@ -25,7 +25,7 @@ alleen de actieve Wissellanes, met een vaste bovengrens van vier lanes.
 - Daarna meet iedere subtree recursief eigen node, labels en child-boxen.
 - Caption en centrale binnenmarge horen bij `requiredWidth/requiredHeight`.
 - Een zichtbare subtree-rect gebruikt uitsluitend die gemeten geometrie.
-- De gemeten rectmaat herplaatst in rc.41 geen knopen of naburige subtrees.
+- De gemeten rectmaat herplaatst in rc.42 geen knopen of naburige subtrees.
 - Toepassingen declareren een inhoudssoort/layout-demand, nooit x/y.
 - Alle meetmaten komen uit één layout-policy; zinspecifieke pixelpatches zijn
   verboden.

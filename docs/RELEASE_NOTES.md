@@ -1,4 +1,26 @@
 
+## v2.0.0-rc.42 — Gereserveerde toepassingen
+
+- Status: nieuwe release candidate voor handmatige controle; de goedgekeurde
+  rc.41-bron blijft ongewijzigd.
+- Config → Toepassingen reserveert zichtbaar maar niet-activeerbaar:
+  **Vraagzin**, **Nadruk** (`juist díe trui`) en **Onaffe zin**.
+- De reserveringen staan buiten de actieve featurecatalogus en voegen geen
+  state, voorbeelden, inserties, documentatie, opslag, exportvelden,
+  layout-demand of rendering toe.
+- Statische en runtimecontroles bewaken dat de drie inputs uitgeschakeld en
+  buiten OPN `metadata.extras` blijven.
+- Config bevat een bewerkbare carousel per LEESMIJ-item, met add/remove,
+  vorige/volgende, beeldpad, breed/smal, alt-tekst en onderschrift in NL/EN.
+- Carouselwijzigingen krijgen een live voorvertoning, verschijnen direct in
+  LEESMIJ en worden via de bestaande Config-save lokaal bewaard.
+- Herstel verwijdert de lokale overschrijving; onveilige beeldschema's worden
+  niet gerenderd.
+- Onderschriftvelden zijn compact en graph-sneltoetsen blijven buiten
+  Config/LEESMIJ en invoervelden.
+- Mobiele Main-bediening en de lokale viewporttestknop dekken Config/LEESMIJ
+  niet meer af.
+
 ## v2.0.0-rc.41 — Recursief gemeten boxen en volledige projecties
 
 - Status: op 28 juli 2026 handmatig door de gebruiker goedgekeurd. De

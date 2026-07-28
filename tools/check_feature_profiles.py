@@ -35,6 +35,11 @@ for marker, label in [
     ("id: 'adverbs'", "feature-id Bijwoorden"),
     ("insertionAxes: Object.freeze(['lex', 'log'])", "Bijwoorden vereist LEX+LOG"),
     ("defaultEnabled: false", "Bijwoorden standaard uit"),
+    ("const RESERVED_APPLICATION_DEFINITIONS = Object.freeze([", "aparte reserveringscatalogus"),
+    ("id: 'question-sentence'", "reservering Vraagzin"),
+    ("id: 'emphasis'", "reservering Nadruk"),
+    ("id: 'incomplete-sentence'", "reservering Onaffe zin"),
+    ("example: 'juist díe trui'", "voorbeeld Nadruk"),
     ("features: { ...DEFAULT_FEATURES }", "featurestaat"),
     ("let activeConfigTab = 'preconfig';", "Voorconfig als starttab"),
     ("{ id: 'preconfig', nl: 'Voorconfig', en: 'Pre-config' }", "Config-voorconfigtab"),
@@ -42,11 +47,40 @@ for marker, label in [
     ('id="insertionAxis${axis.label}Input"', "dynamische insertiecheckboxes"),
     ("id=\"insertionLexLogPresetButton\"", "LEX+LOG-preset"),
     ("id=\"featureAdverbsInput\"", "Bijwoorden-checkbox"),
+    ('data-reserved-application="${application.id}" disabled', "uitgeschakelde toepassingreserveringen"),
+    ('id="reservedApplicationsHeading"', "kop gereserveerde toepassingen"),
+    ("Gereserveerd · nog niet actief", "zichtbare reserveringsstatus"),
     ("async function setInsertionAxes(", "centrale insertieschakelaar"),
     ("async function setFeatureEnabled(", "centrale featureschakelaar"),
     ("function resetAdverbFeatureState()", "feature-reset"),
 ]:
     require(JS, marker, label)
+
+feature_catalog = re.search(
+    r"const FEATURE_DEFINITIONS = Object\.freeze\(\{(.*?)\n  \}\);\n  // Gereserveerde toepassingen",
+    JS,
+    flags=re.S,
+)
+if not feature_catalog:
+    errors.append("actieve featurecatalogus kon niet afzonderlijk worden gelezen")
+else:
+    for reserved_id in ["question-sentence", "emphasis", "incomplete-sentence"]:
+        if reserved_id in feature_catalog.group(1):
+            errors.append(f"gereserveerde toepassing staat actief in FEATURE_DEFINITIONS: {reserved_id}")
+
+reserved_catalog = re.search(
+    r"const RESERVED_APPLICATION_DEFINITIONS = Object\.freeze\(\[(.*?)\n  \]\);\n  const DEFAULT_FEATURES",
+    JS,
+    flags=re.S,
+)
+if not reserved_catalog:
+    errors.append("reserveringscatalogus kon niet afzonderlijk worden gelezen")
+else:
+    if reserved_catalog.group(1).count("id: '") != 3:
+        errors.append("reserveringscatalogus bevat niet exact drie toepassingen")
+    for forbidden in ["defaultEnabled", "insertionAxes", "layoutDemand"]:
+        if forbidden in reserved_catalog.group(1):
+            errors.append(f"reserveringscatalogus activeert al featuregedrag: {forbidden}")
 
 # Every runtime entry point that can create adverb data has an explicit guard.
 for marker, label in [
@@ -123,4 +157,4 @@ if errors:
         print("-", error)
     raise SystemExit(1)
 
-print("FEATURE PROFILE CHECK: OK (Voorconfig per as; Bijwoorden vereist LEX + LOG)")
+print("FEATURE PROFILE CHECK: OK (Bijwoorden actief contract; 3 toepassingen uitsluitend gereserveerd)")

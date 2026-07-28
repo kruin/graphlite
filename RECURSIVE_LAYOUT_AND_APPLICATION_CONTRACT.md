@@ -1,8 +1,9 @@
 # Recursieve layout en toepassingscontract
 
-Normatief ontwerp voor OpenGraph Lite Viewer `v2.0.0-rc.41`. De gebruiker heeft
-deze releasekandidaat op 28 juli 2026 handmatig goedgekeurd. De hieronder
-beschreven technische grenzen blijven onderdeel van het contract.
+Normatief ontwerp voor OpenGraph Lite Viewer `v2.0.0-rc.42`. Deze
+releasekandidaat wacht op handmatige goedkeuring. De goedgekeurde rc.41-bron
+blijft ongewijzigd; de hieronder beschreven technische grenzen blijven
+onderdeel van het contract.
 
 ## Hoofdbesluit
 
@@ -56,7 +57,7 @@ Bladeren krijgen een minimale gridpositie. Een parent plaatst complete
 child-subtrees in vrije HOR/VER-corridors. De uitkomst is een structurele
 layout in cellen. Groei en render mogen deze posities niet later wijzigen.
 
-**Implementatiegrens in rc.41:** deze gridplaatsing krijgt de later gemeten
+**Implementatiegrens in rc.42:** deze gridplaatsing krijgt de later gemeten
 pixelbreedtes nog niet terug als invoer. Een langer label kan dus zijn
 subtree-rechthoek verbreden, maar laat niet automatisch naburige knopen naar
 een andere gridcel verhuizen.
@@ -86,7 +87,7 @@ De tekstmeting gebeurt vóór het tekenen van de betrokken SVG-elementen via een
 canvas-meetcontext. De renderer hoeft dus geen reeds getekende SVG te meten en
 opnieuw te tekenen.
 
-`requiredWidth/requiredHeight` bestuurt in rc.41 de zichtbare subtree-rect. Het
+`requiredWidth/requiredHeight` bestuurt in rc.42 de zichtbare subtree-rect. Het
 is nog geen algemene constraint- of collision-solver voor de hele graph.
 
 ### 5. Assen en toepassingsruimte oplossen
@@ -184,6 +185,11 @@ Een latere syntactische toepassing mag pas SYNT-inserties leveren wanneer
 `insertie.SYNT` actief is. Zij mag niet via een bijwoord-specifieke uitzondering
 de boom binnendringen.
 
+Vraagzin, Nadruk (`juist díe trui`) en Onaffe zin zijn in rc.42 uitsluitend
+gereserveerde namen. Ze leveren nog geen descriptor, vereisen nog geen
+voorconfig en mogen dus geen state, bijdrage, layout-demand, opslagveld,
+documentatiesectie of cleanup activeren.
+
 ## LOG-majors en -minors
 
 ### Majors
@@ -220,7 +226,7 @@ interval → prioriteit → toepassings-id → item-id
 Dubbele IDs, een onbekend interval of een minor zonder vereiste voorconfig zijn
 harde validatiefouten. De renderlaag lost zulke conflicten niet zelf op.
 
-## Wat rc.41 al uitvoert
+## Wat rc.42 al uitvoert
 
 - recursieve structurele plaatsing blijft leidend;
 - subtree-boxen worden recursief uit werkelijke node-, label- en

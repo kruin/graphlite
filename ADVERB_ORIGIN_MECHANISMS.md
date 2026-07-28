@@ -111,7 +111,7 @@ Onderzoeksbasis:
 - Fortuin (2004), imperatiefsubjecten en modale partikels.
 - Van der Wouden e.a., onderzoek naar combinaties en volgorde van Nederlandse modale partikels.
 
-## Implementatiestatus v2.0.0-rc.41
+## Implementatiestatus v2.0.0-rc.42
 
 - De twee mechanismen zijn in LEESMIJ en specs benoemd.
 - Voorbeeldmetadata kan `data-source-mechanism` en `data-source-components` bevatten.

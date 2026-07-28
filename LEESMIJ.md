@@ -1,4 +1,4 @@
-# OpenGraph Lite Viewer v2.0.0-rc.41
+# OpenGraph Lite Viewer v2.0.0-rc.42
 
 OpenGraph Lite Viewer is een demo/viewer voor JAN-, OPN- en
 OpenGraph-taalstructuren. Deze versie gebruikt de volledige v1.0.16-bronset als
@@ -6,10 +6,10 @@ functionele basis.
 
 Engelse documentatie: [`README.md`](README.md).
 
-> **Controlestatus:** rc.41 is op 28 juli 2026 handmatig door de gebruiker
-> goedgekeurd. De automatische controles bewaken geometrie en
-> feature-invarianten; het vastgelegde akkoord omvat het menselijke oordeel
-> over leesbaarheid en duidelijkheid.
+> **Controlestatus:** rc.42 is een releasekandidaat die nog handmatig visueel
+> moet worden goedgekeurd. De goedgekeurde rc.41-bron blijft ongewijzigd. De
+> automatische controles bewaken geometrie en feature-invarianten, maar
+> vervangen geen menselijk oordeel over leesbaarheid en duidelijkheid.
 
 ## OGN Basis, voorconfig en toepassingen
 
@@ -25,6 +25,25 @@ beschikbaar wanneer insertie op **LEX + LOG** actief is. Staat Bijwoorden uit,
 dan ontbreken de bijbehorende voorbeelden, LOG-minors, directe LEX-inserties,
 bediening, runtimegegevens, documentatielinks en exportvelden. Een OPN-export
 vermeldt dan `profile: "base"`, `extras: []` en de drie asschakelaars.
+
+Config toont daarnaast drie uitgeschakelde reserveringen voor latere
+toepassingen: **Vraagzin**, **Nadruk** (bijvoorbeeld `juist díe trui`) en
+**Onaffe zin**. Ze staan bewust buiten de actieve featurecatalogus en voegen
+daarom geen state, voorbeelden, inserties, documentatie, opslag, exportvelden
+of rendergedrag toe.
+
+## Bewerkbare LEESMIJ-carousels
+
+`Config → LEESMIJ-carousels` bevat één editor voor de eigen carousel van ieder
+LEESMIJ-item. Een slide bewaart een beeldpad of https-URL, breed of smal,
+alt-tekst NL/EN en onderschrift NL/EN. Toevoegen, verwijderen, vorige/volgende,
+live voorvertoning en herstel zijn beschikbaar. De bestaande Config-save
+bewaart alleen eigen overschrijvingen; `Herstel dit item` brengt de ingebouwde
+broncarousel of lege gereserveerde carouselruimte terug. Onveilige
+`javascript:`, `vbscript:`, `data:`- en `file:`-beeldbronnen worden niet
+gerenderd. Onderschriften gebruiken compacte tekstvelden; graph-sneltoetsen
+blijven uit zolang Config of LEESMIJ openstaat en wanneer een invoerveld focus
+heeft.
 
 ## Recursieve layout op inhoudsmaat
 
@@ -45,7 +64,7 @@ gezamenlijke structurele grid-envelop. Zie
 
 ### Wat is nu recursief—en wat nog niet?
 
-| Fase | Gedrag in rc.41 |
+| Fase | Gedrag in rc.42 |
 |---|---|
 | Structuur en config | Bepalen welke knopen, assen, majors, minors en toepassingsbijdragen bestaan. |
 | Gridplaatsing | Plaatst structurele knopen en subtrees op het HOR/VER-celgrid. Dit is nog geen tekstbewuste pixelpakking. |
@@ -55,7 +74,7 @@ gezamenlijke structurele grid-envelop. Zie
 | Viewport-fit | Houdt volledige LEX-inhoud, centrale structuur, volledige regelboxen en LOG binnen één stabiel Syntax/Functional-kader. |
 | Render | Tekent het opgeloste resultaat; voegt geen taalinhoud toe en kiest geen nieuwe posities. |
 
-Dat onderscheid is belangrijk. rc.41 heeft recursieve **boxmeting**, maar nog
+Dat onderscheid is belangrijk. rc.42 heeft recursieve **boxmeting**, maar nog
 geen algemene botsingssolver die bij een breder label alle knopen opnieuw
 plaatst. In portret gebruikt de volledige links-naar-rechtscompositie de
 beschikbare breedte. Omdat die compositie van nature breed is, kan tekst klein
@@ -144,14 +163,14 @@ maak-volledige-zip.bat
 ```
 
 De BAT leidt de ZIP-naam af uit de map waarin hij zelf staat. De map
-`OpenGraph_Lite_Viewer_v2.0.0-rc.41` maakt dus daarnaast automatisch
-`OpenGraph_Lite_Viewer_v2.0.0-rc.41_full_source.zip`. Een bestaande ZIP met
+`OpenGraph_Lite_Viewer_v2.0.0-rc.42` maakt dus daarnaast automatisch
+`OpenGraph_Lite_Viewer_v2.0.0-rc.42_full_source.zip`. Een bestaande ZIP met
 precies die naam wordt veilig vervangen; het script verzint nooit zelf een
 achtervoegsel `(1)`.
 
 Bestanden met het patroon `*_full_source*.zip` zijn gegenereerde
 release-artefacten en geen projectbron. Daaronder valt ook een browserdownload
-als `OpenGraph_Lite_Viewer_v2.0.0-rc.41_full_source (1).zip`. Zulke kopieën
+als `OpenGraph_Lite_Viewer_v2.0.0-rc.42_full_source (1).zip`. Zulke kopieën
 worden genegeerd door de manifest- en publicatiecontrole, niet voor GitHub
 Pages gestaged en niet in een nieuwe volledige bronzip opgenomen. Ze mogen dus
 lokaal blijven staan zonder de publicatie te blokkeren; oude kopieën
@@ -160,13 +179,13 @@ verwijderen houdt de projectmap wel overzichtelijker.
 GitHub Pages:
 
 ```text
-https://kruin.github.io/graphlite/index.html?ogv=v2.0.0-rc.41
+https://kruin.github.io/graphlite/index.html?ogv=v2.0.0-rc.42
 ```
 
 Cache-reset:
 
 ```text
-https://kruin.github.io/graphlite/reset-cache.html?ogv=v2.0.0-rc.41
+https://kruin.github.io/graphlite/reset-cache.html?ogv=v2.0.0-rc.42
 ```
 
 ## Desktopweergave

@@ -29,6 +29,8 @@ python tools\check_config_tabs_and_menus.py
 if errorlevel 1 exit /b 1
 python tools\check_feature_profiles.py
 if errorlevel 1 exit /b 1
+python tools\check_readme_carousel_editor.py
+if errorlevel 1 exit /b 1
 python tools\check_desktop_max_view.py
 if errorlevel 1 exit /b 1
 python tools\check_social_and_linguistic_export.py

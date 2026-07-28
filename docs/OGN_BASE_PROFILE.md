@@ -28,6 +28,10 @@ Zolang geen toepassing is aangevinkt, blijft `OGN Basis` actief. Toepassingen
 gelden voor de hele viewer: bediening, voorbeelddata, rendering, Play,
 documentatie en export volgen steeds dezelfde profielkeuze.
 
+De uitgeschakelde Config-reserveringen Vraagzin, Nadruk en Onaffe zin tellen
+niet als toepassing. Ze kunnen niet worden aangevinkt en veranderen niets aan
+OGN Basis, ook niet wanneer één of meer insertie-assen aanstaan.
+
 ## OPN
 
 Een export vanuit dit profiel bevat:

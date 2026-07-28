@@ -1,5 +1,5 @@
 
-## Actueel contract · v2.0.0-rc.41
+## Actueel contract · v2.0.0-rc.42
 
 De discrete HOR/VER-gridplaatsing blijft structureel leidend. Voor het tekenen
 voert de viewer daarnaast één bottom-up meetpass uit:
@@ -18,7 +18,7 @@ Kleine unary boxen zijn daardoor inhoudsgestuurd compact; volledige LEX-inhoud
 en SYNT-regelboxen blijven in handheld MAX zichtbaar. Zie
 `RECURSIVE_LAYOUT_AND_APPLICATION_CONTRACT.md`.
 
-Deze pixelmeting voedt in rc.41 de structurele gridplaatsing nog niet terug.
+Deze pixelmeting voedt in rc.42 de structurele gridplaatsing nog niet terug.
 Zij verandert dus de zichtbare boxmaat, maar verplaatst geen knopen naar andere
 HOR/VER-cellen.
 

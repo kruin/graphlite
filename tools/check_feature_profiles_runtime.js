@@ -5,6 +5,7 @@ const { chromium } = require('playwright');
 
 const baseUrl = process.argv[2] || 'http://127.0.0.1:8088/';
 const appUrl = new URL('index.html?runtime-profile-check=1', baseUrl).toString();
+const reservedApplicationIds = ['question-sentence', 'emphasis', 'incomplete-sentence'];
 
 async function readDownloadJson(page, selector) {
   const pending = page.waitForEvent('download');
@@ -51,6 +52,12 @@ async function waitForViewer(page) {
       adverbOptionCount: document.querySelectorAll('#mainAdverbOptions [role="option"]').length,
       visibleFeatureNodes: [...document.querySelectorAll('[data-feature="adverbs"]')]
         .filter(node => !node.hidden && getComputedStyle(node).display !== 'none').length,
+      reservedApplications: [...document.querySelectorAll('[data-reserved-application]')].map(input => ({
+        id: input.dataset.reservedApplication,
+        disabled: input.disabled,
+        checked: input.checked,
+        text: input.closest('label')?.textContent || ''
+      })),
       mainText: document.body.innerText
     }));
     assert.equal(baseState.profileOff, true);
@@ -61,6 +68,12 @@ async function waitForViewer(page) {
     assert.equal(baseState.sentenceCount, 12);
     assert.equal(baseState.adverbOptionCount, 0);
     assert.equal(baseState.visibleFeatureNodes, 0);
+    assert.deepEqual(baseState.reservedApplications.map(item => item.id), reservedApplicationIds);
+    assert.ok(baseState.reservedApplications.every(item => item.disabled && !item.checked));
+    assert.match(baseState.reservedApplications[0].text, /Vraagzin/);
+    assert.match(baseState.reservedApplications[1].text, /Nadruk/);
+    assert.match(baseState.reservedApplications[1].text, /juist díe trui/);
+    assert.match(baseState.reservedApplications[2].text, /Onaffe zin/);
     assert.doesNotMatch(baseState.mainText, /\b(?:adverbs?|bijwoorden?|minors?)\b/i);
 
     const baseOpn = await readDownloadJson(page, '#downloadOpnButton');
@@ -73,8 +86,13 @@ async function waitForViewer(page) {
     }
     assert.equal('insertion_interval' in baseOpn.data.projections.log, false);
     assert.equal(baseOpn.data.projections.log.sequence.some(item => item.kind === 'minor'), false);
+    for (const reservedId of reservedApplicationIds) {
+      assert.doesNotMatch(JSON.stringify(baseOpn), new RegExp(reservedId));
+    }
 
     await page.click('#openConfigButton');
+    assert.equal(await page.locator('[data-reserved-application]').count(), 3);
+    assert.equal(await page.locator('[data-reserved-application]:disabled').count(), 3);
     await page.click('#insertionAxisLEXInput');
     assert.equal(await page.locator('#featureAdverbsInput').isDisabled(), true);
     await page.click('#insertionAxisSYNTInput');
@@ -83,6 +101,7 @@ async function waitForViewer(page) {
     await page.click('#insertionAxisSYNTInput');
     await page.click('#insertionAxisLOGInput');
     assert.equal(await page.locator('#featureAdverbsInput').isDisabled(), false);
+    assert.equal(await page.locator('[data-reserved-application]:disabled').count(), 3);
     await page.click('[data-config-tab-button="features"]');
     await page.click('#featureAdverbsInput');
     await page.waitForSelector('body.feature-adverbs-on');
@@ -98,6 +117,8 @@ async function waitForViewer(page) {
     assert.equal(enabledState.menuHidden, false);
     assert.equal(enabledState.sentenceCount, 14);
     assert.ok(enabledState.adverbOptionCount >= 20);
+    assert.equal(await page.locator('[data-reserved-application]:disabled').count(), 3);
+    assert.equal(await page.locator('[data-reserved-application]:checked').count(), 0);
 
     const extrasOpn = await readDownloadJson(page, '#configDownloadOpnButton');
     assert.equal(extrasOpn.metadata.profile, 'custom');
@@ -105,6 +126,9 @@ async function waitForViewer(page) {
     assert.deepEqual(extrasOpn.metadata.preconfig.insertion, { lex: true, synt: false, log: true });
     assert.equal('free_slot_count' in extrasOpn.data.projections.lex, true);
     assert.equal('insertion_interval' in extrasOpn.data.projections.log, true);
+    for (const reservedId of reservedApplicationIds) {
+      assert.doesNotMatch(JSON.stringify(extrasOpn), new RegExp(reservedId));
+    }
 
     await page.click('[data-config-tab-button="preconfig"]');
     await page.click('#insertionAxisLEXInput');
@@ -138,7 +162,7 @@ async function waitForViewer(page) {
     assert.equal(await page.locator('[data-profile-section="extras"]:visible').count(), 0);
 
     assert.deepEqual(pageErrors, []);
-    console.log('FEATURE PROFILE RUNTIME CHECK: OK (Basis → Bijwoorden aan → Basis)');
+    console.log('FEATURE PROFILE RUNTIME CHECK: OK (Basis → 3 reserveringen uit → Bijwoorden aan → Basis)');
   } finally {
     await browser.close();
   }

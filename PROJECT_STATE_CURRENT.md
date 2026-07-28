@@ -1,11 +1,39 @@
 # PROJECT_STATE_CURRENT
 
-Leidende status van OpenGraph Lite Viewer `v2.0.0-rc.41`.
+Leidende status van OpenGraph Lite Viewer `v2.0.0-rc.42`.
 
-Controlestatus: rc.41 is op 28 juli 2026 handmatig door de gebruiker
-goedgekeurd.
+Controlestatus: rc.42 is een nieuwe releasekandidaat en wacht op handmatige
+goedkeuring. De goedgekeurde rc.41-bron blijft ongewijzigd.
 
-## Recursieve layout en volledige projecties rc.41
+## Gereserveerde toepassingen rc.42
+
+- Config → Toepassingen toont **Vraagzin**, **Nadruk** (`juist díe trui`) en
+  **Onaffe zin** als uitgeschakelde reserveringen.
+- Deze drie staan niet in `FEATURE_DEFINITIONS`, krijgen geen runtime-state en
+  worden niet opgeslagen of geëxporteerd.
+- Een reservering activeert geen voorbeelden, inserties, documentatie,
+  resources, layout-demand of renderfunctionaliteit.
+- Vereiste voorconfig en taalkundig contract worden pas bepaald wanneer een
+  reservering als echte toepassing wordt uitgewerkt.
+
+## Bewerkbare LEESMIJ-carousels rc.42
+
+- Ieder zichtbaar LEESMIJ-item heeft één eigen carouselbron.
+- Config biedt onderwerpkeuze, add/remove, vorige/volgende, beeldpad,
+  breed/smal, alt-tekst en onderschrift in NL en EN.
+- Wijzigingen verschijnen direct in de carousel en worden als
+  `readmeCarousels` in de lokale Config-snapshot bewaard.
+- `Herstel dit item` verwijdert alleen de lokale overschrijving en herstelt de
+  ingebouwde broncarousel of gereserveerde lege ruimte.
+- Onveilige URI-schema's worden niet als beeldbron gerenderd.
+- Onderschriften zijn compacte tekstvelden; graph-sneltoetsen zijn geblokkeerd
+  in Config/LEESMIJ en bij focus op een invoerveld.
+- Mobiele Main-bediening en de lokale viewporttestknop zijn buiten Main
+  verborgen, zodat de editor niet wordt afgedekt.
+- Bijwoordgebonden LEESMIJ-items zijn alleen beschikbaar wanneer de toepassing
+  Bijwoorden actief is en worden bij uitschakelen opgeruimd.
+
+## Recursieve layout en volledige projecties rc.42
 
 - Structurele gridplaatsing blijft recursief; daarna meet een tweede bottom-up
   pass per subtree de nodevormen, labels, child-boxen en het caption.
@@ -25,7 +53,7 @@ goedgekeurd.
   brede LEX-inhoud; de renderer bepaalt de maten.
 - De beslisregels voor voorconfig, toepassingen en LOG-majors/minors staan in
   `RECURSIVE_LAYOUT_AND_APPLICATION_CONTRACT.md`.
-- De gemeten subtree-maat bestuurt de zichtbare rect, maar herplaatst in rc.41
+- De gemeten subtree-maat bestuurt de zichtbare rect, maar herplaatst in rc.42
   nog geen knopen naar andere gridcellen.
 - `tools/check_recursive_box_fit_runtime.js` controleert containment, viewport,
   majors/minors en Syntax/Functional-stabiliteit in Chromium.

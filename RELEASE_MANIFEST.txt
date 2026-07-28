@@ -29,6 +29,8 @@ RC38_MOBILE_LAYOUT_TEST.md
 RC39_VIEWPORT_SWITCH_TEST.md
 RC40_LANDSCAPE_COMPOSITION_TEST.md
 RC41_RECURSIVE_LAYOUT_TEST.md
+RC42_RESERVED_APPLICATIONS_TEST.md
+RC42_README_CAROUSEL_EDITOR_TEST.md
 README.md
 RECURSIVE_LAYOUT_AND_APPLICATION_CONTRACT.md
 SOURCE_BASE.md
@@ -61,6 +63,7 @@ SOURCE_CHANGES_V2.0.0-rc.38.md
 SOURCE_CHANGES_V2.0.0-rc.39.md
 SOURCE_CHANGES_V2.0.0-rc.40.md
 SOURCE_CHANGES_V2.0.0-rc.41.md
+SOURCE_CHANGES_V2.0.0-rc.42.md
 SOURCE_CHANGES_V2.0.0-rc.6.md
 SOURCE_CHANGES_V2.0.0-rc.9.md
 SOV_NOTATION_OPTIONS.md
@@ -194,6 +197,8 @@ tools/check_mobile_layout_runtime.js
 tools/check_opn_storage.py
 tools/check_play_reverse.py
 tools/check_projection_cleanup.py
+tools/check_readme_carousel_editor.py
+tools/check_readme_carousel_editor_runtime.js
 tools/check_recursive_box_fit_runtime.js
 tools/check_release.py
 tools/check_release_zip_batch.py

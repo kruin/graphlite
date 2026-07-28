@@ -65,7 +65,7 @@ if re.search(
 
 for marker, label in [
     ("def is_generated_release_archive(name: str)", "centrale manifestfilter"),
-    ("OpenGraph_Lite_Viewer_v2.0.0-rc.41_full_source (1).zip", "regressietest browsernaam (1)"),
+    ("OpenGraph_Lite_Viewer_v2.0.0-rc.42_full_source (1).zip", "regressietest browsernaam (1)"),
     ("graphlite_full_source.zip", "regressietest repositorynaam"),
 ]:
     require(RELEASE_CHECK, marker, label)

@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'v2.0.0-rc.41';
+  const VERSION = 'v2.0.0-rc.42';
   const OPN_FORMAT_VERSION = '1.0';
   const OPN_DOCUMENT_TYPE = 'opengraph-document';
   const PARADATA_EVENT_LIMIT = 250;
@@ -70,9 +70,37 @@
       layoutDemand: Object.freeze({ lexContent: 'wide-insertion' })
     })
   });
+  // Gereserveerde toepassingen horen bewust niet bij FEATURE_DEFINITIONS:
+  // ze krijgen geen state, opslag, export, resources of runtime-entrypoint.
+  const RESERVED_APPLICATION_DEFINITIONS = Object.freeze([
+    Object.freeze({
+      id: 'question-sentence',
+      label: 'Vraagzin',
+      labelEn: 'Question sentence',
+      description: 'Ontwerp en benodigde voorconfig volgen later.',
+      descriptionEn: 'Design and required pre-config will be defined later.'
+    }),
+    Object.freeze({
+      id: 'emphasis',
+      label: 'Nadruk',
+      labelEn: 'Emphasis',
+      description: 'Focus of nadruk, bijvoorbeeld',
+      descriptionEn: 'Focus or emphasis, for example',
+      example: 'juist díe trui'
+    }),
+    Object.freeze({
+      id: 'incomplete-sentence',
+      label: 'Onaffe zin',
+      labelEn: 'Incomplete sentence',
+      description: 'Definitie en benodigde voorconfig volgen later.',
+      descriptionEn: 'Definition and required pre-config will be defined later.'
+    })
+  ]);
   const DEFAULT_FEATURES = Object.freeze(
     Object.fromEntries(Object.values(FEATURE_DEFINITIONS).map(feature => [feature.id, feature.defaultEnabled]))
   );
+  const MAX_README_CAROUSEL_SLIDES = 20;
+  const DEFAULT_README_CAROUSELS = new Map();
 
 
   const LANGUAGE_OPTIONS = [
@@ -1710,7 +1738,7 @@
 
   const LEXICON_USAGE_PROFILES = new Map();
   const LEXICON_CONSTRUCTIONS = new Map();
-  const LEX_ANALYSIS_STORAGE_KEY = 'opengraph_lex_analysis_choices_v2.0.0-rc.41';
+  const LEX_ANALYSIS_STORAGE_KEY = 'opengraph_lex_analysis_choices_v2.0.0-rc.42';
 
   function normalizeInsertionOrigin(value) {
     const origin = String(value || 'LOG').trim().toUpperCase().replace('MIXED', 'LOG+LEX');
@@ -1810,6 +1838,7 @@
     useExampleLexInsertions: false,
     lexAnalysisChoices: loadLexAnalysisChoices(),
     lexInsertionExtensionTargets: ['vp-boundary'],
+    readmeCarousels: {},
     portraitMenuSlots: 0,
     topMenusAbove: [],
     lastSupportedGrowthStep: 0,
@@ -1944,6 +1973,9 @@
     ADVERB_OPTIONS = [NO_ADVERB_OPTION];
     LEXICON_USAGE_PROFILES.clear();
     LEXICON_CONSTRUCTIONS.clear();
+    ['adverbs', 'lexical-profiles', 'adverb-origins'].forEach(topicId => {
+      if (state.readmeCarousels) delete state.readmeCarousels[topicId];
+    });
     try { localStorage.removeItem(LEX_ANALYSIS_STORAGE_KEY); } catch (_err) {}
     const ambiguityPanel = document.getElementById('lexAmbiguityPanel');
     if (ambiguityPanel) ambiguityPanel.classList.add('hidden');
@@ -2021,6 +2053,8 @@
       logLexDashboardTitle.textContent = adverbsEnabled ? 'LEX & bijwoorden' : 'LEX';
     }
     syncFeatureDocumentationLinks();
+    syncReadmeCarouselEditorTopics();
+    renderReadmeTopicCarousels();
   }
 
   async function setFeatureEnabled(featureId, enabled, options = {}) {
@@ -4500,7 +4534,7 @@
     const landscapeHandheld = isHandheldLandscapeViewport();
     if (mode === 'max') {
       if (landscapeHandheld) {
-        // v2.0.0-rc.41: landschap heeft veel breedte maar weinig hoogte.
+        // v2.0.0-rc.42: landschap heeft veel breedte maar weinig hoogte.
         // Maak de projectie daarom werkelijk platter in plaats van een hoge
         // portretlayout met cover-zoom af te snijden. Font en knopen behouden
         // hun leesbare maat; vooral de horizontale/verticale celafstand wordt
@@ -4633,7 +4667,7 @@
       // moeten de volledige LEX-inhoud links en regelboxen rechts bevatten.
       const left = westAxis - activeLexRenderLeftReach();
       const eastAxisRight = px(union.maxX, origin) + 118;
-      // v2.0.0-rc.41: in portret hoort niet alleen de groene SYNT-as, maar
+      // v2.0.0-rc.42: in portret hoort niet alleen de groene SYNT-as, maar
       // ook de volledige regelbox rechts ervan in de eerste MAX-fit. Gebruik
       // de unie van Syntax en Functional zodat een viewwissel niet verspringt.
       const syntaxRuleRight = projectedRuleRightEdge(
@@ -7089,7 +7123,7 @@
 
   function canvasAspectRatio() {
     syncMainTopbarLayout();
-    // v2.0.0-rc.41: in handheld-landscape reserveert het SVG zelf ruimte
+    // v2.0.0-rc.42: in handheld-landscape reserveert het SVG zelf ruimte
     // voor menu en Play. Gebruik daarom de werkelijk tekenbare SVG-maat en
     // niet de buitenste telefoonframe/canvas-wrap-maat.
     const svgRect = els.svg?.getBoundingClientRect?.();
@@ -7416,7 +7450,7 @@
       w: axes.w + padX * 2,
       h: axes.h + padY * 2
     };
-    // v2.0.0-rc.41: ook in landschap is MAX een contain-fit. De voormalige
+    // v2.0.0-rc.42: ook in landschap is MAX een contain-fit. De voormalige
     // cover-zoom vulde wel de breedte, maar sneed de rastertop en de volledige
     // LOG-as af. De plattere landschapscellen hierboven benutten de breedte
     // zonder semantische projecties buiten het scherm te plaatsen.
@@ -9545,6 +9579,7 @@
   const CONFIG_TAB_DEFINITIONS = [
     { id: 'preconfig', nl: 'Voorconfig', en: 'Pre-config' },
     { id: 'features', nl: 'Toepassingen', en: 'Applications' },
+    { id: 'readme-carousels', nl: 'LEESMIJ-carousels', en: 'README carousels' },
     { id: 'overview', nl: 'Overzicht', en: 'Overview' },
     { id: 'jan', nl: 'JaN · TODO', en: 'JaN · TODO' },
     { id: 'files', nl: 'Opslaan & exporteren', en: 'Save & export' },
@@ -9553,6 +9588,9 @@
     { id: 'advanced', nl: 'Geavanceerd', en: 'Advanced' }
   ];
   let activeConfigTab = 'preconfig';
+  let readmeCarouselEditorTopicId = 'readme';
+  let readmeCarouselEditorSlideIndex = 0;
+  let readmeCarouselDefaultsCaptured = false;
 
   function activateConfigTab(tabId = 'preconfig', focusTab = false) {
     const validId = CONFIG_TAB_DEFINITIONS.some(tab => tab.id === tabId) ? tabId : 'preconfig';
@@ -9569,6 +9607,7 @@
       panel.hidden = !active;
       panel.classList.toggle('active', active);
     });
+    if (validId === 'readme-carousels') syncReadmeCarouselEditorTopics();
   }
 
   function setupConfigTabs() {
@@ -9693,6 +9732,7 @@
       <div class="config-dashboard">
         <button type="button" data-config-jump="preconfig"><strong>Voorconfig</strong><span>Algemene mogelijkheden vóór toepassingen.</span></button>
         <button type="button" data-config-jump="features"><strong>Toepassingen</strong><span>Bijwoorden en volgende uitbreidingen.</span></button>
+        <button type="button" data-config-jump="readme-carousels"><strong>LEESMIJ-carousels</strong><span>Beelden en onderschriften per LEESMIJ-item.</span></button>
         <button type="button" data-config-jump="view"><strong>Basisweergave</strong><span>View, interface, raster en vulling.</span></button>
         <button type="button" data-config-jump="jan"><strong>JaN-notatie · TODO</strong><span>S:np-VP; binair eerst, meertakkig later.</span></button>
         <button type="button" data-config-jump="view"><strong>Boom & layout</strong><span>Takvolgorde, ruimte en fit.</span></button>
@@ -9734,7 +9774,7 @@
       </fieldset>
       <section class="preconfig-candidates" aria-labelledby="preconfigCandidatesHeading">
         <h3 id="preconfigCandidatesHeading"><span class="help-lang-nl">Volgende voorconfig-kandidaten</span><span class="help-lang-en">Next pre-config candidates</span></h3>
-        <p><span class="help-lang-nl">Ontwerpvoorraad; in rc.41 nog niet schakelbaar.</span><span class="help-lang-en">Design backlog; not switchable in rc.41 yet.</span></p>
+        <p><span class="help-lang-nl">Ontwerpvoorraad; in rc.42 nog niet schakelbaar.</span><span class="help-lang-en">Design backlog; not switchable in rc.42 yet.</span></p>
         <ul>${PRECONFIG_CANDIDATES.map(candidate => `<li><span class="help-lang-nl">${candidate.label}</span><span class="help-lang-en">${candidate.labelEn}</span></li>`).join('')}</ul>
       </section>`;
     preconfigCard.querySelectorAll('[data-insertion-axis]').forEach(input => {
@@ -9767,11 +9807,11 @@
     featuresCard.innerHTML = `
       <div class="help-lang-nl">
         <h2>OGN Basis & toepassingen</h2>
-        <p class="inline-help">OGN Basis bevat de gewone boom, het raster, LEX/SYNT/LOG met S/O/V-majors en voorbeeldzinnen zonder extra inserties. Een toepassing wordt pas beschikbaar wanneer haar voorconfig gereed is.</p>
+        <p class="inline-help">OGN Basis bevat de gewone boom, het raster, LEX/SYNT/LOG met S/O/V-majors en voorbeeldzinnen zonder extra inserties. Een uitgewerkte toepassing wordt pas beschikbaar wanneer haar voorconfig gereed is; een gereserveerde toepassing heeft nog geen werking.</p>
       </div>
       <div class="help-lang-en">
         <h2>OGN Base & applications</h2>
-        <p class="inline-help">OGN Base contains the ordinary tree, grid, LEX/SYNT/LOG with S/O/V majors, and samples without extra insertions. An application becomes available only after its pre-config is ready.</p>
+        <p class="inline-help">OGN Base contains the ordinary tree, grid, LEX/SYNT/LOG with S/O/V majors, and samples without extra insertions. An implemented application becomes available only after its pre-config is ready; a reserved application has no behaviour yet.</p>
       </div>
       <div class="feature-profile-status" id="featureProfileStatus" role="status"></div>
       <fieldset class="feature-extra-list">
@@ -9785,7 +9825,23 @@
             <small class="feature-requirement-status" id="featureAdverbsRequirementStatus"></small>
           </span>
         </label>
-      </fieldset>`;
+      </fieldset>
+      <section class="reserved-applications" aria-labelledby="reservedApplicationsHeading">
+        <h3 id="reservedApplicationsHeading"><span class="help-lang-nl">Gereserveerde toepassingen</span><span class="help-lang-en">Reserved applications</span></h3>
+        <p><span class="help-lang-nl">De namen en plaats in Config liggen vast. Deze items zijn nog niet schakelbaar en voegen niets toe aan voorbeelden, inserties, documentatie, opslag, export of rendering.</span><span class="help-lang-en">Their names and position in Config are fixed. These items cannot be enabled yet and add nothing to samples, insertions, documentation, storage, export, or rendering.</span></p>
+        <div class="reserved-application-list">
+          ${RESERVED_APPLICATION_DEFINITIONS.map(application => `
+            <label class="feature-extra-choice reserved-application-choice">
+              <input aria-disabled="true" data-reserved-application="${application.id}" disabled type="checkbox"/>
+              <span>
+                <strong><span class="help-lang-nl">${application.label}</span><span class="help-lang-en">${application.labelEn}</span></strong>
+                <small class="help-lang-nl">${application.description}${application.example ? ` <code>${application.example}</code>.` : ''}</small>
+                <small class="help-lang-en">${application.descriptionEn}${application.example ? ` <code>${application.example}</code>.` : ''}</small>
+                <small class="reserved-application-status"><span class="help-lang-nl">Gereserveerd · nog niet actief</span><span class="help-lang-en">Reserved · not active yet</span></small>
+              </span>
+            </label>`).join('')}
+        </div>
+      </section>`;
     featuresCard.querySelector('#featureAdverbsInput')?.addEventListener('change', async event => {
       const enabled = !!event.target.checked;
       event.target.disabled = true;
@@ -9795,6 +9851,89 @@
       markConfigDirty(isEnglish() ? 'Adverbs application' : 'Toepassing Bijwoorden');
     });
 
+    const readmeCarouselCard = document.createElement('section');
+    readmeCarouselCard.className = 'panel-card config-readme-carousel-card';
+    readmeCarouselCard.id = 'config-readme-carousels';
+    readmeCarouselCard.innerHTML = `
+      <div class="help-lang-nl">
+        <h2>LEESMIJ-carousels bewerken</h2>
+        <p class="inline-help">Ieder LEESMIJ-onderwerp heeft een eigen carousel. Voeg per slide een lokaal beeldpad of een https-URL, alt-tekst en onderschrift toe. Wijzigingen zijn direct zichtbaar in LEESMIJ en worden bewaard met de bestaande knop <strong>Ja · bewaar config</strong>.</p>
+      </div>
+      <div class="help-lang-en">
+        <h2>Edit README carousels</h2>
+        <p class="inline-help">Every README topic has its own carousel. Add a local image path or https URL, alt text, and caption per slide. Changes appear in README immediately and are stored by the existing <strong>Yes · save config</strong> button.</p>
+      </div>
+      <label class="select-field readme-carousel-topic-field" for="readmeCarouselTopicSelect">
+        <span><span class="help-lang-nl">LEESMIJ-item</span><span class="help-lang-en">README topic</span></span>
+        <select id="readmeCarouselTopicSelect"></select>
+      </label>
+      <div class="readme-carousel-editor-nav">
+        <button id="readmeCarouselPrevButton" type="button" aria-label="Vorige slide">←</button>
+        <strong id="readmeCarouselSlideCounter" aria-live="polite">0 / 0</strong>
+        <button id="readmeCarouselNextButton" type="button" aria-label="Volgende slide">→</button>
+      </div>
+      <div class="readme-carousel-editor-preview" id="readmeCarouselEditorPreview"></div>
+      <fieldset class="readme-carousel-slide-fields">
+        <legend><span class="help-lang-nl">Actieve slide</span><span class="help-lang-en">Active slide</span></legend>
+        <label for="readmeCarouselImageInput">
+          <span><span class="help-lang-nl">Beeldpad of https-URL</span><span class="help-lang-en">Image path or https URL</span></span>
+          <input data-readme-carousel-field="src" id="readmeCarouselImageInput" type="text" placeholder="images/readme/voorbeeld.png"/>
+        </label>
+        <label for="readmeCarouselShapeSelect">
+          <span><span class="help-lang-nl">Beeldvorm</span><span class="help-lang-en">Image shape</span></span>
+          <select data-readme-carousel-field="shape" id="readmeCarouselShapeSelect">
+            <option value="wide">Breed · 16:10</option>
+            <option value="narrow">Smal · portret</option>
+          </select>
+        </label>
+        <label for="readmeCarouselAltNlInput">
+          <span>Alt-tekst NL</span>
+          <input data-readme-carousel-field="altNl" id="readmeCarouselAltNlInput" type="text"/>
+        </label>
+        <label for="readmeCarouselAltEnInput">
+          <span>Alt text EN</span>
+          <input data-readme-carousel-field="altEn" id="readmeCarouselAltEnInput" type="text"/>
+        </label>
+        <label for="readmeCarouselCaptionNlInput">
+          <span><span class="help-lang-nl">Onderschrift NL</span><span class="help-lang-en">Caption NL</span></span>
+          <input data-readme-carousel-field="captionNl" id="readmeCarouselCaptionNlInput" maxlength="1200" type="text"/>
+        </label>
+        <label for="readmeCarouselCaptionEnInput">
+          <span><span class="help-lang-nl">Onderschrift EN</span><span class="help-lang-en">Caption EN</span></span>
+          <input data-readme-carousel-field="captionEn" id="readmeCarouselCaptionEnInput" maxlength="1200" type="text"/>
+        </label>
+      </fieldset>
+      <div class="readme-carousel-editor-actions">
+        <button id="readmeCarouselAddButton" type="button"><span class="help-lang-nl">+ Slide</span><span class="help-lang-en">+ Slide</span></button>
+        <button id="readmeCarouselRemoveButton" type="button"><span class="help-lang-nl">Verwijder slide</span><span class="help-lang-en">Remove slide</span></button>
+        <button id="readmeCarouselResetButton" type="button"><span class="help-lang-nl">Herstel dit item</span><span class="help-lang-en">Reset this topic</span></button>
+      </div>
+      <p class="readme-carousel-editor-status" id="readmeCarouselEditorStatus" role="status"></p>`;
+    readmeCarouselCard.querySelector('#readmeCarouselTopicSelect')?.addEventListener('change', event => {
+      readmeCarouselEditorTopicId = event.target.value || 'readme';
+      readmeCarouselEditorSlideIndex = 0;
+      renderReadmeCarouselEditor();
+    });
+    readmeCarouselCard.querySelector('#readmeCarouselPrevButton')?.addEventListener('click', () => {
+      const slides = readmeCarouselSlidesForTopic(readmeCarouselEditorTopicId);
+      if (!slides.length) return;
+      readmeCarouselEditorSlideIndex = (readmeCarouselEditorSlideIndex - 1 + slides.length) % slides.length;
+      renderReadmeCarouselEditor();
+    });
+    readmeCarouselCard.querySelector('#readmeCarouselNextButton')?.addEventListener('click', () => {
+      const slides = readmeCarouselSlidesForTopic(readmeCarouselEditorTopicId);
+      if (!slides.length) return;
+      readmeCarouselEditorSlideIndex = (readmeCarouselEditorSlideIndex + 1) % slides.length;
+      renderReadmeCarouselEditor();
+    });
+    readmeCarouselCard.querySelectorAll('[data-readme-carousel-field]').forEach(control => {
+      const eventName = control.tagName === 'SELECT' ? 'change' : 'input';
+      control.addEventListener(eventName, event => updateReadmeCarouselSlideField(event.target.dataset.readmeCarouselField, event.target.value));
+    });
+    readmeCarouselCard.querySelector('#readmeCarouselAddButton')?.addEventListener('click', addReadmeCarouselSlide);
+    readmeCarouselCard.querySelector('#readmeCarouselRemoveButton')?.addEventListener('click', removeReadmeCarouselSlide);
+    readmeCarouselCard.querySelector('#readmeCarouselResetButton')?.addEventListener('click', resetReadmeCarouselTopic);
+
     const janCard = document.createElement('section');
     janCard.className = 'panel-card config-jan-card';
     janCard.id = 'config-jan';
@@ -9802,6 +9941,7 @@
 
     panels.get('preconfig').appendChild(preconfigCard);
     panels.get('features').appendChild(featuresCard);
+    panels.get('readme-carousels').appendChild(readmeCarouselCard);
     panels.get('overview').appendChild(overviewCard);
     panels.get('jan').appendChild(janCard);
     panels.get('files').append(graphExportCard, opnCard, saveCard, examplesCard);
@@ -9890,6 +10030,17 @@
     document.querySelectorAll('[data-config-tab-button]').forEach(button => {
       button.textContent = en ? button.dataset.labelEn : button.dataset.labelNl;
     });
+    const readmeShapeSelect = document.getElementById('readmeCarouselShapeSelect');
+    if (readmeShapeSelect) {
+      const wide = readmeShapeSelect.querySelector('option[value="wide"]');
+      const narrow = readmeShapeSelect.querySelector('option[value="narrow"]');
+      if (wide) wide.textContent = en ? 'Wide · 16:10' : 'Breed · 16:10';
+      if (narrow) narrow.textContent = en ? 'Narrow · portrait' : 'Smal · portret';
+    }
+    const readmePrev = document.getElementById('readmeCarouselPrevButton');
+    const readmeNext = document.getElementById('readmeCarouselNextButton');
+    if (readmePrev) readmePrev.setAttribute('aria-label', en ? 'Previous slide' : 'Vorige slide');
+    if (readmeNext) readmeNext.setAttribute('aria-label', en ? 'Next slide' : 'Volgende slide');
     setText('[data-config-card="tree"] > h2', en ? 'Tree and view' : 'Boom en beeld');
     setText('[data-config-card="log-settings"] > h2', en ? 'LOG placement authority' : 'LOG als plaatsingsautoriteit');
     setText('[data-config-card="lex"] > h2', en ? 'LEX axis - utterance type' : 'LEX-as · uitingtype');
@@ -10254,64 +10405,340 @@
     restoreSize();
   }
 
-  function registerReadmeCarousel() {
-    // Het eerste README-item bevat een brede en een smalle traditionele boom.
-    // De actieve beeldvorm bepaalt de carouselverhouding, zodat beide leesbaar blijven.
-    const carousel = document.querySelector('[data-readme-carousel]');
-    if (!carousel || carousel.dataset.carouselBound === '1') return;
-    carousel.dataset.carouselBound = '1';
-    const slides = Array.from(carousel.querySelectorAll('[data-readme-slide]'));
-    const controls = carousel.querySelector('[data-readme-carousel-controls]');
-    if (!slides.length || !controls) return;
-
-    let activeIndex = 0;
-    const showSlide = requestedIndex => {
-      activeIndex = (requestedIndex + slides.length) % slides.length;
-      slides.forEach((slide, index) => {
-        const active = index === activeIndex;
-        slide.classList.toggle('is-active', active);
-        slide.hidden = !active;
-        slide.setAttribute('aria-hidden', String(!active));
-      });
-      carousel.dataset.activeShape = slides[activeIndex]?.dataset.readmeShape || 'wide';
-      controls.querySelectorAll('[data-readme-carousel-dot]').forEach((dot, index) => {
-        const active = index === activeIndex;
-        dot.classList.toggle('is-active', active);
-        dot.setAttribute('aria-selected', String(active));
-      });
+  function normalizedReadmeCarouselSlide(value = {}) {
+    const text = (input, maximum) => String(input || '').trim().slice(0, maximum);
+    return {
+      src: text(value.src, 2048),
+      shape: value.shape === 'narrow' ? 'narrow' : 'wide',
+      altNl: text(value.altNl, 320),
+      altEn: text(value.altEn, 320),
+      captionNl: text(value.captionNl, 1200),
+      captionEn: text(value.captionEn, 1200)
     };
+  }
 
-    if (slides.length < 2) {
-      controls.hidden = true;
-      controls.setAttribute('aria-hidden', 'true');
-      showSlide(0);
+  function readmeCarouselTopicRecords() {
+    return Array.from(document.querySelectorAll('.help-topic-panel'))
+      .map(panel => {
+        const id = panel.getAttribute('data-help-topic') || '';
+        if (!id) return null;
+        const featureId = panel.getAttribute('data-feature') || '';
+        if (featureId && !featureEnabled(featureId)) return null;
+        const button = Array.from(document.querySelectorAll('[data-help-topic-button]'))
+          .find(candidate => candidate.getAttribute('data-help-topic-button') === id);
+        const label = language => {
+          const className = language === 'en' ? '.help-lang-en' : '.help-lang-nl';
+          const localized = button?.querySelector(className)?.textContent?.trim();
+          const plain = Array.from(button?.children || [])
+            .find(child => !child.classList.contains('help-lang-en') && !child.classList.contains('help-lang-nl'))
+            ?.textContent?.trim();
+          return localized || plain || panel.querySelector(`${className} h3`)?.textContent?.trim()
+            || panel.querySelector('h3')?.textContent?.trim() || id;
+        };
+        return { id, panel, labelNl: label('nl'), labelEn: label('en') };
+      })
+      .filter(Boolean);
+  }
+
+  function captureDefaultReadmeCarousels() {
+    if (readmeCarouselDefaultsCaptured) return;
+    readmeCarouselDefaultsCaptured = true;
+    readmeCarouselTopicRecords().forEach(({ id, panel }) => {
+      const carousel = panel.querySelector('[data-readme-carousel]');
+      if (!carousel) return;
+      const slides = Array.from(carousel.querySelectorAll('[data-readme-slide]')).map(slide => {
+        const image = slide.querySelector('img');
+        const caption = slide.querySelector('figcaption');
+        const captionNl = caption?.querySelector('.help-lang-nl')?.textContent?.trim()
+          || caption?.textContent?.trim() || '';
+        const captionEn = caption?.querySelector('.help-lang-en')?.textContent?.trim()
+          || caption?.textContent?.trim() || '';
+        return normalizedReadmeCarouselSlide({
+          src: image?.getAttribute('src') || '',
+          shape: slide.getAttribute('data-readme-shape') || 'wide',
+          altNl: image?.getAttribute('alt') || '',
+          altEn: image?.getAttribute('alt') || '',
+          captionNl,
+          captionEn
+        });
+      });
+      if (slides.length) DEFAULT_README_CAROUSELS.set(id, slides);
+    });
+  }
+
+  function normalizeReadmeCarousels(value = {}) {
+    const validTopics = new Set(
+      Array.from(document.querySelectorAll('.help-topic-panel'))
+        .map(panel => panel.getAttribute('data-help-topic'))
+        .filter(Boolean)
+    );
+    const normalized = {};
+    if (!value || typeof value !== 'object' || Array.isArray(value)) return normalized;
+    Object.entries(value).forEach(([topicId, slides]) => {
+      if (!validTopics.has(topicId) || !Array.isArray(slides)) return;
+      normalized[topicId] = slides
+        .slice(0, MAX_README_CAROUSEL_SLIDES)
+        .map(normalizedReadmeCarouselSlide);
+    });
+    return normalized;
+  }
+
+  function readmeHasCustomCarousel(topicId) {
+    return Object.prototype.hasOwnProperty.call(state.readmeCarousels || {}, topicId);
+  }
+
+  function readmeCarouselSlidesForTopic(topicId) {
+    if (readmeHasCustomCarousel(topicId)) return state.readmeCarousels[topicId];
+    return DEFAULT_README_CAROUSELS.get(topicId) || [];
+  }
+
+  function ensureReadmeCarouselOverride(topicId) {
+    if (!state.readmeCarousels || typeof state.readmeCarousels !== 'object') state.readmeCarousels = {};
+    if (!readmeHasCustomCarousel(topicId)) {
+      state.readmeCarousels[topicId] = readmeCarouselSlidesForTopic(topicId)
+        .map(slide => normalizedReadmeCarouselSlide(slide));
+    }
+    return state.readmeCarousels[topicId];
+  }
+
+  function safeReadmeCarouselSource(value) {
+    const source = String(value || '').trim();
+    if (!source || /^(?:javascript|vbscript|data|file):/i.test(source)) return '';
+    return source;
+  }
+
+  function configuredReadmeCarouselHtml(topicId, slides) {
+    const topic = readmeCarouselTopicRecords().find(item => item.id === topicId);
+    const title = topic ? (isEnglish() ? topic.labelEn : topic.labelNl) : topicId;
+    if (!slides.length) {
+      return `<div class="help-carousel-frame">
+        <strong>${escapeHtml(title)}</strong>
+        <span class="help-lang-nl">Deze carousel bevat nog geen slides.</span>
+        <span class="help-lang-en">This carousel does not contain slides yet.</span>
+      </div>`;
+    }
+    return `<div class="readme-carousel-viewport">
+      ${slides.map((slide, index) => {
+        const item = normalizedReadmeCarouselSlide(slide);
+        const source = safeReadmeCarouselSource(item.src);
+        const alt = isEnglish() ? (item.altEn || item.altNl) : (item.altNl || item.altEn);
+        return `<figure class="readme-carousel-slide${index === 0 ? ' is-active' : ''}" data-readme-shape="${item.shape}" data-readme-slide=""${index === 0 ? '' : ' hidden=""'}>
+          ${source
+            ? `<img alt="${escapeHtml(alt)}" data-alt-en="${escapeHtml(item.altEn)}" data-alt-nl="${escapeHtml(item.altNl)}" data-readme-carousel-image="" src="${escapeHtml(source)}"/>`
+            : `<div class="readme-carousel-image-placeholder"><span class="help-lang-nl">Nog geen beeldpad</span><span class="help-lang-en">No image path yet</span></div>`}
+          <figcaption><span class="help-lang-nl">${escapeHtml(item.captionNl || item.altNl)}</span><span class="help-lang-en">${escapeHtml(item.captionEn || item.altEn)}</span></figcaption>
+        </figure>`;
+      }).join('')}
+    </div>
+    <div aria-hidden="false" class="readme-carousel-controls" data-readme-carousel-controls=""></div>`;
+  }
+
+  function renderReadmeTopicCarousels() {
+    document.querySelectorAll('.help-topic-panel').forEach(panel => {
+      panel.querySelectorAll('.help-topic-carousel-slot:not(.readme-configured-carousel), .help-carousel-reserved, .readme-tree-carousel:not(.readme-configured-carousel)')
+        .forEach(node => { node.dataset.readmeDefaultCarousel = '1'; });
+      panel.querySelectorAll(':scope > .readme-configured-carousel').forEach(node => node.remove());
+      const topicId = panel.getAttribute('data-help-topic') || '';
+      const custom = topicId && readmeHasCustomCarousel(topicId);
+      panel.querySelectorAll('[data-readme-default-carousel]').forEach(node => { node.hidden = custom; });
+      if (!custom) return;
+      const slides = readmeCarouselSlidesForTopic(topicId);
+      const carousel = document.createElement('section');
+      carousel.className = slides.length
+        ? 'readme-tree-carousel readme-configured-carousel'
+        : 'help-topic-carousel-slot readme-configured-carousel';
+      carousel.dataset.readmeCarousel = '';
+      carousel.dataset.readmeConfiguredTopic = topicId;
+      if (!slides.length) {
+        const topic = readmeCarouselTopicRecords().find(item => item.id === topicId);
+        carousel.dataset.carouselTopic = topic ? (isEnglish() ? topic.labelEn : topic.labelNl) : topicId;
+      }
+      carousel.setAttribute('role', 'group');
+      carousel.setAttribute('aria-label', `LEESMIJ-carousel: ${topicId}`);
+      carousel.innerHTML = configuredReadmeCarouselHtml(topicId, slides);
+      panel.appendChild(carousel);
+    });
+    registerReadmeCarousel();
+    syncReadmeCarouselLanguage();
+  }
+
+  function syncReadmeCarouselLanguage() {
+    document.querySelectorAll('[data-readme-carousel-image]').forEach(image => {
+      image.alt = isEnglish()
+        ? (image.dataset.altEn || image.dataset.altNl || '')
+        : (image.dataset.altNl || image.dataset.altEn || '');
+    });
+  }
+
+  function syncReadmeCarouselEditorTopics() {
+    const select = document.getElementById('readmeCarouselTopicSelect');
+    if (!select) return;
+    const topics = readmeCarouselTopicRecords();
+    const previous = readmeCarouselEditorTopicId;
+    select.replaceChildren(...topics.map(topic => {
+      const option = document.createElement('option');
+      option.value = topic.id;
+      option.textContent = isEnglish() ? topic.labelEn : topic.labelNl;
+      return option;
+    }));
+    if (!topics.some(topic => topic.id === readmeCarouselEditorTopicId)) {
+      readmeCarouselEditorTopicId = topics[0]?.id || '';
+      readmeCarouselEditorSlideIndex = 0;
+    }
+    if (previous !== readmeCarouselEditorTopicId) readmeCarouselEditorSlideIndex = 0;
+    select.value = readmeCarouselEditorTopicId;
+    renderReadmeCarouselEditor();
+  }
+
+  function renderReadmeCarouselEditorPreview(slide = null) {
+    const preview = document.getElementById('readmeCarouselEditorPreview');
+    if (!preview) return;
+    if (!slide) {
+      preview.innerHTML = '<span class="help-lang-nl">Nog geen slide. Kies + Slide.</span><span class="help-lang-en">No slide yet. Choose + Slide.</span>';
       return;
     }
+    const item = normalizedReadmeCarouselSlide(slide);
+    const source = safeReadmeCarouselSource(item.src);
+    const alt = isEnglish() ? (item.altEn || item.altNl) : (item.altNl || item.altEn);
+    preview.innerHTML = `<figure data-readme-shape="${item.shape}">
+      ${source
+        ? `<img alt="${escapeHtml(alt)}" src="${escapeHtml(source)}"/>`
+        : '<div class="readme-carousel-image-placeholder"><span class="help-lang-nl">Nog geen beeldpad</span><span class="help-lang-en">No image path yet</span></div>'}
+      <figcaption><span class="help-lang-nl">${escapeHtml(item.captionNl || item.altNl)}</span><span class="help-lang-en">${escapeHtml(item.captionEn || item.altEn)}</span></figcaption>
+    </figure>`;
+  }
 
-    controls.hidden = false;
-    controls.setAttribute('aria-hidden', 'false');
-    controls.innerHTML = `
-      <button type="button" data-readme-carousel-prev aria-label="Vorig README-beeld">←</button>
-      <div class="readme-carousel-dots" role="tablist" aria-label="Kies een README-beeld">
-        ${slides.map((_slide, index) => `<button type="button" data-readme-carousel-dot="${index}" aria-label="README-beeld ${index + 1}" aria-selected="${index === 0}"></button>`).join('')}
-      </div>
-      <button type="button" data-readme-carousel-next aria-label="Volgend README-beeld">→</button>`;
-    controls.querySelector('[data-readme-carousel-prev]')?.addEventListener('click', () => showSlide(activeIndex - 1));
-    controls.querySelector('[data-readme-carousel-next]')?.addEventListener('click', () => showSlide(activeIndex + 1));
-    controls.querySelectorAll('[data-readme-carousel-dot]').forEach(dot => {
-      dot.addEventListener('click', () => showSlide(Number(dot.getAttribute('data-readme-carousel-dot')) || 0));
+  function renderReadmeCarouselEditor() {
+    const slides = readmeCarouselSlidesForTopic(readmeCarouselEditorTopicId);
+    readmeCarouselEditorSlideIndex = slides.length
+      ? Math.max(0, Math.min(readmeCarouselEditorSlideIndex, slides.length - 1))
+      : 0;
+    const slide = slides[readmeCarouselEditorSlideIndex] || null;
+    const counter = document.getElementById('readmeCarouselSlideCounter');
+    if (counter) counter.textContent = slides.length ? `${readmeCarouselEditorSlideIndex + 1} / ${slides.length}` : '0 / 0';
+    const fieldValues = slide || normalizedReadmeCarouselSlide();
+    document.querySelectorAll('[data-readme-carousel-field]').forEach(control => {
+      const field = control.dataset.readmeCarouselField;
+      control.value = fieldValues[field] || (field === 'shape' ? 'wide' : '');
+      control.disabled = !slide;
     });
-    carousel.tabIndex = 0;
-    carousel.addEventListener('keydown', event => {
-      if (event.key === 'ArrowLeft') {
-        event.preventDefault();
-        showSlide(activeIndex - 1);
-      } else if (event.key === 'ArrowRight') {
-        event.preventDefault();
-        showSlide(activeIndex + 1);
+    const previous = document.getElementById('readmeCarouselPrevButton');
+    const next = document.getElementById('readmeCarouselNextButton');
+    const remove = document.getElementById('readmeCarouselRemoveButton');
+    const add = document.getElementById('readmeCarouselAddButton');
+    if (previous) previous.disabled = slides.length < 2;
+    if (next) next.disabled = slides.length < 2;
+    if (remove) remove.disabled = !slide;
+    if (add) add.disabled = slides.length >= MAX_README_CAROUSEL_SLIDES;
+    const status = document.getElementById('readmeCarouselEditorStatus');
+    if (status) {
+      status.textContent = readmeHasCustomCarousel(readmeCarouselEditorTopicId)
+        ? (isEnglish() ? 'Custom carousel · save Config to keep these changes.' : 'Eigen carousel · bewaar Config om deze wijzigingen te behouden.')
+        : (isEnglish() ? 'Source default · editing creates a local Config override.' : 'Bronstandaard · bewerken maakt een lokale Config-overschrijving.');
+    }
+    renderReadmeCarouselEditorPreview(slide);
+  }
+
+  function updateReadmeCarouselSlideField(field, value) {
+    if (!['src', 'shape', 'altNl', 'altEn', 'captionNl', 'captionEn'].includes(field)) return;
+    const slides = ensureReadmeCarouselOverride(readmeCarouselEditorTopicId);
+    const slide = slides[readmeCarouselEditorSlideIndex];
+    if (!slide) return;
+    slide[field] = field === 'shape' ? (value === 'narrow' ? 'narrow' : 'wide') : String(value || '');
+    state.readmeCarousels[readmeCarouselEditorTopicId][readmeCarouselEditorSlideIndex] = normalizedReadmeCarouselSlide(slide);
+    renderReadmeTopicCarousels();
+    renderReadmeCarouselEditorPreview(state.readmeCarousels[readmeCarouselEditorTopicId][readmeCarouselEditorSlideIndex]);
+    markConfigDirty(isEnglish() ? 'README carousel' : 'LEESMIJ-carousel');
+  }
+
+  function addReadmeCarouselSlide() {
+    const slides = ensureReadmeCarouselOverride(readmeCarouselEditorTopicId);
+    if (slides.length >= MAX_README_CAROUSEL_SLIDES) return;
+    slides.push(normalizedReadmeCarouselSlide());
+    readmeCarouselEditorSlideIndex = slides.length - 1;
+    renderReadmeTopicCarousels();
+    renderReadmeCarouselEditor();
+    appendConfigLog('add-readme-carousel-slide', { topic: readmeCarouselEditorTopicId, index: readmeCarouselEditorSlideIndex });
+    markConfigDirty(isEnglish() ? 'README carousel slide added' : 'LEESMIJ-carouselslide toegevoegd');
+  }
+
+  function removeReadmeCarouselSlide() {
+    const slides = ensureReadmeCarouselOverride(readmeCarouselEditorTopicId);
+    if (!slides.length) return;
+    slides.splice(readmeCarouselEditorSlideIndex, 1);
+    readmeCarouselEditorSlideIndex = Math.max(0, Math.min(readmeCarouselEditorSlideIndex, slides.length - 1));
+    renderReadmeTopicCarousels();
+    renderReadmeCarouselEditor();
+    appendConfigLog('remove-readme-carousel-slide', { topic: readmeCarouselEditorTopicId });
+    markConfigDirty(isEnglish() ? 'README carousel slide removed' : 'LEESMIJ-carouselslide verwijderd');
+  }
+
+  function resetReadmeCarouselTopic() {
+    if (state.readmeCarousels) delete state.readmeCarousels[readmeCarouselEditorTopicId];
+    readmeCarouselEditorSlideIndex = 0;
+    renderReadmeTopicCarousels();
+    renderReadmeCarouselEditor();
+    appendConfigLog('reset-readme-carousel-topic', { topic: readmeCarouselEditorTopicId });
+    markConfigDirty(isEnglish() ? 'README carousel reset' : 'LEESMIJ-carousel hersteld');
+  }
+
+  function registerReadmeCarousel() {
+    document.querySelectorAll('[data-readme-carousel]').forEach(carousel => {
+      if (!carousel || carousel.dataset.carouselBound === '1') return;
+      carousel.dataset.carouselBound = '1';
+      const slides = Array.from(carousel.querySelectorAll('[data-readme-slide]'));
+      const controls = carousel.querySelector('[data-readme-carousel-controls]');
+      if (!slides.length || !controls) return;
+
+      let activeIndex = 0;
+      const showSlide = requestedIndex => {
+        activeIndex = (requestedIndex + slides.length) % slides.length;
+        slides.forEach((slide, index) => {
+          const active = index === activeIndex;
+          slide.classList.toggle('is-active', active);
+          slide.hidden = !active;
+          slide.setAttribute('aria-hidden', String(!active));
+        });
+        carousel.dataset.activeShape = slides[activeIndex]?.dataset.readmeShape || 'wide';
+        controls.querySelectorAll('[data-readme-carousel-dot]').forEach((dot, index) => {
+          const active = index === activeIndex;
+          dot.classList.toggle('is-active', active);
+          dot.setAttribute('aria-selected', String(active));
+        });
+      };
+
+      if (slides.length < 2) {
+        controls.hidden = true;
+        controls.setAttribute('aria-hidden', 'true');
+        showSlide(0);
+        return;
       }
+
+      controls.hidden = false;
+      controls.setAttribute('aria-hidden', 'false');
+      controls.innerHTML = `
+        <button type="button" data-readme-carousel-prev aria-label="Vorig README-beeld">←</button>
+        <div class="readme-carousel-dots" role="tablist" aria-label="Kies een README-beeld">
+          ${slides.map((_slide, index) => `<button type="button" data-readme-carousel-dot="${index}" aria-label="README-beeld ${index + 1}" aria-selected="${index === 0}"></button>`).join('')}
+        </div>
+        <button type="button" data-readme-carousel-next aria-label="Volgend README-beeld">→</button>`;
+      controls.querySelector('[data-readme-carousel-prev]')?.addEventListener('click', () => showSlide(activeIndex - 1));
+      controls.querySelector('[data-readme-carousel-next]')?.addEventListener('click', () => showSlide(activeIndex + 1));
+      controls.querySelectorAll('[data-readme-carousel-dot]').forEach(dot => {
+        dot.addEventListener('click', () => showSlide(Number(dot.getAttribute('data-readme-carousel-dot')) || 0));
+      });
+      carousel.tabIndex = 0;
+      carousel.addEventListener('keydown', event => {
+        if (event.key === 'ArrowLeft') {
+          event.preventDefault();
+          showSlide(activeIndex - 1);
+        } else if (event.key === 'ArrowRight') {
+          event.preventDefault();
+          showSlide(activeIndex + 1);
+        }
+      });
+      showSlide(0);
     });
-    showSlide(0);
   }
 
   function registerReadmeExternalWindows() {
@@ -10351,6 +10778,7 @@
       layoutDensity: state.layoutDensity,
       viewFitMode: state.viewFitMode,
       helpLayoutMode: state.helpLayoutMode,
+      readmeCarousels: normalizeReadmeCarousels(state.readmeCarousels),
       showGrid: !!state.showGrid,
       showRelations: !!state.showRelations,
       showLabels: !!state.showLabels,
@@ -10460,6 +10888,9 @@
     if (snapshot.southBoxManual && Number.isFinite(snapshot.southBoxManual.left) && Number.isFinite(snapshot.southBoxManual.top)) state.southBoxManual = snapshot.southBoxManual;
     else if ('southBoxManual' in snapshot) state.southBoxManual = null;
     if (typeof snapshot.helpLayoutMode === 'string' && ['auto','stacked','side'].includes(snapshot.helpLayoutMode)) state.helpLayoutMode = snapshot.helpLayoutMode;
+    state.readmeCarousels = currentVersionSnapshot
+      ? normalizeReadmeCarousels(snapshot.readmeCarousels)
+      : {};
     if (typeof snapshot.showGrid === 'boolean') state.showGrid = snapshot.showGrid;
     if (typeof snapshot.showRelations === 'boolean') state.showRelations = snapshot.showRelations;
     if (typeof snapshot.showLabels === 'boolean') state.showLabels = snapshot.showLabels;
@@ -10483,6 +10914,8 @@
     if (!featureEnabled('adverbs')) resetAdverbFeatureState();
     refreshExamplesForFeatures();
     applyFeatureVisibility();
+    renderReadmeTopicCarousels();
+    syncReadmeCarouselEditorTopics();
     resetManualViewBox();
     return true;
   }
@@ -11069,6 +11502,13 @@
       });
     }
     window.addEventListener('keydown', event => {
+      if (event.defaultPrevented
+        || document.body.classList.contains('config-screen-active')
+        || document.body.classList.contains('help-screen-active')) return;
+      const target = event.target;
+      if (target instanceof Element
+        && (target.matches('input, textarea, select, [contenteditable]')
+          || target.closest('input, textarea, select, [contenteditable]'))) return;
       if (event.key === '1') setProjection('axes');
       else if (event.key === '2') setProjection('source');
       else if (event.key === '3') setProjection('lex');
@@ -11114,8 +11554,10 @@
     document.body.classList.remove('help-screen-active');
     syncViewportTestClasses();
     syncPortraitStageMode();
+    captureDefaultReadmeCarousels();
     setupConfigTabs();
     ensureHelpTopicCarouselSlots();
+    renderReadmeTopicCarousels();
     registerReadmeCarousel();
     registerReadmeExternalWindows();
     registerEvents();

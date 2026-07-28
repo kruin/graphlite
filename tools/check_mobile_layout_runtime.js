@@ -162,7 +162,7 @@ async function dragHelpResizer(page, metrics, amount = 70) {
         text: article?.textContent || ''
       };
     });
-    assert.equal(recursiveHelp.hidden, false, 'README-onderwerp Layout rc.41 opent niet');
+    assert.equal(recursiveHelp.hidden, false, 'README-onderwerp Layout rc.42 opent niet');
     assert.match(
       recursiveHelp.text,
       /not yet a general collision or repacking solver/,

@@ -5,7 +5,7 @@ Bestanden om als leidende projectbronnen toe te voegen of te vervangen.
 ## Volledige projectzip
 
 ```text
-OpenGraph_Lite_Viewer_v2.0.0-rc.41_full_source.zip
+OpenGraph_Lite_Viewer_v2.0.0-rc.42_full_source.zip
 ```
 
 De zip bevat de volledige bronset, documentatie, referenties, voorbeelden, OPN-voorbeeldbestand en releasecontroles.
@@ -29,6 +29,7 @@ DOCUMENTATION_RULES.md
 HANDOVER_FOR_COLLABORATORS.md
 DEPLOY_GITHUB_PAGES.md
 RECURSIVE_LAYOUT_AND_APPLICATION_CONTRACT.md
+SOURCE_CHANGES_V2.0.0-rc.42.md
 SOURCE_CHANGES_V2.0.0-rc.41.md
 SOURCE_CHANGES_V2.0.0-rc.40.md
 SOURCE_CHANGES_V2.0.0-rc.39.md
@@ -39,6 +40,8 @@ RC38_MOBILE_LAYOUT_TEST.md
 RC39_VIEWPORT_SWITCH_TEST.md
 RC40_LANDSCAPE_COMPOSITION_TEST.md
 RC41_RECURSIVE_LAYOUT_TEST.md
+RC42_RESERVED_APPLICATIONS_TEST.md
+RC42_README_CAROUSEL_EDITOR_TEST.md
 structure-config.html
 viewer.js
 index.html
@@ -54,6 +57,8 @@ images/readme/play-log-space-lex.svg
 tools/check_log_slot_distance.py
 tools/check_feature_profiles.py
 tools/check_feature_profiles_runtime.js
+tools/check_readme_carousel_editor.py
+tools/check_readme_carousel_editor_runtime.js
 tools/check_mobile_layout_rc38.py
 tools/check_mobile_layout_runtime.js
 tools/check_viewport_switch_runtime.js

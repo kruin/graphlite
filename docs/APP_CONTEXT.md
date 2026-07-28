@@ -1,4 +1,4 @@
-# Actuele contractlaag · v2.0.0-rc.41
+# Actuele contractlaag · v2.0.0-rc.42
 
 Config scheidt nu `Voorconfig → Toepassingen`. Insertie is vooraf en
 onafhankelijk schakelbaar op LEX, SYNT en LOG. Bijwoorden vereist LEX + LOG;

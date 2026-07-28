@@ -38,11 +38,30 @@ schakelbaar:
 Een kandidaat wordt pas een actieve voorconfig wanneer bediening, opslag,
 import/export, afhankelijkheden en regressietests samen zijn geïmplementeerd.
 
+## Gereserveerde toepassingen in rc.42
+
+Config toont drie vervolgtoepassingen als vaste, uitgeschakelde reserveringen:
+
+- **Vraagzin**;
+- **Nadruk**, met als richtinggevend voorbeeld `juist díe trui`;
+- **Onaffe zin**.
+
+Deze namen staan in `RESERVED_APPLICATION_DEFINITIONS`, niet in de actieve
+`FEATURE_DEFINITIONS`. Daardoor krijgen ze geen checkboxwerking, runtime-state,
+resources, voorbeeldzinnen, inserties, documentatielinks, opslagvelden,
+OPN-extra of layout-demand. Ook een ingeschakelde LEX-, SYNT- of LOG-voorconfig
+maakt een reservering niet actief.
+
+Bij latere uitwerking wordt per toepassing eerst afzonderlijk bepaald welke
+voorconfig nodig is. Pas wanneer functionaliteit, cleanup, opslag/export,
+documentatie en regressietests samen gereed zijn, verhuist zij naar de actieve
+featurecatalogus.
+
 ## Layout-demand van een toepassing
 
 Voorconfig bepaalt **of** een capaciteit beschikbaar is. Een toepassing mag
 daarnaast declareren **welk soort** renderinhoud zij kan toevoegen, maar geen
-pixelcoördinaten. Bijwoorden declareert in rc.41 bijvoorbeeld
+pixelcoördinaten. Bijwoorden declareert in rc.42 bijvoorbeeld
 `lexContent: wide-insertion`. De centrale layout-policy vertaalt dat naar
 voldoende zichtbare ruimte op ieder viewport.
 

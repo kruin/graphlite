@@ -30,10 +30,12 @@ required_files = [
     "ADVERB_ORIGIN_MECHANISMS.md", "LEXICON_USAGE_PROFILES_AND_DISAMBIGUATION.md",
     "LEXICON_USAGE_PROFILE_TEST.md", "SOURCE_CHANGES_V2.0.0-rc.38.md",
     "SOURCE_CHANGES_V2.0.0-rc.39.md", "SOURCE_CHANGES_V2.0.0-rc.40.md",
-    "SOURCE_CHANGES_V2.0.0-rc.41.md", "RECURSIVE_LAYOUT_AND_APPLICATION_CONTRACT.md",
+    "SOURCE_CHANGES_V2.0.0-rc.41.md", "SOURCE_CHANGES_V2.0.0-rc.42.md",
+    "RECURSIVE_LAYOUT_AND_APPLICATION_CONTRACT.md",
     "RC35_README_LAYOUT_TEST.md", "RC36_BASE_PROFILE_TEST.md", "RC37_PRECONFIG_TEST.md",
     "RC38_MOBILE_LAYOUT_TEST.md", "RC39_VIEWPORT_SWITCH_TEST.md",
     "RC40_LANDSCAPE_COMPOSITION_TEST.md", "RC41_RECURSIVE_LAYOUT_TEST.md",
+    "RC42_RESERVED_APPLICATIONS_TEST.md", "RC42_README_CAROUSEL_EDITOR_TEST.md",
     "OPN_STORAGE_FORMAT.md", "PRECONFIG_ARCHITECTURE.md", "projectie-master-spec.md",
     "docs/ADVERB_ORIGIN_MECHANISMS.md", "docs/OGN_BASE_PROFILE.md", "docs/PRECONFIG_ARCHITECTURE.md",
     "docs/LAYOUT_SPEC.md", "docs/RECURSIVE_LAYOUT_AND_APPLICATION_CONTRACT.md", "docs/RENDER_EXPLANATION.md",
@@ -50,6 +52,7 @@ required_files = [
     "tools/check_play_reverse.py", "tools/check_release_zip_batch.py",
     "tools/check_opn_storage.py", "tools/check_lexicon_usage_profiles.py",
     "tools/check_feature_profiles.py", "tools/check_feature_profiles_runtime.js",
+    "tools/check_readme_carousel_editor.py", "tools/check_readme_carousel_editor_runtime.js",
     "tools/check_mobile_layout_rc38.py", "tools/check_mobile_layout_runtime.js",
     "tools/check_viewport_switch_runtime.js", "tools/check_landscape_composition_runtime.js",
     "tools/check_recursive_box_fit_runtime.js",
@@ -74,8 +77,8 @@ debug_html = read("debug.html")
 local_mobile = read("local-mobile-test.js")
 
 # Version identity and the paired entry pages.
-if not VERSION or VERSION != "v2.0.0-rc.41":
-    errors.append(f"VERSION.txt moet v2.0.0-rc.41 bevatten, gevonden: {VERSION!r}")
+if not VERSION or VERSION != "v2.0.0-rc.42":
+    errors.append(f"VERSION.txt moet v2.0.0-rc.42 bevatten, gevonden: {VERSION!r}")
 for rel in ["index.html", "viewer.html", "viewer.js", "reset-cache.html", "sw.js"]:
     if VERSION not in read(rel):
         errors.append(f"versie ontbreekt in {rel}")
@@ -239,7 +242,7 @@ for marker, label in [
     source = js if marker not in {"Ja · bewaar config", "Nee · herstel laatst bewaarde config"} else index
     require(source, marker, label)
 
-# rc.41: recursive intrinsic subtree measurement and complete handheld fit.
+# rc.42: recursive intrinsic subtree measurement and complete handheld fit.
 for marker, label in [
     ("const SUBTREE_MEASURE_POLICY = Object.freeze({", "centrale subtree-meetpolicy"),
     ("function measureSubtreeBoxes(layout, origin)", "recursieve subtree-meetpass"),
@@ -262,14 +265,14 @@ for rel in [
     ]:
         require(text, marker, f"{rel} contractterm")
 for marker, label in [
-    ('data-help-topic="recursive-layout"', "ingebouwde README-uitleg over rc.41"),
+    ('data-help-topic="recursive-layout"', "ingebouwde README-uitleg over rc.42"),
     ("not yet a general collision or repacking solver", "Engelse begrenzing recursieve boxmeting"),
     ("nog geen algemene botsings- of herplaatsingssolver", "Nederlandse begrenzing recursieve boxmeting"),
 ]:
     require(index, marker, label)
 for marker, label in [
     ("Datum: 2026-07-28", "datum handmatig akkoord"),
-    ("Akkoord rc.41: ja", "vastgelegd handmatig akkoord"),
+    ("Akkoord rc.41: ja", "vastgelegd handmatig akkoord rc.41"),
     ("Blokkerende herstelpunten: geen opgegeven", "resultaat handmatig akkoord"),
     ("Voorconfig en toepassingen", "controle voorconfig en toepassingen"),
     ("README en bediening", "controle README en bediening"),
@@ -277,20 +280,36 @@ for marker, label in [
     require(read("RC41_RECURSIVE_LAYOUT_TEST.md"), marker, label)
 if "Akkoord rc.41: ja / nee" in read("RC41_RECURSIVE_LAYOUT_TEST.md"):
     errors.append("RC41-akkoordlijst bevat nog de voorlopige keuze 'ja / nee'")
-approval_markers = {
-    "README.md": "manually approved by the user on 28 July",
-    "docs/README.md": "manually approved by the user on 28 July",
-    "LEESMIJ.md": "op 28 juli 2026 handmatig door de gebruiker",
-    "docs/LEESMIJ.md": "op 28 juli 2026 handmatig door de gebruiker",
-    "PROJECT_STATE_CURRENT.md": "op 28 juli 2026 handmatig door de gebruiker",
-    "docs/PROJECT_STATE_CURRENT.md": "op 28 juli 2026 handmatig door de gebruiker",
-    "HANDOVER_FOR_COLLABORATORS.md": "op 28 juli 2026 handmatig",
-    "docs/HANDOVER_FOR_COLLABORATORS.md": "op 28 juli 2026 handmatig",
-    "docs/RELEASE_NOTES.md": "op 28 juli 2026 handmatig door de gebruiker goedgekeurd",
-    "docs/docs-home.html": "rc.41 is op 28 juli 2026 handmatig door de gebruiker goedgekeurd",
+for rel, markers in {
+    "RC42_RESERVED_APPLICATIONS_TEST.md": [
+        "Akkoord rc.42: ja / nee",
+        "Vraagzin",
+        "juist díe trui",
+        "Onaffe zin",
+    ],
+    "RC42_README_CAROUSEL_EDITOR_TEST.md": [
+        "Akkoord rc.42: ja / nee",
+        "LEESMIJ-carousels",
+        "alt-tekst",
+        "Ja · bewaar config",
+    ],
+}.items():
+    for marker in markers:
+        require(read(rel), marker, f"{rel} handmatige controle")
+candidate_markers = {
+    "README.md": "rc.42 is a release candidate awaiting manual visual",
+    "docs/README.md": "rc.42 is a release candidate awaiting manual visual",
+    "LEESMIJ.md": "rc.42 is een releasekandidaat die nog handmatig visueel",
+    "docs/LEESMIJ.md": "rc.42 is een releasekandidaat die nog handmatig visueel",
+    "PROJECT_STATE_CURRENT.md": "rc.42 is een nieuwe releasekandidaat",
+    "docs/PROJECT_STATE_CURRENT.md": "rc.42 is een nieuwe releasekandidaat",
+    "HANDOVER_FOR_COLLABORATORS.md": "rc.42 wacht op handmatige goedkeuring",
+    "docs/HANDOVER_FOR_COLLABORATORS.md": "rc.42 wacht op handmatige goedkeuring",
+    "docs/RELEASE_NOTES.md": "nieuwe release candidate voor handmatige controle",
+    "docs/docs-home.html": "rc.42 is een nieuwe testkandidaat",
 }
-for rel, marker in approval_markers.items():
-    require(read(rel), marker, f"{rel} vastgelegde rc.41-goedkeuring")
+for rel, marker in candidate_markers.items():
+    require(read(rel), marker, f"{rel} voorlopige rc.42-status")
 for rel in ["DOCUMENTATION_RULES.md", "docs/DOCUMENTATION_RULES.md"]:
     text = read(rel)
     for marker in [
@@ -461,8 +480,8 @@ def is_generated_release_archive(name: str) -> bool:
 # Browser downloads can add " (1)" before .zip. That local copy must behave
 # exactly like the canonical release archive and never become product source.
 for generated_name in [
-    "OpenGraph_Lite_Viewer_v2.0.0-rc.41_full_source.zip",
-    "OpenGraph_Lite_Viewer_v2.0.0-rc.41_full_source (1).zip",
+    "OpenGraph_Lite_Viewer_v2.0.0-rc.42_full_source.zip",
+    "OpenGraph_Lite_Viewer_v2.0.0-rc.42_full_source (1).zip",
     "graphlite_full_source.zip",
     "graphlite_full_source.tmp.12345.zip",
     "graphlite_full_source.zip.sha256",

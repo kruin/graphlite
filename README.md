@@ -1,4 +1,4 @@
-# OpenGraph Lite Viewer v2.0.0-rc.41
+# OpenGraph Lite Viewer v2.0.0-rc.42
 
 OpenGraph Lite Viewer is a demo/viewer for JaN, OPN and OpenGraph linguistic structures. This release is
 built exclusively on the uploaded `v2.0.0-rc.26` source through rc.27; rc.28
@@ -7,10 +7,10 @@ the abandoned alternate version line.
 
 Dutch documentation: [`LEESMIJ.md`](LEESMIJ.md).
 
-> **Validation status:** rc.41 was manually approved by the user on 28 July
-> 2026. Automated checks verify geometry and feature invariants; the recorded
-> approval covers the human judgement about readability and explanatory
-> clarity.
+> **Validation status:** rc.42 is a release candidate awaiting manual visual
+> approval. The approved rc.41 source remains unchanged. Automated checks
+> verify geometry and feature invariants; they do not replace a human
+> judgement about readability and explanatory clarity.
 
 ## OGN Base, pre-config and applications
 
@@ -26,6 +26,24 @@ is enabled. When Adverbs is off, its examples, LOG minors, direct LEX
 insertions, controls, runtime data, documentation links, and export fields are
 absent. OPN exports record `profile: "base"`, `extras: []`, and all three axis
 switches.
+
+Config also shows three disabled reservations for later applications:
+**Question sentence**, **Emphasis** (for example `juist díe trui`), and
+**Incomplete sentence**. They are deliberately outside the active feature
+catalogue and therefore add no state, samples, insertions, documentation,
+storage, export fields, or rendering behaviour.
+
+## Editable README carousels
+
+`Config → README carousels` provides one editor for the carousel belonging to
+each README topic. A slide records an image path or https URL, wide or narrow
+shape, NL/EN alt text, and NL/EN captions. Add, remove, previous/next, live
+preview, and reset are available. The existing Config Save action stores only
+custom overrides; resetting a topic restores its built-in source carousel or
+empty reserved carousel area. Unsafe `javascript:`, `vbscript:`, `data:`, and
+`file:` image sources are not rendered. Captions use compact single-line
+fields; graph shortcuts stay inactive while Config or README is open and
+while a form control has focus.
 
 ## Recursive content-sized layout
 
@@ -46,7 +64,7 @@ axis over their combined structural grid envelope. See
 
 ### What is recursive now—and what is not
 
-| Stage | rc.41 behaviour |
+| Stage | rc.42 behaviour |
 |---|---|
 | Structure and config | Decide which nodes, axes, majors, minors and application contributions exist. |
 | Grid placement | Places structural nodes and subtrees on the HOR/VER cell grid. This is not yet text-aware pixel packing. |
@@ -56,7 +74,7 @@ axis over their combined structural grid envelope. See
 | Viewport fit | Keeps complete LEX content, the central structure, complete rule boxes and LOG inside a stable Syntax/Functional frame. |
 | Rendering | Draws the resolved result; it does not add linguistic content or choose new positions. |
 
-This distinction matters. rc.41 has recursive **box measurement**, but it is
+This distinction matters. rc.42 has recursive **box measurement**, but it is
 not yet a general collision solver that repositions every node when a label
 becomes wider. In portrait, the complete left-to-right composition uses the
 available width; because that composition is intrinsically wide, text can
@@ -136,14 +154,14 @@ maak-volledige-zip.bat
 ```
 
 The batch file derives the ZIP name from its own containing directory. A
-directory named `OpenGraph_Lite_Viewer_v2.0.0-rc.41` therefore produces the
-sibling file `OpenGraph_Lite_Viewer_v2.0.0-rc.41_full_source.zip`. An existing
+directory named `OpenGraph_Lite_Viewer_v2.0.0-rc.42` therefore produces the
+sibling file `OpenGraph_Lite_Viewer_v2.0.0-rc.42_full_source.zip`. An existing
 ZIP with that exact name is replaced safely; the script never invents a
 `(1)` suffix.
 
 Files matching `*_full_source*.zip` are generated release artifacts, not
 project source. This includes a browser download such as
-`OpenGraph_Lite_Viewer_v2.0.0-rc.41_full_source (1).zip`. Such copies are
+`OpenGraph_Lite_Viewer_v2.0.0-rc.42_full_source (1).zip`. Such copies are
 ignored by the manifest and publication checks, are not staged for GitHub
 Pages, and are excluded when a new full-source ZIP is built. They may therefore
 remain locally without blocking publication, although deleting old copies
@@ -152,13 +170,13 @@ keeps the project folder clearer.
 GitHub Pages:
 
 ```text
-https://kruin.github.io/graphlite/index.html?ogv=v2.0.0-rc.41
+https://kruin.github.io/graphlite/index.html?ogv=v2.0.0-rc.42
 ```
 
 Cache reset:
 
 ```text
-https://kruin.github.io/graphlite/reset-cache.html?ogv=v2.0.0-rc.41
+https://kruin.github.io/graphlite/reset-cache.html?ogv=v2.0.0-rc.42
 ```
 
 ## Desktop view
