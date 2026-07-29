@@ -2739,6 +2739,32 @@ body.config-screen-active .config-tab-list {
   background: color-mix(in srgb, var(--panel), var(--bg) 12%);
   box-shadow: var(--shadow-soft);
 }
+body.config-screen-active .config-tab-list,
+body.config-screen-active .config-global-save-slot,
+body.config-screen-active .config-tab-panel {
+  grid-column: 1 / -1 !important;
+}
+body.config-screen-active .config-global-save-slot {
+  display: block !important;
+  width: 100% !important;
+  min-width: 0;
+}
+body.config-screen-active .config-global-save-card {
+  display: block !important;
+  width: 100% !important;
+  margin: 0 0 .8rem !important;
+  padding: .45rem .55rem !important;
+  box-sizing: border-box;
+  border-color: color-mix(in srgb, var(--accent), var(--line) 50%) !important;
+  background: color-mix(in srgb, var(--accent), var(--panel) 95%) !important;
+}
+body.config-screen-active .config-global-save-card .config-save-field {
+  margin: 0;
+  padding: .4rem .5rem;
+}
+body.config-screen-active .config-global-save-card #configSaveStatus {
+  margin: 0 0 .35rem;
+}
 body.config-screen-active .config-tab-button {
   flex: 0 0 auto;
   min-height: 2.55rem;
@@ -7430,11 +7456,134 @@ body.help-layout-stacked.help-resizing { cursor: row-resize !important; user-sel
 }
 
 .readme-carousel-topic-field select,
+.readme-topic-fields input,
+.readme-topic-fields select,
+.readme-topic-fields textarea,
 .readme-carousel-slide-fields input,
 .readme-carousel-slide-fields select,
 .readme-carousel-slide-fields textarea {
   width: 100%;
   box-sizing: border-box;
+}
+
+.readme-topic-fields {
+  display: grid;
+  grid-template-columns: minmax(9rem, .6fr) repeat(2, minmax(0, 1fr));
+  gap: .8rem;
+  margin-bottom: 1.1rem;
+  padding: 1rem;
+  border: 1px solid #94a3b8;
+  border-radius: 14px;
+  background: #f8fafc;
+}
+
+.readme-topic-fields > label {
+  display: grid;
+  gap: .35rem;
+  align-content: start;
+  min-width: 0;
+}
+
+.readme-topic-html-field,
+.readme-topic-html-help {
+  grid-column: 1 / -1;
+}
+
+.readme-topic-fields textarea {
+  min-height: 11rem;
+  resize: vertical;
+  font: 500 .84rem/1.45 ui-monospace, SFMono-Regular, Consolas, monospace;
+  tab-size: 2;
+}
+
+.readme-topic-html-help {
+  color: #475569;
+  line-height: 1.45;
+}
+
+.readme-carousel-editor-heading {
+  margin: 1.15rem 0 .3rem;
+}
+
+.readme-carousel-slide-fields input.is-embedded-source {
+  border-style: dashed;
+  background: #eef2ff;
+  color: #475569;
+}
+
+.config-readme-slide-file-card {
+  grid-column: 1 / -1 !important;
+}
+
+.config-project-layers-card {
+  grid-column: 1 / -1 !important;
+}
+
+.project-config-precedence {
+  display: grid;
+  gap: .45rem;
+  margin: .8rem 0;
+  padding: .75rem .85rem .75rem 2.25rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  background: #f8fafc;
+}
+
+.project-config-precedence li {
+  padding-left: .25rem;
+  line-height: 1.45;
+}
+
+.project-config-layer-status {
+  min-height: 1.35rem;
+  color: #334155;
+  font-weight: 800;
+}
+
+.readme-slide-file-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(9rem, .7fr) minmax(0, 1.4fr);
+  gap: .75rem;
+  margin: .8rem 0;
+}
+
+.readme-slide-file-grid label {
+  display: grid;
+  gap: .35rem;
+  min-width: 0;
+}
+
+.readme-slide-file-grid select,
+.readme-slide-file-grid input {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.readme-slide-file-status {
+  min-height: 1.35rem;
+}
+
+.readme-slide-file-status.is-error {
+  color: #b91c1c;
+  font-weight: 850;
+}
+
+.help-topic-empty-state {
+  display: grid;
+  min-height: 12rem;
+  place-items: center;
+  padding: 1rem;
+  border: 1px dashed #94a3b8;
+  border-radius: 14px;
+  background: #f8fafc;
+  color: #475569;
+  font-weight: 800;
+  text-align: center;
+}
+
+.help-topic-empty-state[hidden] {
+  display: none !important;
 }
 
 .readme-carousel-editor-nav {
@@ -7539,10 +7688,13 @@ body.help-layout-stacked.help-resizing { cursor: row-resize !important; user-sel
     grid-template-columns: 1fr;
   }
 
-  .readme-carousel-slide-fields {
+  .readme-topic-fields,
+  .readme-carousel-slide-fields,
+  .readme-slide-file-grid {
     grid-template-columns: 1fr;
   }
 
+  .readme-topic-fields > *,
   .readme-carousel-slide-fields label {
     grid-column: 1 !important;
   }

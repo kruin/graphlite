@@ -1,8 +1,35 @@
 
-## v2.0.0-rc.42 — Gereserveerde toepassingen
+## v2.0.0-rc.43 — LEESMIJ-items en projectconfig
 
 - Status: nieuwe release candidate voor handmatige controle; de goedgekeurde
   rc.41-bron blijft ongewijzigd.
+- `Config → LEESMIJ-items` bewerkt per onderwerp `Tonen: ja/nee`,
+  navigatietitels NL/EN, beperkte veilige HTML-inhoud en de eigen carousel.
+- `Tonen: nee` verbergt het item zonder het uit de DOM of Config te
+  verwijderen. Scripts, formulieren, styles, frames, event-attributen en
+  onveilige linkschema's worden uit aangepaste inhoud verwijderd.
+- `Config → Bestanden & export` voegt lokale PNG-, JPEG-, WebP- en
+  GIF-bestanden via een vertrouwde route als ingesloten carousel-slide toe.
+  De viewer begrenst één beeld op 1,25 MB en bewaakt ook de totale payload.
+- De gezamenlijke Config-savebalk staat boven ieder Config-onderdeel en
+  bewaart tekst, zichtbaarheid en slides in dezelfde snapshot.
+- Iedere projectzip bevat `config/default-config.json` én
+  `config/user-config.json`. De ingeschakelde user-config overschrijft de
+  standaard per instelling, maar vervangt het standaardbestand niet.
+- Via `start_local_viewer.bat` schrijft `Schrijf huidige Config naar project`
+  uitsluitend naar het allowlistdoel `config/user-config.json`. Op een gewone
+  webserver is `Download user-config` de fallback.
+- De vaste voorrang is code-defaults → default-config → user-config →
+  lokaal bewaarde browser-Config.
+- Iedere projectzip bevat `PUBLICATIE_README.md` met kopieerbare teksten voor
+  LinkedIn, Reddit, Facebook, YouTube, Bluesky, Mastodon, X en GitHub.
+- Nieuwe statische en browsergebaseerde controles bewaken de itemeditor,
+  bestandsinvoer, savebalk, configlagen, overschrijving en lokale schrijfroute.
+- De in rc.42 gereserveerde toepassingen Vraagzin, Nadruk en Onaffe zin
+  blijven zichtbaar maar niet actief.
+
+## v2.0.0-rc.42 — Gereserveerde toepassingen en LEESMIJ-carousels
+
 - Config → Toepassingen reserveert zichtbaar maar niet-activeerbaar:
   **Vraagzin**, **Nadruk** (`juist díe trui`) en **Onaffe zin**.
 - De reserveringen staan buiten de actieve featurecatalogus en voegen geen

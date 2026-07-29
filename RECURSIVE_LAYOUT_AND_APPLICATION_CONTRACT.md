@@ -1,6 +1,6 @@
 # Recursieve layout en toepassingscontract
 
-Normatief ontwerp voor OpenGraph Lite Viewer `v2.0.0-rc.42`. Deze
+Normatief ontwerp voor OpenGraph Lite Viewer `v2.0.0-rc.43`. Deze
 releasekandidaat wacht op handmatige goedkeuring. De goedgekeurde rc.41-bron
 blijft ongewijzigd; de hieronder beschreven technische grenzen blijven
 onderdeel van het contract.

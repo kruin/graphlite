@@ -1,4 +1,4 @@
-# Bijwoorden als LOG-minors · v2.0.0-rc.42
+# Bijwoorden als LOG-minors · v2.0.0-rc.43
 
 ## Regel
 

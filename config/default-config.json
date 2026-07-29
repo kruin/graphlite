@@ -1,0 +1,47 @@
+{
+  "schema": "opengraph-project-config",
+  "version": "v2.0.0-rc.43",
+  "kind": "default",
+  "enabled": true,
+  "description": "Bundled OGN Base defaults. Keep this file; config/user-config.json overlays it.",
+  "config": {
+    "version": "v2.0.0-rc.43",
+    "profile": "base",
+    "preconfig": {
+      "insertion": {
+        "lex": false,
+        "synt": false,
+        "log": false
+      }
+    },
+    "features": {
+      "adverbs": false
+    },
+    "centerMode": "syntax",
+    "projection": "axes",
+    "sourceAxes": [
+      "lex",
+      "synt",
+      "log"
+    ],
+    "treeChoice": "auto-min",
+    "functionalOrder": "left-first",
+    "branchOrder": "normal",
+    "layoutDensity": "max",
+    "viewFitMode": "max",
+    "helpLayoutMode": "auto",
+    "readmeTopicEdits": {},
+    "readmeCarousels": {},
+    "showGrid": true,
+    "showRelations": true,
+    "showLabels": true,
+    "syntProjectionColor": "green",
+    "logProjectionColor": "purple",
+    "projectionBoxDraggable": true,
+    "projectionBoxManual": null,
+    "southBoxDraggable": true,
+    "southBoxManual": null,
+    "freeSlotCount": 2,
+    "topMenusAbove": []
+  }
+}

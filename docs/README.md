@@ -1,4 +1,4 @@
-# OpenGraph Lite Viewer v2.0.0-rc.42
+# OpenGraph Lite Viewer v2.0.0-rc.43
 
 OpenGraph Lite Viewer is a demo/viewer for JaN, OPN and OpenGraph linguistic structures. This release is
 built exclusively on the uploaded `v2.0.0-rc.26` source through rc.27; rc.28
@@ -7,7 +7,7 @@ the abandoned alternate version line.
 
 Dutch documentation: [`LEESMIJ.md`](LEESMIJ.md).
 
-> **Validation status:** rc.42 is a release candidate awaiting manual visual
+> **Validation status:** rc.43 is a release candidate awaiting manual visual
 > approval. The approved rc.41 source remains unchanged. Automated checks
 > verify geometry and feature invariants; they do not replace a human
 > judgement about readability and explanatory clarity.
@@ -33,17 +33,35 @@ Config also shows three disabled reservations for later applications:
 catalogue and therefore add no state, samples, insertions, documentation,
 storage, export fields, or rendering behaviour.
 
-## Editable README carousels
+## Editable README topics and carousels
 
-`Config → README carousels` provides one editor for the carousel belonging to
-each README topic. A slide records an image path or https URL, wide or narrow
-shape, NL/EN alt text, and NL/EN captions. Add, remove, previous/next, live
-preview, and reset are available. The existing Config Save action stores only
-custom overrides; resetting a topic restores its built-in source carousel or
-empty reserved carousel area. Unsafe `javascript:`, `vbscript:`, `data:`, and
-`file:` image sources are not rendered. Captions use compact single-line
-fields; graph shortcuts stay inactive while Config or README is open and
-while a form control has focus.
+`Config → README topics` edits Show yes/no, NL/EN navigation titles, limited
+safe HTML content, and the topic carousel. No hides a topic without deleting
+it. Scripts, forms, styles, frames, event attributes, and unsafe link schemes
+are removed before custom content is rendered.
+
+Slides retain path/https, shape, NL/EN alt text and captions. Under
+`Config → Files & export`, a local PNG, JPEG, WebP, or GIF can be embedded
+directly as a slide, with a 1.25 MB per-image limit and a bounded combined
+payload. Manually typed `data:` URLs remain blocked. The shared Config Save bar
+is visible on every Config section.
+
+## Project Config and publication copy
+
+Every project zip contains `config/default-config.json` and
+`config/user-config.json`. The enabled user file overlays the default without
+replacing it. Running through `start_local_viewer.bat` enables
+`Write current Config to project`; the allow-listed endpoint writes the
+current snapshot to `config/user-config.json`. A regular web version offers a
+download fallback.
+
+Precedence is code defaults → default config → project user config →
+browser-local saved Config. The zip also includes
+[`PUBLICATIE_README.md`](../PUBLICATIE_README.md) with publication copy for
+LinkedIn, Reddit, Facebook, YouTube, Bluesky, Mastodon, X, and GitHub. Use
+[`RC43_CONFIG_README_PROJECT_TEST.md`](../RC43_CONFIG_README_PROJECT_TEST.md)
+for manual validation of the editor, Config layers, project zip, and viewport
+sizes.
 
 ## Recursive content-sized layout
 
@@ -154,14 +172,14 @@ maak-volledige-zip.bat
 ```
 
 The batch file derives the ZIP name from its own containing directory. A
-directory named `OpenGraph_Lite_Viewer_v2.0.0-rc.42` therefore produces the
-sibling file `OpenGraph_Lite_Viewer_v2.0.0-rc.42_full_source.zip`. An existing
+directory named `OpenGraph_Lite_Viewer_v2.0.0-rc.43` therefore produces the
+sibling file `OpenGraph_Lite_Viewer_v2.0.0-rc.43_full_source.zip`. An existing
 ZIP with that exact name is replaced safely; the script never invents a
 `(1)` suffix.
 
 Files matching `*_full_source*.zip` are generated release artifacts, not
 project source. This includes a browser download such as
-`OpenGraph_Lite_Viewer_v2.0.0-rc.42_full_source (1).zip`. Such copies are
+`OpenGraph_Lite_Viewer_v2.0.0-rc.43_full_source (1).zip`. Such copies are
 ignored by the manifest and publication checks, are not staged for GitHub
 Pages, and are excluded when a new full-source ZIP is built. They may therefore
 remain locally without blocking publication, although deleting old copies
@@ -170,13 +188,13 @@ keeps the project folder clearer.
 GitHub Pages:
 
 ```text
-https://kruin.github.io/graphlite/index.html?ogv=v2.0.0-rc.42
+https://kruin.github.io/graphlite/index.html?ogv=v2.0.0-rc.43
 ```
 
 Cache reset:
 
 ```text
-https://kruin.github.io/graphlite/reset-cache.html?ogv=v2.0.0-rc.42
+https://kruin.github.io/graphlite/reset-cache.html?ogv=v2.0.0-rc.43
 ```
 
 ## Desktop view

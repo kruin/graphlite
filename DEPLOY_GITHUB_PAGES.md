@@ -33,7 +33,40 @@ viewer.html
 viewer.js
 styles.css
 reset-cache.html
+config/default-config.json
+config/user-config.json
+PUBLICATIE_README.md
 ```
+
+## Eigen Config vóór de projectzip
+
+De site en iedere volledige projectzip bewaren de standaard en de eigen
+Config als afzonderlijke lagen:
+
+```text
+config/default-config.json
+config/user-config.json
+```
+
+Start lokaal via `start_local_viewer.bat`, stel Config in en kies onder
+`Bestanden & export` de knop `Schrijf huidige Config naar project`. De lokale
+server schrijft alleen het allowlistdoel `config/user-config.json`; de
+standaardconfig blijft ongewijzigd. Maak daarna pas de volledige projectzip.
+
+Werk je vanaf een gewone webserver, kies dan `Download user-config` en plaats
+het gedownloade bestand handmatig als `config/user-config.json`.
+
+Laadvolgorde:
+
+```text
+code-defaults → default-config → user-config → browser-Config
+```
+
+De laatste aanwezige waarde wint. Controleer vóór publicatie dat beide
+configbestanden hetzelfde versienummer als `VERSION.txt` hebben.
+
+`PUBLICATIE_README.md` gaat verplicht mee in de projectzip. Vul de
+platformspecifieke URL-placeholders pas in voor de concrete publicatie.
 
 ## Staging
 
@@ -78,13 +111,13 @@ De BAT kan browsercache niet op afstand wissen. Zij kan wel:
 Voorbeeld:
 
 ```text
-https://kruin.github.io/graphlite/reset-cache.html?ogv=v2.0.0-rc.42&nocache=TIMESTAMP
+https://kruin.github.io/graphlite/reset-cache.html?ogv=v2.0.0-rc.43&nocache=TIMESTAMP
 ```
 
 Daarna:
 
 ```text
-https://kruin.github.io/graphlite/index.html?ogv=v2.0.0-rc.42
+https://kruin.github.io/graphlite/index.html?ogv=v2.0.0-rc.43
 ```
 
 ## GitHub Pages settings

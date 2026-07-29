@@ -1,4 +1,4 @@
-# OpenGraph Lite Viewer v2.0.0-rc.42
+# OpenGraph Lite Viewer v2.0.0-rc.43
 
 OpenGraph Lite Viewer is een demo/viewer voor JAN-, OPN- en
 OpenGraph-taalstructuren. Deze versie gebruikt de volledige v1.0.16-bronset als
@@ -6,7 +6,7 @@ functionele basis.
 
 Engelse documentatie: [`README.md`](README.md).
 
-> **Controlestatus:** rc.42 is een releasekandidaat die nog handmatig visueel
+> **Controlestatus:** rc.43 is een releasekandidaat die nog handmatig visueel
 > moet worden goedgekeurd. De goedgekeurde rc.41-bron blijft ongewijzigd. De
 > automatische controles bewaken geometrie en feature-invarianten, maar
 > vervangen geen menselijk oordeel over leesbaarheid en duidelijkheid.
@@ -32,18 +32,62 @@ toepassingen: **Vraagzin**, **Nadruk** (bijvoorbeeld `juist díe trui`) en
 daarom geen state, voorbeelden, inserties, documentatie, opslag, exportvelden
 of rendergedrag toe.
 
-## Bewerkbare LEESMIJ-carousels
+## Bewerkbare LEESMIJ-items en carousels
 
-`Config → LEESMIJ-carousels` bevat één editor voor de eigen carousel van ieder
-LEESMIJ-item. Een slide bewaart een beeldpad of https-URL, breed of smal,
-alt-tekst NL/EN en onderschrift NL/EN. Toevoegen, verwijderen, vorige/volgende,
-live voorvertoning en herstel zijn beschikbaar. De bestaande Config-save
-bewaart alleen eigen overschrijvingen; `Herstel dit item` brengt de ingebouwde
-broncarousel of lege gereserveerde carouselruimte terug. Onveilige
-`javascript:`, `vbscript:`, `data:`- en `file:`-beeldbronnen worden niet
-gerenderd. Onderschriften gebruiken compacte tekstvelden; graph-sneltoetsen
+`Config → LEESMIJ-items` bewerkt het volledige item en niet alleen de beelden.
+Ieder onderwerp heeft **Tonen: ja/nee**, een navigatietitel NL/EN en inhoud
+NL/EN in beperkte veilige HTML. Nee verbergt het item zonder het te
+verwijderen; in Config blijft het dus terugvindbaar. Scripts, formulieren,
+styles, frames, event-attributen en onveilige linkschema’s worden vóór
+weergave verwijderd.
+
+Dezelfde editor beheert de carousel: actieve slide toevoegen/verwijderen,
+vorige/volgende, breed/smal, alt-tekst en onderschrift NL/EN, live
+voorvertoning en volledig herstel van het item. Een gewoon beeldpad of
+https-URL blijft mogelijk. Onder `Config → Bestanden & export` kan daarnaast
+een lokale PNG, JPEG, WebP of GIF rechtstreeks als ingesloten slide worden
+ingevoegd. De grens is 1,25 MB per beeld en ook de totale ingesloten opslag is
+begrensd. Een handmatig getypte `data:`-URL blijft geblokkeerd; alleen de
+vertrouwde bestandsroute mag een ingesloten beeld maken.
+
+De gezamenlijke Config-savebalk staat boven ieder Config-onderdeel. Titel,
+itemtekst, Tonen ja/nee en carousel worden samen bewaard. Graph-sneltoetsen
 blijven uit zolang Config of LEESMIJ openstaat en wanneer een invoerveld focus
 heeft.
+
+## Standaardconfig, project-user-config en browser-Config
+
+Iedere volledige projectzip bevat
+`config/default-config.json` én `config/user-config.json`. De viewer past eerst
+de standaard toe en daarna de ingeschakelde user-config als overschrijving.
+De standaard wordt dus niet fysiek vervangen.
+
+Start via `start_local_viewer.bat` en kies
+`Config → Bestanden & export → Schrijf huidige Config naar project`. De lokale
+server schrijft de actuele snapshot via een vaste allowlist naar
+`config/user-config.json`; dat bestand gaat daarna mee in de volgende
+volledige bronzip. Op een gewone webserver gebruik je
+`Download user-config` en plaats je het bestand handmatig in `config/`.
+
+De voorrang is:
+
+```text
+code-defaults → config/default-config.json → config/user-config.json
+→ lokaal bewaarde browser-Config
+```
+
+De laatste browsersnapshot blijft apparaatgebonden totdat hij naar het
+projectbestand wordt geschreven.
+
+## Kant-en-klare publicatieteksten
+
+Iedere projectzip bevat [`PUBLICATIE_README.md`](PUBLICATIE_README.md) met
+kopieerbare Nederlandse en Engelse teksten voor LinkedIn, Reddit, Facebook,
+YouTube, Bluesky, Mastodon, X en een GitHub-release. Vervang vóór plaatsing de
+gemarkeerde live-, bron- en videolinks. De teksten noemen rc.43 bewust een
+release candidate totdat de handmatige controle is afgetekend. Gebruik
+[`RC43_CONFIG_README_PROJECT_TEST.md`](RC43_CONFIG_README_PROJECT_TEST.md) voor
+de controle van itemeditor, Config-lagen, projectzip en schermmaten.
 
 ## Recursieve layout op inhoudsmaat
 
@@ -163,14 +207,14 @@ maak-volledige-zip.bat
 ```
 
 De BAT leidt de ZIP-naam af uit de map waarin hij zelf staat. De map
-`OpenGraph_Lite_Viewer_v2.0.0-rc.42` maakt dus daarnaast automatisch
-`OpenGraph_Lite_Viewer_v2.0.0-rc.42_full_source.zip`. Een bestaande ZIP met
+`OpenGraph_Lite_Viewer_v2.0.0-rc.43` maakt dus daarnaast automatisch
+`OpenGraph_Lite_Viewer_v2.0.0-rc.43_full_source.zip`. Een bestaande ZIP met
 precies die naam wordt veilig vervangen; het script verzint nooit zelf een
 achtervoegsel `(1)`.
 
 Bestanden met het patroon `*_full_source*.zip` zijn gegenereerde
 release-artefacten en geen projectbron. Daaronder valt ook een browserdownload
-als `OpenGraph_Lite_Viewer_v2.0.0-rc.42_full_source (1).zip`. Zulke kopieën
+als `OpenGraph_Lite_Viewer_v2.0.0-rc.43_full_source (1).zip`. Zulke kopieën
 worden genegeerd door de manifest- en publicatiecontrole, niet voor GitHub
 Pages gestaged en niet in een nieuwe volledige bronzip opgenomen. Ze mogen dus
 lokaal blijven staan zonder de publicatie te blokkeren; oude kopieën
@@ -179,13 +223,13 @@ verwijderen houdt de projectmap wel overzichtelijker.
 GitHub Pages:
 
 ```text
-https://kruin.github.io/graphlite/index.html?ogv=v2.0.0-rc.42
+https://kruin.github.io/graphlite/index.html?ogv=v2.0.0-rc.43
 ```
 
 Cache-reset:
 
 ```text
-https://kruin.github.io/graphlite/reset-cache.html?ogv=v2.0.0-rc.42
+https://kruin.github.io/graphlite/reset-cache.html?ogv=v2.0.0-rc.43
 ```
 
 ## Desktopweergave

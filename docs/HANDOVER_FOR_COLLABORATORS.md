@@ -1,8 +1,8 @@
 # HANDOVER_FOR_COLLABORATORS
 
-Overdracht voor OpenGraph Lite Viewer v2.0.0-rc.42.
+Overdracht voor OpenGraph Lite Viewer v2.0.0-rc.43.
 
-Releasebesluit: rc.42 wacht op handmatige goedkeuring. De formeel goedgekeurde
+Releasebesluit: rc.43 wacht op handmatige goedkeuring. De formeel goedgekeurde
 rc.41-bron blijft ongewijzigd.
 
 De reserveringen Vraagzin, Nadruk en Onaffe zin zijn uitsluitend
@@ -10,12 +10,47 @@ Config-voorraad. Voeg ze niet toe aan `FEATURE_DEFINITIONS`, state, opslag,
 export of rendering voordat hun eigen voorconfig, contract en tests zijn
 vastgelegd.
 
-LEESMIJ-carousels gebruiken `state.readmeCarousels` uitsluitend als lokale
-Config-overschrijving. Houd de ingebouwde introcarousel in de HTML als
-bronstandaard. Voeg geen losse carousel-state toe aan OPN-documentdata en laat
-onveilige beeldschema's niet door de bronfilter. Houd de onderschriftvelden
-compact en laat graph-sneltoetsen nooit reageren binnen Config/LEESMIJ of
-vanuit een actief invoerveld.
+LEESMIJ-aanpassingen gebruiken `state.readmeTopicEdits` en
+`state.readmeCarousels` uitsluitend als Config-overschrijving. Houd de
+ingebouwde itemtekst en introcarousel in de HTML als bronstandaard. `Tonen:
+nee` verbergt een item, maar verwijdert het niet uit de DOM of de Config-keuze.
+Voeg deze state niet toe aan OPN-documentdata. Laat alleen beperkte,
+gesaniteerde HTML toe en accepteer een ingesloten `data:image/...`-bron
+uitsluitend wanneer die via de vertrouwde bestandsinvoer is gemaakt. Houd
+onderschriftvelden compact en laat graph-sneltoetsen nooit reageren binnen
+Config/LEESMIJ of vanuit een actief invoerveld.
+
+## Projectconfig en projectzip
+
+Iedere volledige projectzip bevat drie bestanden met een afzonderlijke rol:
+
+```text
+config/default-config.json   meegeleverde, controleerbare standaard
+config/user-config.json      gebruikersoverschrijving naast de standaard
+config/README.md             laadvolgorde en lokale werkwijze
+```
+
+De vaste voorrang is:
+
+```text
+code-defaults
+→ config/default-config.json
+→ config/user-config.json (alleen enabled=true)
+→ lokaal bewaarde browser-Config
+```
+
+De laatste aanwezige laag wint per instelling. Verwijder of overschrijf de
+standaardconfig niet wanneer een gebruiker eigen keuzes meeneemt. Via
+`start_local_viewer.bat` mag de lokale endpoint alleen het allowlistdoel
+`config/user-config.json` schrijven. Op een gewone webserver blijft
+`Download user-config` de fallback. Controleer vóór iedere zip dat beide JSON-
+bestanden hetzelfde versienummer als `VERSION.txt` hebben.
+
+Iedere projectzip bevat daarnaast `PUBLICATIE_README.md`. Dat bestand bevat
+versiegebonden plaatsingsteksten voor LinkedIn, Reddit, Facebook, YouTube,
+Bluesky, Mastodon, X en GitHub. Werk de placeholders bij vóór publicatie en
+noem een kandidaat geen stabiele release zolang het handmatige akkoord
+ontbreekt.
 
 ## Bronbasis
 
@@ -111,11 +146,15 @@ Intern schrijft de viewer `central_opn: "ft"`. Invoer met de oude waarde `functi
 2. Lees `VERSION.txt`.
 3. Wijzig app en leidende instructies samen.
 4. Voer ook `tools/check_local_start.py`,
-   `tools/check_feature_profiles.py` en `tools/check_log_slot_distance.py` uit.
+   `tools/check_feature_profiles.py`, `tools/check_log_slot_distance.py`,
+   `tools/check_readme_item_editor.py` en
+   `tools/check_project_config_layers.py` uit.
 5. Voer `check_release.bat` uit.
 6. Hernoem de projectmap naar de bedoelde release en voer
    `maak-volledige-zip.bat` uit. De ZIP neemt automatisch de actuele mapnaam
    over.
+7. Controleer in de uitgepakte zip of `config/default-config.json`,
+   `config/user-config.json` en `PUBLICATIE_README.md` aanwezig zijn.
 
 ## Publiceren
 

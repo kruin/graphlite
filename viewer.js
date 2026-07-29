@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'v2.0.0-rc.42';
+  const VERSION = 'v2.0.0-rc.43';
   const OPN_FORMAT_VERSION = '1.0';
   const OPN_DOCUMENT_TYPE = 'opengraph-document';
   const PARADATA_EVENT_LIMIT = 250;
@@ -44,6 +44,9 @@
   const CANVAS_GUIDE_TEXT_VISIBLE = false;
   const CONFIG_STORAGE_KEY = 'opengraph_saved_config_v1014';
   const CONFIG_LOG_KEY = 'opengraph_local_config_log_v1014';
+  const PROJECT_CONFIG_SCHEMA = 'opengraph-project-config';
+  const PROJECT_DEFAULT_CONFIG_PATH = 'config/default-config.json';
+  const PROJECT_USER_CONFIG_PATH = 'config/user-config.json';
   const INSERTION_AXIS_DEFINITIONS = Object.freeze({
     lex: Object.freeze({ id: 'lex', label: 'LEX', defaultEnabled: false }),
     synt: Object.freeze({ id: 'synt', label: 'SYNT', defaultEnabled: false }),
@@ -100,7 +103,13 @@
     Object.fromEntries(Object.values(FEATURE_DEFINITIONS).map(feature => [feature.id, feature.defaultEnabled]))
   );
   const MAX_README_CAROUSEL_SLIDES = 20;
+  const MAX_README_TOPIC_HTML_LENGTH = 50000;
+  const MAX_README_EMBEDDED_IMAGE_BYTES = 1250000;
+  const MAX_README_EMBEDDED_SOURCE_CHARS = 1800000;
+  const MAX_README_EMBEDDED_TOTAL_CHARS = 3200000;
+  const README_EMBEDDED_IMAGE_TYPES = new Set(['image/png', 'image/jpeg', 'image/webp', 'image/gif']);
   const DEFAULT_README_CAROUSELS = new Map();
+  const DEFAULT_README_TOPICS = new Map();
 
 
   const LANGUAGE_OPTIONS = [
@@ -1738,7 +1747,7 @@
 
   const LEXICON_USAGE_PROFILES = new Map();
   const LEXICON_CONSTRUCTIONS = new Map();
-  const LEX_ANALYSIS_STORAGE_KEY = 'opengraph_lex_analysis_choices_v2.0.0-rc.42';
+  const LEX_ANALYSIS_STORAGE_KEY = 'opengraph_lex_analysis_choices_v2.0.0-rc.43';
 
   function normalizeInsertionOrigin(value) {
     const origin = String(value || 'LOG').trim().toUpperCase().replace('MIXED', 'LOG+LEX');
@@ -1839,6 +1848,7 @@
     lexAnalysisChoices: loadLexAnalysisChoices(),
     lexInsertionExtensionTargets: ['vp-boundary'],
     readmeCarousels: {},
+    readmeTopicEdits: {},
     portraitMenuSlots: 0,
     topMenusAbove: [],
     lastSupportedGrowthStep: 0,
@@ -1975,6 +1985,7 @@
     LEXICON_CONSTRUCTIONS.clear();
     ['adverbs', 'lexical-profiles', 'adverb-origins'].forEach(topicId => {
       if (state.readmeCarousels) delete state.readmeCarousels[topicId];
+      if (state.readmeTopicEdits) delete state.readmeTopicEdits[topicId];
     });
     try { localStorage.removeItem(LEX_ANALYSIS_STORAGE_KEY); } catch (_err) {}
     const ambiguityPanel = document.getElementById('lexAmbiguityPanel');
@@ -2020,6 +2031,7 @@
     syncPreconfigControls();
     document.body.classList.toggle('feature-adverbs-on', adverbsEnabled);
     document.body.classList.toggle('feature-adverbs-off', !adverbsEnabled);
+    renderReadmeTopicEdits();
     document.querySelectorAll('[data-feature="adverbs"]').forEach(node => {
       node.hidden = !adverbsEnabled;
       node.setAttribute('aria-hidden', String(!adverbsEnabled));
@@ -2053,8 +2065,12 @@
       logLexDashboardTitle.textContent = adverbsEnabled ? 'LEX & bijwoorden' : 'LEX';
     }
     syncFeatureDocumentationLinks();
-    syncReadmeCarouselEditorTopics();
     renderReadmeTopicCarousels();
+    syncReadmeCarouselEditorTopics();
+    setHelpTopic(
+      document.querySelector('.help-topic-panel.is-active')?.getAttribute('data-help-topic')
+      || 'readme'
+    );
   }
 
   async function setFeatureEnabled(featureId, enabled, options = {}) {
@@ -4534,7 +4550,7 @@
     const landscapeHandheld = isHandheldLandscapeViewport();
     if (mode === 'max') {
       if (landscapeHandheld) {
-        // v2.0.0-rc.42: landschap heeft veel breedte maar weinig hoogte.
+        // v2.0.0-rc.43: landschap heeft veel breedte maar weinig hoogte.
         // Maak de projectie daarom werkelijk platter in plaats van een hoge
         // portretlayout met cover-zoom af te snijden. Font en knopen behouden
         // hun leesbare maat; vooral de horizontale/verticale celafstand wordt
@@ -4667,7 +4683,7 @@
       // moeten de volledige LEX-inhoud links en regelboxen rechts bevatten.
       const left = westAxis - activeLexRenderLeftReach();
       const eastAxisRight = px(union.maxX, origin) + 118;
-      // v2.0.0-rc.42: in portret hoort niet alleen de groene SYNT-as, maar
+      // v2.0.0-rc.43: in portret hoort niet alleen de groene SYNT-as, maar
       // ook de volledige regelbox rechts ervan in de eerste MAX-fit. Gebruik
       // de unie van Syntax en Functional zodat een viewwissel niet verspringt.
       const syntaxRuleRight = projectedRuleRightEdge(
@@ -7123,7 +7139,7 @@
 
   function canvasAspectRatio() {
     syncMainTopbarLayout();
-    // v2.0.0-rc.42: in handheld-landscape reserveert het SVG zelf ruimte
+    // v2.0.0-rc.43: in handheld-landscape reserveert het SVG zelf ruimte
     // voor menu en Play. Gebruik daarom de werkelijk tekenbare SVG-maat en
     // niet de buitenste telefoonframe/canvas-wrap-maat.
     const svgRect = els.svg?.getBoundingClientRect?.();
@@ -7450,7 +7466,7 @@
       w: axes.w + padX * 2,
       h: axes.h + padY * 2
     };
-    // v2.0.0-rc.42: ook in landschap is MAX een contain-fit. De voormalige
+    // v2.0.0-rc.43: ook in landschap is MAX een contain-fit. De voormalige
     // cover-zoom vulde wel de breedte, maar sneed de rastertop en de volledige
     // LOG-as af. De plattere landschapscellen hierboven benutten de breedte
     // zonder semantische projecties buiten het scherm te plaatsen.
@@ -9579,10 +9595,10 @@
   const CONFIG_TAB_DEFINITIONS = [
     { id: 'preconfig', nl: 'Voorconfig', en: 'Pre-config' },
     { id: 'features', nl: 'Toepassingen', en: 'Applications' },
-    { id: 'readme-carousels', nl: 'LEESMIJ-carousels', en: 'README carousels' },
+    { id: 'readme-carousels', nl: 'LEESMIJ-items', en: 'README topics' },
     { id: 'overview', nl: 'Overzicht', en: 'Overview' },
     { id: 'jan', nl: 'JaN · TODO', en: 'JaN · TODO' },
-    { id: 'files', nl: 'Opslaan & exporteren', en: 'Save & export' },
+    { id: 'files', nl: 'Bestanden & export', en: 'Files & export' },
     { id: 'view', nl: 'Beeld', en: 'View' },
     { id: 'log-lex', nl: 'LOG & LEX', en: 'LOG & LEX' },
     { id: 'advanced', nl: 'Geavanceerd', en: 'Advanced' }
@@ -9591,6 +9607,15 @@
   let readmeCarouselEditorTopicId = 'readme';
   let readmeCarouselEditorSlideIndex = 0;
   let readmeCarouselDefaultsCaptured = false;
+  let readmeTopicDefaultsCaptured = false;
+  let readmePendingSlideFile = null;
+  const projectConfigStatus = {
+    defaultLoaded: false,
+    userLoaded: false,
+    browserLoaded: false,
+    messageNl: '',
+    messageEn: ''
+  };
 
   function activateConfigTab(tabId = 'preconfig', focusTab = false) {
     const validId = CONFIG_TAB_DEFINITIONS.some(tab => tab.id === tabId) ? tabId : 'preconfig';
@@ -9716,10 +9741,13 @@
     });
 
     const saveCard = document.createElement('section');
-    saveCard.className = 'panel-card config-file-settings-card';
+    saveCard.className = 'panel-card config-file-settings-card config-global-save-card';
     saveCard.dataset.configCard = 'save';
     const saveField = treeCard.querySelector('.config-save-field');
     if (saveField) saveCard.appendChild(saveField);
+    const saveSlot = document.createElement('div');
+    saveSlot.className = 'config-global-save-slot';
+    saveSlot.appendChild(saveCard);
 
     const oldViewGrid = treeCard.querySelector('.view-config-grid');
     if (oldViewGrid && !oldViewGrid.children.length) oldViewGrid.remove();
@@ -9732,7 +9760,7 @@
       <div class="config-dashboard">
         <button type="button" data-config-jump="preconfig"><strong>Voorconfig</strong><span>Algemene mogelijkheden vóór toepassingen.</span></button>
         <button type="button" data-config-jump="features"><strong>Toepassingen</strong><span>Bijwoorden en volgende uitbreidingen.</span></button>
-        <button type="button" data-config-jump="readme-carousels"><strong>LEESMIJ-carousels</strong><span>Beelden en onderschriften per LEESMIJ-item.</span></button>
+        <button type="button" data-config-jump="readme-carousels"><strong>LEESMIJ-items</strong><span>Tonen, tekst, beelden en onderschriften per item.</span></button>
         <button type="button" data-config-jump="view"><strong>Basisweergave</strong><span>View, interface, raster en vulling.</span></button>
         <button type="button" data-config-jump="jan"><strong>JaN-notatie · TODO</strong><span>S:np-VP; binair eerst, meertakkig later.</span></button>
         <button type="button" data-config-jump="view"><strong>Boom & layout</strong><span>Takvolgorde, ruimte en fit.</span></button>
@@ -9774,7 +9802,7 @@
       </fieldset>
       <section class="preconfig-candidates" aria-labelledby="preconfigCandidatesHeading">
         <h3 id="preconfigCandidatesHeading"><span class="help-lang-nl">Volgende voorconfig-kandidaten</span><span class="help-lang-en">Next pre-config candidates</span></h3>
-        <p><span class="help-lang-nl">Ontwerpvoorraad; in rc.42 nog niet schakelbaar.</span><span class="help-lang-en">Design backlog; not switchable in rc.42 yet.</span></p>
+        <p><span class="help-lang-nl">Ontwerpvoorraad; in rc.43 nog niet schakelbaar.</span><span class="help-lang-en">Design backlog; not switchable in rc.43 yet.</span></p>
         <ul>${PRECONFIG_CANDIDATES.map(candidate => `<li><span class="help-lang-nl">${candidate.label}</span><span class="help-lang-en">${candidate.labelEn}</span></li>`).join('')}</ul>
       </section>`;
     preconfigCard.querySelectorAll('[data-insertion-axis]').forEach(input => {
@@ -9856,17 +9884,45 @@
     readmeCarouselCard.id = 'config-readme-carousels';
     readmeCarouselCard.innerHTML = `
       <div class="help-lang-nl">
-        <h2>LEESMIJ-carousels bewerken</h2>
-        <p class="inline-help">Ieder LEESMIJ-onderwerp heeft een eigen carousel. Voeg per slide een lokaal beeldpad of een https-URL, alt-tekst en onderschrift toe. Wijzigingen zijn direct zichtbaar in LEESMIJ en worden bewaard met de bestaande knop <strong>Ja · bewaar config</strong>.</p>
+        <h2>LEESMIJ-items bewerken</h2>
+        <p class="inline-help">Bepaal per item of het wordt getoond en pas navigatietitel en inhoud aan. De inhoud gebruikt beperkte, veilige HTML. Daaronder beheer je de eigen carousel. Wijzigingen zijn direct zichtbaar in LEESMIJ en worden bewaard met <strong>Ja · bewaar config</strong>.</p>
       </div>
       <div class="help-lang-en">
-        <h2>Edit README carousels</h2>
-        <p class="inline-help">Every README topic has its own carousel. Add a local image path or https URL, alt text, and caption per slide. Changes appear in README immediately and are stored by the existing <strong>Yes · save config</strong> button.</p>
+        <h2>Edit README topics</h2>
+        <p class="inline-help">Choose whether each topic is shown and edit its navigation title and content. Content accepts limited, safe HTML. Manage its carousel below. Changes appear in README immediately and are stored with <strong>Yes · save config</strong>.</p>
       </div>
       <label class="select-field readme-carousel-topic-field" for="readmeCarouselTopicSelect">
         <span><span class="help-lang-nl">LEESMIJ-item</span><span class="help-lang-en">README topic</span></span>
         <select id="readmeCarouselTopicSelect"></select>
       </label>
+      <fieldset class="readme-topic-fields">
+        <legend><span class="help-lang-nl">Item</span><span class="help-lang-en">Topic</span></legend>
+        <label for="readmeTopicVisibilitySelect">
+          <span><span class="help-lang-nl">Item tonen</span><span class="help-lang-en">Show topic</span></span>
+          <select id="readmeTopicVisibilitySelect">
+            <option value="yes">Ja / Yes</option>
+            <option value="no">Nee / No</option>
+          </select>
+        </label>
+        <label for="readmeTopicLabelNlInput">
+          <span><span class="help-lang-nl">Navigatietitel NL</span><span class="help-lang-en">Navigation title NL</span></span>
+          <input id="readmeTopicLabelNlInput" maxlength="180" type="text"/>
+        </label>
+        <label for="readmeTopicLabelEnInput">
+          <span><span class="help-lang-nl">Navigatietitel EN</span><span class="help-lang-en">Navigation title EN</span></span>
+          <input id="readmeTopicLabelEnInput" maxlength="180" type="text"/>
+        </label>
+        <label class="readme-topic-html-field" for="readmeTopicHtmlNlInput">
+          <span><span class="help-lang-nl">Itemtekst NL · veilige HTML</span><span class="help-lang-en">Topic content NL · safe HTML</span></span>
+          <textarea id="readmeTopicHtmlNlInput" maxlength="${MAX_README_TOPIC_HTML_LENGTH}" rows="9" spellcheck="true"></textarea>
+        </label>
+        <label class="readme-topic-html-field" for="readmeTopicHtmlEnInput">
+          <span><span class="help-lang-nl">Itemtekst EN · veilige HTML</span><span class="help-lang-en">Topic content EN · safe HTML</span></span>
+          <textarea id="readmeTopicHtmlEnInput" maxlength="${MAX_README_TOPIC_HTML_LENGTH}" rows="9" spellcheck="true"></textarea>
+        </label>
+        <small class="readme-topic-html-help"><span class="help-lang-nl">Wijzigingen worden toegepast wanneer je het veld verlaat. Toegestaan: koppen, alinea’s, lijsten, nadruk, code en veilige links. Scripts, formulieren, styles en ingesloten frames worden verwijderd.</span><span class="help-lang-en">Changes apply when you leave the field. Allowed: headings, paragraphs, lists, emphasis, code, and safe links. Scripts, forms, styles, and embedded frames are removed.</span></small>
+      </fieldset>
+      <h3 class="readme-carousel-editor-heading"><span class="help-lang-nl">Slides van dit item</span><span class="help-lang-en">Slides for this topic</span></h3>
       <div class="readme-carousel-editor-nav">
         <button id="readmeCarouselPrevButton" type="button" aria-label="Vorige slide">←</button>
         <strong id="readmeCarouselSlideCounter" aria-live="polite">0 / 0</strong>
@@ -9905,14 +9961,23 @@
       </fieldset>
       <div class="readme-carousel-editor-actions">
         <button id="readmeCarouselAddButton" type="button"><span class="help-lang-nl">+ Slide</span><span class="help-lang-en">+ Slide</span></button>
-        <button id="readmeCarouselRemoveButton" type="button"><span class="help-lang-nl">Verwijder slide</span><span class="help-lang-en">Remove slide</span></button>
-        <button id="readmeCarouselResetButton" type="button"><span class="help-lang-nl">Herstel dit item</span><span class="help-lang-en">Reset this topic</span></button>
+        <button id="readmeCarouselRemoveButton" type="button"><span class="help-lang-nl">Verwijder actieve slide</span><span class="help-lang-en">Remove active slide</span></button>
+        <button id="readmeCarouselResetButton" type="button"><span class="help-lang-nl">Herstel item · tekst + slides</span><span class="help-lang-en">Reset topic · content + slides</span></button>
       </div>
       <p class="readme-carousel-editor-status" id="readmeCarouselEditorStatus" role="status"></p>`;
     readmeCarouselCard.querySelector('#readmeCarouselTopicSelect')?.addEventListener('change', event => {
       readmeCarouselEditorTopicId = event.target.value || 'readme';
       readmeCarouselEditorSlideIndex = 0;
       renderReadmeCarouselEditor();
+    });
+    readmeCarouselCard.querySelector('#readmeTopicVisibilitySelect')?.addEventListener('change', event => {
+      updateReadmeTopicEditField('visible', event.target.value);
+    });
+    ['labelNl', 'labelEn', 'htmlNl', 'htmlEn'].forEach(field => {
+      const suffix = field[0].toUpperCase() + field.slice(1);
+      readmeCarouselCard.querySelector(`#readmeTopic${suffix}Input`)?.addEventListener('change', event => {
+        updateReadmeTopicEditField(field, event.target.value);
+      });
     });
     readmeCarouselCard.querySelector('#readmeCarouselPrevButton')?.addEventListener('click', () => {
       const slides = readmeCarouselSlidesForTopic(readmeCarouselEditorTopicId);
@@ -9932,7 +9997,93 @@
     });
     readmeCarouselCard.querySelector('#readmeCarouselAddButton')?.addEventListener('click', addReadmeCarouselSlide);
     readmeCarouselCard.querySelector('#readmeCarouselRemoveButton')?.addEventListener('click', removeReadmeCarouselSlide);
-    readmeCarouselCard.querySelector('#readmeCarouselResetButton')?.addEventListener('click', resetReadmeCarouselTopic);
+    readmeCarouselCard.querySelector('#readmeCarouselResetButton')?.addEventListener('click', resetReadmeTopicConfiguration);
+
+    const projectConfigCard = document.createElement('section');
+    projectConfigCard.className = 'panel-card config-project-layers-card';
+    projectConfigCard.dataset.configCard = 'project-config';
+    projectConfigCard.innerHTML = `
+      <div class="help-lang-nl">
+        <h2>Config in de projectzip</h2>
+        <p class="inline-help">De viewer laadt eerst <a href="${PROJECT_DEFAULT_CONFIG_PATH}" target="_blank" rel="noopener">de standaardconfig</a> en legt daarna <a href="${PROJECT_USER_CONFIG_PATH}" target="_blank" rel="noopener">jouw projectconfig</a> eroverheen. De bestanden blijven naast elkaar bestaan. Een al lokaal bewaarde browsersnapshot wordt als laatste toegepast.</p>
+      </div>
+      <div class="help-lang-en">
+        <h2>Config in the project zip</h2>
+        <p class="inline-help">The viewer loads <a href="${PROJECT_DEFAULT_CONFIG_PATH}" target="_blank" rel="noopener">the default config</a> first, then overlays <a href="${PROJECT_USER_CONFIG_PATH}" target="_blank" rel="noopener">your project config</a>. Both files remain available. A browser-local saved snapshot is applied last.</p>
+      </div>
+      <ol class="project-config-precedence">
+        <li><code>${PROJECT_DEFAULT_CONFIG_PATH}</code> · <span class="help-lang-nl">meegeleverde standaard</span><span class="help-lang-en">bundled default</span></li>
+        <li><code>${PROJECT_USER_CONFIG_PATH}</code> · <span class="help-lang-nl">jouw overschrijvingen</span><span class="help-lang-en">your overrides</span></li>
+        <li><span class="help-lang-nl">lokaal bewaarde browser-Config</span><span class="help-lang-en">browser-local saved Config</span> · <span class="help-lang-nl">alleen op dit apparaat</span><span class="help-lang-en">this device only</span></li>
+      </ol>
+      <div class="button-row project-config-actions">
+        <button class="primary" id="writeProjectUserConfigButton" type="button"><span class="help-lang-nl">Schrijf huidige Config naar project</span><span class="help-lang-en">Write current Config to project</span></button>
+        <button id="downloadProjectUserConfigButton" type="button"><span class="help-lang-nl">Download user-config</span><span class="help-lang-en">Download user config</span></button>
+      </div>
+      <p class="top-menu-choice-help project-config-layer-status" id="projectConfigLayerStatus" role="status"></p>
+      <p class="top-menu-choice-help"><span class="help-lang-nl"><strong>Direct schrijven</strong> werkt wanneer de viewer via <code>start_local_viewer.bat</code> draait. Bij een gewone webversie download je het bestand en plaats je het handmatig in <code>config/</code>.</span><span class="help-lang-en"><strong>Direct writing</strong> works when the viewer runs through <code>start_local_viewer.bat</code>. On a regular web version, download the file and place it in <code>config/</code> manually.</span></p>`;
+    projectConfigCard.querySelector('#writeProjectUserConfigButton')?.addEventListener('click', writeProjectUserConfig);
+    projectConfigCard.querySelector('#downloadProjectUserConfigButton')?.addEventListener('click', downloadProjectUserConfig);
+
+    const readmeSlideFileCard = document.createElement('section');
+    readmeSlideFileCard.className = 'panel-card config-readme-slide-file-card';
+    readmeSlideFileCard.dataset.configCard = 'readme-slide-file';
+    readmeSlideFileCard.innerHTML = `
+      <div class="help-lang-nl">
+        <h2>Afbeelding als LEESMIJ-slide invoegen</h2>
+        <p class="inline-help">Kies een lokaal PNG-, JPEG-, WebP- of GIF-bestand. Config sluit het beeld in bij de gekozen carousel; een los beeldpad is niet nodig. Maximaal 1,25 MB per bestand. Bewerk daarna alt-tekst en onderschrift bij LEESMIJ-items.</p>
+      </div>
+      <div class="help-lang-en">
+        <h2>Insert image as README slide</h2>
+        <p class="inline-help">Choose a local PNG, JPEG, WebP, or GIF file. Config embeds it in the selected carousel, so no separate image path is needed. Maximum 1.25 MB per file. Then edit alt text and caption under README topics.</p>
+      </div>
+      <div class="readme-slide-file-grid">
+        <label for="readmeSlideFileTopicSelect">
+          <span><span class="help-lang-nl">LEESMIJ-item</span><span class="help-lang-en">README topic</span></span>
+          <select id="readmeSlideFileTopicSelect"></select>
+        </label>
+        <label for="readmeSlideFileShapeSelect">
+          <span><span class="help-lang-nl">Beeldvorm</span><span class="help-lang-en">Image shape</span></span>
+          <select id="readmeSlideFileShapeSelect">
+            <option value="wide">Breed · 16:10</option>
+            <option value="narrow">Smal · portret</option>
+          </select>
+        </label>
+        <label class="readme-slide-file-picker" for="readmeSlideFileInput">
+          <span><span class="help-lang-nl">Afbeeldingsbestand</span><span class="help-lang-en">Image file</span></span>
+          <input accept=".png,.jpg,.jpeg,.webp,.gif,image/png,image/jpeg,image/webp,image/gif" id="readmeSlideFileInput" type="file"/>
+        </label>
+      </div>
+      <div class="button-row readme-slide-file-actions">
+        <button class="primary" disabled id="readmeSlideFileInsertButton" type="button"><span class="help-lang-nl">Voeg toe als slide</span><span class="help-lang-en">Insert as slide</span></button>
+        <button disabled id="readmeSlideFileEditButton" type="button"><span class="help-lang-nl">Bewerk ingevoegde slide</span><span class="help-lang-en">Edit inserted slide</span></button>
+      </div>
+      <p class="top-menu-choice-help readme-slide-file-status" id="readmeSlideFileStatus" role="status"><span class="help-lang-nl">Nog geen bestand gekozen.</span><span class="help-lang-en">No file selected yet.</span></p>`;
+    const readmeSlideFileInput = readmeSlideFileCard.querySelector('#readmeSlideFileInput');
+    const readmeSlideFileInsertButton = readmeSlideFileCard.querySelector('#readmeSlideFileInsertButton');
+    readmeSlideFileInput?.addEventListener('change', event => {
+      readmePendingSlideFile = event.target.files?.[0] || null;
+      if (readmeSlideFileInsertButton) readmeSlideFileInsertButton.disabled = !readmePendingSlideFile;
+      const editButton = document.getElementById('readmeSlideFileEditButton');
+      if (editButton) editButton.disabled = true;
+      if (readmePendingSlideFile) {
+        setReadmeSlideFileStatus(
+          `Gekozen: ${readmePendingSlideFile.name} · ${Math.ceil(readmePendingSlideFile.size / 1024)} kB.`,
+          `Selected: ${readmePendingSlideFile.name} · ${Math.ceil(readmePendingSlideFile.size / 1024)} kB.`
+        );
+      } else {
+        setReadmeSlideFileStatus('Nog geen bestand gekozen.', 'No file selected yet.');
+      }
+    });
+    readmeSlideFileCard.querySelector('#readmeSlideFileTopicSelect')?.addEventListener('change', event => {
+      readmeCarouselEditorTopicId = event.target.value || readmeCarouselEditorTopicId;
+      readmeCarouselEditorSlideIndex = 0;
+    });
+    readmeSlideFileInsertButton?.addEventListener('click', insertReadmeSlideFile);
+    readmeSlideFileCard.querySelector('#readmeSlideFileEditButton')?.addEventListener('click', () => {
+      activateConfigTab('readme-carousels');
+      syncReadmeCarouselEditorTopics();
+    });
 
     const janCard = document.createElement('section');
     janCard.className = 'panel-card config-jan-card';
@@ -9944,7 +10095,7 @@
     panels.get('readme-carousels').appendChild(readmeCarouselCard);
     panels.get('overview').appendChild(overviewCard);
     panels.get('jan').appendChild(janCard);
-    panels.get('files').append(graphExportCard, opnCard, saveCard, examplesCard);
+    panels.get('files').append(projectConfigCard, readmeSlideFileCard, graphExportCard, opnCard, examplesCard);
     panels.get('view').appendChild(treeCard);
     panels.get('log-lex').append(logSettingsCard, lexCard, relationCard);
     panels.get('advanced').appendChild(advancedCard);
@@ -9973,10 +10124,11 @@
       small.innerHTML = `<span class="help-lang-nl">${texts[0]}</span><span class="help-lang-en">${texts[1]}</span>`;
       label.appendChild(small);
     });
-    sidePanel.replaceChildren(tabList, ...panels.values());
+    sidePanel.replaceChildren(tabList, saveSlot, ...panels.values());
     sidePanel.dataset.configTabsReady = '1';
     activateConfigTab(activeConfigTab);
     applyFeatureVisibility();
+    syncProjectConfigStatus();
   }
 
   function setText(selector, text) {
@@ -10237,6 +10389,7 @@
     if (els.sourceAxisSummaryLabel) els.sourceAxisSummaryLabel.textContent = en ? 'Projections' : 'Projecties';
     renderMainChoiceMenus();
     applyFeatureVisibility();
+    syncProjectConfigStatus();
     applySelectedLanguageTexts();
   }
 
@@ -10251,21 +10404,42 @@
   function setHelpTopic(topicId = 'readme') {
     const panels = Array.from(document.querySelectorAll('[data-help-topic]'));
     const buttons = Array.from(document.querySelectorAll('[data-help-topic-button]'));
-    const validIds = new Set(panels.map(panel => panel.getAttribute('data-help-topic')));
-    const next = validIds.has(topicId) ? topicId : 'readme';
+    const validIds = panels
+      .map(panel => panel.getAttribute('data-help-topic') || '')
+      .filter(topic => topic && readmeTopicIsAvailable(topic));
+    const next = validIds.includes(topicId)
+      ? topicId
+      : validIds.includes('readme')
+        ? 'readme'
+        : validIds[0] || '';
     panels.forEach(panel => {
-      const active = panel.getAttribute('data-help-topic') === next;
+      const active = !!next && panel.getAttribute('data-help-topic') === next;
       panel.classList.toggle('is-active', active);
       panel.hidden = !active;
+      panel.setAttribute('aria-hidden', String(!active));
     });
     buttons.forEach(button => {
-      const active = button.getAttribute('data-help-topic-button') === next;
+      const buttonTopic = button.getAttribute('data-help-topic-button') || '';
+      const available = readmeTopicIsAvailable(buttonTopic);
+      const active = available && buttonTopic === next;
+      button.hidden = !available;
+      button.setAttribute('aria-hidden', String(!available));
       button.classList.toggle('is-active', active);
       button.setAttribute('aria-current', active ? 'page' : 'false');
       button.setAttribute('aria-expanded', active ? 'true' : 'false');
     });
     const stage = document.querySelector('.help-topic-stage');
-    if (stage) stage.scrollTop = 0;
+    if (stage) {
+      let empty = stage.querySelector('.help-topic-empty-state');
+      if (!empty) {
+        empty = document.createElement('div');
+        empty.className = 'help-topic-empty-state';
+        empty.innerHTML = '<span class="help-lang-nl">Er zijn geen LEESMIJ-items ingesteld op Tonen: ja. Zet een item weer aan in Config.</span><span class="help-lang-en">No README topics are set to Show: yes. Enable a topic again in Config.</span>';
+        stage.appendChild(empty);
+      }
+      empty.hidden = !!next;
+      stage.scrollTop = 0;
+    }
   }
 
   function registerHelpTopicTree() {
@@ -10405,10 +10579,20 @@
     restoreSize();
   }
 
+  function safeReadmeEmbeddedImageSource(value) {
+    const source = String(value || '').trim();
+    if (!source || source.length > MAX_README_EMBEDDED_SOURCE_CHARS) return '';
+    if (!/^data:image\/(?:png|jpeg|webp|gif);base64,[a-z0-9+/=\s]+$/i.test(source)) return '';
+    return source.replace(/\s+/g, '');
+  }
+
   function normalizedReadmeCarouselSlide(value = {}) {
     const text = (input, maximum) => String(input || '').trim().slice(0, maximum);
+    const embeddedSource = value.embedded === true ? safeReadmeEmbeddedImageSource(value.src) : '';
     return {
-      src: text(value.src, 2048),
+      src: embeddedSource || text(value.src, 2048),
+      embedded: !!embeddedSource,
+      fileName: embeddedSource ? text(value.fileName, 240) : '',
       shape: value.shape === 'narrow' ? 'narrow' : 'wide',
       altNl: text(value.altNl, 320),
       altEn: text(value.altEn, 320),
@@ -10438,6 +10622,154 @@
         return { id, panel, labelNl: label('nl'), labelEn: label('en') };
       })
       .filter(Boolean);
+  }
+
+  function readmeTopicLanguageContainer(panel, language) {
+    const className = language === 'en' ? 'help-lang-en' : 'help-lang-nl';
+    return Array.from(panel?.children || []).find(child => child.classList?.contains(className)) || null;
+  }
+
+  function captureDefaultReadmeTopics() {
+    if (readmeTopicDefaultsCaptured) return;
+    readmeTopicDefaultsCaptured = true;
+    Array.from(document.querySelectorAll('.help-topic-panel')).forEach(panel => {
+      const id = panel.getAttribute('data-help-topic') || '';
+      if (!id) return;
+      const button = document.querySelector(`[data-help-topic-button="${CSS.escape(id)}"]`);
+      const nlContainer = readmeTopicLanguageContainer(panel, 'nl');
+      const enContainer = readmeTopicLanguageContainer(panel, 'en');
+      const labelFor = language => {
+        const localized = button?.querySelector(language === 'en' ? '.help-lang-en' : '.help-lang-nl');
+        return localized?.textContent?.trim()
+          || button?.textContent?.trim()
+          || readmeTopicLanguageContainer(panel, language)?.querySelector('h3')?.textContent?.trim()
+          || id;
+      };
+      DEFAULT_README_TOPICS.set(id, {
+        visible: true,
+        labelNl: labelFor('nl'),
+        labelEn: labelFor('en'),
+        htmlNl: nlContainer?.innerHTML?.trim() || '',
+        htmlEn: enContainer?.innerHTML?.trim() || ''
+      });
+    });
+  }
+
+  function sanitizeReadmeTopicHtml(value) {
+    const template = document.createElement('template');
+    template.innerHTML = String(value || '').slice(0, MAX_README_TOPIC_HTML_LENGTH);
+    const allowedElements = new Set([
+      'a', 'b', 'blockquote', 'br', 'code', 'em', 'h3', 'h4', 'hr', 'i',
+      'li', 'ol', 'p', 'pre', 'span', 'strong', 'u', 'ul'
+    ]);
+    const removableElements = new Set([
+      'audio', 'button', 'embed', 'form', 'iframe', 'input', 'link', 'meta',
+      'object', 'script', 'select', 'source', 'style', 'textarea', 'video'
+    ]);
+    Array.from(template.content.querySelectorAll('*')).forEach(node => {
+      const tag = node.tagName.toLowerCase();
+      if (!allowedElements.has(tag)) {
+        if (removableElements.has(tag)) node.remove();
+        else node.replaceWith(...Array.from(node.childNodes));
+        return;
+      }
+      Array.from(node.attributes).forEach(attribute => {
+        const name = attribute.name.toLowerCase();
+        if (tag === 'a' && name === 'href') {
+          const href = String(attribute.value || '').trim();
+          if (!href || /^(?:javascript|vbscript|data|file):/i.test(href)) node.removeAttribute(attribute.name);
+          return;
+        }
+        if (tag === 'a' && name === 'title') return;
+        if (tag === 'p' && name === 'class' && attribute.value === 'readme-query-note') return;
+        node.removeAttribute(attribute.name);
+      });
+      if (tag === 'a' && node.hasAttribute('href')) {
+        node.setAttribute('target', '_blank');
+        node.setAttribute('rel', 'noopener noreferrer');
+      }
+    });
+    return template.innerHTML.trim();
+  }
+
+  function normalizedReadmeTopicEdit(topicId, value = {}) {
+    const defaults = DEFAULT_README_TOPICS.get(topicId);
+    if (!defaults) return null;
+    const label = (input, fallback) => String(input || '').trim().slice(0, 180) || fallback;
+    return {
+      visible: value.visible !== false,
+      labelNl: label(value.labelNl, defaults.labelNl),
+      labelEn: label(value.labelEn, defaults.labelEn),
+      htmlNl: typeof value.htmlNl === 'string' ? sanitizeReadmeTopicHtml(value.htmlNl) : defaults.htmlNl,
+      htmlEn: typeof value.htmlEn === 'string' ? sanitizeReadmeTopicHtml(value.htmlEn) : defaults.htmlEn
+    };
+  }
+
+  function normalizeReadmeTopicEdits(value = {}) {
+    const normalized = {};
+    if (!value || typeof value !== 'object' || Array.isArray(value)) return normalized;
+    Object.entries(value).forEach(([topicId, edit]) => {
+      if (!DEFAULT_README_TOPICS.has(topicId) || !edit || typeof edit !== 'object' || Array.isArray(edit)) return;
+      const item = normalizedReadmeTopicEdit(topicId, edit);
+      if (item) normalized[topicId] = item;
+    });
+    return normalized;
+  }
+
+  function readmeTopicEditFor(topicId) {
+    return state.readmeTopicEdits?.[topicId] || DEFAULT_README_TOPICS.get(topicId) || null;
+  }
+
+  function ensureReadmeTopicEdit(topicId) {
+    if (!state.readmeTopicEdits || typeof state.readmeTopicEdits !== 'object') state.readmeTopicEdits = {};
+    if (!state.readmeTopicEdits[topicId]) {
+      state.readmeTopicEdits[topicId] = normalizedReadmeTopicEdit(topicId, DEFAULT_README_TOPICS.get(topicId));
+    }
+    return state.readmeTopicEdits[topicId] || null;
+  }
+
+  function readmeTopicIsAvailable(topicId) {
+    const panel = document.querySelector(`.help-topic-panel[data-help-topic="${CSS.escape(topicId)}"]`);
+    if (!panel) return false;
+    const featureId = panel.getAttribute('data-feature') || '';
+    return (!featureId || featureEnabled(featureId)) && readmeTopicEditFor(topicId)?.visible !== false;
+  }
+
+  function renderReadmeTopicEdits() {
+    captureDefaultReadmeTopics();
+    Array.from(document.querySelectorAll('.help-topic-panel')).forEach(panel => {
+      const topicId = panel.getAttribute('data-help-topic') || '';
+      const item = readmeTopicEditFor(topicId);
+      const defaults = DEFAULT_README_TOPICS.get(topicId);
+      if (!item || !defaults) return;
+      const button = document.querySelector(`[data-help-topic-button="${CSS.escape(topicId)}"]`);
+      if (button) {
+        let labelNl = button.querySelector(':scope > .help-lang-nl');
+        let labelEn = button.querySelector(':scope > .help-lang-en');
+        if (!labelNl || !labelEn) {
+          labelNl = document.createElement('span');
+          labelNl.className = 'help-lang-nl';
+          labelEn = document.createElement('span');
+          labelEn.className = 'help-lang-en';
+          button.replaceChildren(labelNl, labelEn);
+        }
+        labelNl.textContent = item.labelNl;
+        labelEn.textContent = item.labelEn;
+        const available = readmeTopicIsAvailable(topicId);
+        button.hidden = !available;
+        button.setAttribute('aria-hidden', String(!available));
+      }
+      const nlContainer = readmeTopicLanguageContainer(panel, 'nl');
+      const enContainer = readmeTopicLanguageContainer(panel, 'en');
+      if (nlContainer) nlContainer.innerHTML = item.htmlNl;
+      if (enContainer) enContainer.innerHTML = item.htmlEn;
+    });
+    setHelpTopic(
+      document.querySelector('.help-topic-panel.is-active')?.getAttribute('data-help-topic')
+      || readmeCarouselEditorTopicId
+      || 'readme'
+    );
+    registerReadmeExternalWindows();
   }
 
   function captureDefaultReadmeCarousels() {
@@ -10473,12 +10805,26 @@
         .filter(Boolean)
     );
     const normalized = {};
+    let embeddedCharacters = 0;
     if (!value || typeof value !== 'object' || Array.isArray(value)) return normalized;
     Object.entries(value).forEach(([topicId, slides]) => {
       if (!validTopics.has(topicId) || !Array.isArray(slides)) return;
       normalized[topicId] = slides
         .slice(0, MAX_README_CAROUSEL_SLIDES)
-        .map(normalizedReadmeCarouselSlide);
+        .map(normalizedReadmeCarouselSlide)
+        .map(slide => {
+          if (!slide.embedded) return slide;
+          if (embeddedCharacters + slide.src.length > MAX_README_EMBEDDED_TOTAL_CHARS) {
+            return normalizedReadmeCarouselSlide({
+              ...slide,
+              src: '',
+              embedded: false,
+              fileName: ''
+            });
+          }
+          embeddedCharacters += slide.src.length;
+          return slide;
+        });
     });
     return normalized;
   }
@@ -10501,8 +10847,9 @@
     return state.readmeCarousels[topicId];
   }
 
-  function safeReadmeCarouselSource(value) {
+  function safeReadmeCarouselSource(value, embedded = false) {
     const source = String(value || '').trim();
+    if (embedded) return safeReadmeEmbeddedImageSource(source);
     if (!source || /^(?:javascript|vbscript|data|file):/i.test(source)) return '';
     return source;
   }
@@ -10520,7 +10867,7 @@
     return `<div class="readme-carousel-viewport">
       ${slides.map((slide, index) => {
         const item = normalizedReadmeCarouselSlide(slide);
-        const source = safeReadmeCarouselSource(item.src);
+        const source = safeReadmeCarouselSource(item.src, item.embedded);
         const alt = isEnglish() ? (item.altEn || item.altNl) : (item.altNl || item.altEn);
         return `<figure class="readme-carousel-slide${index === 0 ? ' is-active' : ''}" data-readme-shape="${item.shape}" data-readme-slide=""${index === 0 ? '' : ' hidden=""'}>
           ${source
@@ -10587,7 +10934,26 @@
     }
     if (previous !== readmeCarouselEditorTopicId) readmeCarouselEditorSlideIndex = 0;
     select.value = readmeCarouselEditorTopicId;
+    syncReadmeSlideFileTopics(topics);
     renderReadmeCarouselEditor();
+  }
+
+  function syncReadmeSlideFileTopics(topics = readmeCarouselTopicRecords()) {
+    const select = document.getElementById('readmeSlideFileTopicSelect');
+    if (!select) return;
+    const previous = select.value || readmeCarouselEditorTopicId;
+    select.replaceChildren(...topics.map(topic => {
+      const option = document.createElement('option');
+      option.value = topic.id;
+      option.textContent = isEnglish() ? topic.labelEn : topic.labelNl;
+      return option;
+    }));
+    const next = topics.some(topic => topic.id === previous)
+      ? previous
+      : topics.some(topic => topic.id === readmeCarouselEditorTopicId)
+        ? readmeCarouselEditorTopicId
+        : topics[0]?.id || '';
+    select.value = next;
   }
 
   function renderReadmeCarouselEditorPreview(slide = null) {
@@ -10598,7 +10964,7 @@
       return;
     }
     const item = normalizedReadmeCarouselSlide(slide);
-    const source = safeReadmeCarouselSource(item.src);
+    const source = safeReadmeCarouselSource(item.src, item.embedded);
     const alt = isEnglish() ? (item.altEn || item.altNl) : (item.altNl || item.altEn);
     preview.innerHTML = `<figure data-readme-shape="${item.shape}">
       ${source
@@ -10619,9 +10985,35 @@
     const fieldValues = slide || normalizedReadmeCarouselSlide();
     document.querySelectorAll('[data-readme-carousel-field]').forEach(control => {
       const field = control.dataset.readmeCarouselField;
-      control.value = fieldValues[field] || (field === 'shape' ? 'wide' : '');
+      const embeddedSourceField = field === 'src' && fieldValues.embedded;
+      control.value = embeddedSourceField
+        ? `${isEnglish() ? 'Embedded file' : 'Ingesloten bestand'} · ${fieldValues.fileName || 'image'}`
+        : fieldValues[field] || (field === 'shape' ? 'wide' : '');
       control.disabled = !slide;
+      if (field === 'src') {
+        control.readOnly = !!embeddedSourceField;
+        control.classList.toggle('is-embedded-source', !!embeddedSourceField);
+        control.title = embeddedSourceField
+          ? (isEnglish()
+            ? 'This image was inserted through Save & export. Remove the slide to replace the embedded file.'
+            : 'Dit beeld is ingevoegd via Opslaan & exporteren. Verwijder de slide om het ingesloten bestand te vervangen.')
+          : '';
+      }
     });
+    const topic = readmeTopicEditFor(readmeCarouselEditorTopicId);
+    const topicDefaults = DEFAULT_README_TOPICS.get(readmeCarouselEditorTopicId);
+    const topicFields = {
+      readmeTopicLabelNlInput: topic?.labelNl || topicDefaults?.labelNl || '',
+      readmeTopicLabelEnInput: topic?.labelEn || topicDefaults?.labelEn || '',
+      readmeTopicHtmlNlInput: topic?.htmlNl || topicDefaults?.htmlNl || '',
+      readmeTopicHtmlEnInput: topic?.htmlEn || topicDefaults?.htmlEn || ''
+    };
+    Object.entries(topicFields).forEach(([id, value]) => {
+      const control = document.getElementById(id);
+      if (control && control.value !== value) control.value = value;
+    });
+    const visibility = document.getElementById('readmeTopicVisibilitySelect');
+    if (visibility) visibility.value = topic?.visible === false ? 'no' : 'yes';
     const previous = document.getElementById('readmeCarouselPrevButton');
     const next = document.getElementById('readmeCarouselNextButton');
     const remove = document.getElementById('readmeCarouselRemoveButton');
@@ -10639,12 +11031,35 @@
     renderReadmeCarouselEditorPreview(slide);
   }
 
+  function updateReadmeTopicEditField(field, value) {
+    if (!['visible', 'labelNl', 'labelEn', 'htmlNl', 'htmlEn'].includes(field)) return;
+    const edit = ensureReadmeTopicEdit(readmeCarouselEditorTopicId);
+    if (!edit) return;
+    if (field === 'visible') edit.visible = value !== 'no' && value !== false;
+    else if (field === 'labelNl' || field === 'labelEn') {
+      const defaults = DEFAULT_README_TOPICS.get(readmeCarouselEditorTopicId);
+      edit[field] = String(value || '').trim().slice(0, 180) || defaults?.[field] || readmeCarouselEditorTopicId;
+    } else {
+      edit[field] = sanitizeReadmeTopicHtml(value);
+    }
+    state.readmeTopicEdits[readmeCarouselEditorTopicId] = normalizedReadmeTopicEdit(readmeCarouselEditorTopicId, edit);
+    renderReadmeTopicEdits();
+    renderReadmeTopicCarousels();
+    syncReadmeCarouselEditorTopics();
+    appendConfigLog('change-readme-topic', { topic: readmeCarouselEditorTopicId, field });
+    markConfigDirty(isEnglish() ? 'README topic' : 'LEESMIJ-item');
+  }
+
   function updateReadmeCarouselSlideField(field, value) {
     if (!['src', 'shape', 'altNl', 'altEn', 'captionNl', 'captionEn'].includes(field)) return;
     const slides = ensureReadmeCarouselOverride(readmeCarouselEditorTopicId);
     const slide = slides[readmeCarouselEditorSlideIndex];
     if (!slide) return;
     slide[field] = field === 'shape' ? (value === 'narrow' ? 'narrow' : 'wide') : String(value || '');
+    if (field === 'src') {
+      slide.embedded = false;
+      slide.fileName = '';
+    }
     state.readmeCarousels[readmeCarouselEditorTopicId][readmeCarouselEditorSlideIndex] = normalizedReadmeCarouselSlide(slide);
     renderReadmeTopicCarousels();
     renderReadmeCarouselEditorPreview(state.readmeCarousels[readmeCarouselEditorTopicId][readmeCarouselEditorSlideIndex]);
@@ -10680,6 +11095,114 @@
     renderReadmeCarouselEditor();
     appendConfigLog('reset-readme-carousel-topic', { topic: readmeCarouselEditorTopicId });
     markConfigDirty(isEnglish() ? 'README carousel reset' : 'LEESMIJ-carousel hersteld');
+  }
+
+  function resetReadmeTopicConfiguration() {
+    if (state.readmeTopicEdits) delete state.readmeTopicEdits[readmeCarouselEditorTopicId];
+    if (state.readmeCarousels) delete state.readmeCarousels[readmeCarouselEditorTopicId];
+    readmeCarouselEditorSlideIndex = 0;
+    renderReadmeTopicEdits();
+    renderReadmeTopicCarousels();
+    syncReadmeCarouselEditorTopics();
+    appendConfigLog('reset-readme-topic', { topic: readmeCarouselEditorTopicId });
+    markConfigDirty(isEnglish() ? 'README topic reset' : 'LEESMIJ-item hersteld');
+  }
+
+  function readmeEmbeddedSourceCharacterTotal() {
+    return Object.values(state.readmeCarousels || {}).flatMap(slides => Array.isArray(slides) ? slides : [])
+      .reduce((total, slide) => total + (slide?.embedded === true ? String(slide.src || '').length : 0), 0);
+  }
+
+  function setReadmeSlideFileStatus(nl, en = nl, error = false) {
+    const status = document.getElementById('readmeSlideFileStatus');
+    if (!status) return;
+    status.textContent = isEnglish() ? en : nl;
+    status.classList.toggle('is-error', !!error);
+  }
+
+  function readFileAsDataUrl(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.addEventListener('load', () => resolve(String(reader.result || '')));
+      reader.addEventListener('error', () => reject(reader.error || new Error('Bestand lezen mislukt.')));
+      reader.readAsDataURL(file);
+    });
+  }
+
+  async function insertReadmeSlideFile() {
+    const file = readmePendingSlideFile;
+    const topicSelect = document.getElementById('readmeSlideFileTopicSelect');
+    const shapeSelect = document.getElementById('readmeSlideFileShapeSelect');
+    const insertButton = document.getElementById('readmeSlideFileInsertButton');
+    const editButton = document.getElementById('readmeSlideFileEditButton');
+    const topicId = topicSelect?.value || '';
+    if (!file || !topicId) {
+      setReadmeSlideFileStatus('Kies eerst een afbeelding en een LEESMIJ-item.', 'Choose an image and README topic first.', true);
+      return;
+    }
+    if (!README_EMBEDDED_IMAGE_TYPES.has(file.type)) {
+      setReadmeSlideFileStatus('Gebruik PNG, JPEG, WebP of GIF.', 'Use PNG, JPEG, WebP, or GIF.', true);
+      return;
+    }
+    if (file.size > MAX_README_EMBEDDED_IMAGE_BYTES) {
+      setReadmeSlideFileStatus(
+        'Afbeelding te groot. Verklein deze tot maximaal 1,25 MB.',
+        'Image too large. Reduce it to no more than 1.25 MB.',
+        true
+      );
+      return;
+    }
+    if (readmeCarouselSlidesForTopic(topicId).length >= MAX_README_CAROUSEL_SLIDES) {
+      setReadmeSlideFileStatus('Dit item heeft al 20 slides.', 'This topic already has 20 slides.', true);
+      return;
+    }
+    if (insertButton) insertButton.disabled = true;
+    try {
+      const source = await readFileAsDataUrl(file);
+      const safeSource = safeReadmeEmbeddedImageSource(source);
+      if (!safeSource) throw new Error('Ongeldig beeldbestand.');
+      if (readmeEmbeddedSourceCharacterTotal() + safeSource.length > MAX_README_EMBEDDED_TOTAL_CHARS) {
+        setReadmeSlideFileStatus(
+          'De ingesloten beelden zijn samen te groot voor lokale Config-opslag. Verklein beelden of verwijder een slide.',
+          'The embedded images are too large together for local Config storage. Reduce images or remove a slide.',
+          true
+        );
+        return;
+      }
+      const baseName = String(file.name || 'afbeelding').replace(/\.[^.]+$/, '').trim() || 'afbeelding';
+      const slides = ensureReadmeCarouselOverride(topicId);
+      slides.push(normalizedReadmeCarouselSlide({
+        src: safeSource,
+        embedded: true,
+        fileName: file.name,
+        shape: shapeSelect?.value === 'narrow' ? 'narrow' : 'wide',
+        altNl: baseName,
+        altEn: baseName
+      }));
+      readmeCarouselEditorTopicId = topicId;
+      readmeCarouselEditorSlideIndex = slides.length - 1;
+      renderReadmeTopicCarousels();
+      syncReadmeCarouselEditorTopics();
+      appendConfigLog('insert-readme-slide-file', {
+        topic: topicId,
+        fileName: file.name,
+        mimeType: file.type,
+        bytes: file.size
+      });
+      markConfigDirty(isEnglish() ? 'README image inserted' : 'LEESMIJ-beeld ingevoegd');
+      setReadmeSlideFileStatus(
+        `${file.name} is als slide ingevoegd. Bewerk nu alt-tekst en onderschrift en bewaar Config.`,
+        `Inserted ${file.name}. Edit alt text and caption, then save Config.`
+      );
+      if (editButton) editButton.disabled = false;
+      const input = document.getElementById('readmeSlideFileInput');
+      if (input) input.value = '';
+      readmePendingSlideFile = null;
+    } catch (_err) {
+      setReadmeSlideFileStatus('Afbeelding kon niet worden gelezen.', 'The image could not be read.', true);
+    } finally {
+      if (insertButton) insertButton.disabled = !readmePendingSlideFile;
+    }
   }
 
   function registerReadmeCarousel() {
@@ -10762,6 +11285,144 @@
     });
   }
 
+  function projectConfigSnapshotFromDocument(documentValue, expectedKind) {
+    if (!documentValue || typeof documentValue !== 'object' || Array.isArray(documentValue)) return null;
+    if (documentValue.schema !== PROJECT_CONFIG_SCHEMA || documentValue.version !== VERSION) return null;
+    if (expectedKind && documentValue.kind !== expectedKind) return null;
+    if (documentValue.enabled === false) return null;
+    const snapshot = documentValue.config;
+    if (!snapshot || typeof snapshot !== 'object' || Array.isArray(snapshot)) return null;
+    return { ...snapshot, version: VERSION };
+  }
+
+  function mergeProjectConfigSnapshots(base = {}, override = {}) {
+    const merged = { ...base, ...override, version: VERSION };
+    if (base.preconfig || override.preconfig) {
+      merged.preconfig = {
+        ...(base.preconfig || {}),
+        ...(override.preconfig || {}),
+        insertion: {
+          ...(base.preconfig?.insertion || {}),
+          ...(override.preconfig?.insertion || {})
+        }
+      };
+    }
+    if (base.features || override.features) {
+      merged.features = { ...(base.features || {}), ...(override.features || {}) };
+    }
+    // Deze collecties zijn volledige gebruikerskeuzes. Als de user-config de
+    // sleutel bevat, vervangt die de standaardcollectie ook wanneer zij leeg is.
+    for (const key of ['readmeTopicEdits', 'readmeCarousels', 'sourceAxes', 'topMenusAbove', 'topMenuChoices']) {
+      if (Object.prototype.hasOwnProperty.call(override, key)) merged[key] = override[key];
+    }
+    return merged;
+  }
+
+  function syncProjectConfigStatus() {
+    const status = document.getElementById('projectConfigLayerStatus');
+    if (!status) return;
+    if (projectConfigStatus.messageNl || projectConfigStatus.messageEn) {
+      status.textContent = isEnglish()
+        ? (projectConfigStatus.messageEn || projectConfigStatus.messageNl)
+        : (projectConfigStatus.messageNl || projectConfigStatus.messageEn);
+      return;
+    }
+    const layersNl = [
+      projectConfigStatus.defaultLoaded ? 'standaard geladen' : 'code-standaard actief',
+      projectConfigStatus.userLoaded ? 'project-user-config actief' : 'geen project-user-config',
+      projectConfigStatus.browserLoaded ? 'lokale browsersnapshot als laatste toegepast' : 'geen lokale browsersnapshot'
+    ];
+    const layersEn = [
+      projectConfigStatus.defaultLoaded ? 'default loaded' : 'code default active',
+      projectConfigStatus.userLoaded ? 'project user config active' : 'no project user config',
+      projectConfigStatus.browserLoaded ? 'local browser snapshot applied last' : 'no local browser snapshot'
+    ];
+    status.textContent = (isEnglish() ? layersEn : layersNl).join(' · ');
+  }
+
+  async function fetchProjectConfigDocument(path) {
+    const response = await fetch(`${path}?v=${encodeURIComponent(VERSION)}&nocache=${Date.now()}`, { cache: 'no-store' });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    return response.json();
+  }
+
+  async function loadProjectConfigLayers() {
+    let merged = null;
+    try {
+      const defaultDocument = await fetchProjectConfigDocument(PROJECT_DEFAULT_CONFIG_PATH);
+      const defaultSnapshot = projectConfigSnapshotFromDocument(defaultDocument, 'default');
+      if (defaultSnapshot) {
+        merged = defaultSnapshot;
+        projectConfigStatus.defaultLoaded = true;
+      }
+    } catch (_err) {
+      projectConfigStatus.defaultLoaded = false;
+    }
+    try {
+      const userDocument = await fetchProjectConfigDocument(PROJECT_USER_CONFIG_PATH);
+      const userSnapshot = projectConfigSnapshotFromDocument(userDocument, 'user');
+      if (userSnapshot) {
+        merged = mergeProjectConfigSnapshots(merged || {}, userSnapshot);
+        projectConfigStatus.userLoaded = true;
+      }
+    } catch (_err) {
+      projectConfigStatus.userLoaded = false;
+    }
+    if (merged) applyConfigSnapshot(merged);
+    syncProjectConfigStatus();
+    return !!merged;
+  }
+
+  function currentProjectUserConfigDocument() {
+    return {
+      schema: PROJECT_CONFIG_SCHEMA,
+      version: VERSION,
+      kind: 'user',
+      enabled: true,
+      savedAt: new Date().toISOString(),
+      precedence: 'overrides config/default-config.json; browser-local saved Config is applied afterwards',
+      config: {
+        ...currentConfigSnapshot(),
+        topMenusAbove: normalizeTopMenusAbove(state.topMenusAbove)
+      }
+    };
+  }
+
+  function downloadProjectUserConfig() {
+    const content = `${JSON.stringify(currentProjectUserConfigDocument(), null, 2)}\n`;
+    download('user-config.json', content, 'application/json');
+    projectConfigStatus.messageNl = 'user-config.json gedownload. Plaats het bestand in de map config/ vóór je de projectzip maakt.';
+    projectConfigStatus.messageEn = 'Downloaded user-config.json. Put it in config/ before creating the project zip.';
+    syncProjectConfigStatus();
+  }
+
+  async function writeProjectUserConfig() {
+    const button = document.getElementById('writeProjectUserConfigButton');
+    if (button) button.disabled = true;
+    const content = `${JSON.stringify(currentProjectUserConfigDocument(), null, 2)}\n`;
+    try {
+      const response = await fetch('/__opengraph_save_file', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ filename: PROJECT_USER_CONFIG_PATH, content })
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok || !result.ok) throw new Error(result.error || 'save endpoint failed');
+      projectConfigStatus.userLoaded = true;
+      projectConfigStatus.messageNl = `Actuele Config geschreven naar ${PROJECT_USER_CONFIG_PATH} (${result.bytes || content.length} bytes). Dit bestand gaat mee in de projectzip.`;
+      projectConfigStatus.messageEn = `Current Config written to ${PROJECT_USER_CONFIG_PATH} (${result.bytes || content.length} bytes). It will be included in the project zip.`;
+      appendConfigLog('write-project-user-config', { path: PROJECT_USER_CONFIG_PATH, bytes: result.bytes || content.length });
+    } catch (_err) {
+      const fallback = document.getElementById('downloadProjectUserConfigButton');
+      projectConfigStatus.messageNl = 'Direct schrijven kan alleen via start_local_viewer.bat. Gebruik anders Download user-config en plaats het bestand in config/.';
+      projectConfigStatus.messageEn = 'Direct writing requires start_local_viewer.bat. Otherwise download user-config and put it in config/.';
+      if (fallback) fallback.focus();
+    } finally {
+      if (button) button.disabled = false;
+      syncProjectConfigStatus();
+    }
+  }
+
   function currentConfigSnapshot() {
     return {
       version: VERSION,
@@ -10778,6 +11439,7 @@
       layoutDensity: state.layoutDensity,
       viewFitMode: state.viewFitMode,
       helpLayoutMode: state.helpLayoutMode,
+      readmeTopicEdits: normalizeReadmeTopicEdits(state.readmeTopicEdits),
       readmeCarousels: normalizeReadmeCarousels(state.readmeCarousels),
       showGrid: !!state.showGrid,
       showRelations: !!state.showRelations,
@@ -10795,7 +11457,7 @@
         lexInsertionContent: state.lexInsertionContent,
         logInsertionInterval: state.logInsertionInterval
       } : {}),
-      topMenuChoices: Array.isArray(state.topMenuChoices) ? state.topMenuChoices.slice() : []
+      topMenusAbove: normalizeTopMenusAbove(state.topMenusAbove)
     };
   }
 
@@ -10891,6 +11553,9 @@
     state.readmeCarousels = currentVersionSnapshot
       ? normalizeReadmeCarousels(snapshot.readmeCarousels)
       : {};
+    state.readmeTopicEdits = currentVersionSnapshot
+      ? normalizeReadmeTopicEdits(snapshot.readmeTopicEdits)
+      : {};
     if (typeof snapshot.showGrid === 'boolean') state.showGrid = snapshot.showGrid;
     if (typeof snapshot.showRelations === 'boolean') state.showRelations = snapshot.showRelations;
     if (typeof snapshot.showLabels === 'boolean') state.showLabels = snapshot.showLabels;
@@ -10899,7 +11564,10 @@
     if (typeof snapshot.lexFreeSlotPlacement === 'string') state.lexFreeSlotPlacement = snapshot.lexFreeSlotPlacement;
     if (typeof snapshot.lexInsertionContent === 'string') state.lexInsertionContent = snapshot.lexInsertionContent;
     if (typeof snapshot.logInsertionInterval === 'string') state.logInsertionInterval = validLogInsertionInterval(snapshot.logInsertionInterval);
-    if (Array.isArray(snapshot.topMenuChoices)) state.topMenuChoices = snapshot.topMenuChoices.slice(0, TOP_MENU_MAX);
+    const savedTopMenus = Array.isArray(snapshot.topMenusAbove)
+      ? snapshot.topMenusAbove
+      : snapshot.topMenuChoices;
+    if (Array.isArray(savedTopMenus)) state.topMenusAbove = normalizeTopMenusAbove(savedTopMenus);
     try {
       localStorage.setItem('opengraph_projection_color_synt', state.syntProjectionColor);
       localStorage.setItem('opengraph_projection_color_log', state.logProjectionColor);
@@ -10914,6 +11582,7 @@
     if (!featureEnabled('adverbs')) resetAdverbFeatureState();
     refreshExamplesForFeatures();
     applyFeatureVisibility();
+    renderReadmeTopicEdits();
     renderReadmeTopicCarousels();
     syncReadmeCarouselEditorTopics();
     resetManualViewBox();
@@ -10930,9 +11599,31 @@
 
   function saveConfigSnapshot() {
     const snapshot = currentConfigSnapshot();
-    try { localStorage.setItem(CONFIG_STORAGE_KEY, JSON.stringify(snapshot)); } catch (_err) {}
-    appendConfigLog('save-config', snapshot);
+    try {
+      localStorage.setItem(CONFIG_STORAGE_KEY, JSON.stringify(snapshot));
+    } catch (_err) {
+      if (els.configSaveStatus) {
+        els.configSaveStatus.textContent = isEnglish()
+          ? 'Config could not be saved. Embedded images may exceed browser storage; reduce or remove an image.'
+          : 'Config kon niet worden bewaard. Ingesloten beelden passen mogelijk niet in de browseropslag; verklein of verwijder een beeld.';
+      }
+      appendConfigLog('save-config-failed', {
+        reason: 'local-storage',
+        embeddedCharacters: readmeEmbeddedSourceCharacterTotal()
+      });
+      return false;
+    }
+    appendConfigLog('save-config', {
+      version: VERSION,
+      profile: snapshot.profile,
+      readmeTopicEdits: Object.keys(snapshot.readmeTopicEdits || {}).length,
+      readmeCarousels: Object.fromEntries(
+        Object.entries(snapshot.readmeCarousels || {}).map(([topicId, slides]) => [topicId, slides.length])
+      ),
+      embeddedCharacters: readmeEmbeddedSourceCharacterTotal()
+    });
     syncConfigSaveStatus(true);
+    return true;
   }
 
   async function discardConfigChanges() {
@@ -11554,9 +12245,11 @@
     document.body.classList.remove('help-screen-active');
     syncViewportTestClasses();
     syncPortraitStageMode();
+    captureDefaultReadmeTopics();
     captureDefaultReadmeCarousels();
     setupConfigTabs();
     ensureHelpTopicCarouselSlots();
+    renderReadmeTopicEdits();
     renderReadmeTopicCarousels();
     registerReadmeCarousel();
     registerReadmeExternalWindows();
@@ -11564,7 +12257,9 @@
     registerCanvasPan();
     registerPaneSplitter();
     await loadStructureConfig();
-    loadSavedConfigSnapshot();
+    await loadProjectConfigLayers();
+    projectConfigStatus.browserLoaded = loadSavedConfigSnapshot();
+    syncProjectConfigStatus();
     if (featureEnabled('adverbs')) await loadLexiconUsageProfiles();
     await loadExamplesFromHtml();
     refreshExamplesForFeatures();

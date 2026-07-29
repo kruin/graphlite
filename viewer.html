@@ -1,7 +1,7 @@
 <!doctype html>
 
-<!-- OPENGRAPH_ROOT_VIEWER_INDEX_v2.0.0-rc.42: this root index is the app, not docs. -->
-<html data-opengraph-app="viewer" data-version="v2.0.0-rc.42" lang="en">
+<!-- OPENGRAPH_ROOT_VIEWER_INDEX_v2.0.0-rc.43: this root index is the app, not docs. -->
+<html data-opengraph-app="viewer" data-version="v2.0.0-rc.43" lang="en">
 <head>
 <meta charset="utf-8"/>
 <meta content="no-store, no-cache, must-revalidate, max-age=0" http-equiv="Cache-Control"/>
@@ -10,10 +10,10 @@
 <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport"/>
 <meta content="#0f172a" name="theme-color"/>
 <meta content="OpenGraph Lite Viewer: vrije JAN-bronknopen, edits, LEX-plaatsingsregels en projecties." name="description"/>
-<title>OpenGraph Lite Viewer v2.0.0-rc.42</title>
+<title>OpenGraph Lite Viewer v2.0.0-rc.43</title>
 <script>
     (function() {
-      var VERSION = 'v2.0.0-rc.42';
+      var VERSION = 'v2.0.0-rc.43';
       window.__OPENGRAPH_EXPECTED_VERSION__ = VERSION;
       function runCacheCleanupOnce() {
         var flag = 'opengraph-cache-cleaned-' + VERSION;
@@ -52,13 +52,13 @@
 <link href="icons/icon-192.svg" rel="icon" type="image/svg+xml"/>
 <!-- v4552: manifest disabled in local/dev build to avoid PWA/service-worker confusion. -->
 <!-- <link rel="manifest" href="manifest.webmanifest"> -->
-<link href="styles.css?v2.0.0-rc.42" rel="stylesheet"/>
+<link href="styles.css?v2.0.0-rc.43" rel="stylesheet"/>
 </head>
 <body class="main-screen-active">
 <header class="app-header">
 <div>
 <div class="eyebrow">OpenGraph · JaN · Open Notation</div>
-<h1>OpenGraph Lite Viewer <span class="version-tag">v2.0.0-rc.42</span></h1>
+<h1>OpenGraph Lite Viewer <span class="version-tag">v2.0.0-rc.43</span></h1>
 <p class="header-subtitle">Top menu with Sentence, Syntax / Functional, Interface, Projections, LOG order, Language, README and Config.</p>
 </div>
 <button class="ghost hidden" id="installButton" type="button">Install</button>
@@ -236,6 +236,8 @@
 <span class="help-lang-en">Carousel</span>
 </button>
 </li>
+<li><button class="help-topic-button" data-help-topic-button="project-config" type="button"><span class="help-lang-nl">Projectconfig</span><span class="help-lang-en">Project config</span></button></li>
+<li><button class="help-topic-button" data-help-topic-button="publishing" type="button"><span class="help-lang-nl">Publiceren</span><span class="help-lang-en">Publishing</span></button></li>
 </ul>
 </nav>
 </aside>
@@ -490,15 +492,17 @@
 <article class="help-topic-panel" data-help-topic="carousel">
 <div class="help-lang-nl">
 <h3>Carrousel</h3>
-<p>Ieder LEESMIJ-item heeft een eigen carouselruimte. Open <strong>Config → LEESMIJ-carousels</strong> om per item slides toe te voegen, te verwijderen of te herstellen. Een slide bevat een lokaal beeldpad of https-URL, een beeldvorm, alt-tekst NL/EN en een onderschrift NL/EN.</p>
-<p>De voorvertoning en LEESMIJ veranderen direct. <strong>Ja · bewaar config</strong> bewaart de eigen carousels lokaal; <strong>Herstel dit item</strong> brengt de ingebouwde broncarousel of de lege gereserveerde ruimte terug.</p>
-<p>Onderschriften zijn compacte tekstvelden. Graph-sneltoetsen staan uit zolang Config of LEESMIJ open is, zodat letters in beeldtekst geen graphactie starten.</p>
+<p>Ieder LEESMIJ-item heeft een eigen tekst- en carouselconfig. Open <strong>Config → LEESMIJ-items</strong> om de navigatietitel en veilige HTML-inhoud in NL/EN te bewerken en het item op <strong>Tonen: ja/nee</strong> te zetten. Nee verbergt het item; het wordt niet verwijderd en blijft in Config beschikbaar.</p>
+<p>Slides kunnen daar via een beeldpad of https-URL worden beheerd. Een lokale PNG, JPEG, WebP of GIF voeg je rechtstreeks in via <strong>Config → Bestanden &amp; export → Afbeelding als LEESMIJ-slide invoegen</strong>. Het bestand wordt ingesloten; maximaal 1,25 MB per beeld en een begrensde totale opslag.</p>
+<p>De voorvertoning en LEESMIJ veranderen direct. De globale knop <strong>Ja · bewaar config</strong> staat op ieder Config-onderdeel. <strong>Herstel item · tekst + slides</strong> brengt titel, inhoud, zichtbaarheid en broncarousel terug.</p>
+<p>Scripts, formulieren, styles, frames en onveilige URL-schema’s worden uit aangepaste itemtekst verwijderd. Graph-sneltoetsen staan uit zolang Config of LEESMIJ open is.</p>
 </div>
 <div class="help-lang-en">
 <h3>Carousel</h3>
-<p>Every README topic has its own carousel area. Open <strong>Config → README carousels</strong> to add, remove, or reset slides per topic. A slide contains a local image path or https URL, an image shape, NL/EN alt text, and NL/EN captions.</p>
-<p>The preview and README update immediately. <strong>Yes · save config</strong> stores custom carousels locally; <strong>Reset this topic</strong> restores the built-in source carousel or the empty reserved area.</p>
-<p>Captions use compact text fields. Graph shortcuts stay inactive while Config or README is open, so letters in image text cannot trigger a graph action.</p>
+<p>Every README topic has its own content and carousel configuration. Open <strong>Config → README topics</strong> to edit its navigation title and safe HTML content in NL/EN and set <strong>Show: yes/no</strong>. No hides the topic; it is not deleted and remains available in Config.</p>
+<p>Slides can be managed there with an image path or https URL. Insert a local PNG, JPEG, WebP, or GIF through <strong>Config → Files &amp; export → Insert image as README slide</strong>. The file is embedded, with a 1.25 MB per-image limit and bounded total storage.</p>
+<p>The preview and README update immediately. The global <strong>Yes · save config</strong> control appears on every Config section. <strong>Reset topic · content + slides</strong> restores its title, content, visibility, and source carousel.</p>
+<p>Scripts, forms, styles, frames, and unsafe URL schemes are removed from edited topic content. Graph shortcuts stay inactive while Config or README is open.</p>
 </div>
 <div aria-label="Carrouselbediening" class="help-carousel-reserved help-carousel-large">
 <div class="help-carousel-frame">
@@ -506,6 +510,34 @@
 <span class="help-lang-nl">Bewerk de carousel van ieder LEESMIJ-item via Config.</span>
 <span class="help-lang-en">Edit every README topic carousel through Config.</span>
 </div>
+</div>
+</article>
+<article class="help-topic-panel" data-help-topic="project-config">
+<div class="help-lang-nl">
+<h3>Standaardconfig en jouw projectconfig</h3>
+<p>Iedere projectzip bevat <code>config/default-config.json</code> en <code>config/user-config.json</code>. De viewer leest eerst de standaard en past daarna de user-config als overschrijving toe. De standaard blijft dus intact en controleerbaar.</p>
+<p>Start lokaal met <code>start_local_viewer.bat</code>. Onder <strong>Config → Bestanden &amp; export</strong> schrijft <strong>Schrijf huidige Config naar project</strong> de actuele instellingen naar <code>config/user-config.json</code>. Daarna gaat dat bestand automatisch mee wanneer je de volledige projectzip maakt.</p>
+<p>Op een gewone webserver is rechtstreeks schrijven niet toegestaan. Gebruik dan <strong>Download user-config</strong> en plaats het bestand handmatig in de map <code>config/</code>.</p>
+<p>Voorrang: code-defaults → standaardconfig → project-user-config → lokaal bewaarde browsersnapshot. Alleen de laatste browsersnapshot blijft apparaatgebonden.</p>
+</div>
+<div class="help-lang-en">
+<h3>Default config and your project config</h3>
+<p>Every project zip contains <code>config/default-config.json</code> and <code>config/user-config.json</code>. The viewer reads the default first, then applies the user config as an override. The default therefore remains intact and inspectable.</p>
+<p>Start locally with <code>start_local_viewer.bat</code>. Under <strong>Config → Files &amp; export</strong>, <strong>Write current Config to project</strong> writes the current settings to <code>config/user-config.json</code>. That file is then included automatically when you create the full project zip.</p>
+<p>A regular web server cannot write into the project directory. Use <strong>Download user config</strong> there and place the file in <code>config/</code> manually.</p>
+<p>Precedence: code defaults → default config → project user config → locally saved browser snapshot. Only the final browser snapshot remains device-specific.</p>
+</div>
+</article>
+<article class="help-topic-panel" data-help-topic="publishing">
+<div class="help-lang-nl">
+<h3>Publiceren op platforms</h3>
+<p>Iedere volledige projectzip bevat <a href="PUBLICATIE_README.md" target="_blank" rel="noopener">PUBLICATIE_README.md</a> met kopieerbare teksten voor LinkedIn, Reddit, Facebook, YouTube, Bluesky, Mastodon, X en een GitHub-release.</p>
+<p>Vervang eerst de gemarkeerde live-, bron- en videolinks. Controleer vervolgens versie, afbeelding en alt-tekst. De tekst noemt rc.43 bewust een release candidate totdat de handmatige controle is afgetekend.</p>
+</div>
+<div class="help-lang-en">
+<h3>Publishing on platforms</h3>
+<p>Every full project zip contains <a href="PUBLICATIE_README.md" target="_blank" rel="noopener">PUBLICATIE_README.md</a> with ready-to-copy text for LinkedIn, Reddit, Facebook, YouTube, Bluesky, Mastodon, X, and a GitHub release.</p>
+<p>Replace the marked live, source, and video links first. Then verify the version, image, and alt text. The copy deliberately calls rc.43 a release candidate until manual validation is signed off.</p>
 </div>
 </article>
 <article class="help-topic-panel" data-help-topic="jan-todo">
@@ -525,17 +557,17 @@
 </section>
 <section aria-label="Hoofdbediening" class="toolbar">
 <div aria-label="Zin-input" class="input-sentence-tools">
-<a class="button-link" href="examples-input.html?v2.0.0-rc.42" title="Open de HTML-inputfile met voorbeeldzinnen, subject vet en object cursief">HTML-input</a>
-<a class="button-link" data-feature="adverbs" hidden="" href="examples-adverbs.html?v2.0.0-rc.42" title="Voorbeeldset met één bijwoord per zin en default-host per categorie">Bijwoordvoorbeelden</a>
-<a class="button-link" data-feature="adverbs" hidden="" href="docs/LEX_ADVERB_PLACEMENT_RULES_CHECKED.md?v2.0.0-rc.42" title="Bijwoordklasse en scope als input voor LOG-minors; default en gemarkeerd">Bijwoordregels</a>
-<a class="button-link" data-feature="adverbs" hidden="" href="examples-adverb-rules-v4552.html?v2.0.0-rc.42" title="Controle per bijwoord: uitzonderingen en eigen regels">Bijwoordcheck</a>
-<a class="button-link" data-feature="adverbs" hidden="" href="examples-adverb-rules-v4552.html?v2.0.0-rc.42" title="Controle per bijwoord: uitzonderingen en eigen regels">Bijwoordcheck</a>
-<a class="button-link" href="lexicon-config.html?v2.0.0-rc.42" title="Leesbare lexicon-config voor voorbeeldzinnen">Lexicon</a>
-<a class="button-link" href="lexicon-editor.html?v2.0.0-rc.42" title="Lexicon én korte voorbeelduitingen beheren; exporteert lexicon-config.html en examples-input.html">Lexicon+uitingen-editor</a>
-<a class="button-link" href="structure-editor.html?v2.0.0-rc.42" title="Bewerk syntax-, functional- en LOG-slotconfig">Structure-editor</a>
-<a class="button-link" href="docs/docs-home.html?v2.0.0-rc.42" title="Projectcontext, layoutspec en release notes">Docs</a>
-<a class="button-link" href="lex-movement-rules.html?v2.0.0-rc.42" title="Simpele uitleg van de LEX-Wissels per zinstype">Plaatsingsregels</a>
-<a class="button-link" href="reset-cache.html?v2.0.0-rc.42" title="Verwijder browsercache/service worker en open de viewer opnieuw">Reset cache</a>
+<a class="button-link" href="examples-input.html?v2.0.0-rc.43" title="Open de HTML-inputfile met voorbeeldzinnen, subject vet en object cursief">HTML-input</a>
+<a class="button-link" data-feature="adverbs" hidden="" href="examples-adverbs.html?v2.0.0-rc.43" title="Voorbeeldset met één bijwoord per zin en default-host per categorie">Bijwoordvoorbeelden</a>
+<a class="button-link" data-feature="adverbs" hidden="" href="docs/LEX_ADVERB_PLACEMENT_RULES_CHECKED.md?v2.0.0-rc.43" title="Bijwoordklasse en scope als input voor LOG-minors; default en gemarkeerd">Bijwoordregels</a>
+<a class="button-link" data-feature="adverbs" hidden="" href="examples-adverb-rules-v4552.html?v2.0.0-rc.43" title="Controle per bijwoord: uitzonderingen en eigen regels">Bijwoordcheck</a>
+<a class="button-link" data-feature="adverbs" hidden="" href="examples-adverb-rules-v4552.html?v2.0.0-rc.43" title="Controle per bijwoord: uitzonderingen en eigen regels">Bijwoordcheck</a>
+<a class="button-link" href="lexicon-config.html?v2.0.0-rc.43" title="Leesbare lexicon-config voor voorbeeldzinnen">Lexicon</a>
+<a class="button-link" href="lexicon-editor.html?v2.0.0-rc.43" title="Lexicon én korte voorbeelduitingen beheren; exporteert lexicon-config.html en examples-input.html">Lexicon+uitingen-editor</a>
+<a class="button-link" href="structure-editor.html?v2.0.0-rc.43" title="Bewerk syntax-, functional- en LOG-slotconfig">Structure-editor</a>
+<a class="button-link" href="docs/docs-home.html?v2.0.0-rc.43" title="Projectcontext, layoutspec en release notes">Docs</a>
+<a class="button-link" href="lex-movement-rules.html?v2.0.0-rc.43" title="Simpele uitleg van de LEX-Wissels per zinstype">Plaatsingsregels</a>
+<a class="button-link" href="reset-cache.html?v2.0.0-rc.43" title="Verwijder browsercache/service worker en open de viewer opnieuw">Reset cache</a>
 </div>
 <div class="button-row compact-actions">
 <button id="resetExampleButton" title="Herlaad het gekozen voorbeeld" type="button">Reset voorbeeld</button>
@@ -675,11 +707,11 @@
 <h2>Voorbeeldzinnen</h2>
 <p class="inline-help">Voeg voorbeeldzinnen toe via de editor. Start lokaal met <code>start_local_viewer.bat</code>; dan schrijft <strong>Opslaan</strong> direct naar <code>examples-input.html</code>. Daarna kun je hier de lijst herladen.</p>
 <div class="button-row">
-<a class="button-link primary" href="examples-editor.html?v2.0.0-rc.42" title="Voorbeeldzinnen toevoegen en opslaan">Voorbeeldzinnen-editor</a>
-<a class="button-link" href="examples-input.html?v2.0.0-rc.42" title="Leesbare HTML-input met voorbeeldzinnen">HTML-input</a>
-<a class="button-link" data-feature="adverbs" hidden="" href="examples-adverbs.html?v2.0.0-rc.42" title="Bijwoordvoorbeelden met default-host en gemarkeerde host">Bijwoordvoorbeelden</a>
-<a class="button-link" data-feature="adverbs" hidden="" href="docs/LEX_ADVERB_PLACEMENT_RULES_CHECKED.md?v2.0.0-rc.42" title="Bijwoordklasse en scope als input voor LOG-minors; default en gemarkeerd">Bijwoordregels</a>
-<a class="button-link" data-feature="adverbs" hidden="" href="examples-adverb-rules-v4552.html?v2.0.0-rc.42" title="Controle per bijwoord: uitzonderingen en eigen regels">Bijwoordcheck</a>
+<a class="button-link primary" href="examples-editor.html?v2.0.0-rc.43" title="Voorbeeldzinnen toevoegen en opslaan">Voorbeeldzinnen-editor</a>
+<a class="button-link" href="examples-input.html?v2.0.0-rc.43" title="Leesbare HTML-input met voorbeeldzinnen">HTML-input</a>
+<a class="button-link" data-feature="adverbs" hidden="" href="examples-adverbs.html?v2.0.0-rc.43" title="Bijwoordvoorbeelden met default-host en gemarkeerde host">Bijwoordvoorbeelden</a>
+<a class="button-link" data-feature="adverbs" hidden="" href="docs/LEX_ADVERB_PLACEMENT_RULES_CHECKED.md?v2.0.0-rc.43" title="Bijwoordklasse en scope als input voor LOG-minors; default en gemarkeerd">Bijwoordregels</a>
+<a class="button-link" data-feature="adverbs" hidden="" href="examples-adverb-rules-v4552.html?v2.0.0-rc.43" title="Controle per bijwoord: uitzonderingen en eigen regels">Bijwoordcheck</a>
 <button id="reloadExamplesButton" title="Herlees examples-input.html zonder de hele pagina opnieuw te openen" type="button">Herlaad zinnen</button>
 </div>
 </section>
@@ -779,15 +811,15 @@
 <div aria-label="Documentatie" class="mobile-sheet-section">
 <h3>Documentatie</h3>
 <div class="mobile-link-grid">
-<a href="docs/docs-home.html?v2.0.0-rc.42">Docs</a>
-<a href="lex-movement-rules.html?v2.0.0-rc.42">Plaatsingsregels</a>
-<a href="reset-cache.html?v2.0.0-rc.42">Reset cache</a>
+<a href="docs/docs-home.html?v2.0.0-rc.43">Docs</a>
+<a href="lex-movement-rules.html?v2.0.0-rc.43">Plaatsingsregels</a>
+<a href="reset-cache.html?v2.0.0-rc.43">Reset cache</a>
 </div>
 </div>
 <p class="mobile-sheet-note">Sleep met één vinger om te pannen. Knijp met twee vingers om te zoomen. FIT past het zichtvenster aan de huidige boom en named projections aan; de boom zelf verandert niet.</p>
 </section>
 <script>
-    window.__opengraphBoot = { version: 'v2.0.0-rc.42', loaded: false, marker: 'viewer-index' };
+    window.__opengraphBoot = { version: 'v2.0.0-rc.43', loaded: false, marker: 'viewer-index' };
     function ogStatus(message) {
       var target = document.getElementById('actionFeedback') || document.body;
       if (target) target.textContent = message;
@@ -800,7 +832,7 @@
     });
     setTimeout(function() {
       if (!window.__opengraphBoot || !window.__opengraphBoot.loaded) {
-        ogStatus('Viewer start niet volledig. Gebruik Reset cache of open http://127.0.0.1:8088/reset-cache.html?v2.0.0-rc.42.');
+        ogStatus('Viewer start niet volledig. Gebruik Reset cache of open http://127.0.0.1:8088/reset-cache.html?v2.0.0-rc.43.');
       }
     }, 2500);
   </script>
@@ -810,11 +842,11 @@
       var isLocal = window.location.protocol === 'file:' || !host || host === 'localhost' || host === '127.0.0.1';
       if (!isLocal) return;
       var script = document.createElement('script');
-      script.src = 'local-mobile-test.js?v2.0.0-rc.42';
+      script.src = 'local-mobile-test.js?v2.0.0-rc.43';
       script.defer = true;
       document.head.appendChild(script);
     })();
   </script>
-<script defer="" src="viewer.js?v2.0.0-rc.42&amp;cb=4"></script>
+<script defer="" src="viewer.js?v2.0.0-rc.43&amp;cb=4"></script>
 </body>
 </html>

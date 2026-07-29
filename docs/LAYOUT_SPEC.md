@@ -1,5 +1,5 @@
 
-## Actueel contract · v2.0.0-rc.42
+## Actueel contract · v2.0.0-rc.43
 
 De discrete HOR/VER-gridplaatsing blijft structureel leidend. Voor het tekenen
 voert de viewer daarnaast één bottom-up meetpass uit:

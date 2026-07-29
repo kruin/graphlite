@@ -5,7 +5,7 @@ Bestanden om als leidende projectbronnen toe te voegen of te vervangen.
 ## Volledige projectzip
 
 ```text
-OpenGraph_Lite_Viewer_v2.0.0-rc.42_full_source.zip
+OpenGraph_Lite_Viewer_v2.0.0-rc.43_full_source.zip
 ```
 
 De zip bevat de volledige bronset, documentatie, referenties, voorbeelden, OPN-voorbeeldbestand en releasecontroles.
@@ -29,6 +29,8 @@ DOCUMENTATION_RULES.md
 HANDOVER_FOR_COLLABORATORS.md
 DEPLOY_GITHUB_PAGES.md
 RECURSIVE_LAYOUT_AND_APPLICATION_CONTRACT.md
+PUBLICATIE_README.md
+SOURCE_CHANGES_V2.0.0-rc.43.md
 SOURCE_CHANGES_V2.0.0-rc.42.md
 SOURCE_CHANGES_V2.0.0-rc.41.md
 SOURCE_CHANGES_V2.0.0-rc.40.md
@@ -42,6 +44,10 @@ RC40_LANDSCAPE_COMPOSITION_TEST.md
 RC41_RECURSIVE_LAYOUT_TEST.md
 RC42_RESERVED_APPLICATIONS_TEST.md
 RC42_README_CAROUSEL_EDITOR_TEST.md
+RC43_CONFIG_README_PROJECT_TEST.md
+config/default-config.json
+config/user-config.json
+config/README.md
 structure-config.html
 viewer.js
 index.html
@@ -59,6 +65,10 @@ tools/check_feature_profiles.py
 tools/check_feature_profiles_runtime.js
 tools/check_readme_carousel_editor.py
 tools/check_readme_carousel_editor_runtime.js
+tools/check_readme_item_editor.py
+tools/check_readme_item_editor_runtime.js
+tools/check_project_config_layers.py
+tools/check_project_config_layers_runtime.js
 tools/check_mobile_layout_rc38.py
 tools/check_mobile_layout_runtime.js
 tools/check_viewport_switch_runtime.js
@@ -76,6 +86,11 @@ tools/check_release_zip_batch.py
 maak-volledige-zip.bat
 ```
 
+De standaard- en user-config blijven afzonderlijke bestanden. Schrijf lokale
+keuzes vóór het zippen via `Config → Bestanden & export` naar
+`config/user-config.json`; verwijder of vervang
+`config/default-config.json` niet.
+
 ## Niet als leidende bron gebruiken
 
 Oude projectzips en gedownloade kopieën met bijvoorbeeld `(1)` zijn
@@ -83,8 +98,6 @@ release-artefacten, geen bronbestanden, en worden daarom niet in de volledige
 bronzip opgenomen. Losse screenshots en historische release notes mogen wel
 aanwezig blijven, maar de bovenstaande bestanden zijn normatief.
 
-- `LEXICON_USAGE_PROFILES_AND_DISAMBIGUATION.md`
-
-- `LEXICON_USAGE_PROFILE_TEST.md`
-
-- `SOURCE_CHANGES_V2.0.0-rc.29.md`
+`LEXICON_USAGE_PROFILES_AND_DISAMBIGUATION.md`,
+`LEXICON_USAGE_PROFILE_TEST.md` en `SOURCE_CHANGES_V2.0.0-rc.29.md` zijn
+historische of aanvullende bronnen, maar niet de eerste instap voor rc.43.

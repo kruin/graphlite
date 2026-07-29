@@ -31,12 +31,15 @@ required_files = [
     "LEXICON_USAGE_PROFILE_TEST.md", "SOURCE_CHANGES_V2.0.0-rc.38.md",
     "SOURCE_CHANGES_V2.0.0-rc.39.md", "SOURCE_CHANGES_V2.0.0-rc.40.md",
     "SOURCE_CHANGES_V2.0.0-rc.41.md", "SOURCE_CHANGES_V2.0.0-rc.42.md",
+    "SOURCE_CHANGES_V2.0.0-rc.43.md", "PUBLICATIE_README.md",
     "RECURSIVE_LAYOUT_AND_APPLICATION_CONTRACT.md",
     "RC35_README_LAYOUT_TEST.md", "RC36_BASE_PROFILE_TEST.md", "RC37_PRECONFIG_TEST.md",
     "RC38_MOBILE_LAYOUT_TEST.md", "RC39_VIEWPORT_SWITCH_TEST.md",
     "RC40_LANDSCAPE_COMPOSITION_TEST.md", "RC41_RECURSIVE_LAYOUT_TEST.md",
     "RC42_RESERVED_APPLICATIONS_TEST.md", "RC42_README_CAROUSEL_EDITOR_TEST.md",
+    "RC43_CONFIG_README_PROJECT_TEST.md",
     "OPN_STORAGE_FORMAT.md", "PRECONFIG_ARCHITECTURE.md", "projectie-master-spec.md",
+    "config/default-config.json", "config/user-config.json", "config/README.md",
     "docs/ADVERB_ORIGIN_MECHANISMS.md", "docs/OGN_BASE_PROFILE.md", "docs/PRECONFIG_ARCHITECTURE.md",
     "docs/LAYOUT_SPEC.md", "docs/RECURSIVE_LAYOUT_AND_APPLICATION_CONTRACT.md", "docs/RENDER_EXPLANATION.md",
     "docs/RENDER_EXPLANATION_EN.md", "docs/TALIGE_UITBREIDINGEN.md", "docs/SOCIAL_EXPORT.md",
@@ -53,6 +56,8 @@ required_files = [
     "tools/check_opn_storage.py", "tools/check_lexicon_usage_profiles.py",
     "tools/check_feature_profiles.py", "tools/check_feature_profiles_runtime.js",
     "tools/check_readme_carousel_editor.py", "tools/check_readme_carousel_editor_runtime.js",
+    "tools/check_readme_item_editor.py", "tools/check_readme_item_editor_runtime.js",
+    "tools/check_project_config_layers.py", "tools/check_project_config_layers_runtime.js",
     "tools/check_mobile_layout_rc38.py", "tools/check_mobile_layout_runtime.js",
     "tools/check_viewport_switch_runtime.js", "tools/check_landscape_composition_runtime.js",
     "tools/check_recursive_box_fit_runtime.js",
@@ -75,10 +80,12 @@ publish_bat = read("publish_checked.bat")
 start_bat = read("start_local_viewer.bat")
 debug_html = read("debug.html")
 local_mobile = read("local-mobile-test.js")
+server = read("server_nocache.py")
+publication_readme = read("PUBLICATIE_README.md")
 
 # Version identity and the paired entry pages.
-if not VERSION or VERSION != "v2.0.0-rc.42":
-    errors.append(f"VERSION.txt moet v2.0.0-rc.42 bevatten, gevonden: {VERSION!r}")
+if not VERSION or VERSION != "v2.0.0-rc.43":
+    errors.append(f"VERSION.txt moet v2.0.0-rc.43 bevatten, gevonden: {VERSION!r}")
 for rel in ["index.html", "viewer.html", "viewer.js", "reset-cache.html", "sw.js"]:
     if VERSION not in read(rel):
         errors.append(f"versie ontbreekt in {rel}")
@@ -156,7 +163,7 @@ for marker, label in [
 require(index, 'id="helpPanelResizer"', "README-resizer in HTML")
 for marker in ['data-help-topic="opengraph"', 'data-help-topic="jan-todo"', 'data-help-topic="adverb-origins"']:
     require(index, marker, f"LEESMIJ-onderwerp {marker}")
-require(js, "if (stage) stage.scrollTop = 0;", "README-item start bovenaan")
+require(js, "stage.scrollTop = 0;", "README-item start bovenaan")
 
 # Local portrait/landscape simulation must survive the later MAX rules and use
 # the version of the loaded viewer instead of a historical hardcoded value.
@@ -242,6 +249,87 @@ for marker, label in [
     source = js if marker not in {"Ja · bewaar config", "Nee · herstel laatst bewaarde config"} else index
     require(source, marker, label)
 
+# rc.43: complete README-topic editing, one save bar and layered project Config.
+for marker, label in [
+    ("readmeTopicEdits: {}", "LEESMIJ-itemoverschrijvingen"),
+    ("function sanitizeReadmeTopicHtml(", "veilige LEESMIJ-HTML"),
+    ('id="readmeTopicVisibilitySelect"', "LEESMIJ Tonen ja/nee"),
+    ('id="readmeTopicLabelNlInput"', "LEESMIJ-navigatietitel NL"),
+    ('id="readmeTopicLabelEnInput"', "LEESMIJ-navigatietitel EN"),
+    ('id="readmeTopicHtmlNlInput"', "LEESMIJ-itemtekst NL"),
+    ('id="readmeTopicHtmlEnInput"', "LEESMIJ-itemtekst EN"),
+    ("function insertReadmeSlideFile()", "lokale afbeelding naar LEESMIJ-slide"),
+    ("MAX_README_EMBEDDED_IMAGE_BYTES = 1250000", "LEESMIJ-bestandslimiet"),
+    ("config-global-save-card", "globale Config-savekaart"),
+    ("sidePanel.replaceChildren(tabList, saveSlot, ...panels.values())", "Config-save op ieder tabblad"),
+    ("PROJECT_DEFAULT_CONFIG_PATH = 'config/default-config.json'", "project-standaardconfig"),
+    ("PROJECT_USER_CONFIG_PATH = 'config/user-config.json'", "project-user-config"),
+    ("function mergeProjectConfigSnapshots(", "projectconfig-overschrijving"),
+    ("mergeProjectConfigSnapshots(merged || {}, userSnapshot)", "user-config na standaardconfig"),
+    ("projectConfigStatus.browserLoaded = loadSavedConfigSnapshot()", "browser-Config als laatste laag"),
+    ("filename: PROJECT_USER_CONFIG_PATH", "exact schrijfdoel user-config"),
+]:
+    require(js, marker, label)
+for marker, label in [
+    (".readme-topic-fields", "LEESMIJ-itemvelden"),
+    (".readme-slide-file-grid", "LEESMIJ-bestandsinvoer"),
+    (".config-global-save-card", "globale Config-savevormgeving"),
+    (".project-config-precedence", "projectconfigvormgeving"),
+]:
+    require(css, marker, label)
+for marker, label in [
+    ("'config/user-config.json': ROOT / 'config' / 'user-config.json'", "lokale allowlist user-config"),
+    ("document.get('version') != APP_VERSION", "lokale user-configversievalidatie"),
+    ("document.get('enabled') is not True", "lokale actieve user-configvalidatie"),
+]:
+    require(server, marker, label)
+
+project_config_documents = {}
+for rel, kind in [
+    ("config/default-config.json", "default"),
+    ("config/user-config.json", "user"),
+]:
+    try:
+        document = json.loads(read(rel))
+        project_config_documents[rel] = document
+    except Exception as exc:
+        errors.append(f"ongeldige projectconfig {rel}: {exc}")
+        continue
+    if document.get("schema") != "opengraph-project-config":
+        errors.append(f"{rel} mist schema opengraph-project-config")
+    if document.get("version") != VERSION:
+        errors.append(f"{rel} versie wijkt af van VERSION.txt")
+    if document.get("kind") != kind:
+        errors.append(f"{rel} kind moet {kind!r} zijn")
+    if not isinstance(document.get("enabled"), bool):
+        errors.append(f"{rel} enabled moet true of false zijn")
+    if not isinstance(document.get("config"), dict):
+        errors.append(f"{rel} mist config-object")
+if project_config_documents.get("config/default-config.json", {}).get("enabled") is not True:
+    errors.append("config/default-config.json moet actief zijn")
+user_config = project_config_documents.get("config/user-config.json", {})
+if user_config.get("enabled") is False and user_config.get("config") != {}:
+    errors.append("uitgeschakelde config/user-config.json moet een lege placeholder zijn")
+
+for marker, label in [
+    ("default-config.json", "standaardconfig-uitleg"),
+    ("user-config.json", "user-config-uitleg"),
+    ("ingebouwde code-defaults", "volledige config-laadvolgorde"),
+    ("lokaal bewaarde browser-Config", "browser-Config als laatste laag"),
+]:
+    require(read("config/README.md"), marker, label)
+for marker, label in [
+    ("## LinkedIn · Nederlands", "LinkedIn-publicatietekst"),
+    ("## Reddit", "Reddit-publicatietekst"),
+    ("## Facebook", "Facebook-publicatietekst"),
+    ("## YouTube", "YouTube-publicatietekst"),
+    ("## Bluesky / Mastodon / X", "korte social-publicatietekst"),
+    ("## GitHub-releasebeschrijving", "GitHub-releasebeschrijving"),
+    ("[LIVE_DEMO_URL]", "in te vullen live-URL"),
+    ("v2.0.0-rc.43", "versiegebonden publicatietekst"),
+]:
+    require(publication_readme, marker, label)
+
 # rc.42: recursive intrinsic subtree measurement and complete handheld fit.
 for marker, label in [
     ("const SUBTREE_MEASURE_POLICY = Object.freeze({", "centrale subtree-meetpolicy"),
@@ -293,23 +381,31 @@ for rel, markers in {
         "alt-tekst",
         "Ja · bewaar config",
     ],
+    "RC43_CONFIG_README_PROJECT_TEST.md": [
+        "Akkoord rc.43: ja / nee",
+        "Tonen ja/nee",
+        "config/default-config.json",
+        "config/user-config.json",
+        "PUBLICATIE_README.md",
+        "browser-Config als laatste laag",
+    ],
 }.items():
     for marker in markers:
         require(read(rel), marker, f"{rel} handmatige controle")
 candidate_markers = {
-    "README.md": "rc.42 is a release candidate awaiting manual visual",
-    "docs/README.md": "rc.42 is a release candidate awaiting manual visual",
-    "LEESMIJ.md": "rc.42 is een releasekandidaat die nog handmatig visueel",
-    "docs/LEESMIJ.md": "rc.42 is een releasekandidaat die nog handmatig visueel",
-    "PROJECT_STATE_CURRENT.md": "rc.42 is een nieuwe releasekandidaat",
-    "docs/PROJECT_STATE_CURRENT.md": "rc.42 is een nieuwe releasekandidaat",
-    "HANDOVER_FOR_COLLABORATORS.md": "rc.42 wacht op handmatige goedkeuring",
-    "docs/HANDOVER_FOR_COLLABORATORS.md": "rc.42 wacht op handmatige goedkeuring",
+    "README.md": "rc.43 is a release candidate awaiting manual visual",
+    "docs/README.md": "rc.43 is a release candidate awaiting manual visual",
+    "LEESMIJ.md": "rc.43 is een releasekandidaat die nog handmatig visueel",
+    "docs/LEESMIJ.md": "rc.43 is een releasekandidaat die nog handmatig visueel",
+    "PROJECT_STATE_CURRENT.md": "rc.43 is een nieuwe releasekandidaat",
+    "docs/PROJECT_STATE_CURRENT.md": "rc.43 is een nieuwe releasekandidaat",
+    "HANDOVER_FOR_COLLABORATORS.md": "rc.43 wacht op handmatige goedkeuring",
+    "docs/HANDOVER_FOR_COLLABORATORS.md": "rc.43 wacht op handmatige goedkeuring",
     "docs/RELEASE_NOTES.md": "nieuwe release candidate voor handmatige controle",
-    "docs/docs-home.html": "rc.42 is een nieuwe testkandidaat",
+    "docs/docs-home.html": "rc.43 is een nieuwe testkandidaat",
 }
 for rel, marker in candidate_markers.items():
-    require(read(rel), marker, f"{rel} voorlopige rc.42-status")
+    require(read(rel), marker, f"{rel} voorlopige rc.43-status")
 for rel in ["DOCUMENTATION_RULES.md", "docs/DOCUMENTATION_RULES.md"]:
     text = read(rel)
     for marker in [
@@ -317,6 +413,8 @@ for rel in ["DOCUMENTATION_RULES.md", "docs/DOCUMENTATION_RULES.md"]:
         "Automatische garantie",
         "Handmatig oordeel",
         "Vervolgvoorstel",
+        "code-defaults → default-config → user-config → browser-Config",
+        "PUBLICATIE_README.md",
     ]:
         require(text, marker, f"{rel} verduidelijkingsregel")
 
@@ -480,8 +578,8 @@ def is_generated_release_archive(name: str) -> bool:
 # Browser downloads can add " (1)" before .zip. That local copy must behave
 # exactly like the canonical release archive and never become product source.
 for generated_name in [
-    "OpenGraph_Lite_Viewer_v2.0.0-rc.42_full_source.zip",
-    "OpenGraph_Lite_Viewer_v2.0.0-rc.42_full_source (1).zip",
+    "OpenGraph_Lite_Viewer_v2.0.0-rc.43_full_source.zip",
+    "OpenGraph_Lite_Viewer_v2.0.0-rc.43_full_source (1).zip",
     "graphlite_full_source.zip",
     "graphlite_full_source.tmp.12345.zip",
     "graphlite_full_source.zip.sha256",

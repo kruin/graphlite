@@ -32,7 +32,7 @@ Dit is iets anders dan de didactische keuze **boom eerst**. Boom eerst zegt welk
 
 **Recursion** is the technical drawing method. The viewer builds the layout bottom-up: leaves, category nodes, subtrees, boxes, and finally the complete tree. This is separate from the didactic choice called **tree first**.
 
-## Actueel contract · v2.0.0-rc.42
+## Actueel contract · v2.0.0-rc.43
 
 Na de recursieve gridplaatsing volgt nu een tweede, intrinsieke meetpass.
 Iedere subtree-box omvat de werkelijke nodevormen, labels, child-boxen en het

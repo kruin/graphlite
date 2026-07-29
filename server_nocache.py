@@ -7,10 +7,12 @@ import json
 import sys
 
 ROOT = Path(__file__).resolve().parent
+APP_VERSION = (ROOT / 'VERSION.txt').read_text(encoding='utf-8-sig').strip()
 ALLOWED_WRITES = {
-    'examples-input.html',
-    'lexicon-config.html',
-    'structure-config.html',
+    'examples-input.html': ROOT / 'examples-input.html',
+    'lexicon-config.html': ROOT / 'lexicon-config.html',
+    'structure-config.html': ROOT / 'structure-config.html',
+    'config/user-config.json': ROOT / 'config' / 'user-config.json',
 }
 
 class NoCacheHandler(SimpleHTTPRequestHandler):
@@ -37,7 +39,7 @@ class NoCacheHandler(SimpleHTTPRequestHandler):
             length = int(self.headers.get('Content-Length', '0'))
             raw = self.rfile.read(length)
             payload = json.loads(raw.decode('utf-8'))
-            filename = str(payload.get('filename') or '').replace('\\', '/').split('/')[-1]
+            filename = str(payload.get('filename') or '').replace('\\', '/').lstrip('/')
             content = payload.get('content')
             if filename not in ALLOWED_WRITES:
                 self._json_response(400, {'ok': False, 'error': f'file not allowed: {filename}'})
@@ -45,7 +47,20 @@ class NoCacheHandler(SimpleHTTPRequestHandler):
             if not isinstance(content, str):
                 self._json_response(400, {'ok': False, 'error': 'content must be a string'})
                 return
-            target = ROOT / filename
+            if filename == 'config/user-config.json':
+                document = json.loads(content)
+                if (
+                    not isinstance(document, dict)
+                    or document.get('schema') != 'opengraph-project-config'
+                    or document.get('version') != APP_VERSION
+                    or document.get('kind') != 'user'
+                    or document.get('enabled') is not True
+                    or not isinstance(document.get('config'), dict)
+                ):
+                    self._json_response(400, {'ok': False, 'error': 'invalid OpenGraph user config'})
+                    return
+            target = ALLOWED_WRITES[filename]
+            target.parent.mkdir(parents=True, exist_ok=True)
             target.write_text(content, encoding='utf-8', newline='')
             self._json_response(200, {'ok': True, 'filename': filename, 'path': str(target), 'bytes': len(content.encode('utf-8'))})
         except Exception as exc:

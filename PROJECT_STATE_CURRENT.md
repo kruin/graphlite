@@ -1,9 +1,34 @@
 # PROJECT_STATE_CURRENT
 
-Leidende status van OpenGraph Lite Viewer `v2.0.0-rc.42`.
+Leidende status van OpenGraph Lite Viewer `v2.0.0-rc.43`.
 
-Controlestatus: rc.42 is een nieuwe releasekandidaat en wacht op handmatige
+Controlestatus: rc.43 is een nieuwe releasekandidaat en wacht op handmatige
 goedkeuring. De goedgekeurde rc.41-bron blijft ongewijzigd.
+
+## Config, LEESMIJ en projectzip rc.43
+
+- `Config → LEESMIJ-items` bewerkt per onderwerp Tonen ja/nee,
+  navigatietitels NL/EN, beperkte veilige HTML-inhoud en de carousel.
+- Tonen: nee verbergt het item zonder DOM- of Config-verwijdering.
+- Lokale PNG/JPEG/WebP/GIF-bestanden worden uitsluitend via de vertrouwde
+  bestandsroute als ingesloten slide geaccepteerd; 1,25 MB per bestand en een
+  totale opslaggrens.
+- Dezelfde savebalk met Ja/Nee/status staat boven ieder Config-tabblad.
+- Iedere projectzip bevat `config/default-config.json`,
+  `config/user-config.json`, `config/README.md` en
+  `PUBLICATIE_README.md`.
+- De Config-voorrang is code → default-config → user-config →
+  apparaatgebonden browsersnapshot.
+- Via de lokale save-endpoint kan alleen het allowlistdoel
+  `config/user-config.json` worden geschreven. Op een gewone webserver is
+  download + handmatig plaatsen de fallback.
+- `PUBLICATIE_README.md` levert versiegebonden, kopieerbare teksten voor
+  LinkedIn, Reddit, Facebook, YouTube, Bluesky, Mastodon, X en GitHub.
+- Nieuwe controles:
+  `tools/check_readme_item_editor.py`,
+  `tools/check_readme_item_editor_runtime.js`,
+  `tools/check_project_config_layers.py` en
+  `tools/check_project_config_layers_runtime.js`.
 
 ## Gereserveerde toepassingen rc.42
 

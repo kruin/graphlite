@@ -1,4 +1,4 @@
-# Lexicon usage-profile test · v2.0.0-rc.42
+# Lexicon usage-profile test · v2.0.0-rc.43
 
 ## Static checks
 

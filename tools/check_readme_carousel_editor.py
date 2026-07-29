@@ -41,7 +41,7 @@ for marker, label in [
     ("normalizeReadmeCarousels(snapshot.readmeCarousels)", "Config-snapshotinvoer"),
     ("/^(?:javascript|vbscript|data|file):/i", "onveilige beeldschema's blokkeren"),
     ("captureDefaultReadmeCarousels();\n    setupConfigTabs();", "bron vastleggen vóór editorbouw"),
-    ("ensureHelpTopicCarouselSlots();\n    renderReadmeTopicCarousels();", "per-item-slots daarna renderen"),
+    ("ensureHelpTopicCarouselSlots();\n    renderReadmeTopicEdits();\n    renderReadmeTopicCarousels();", "per-item-slots daarna tekst en carousels renderen"),
     ("document.body.classList.contains('config-screen-active')", "sneltoetsblokkade in Config"),
     ("target.matches('input, textarea, select, [contenteditable]')", "sneltoetsblokkade in invoervelden"),
 ]:

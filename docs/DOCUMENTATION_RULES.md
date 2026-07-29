@@ -68,6 +68,30 @@ Een release candidate geldt pas als handmatig akkoord wanneer de bijbehorende
 controlelijst is ingevuld. Een geslaagde automatische controle vervangt dat
 visuele akkoord niet.
 
+## Verplichte projectzip-uitleg
+
+Iedere actuele releasebeschrijving maakt onderscheid tussen:
+
+1. `config/default-config.json`: de meegeleverde, controleerbare standaard;
+2. `config/user-config.json`: de optionele gebruikerslaag die dezelfde
+   instellingen mag overschrijven zonder de standaard te verwijderen;
+3. de lokaal bewaarde browser-Config: een apparaatgebonden laatste laag.
+
+Schrijf de voorrang steeds expliciet als:
+
+```text
+code-defaults → default-config → user-config → browser-Config
+```
+
+Noem `Schrijf huidige Config naar project` alleen bij lokaal starten via
+`start_local_viewer.bat`. Beschrijf voor een gewone webserver de downloadroute
+als fallback.
+
+Iedere volledige projectzip bevat ook `PUBLICATIE_README.md` met
+versiegebonden teksten voor publicatieplatforms. Die teksten moeten de
+werkelijke releasestatus noemen en mogen placeholders voor live-, bron- en
+videolinks pas na bewuste invulling verliezen.
+
 ## Bovenbalkterminologie
 
 - Schrijf `Projectie`, `Bron` en `Assen`; noem de oude zwevende `Projecties-box` niet als actieve UI.
