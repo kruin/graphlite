@@ -15,6 +15,7 @@ import start_local_viewer as launcher
 
 SERVER = ROOT / "server_nocache.py"
 VERSION = (ROOT / "VERSION.txt").read_text(encoding="utf-8").strip()
+SOURCE_BUILD = (ROOT / "SOURCE_BUILD.txt").read_text(encoding="utf-8").strip()
 START_BAT = (ROOT / "start_local_viewer.bat").read_text(encoding="utf-8")
 
 
@@ -24,7 +25,7 @@ def free_port() -> int:
         return int(sock.getsockname()[1])
 
 
-def probe(port: int, expected: str) -> str:
+def probe(port: int, expected: str, expected_build: str = SOURCE_BUILD) -> str:
     result = subprocess.run(
         [
             sys.executable,
@@ -34,6 +35,7 @@ def probe(port: int, expected: str) -> str:
             str(port),
             expected,
             "local-start-test",
+            expected_build,
         ],
         cwd=ROOT,
         check=True,
@@ -75,12 +77,14 @@ def main() -> None:
                 detail = process.stderr.read() if process.stderr else ""
                 raise AssertionError(f"lokale server stopte voortijdig: {detail}")
             time.sleep(0.05)
-        require(state == f"ok|{VERSION}", f"juiste versie niet herkend: {state!r}")
+        identity = f"{VERSION} | {SOURCE_BUILD}"
+        require(state == f"ok|{identity}", f"juiste bron niet herkend: {state!r}")
         require(
             launcher.run(
                 host="127.0.0.1",
                 port=port,
                 expected_version=VERSION,
+                expected_build=SOURCE_BUILD,
                 allow_start=False,
                 open_browser=False,
             )
@@ -95,11 +99,30 @@ def main() -> None:
                 host="127.0.0.1",
                 port=port,
                 expected_version="v0-test-wrong",
+                expected_build=SOURCE_BUILD,
                 allow_start=False,
                 open_browser=False,
             )
             == 1,
             "Python-launcher blokkeert een verkeerde actieve versie niet",
+        )
+
+        wrong_build = probe(port, VERSION, "oude-bronstand")
+        require(
+            wrong_build == f"wrong|{identity}",
+            f"verkeerde bronstand bij dezelfde versie niet herkend: {wrong_build!r}",
+        )
+        require(
+            launcher.run(
+                host="127.0.0.1",
+                port=port,
+                expected_version=VERSION,
+                expected_build="oude-bronstand",
+                allow_start=False,
+                open_browser=False,
+            )
+            == 1,
+            "Python-launcher blokkeert een oude bron met hetzelfde versienummer niet",
         )
     finally:
         process.terminate()
@@ -134,13 +157,17 @@ def main() -> None:
                 host="127.0.0.1",
                 port=new_port,
                 expected_version=VERSION,
+                expected_build=SOURCE_BUILD,
                 allow_start=True,
                 open_browser=False,
             )
             == 0,
             "Python-launcher start en bereikt een nieuwe server niet",
         )
-        require(probe(new_port, VERSION) == f"ok|{VERSION}", "nieuw gestarte server reageert niet")
+        require(
+            probe(new_port, VERSION) == f"ok|{VERSION} | {SOURCE_BUILD}",
+            "nieuw gestarte server reageert niet met de juiste bronstand",
+        )
     finally:
         launcher.launch_server = original_launch_server
         for child in launched:
@@ -154,7 +181,7 @@ def main() -> None:
     print(
         "LOCAL START CHECK: OK "
         "(minimale BAT; Python-launcher; bestaande/nieuwe server; "
-        "juiste/verkeerde versie; gesloten poort; één starter)"
+        "juiste/verkeerde versie en bronstand; gesloten poort; één starter)"
     )
 
 

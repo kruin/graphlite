@@ -1,7 +1,7 @@
 <!doctype html>
 
-<!-- OPENGRAPH_ROOT_VIEWER_INDEX_v2.0.0-rc.43: this root index is the app, not docs. -->
-<html data-opengraph-app="viewer" data-version="v2.0.0-rc.43" lang="en">
+<!-- OPENGRAPH_ROOT_VIEWER_INDEX_v2.0.0-rc.45: this root index is the app, not docs. -->
+<html data-opengraph-app="viewer" data-version="v2.0.0-rc.45" lang="en">
 <head>
 <meta charset="utf-8"/>
 <meta content="no-store, no-cache, must-revalidate, max-age=0" http-equiv="Cache-Control"/>
@@ -10,10 +10,10 @@
 <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport"/>
 <meta content="#0f172a" name="theme-color"/>
 <meta content="OpenGraph Lite Viewer: vrije JAN-bronknopen, edits, LEX-plaatsingsregels en projecties." name="description"/>
-<title>OpenGraph Lite Viewer v2.0.0-rc.43</title>
+<title>OpenGraph Lite Viewer v2.0.0-rc.45</title>
 <script>
     (function() {
-      var VERSION = 'v2.0.0-rc.43';
+      var VERSION = 'v2.0.0-rc.45';
       window.__OPENGRAPH_EXPECTED_VERSION__ = VERSION;
       function runCacheCleanupOnce() {
         var flag = 'opengraph-cache-cleaned-' + VERSION;
@@ -52,13 +52,13 @@
 <link href="icons/icon-192.svg" rel="icon" type="image/svg+xml"/>
 <!-- v4552: manifest disabled in local/dev build to avoid PWA/service-worker confusion. -->
 <!-- <link rel="manifest" href="manifest.webmanifest"> -->
-<link href="styles.css?v2.0.0-rc.43" rel="stylesheet"/>
+<link href="styles.css?v2.0.0-rc.45" rel="stylesheet"/>
 </head>
 <body class="main-screen-active">
 <header class="app-header">
 <div>
 <div class="eyebrow">OpenGraph · JaN · Open Notation</div>
-<h1>OpenGraph Lite Viewer <span class="version-tag">v2.0.0-rc.43</span></h1>
+<h1>OpenGraph Lite Viewer <span class="version-tag">v2.0.0-rc.45</span></h1>
 <p class="header-subtitle">Top menu with Sentence, Syntax / Functional, Interface, Projections, LOG order, Language, README and Config.</p>
 </div>
 <button class="ghost hidden" id="installButton" type="button">Install</button>
@@ -173,8 +173,8 @@
 <ul>
 <li>
 <button class="help-topic-button is-active" data-help-topic-button="readme" type="button">
-<span class="help-lang-nl">Lees mij / README</span>
-<span class="help-lang-en">README</span>
+<span class="help-lang-nl">Start · OGN-kern</span>
+<span class="help-lang-en">Start · OGN Core</span>
 </button>
 </li>
 <li>
@@ -183,10 +183,10 @@
 <span class="help-lang-en">Open Graph Notation</span>
 </button>
 <ul>
-<li><button class="help-topic-button" data-help-topic-button="grid-rule" type="button"><span class="help-lang-nl">Gridregel</span><span class="help-lang-en">Grid rule</span></button></li>
-<li><button class="help-topic-button" data-help-topic-button="projection-mechanism" type="button"><span class="help-lang-nl">Projectiemechanisme</span><span class="help-lang-en">Projection mechanism</span></button></li>
-<li><button class="help-topic-button" data-help-topic-button="sequential-drawing" type="button"><span class="help-lang-nl">Volgordelijk schrijven</span><span class="help-lang-en">Sequential writing</span></button></li>
-<li><button class="help-topic-button" data-help-topic-button="recursive-layout" type="button"><span class="help-lang-nl">Layout rc.42</span><span class="help-lang-en">Layout rc.42</span></button></li>
+<li><button class="help-topic-button" data-help-topic-button="grid-rule" type="button"><span class="help-lang-nl">1 · Vrije plaatsing</span><span class="help-lang-en">1 · Free Placement</span></button></li>
+<li><button class="help-topic-button" data-help-topic-button="sequential-drawing" type="button"><span class="help-lang-nl">Plaatsingsstrategieën</span><span class="help-lang-en">Placement Strategies</span></button></li>
+<li><button class="help-topic-button" data-help-topic-button="projection-mechanism" type="button"><span class="help-lang-nl">2 · Projectie</span><span class="help-lang-en">2 · Projection</span></button></li>
+<li><button class="help-topic-button" data-help-topic-button="recursive-layout" type="button"><span class="help-lang-nl">3 · Berekende plaatsing</span><span class="help-lang-en">3 · Calculated Placement</span></button></li>
 <li><button class="help-topic-button" data-help-topic-button="west-axis" type="button"><span class="help-lang-nl">West-as</span><span class="help-lang-en">West axis</span></button></li>
 <li><button class="help-topic-button" data-help-topic-button="south-axis" type="button"><span class="help-lang-nl">Zuid-as</span><span class="help-lang-en">South axis</span></button></li>
 </ul>
@@ -245,34 +245,36 @@
 <section aria-live="polite" class="help-topic-stage">
 <article class="help-topic-panel readme-intro-panel is-active" data-help-topic="readme">
 <div class="help-lang-nl">
-<h3>Probleembomen</h3>
-<p>Wanneer alle bladeren op één basislijn moeten staan, wordt een langere zinsboom óf te breed voor het beschikbare vak, óf zo sterk samengedrukt dat woorden en labels elkaar overschrijven.</p>
-<p>De derde en vierde boom lijken dit op te lossen met vrije takhoeken, ongelijke taklengtes en bladeren op verschillende hoogtes. Dat is slechts een grafisch gemotiveerde schijnoplossing: de boom past beter, maar de representatie blijft syntactische structuur en lexicale woordvolgorde in één tekening verknopen.</p>
-<p class="readme-query-note">Het eigenlijke probleem is dus niet alleen ruimtegebrek. <strong>OpenGraph Notation</strong> scheidt structurele relaties van lineaire woordvolgorde. Die aanpak volgt in het volgende item.</p>
+<h3>Open Graph Notation begint met vrije plaatsing</h3>
+<p><strong>Iedere knoop is baas op zijn eigen horizontale en verticale gridlijn.</strong> OGN schrijft knopen één voor één op vrije plaatsen. Na iedere stap verandert de bezetting van het grid en wordt opnieuw bepaald welke plaatsen nog vrij en geldig zijn.</p>
+<p><strong>Harde regel — A ≠ B:</strong> twee verschillende knopen mogen nooit dezelfde horizontale of verticale gridlijn bezetten. Formeel: <code>A ≠ B ⇒ x(A) ≠ x(B) én y(A) ≠ y(B)</code>. Een overtreding heet <strong>gridlijnhergebruik</strong>: horizontaal hergebruik deelt een rij, verticaal hergebruik een kolom. Is geen geldige rij én kolom beschikbaar, dan wordt geen fallbackknoop getekend.</p>
+<p>Een <strong>ruleset</strong> bepaalt welke vrije plaatsen geldig zijn. Een <strong>zoekstrategie</strong> bepaalt in welke volgorde kandidaten worden getest. De eerstgevonden geldige plek wordt direct geschreven; een andere zoekvolgorde kan dus een ander beeld opleveren.</p>
+<p class="readme-query-note">De vaste volgorde is: <strong>1 · OGN Free Placement</strong>, <strong>2 · OGN Projection</strong>, <strong>3 · OGN Calculated Placement</strong>. Directe plaatsing en berekende plaatsing blijven afzonderlijke werkwijzen.</p>
 </div>
 <div class="help-lang-en">
-<h3>Problem trees</h3>
-<p>When all leaves must remain on one baseline, a longer sentence tree either becomes too wide for its frame or must be compressed until words and labels overlap.</p>
-<p>The third and fourth trees appear to solve this by using flexible branch angles, unequal branch lengths and leaves at different heights. This is only a graphically motivated apparent solution: the tree fits better, but the representation still entangles syntactic structure with lexical word order in one drawing.</p>
-<p class="readme-query-note">The real problem is therefore not merely lack of space. <strong>OpenGraph Notation</strong> separates structural relations from linear word order. The next item introduces that approach.</p>
+<h3>Open Graph Notation starts with free placement</h3>
+<p><strong>Every node owns its horizontal and vertical grid line.</strong> OGN writes nodes one at a time into free positions. After every step, grid occupancy changes and the notation determines again which positions remain free and valid.</p>
+<p><strong>Hard rule — A ≠ B:</strong> two different nodes may never occupy the same horizontal or vertical grid line. Formally: <code>A ≠ B ⇒ x(A) ≠ x(B) and y(A) ≠ y(B)</code>. A violation is <strong>grid-line reuse</strong>: horizontal reuse shares a row, vertical reuse a column. If no valid row and column are available, no fallback node is rendered.</p>
+<p>A <strong>rule set</strong> determines which free positions are valid. A <strong>search strategy</strong> determines the order in which candidates are tested. The first valid position found is written immediately, so another search order may produce another picture.</p>
+<p class="readme-query-note">The fixed order is: <strong>1 · OGN Free Placement</strong>, <strong>2 · OGN Projection</strong>, <strong>3 · OGN Calculated Placement</strong>. Direct placement and calculated placement remain separate methods.</p>
 </div>
-<section aria-label="Probleem en oplossing voor traditionele zinsbomen" class="readme-tree-carousel" data-readme-carousel="" role="group">
+<section aria-label="OGN-kern, zoekstrategieën en lagen" class="readme-tree-carousel" data-readme-carousel="" role="group">
 <div class="readme-carousel-viewport">
 <figure class="readme-carousel-slide is-active" data-readme-shape="wide" data-readme-slide="">
-<img alt="Zeer brede traditionele Nederlandse zinsboom waarvan een groot deel buiten een geprojecteerd paginaformaat valt." decoding="async" loading="eager" src="images/readme/traditional-tree-problem-too-wide.png"/>
-<figcaption><span class="help-lang-nl"><strong>1 · Te breed.</strong> De boom blijft leesbaar, maar past niet in het beschikbare formaat.</span><span class="help-lang-en"><strong>1 · Too wide.</strong> The tree remains readable but does not fit the available frame.</span></figcaption>
+<img alt="Drie OGN-knopen op unieke horizontale en verticale gridlijnen." decoding="async" loading="eager" src="images/readme/ogn-free-grid.svg"/>
+<figcaption><span class="help-lang-nl"><strong>1 · Gridbezit.</strong> Iedere knoop is baas op zijn eigen horizontale en verticale gridlijn.</span><span class="help-lang-en"><strong>1 · Grid ownership.</strong> Every node owns its horizontal and vertical grid line.</span></figcaption>
 </figure>
 <figure class="readme-carousel-slide" data-readme-shape="wide" data-readme-slide="" hidden="">
-<img alt="Samengedrukte traditionele Nederlandse zinsboom die binnen het formaat past, maar waarvan woorden en labels elkaar overschrijven." decoding="async" loading="lazy" src="images/readme/traditional-tree-problem-unreadable.png"/>
-<figcaption><span class="help-lang-nl"><strong>2 · Onleesbaar.</strong> De boom past, maar de bladeren en woorden staan te dicht op elkaar.</span><span class="help-lang-en"><strong>2 · Unreadable.</strong> The tree fits, but leaves and words are packed too tightly.</span></figcaption>
+<img alt="Drie opeenvolgende grids waarin eerst A, daarna B en daarna C op een nog vrije plaats wordt geschreven." decoding="async" loading="lazy" src="images/readme/ogn-sequential-write.svg"/>
+<figcaption><span class="help-lang-nl"><strong>2 · Eén voor één.</strong> Iedere geschreven knoop verandert de verzameling vrije plaatsen.</span><span class="help-lang-en"><strong>2 · One at a time.</strong> Every written node changes the set of free positions.</span></figcaption>
 </figure>
 <figure class="readme-carousel-slide" data-readme-shape="wide" data-readme-slide="" hidden="">
-<img alt="Traditionele Nederlandse zinsboom in een breed rechthoekig vak, met uiteenlopende takhoeken en bladeren op verschillende hoogtes." decoding="async" loading="lazy" src="images/readme/traditional-tree-flexible-wide.png"/>
-<figcaption><span class="help-lang-nl"><strong>3 · Grafische schijnoplossing, breed.</strong> De boom past beter door vrije takhoeken, taklengtes en bladhoogtes.</span><span class="help-lang-en"><strong>3 · Apparent graphical solution, wide.</strong> Flexible branch angles, lengths and leaf heights make the tree fit better.</span></figcaption>
+<img alt="Twee grids beginnen in hetzelfde middenpunt; verschillende kandidaatvolgorden leveren verschillende directe plaatsingen op." decoding="async" loading="lazy" src="images/readme/ogn-placement-strategies.svg"/>
+<figcaption><span class="help-lang-nl"><strong>3 · Zoeken.</strong> Een andere zoekvolgorde kan een ander groeibeeld opleveren.</span><span class="help-lang-en"><strong>3 · Search.</strong> Another search order can produce another growth pattern.</span></figcaption>
 </figure>
-<figure class="readme-carousel-slide" data-readme-shape="narrow" data-readme-slide="" hidden="">
-<img alt="Smalle traditionele Nederlandse zinsboom waarin MISSCHIEN WEL lager staat om de volledige boom binnen het vak te laten passen." decoding="async" loading="lazy" src="images/readme/traditional-tree-flexible-narrow.png"/>
-<figcaption><span class="help-lang-nl"><strong>4 · Grafische schijnoplossing, smal.</strong> <em>MISSCHIEN WEL</em> staat lager, maar structuur en woordvolgorde blijven verknopt.</span><span class="help-lang-en"><strong>4 · Apparent graphical solution, narrow.</strong> <em>MISSCHIEN WEL</em> is placed lower, but structure and word order remain entangled.</span></figcaption>
+<figure class="readme-carousel-slide" data-readme-shape="wide" data-readme-slide="" hidden="">
+<img alt="Drie opeenvolgende lagen: OGN Free Placement, OGN Projection en OGN Calculated Placement, zonder een specifieke uitbreiding vooruit te lopen." decoding="async" loading="lazy" src="images/readme/ogn-three-layers.svg"/>
+<figcaption><span class="help-lang-nl"><strong>4 · Volgorde.</strong> Vrije plaatsing eerst, projectie tweede, berekende toepassing derde.</span><span class="help-lang-en"><strong>4 · Order.</strong> Free placement first, projection second, calculated application third.</span></figcaption>
 </figure>
 </div>
 <div aria-hidden="false" class="readme-carousel-controls" data-readme-carousel-controls=""></div>
@@ -280,64 +282,75 @@
 </article>
 <article class="help-topic-panel" data-help-topic="opengraph">
 <div class="help-lang-nl">
-<p><strong>Welk probleem lost OGN op?</strong> In een klassieke constituentboom wordt de horizontale volgorde van vertakkingen vaak tegelijk gelezen als structurele ordening en als woordvolgorde. OGN ontkoppelt die taken: de centrale vertakkingen onder <strong>S</strong> leggen de structurele relaties vast; de <strong>LEX-projectie</strong> legt onafhankelijk de lineaire woordvolgorde van de zin vast. Dezelfde centrale structuur kan daardoor verschillende oppervlaktestrings krijgen zonder de boom te spiegelen, opnieuw op te bouwen of woordvolgorde als centrale boomtransformatie te behandelen.</p><h3>Open Graph Notation</h3>
-<p>Open Graph Notation staat op zichzelf. De notatie beschrijft knopen op een open grid en projecties vanuit die knopen naar veronderstelde assen.</p>
-<p>De kern bestaat uit de <strong>Gridregel</strong>, het <strong>projectiemechanisme</strong> en een volgordelijke schrijfwijze: knopen verschijnen één voor één, met hun projectie zodra die knoop beschikbaar is.</p>
-<p><strong>Plaatsingsplan vóór rendering.</strong> Eerst worden hosts, lexicale inserties, landingsplaatsen, gridruimte en Wissel-corridors berekend. Daarna wordt de centrale boom geplaatst en de kernzin lexicaal ingevuld. Play/Groei onthult dit vooraf vastgelegde resultaat; de renderer reserveert geen nieuwe ruimte.</p></div>
+<h3>Open Graph Notation</h3>
+<p>Open Graph Notation is in de eerste plaats een algemene notatie voor knopen op een open grid. Iedere knoop bezit één horizontale en één verticale gridlijn. Knopen worden één voor één op vrije plaatsen geschreven.</p>
+<p><strong>Eerste laag · OGN Free Placement.</strong> Een ruleset bepaalt welke vrije plaatsen geldig zijn; een zoekstrategie bepaalt de testvolgorde. De eerstgevonden geldige plek wordt direct geschreven.</p>
+<p><strong>Tweede laag · OGN Projection.</strong> Een reeds geplaatste bronknoop kan daarna naar een as of afgeleide ruimte projecteren. De bronplaatsing blijft intact.</p>
+<p><strong>Derde laag · OGN Calculated Placement.</strong> Een uitbreiding mag vooraf een compleet plaatsingsplan berekenen. Dat is een andere werkwijze dan directe plaatsing.</p></div>
 <div class="help-lang-en">
-<p><strong>What problem does OGN solve?</strong> In a classical constituent tree, horizontal branch order is often read both as structural order and as sentence word order. OGN separates these tasks: the central branches under <strong>S</strong> encode structural relations, while the <strong>LEX projection</strong> independently encodes the linear word order of the sentence. The same central structure can therefore yield different surface strings without mirroring or rebuilding the tree, or treating word order as a central-tree transformation.</p><h3>Open Graph Notation</h3>
-<p>Open Graph Notation stands on its own. It describes nodes on an open grid and projections from those nodes to assumed axes.</p>
-<p>Its core consists of the <strong>Grid rule</strong>, the <strong>projection mechanism</strong> and sequential writing: nodes appear one by one, with their projection as soon as the node is available.</p>
-<p><strong>Placement plan before rendering.</strong> Hosts, lexical insertions, landing positions, grid space and exchange corridors are calculated first. The central tree is then placed and the core sentence is filled lexically. Play/Growth reveals this fixed result; the renderer reserves no new space.</p></div>
+<h3>Open Graph Notation</h3>
+<p>Open Graph Notation is first of all a general notation for nodes on an open grid. Every node owns one horizontal and one vertical grid line. Nodes are written one at a time into free positions.</p>
+<p><strong>First layer · OGN Free Placement.</strong> A rule set determines which free positions are valid; a search strategy determines the test order. The first valid position found is written immediately.</p>
+<p><strong>Second layer · OGN Projection.</strong> A placed source node may then project to an axis or derived space. Its source position remains intact.</p>
+<p><strong>Third layer · OGN Calculated Placement.</strong> An extension may calculate a complete placement plan in advance. This is a different method from direct placement.</p></div>
 <div aria-label="Gereserveerde carouselruimte" class="help-carousel-reserved">
 <div class="help-carousel-frame">
 <strong><span class="help-lang-nl">Carouselruimte</span><span class="help-lang-en">Carousel space</span></strong>
-<span class="help-lang-nl">Gereserveerd voor een visuele uitleg van gridregel en projectiemechanisme.</span>
-<span class="help-lang-en">Reserved for a visual explanation of the grid rule and projection mechanism.</span>
+<span class="help-lang-nl">Gereserveerd voor aanvullende uitleg van vrije plaatsing, projectie en berekende toepassingen.</span>
+<span class="help-lang-en">Reserved for additional explanation of free placement, projection and calculated applications.</span>
 </div>
 </div>
 </article>
 <article class="help-topic-panel" data-help-topic="grid-rule">
 <div class="help-lang-nl">
-<h3>Gridregel</h3>
-<p>Een knoop staat op een eigen kruispunt van het grid. In de strikte boomweergave is elke knoop de enige knoop op zijn horizontale gridlijn en de enige knoop op zijn verticale gridlijn.</p>
-<p>Die regel maakt de plaats van een knoop ondubbelzinnig. Projectielijnen kunnen daardoor helder naar een west-as of zuid-as worden getrokken.</p>
+<h3>1 · OGN Free Placement</h3>
+<p>Een knoop gebruikt één vrije horizontale en één vrije verticale gridlijn en is op beide de enige knoop: <strong>iedere knoop is baas op zijn eigen gridlijnen</strong>.</p>
+<p>OGN schrijft een volgende knoop pas nadat de bestaande bezetting bekend is. De ruleset bepaalt welke vrije posities geldig zijn; de zoekstrategie test kandidaten in een bepaalde volgorde. De eerstgevonden geldige plaats wordt direct onderdeel van de graph.</p>
+<p>Een vrije positie is niet automatisch geldig. Vrijheid volgt uit de gridlijnen; geldigheid volgt uit de actieve ruleset.</p>
 </div>
 <div class="help-lang-en">
-<h3>Grid rule</h3>
-<p>A node occupies its own grid intersection. In the strict tree display, each node is the only node on its horizontal grid line and the only node on its vertical grid line.</p>
-<p>This makes the node position unambiguous. Projection lines can then be drawn clearly to a west axis or south axis.</p>
+<h3>1 · OGN Free Placement</h3>
+<p>A node uses one free horizontal and one free vertical grid line and is the only node on both: <strong>every node owns its grid lines</strong>.</p>
+<p>OGN writes the next node only after current occupancy is known. The rule set determines which free positions are valid; the search strategy tests candidates in a chosen order. The first valid position found becomes part of the graph immediately.</p>
+<p>A free position is not automatically valid. Freedom follows from grid-line occupancy; validity follows from the active rule set.</p>
 </div>
 </article>
 <article class="help-topic-panel" data-help-topic="projection-mechanism">
 <div class="help-lang-nl">
-<h3>Projectiemechanisme</h3>
+<h3>2 · OGN Projection</h3>
+<p>Projectie komt pas nadat de bronknoop op het centrale grid is geschreven.</p>
 <p>Een projectie verbindt een bronknoop met een positie op een veronderstelde as. De bronknoop blijft staan; de projectie toont een andere lezing of ordening.</p>
-<p>Horizontale projecties lopen naar een west-as. Verticale of zuidelijke projecties lopen naar een zuid-as. In de algemene notatie zijn die assen nog niet ingevuld met namen of taalkundige inhoud.</p>
+<p>Horizontale projecties lopen naar een west-as. Verticale of zuidelijke projecties lopen naar een zuid-as. In de algemene notatie hebben die assen nog geen specifieke naam of domeininhoud.</p>
 <p>De punten op de assen heten <strong>projectiemerkers</strong>. Zij zijn geen nieuwe bronknopen, maar asposities die door projectie ontstaan.</p>
 </div>
 <div class="help-lang-en">
-<h3>Projection mechanism</h3>
+<h3>2 · OGN Projection</h3>
+<p>Projection begins only after the source node has been written on the central grid.</p>
 <p>A projection connects a source node to a position on an assumed axis. The source node remains in place; the projection shows another reading or ordering.</p>
-<p>Horizontal projections run to a west axis. Vertical or southern projections run to a south axis. In the general notation, these axes are not yet filled with names or linguistic content.</p>
+<p>Horizontal projections run to a west axis. Vertical or southern projections run to a south axis. In the general notation, these axes do not yet have a specific name or domain content.</p>
 <p>The points on the axes are called <strong>projection markers</strong>. They are not new source nodes, but axis positions created by projection.</p>
 </div>
 </article>
 <article class="help-topic-panel" data-help-topic="sequential-drawing">
 <div class="help-lang-nl">
-<h3>Volgordelijke notatie</h3>
-<p>Open Graph Notation kan als schrijfproces worden gelezen. Eerst verschijnen centrale bronknopen één voor één. Zodra een bronknoop beschikbaar is, kan de bijbehorende projectie naar een as worden geschreven.</p>
-<p>Voor boomtoepassingen is de layout tweepass: eerst worden boxen bottom-up uitgerekend; daarna wordt top-down gerenderd. Het resultaat is statisch: de centrale graph transformeert niet door projecties of as-verplaatsingen.</p>
+<h3>Zoekstrategieën en Greedy Grow</h3>
+<p>Open Graph Notation is bij directe plaatsing een volgordelijk schrijfproces: bezetting lezen → vrije plaatsen bepalen → ruleset toepassen → kandidaten in zoekvolgorde testen → eerstgevonden geldige plek direct schrijven.</p>
+<p>Een andere zoekvolgorde kan vanuit hetzelfde startpunt een ander groeipad en eindbeeld opleveren.</p>
+<p><strong>Greedy Grow · geaccepteerde reconstructie.</strong> De historische vierarmige volgorde reproduceert de bewaarde demo's van 12, 31 en 96 knopen exact. Iedere stap schrijft direct één dot; er wordt geen toekomstig eindbeeld opgeslagen. Vier teruggevonden experimentele zoekvolgorden maken andere groeibeelden vergelijkbaar. De gemeten veldomtrek is diagnostiek, geen bewezen wereldwijd optimum.</p>
+<p><a href="greedy-grow.html">Open de bedienbare Greedy Grow-reconstructie</a>. Publicatieslide 5 wordt rechtstreeks uit dezelfde engine afgeleid. Geaccepteerd op 2 augustus 2026.</p>
 </div>
 <div class="help-lang-en">
-<h3>Sequential notation</h3>
-<p>Open Graph Notation can be read as a writing process. Central source nodes appear one by one. As soon as a source node is available, its projection to an axis can be written.</p>
-<p>For tree applications the layout is two-pass: boxes are computed bottom-up first; rendering then runs top-down. The result is static: the central graph is not transformed by projections or axis movements.</p>
+<h3>Search Strategies and Greedy Grow</h3>
+<p>In direct placement, Open Graph Notation is a sequential writing process: read occupancy → determine free positions → apply the rule set → test candidates in search order → write the first valid position found immediately.</p>
+<p>Another search order may produce another growth path and final picture from the same start.</p>
+<p><strong>Greedy Grow · accepted reconstruction.</strong> The historical four-arm order exactly reproduces the preserved 12-, 31- and 96-node demos. Every step writes one dot immediately; no future layout is stored. Four recovered experimental search orders make different growth pictures comparable. The measured field perimeter is diagnostic, not a proven global optimum.</p>
+<p><a href="greedy-grow.html">Open the interactive Greedy Grow reconstruction</a>. Publication slide 5 is derived directly from the same engine. Accepted on 2 August 2026.</p>
 </div>
 </article>
 <article class="help-topic-panel" data-help-topic="recursive-layout">
 <div class="help-lang-nl">
-<h3>Layout rc.42: wat wordt recursief berekend?</h3>
+<h3>3 · OGN Berekende Plaatsing</h3>
+<p>Een berekende toepassing maakt eerst een plaatsingsplan en schrijft het resultaat daarna volgens de OGN-kern. De huidige <strong>Two-Pass Language Tree</strong> is één zo'n toepassing, niet het beginpunt van OGN.</p>
 <p><strong>Structurele plaatsing:</strong> de boom plaatst knopen en complete subtrees op het HOR/VER-celgrid. Die gridposities blijven leidend.</p>
 <p><strong>Visuele meting:</strong> daarna meet een tweede bottom-up pass per subtree de nodevormen, labels, afstammelingen, caption en marge. Deze uitkomst bepaalt de zichtbare subtree-box. Daardoor kan <code>NP → HOND</code> smaller zijn dan VP.</p>
 <p><strong>Belangrijke grens:</strong> de gemeten pixelmaat verplaatst in rc.42 nog geen knopen naar andere gridcellen. Dit is dus recursieve boxmeting, nog geen algemene botsings- of herplaatsingssolver.</p>
@@ -345,7 +358,8 @@
 <p><strong>Portret:</strong> de complete horizontale compositie benut de breedte, maar kan klein blijven en verticale witruimte overlaten. Pan/zoom blijft beschikbaar; een gestapelde portretvariant is een afzonderlijke toekomstige layoutkeuze.</p>
 </div>
 <div class="help-lang-en">
-<h3>Layout rc.42: what is calculated recursively?</h3>
+<h3>3 · OGN Calculated Placement</h3>
+<p>A calculated application creates a placement plan first and then writes the result according to OGN Core. The current <strong>Two-Pass Language Tree</strong> is one such application, not the OGN starting point.</p>
 <p><strong>Structural placement:</strong> the tree places nodes and complete subtrees on the HOR/VER cell grid. Those grid positions remain authoritative.</p>
 <p><strong>Visual measurement:</strong> a second bottom-up pass then measures each subtree from node shapes, labels, descendants, caption and padding. This result determines the visible subtree box, allowing <code>NP → HOND</code> to be narrower than VP.</p>
 <p><strong>Important boundary:</strong> in rc.42 the measured pixel size does not move nodes to other grid cells. This is recursive box measurement, not yet a general collision or repacking solver.</p>
@@ -403,13 +417,15 @@
 </article>
 <article class="help-topic-panel" data-help-topic="tree-notation">
 <div class="help-lang-nl">
-<h3>Tree notation</h3>
-<p>Tree notation gebruikt het grid om een herkenbare boom te tekenen. De gridregel houdt de knopen van elkaar gescheiden en maakt projecties leesbaar.</p>
+<h3>Two-Pass Language Tree</h3>
+<p>De taalboom is een berekende OGN-toepassing. Zij gebruikt het grid om een herkenbare boom te schrijven nadat structurele regels de plaatsen hebben bepaald. Een tweede pass meet nodevormen, labels en subtrees voor de zichtbare boxen.</p>
+<p>Traditionele taalbomen kunnen te breed of onleesbaar samengedrukt worden wanneer structuur en lineaire woordvolgorde dezelfde geometrie moeten delen. Binnen deze toepassing kan LEX de woordvolgorde afzonderlijk projecteren. Dat is een voordeel van de taaltoepassing, niet de algemene oorsprong van OGN.</p>
 <p>De taalboomweergave kan als Syntax tree of als Functional structure worden bekeken.</p>
 </div>
 <div class="help-lang-en">
-<h3>Tree notation</h3>
-<p>Tree notation uses the grid to draw a recognizable tree. The grid rule keeps nodes separated and makes projections readable.</p>
+<h3>Two-Pass Language Tree</h3>
+<p>The language tree is a calculated OGN application. It uses the grid to write a recognizable tree after structural rules have determined positions. A second pass measures node shapes, labels, and subtrees for the visible boxes.</p>
+<p>Traditional language trees can become too wide or unreadably compressed when structure and linear word order must share the same geometry. Within this application, LEX can project word order separately. That is a benefit of the language application, not the general origin of OGN.</p>
 <p>The linguistic tree display can be viewed as Syntax tree or as Functional structure.</p>
 </div>
 </article>
@@ -531,13 +547,13 @@
 <article class="help-topic-panel" data-help-topic="publishing">
 <div class="help-lang-nl">
 <h3>Publiceren op platforms</h3>
-<p>Iedere volledige projectzip bevat <a href="PUBLICATIE_README.md" target="_blank" rel="noopener">PUBLICATIE_README.md</a> met kopieerbare teksten voor LinkedIn, Reddit, Facebook, YouTube, Bluesky, Mastodon, X en een GitHub-release.</p>
-<p>Vervang eerst de gemarkeerde live-, bron- en videolinks. Controleer vervolgens versie, afbeelding en alt-tekst. De tekst noemt rc.43 bewust een release candidate totdat de handmatige controle is afgetekend.</p>
+<p>Iedere volledige projectzip bevat een <a href="publicatie-carrousel/index.html" target="_blank" rel="noopener">bewerkbare publicatiecarrousel</a> en zeven kant-en-klare vierkante PNG-slides. Upload de bestanden <code>01</code> tot en met <code>07</code> in die volgorde als één gallery, bijvoorbeeld op Reddit.</p>
+<p><a href="PUBLICATIE_README.md" target="_blank" rel="noopener">PUBLICATIE_README.md</a> bevat de exacte uploadvolgorde, alt-teksten en kopieerbare platformteksten. Vervang eerst de gemarkeerde live-, bron- en videolinks. rc.45 is op 2 augustus 2026 handmatig goedgekeurd.</p>
 </div>
 <div class="help-lang-en">
 <h3>Publishing on platforms</h3>
-<p>Every full project zip contains <a href="PUBLICATIE_README.md" target="_blank" rel="noopener">PUBLICATIE_README.md</a> with ready-to-copy text for LinkedIn, Reddit, Facebook, YouTube, Bluesky, Mastodon, X, and a GitHub release.</p>
-<p>Replace the marked live, source, and video links first. Then verify the version, image, and alt text. The copy deliberately calls rc.43 a release candidate until manual validation is signed off.</p>
+<p>Every full project zip contains an <a href="publicatie-carrousel/index.html" target="_blank" rel="noopener">editable publication carousel</a> and seven ready-to-upload square PNG slides. Upload files <code>01</code> through <code>07</code> in that order as one gallery, for example on Reddit.</p>
+<p><a href="PUBLICATIE_README.md" target="_blank" rel="noopener">PUBLICATIE_README.md</a> contains the exact upload order, alt text, and ready-to-copy platform text. Replace the marked live, source, and video links first. rc.45 was manually approved on 2 August 2026.</p>
 </div>
 </article>
 <article class="help-topic-panel" data-help-topic="jan-todo">
@@ -557,17 +573,17 @@
 </section>
 <section aria-label="Hoofdbediening" class="toolbar">
 <div aria-label="Zin-input" class="input-sentence-tools">
-<a class="button-link" href="examples-input.html?v2.0.0-rc.43" title="Open de HTML-inputfile met voorbeeldzinnen, subject vet en object cursief">HTML-input</a>
-<a class="button-link" data-feature="adverbs" hidden="" href="examples-adverbs.html?v2.0.0-rc.43" title="Voorbeeldset met één bijwoord per zin en default-host per categorie">Bijwoordvoorbeelden</a>
-<a class="button-link" data-feature="adverbs" hidden="" href="docs/LEX_ADVERB_PLACEMENT_RULES_CHECKED.md?v2.0.0-rc.43" title="Bijwoordklasse en scope als input voor LOG-minors; default en gemarkeerd">Bijwoordregels</a>
-<a class="button-link" data-feature="adverbs" hidden="" href="examples-adverb-rules-v4552.html?v2.0.0-rc.43" title="Controle per bijwoord: uitzonderingen en eigen regels">Bijwoordcheck</a>
-<a class="button-link" data-feature="adverbs" hidden="" href="examples-adverb-rules-v4552.html?v2.0.0-rc.43" title="Controle per bijwoord: uitzonderingen en eigen regels">Bijwoordcheck</a>
-<a class="button-link" href="lexicon-config.html?v2.0.0-rc.43" title="Leesbare lexicon-config voor voorbeeldzinnen">Lexicon</a>
-<a class="button-link" href="lexicon-editor.html?v2.0.0-rc.43" title="Lexicon én korte voorbeelduitingen beheren; exporteert lexicon-config.html en examples-input.html">Lexicon+uitingen-editor</a>
-<a class="button-link" href="structure-editor.html?v2.0.0-rc.43" title="Bewerk syntax-, functional- en LOG-slotconfig">Structure-editor</a>
-<a class="button-link" href="docs/docs-home.html?v2.0.0-rc.43" title="Projectcontext, layoutspec en release notes">Docs</a>
-<a class="button-link" href="lex-movement-rules.html?v2.0.0-rc.43" title="Simpele uitleg van de LEX-Wissels per zinstype">Plaatsingsregels</a>
-<a class="button-link" href="reset-cache.html?v2.0.0-rc.43" title="Verwijder browsercache/service worker en open de viewer opnieuw">Reset cache</a>
+<a class="button-link" href="examples-input.html?v2.0.0-rc.45" title="Open de HTML-inputfile met voorbeeldzinnen, subject vet en object cursief">HTML-input</a>
+<a class="button-link" data-feature="adverbs" hidden="" href="examples-adverbs.html?v2.0.0-rc.45" title="Voorbeeldset met één bijwoord per zin en default-host per categorie">Bijwoordvoorbeelden</a>
+<a class="button-link" data-feature="adverbs" hidden="" href="docs/LEX_ADVERB_PLACEMENT_RULES_CHECKED.md?v2.0.0-rc.45" title="Bijwoordklasse en scope als input voor LOG-minors; default en gemarkeerd">Bijwoordregels</a>
+<a class="button-link" data-feature="adverbs" hidden="" href="examples-adverb-rules-v4552.html?v2.0.0-rc.45" title="Controle per bijwoord: uitzonderingen en eigen regels">Bijwoordcheck</a>
+<a class="button-link" data-feature="adverbs" hidden="" href="examples-adverb-rules-v4552.html?v2.0.0-rc.45" title="Controle per bijwoord: uitzonderingen en eigen regels">Bijwoordcheck</a>
+<a class="button-link" href="lexicon-config.html?v2.0.0-rc.45" title="Leesbare lexicon-config voor voorbeeldzinnen">Lexicon</a>
+<a class="button-link" href="lexicon-editor.html?v2.0.0-rc.45" title="Lexicon én korte voorbeelduitingen beheren; exporteert lexicon-config.html en examples-input.html">Lexicon+uitingen-editor</a>
+<a class="button-link" href="structure-editor.html?v2.0.0-rc.45" title="Bewerk syntax-, functional- en LOG-slotconfig">Structure-editor</a>
+<a class="button-link" href="docs/docs-home.html?v2.0.0-rc.45" title="Projectcontext, layoutspec en release notes">Docs</a>
+<a class="button-link" href="lex-movement-rules.html?v2.0.0-rc.45" title="Simpele uitleg van de LEX-Wissels per zinstype">Plaatsingsregels</a>
+<a class="button-link" href="reset-cache.html?v2.0.0-rc.45" title="Verwijder browsercache/service worker en open de viewer opnieuw">Reset cache</a>
 </div>
 <div class="button-row compact-actions">
 <button id="resetExampleButton" title="Herlaad het gekozen voorbeeld" type="button">Reset voorbeeld</button>
@@ -707,11 +723,11 @@
 <h2>Voorbeeldzinnen</h2>
 <p class="inline-help">Voeg voorbeeldzinnen toe via de editor. Start lokaal met <code>start_local_viewer.bat</code>; dan schrijft <strong>Opslaan</strong> direct naar <code>examples-input.html</code>. Daarna kun je hier de lijst herladen.</p>
 <div class="button-row">
-<a class="button-link primary" href="examples-editor.html?v2.0.0-rc.43" title="Voorbeeldzinnen toevoegen en opslaan">Voorbeeldzinnen-editor</a>
-<a class="button-link" href="examples-input.html?v2.0.0-rc.43" title="Leesbare HTML-input met voorbeeldzinnen">HTML-input</a>
-<a class="button-link" data-feature="adverbs" hidden="" href="examples-adverbs.html?v2.0.0-rc.43" title="Bijwoordvoorbeelden met default-host en gemarkeerde host">Bijwoordvoorbeelden</a>
-<a class="button-link" data-feature="adverbs" hidden="" href="docs/LEX_ADVERB_PLACEMENT_RULES_CHECKED.md?v2.0.0-rc.43" title="Bijwoordklasse en scope als input voor LOG-minors; default en gemarkeerd">Bijwoordregels</a>
-<a class="button-link" data-feature="adverbs" hidden="" href="examples-adverb-rules-v4552.html?v2.0.0-rc.43" title="Controle per bijwoord: uitzonderingen en eigen regels">Bijwoordcheck</a>
+<a class="button-link primary" href="examples-editor.html?v2.0.0-rc.45" title="Voorbeeldzinnen toevoegen en opslaan">Voorbeeldzinnen-editor</a>
+<a class="button-link" href="examples-input.html?v2.0.0-rc.45" title="Leesbare HTML-input met voorbeeldzinnen">HTML-input</a>
+<a class="button-link" data-feature="adverbs" hidden="" href="examples-adverbs.html?v2.0.0-rc.45" title="Bijwoordvoorbeelden met default-host en gemarkeerde host">Bijwoordvoorbeelden</a>
+<a class="button-link" data-feature="adverbs" hidden="" href="docs/LEX_ADVERB_PLACEMENT_RULES_CHECKED.md?v2.0.0-rc.45" title="Bijwoordklasse en scope als input voor LOG-minors; default en gemarkeerd">Bijwoordregels</a>
+<a class="button-link" data-feature="adverbs" hidden="" href="examples-adverb-rules-v4552.html?v2.0.0-rc.45" title="Controle per bijwoord: uitzonderingen en eigen regels">Bijwoordcheck</a>
 <button id="reloadExamplesButton" title="Herlees examples-input.html zonder de hele pagina opnieuw te openen" type="button">Herlaad zinnen</button>
 </div>
 </section>
@@ -753,7 +769,7 @@
 </details>
 <details>
 <summary>Bediening</summary>
-<p><strong>Open Graph</strong>: de gridregel geeft elke bronknoop een eigen kruispunt. Het projectiemechanisme trekt projectielijnen naar projectiemerkers op veronderstelde assen. In de taalweergave krijgen die projecties namen en selectieregels: <strong>LEX</strong> voor lexicale plaatsing, <strong>SYNT</strong> voor syntaxregels en <strong>LOG</strong> voor S-O-V-volgorde. <strong>Play</strong> presenteert de volgordelijke opbouw. Bij boomtoepassingen worden boxen bottom-up berekend en top-down gerenderd; de centrale graph blijft statisch. De bovenbalk bevat <strong>Projectie</strong>. <strong>Alle</strong> toont de centrale view met alle named projections. Bij <strong>Bron</strong> verschijnt <strong>Assen</strong>, waarmee LEX, SYNT en LOG afzonderlijk of gecombineerd zichtbaar worden. De viewport blijft daarbij vast.</p>
+<p><strong>Open Graph</strong>: de gridregel geeft elke bronknoop een eigen horizontale en verticale gridlijn. Het projectiemechanisme trekt projectielijnen naar projectiemerkers op veronderstelde assen. In de taalweergave krijgen die projecties namen en selectieregels: <strong>LEX</strong> voor lexicale plaatsing, <strong>SYNT</strong> voor syntaxregels en <strong>LOG</strong> voor S-O-V-volgorde. <strong>Play</strong> presenteert de volgordelijke opbouw. Bij boomtoepassingen worden boxen bottom-up berekend en top-down gerenderd; de centrale graph blijft statisch. De bovenbalk bevat <strong>Projectie</strong>. <strong>Alle</strong> toont de centrale view met alle named projections. Bij <strong>Bron</strong> verschijnt <strong>Assen</strong>, waarmee LEX, SYNT en LOG afzonderlijk of gecombineerd zichtbaar worden. De viewport blijft daarbij vast.</p>
 </details>
 </section>
 </main>
@@ -811,15 +827,15 @@
 <div aria-label="Documentatie" class="mobile-sheet-section">
 <h3>Documentatie</h3>
 <div class="mobile-link-grid">
-<a href="docs/docs-home.html?v2.0.0-rc.43">Docs</a>
-<a href="lex-movement-rules.html?v2.0.0-rc.43">Plaatsingsregels</a>
-<a href="reset-cache.html?v2.0.0-rc.43">Reset cache</a>
+<a href="docs/docs-home.html?v2.0.0-rc.45">Docs</a>
+<a href="lex-movement-rules.html?v2.0.0-rc.45">Plaatsingsregels</a>
+<a href="reset-cache.html?v2.0.0-rc.45">Reset cache</a>
 </div>
 </div>
 <p class="mobile-sheet-note">Sleep met één vinger om te pannen. Knijp met twee vingers om te zoomen. FIT past het zichtvenster aan de huidige boom en named projections aan; de boom zelf verandert niet.</p>
 </section>
 <script>
-    window.__opengraphBoot = { version: 'v2.0.0-rc.43', loaded: false, marker: 'viewer-index' };
+    window.__opengraphBoot = { version: 'v2.0.0-rc.45', loaded: false, marker: 'viewer-index' };
     function ogStatus(message) {
       var target = document.getElementById('actionFeedback') || document.body;
       if (target) target.textContent = message;
@@ -832,7 +848,7 @@
     });
     setTimeout(function() {
       if (!window.__opengraphBoot || !window.__opengraphBoot.loaded) {
-        ogStatus('Viewer start niet volledig. Gebruik Reset cache of open http://127.0.0.1:8088/reset-cache.html?v2.0.0-rc.43.');
+        ogStatus('Viewer start niet volledig. Gebruik Reset cache of open http://127.0.0.1:8088/reset-cache.html?v2.0.0-rc.45.');
       }
     }, 2500);
   </script>
@@ -842,11 +858,11 @@
       var isLocal = window.location.protocol === 'file:' || !host || host === 'localhost' || host === '127.0.0.1';
       if (!isLocal) return;
       var script = document.createElement('script');
-      script.src = 'local-mobile-test.js?v2.0.0-rc.43';
+      script.src = 'local-mobile-test.js?v2.0.0-rc.45';
       script.defer = true;
       document.head.appendChild(script);
     })();
   </script>
-<script defer="" src="viewer.js?v2.0.0-rc.43&amp;cb=4"></script>
+<script defer="" src="viewer.js?v2.0.0-rc.45&amp;cb=4"></script>
 </body>
 </html>

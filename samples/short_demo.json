@@ -26,8 +26,7 @@
   "freedom": {
     "hor_ver_free": true,
     "x_line_unique": true,
-    "y_line_unique": true,
-    "diagonal_free": "none"
+    "y_line_unique": true
   },
   "greedy": {
     "count": 12,
@@ -36,8 +35,7 @@
     "generation_max": 12,
     "no_limit": true,
     "style": "free-hor-ver-demo",
-    "rule": "hor-ver-free",
-    "diagonal_free": "none"
+    "rule": "hor-ver-free"
   },
   "grow": {
     "interval_ms": 700,

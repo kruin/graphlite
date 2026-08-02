@@ -1,23 +1,61 @@
-# OpenGraph Lite Viewer v2.0.0-rc.43
+# OpenGraph Lite Viewer v2.0.0-rc.45
 
-OpenGraph Lite Viewer is a demo/viewer for JaN, OPN and OpenGraph linguistic structures. This release is
-built exclusively on the uploaded `v2.0.0-rc.26` source through rc.27; rc.28
-restores the documented OGN/UI contracts without importing source files from
-the abandoned alternate version line.
+OpenGraph Lite Viewer is a viewer and test environment for general Open Graph
+Notation. This release is built exclusively on the uploaded
+`v2.0.0-rc.26` source through rc.27; rc.28 restores the documented OGN/UI
+contracts without importing source files from the abandoned alternate version
+line.
 
 Dutch documentation: [`LEESMIJ.md`](LEESMIJ.md).
 
-> **Validation status:** rc.43 is a release candidate awaiting manual visual
-> approval. The approved rc.41 source remains unchanged. Automated checks
-> verify geometry and feature invariants; they do not replace a human
-> judgement about readability and explanatory clarity.
+> **Validation status:** rc.45 was manually approved on 2 August 2026,
+> including the accepted Greedy Grow reconstruction and the derived
+> publication slide. Automated checks continue to verify the geometry and
+> feature invariants.
 
-## OGN Base, pre-config and applications
+## OGN Core: free placement first
 
-The viewer now starts in **OGN Base**. This profile contains the ordinary
-Syntax/Functional tree, grid, the LEX/SYNT/LOG projections with S/O/V majors,
-and examples without optional insertions. Insertion defaults to off on LEX,
-SYNT and LOG.
+Open Graph Notation writes nodes one at a time into free positions on an open
+grid. Every node owns one horizontal and one vertical grid line.
+
+**Hard rule — A ≠ B:** two different nodes may never occupy the same
+horizontal or vertical grid line.
+
+```text
+A ≠ B  ⇒  x(A) ≠ x(B)  and  y(A) ≠ y(B)
+```
+
+A new node may therefore be written only when both its row and its column are
+unused. This also applies to applications. If placement cannot find a valid
+row and column, no fallback node is rendered.
+
+A violation is called **grid-line reuse**: horizontal reuse shares a row;
+vertical reuse shares a column. Both are always invalid.
+
+A rule set
+determines which candidates are valid; a **Search Strategy** determines their
+test order. Direct placement writes the first valid position found
+immediately, so another search order may produce another picture.
+
+**Greedy Grow has an accepted reconstruction.** It writes one dot
+per step from the central grid point and stores no future layout. The
+historical four-arm order exactly reproduces the preserved 12-, 31- and
+96-node demos. Recovered experimental search orders can be compared in
+[`greedy-grow.html`](../greedy-grow.html); the evidence boundary is documented
+in the [`technical reconstruction`](GREEDY_GROW_RECONSTRUCTION.md).
+Publication slide 5 is derived directly from the same engine.
+
+The fixed order is **OGN Free Placement → OGN Projection → OGN Calculated
+Placement**. The Two-Pass Language Tree appears only in the third layer as one
+application. See
+[`OGN_CORE_PLACEMENT_ARCHITECTURE.md`](OGN_CORE_PLACEMENT_ARCHITECTURE.md).
+
+## Current calculated application: Two-Pass Language Tree
+
+The current viewer's `OGN Base` profile is the base of its language
+application. It contains the Syntax/Functional tree, grid, named LEX/SYNT/LOG
+projections with S/O/V majors, and examples without optional insertions. It is
+not the definition of OGN Core. Insertion defaults to off on LEX, SYNT and LOG.
 
 `Config → Pre-config` enables insertion independently per axis without adding
 linguistic content. `Config → Applications` then provides **Adverbs** as the
@@ -46,7 +84,7 @@ directly as a slide, with a 1.25 MB per-image limit and a bounded combined
 payload. Manually typed `data:` URLs remain blocked. The shared Config Save bar
 is visible on every Config section.
 
-## Project Config and publication copy
+## Project Config and publication carousel
 
 Every project zip contains `config/default-config.json` and
 `config/user-config.json`. The enabled user file overlays the default without
@@ -56,12 +94,36 @@ current snapshot to `config/user-config.json`. A regular web version offers a
 download fallback.
 
 Precedence is code defaults → default config → project user config →
-browser-local saved Config. The zip also includes
-[`PUBLICATIE_README.md`](../PUBLICATIE_README.md) with publication copy for
-LinkedIn, Reddit, Facebook, YouTube, Bluesky, Mastodon, X, and GitHub. Use
-[`RC43_CONFIG_README_PROJECT_TEST.md`](../RC43_CONFIG_README_PROJECT_TEST.md)
-for manual validation of the editor, Config layers, project zip, and viewport
-sizes.
+browser-local saved Config. The zip also includes seven numbered 1080 × 1080
+PNG slides under
+[`publicatie-carrousel/slides/`](../publicatie-carrousel/slides/) and an
+single editable [`HTML source`](../publicatie-carrousel/index.html). Upload `01`
+through `07` as one gallery.
+
+Slide 4 shows nodes projecting to WEST, SOUTH and EAST. Slide 5 is the
+**Direct — Greedy Grow** example; slide 6 is the
+**Calculated — Language Tree** example, with `HOND · BIJT · MAN` on the west
+LEX axis. Both example slides refer to `github.com/kruin/graphlite`.
+
+The carousel is always derived: do not edit a PNG or carousel ZIP. Run
+`installeer-carrousel-tools.bat` once in an extracted work folder before the
+first rebuild; Node.js 18 or newer is required. After an HTML change, run
+`maak-publicatie-carrousel.bat`. It regenerates all seven slides, records their
+relation to source, exporter and version in
+`publicatie-carrousel/derived-manifest.json`, validates that proof, and rebuilds
+the sibling carousel ZIP. Run `maak-volledige-zip.bat` from the full project
+folder afterwards. The standalone carousel package can rebuild itself but does
+not modify another full project folder. Local `node_modules` and browser files
+are excluded from both ZIPs. Visual review remains a separate required step.
+
+[`PUBLICATIE_README.md`](../PUBLICATIE_README.md) contains the exact order,
+alt text, Reddit instructions, and publication copy for LinkedIn, Facebook,
+YouTube, Bluesky, Mastodon, X, and GitHub. Use
+[`RC45_OGN_CORE_EXPLANATION_TEST.md`](../RC45_OGN_CORE_EXPLANATION_TEST.md)
+records the manual approval of the core explanation, Greedy Grow and the
+publication carousel. The inherited Config and
+project-zip checks remain in
+[`RC43_CONFIG_README_PROJECT_TEST.md`](../RC43_CONFIG_README_PROJECT_TEST.md).
 
 ## Recursive content-sized layout
 
@@ -154,9 +216,11 @@ the BAT from inside the compressed folder. The BAT only checks that extraction
 is complete and starts
 `start_local_viewer.py`. That Python launcher controls server detection,
 starting, waiting, version validation and opening the browser. It opens
-`reset-cache.html` only after port 8088 serves the exact version from the
-current folder. If startup fails, the concrete reason remains visible before
-`Press any key`.
+`reset-cache.html` only after port 8088 serves both the exact version and the
+exact `SOURCE_BUILD.txt` identity from the current folder. This also catches
+an older source package carrying the same rc.45 version number. If the launcher
+reports another source, close the old **OpenGraph local server** window and
+start the BAT again. The concrete reason remains visible before `Press any key`.
 
 On a large screen, the local `LOKAAL` selector appears at the bottom right.
 `mobile portrait` stays inside a 390 × 844 frame and `mobile landscape`
@@ -172,14 +236,14 @@ maak-volledige-zip.bat
 ```
 
 The batch file derives the ZIP name from its own containing directory. A
-directory named `OpenGraph_Lite_Viewer_v2.0.0-rc.43` therefore produces the
-sibling file `OpenGraph_Lite_Viewer_v2.0.0-rc.43_full_source.zip`. An existing
+directory named `OpenGraph_Lite_Viewer_v2.0.0-rc.45` therefore produces the
+sibling file `OpenGraph_Lite_Viewer_v2.0.0-rc.45_full_source.zip`. An existing
 ZIP with that exact name is replaced safely; the script never invents a
 `(1)` suffix.
 
 Files matching `*_full_source*.zip` are generated release artifacts, not
 project source. This includes a browser download such as
-`OpenGraph_Lite_Viewer_v2.0.0-rc.43_full_source (1).zip`. Such copies are
+`OpenGraph_Lite_Viewer_v2.0.0-rc.45_full_source (1).zip`. Such copies are
 ignored by the manifest and publication checks, are not staged for GitHub
 Pages, and are excluded when a new full-source ZIP is built. They may therefore
 remain locally without blocking publication, although deleting old copies
@@ -188,13 +252,13 @@ keeps the project folder clearer.
 GitHub Pages:
 
 ```text
-https://kruin.github.io/graphlite/index.html?ogv=v2.0.0-rc.43
+https://kruin.github.io/graphlite/index.html?ogv=v2.0.0-rc.45
 ```
 
 Cache reset:
 
 ```text
-https://kruin.github.io/graphlite/reset-cache.html?ogv=v2.0.0-rc.43
+https://kruin.github.io/graphlite/reset-cache.html?ogv=v2.0.0-rc.45
 ```
 
 ## Desktop view
@@ -260,12 +324,9 @@ then upload it through LinkedIn's Video action. See
 
 ## Read me / README
 
-The language-dependent `README` / `LEESMIJ` button opens immediately on the `Boom, gek` /
-`A tree. Odd, really` introduction. The topic list occupies the upper half and the active text the lower half in every interface mode. Both halves scroll independently.
-
-The introduction currently shows only the first image: traditional
-sentence-tree examples. Carousel support remains ready for later
-specification images, but no controls are shown while there is only one image.
+The `README` / `LEESMIJ` button opens immediately on **Start · OGN Core**. The
+first carousel explains free grid positions, sequential node writing, search
+order, and the fixed layer order. It introduces no specialized extension.
 
 The external example-search link opens in a separate browser window. Closing
 that window returns the user to the still-open app.

@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="description" content="Geaccepteerde Greedy Grow-reconstructie voor directe OGN Free Placement."/>
+  <title>Greedy Grow · reconstructie</title>
+  <link rel="stylesheet" href="greedy-grow.css?v2.0.0-rc.45"/>
+</head>
+<body>
+  <main class="greedy-page">
+    <header class="greedy-header">
+      <div>
+        <div class="greedy-kicker">OGN Free Placement · geaccepteerde reconstructie</div>
+        <h1>Greedy Grow</h1>
+        <p>Start in het centrale gridpunt. Iedere stap zoekt kandidaten in één gekozen volgorde en schrijft direct de eerste plek met een vrije rij én kolom. Er wordt geen toekomstig eindplan opgeslagen.</p>
+      </div>
+      <a class="greedy-back" href="index.html">← OpenGraph Lite Viewer</a>
+    </header>
+
+    <section class="greedy-controls greedy-panel" aria-label="Greedy Grow-bediening">
+      <label>Zoekstrategie
+        <select id="greedyStrategySelect"></select>
+      </label>
+      <label>Doelaantal knopen
+        <input id="greedyTargetInput" type="number" min="1" max="500" step="1" value="31"/>
+      </label>
+      <label>Play-interval ms
+        <input id="greedyIntervalInput" type="number" min="80" max="10000" step="50" value="700"/>
+      </label>
+      <label class="greedy-path-toggle">
+        <input id="greedyShowPathInput" type="checkbox" checked/>
+        <span>Groeipad tonen</span>
+      </label>
+      <p class="greedy-strategy-description" id="greedyStrategyDescription"></p>
+      <div class="greedy-actions">
+        <button id="greedyPreviousButton" type="button">−1 · ongedaan</button>
+        <button class="primary" id="greedyNextButton" type="button">+1 · plaats direct</button>
+        <button id="greedyPlayButton" type="button">Play</button>
+        <button id="greedyResetButton" type="button">Reset</button>
+        <button id="greedyDownloadButton" type="button">Download actuele JSON</button>
+      </div>
+    </section>
+
+    <section class="greedy-workspace">
+      <section class="greedy-panel greedy-canvas-panel" aria-label="Greedy Grow-grid">
+        <div class="greedy-canvas-wrap">
+          <svg id="greedyCanvas" role="img" aria-label="Grid waarop Greedy Grow knopen één voor één direct schrijft"></svg>
+        </div>
+      </section>
+
+      <aside class="greedy-side">
+        <section class="greedy-panel greedy-panel-content">
+          <h2>Actuele stap</h2>
+          <p class="greedy-status" id="greedyStatus" role="status"></p>
+          <div class="greedy-metrics" id="greedyMetrics"></div>
+        </section>
+        <section class="greedy-panel greedy-panel-content">
+          <h2>Laatste schrijfhandelingen</h2>
+          <ol class="greedy-event-log" id="greedyEventLog"></ol>
+        </section>
+        <section class="greedy-panel greedy-panel-content">
+          <h2>Status van de reconstructie</h2>
+          <p class="greedy-note">Geaccepteerd op 2 augustus 2026. De compacte vierarmige strategie reproduceert exact de drie bewaarde demo’s. De andere kandidaatvolgorden komen uit de bewaarde browserproef. Aanvullende geometrische regels blijven buiten deze reconstructie. Zie <a href="GREEDY_GROW_RECONSTRUCTION.md">de technische reconstructie</a>.</p>
+        </section>
+      </aside>
+    </section>
+  </main>
+  <script src="greedy-grow-engine.js?v2.0.0-rc.45"></script>
+  <script src="greedy-grow.js?v2.0.0-rc.45"></script>
+</body>
+</html>

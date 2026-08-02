@@ -1,0 +1,67 @@
+{
+  "schema": "opengraph-publication-carousel-derived-v1",
+  "app_version": "v2.0.0-rc.45",
+  "generated_by": "tools/export_publication_carousel.js",
+  "inputs": [
+    {
+      "path": "publicatie-carrousel/index.html",
+      "sha256": "b11c3589341e485cb9a668891fd5c0d47b05861fc2c5759e39fc0a6fa8a13263"
+    },
+    {
+      "path": "greedy-grow-engine.js",
+      "sha256": "a7c60ad0f1ec3bc35b0206e5de753a3c3e60e8dd2b46d5db9952397811aa5c25"
+    },
+    {
+      "path": "VERSION.txt",
+      "sha256": "d7ef9af82b73bb412a57cfda82fdfc19ce108f3f9641f5e659548147e4bd0157"
+    },
+    {
+      "path": "tools/export_publication_carousel.js",
+      "sha256": "3ee38cc644e387aca49b84e37d100e854c01798c8cfc7ee0f2ae0cdca0f6e700"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "publicatie-carrousel/slides/01-every-node-owns-grid-lines.png",
+      "sha256": "44f7f6797974e41fcdfe0efef4c4a3b784c3957641b53133fd69626ecd6113f3",
+      "width": 1080,
+      "height": 1080
+    },
+    {
+      "path": "publicatie-carrousel/slides/02-free-places-first.png",
+      "sha256": "0860d87edf602b6f3e3eb0402dcba80c88061ec8be46de5628a0024082e1af62",
+      "width": 1080,
+      "height": 1080
+    },
+    {
+      "path": "publicatie-carrousel/slides/03-one-node-at-a-time.png",
+      "sha256": "3ed6d1cd14020aeb7dda7fb6fccd8250113b65cb5720fb75036aebb9401603d7",
+      "width": 1080,
+      "height": 1080
+    },
+    {
+      "path": "publicatie-carrousel/slides/04-node-projection-west-south-east.png",
+      "sha256": "ddb9013f581536ff188d6c3bfca9ed648c29e88b071e46f03c5f3bf1a6f66d31",
+      "width": 1080,
+      "height": 1080
+    },
+    {
+      "path": "publicatie-carrousel/slides/05-direct-placement-greedy-grow.png",
+      "sha256": "20c3a9ad2341019cc4c32e894f835ed0ea875ee414b0f6aa775c2737ddb17a44",
+      "width": 1080,
+      "height": 1080
+    },
+    {
+      "path": "publicatie-carrousel/slides/06-calculated-placement-language-tree.png",
+      "sha256": "dedffec077ca47b144ccbe4e676ae76f59a3696eedd09b8c380e7c6313265262",
+      "width": 1080,
+      "height": 1080
+    },
+    {
+      "path": "publicatie-carrousel/slides/07-core-first-examples-follow.png",
+      "sha256": "7dc6c0579c9e97534f2de5b77357e77dfc1542eb0e0481fc88a491f6656fbc70",
+      "width": 1080,
+      "height": 1080
+    }
+  ]
+}

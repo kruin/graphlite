@@ -1,22 +1,59 @@
-# OpenGraph Lite Viewer v2.0.0-rc.43
+# OpenGraph Lite Viewer v2.0.0-rc.45
 
-OpenGraph Lite Viewer is een demo/viewer voor JAN-, OPN- en
-OpenGraph-taalstructuren. Deze versie gebruikt de volledige v1.0.16-bronset als
+OpenGraph Lite Viewer is een viewer en testomgeving voor de algemene Open
+Graph Notation. Deze versie gebruikt de volledige v1.0.16-bronset als
 functionele basis.
 
 Engelse documentatie: [`README.md`](README.md).
 
-> **Controlestatus:** rc.43 is een releasekandidaat die nog handmatig visueel
-> moet worden goedgekeurd. De goedgekeurde rc.41-bron blijft ongewijzigd. De
-> automatische controles bewaken geometrie en feature-invarianten, maar
-> vervangen geen menselijk oordeel over leesbaarheid en duidelijkheid.
+> **Controlestatus:** rc.45 is op 2 augustus 2026 handmatig goedgekeurd,
+> inclusief de Greedy Grow-reconstructie en de afgeleide publicatieslide. De
+> automatische controles blijven geometrie en feature-invarianten bewaken.
 
-## OGN Basis, voorconfig en toepassingen
+## OGN-kern: vrije plaatsing eerst
 
-De viewer start voortaan in **OGN Basis**. Dit profiel bevat de gewone
-Syntax-/Functional-boom, het raster, de projecties LEX/SYNT/LOG met de majors
-S/O/V en voorbeelden zonder optionele inserties. Insertie staat standaard uit
-op LEX, SYNT en LOG.
+Open Graph Notation schrijft knopen één voor één op vrije plaatsen van een
+open grid. Iedere knoop is baas op één eigen horizontale en één eigen verticale
+gridlijn.
+
+**Harde regel — A ≠ B:** twee verschillende knopen mogen nooit dezelfde
+horizontale of verticale gridlijn bezetten.
+
+```text
+A ≠ B  ⇒  x(A) ≠ x(B)  én  y(A) ≠ y(B)
+```
+
+Dus: een nieuwe knoop mag pas worden geschreven als zowel zijn rij als zijn
+kolom nog vrij is. Dit geldt ook voor toepassingen. Vindt de plaatsingslaag
+geen geldige rij én kolom, dan wordt geen fallbackknoop getekend.
+
+Een overtreding heet **gridlijnhergebruik**: horizontaal hergebruik deelt een
+rij; verticaal hergebruik deelt een kolom. Beide zijn altijd ongeldig.
+
+Een ruleset bepaalt welke kandidaten geldig zijn; een
+**zoekstrategie** bepaalt hun testvolgorde. Directe plaatsing schrijft de
+eerstgevonden geldige plek meteen, zodat een andere zoekvolgorde een ander
+beeld kan opleveren.
+
+**Greedy Grow heeft een geaccepteerde reconstructie.** Het schrijft
+vanaf het centrale gridpunt per stap één dot en bewaart geen toekomstig
+eindbeeld. De historische vierarmige volgorde reproduceert de bewaarde demo's
+van 12, 31 en 96 knopen exact. Vergelijk de teruggevonden experimentele
+zoekvolgorden in [`greedy-grow.html`](../greedy-grow.html); de bewijsgrens staat
+in de [`technische reconstructie`](GREEDY_GROW_RECONSTRUCTION.md).
+Publicatieslide 5 wordt rechtstreeks uit dezelfde engine afgeleid.
+
+De vaste volgorde is **OGN Free Placement → OGN Projection → OGN Berekende
+Plaatsing**. De Two-Pass Language Tree verschijnt pas in de derde laag als één
+toepassing. Zie
+[`OGN_CORE_PLACEMENT_ARCHITECTURE.md`](OGN_CORE_PLACEMENT_ARCHITECTURE.md).
+
+## Huidige berekende toepassing: Two-Pass Language Tree
+
+Het profiel `OGN Basis` is de basis van de huidige taaltoepassing. Het bevat
+de Syntax-/Functional-boom, het raster, de named projections LEX/SYNT/LOG met
+S/O/V-majors en voorbeelden zonder optionele inserties. Het definieert niet de
+algemene OGN-kern. Insertie staat standaard uit op LEX, SYNT en LOG.
 
 `Config → Voorconfig` schakelt insertie per as onafhankelijk aan of uit. Deze
 voorconfig voegt zelf nog geen taalinhoud toe. Daarna bevat
@@ -45,7 +82,7 @@ worden ingesloten, met maximaal 1,25 MB per beeld en een begrensde gezamenlijke
 payload. Handmatig getypte `data:`-URL’s blijven geblokkeerd. De gezamenlijke
 Config-savebalk is op ieder Config-onderdeel zichtbaar.
 
-## Projectconfig en publicatieteksten
+## Projectconfig en publicatiecarrousel
 
 Iedere projectzip bevat `config/default-config.json` en
 `config/user-config.json`. De ingeschakelde user-config overschrijft de
@@ -55,12 +92,36 @@ allowlist naar `config/user-config.json` schrijven. De gewone webversie biedt
 een downloadfallback.
 
 De voorrang is code-defaults → standaardconfig → project-user-config → lokaal
-bewaarde browser-Config. De zip bevat ook
-[`PUBLICATIE_README.md`](../PUBLICATIE_README.md) met teksten voor LinkedIn,
-Reddit, Facebook, YouTube, Bluesky, Mastodon, X en GitHub. Gebruik
-[`RC43_CONFIG_README_PROJECT_TEST.md`](../RC43_CONFIG_README_PROJECT_TEST.md)
-voor de handmatige controle van editor, Config-lagen, projectzip en
-schermmaten.
+bewaarde browser-Config. De zip bevat ook zeven genummerde PNG-slides van
+1080 × 1080 onder
+[`publicatie-carrousel/slides/`](../publicatie-carrousel/slides/) en een
+bewerkbare [`HTML-bron`](../publicatie-carrousel/index.html). Upload `01` tot
+en met `07` als één gallery.
+
+Slide 4 toont knopen die naar WEST, SOUTH en EAST projecteren. Slide 5 is het
+voorbeeld **Direct — Greedy Grow**; slide 6 is
+**Calculated — Language Tree**, met `HOND · BIJT · MAN` op de westelijke
+LEX-as. Beide voorbeeldslides verwijzen naar `github.com/kruin/graphlite`.
+
+Wil je alleen publiceren, gebruik dan de meegeleverde PNG's; installeren is
+niet nodig. Wil je de carrousel wijzigen, werk dan bij voorkeur in de
+uitgepakte volledige projectzip. Draai daar éénmalig
+`installeer-carrousel-tools.bat`, bewerk uitsluitend de HTML-bron en draai
+daarna `maak-publicatie-carrousel.bat`. Node.js 18 of hoger is vereist; Node.js
+18.14 voldoet. Controleer de nieuwe PNG's en draai vervolgens
+`maak-volledige-zip.bat`, zodat de wijziging ook in de projectzip terechtkomt.
+De losse carrouselzip kan zichzelf eveneens opnieuw afleiden, maar wijzigt geen
+afzonderlijke projectmap. Lokale `node_modules` en browserbestanden gaan nooit
+mee in een zip.
+
+[`PUBLICATIE_README.md`](../PUBLICATIE_README.md) bevat volgorde, alt-teksten,
+Reddit-instructies en teksten voor LinkedIn, Facebook, YouTube, Bluesky,
+Mastodon, X en GitHub. Gebruik
+[`RC45_OGN_CORE_EXPLANATION_TEST.md`](../RC45_OGN_CORE_EXPLANATION_TEST.md)
+legt het handmatige akkoord voor kernuitleg, Greedy Grow en carrousel vast. De
+geërfde Config- en projectzipcontrole
+blijft in
+[`RC43_CONFIG_README_PROJECT_TEST.md`](../RC43_CONFIG_README_PROJECT_TEST.md).
 
 ## Recursieve layout op inhoudsmaat
 
@@ -163,9 +224,12 @@ start_local_viewer.bat
 BAT niet vanuit de gecomprimeerde map. De BAT controleert alleen of alles is
 uitgepakt en start daarna
 `start_local_viewer.py`. Die Python-launcher regelt serverdetectie, starten,
-wachten, versiecontrole en browseropening. `reset-cache.html` opent pas wanneer
-poort 8088 exact de versie uit de huidige map bedient. Mislukt de start, dan
-blijft de concrete reden zichtbaar vóór `Press any key`.
+wachten, broncontrole en browseropening. `reset-cache.html` opent pas wanneer
+poort 8088 zowel de exacte versie als de identiteit uit `SOURCE_BUILD.txt` van
+de huidige map bedient. Zo wordt ook een ouder bronpakket met hetzelfde
+rc.45-versienummer herkend. Meldt de launcher een andere bron, sluit dan eerst
+het oude venster **OpenGraph local server** en start de BAT opnieuw. De concrete
+reden blijft zichtbaar vóór `Press any key`.
 
 Op een groot scherm verschijnt lokaal rechtsonder de keuzeknop `LOKAAL`.
 `mobile staand` toont blijvend een frame van 390 × 844 en `mobile liggend`
@@ -180,14 +244,14 @@ maak-volledige-zip.bat
 ```
 
 De BAT leidt de ZIP-naam af uit de map waarin hij zelf staat. De map
-`OpenGraph_Lite_Viewer_v2.0.0-rc.43` maakt dus daarnaast automatisch
-`OpenGraph_Lite_Viewer_v2.0.0-rc.43_full_source.zip`. Een bestaande ZIP met
+`OpenGraph_Lite_Viewer_v2.0.0-rc.45` maakt dus daarnaast automatisch
+`OpenGraph_Lite_Viewer_v2.0.0-rc.45_full_source.zip`. Een bestaande ZIP met
 precies die naam wordt veilig vervangen; het script verzint nooit zelf een
 achtervoegsel `(1)`.
 
 Bestanden met het patroon `*_full_source*.zip` zijn gegenereerde
 release-artefacten en geen projectbron. Daaronder valt ook een browserdownload
-als `OpenGraph_Lite_Viewer_v2.0.0-rc.43_full_source (1).zip`. Zulke kopieën
+als `OpenGraph_Lite_Viewer_v2.0.0-rc.45_full_source (1).zip`. Zulke kopieën
 worden genegeerd door de manifest- en publicatiecontrole, niet voor GitHub
 Pages gestaged en niet in een nieuwe volledige bronzip opgenomen. Ze mogen dus
 lokaal blijven staan zonder de publicatie te blokkeren; oude kopieën
@@ -196,13 +260,13 @@ verwijderen houdt de projectmap wel overzichtelijker.
 GitHub Pages:
 
 ```text
-https://kruin.github.io/graphlite/index.html?ogv=v2.0.0-rc.43
+https://kruin.github.io/graphlite/index.html?ogv=v2.0.0-rc.45
 ```
 
 Cache-reset:
 
 ```text
-https://kruin.github.io/graphlite/reset-cache.html?ogv=v2.0.0-rc.43
+https://kruin.github.io/graphlite/reset-cache.html?ogv=v2.0.0-rc.45
 ```
 
 ## Desktopweergave
@@ -274,14 +338,10 @@ download klaar is en upload de uitvoer via LinkedIns Video-actie. Zie
 
 ## Lees mij / README
 
-De taalafhankelijke knop `README` / `LEESMIJ` opent onmiddellijk op de intro `Boom, gek`.
-De onderwerpenlijst staat in de bovenste helft; de actieve itemtekst staat
-meteen in de onderste helft. Beide helften scrollen onafhankelijk. Dit geldt
-voor desktop, mobiel staand en mobiel liggend.
-
-De intro toont nu alleen het eerste beeld met traditionele voorbeeldbomen.
-De carrouselcode blijft gereed voor latere specificatiebeelden, maar bij één
-beeld worden geen bedieningsknoppen getoond.
+De knop `README` / `LEESMIJ` opent onmiddellijk op **Start · OGN-kern**. De
+eerste carousel verklaart vrije gridplaatsen, knopen sequentieel schrijven,
+zoekvolgorde en de vaste laagvolgorde. Er wordt nog geen gespecialiseerde
+uitbreiding geïntroduceerd.
 
 De externe voorbeeldzoekopdracht opent in een apart browservenster. Na het
 sluiten van dat venster staat de app nog open.

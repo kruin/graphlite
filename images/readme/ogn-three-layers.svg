@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" role="img" aria-labelledby="title desc">
+  <title id="title">Three OGN layers</title>
+  <desc id="desc">Free placement comes first, projection second, and calculated placement third, without naming a specific extension.</desc>
+  <rect width="1200" height="700" rx="42" fill="#f8fafc"/>
+  <g font-family="Segoe UI,Arial,sans-serif">
+    <rect x="70" y="150" width="300" height="360" rx="32" fill="#e9efff" stroke="#2f67ff" stroke-width="4"/>
+    <rect x="450" y="150" width="300" height="360" rx="32" fill="#e6f7ef" stroke="#1f9d68" stroke-width="4"/>
+    <rect x="830" y="150" width="300" height="360" rx="32" fill="#f1ebff" stroke="#8256d9" stroke-width="4"/>
+    <g fill="#102038" text-anchor="middle">
+      <text x="220" y="215" font-size="28" font-weight="850">1 · OGN CORE</text>
+      <text x="600" y="215" font-size="28" font-weight="850">2 · PROJECTION</text>
+      <text x="980" y="215" font-size="28" font-weight="850">3 · CALCULATED</text>
+      <text x="220" y="270" font-size="32" font-weight="900">Free Placement</text>
+      <text x="600" y="270" font-size="32" font-weight="900">Derived layer</text>
+      <text x="980" y="270" font-size="32" font-weight="900">Placement plan</text>
+    </g>
+    <g fill="#475569" font-size="23" font-weight="650" text-anchor="middle">
+      <text x="220" y="335">one node at a time</text><text x="220" y="375">write immediately</text>
+      <text x="600" y="325">source node stays</text><text x="600" y="365">marker is derived</text><text x="600" y="405">after placement</text>
+      <text x="980" y="325">complete positions</text><text x="980" y="365">are planned</text><text x="980" y="405">before writing</text>
+    </g>
+    <rect x="865" y="420" width="230" height="54" rx="18" fill="#fff" stroke="#bda8eb" stroke-width="2"/>
+    <text x="980" y="455" fill="#6944b2" font-size="23" font-weight="850" text-anchor="middle">complete plan first</text>
+    <g fill="#64748b" font-size="54" font-weight="900" text-anchor="middle"><text x="410" y="350">→</text><text x="790" y="350">→</text></g>
+    <text x="600" y="610" fill="#102038" font-size="34" font-weight="850" text-anchor="middle">Direct and calculated placement are different methods.</text>
+  </g>
+</svg>

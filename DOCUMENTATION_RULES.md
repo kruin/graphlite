@@ -16,11 +16,28 @@ Gebruik nooit een gecombineerde aanduiding voor LOG en Functional.
 
 ## Vaste uitlegvolgorde
 
-1. Open Graph Notation.
-2. Gridregel en projectiemechanisme.
-3. Centrale views: Syntax, daarna Functional.
-4. Named projections: LEX, SYNT, LOG.
-5. Taalacties en LEX-plaatsingsregels.
+1. **OGN-kern:** iedere knoop is baas op zijn eigen gridlijnen.
+2. **OGN Free Placement:** knopen één voor één op vrije plaatsen.
+3. **Zoekstrategieën:** de ruleset bepaalt geldigheid; de zoekstrategie bepaalt
+   uitsluitend de kandidaatvolgorde voor directe plaatsing.
+4. **OGN Projection:** pas na de bronplaatsing; eerst algemeen, daarna pas
+   named projections.
+5. **OGN Calculated Placement:** de Two-Pass Language Tree als toepassing, niet
+   als definitie van OGN.
+6. Centrale taalviews: Syntax, daarna Functional.
+7. Named language projections: LEX, SYNT, LOG.
+8. Taalacties en LEX-plaatsingsregels.
+
+Noem Greedy Grow geen berekende plaatsing en geen volledig gespecificeerd
+algoritme. Introduceer de Two-Pass Language Tree pas onder **OGN Berekende
+Plaatsing**, nadat de algemene kern, zoekstrategie en projectie zijn uitgelegd.
+
+### Vrij tegenover geldig
+
+Een positie is vrij wanneer haar horizontale en verticale gridlijn nog niet
+door een knoop worden gebruikt. De actieve ruleset bepaalt vervolgens of die
+vrije positie ook geldig is. Werk verdere plaatsingsbeperkingen pas uit in de
+latere rulesets voor directe of berekende plaatsing.
 
 ## View versus projectie
 
@@ -92,6 +109,26 @@ versiegebonden teksten voor publicatieplatforms. Die teksten moeten de
 werkelijke releasestatus noemen en mogen placeholders voor live-, bron- en
 videolinks pas na bewuste invulling verliezen.
 
+Een release met een publicatiecarrousel bevat daarnaast:
+
+- genummerde, direct uploadbare PNG's met één expliciete uploadvolgorde;
+- een zelfstandige bewerkbare bron waaruit alle slides opnieuw kunnen worden
+  geëxporteerd;
+- één afleidingsmanifest dat bron, exporter, versie en alle PNG's met hashes
+  aan elkaar koppelt;
+- alt-tekst per slide en platforminstructies in `PUBLICATIE_README.md`;
+- een automatische controle op afleidingsdrift, aantal, namen en pixelafmetingen;
+- een handmatige controle op leesbaarheid, afsnijding, kleur en inhoud.
+
+Voor rc.45 zijn dat exact zeven slides van 1080 × 1080 pixels in
+`publicatie-carrousel/slides/`, met `publicatie-carrousel/index.html` als bron.
+De PNG's en carrouselzip zijn uitsluitend afgeleiden: bewerk nooit een los
+beeld of archief. Genereer altijd de volledige set met
+`maak-publicatie-carrousel.bat`; een full-source-zip mag niet worden gebouwd
+als `publicatie-carrousel/derived-manifest.json` niet meer klopt.
+Schrijf niet dat iedere community of ieder platform een gallery accepteert;
+platform- en communityinstellingen blijven bepalend.
+
 ## Bovenbalkterminologie
 
 - Schrijf `Projectie`, `Bron` en `Assen`; noem de oude zwevende `Projecties-box` niet als actieve UI.
@@ -118,9 +155,21 @@ Gebruik consequent: **lemma**, **gebruiksprofiel**, **meerwoordconstructie**, **
 
 ## Verplichte kernformuleringen
 
-- OGN ontkoppelt de structurele vertakkingen onder `S` van de lineaire
-  woordvolgorde van de zin. De centrale boom toont structuur; LEX toont de
-  oppervlaktestring.
+- OGN schrijft knopen één voor één op vrije gridplaatsen; iedere knoop is baas
+  op zijn eigen horizontale en verticale gridlijn.
+- Een ruleset bepaalt geldige vrije plaatsen; een zoekstrategie bepaalt de
+  kandidaatvolgorde en de eerstgevonden geldige plek wordt direct geschreven.
+- Greedy Grow begint bij het centrale gridpunt en schrijft dots één voor één.
+  De geaccepteerde compacte vierarmige volgorde reproduceert de bewaarde
+  12/31/96-demo's exact en schrijft direct zonder toekomstig eindbeeld. Toon
+  de veldomtrek alleen als diagnostiek en leid de publicatieslide altijd uit
+  `greedy-grow-engine.js` af.
+- Projectie is de tweede laag en verandert de reeds geplaatste bronknoop niet.
+- Berekende plaatsing is de derde laag. De Two-Pass Language Tree is daarvan
+  één toepassing en niet de algemene definitie van OGN.
+- Binnen die taaltoepassing ontkoppelt OGN de structurele vertakkingen onder
+  `S` van de lineaire woordvolgorde van de zin. De centrale boom toont
+  structuur; LEX toont de oppervlaktestring.
 - Beschrijf de architectuur als:
   `plaatsingsplan berekenen → kernzin invullen → groei/rendering`.
 - Noem de tweede centrale view zichtbaar `Functional`; `ft` mag uitsluitend als

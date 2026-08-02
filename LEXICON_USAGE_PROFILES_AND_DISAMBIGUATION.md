@@ -1,4 +1,4 @@
-# Lexicon usage profiles and disambiguation · v2.0.0-rc.43
+# Lexicon usage profiles and disambiguation · v2.0.0-rc.45
 
 ## Normative distinction
 

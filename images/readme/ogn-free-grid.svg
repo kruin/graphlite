@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" role="img" aria-labelledby="title desc">
+  <title id="title">OGN free placement</title>
+  <desc id="desc">Three nodes occupy separate horizontal and vertical grid lines.</desc>
+  <rect width="1200" height="700" rx="42" fill="#f8fafc"/>
+  <g stroke="#d9e2ec" stroke-width="2">
+    <path d="M120 90V610M260 90V610M400 90V610M540 90V610M680 90V610M820 90V610M960 90V610M1080 90V610"/>
+    <path d="M120 90H1080M120 220H1080M120 350H1080M120 480H1080M120 610H1080"/>
+  </g>
+  <g fill="none" stroke-width="8" opacity=".48">
+    <path d="M120 480H1080M260 90V610" stroke="#2f67ff"/>
+    <path d="M120 220H1080M680 90V610" stroke="#1f9d68"/>
+    <path d="M120 350H1080M960 90V610" stroke="#8256d9"/>
+  </g>
+  <g data-ogn-node-set="readme-free-grid" font-family="Segoe UI,Arial,sans-serif" font-size="38" font-weight="800" text-anchor="middle">
+    <circle cx="260" cy="480" r="52" fill="#fff" stroke="#2f67ff" stroke-width="8"/><text x="260" y="493" fill="#173d9f">A</text>
+    <circle cx="680" cy="220" r="52" fill="#fff" stroke="#1f9d68" stroke-width="8"/><text x="680" y="233" fill="#126642">B</text>
+    <circle cx="960" cy="350" r="52" fill="#fff" stroke="#8256d9" stroke-width="8"/><text x="960" y="363" fill="#5f3aa9">C</text>
+  </g>
+  <text x="600" y="662" fill="#334155" font-family="Segoe UI,Arial,sans-serif" font-size="30" font-weight="700" text-anchor="middle">one node · one horizontal line · one vertical line</text>
+</svg>

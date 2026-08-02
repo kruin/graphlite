@@ -1,9 +1,9 @@
 # HANDOVER_FOR_COLLABORATORS
 
-Overdracht voor OpenGraph Lite Viewer v2.0.0-rc.43.
+Overdracht voor OpenGraph Lite Viewer v2.0.0-rc.45.
 
-Releasebesluit: rc.43 wacht op handmatige goedkeuring. De formeel goedgekeurde
-rc.41-bron blijft ongewijzigd.
+Releasebesluit: rc.45 is op 2 augustus 2026 handmatig goedgekeurd, inclusief
+de Greedy Grow-reconstructie en de rechtstreeks afgeleide publicatieslide.
 
 De reserveringen Vraagzin, Nadruk en Onaffe zin zijn uitsluitend
 Config-voorraad. Voeg ze niet toe aan `FEATURE_DEFINITIONS`, state, opslag,
@@ -19,6 +19,68 @@ gesaniteerde HTML toe en accepteer een ingesloten `data:image/...`-bron
 uitsluitend wanneer die via de vertrouwde bestandsinvoer is gemaakt. Houd
 onderschriftvelden compact en laat graph-sneltoetsen nooit reageren binnen
 Config/LEESMIJ of vanuit een actief invoerveld.
+
+## OGN-kern en toepassingen
+
+Houd de algemene notatie en de huidige taaltoepassing uit elkaar. De vaste
+uitleg- en architectuurvolgorde is:
+
+```text
+OGN Free Placement
+→ OGN Projection
+→ OGN Calculated Placement
+→ gespecialiseerde toepassing
+```
+
+Bij Free Placement is iedere knoop eigenaar van één horizontale en één
+verticale gridlijn. De actuele bezetting wordt vóór iedere nieuwe knoop
+gelezen. Een ruleset bepaalt welke vrije plaatsen geldig zijn; een
+zoekstrategie bepaalt de kandidaatvolgorde. De eerstgevonden geldige plek wordt
+bij directe plaatsing meteen geschreven.
+
+Behandel Greedy Grow als geaccepteerde reconstructie volgens
+`GREEDY_GROW_RECONSTRUCTION.md`. De vierarmige kandidaatvolgorde moet de drie
+bewaarde demo's exact blijven reproduceren; `placeNext` schrijft hoogstens één
+knoop en de state bewaart geen toekomstig eindbeeld. De experimentele
+zoekvolgorden hebben expliciete tie-breaks, maar zijn geen bewezen kopie van de
+verdwenen Java-code. De omtrekkende beweging is diagnostiek en geen bewezen
+wereldwijd optimum. Publicatieslide 5 moet uit `greedy-grow-engine.js` blijven
+worden afgeleid; teken of corrigeer die afbeelding nooit los.
+
+Een projectie wordt pas van een geplaatste bron afgeleid en verplaatst die bron
+niet. Two-Pass Language Tree is één berekende toepassing in de derde laag.
+LEX, SYNT en LOG zijn benoemde projecties binnen die taaltoepassing. Gebruik
+`OGN_CORE_PLACEMENT_ARCHITECTURE.md` als normatieve bron en begin algemene
+OGN-documentatie niet opnieuw met de taalboom.
+
+## Publicatiecarrousel
+
+De rc.45-publicatiecarrousel is een afzonderlijk documentatieartefact en
+wijzigt de viewerlogica niet. Houd deze onderdelen samen:
+
+```text
+publicatie-carrousel/index.html          bewerkbare, zelfstandige bron
+publicatie-carrousel/derived-manifest.json automatisch afleidingsbewijs
+publicatie-carrousel/slides/01-*.png     begin van de uploadvolgorde
+publicatie-carrousel/slides/07-*.png     einde van de uploadvolgorde
+tools/export_publication_carousel.js     herhaalbare PNG-export
+tools/check_publication_carousel.py      bron-/exporter-/PNG-driftcontrole
+maak-publicatie-carrousel.bat            volledige afleiding plus carrouselzip
+PUBLICATIE_README.md                     posttekst, volgorde en alt-teksten
+RC45_OGN_CORE_EXPLANATION_TEST.md        handmatige inhoudelijke en visuele akkoordlijst
+```
+
+Er moeten exact zeven genummerde slides van 1080 × 1080 pixels zijn. Bewerk
+uitsluitend `publicatie-carrousel/index.html` en draai daarna
+`maak-publicatie-carrousel.bat`. Bewerk nooit een losse PNG of carrouselzip.
+De actuele inhoudsvolgorde is: knopen en vrije posities, projectie naar WEST /
+SOUTH / EAST, **Direct — Greedy Grow** op slide 5 en
+**Calculated — Language Tree** op slide 6. Die laatste slide toont het laatste
+stadium van `HOND BIJT MAN`, met de woorden op de westelijke LEX-as. Beide
+voorbeeldslides moeten zichtbaar naar `github.com/kruin/graphlite` verwijzen.
+Het afleidingsmanifest maakt de releasecontrole hard fout bij een verouderde
+bron, exporter of PNG. Handmatig controleren blijft nodig voor
+leesbaarheid, afsnijding, kleuronderscheid en inhoudelijke juistheid.
 
 ## Projectconfig en projectzip
 
@@ -46,11 +108,12 @@ standaardconfig niet wanneer een gebruiker eigen keuzes meeneemt. Via
 `Download user-config` de fallback. Controleer vóór iedere zip dat beide JSON-
 bestanden hetzelfde versienummer als `VERSION.txt` hebben.
 
-Iedere projectzip bevat daarnaast `PUBLICATIE_README.md`. Dat bestand bevat
-versiegebonden plaatsingsteksten voor LinkedIn, Reddit, Facebook, YouTube,
-Bluesky, Mastodon, X en GitHub. Werk de placeholders bij vóór publicatie en
-noem een kandidaat geen stabiele release zolang het handmatige akkoord
-ontbreekt.
+Iedere projectzip bevat daarnaast de zeven kant-en-klare slides, hun
+bewerkbare HTML-bron en `PUBLICATIE_README.md`. Dat bestand bevat de exacte
+uploadvolgorde, alt-teksten en versiegebonden plaatsingsteksten voor Reddit,
+LinkedIn, Facebook, YouTube, Bluesky, Mastodon, X en GitHub. Werk de
+placeholders bij vóór publicatie en noem een kandidaat geen stabiele release
+zolang het handmatige akkoord ontbreekt.
 
 ## Bronbasis
 
@@ -148,13 +211,26 @@ Intern schrijft de viewer `central_opn: "ft"`. Invoer met de oude waarde `functi
 4. Voer ook `tools/check_local_start.py`,
    `tools/check_feature_profiles.py`, `tools/check_log_slot_distance.py`,
    `tools/check_readme_item_editor.py` en
-   `tools/check_project_config_layers.py` uit.
+   `tools/check_project_config_layers.py` uit. Voer voor rc.45 ook
+   `maak-publicatie-carrousel.bat` uit wanneer de carrouselbron gewijzigd is;
+   voer altijd `tools/check_publication_carousel.py` uit.
 5. Voer `check_release.bat` uit.
 6. Hernoem de projectmap naar de bedoelde release en voer
    `maak-volledige-zip.bat` uit. De ZIP neemt automatisch de actuele mapnaam
    over.
 7. Controleer in de uitgepakte zip of `config/default-config.json`,
-   `config/user-config.json` en `PUBLICATIE_README.md` aanwezig zijn.
+   `config/user-config.json`, `PUBLICATIE_README.md`,
+   `publicatie-carrousel/index.html`, `publicatie-carrousel/derived-manifest.json`
+   en alle zeven slides aanwezig zijn.
+
+## Vaste oplevering in Sources
+
+Na iedere afgeronde Graphlite-wijziging is de volgorde: carrousel afleiden,
+alle controles groen, volledige projectzip bouwen en daarna de bestaande
+actuele projectzip in Sources vervangen. Voeg geen tussenstanden of `(1)`-
+kopieën toe. Gebruik pas een nieuwe vaste zipnaam wanneer `VERSION.txt` een
+nieuw rc-nummer krijgt. Bij een mislukte controle wordt de zip in Sources niet
+vervangen.
 
 ## Publiceren
 

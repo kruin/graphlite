@@ -1,9 +1,57 @@
 # PROJECT_STATE_CURRENT
 
-Leidende status van OpenGraph Lite Viewer `v2.0.0-rc.43`.
+Leidende status van OpenGraph Lite Viewer `v2.0.0-rc.45`.
 
-Controlestatus: rc.43 is een nieuwe releasekandidaat en wacht op handmatige
-goedkeuring. De goedgekeurde rc.41-bron blijft ongewijzigd.
+Controlestatus: rc.45 is op 2 augustus 2026 handmatig goedgekeurd, inclusief
+de Greedy Grow-reconstructie, bewijsgrens en afgeleide publicatieslide.
+
+## OGN-kern en vaste uitlegvolgorde rc.45
+
+- De algemene Open Graph Notation begint bij een open grid met vrije posities.
+- Iedere knoop is baas op één eigen horizontale en één eigen verticale
+  gridlijn.
+- OGN schrijft bij directe plaatsing één knoop per stap. Iedere stap leest
+  eerst de actuele bezetting; een ruleset bepaalt de geldige posities en een
+  zoekstrategie bepaalt de testvolgorde. De eerstgevonden geldige plek wordt
+  direct geschreven.
+- Greedy Grow heeft een afzonderlijke geaccepteerde reconstructie in
+  `greedy-grow.html`. De historische vierarmige volgorde reproduceert de
+  bewaarde 12/31/96-demo's exact; iedere stap schrijft direct één knoop en
+  bewaart geen toekomstig eindbeeld. Vier experimentele kandidaatvolgorden
+  zijn vergelijkbaar. De veldomtrek is alleen diagnostiek, geen bewezen
+  wereldwijd optimum. Publicatieslide 5 wordt uit dezelfde engine afgeleid.
+- De vaste laagvolgorde is **OGN Free Placement → OGN Projection → OGN
+  Calculated Placement**.
+- Two-Pass Language Tree is één toepassing van berekende plaatsing. LEX, SYNT
+  en LOG zijn benoemde projecties binnen die taaltoepassing.
+- De normatieve details staan in
+  `OGN_CORE_PLACEMENT_ARCHITECTURE.md`.
+
+## Publicatiecarrousel rc.45
+
+- `publicatie-carrousel/slides/` bevat zeven genummerde PNG-bestanden van exact
+  1080 × 1080 pixels. De uploadvolgorde is `01` tot en met `07`.
+- `publicatie-carrousel/index.html` is de zelfstandige bewerkbare bron. De
+  slides gebruiken alleen lokale projectassets en geen externe fonts. Het
+  enige lokale bron-script is `greedy-grow-engine.js` voor slide 5.
+- Slide 4 toont geplaatste knopen die naar WEST, SOUTH en EAST projecteren.
+  Slide 5 is **Direct — Greedy Grow**. Slide 6 is
+  **Calculated — Language Tree** en toont het laatste stadium van
+  `HOND BIJT MAN` met `HOND · BIJT · MAN` op de westelijke LEX-as.
+- Beide voorbeeldslides verwijzen zichtbaar naar
+  `github.com/kruin/graphlite`; aparte uitlegkaarten voor de twee
+  plaatsingssoorten zijn verwijderd.
+- `tools/export_publication_carousel.js` rendert de zeven slides opnieuw met
+  Chromium/Playwright; plaatsen vereist die ontwikkelafhankelijkheid niet.
+- `PUBLICATIE_README.md` bevat de Reddit-gallerywerkwijze, titel en posttekst,
+  alt-tekst per slide, platformteksten en de actuele kandidaatstatus.
+- `tools/check_publication_carousel.py` bewaakt aantal, bestandsnamen,
+  PNG-afmetingen, drie gestippelde vrije plekken op afzonderlijke lijnen, de
+  WEST/SOUTH/EAST-projecties, de engine-afleiding van Greedy Grow, het
+  Language Tree-eindstadium en de twee GitHub-links. Het handmatige
+  akkoord staat in `RC45_OGN_CORE_EXPLANATION_TEST.md`.
+- rc.45 verandert geen graph-, Config-, opslag- of renderfunctionaliteit van
+  de viewer; de rc.43-functionaliteit blijft geërfd.
 
 ## Config, LEESMIJ en projectzip rc.43
 
@@ -155,14 +203,14 @@ goedkeuring. De goedgekeurde rc.41-bron blijft ongewijzigd.
 ## Lees mij / README
 
 - `Help` is hernoemd tot `Lees mij / README`.
-- Openen activeert altijd de intro `Boom, gek`.
+- Openen activeert altijd `Start · OGN-kern / Start · OGN Core`.
 - De README gebruikt in iedere interfacevorm twee verticale helften:
   onderwerpen boven en de actieve tekst onmiddellijk onder.
 - Beide helften scrollen onafhankelijk.
 - `README.md` is Engels; `LEESMIJ.md` is Nederlands.
-- De intro toont alleen het eerste SVG-beeld met traditionele zinsbomen.
-- De generieke carrouselcode blijft beschikbaar voor latere
-  specificatiebeelden; bij één beeld blijft de bediening verborgen.
+- De eerste carousel toont vier SVG-beelden: vrije gridplaatsen, sequentieel
+  schrijven, verschillende zoekvolgorden en de vaste drie lagen.
+- De traditionele probleembomen verschijnen pas later bij de taaltoepassing.
 - De externe zoeklink in de intro opent in een afzonderlijk venster; de app
   blijft open.
 
@@ -250,14 +298,16 @@ bestaande Ja/Nee-save-werkwijze blijft ongewijzigd.
 - De BAT is alleen nog een minimale Python-kiezer en controleert expliciet of
   de volledige zip is uitgepakt.
 - `start_local_viewer.py` bedient serverdetectie, starten, wachten,
-  versiecontrole en browseropening; complexe CMD-probelogica is verwijderd.
+  broncontrole en browseropening; complexe CMD-probelogica is verwijderd.
 - Eén Python 3-installatie bedient zowel `server_nocache.py` als de versieprobe
   op poort 8088.
-- Alleen wanneer `VERSION.txt` exact met de huidige map overeenkomt, opent de
-  BAT `reset-cache.html`; anders wordt de gevonden toestand vóór de pauze
-  zichtbaar gemeld.
+- Alleen wanneer zowel `VERSION.txt` als `SOURCE_BUILD.txt` exact met de
+  huidige map overeenkomen, opent de BAT `reset-cache.html`. Daardoor wordt
+  ook een oude bron met hetzelfde rc.45-versienummer geblokkeerd; de launcher
+  vraagt dan het oude servervenster te sluiten.
 - `tools/check_local_start.py` toetst bestaande en nieuw gestarte server,
-  juiste/verkeerde versie, gesloten poort en de enige minimale BAT.
+  juiste/verkeerde versie, juiste/verkeerde bronstand, gesloten poort en de
+  enige minimale BAT.
 
 ## Publicatie
 

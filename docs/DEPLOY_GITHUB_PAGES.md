@@ -36,7 +36,13 @@ reset-cache.html
 config/default-config.json
 config/user-config.json
 PUBLICATIE_README.md
+publicatie-carrousel/index.html
+publicatie-carrousel/slides/01-every-node-owns-grid-lines.png
+publicatie-carrousel/slides/07-core-first-examples-follow.png
 ```
+
+`tools/check_publication_carousel.py` controleert daarnaast dat alle zeven
+genummerde slides aanwezig zijn en exact 1080 × 1080 pixels meten.
 
 ## Eigen Config vóór de projectzip
 
@@ -65,8 +71,9 @@ code-defaults → default-config → user-config → browser-Config
 De laatste aanwezige waarde wint. Controleer vóór publicatie dat beide
 configbestanden hetzelfde versienummer als `VERSION.txt` hebben.
 
-`PUBLICATIE_README.md` gaat verplicht mee in de projectzip. Vul de
-platformspecifieke URL-placeholders pas in voor de concrete publicatie.
+`PUBLICATIE_README.md`, de bewerkbare carrouselbron en alle zeven PNG-slides
+gaan verplicht mee in de projectzip. Vul de platformspecifieke
+URL-placeholders pas in voor de concrete publicatie.
 
 ## Staging
 
@@ -111,13 +118,13 @@ De BAT kan browsercache niet op afstand wissen. Zij kan wel:
 Voorbeeld:
 
 ```text
-https://kruin.github.io/graphlite/reset-cache.html?ogv=v2.0.0-rc.43&nocache=TIMESTAMP
+https://kruin.github.io/graphlite/reset-cache.html?ogv=v2.0.0-rc.45&nocache=TIMESTAMP
 ```
 
 Daarna:
 
 ```text
-https://kruin.github.io/graphlite/index.html?ogv=v2.0.0-rc.43
+https://kruin.github.io/graphlite/index.html?ogv=v2.0.0-rc.45
 ```
 
 ## GitHub Pages settings

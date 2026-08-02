@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" role="img" aria-labelledby="title desc">
+  <title id="title">Sequential OGN writing</title>
+  <desc id="desc">Three stages show nodes written one at a time into unoccupied grid positions.</desc>
+  <rect width="1200" height="700" rx="42" fill="#f8fafc"/>
+  <defs>
+    <g id="grid" stroke="#d9e2ec" stroke-width="2">
+      <path d="M0 0V360M90 0V360M180 0V360M270 0V360M360 0V360"/>
+      <path d="M0 0H360M0 90H360M0 180H360M0 270H360M0 360H360"/>
+    </g>
+    <g id="nodeA"><circle r="34" fill="#fff" stroke="#2f67ff" stroke-width="7"/><text y="11" fill="#173d9f" font-family="Segoe UI,Arial,sans-serif" font-size="30" font-weight="800" text-anchor="middle">A</text></g>
+    <g id="nodeB"><circle r="34" fill="#fff" stroke="#1f9d68" stroke-width="7"/><text y="11" fill="#126642" font-family="Segoe UI,Arial,sans-serif" font-size="30" font-weight="800" text-anchor="middle">B</text></g>
+    <g id="nodeC"><circle r="34" fill="#fff" stroke="#8256d9" stroke-width="7"/><text y="11" fill="#5f3aa9" font-family="Segoe UI,Arial,sans-serif" font-size="30" font-weight="800" text-anchor="middle">C</text></g>
+  </defs>
+  <g transform="translate(35 170)"><use href="#grid"/><g data-ogn-node-set="sequential-step-1"><use href="#nodeA" x="90" y="90"/></g></g>
+  <g transform="translate(420 170)"><use href="#grid"/><g data-ogn-node-set="sequential-step-2"><use href="#nodeA" x="90" y="90"/><use href="#nodeB" x="270" y="180"/></g></g>
+  <g transform="translate(805 170)"><use href="#grid"/><g data-ogn-node-set="sequential-step-3"><use href="#nodeA" x="90" y="90"/><use href="#nodeB" x="270" y="180"/><use href="#nodeC" x="180" y="360"/></g></g>
+  <g fill="#102038" font-family="Segoe UI,Arial,sans-serif" font-size="32" font-weight="800" text-anchor="middle">
+    <text x="215" y="115">1 · write A</text><text x="600" y="115">2 · write B</text><text x="985" y="115">3 · write C</text>
+  </g>
+  <g fill="#64748b" font-family="Segoe UI,Arial,sans-serif" font-size="54" font-weight="800" text-anchor="middle">
+    <text x="405" y="375">→</text><text x="790" y="375">→</text>
+  </g>
+  <text x="600" y="650" fill="#334155" font-family="Segoe UI,Arial,sans-serif" font-size="30" font-weight="700" text-anchor="middle">every step updates which grid positions are still free</text>
+</svg>

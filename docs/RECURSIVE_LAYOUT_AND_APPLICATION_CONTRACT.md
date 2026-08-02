@@ -1,9 +1,8 @@
 # Recursieve layout en toepassingscontract
 
-Normatief ontwerp voor OpenGraph Lite Viewer `v2.0.0-rc.43`. Deze
-releasekandidaat wacht op handmatige goedkeuring. De goedgekeurde rc.41-bron
-blijft ongewijzigd; de hieronder beschreven technische grenzen blijven
-onderdeel van het contract.
+Normatief ontwerp voor OpenGraph Lite Viewer `v2.0.0-rc.45`. Deze
+releasekandidaat is op 2 augustus 2026 handmatig goedgekeurd; de hieronder
+beschreven technische grenzen blijven onderdeel van het contract.
 
 ## Hoofdbesluit
 
@@ -56,6 +55,12 @@ pixels:
 Bladeren krijgen een minimale gridpositie. Een parent plaatst complete
 child-subtrees in vrije HOR/VER-corridors. De uitkomst is een structurele
 layout in cellen. Groei en render mogen deze posities niet later wijzigen.
+
+Hier geldt hard `A ≠ B ⇒ x(A) ≠ x(B) én y(A) ≠ y(B)`: twee verschillende
+knopen delen nooit een horizontale of verticale gridlijn. Iedere
+toepassingsverschuiving moet dezelfde invariant behouden. Na plaatsing, vóór
+render en vóór OPN-export wordt dit gecontroleerd; bij een conflict wordt geen
+fallbackknoop getekend. Zo'n conflict heet **gridlijnhergebruik**.
 
 **Implementatiegrens in rc.42:** deze gridplaatsing krijgt de later gemeten
 pixelbreedtes nog niet terug als invoer. Een langer label kan dus zijn

@@ -1,8 +1,21 @@
 # OGN Basis
 
-`OGN Basis` is het standaardprofiel van OpenGraph Lite Viewer.
+`OGN Basis` is het standaardprofiel van de huidige taaltoepassing in
+OpenGraph Lite Viewer. Het profiel is niet hetzelfde als de algemene
+**OGN-kern**.
 
-## Inhoud
+De algemene volgorde is:
+
+```text
+OGN Free Placement
+→ OGN Projection
+→ OGN Calculated Placement
+```
+
+De huidige taalboom hoort bij de derde laag en heet **Two-Pass Language
+Tree**. Zie `OGN_CORE_PLACEMENT_ARCHITECTURE.md`.
+
+## Inhoud van het taalprofiel
 
 - de centrale Syntax- en Functional-view;
 - het vaste raster en het projectiemechanisme;

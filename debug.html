@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
-  <title>OpenGraph Lite Viewer v2.0.0-rc.43 · debug</title>
+  <title>OpenGraph Lite Viewer v2.0.0-rc.45 · debug</title>
   <style>
     body{font-family:system-ui,sans-serif;margin:24px;line-height:1.5;color:#0f172a;background:#f8fafc}
     code{background:#e2e8f0;padding:2px 5px;border-radius:4px}
@@ -13,39 +13,39 @@
   </style>
 </head>
 <body>
-  <h1>OpenGraph Lite Viewer v2.0.0-rc.43 · debug</h1>
+  <h1>OpenGraph Lite Viewer v2.0.0-rc.45 · debug</h1>
   <p>Deze pagina test of statische bestanden bereikbaar zijn en of <code>index.html</code> echt de viewer-root is. <code>viewer.html</code> is toegevoegd als fallback-entry.</p>
   <pre id="out">Start...</pre>
   <p>
-    <a class="button" href="reset-cache.html?ogv=v2.0.0-rc.43&nocache=debug">Reset cache</a>
-    <a class="button" href="index.html?v2.0.0-rc.43&fresh=1">Open / index.html</a>
-    <a class="button" href="viewer.html?v2.0.0-rc.43&fresh=1">Open viewer.html</a>
-    <a class="button" href="docs/docs-home.html?v2.0.0-rc.43">Docs</a>
+    <a class="button" href="reset-cache.html?ogv=v2.0.0-rc.45&nocache=debug">Reset cache</a>
+    <a class="button" href="index.html?v2.0.0-rc.45&fresh=1">Open / index.html</a>
+    <a class="button" href="viewer.html?v2.0.0-rc.45&fresh=1">Open viewer.html</a>
+    <a class="button" href="docs/docs-home.html?v2.0.0-rc.45">Docs</a>
   </p>
   <script>
-    const version = 'v2.0.0-rc.43';
+    const version = 'v2.0.0-rc.45';
     const tests = [
-      {file:'index.html?v2.0.0-rc.43', kind:'viewer-index'},
-      {file:'viewer.html?v2.0.0-rc.43', kind:'viewer-index'},
-      {file:'styles.css?v2.0.0-rc.43'},
-      {file:'viewer.js?v2.0.0-rc.43'},
-      {file:'structure-config.html?v2.0.0-rc.43'},
-      {file:'examples-input.html?v2.0.0-rc.43'},
-      {file:'lexicon-config.html?v2.0.0-rc.43'},
-      {file:'lexicon-editor.html?v2.0.0-rc.43'},
-      {file:'docs/docs-home.html?v2.0.0-rc.43', kind:'docs-home'},
-      {file:'docs/index.html?v2.0.0-rc.43', kind:'should-404'},
+      {file:'index.html?v2.0.0-rc.45', kind:'viewer-index'},
+      {file:'viewer.html?v2.0.0-rc.45', kind:'viewer-index'},
+      {file:'styles.css?v2.0.0-rc.45'},
+      {file:'viewer.js?v2.0.0-rc.45'},
+      {file:'structure-config.html?v2.0.0-rc.45'},
+      {file:'examples-input.html?v2.0.0-rc.45'},
+      {file:'lexicon-config.html?v2.0.0-rc.45'},
+      {file:'lexicon-editor.html?v2.0.0-rc.45'},
+      {file:'docs/docs-home.html?v2.0.0-rc.45', kind:'docs-home'},
+      {file:'docs/index.html?v2.0.0-rc.45', kind:'should-404'},
       {file:'.nojekyll'},
-      {file:'reset-cache.html?ogv=v2.0.0-rc.43&nocache=debug'}
+      {file:'reset-cache.html?ogv=v2.0.0-rc.45&nocache=debug'}
     ];
     const out = document.getElementById('out');
     function judge(test, r, text) {
       if (test.kind === 'viewer-index') {
-        const isViewer = text.includes('data-opengraph-app="viewer"') && text.includes('graphSvg') && text.includes('viewer.js?v2.0.0-rc.43');
+        const isViewer = text.includes('data-opengraph-app="viewer"') && text.includes('graphSvg') && text.includes('viewer.js?v2.0.0-rc.45');
         return {ok: r.ok && isViewer, extra: isViewer ? ' · viewer-index OK' : ' · FOUT: dit lijkt docs/oud index.html, niet de viewer'};
       }
       if (test.kind === 'docs-home') {
-        const ok = r.ok && text.includes('OpenGraph Lite Viewer · docs v2.0.0-rc.43');
+        const ok = r.ok && text.includes('OpenGraph Lite Viewer · docs v2.0.0-rc.45');
         return {ok, extra: ok ? ' · docs-home OK' : ' · FOUT: docs-home ontbreekt of oud'};
       }
       if (test.kind === 'slides-json') {

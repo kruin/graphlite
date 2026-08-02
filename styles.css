@@ -5020,7 +5020,7 @@ body.main-screen-active .main-south-control.language-action-box button {
 }
 
 
-/* v4574: compacte SOV-box op kruising LEX-as × LOG-as. */
+/* v4574: compacte SOV-box op positie LEX-as × LOG-as. */
 body.main-screen-active .main-south-control {
   width: 4.25rem !important;
   min-width: 4.25rem !important;

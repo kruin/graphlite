@@ -1,6 +1,22 @@
 # LAYOUT_RULES
 
-Harde layoutregels voor OpenGraph Lite Viewer `v2.0.0-rc.43`.
+Harde layoutregels voor OpenGraph Lite Viewer `v2.0.0-rc.45`.
+
+## Harde OGN-knoopinvariant
+
+Voor twee verschillende knopen A en B geldt altijd:
+
+```text
+A ≠ B  ⇒  x(A) ≠ x(B)  én  y(A) ≠ y(B)
+```
+
+Geen twee knopen mogen dus dezelfde horizontale of verticale gridlijn
+bezetten. De layout valideert dit na recursieve plaatsing, na iedere
+toepassingsverschuiving, vóór render en vóór OPN-export. Als de invariant niet
+kan worden behouden, wordt de layout niet getekend of geëxporteerd.
+
+Zo'n overtreding heet **gridlijnhergebruik**: horizontaal hergebruik is een
+gedeelde rij, verticaal hergebruik een gedeelde kolom.
 
 ## Vaste projectieposities
 

@@ -15,6 +15,7 @@ from server_nocache import probe_server_state
 ROOT = Path(__file__).resolve().parent
 SERVER = ROOT / "server_nocache.py"
 VERSION_FILE = ROOT / "VERSION.txt"
+SOURCE_BUILD_FILE = ROOT / "SOURCE_BUILD.txt"
 DEFAULT_HOST = "127.0.0.1"
 DEFAULT_PORT = 8088
 
@@ -26,6 +27,15 @@ def read_version() -> str:
     if not version:
         raise RuntimeError(f"VERSION.txt is leeg in {ROOT}")
     return version
+
+
+def read_source_build() -> str:
+    if not SOURCE_BUILD_FILE.is_file():
+        raise RuntimeError(f"SOURCE_BUILD.txt ontbreekt in {ROOT}")
+    source_build = SOURCE_BUILD_FILE.read_text(encoding="utf-8-sig").strip()
+    if not source_build:
+        raise RuntimeError(f"SOURCE_BUILD.txt is leeg in {ROOT}")
+    return source_build
 
 
 def launch_server(port: int) -> subprocess.Popen:
@@ -49,10 +59,11 @@ def launch_server(port: int) -> subprocess.Popen:
     return subprocess.Popen(command, **options)
 
 
-def reset_url(host: str, port: int, version: str) -> str:
+def reset_url(host: str, port: int, version: str, source_build: str) -> str:
     query = urlencode(
         {
             "ogv": version,
+            "source": source_build,
             "nocache": f"{time.time_ns()}-{os.getpid()}",
         }
     )
@@ -72,11 +83,13 @@ def run(
     host: str = DEFAULT_HOST,
     port: int = DEFAULT_PORT,
     expected_version: str | None = None,
+    expected_build: str | None = None,
     allow_start: bool = True,
     open_browser: bool = True,
 ) -> int:
     try:
         version = expected_version or read_version()
+        source_build = expected_build or read_source_build()
     except (OSError, RuntimeError) as exc:
         print(f"FOUT: {exc}", flush=True)
         return 1
@@ -88,6 +101,7 @@ def run(
     print("", flush=True)
     print(f"Bronmap    : {ROOT}", flush=True)
     print(f"App-versie: {version}", flush=True)
+    print(f"Bronstand  : {source_build}", flush=True)
     print(f"Poort      : {port}", flush=True)
     print(f"Python     : {sys.executable}", flush=True)
     print("", flush=True)
@@ -97,10 +111,11 @@ def run(
         port,
         version,
         f"start-{time.time_ns()}",
+        source_build,
     )
     if state == "wrong":
-        print(f"FOUT: poort {port} bedient een andere OpenGraph-versie.", flush=True)
-        print(f"Verwacht : {version}", flush=True)
+        print(f"FOUT: poort {port} bedient een andere OpenGraph-bron.", flush=True)
+        print(f"Verwacht : {version} | {source_build}", flush=True)
         print(f"Gevonden : {served_version}", flush=True)
         print('Sluit het oude venster "OpenGraph local server" en start opnieuw.', flush=True)
         return 1
@@ -131,12 +146,13 @@ def run(
                 port,
                 version,
                 f"wait-{time.time_ns()}",
+                source_build,
             )
             if state == "ok":
                 break
             if state == "wrong":
-                print(f"FOUT: poort {port} bedient een andere OpenGraph-versie.", flush=True)
-                print(f"Verwacht : {version}", flush=True)
+                print(f"FOUT: poort {port} bedient een andere OpenGraph-bron.", flush=True)
+                print(f"Verwacht : {version} | {source_build}", flush=True)
                 print(f"Gevonden : {served_version}", flush=True)
                 return 1
         else:
@@ -147,7 +163,7 @@ def run(
             print(f"Handmatige test: http://{host}:{port}/VERSION.txt", flush=True)
             return 1
 
-    url = reset_url(host, port, version)
+    url = reset_url(host, port, version, source_build)
     print("Servercontrole: OK", flush=True)
     print("Verplichte cache-reset:", flush=True)
     print(url, flush=True)

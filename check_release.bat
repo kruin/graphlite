@@ -8,6 +8,12 @@ if errorlevel 1 (
 )
 node --check viewer.js
 if errorlevel 1 exit /b 1
+node --check greedy-grow-engine.js
+if errorlevel 1 exit /b 1
+node --check greedy-grow.js
+if errorlevel 1 exit /b 1
+node tools\check_greedy_grow_reconstruction.js
+if errorlevel 1 exit /b 1
 where python >nul 2>nul
 if errorlevel 1 (
   echo FOUT: python ontbreekt.
@@ -34,6 +40,12 @@ if errorlevel 1 exit /b 1
 python tools\check_readme_item_editor.py
 if errorlevel 1 exit /b 1
 python tools\check_project_config_layers.py
+if errorlevel 1 exit /b 1
+python tools\check_node_grid_invariant.py
+if errorlevel 1 exit /b 1
+python tools\check_publication_carousel.py
+if errorlevel 1 exit /b 1
+python tools\check_publication_carousel_setup.py
 if errorlevel 1 exit /b 1
 python tools\check_desktop_max_view.py
 if errorlevel 1 exit /b 1

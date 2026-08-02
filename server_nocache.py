@@ -8,6 +8,7 @@ import sys
 
 ROOT = Path(__file__).resolve().parent
 APP_VERSION = (ROOT / 'VERSION.txt').read_text(encoding='utf-8-sig').strip()
+SOURCE_BUILD = (ROOT / 'SOURCE_BUILD.txt').read_text(encoding='utf-8-sig').strip()
 ALLOWED_WRITES = {
     'examples-input.html': ROOT / 'examples-input.html',
     'lexicon-config.html': ROOT / 'lexicon-config.html',
@@ -67,29 +68,51 @@ class NoCacheHandler(SimpleHTTPRequestHandler):
             self._json_response(500, {'ok': False, 'error': str(exc)})
 
 
-def probe_server_state(host, port, expected_version, nonce):
+def _probe_text(host, port, path, nonce):
     query = urlencode({'nocache': nonce})
-    url = f'http://{host}:{port}/VERSION.txt?{query}'
+    url = f'http://{host}:{port}/{path}?{query}'
     request = Request(url, headers={'Cache-Control': 'no-cache'})
     try:
         with urlopen(request, timeout=2) as response:
-            served_version = response.read(4096).decode('utf-8-sig', errors='replace').strip()
+            value = response.read(4096).decode('utf-8-sig', errors='replace').strip()
     except HTTPError as exc:
-        return 'wrong', f'HTTP {exc.code}'
+        return 'http', f'HTTP {exc.code}'
     except (URLError, TimeoutError, OSError):
         return 'down', ''
+    return 'ok', value
 
-    if served_version == expected_version:
+
+def probe_server_state(host, port, expected_version, nonce, expected_build=None):
+    status, served_version = _probe_text(host, port, 'VERSION.txt', nonce)
+    if status == 'down':
+        return 'down', ''
+    if status == 'http':
+        return 'wrong', f'VERSION.txt {served_version}'
+
+    if served_version != expected_version:
+        return 'wrong', served_version or '<lege VERSION.txt>'
+    if expected_build is None:
         return 'ok', served_version
-    return 'wrong', served_version or '<lege VERSION.txt>'
+
+    status, served_build = _probe_text(host, port, 'SOURCE_BUILD.txt', nonce)
+    if status == 'down':
+        return 'down', ''
+    if status == 'http':
+        return 'wrong', f'{served_version} | SOURCE_BUILD.txt {served_build}'
+
+    identity = f'{served_version} | {served_build or "<lege SOURCE_BUILD.txt>"}'
+    if served_build == expected_build:
+        return 'ok', identity
+    return 'wrong', identity
 
 
-def probe_server(host, port, expected_version, nonce):
+def probe_server(host, port, expected_version, nonce, expected_build=None):
     state, served_version = probe_server_state(
         host,
         port,
         expected_version,
         nonce,
+        expected_build,
     )
     print(f'{state}|{served_version}', flush=True)
     return 0
@@ -111,7 +134,7 @@ def run_server(port):
 
 def main(argv):
     if len(argv) > 1 and argv[1] == '--probe':
-        if len(argv) != 6:
+        if len(argv) not in (6, 7):
             print('down|', flush=True)
             return 0
         try:
@@ -119,7 +142,8 @@ def main(argv):
         except ValueError:
             print('down|', flush=True)
             return 0
-        return probe_server(argv[2], port, argv[4], argv[5])
+        expected_build = argv[6] if len(argv) == 7 else None
+        return probe_server(argv[2], port, argv[4], argv[5], expected_build)
 
     port = 8088
     if len(argv) > 1:

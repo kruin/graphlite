@@ -1,11 +1,11 @@
 {
   "schema": "opengraph-project-config",
-  "version": "v2.0.0-rc.43",
+  "version": "v2.0.0-rc.45",
   "kind": "default",
   "enabled": true,
   "description": "Bundled OGN Base defaults. Keep this file; config/user-config.json overlays it.",
   "config": {
-    "version": "v2.0.0-rc.43",
+    "version": "v2.0.0-rc.45",
     "profile": "base",
     "preconfig": {
       "insertion": {

@@ -31,7 +31,7 @@ echo Huidige branch: %BRANCH%
 if /I not "%BRANCH%"=="main" echo WAARSCHUWING: je zit niet op main.
 echo.
 
-for %%f in (index.html viewer.html viewer.js styles.css reset-cache.html VERSION.txt RELEASE_MANIFEST.txt) do (
+for %%f in (index.html viewer.html viewer.js styles.css reset-cache.html VERSION.txt SOURCE_BUILD.txt RELEASE_MANIFEST.txt) do (
   if not exist "%%f" (
     echo FOUT: %%f ontbreekt.
     goto :fail
@@ -46,6 +46,8 @@ if not defined APP_VERSION (
 for %%I in ("%~dp0.") do set "OG_PUBLISH_PROJECT_NAME=%%~nxI"
 set "RELEASE_ZIP=%OG_PUBLISH_PROJECT_NAME%_full_source.zip"
 echo App-versie: %APP_VERSION%
+set /p SOURCE_BUILD=<SOURCE_BUILD.txt
+echo Bronstand  : %SOURCE_BUILD%
 echo Release-zip: %RELEASE_ZIP%
 echo.
 

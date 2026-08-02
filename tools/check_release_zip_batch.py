@@ -23,10 +23,13 @@ for marker, label in [
     ("CreateFromDirectory", "ZIP-opbouw"),
     ("Get-ChildItem -LiteralPath $source -Recurse -File", "gefilterde bronselectie"),
     ("_full_source.*\\.zip", "uitsluiting full-source-kopieën"),
+    ("$parts -contains 'node_modules'", "uitsluiting lokale Node-afhankelijkheden"),
     ("Copy-Item -LiteralPath", "veilige tijdelijke staging"),
     ("$true)", "bovenste projectmap in ZIP"),
     ('move /Y "%OG_ZIP_TEMP%" "%OG_ZIP_PATH%"', "veilige vervanging doel-ZIP"),
     ("dit script maakt geen (1)-naam", "uitleg dubbele downloadnaam"),
+    ('tools\\check_publication_carousel.py', "carrouselafleiding vóór zipbouw"),
+    ('Draai eerst maak-publicatie-carrousel.bat', "herstelroute bij verouderde afgeleiden"),
 ]:
     require(BAT, marker, label)
 
@@ -65,12 +68,13 @@ if re.search(
 
 for marker, label in [
     ("def is_generated_release_archive(name: str)", "centrale manifestfilter"),
-    ("OpenGraph_Lite_Viewer_v2.0.0-rc.43_full_source (1).zip", "regressietest browsernaam (1)"),
+    ("OpenGraph_Lite_Viewer_v2.0.0-rc.45_full_source (1).zip", "regressietest browsernaam (1)"),
     ("graphlite_full_source.zip", "regressietest repositorynaam"),
 ]:
     require(RELEASE_CHECK, marker, label)
 
 require(GITIGNORE, "*_full_source*.zip", "generieke gitignore voor release-zipkopieën")
+require(GITIGNORE, "node_modules/", "node_modules-gitignore")
 
 if errors:
     print("RELEASE-ZIP BATCH CHECK: FOUT")

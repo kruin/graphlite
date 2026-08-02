@@ -102,6 +102,23 @@ async function collect(page) {
         }
       }
     }
+    const nodeCenters = [...svg.querySelectorAll('.node-shape[data-node-id]')].map(node => {
+      const box = node.getBBox();
+      return {
+        id: node.dataset.nodeId || 'knoop-zonder-id',
+        x: box.x + box.width / 2,
+        y: box.y + box.height / 2
+      };
+    });
+    const nodeGridLineIssues = [];
+    for (let first = 0; first < nodeCenters.length; first += 1) {
+      for (let second = first + 1; second < nodeCenters.length; second += 1) {
+        const a = nodeCenters[first];
+        const b = nodeCenters[second];
+        if (Math.abs(a.x - b.x) <= 0.01) nodeGridLineIssues.push(`${a.id}/${b.id}: verticale lijn`);
+        if (Math.abs(a.y - b.y) <= 0.01) nodeGridLineIssues.push(`${a.id}/${b.id}: horizontale lijn`);
+      }
+    }
     const viewBox = svg.viewBox.baseVal;
     return {
       svg: {
@@ -114,6 +131,7 @@ async function collect(page) {
       },
       viewBox: { x: viewBox.x, y: viewBox.y, w: viewBox.width, h: viewBox.height },
       containmentIssues,
+      nodeGridLineIssues,
       subtreeWidths,
       measuredCount: svg.querySelectorAll('.jan-subtree-box[data-measure-mode="recursive-content"]').length,
       subtreeCount: subtreeRects.length,
@@ -148,6 +166,11 @@ function assertInside(value, outer, label, tolerance = 1.5) {
 function assertComposition(metrics, label) {
   assert.equal(metrics.measuredCount, metrics.subtreeCount, `${label}: niet iedere subtree-box is gemeten`);
   assert.deepEqual(metrics.containmentIssues, [], `${label}: inhoud valt buiten een gemeten box`);
+  assert.deepEqual(
+    metrics.nodeGridLineIssues,
+    [],
+    `${label}: A != B vereist verschillende horizontale en verticale gridlijnen`
+  );
   assertInside(metrics.lex, metrics.svg, `${label}: volledige LEX-inhoud`);
   assertInside(metrics.rules, metrics.svg, `${label}: volledige SYNT-regelboxen`);
   if (metrics.movements && metrics.tree) {
@@ -183,6 +206,88 @@ async function setDensity(page, density) {
     select.dispatchEvent(new Event('change', { bubbles: true }));
   }, density);
   await page.waitForTimeout(60);
+}
+
+async function setSelectValue(page, id, value) {
+  await page.evaluate(({ selectId, nextValue }) => {
+    const select = document.getElementById(selectId);
+    if (!select) throw new Error(`${selectId} ontbreekt`);
+    select.value = nextValue;
+    select.dispatchEvent(new Event('change', { bubbles: true }));
+  }, { selectId: id, nextValue: value });
+  await page.waitForTimeout(60);
+}
+
+async function setInsertionTargets(page, targets) {
+  await page.evaluate(nextTargets => {
+    const wanted = new Set(nextTargets);
+    const firstById = new Map();
+    document.querySelectorAll('[data-lex-extension-target]').forEach(input => {
+      const id = input.getAttribute('data-lex-extension-target');
+      if (id && !firstById.has(id)) firstById.set(id, input);
+    });
+    for (const [id, input] of firstById) {
+      if (!!input.checked !== wanted.has(id)) input.click();
+    }
+  }, targets);
+  await page.waitForTimeout(90);
+}
+
+async function assertInvariantOptionMatrix(page, label) {
+  for (let index = 0; index < 6; index += 1) {
+    const order = ((await page.textContent('#mainSouthModeButton')) || '').trim();
+    assertComposition(await collect(page), `${label} LOG ${order} Syntax`);
+    await switchView(page, 'ft');
+    assertComposition(await collect(page), `${label} LOG ${order} Functional`);
+    await switchView(page, 'syntax');
+    await page.evaluate(() => document.getElementById('mainSouthNextButton')?.click());
+    await page.waitForTimeout(60);
+  }
+
+  for (const branchOrder of ['normal', 'auto-compact', 'auto-align', 'flip-all']) {
+    await setSelectValue(page, 'branchOrderSelect', branchOrder);
+    assertComposition(await collect(page), `${label} takvolgorde ${branchOrder} Syntax`);
+    await switchView(page, 'ft');
+    assertComposition(await collect(page), `${label} takvolgorde ${branchOrder} Functional`);
+    await switchView(page, 'syntax');
+  }
+  await setSelectValue(page, 'branchOrderSelect', 'normal');
+
+  for (const functionalOrder of ['left-first', 'right-first']) {
+    await setSelectValue(page, 'functionalOrderSelect', functionalOrder);
+    assertComposition(await collect(page), `${label} layout ${functionalOrder} Syntax`);
+    await switchView(page, 'ft');
+    assertComposition(await collect(page), `${label} layout ${functionalOrder} Functional`);
+    await switchView(page, 'syntax');
+  }
+  await setSelectValue(page, 'functionalOrderSelect', 'left-first');
+
+  for (const freeRows of ['0', '1', '2', '3', '4', '5', '6']) {
+    await setSelectValue(page, 'freeSlotCountSelect', freeRows);
+    assertComposition(await collect(page), `${label} vrije boomrijen ${freeRows} Syntax`);
+    await switchView(page, 'ft');
+    assertComposition(await collect(page), `${label} vrije boomrijen ${freeRows} Functional`);
+    await switchView(page, 'syntax');
+  }
+  await setSelectValue(page, 'freeSlotCountSelect', '2');
+
+  const insertionTargets = [
+    'vp-boundary', 's-boundary', 'object-branch', 'verb-branch',
+    'subject-branch', 'arg-boundary', 'clause-boundary'
+  ];
+  for (const target of insertionTargets) {
+    await setInsertionTargets(page, [target]);
+    assertComposition(await collect(page), `${label} toepassingsverschuiving ${target} Syntax`);
+    await switchView(page, 'ft');
+    assertComposition(await collect(page), `${label} toepassingsverschuiving ${target} Functional`);
+    await switchView(page, 'syntax');
+  }
+  await setInsertionTargets(page, insertionTargets);
+  assertComposition(await collect(page), `${label} alle toepassingsverschuivingen Syntax`);
+  await switchView(page, 'ft');
+  assertComposition(await collect(page), `${label} alle toepassingsverschuivingen Functional`);
+  await switchView(page, 'syntax');
+  await setInsertionTargets(page, ['vp-boundary']);
 }
 
 async function assertSentenceMatrix(page, label, includeFunctional) {
@@ -299,6 +404,7 @@ async function enableAdverbs(page) {
       assert.ok(extras.minorCount >= 1, `${label}: actieve bijwoordtoepassing levert geen LOG-minor`);
       if (label === 'mobile-portrait') {
         assert.equal(await assertSentenceMatrix(page, `${label} Bijwoorden`, false), 14);
+        await assertInvariantOptionMatrix(page, `${label} harde A-ongelijk-B-invariant`);
       }
       assert.deepEqual(errors, [], `${label}: browserfouten`);
       await context.close();
@@ -307,7 +413,7 @@ async function enableAdverbs(page) {
     await browser.close();
     await new Promise(resolve => local.server.close(resolve));
   }
-  console.log('RC41 RECURSIVE BOX FIT: OK (alle zinnen/dichtheden · inhoud · LEX-goot · volledige SYNT · majors/minors · mobiel/forced/groot desktop)');
+  console.log('RC41 RECURSIVE BOX FIT: OK (alle zinnen/dichtheden · unieke knooprijen/-kolommen · LOG/tak/layout/vrije-rijmatrix · inhoud · LEX-goot · volledige SYNT · majors/minors · mobiel/forced/groot desktop)');
 })().catch(error => {
   console.error(error);
   process.exit(1);

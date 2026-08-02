@@ -4,6 +4,7 @@ cd /d "%~dp0"
 set "PYTHONDONTWRITEBYTECODE=1"
 
 if not exist "VERSION.txt" goto :not_extracted
+if not exist "SOURCE_BUILD.txt" goto :not_extracted
 if not exist "server_nocache.py" goto :not_extracted
 if not exist "start_local_viewer.py" goto :not_extracted
 

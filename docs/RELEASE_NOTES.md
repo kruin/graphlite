@@ -1,3 +1,67 @@
+## v2.0.0-rc.45 — OGN-kern vóór toepassingen
+
+- Status: op 2 augustus 2026 handmatig goedgekeurde release candidate.
+- De algemene OGN-uitleg begint nu bij vrije plaatsing op een open grid:
+  iedere knoop bezit één horizontale en één verticale gridlijn en wordt één
+  voor één op een vrije positie geschreven.
+- Ruleset en zoekstrategie zijn afzonderlijke verantwoordelijkheden: de
+  ruleset bepaalt geldigheid; de zoekstrategie bepaalt de kandidaatvolgorde
+  voor directe plaatsing.
+- Greedy Grow begint bij het centrale gridpunt en schrijft dots direct één
+  voor één. De geaccepteerde compacte vierarmige volgorde reproduceert de
+  bewaarde 12/31/96-demo's exact. `greedy-grow.html` maakt de directe stappen
+  en experimentele zoekvolgorden controleerbaar; wereldwijde optimaliteit wordt
+  niet geclaimd.
+- De vaste volgorde is OGN Free Placement → OGN Projection → OGN Calculated
+  Placement.
+- Two-Pass Language Tree staat pas in de derde laag als één gespecialiseerde
+  toepassing. LEX, SYNT en LOG zijn benoemde projecties binnen die
+  taaltoepassing en definiëren OGN niet.
+- Nieuwe normatieve documentatie:
+  `OGN_CORE_PLACEMENT_ARCHITECTURE.md`.
+- README, LEESMIJ, ingebouwde uitleg en platformteksten zijn kern-eerst
+  herschreven.
+- Vier nieuwe README-SVG's verduidelijken het vrije grid, sequentieel
+  schrijven, verschillende zoekvolgorden en de drie lagen.
+- De publicatiecarrousel bevat zeven nieuwe 1080 × 1080-slides met dezelfde
+  kern-eerst-volgorde en nieuwe alt-teksten. Slide 5 wordt rechtstreeks uit de
+  geaccepteerde Greedy-engine afgeleid.
+- De herziene slide 4 projecteert knopen naar de benoemde assen WEST, SOUTH en
+  EAST. Slide 5 noemt alleen het directe voorbeeld Greedy Grow; slide 6 noemt
+  alleen het berekende voorbeeld Language Tree en toont het laatste stadium
+  van `HOND BIJT MAN` met de woorden op de westelijke LEX-as. Beide voorbeelden
+  verwijzen zichtbaar naar `github.com/kruin/graphlite`.
+- `RC45_OGN_CORE_EXPLANATION_TEST.md` bevat de handmatige inhoudelijke en
+  visuele akkoordlijst.
+- `SOURCE_BUILD.txt` laat de lokale starter ook oudere bronpakketten met
+  hetzelfde rc.45-versienummer herkennen en blokkeren. Daardoor wijst een
+  oude, nog draaiende server niet meer ongemerkt naar een bron zonder
+  `greedy-grow.html`.
+- De bestaande viewer-, graph-, Config-, opslag- en taalboomrendering blijven
+  ongewijzigd; Greedy Grow is als afzonderlijke directe OGN-proef toegevoegd.
+
+## v2.0.0-rc.44 — Direct plaatsbare publicatiecarrousel
+
+- Status: nieuwe release candidate voor handmatige controle; de goedgekeurde
+  rc.41-bron blijft ongewijzigd.
+- De projectzip bevat zeven genummerde, direct uploadbare PNG-slides van exact
+  1080 × 1080 pixels.
+- De slides leggen achtereenvolgens het traditionele boomprobleem, de
+  scheiding van structuur en woordvolgorde, LEX/SYNT/LOG, OGN Basis,
+  Voorconfig/Toepassingen en projectconfig uit.
+- `publicatie-carrousel/index.html` is een zelfstandige, bewerkbare HTML-bron
+  zonder externe fonts of scripts.
+- `tools/export_publication_carousel.js` exporteert de complete set opnieuw
+  met Chromium/Playwright.
+- `PUBLICATIE_README.md` bevat uploadvolgorde, alt-tekst per slide, een
+  Reddit-titel en posttekst, communitybeperking en aanvullende platformcopy.
+- `tools/check_publication_carousel.py` controleert bronmarkeringen,
+  bestandsnamen, aantal, PNG-header en afmetingen.
+- `RC44_PUBLICATION_CAROUSEL_TEST.md` legt de handmatige visuele en
+  inhoudelijke akkoordpunten vast.
+- Viewer-, graph-, Config- en opslaggedrag zijn niet gewijzigd; de
+  rc.43-functionaliteit blijft geërfd.
+
 
 ## v2.0.0-rc.43 — LEESMIJ-items en projectconfig
 

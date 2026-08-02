@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const VERSION = 'v2.0.0-rc.43';
+  const VERSION = 'v2.0.0-rc.45';
   const OPN_FORMAT_VERSION = '1.0';
   const OPN_DOCUMENT_TYPE = 'opengraph-document';
   const PARADATA_EVENT_LIMIT = 250;
@@ -1747,7 +1747,7 @@
 
   const LEXICON_USAGE_PROFILES = new Map();
   const LEXICON_CONSTRUCTIONS = new Map();
-  const LEX_ANALYSIS_STORAGE_KEY = 'opengraph_lex_analysis_choices_v2.0.0-rc.43';
+  const LEX_ANALYSIS_STORAGE_KEY = 'opengraph_lex_analysis_choices_v2.0.0-rc.45';
 
   function normalizeInsertionOrigin(value) {
     const origin = String(value || 'LOG').trim().toUpperCase().replace('MIXED', 'LOG+LEX');
@@ -3026,17 +3026,21 @@
       }
     }
 
-    // Safety fallback: keep moving downward until it is free.
+    // Constructive fallback: place the complete subtree beyond every occupied
+    // row and column. Never return an unchecked position: A != B must always
+    // imply x(A) != x(B) and y(A) != y(B).
     const dir = side < 0 ? -1 : 1;
-    for (let y = startY + 18; y < startY + 80; y++) {
-      for (let distance = 1; distance <= 24; distance++) {
-        const dx = dir * distance;
-        if (candidateIsFree(layout, dx, y, occupied, { boxPadding: 0 })) {
-          return shiftLayout(layout, dx, y);
-        }
-      }
+    const occupiedMinX = Math.min(0, ...occupied.boxes.map(box => Number(box.minX) || 0));
+    const occupiedMaxX = Math.max(0, ...occupied.boxes.map(box => Number(box.maxX) || 0));
+    const occupiedMaxY = Math.max(0, ...occupied.boxes.map(box => Number(box.maxY) || 0));
+    const dy = Math.max(startY + 18, occupiedMaxY + 1 - layout.box.minY);
+    const dx = dir < 0
+      ? occupiedMinX - 1 - layout.box.maxX
+      : occupiedMaxX + 1 - layout.box.minX;
+    if (candidateIsFree(layout, dx, dy, occupied, { boxPadding: 0 })) {
+      return shiftLayout(layout, dx, dy);
     }
-    return shiftLayout(layout, dir, startY);
+    throw new Error('OGN GRID-INVARIANT: geen vrije HOR/VER-plaats gevonden; layout is niet getekend.');
   }
 
   function composeLayout(node, placedLayouts) {
@@ -3055,7 +3059,10 @@
     }
 
     const rootBox = { id: `box-${node.id}`, label: `BOX ${node.label}`, nodeId: node.id, rootX: 0, rootY: 0, minX: box.minX, maxX: box.maxX, minY: box.minY, maxY: box.maxY };
-    return { node, nodes, edges, boxes: [rootBox, ...childBoxes], box };
+    return assertUniqueNodeGridLines(
+      { node, nodes, edges, boxes: [rootBox, ...childBoxes], box },
+      `recursieve layout ${node.id || node.label || 'zonder-id'}`
+    );
   }
 
   function preferredFirstSide(options = {}, sidePreference = 0) {
@@ -3732,6 +3739,52 @@
     return out;
   }
 
+  function gridLineKey(value) {
+    const numeric = Number(value);
+    return Number.isFinite(numeric) ? String(Math.round(numeric * 1e9) / 1e9) : 'NaN';
+  }
+
+  function nodeGridLineConflicts(layout) {
+    const conflicts = [];
+    const rows = new Map();
+    const columns = new Map();
+    for (const node of layout?.nodes || []) {
+      const id = String(node?.id || node?.label || 'knoop-zonder-id');
+      if (!Number.isFinite(Number(node?.x)) || !Number.isFinite(Number(node?.y))) {
+        conflicts.push({ axis: 'coordinate', first: id, second: id, value: 'NaN' });
+        continue;
+      }
+      const columnKey = gridLineKey(node.x);
+      const rowKey = gridLineKey(node.y);
+      if (columns.has(columnKey)) conflicts.push({ axis: 'vertical', first: columns.get(columnKey), second: id, value: columnKey });
+      else columns.set(columnKey, id);
+      if (rows.has(rowKey)) conflicts.push({ axis: 'horizontal', first: rows.get(rowKey), second: id, value: rowKey });
+      else rows.set(rowKey, id);
+    }
+    return conflicts;
+  }
+
+  function assertUniqueNodeGridLines(layout, context = 'OGN-layout') {
+    const conflicts = nodeGridLineConflicts(layout);
+    if (!conflicts.length) return layout;
+    const details = conflicts
+      .map(conflict => `${conflict.first} / ${conflict.second}: ${conflict.axis} ${conflict.value}`)
+      .join('; ');
+    throw new Error(`OGN GRID-INVARIANT geschonden in ${context}: gridlijnhergebruik. A != B vereist x(A) != x(B) en y(A) != y(B). ${details}`);
+  }
+
+  function freeSubtreeShiftY(layout, rootNodeId, requestedDy = 1) {
+    const ids = descendantIds(layout, rootNodeId);
+    const movingRows = (layout?.nodes || []).filter(node => ids.has(node.id)).map(node => Number(node.y));
+    const fixedRows = new Set((layout?.nodes || []).filter(node => !ids.has(node.id)).map(node => gridLineKey(node.y)));
+    const start = Math.max(1, Math.ceil(Number(requestedDy) || 1));
+    const limit = start + Math.max(64, (layout?.nodes?.length || 1) * 8);
+    for (let dy = start; dy <= limit; dy += 1) {
+      if (movingRows.every(row => !fixedRows.has(gridLineKey(row + dy)))) return dy;
+    }
+    throw new Error(`OGN GRID-INVARIANT: subtree ${rootNodeId} kan niet naar unieke horizontale gridlijnen worden verplaatst.`);
+  }
+
   function recomputeLayoutBox(layout) {
     if (!layout?.nodes?.length) return layout;
     let box = { minX: layout.nodes[0].x, maxX: layout.nodes[0].x, minY: layout.nodes[0].y, maxY: layout.nodes[0].y };
@@ -3811,10 +3864,11 @@
       const reserveRows = Math.ceil(0.5 + Math.max(0, visibleSlotCount - 1) * slotStepRows + 1.5);
       const beforeBox = hostBoxForNode(layout, host);
       const oldSlotTopY = beforeBox ? beforeBox.minY : host.y;
-      shiftSubtreeY(layout, host.id, reserveRows);
+      const safeReserveRows = freeSubtreeShiftY(layout, host.id, reserveRows);
+      shiftSubtreeY(layout, host.id, safeReserveRows);
       const shiftedHost = (layout.nodes || []).find(node => String(node.id) === String(host.id)) || host;
       const shiftedBox = hostBoxForNode(layout, shiftedHost);
-      const slotY0 = (shiftedBox ? shiftedBox.minY - reserveRows : oldSlotTopY) + 0.5;
+      const slotY0 = (shiftedBox ? shiftedBox.minY - safeReserveRows : oldSlotTopY) + 0.5;
       orderedSpecs.forEach((spec, index) => {
         const content = spec.content || insertionContentForSpec(spec);
         const hostLabel = activeAdverbHostLabel(content, spec.placement);
@@ -3829,7 +3883,7 @@
           toggleTargetId: '', toggleLabel: ''
         });
       });
-      spaces.push({ count: visibleSlotCount, reserveRows, slotStepRows, hostId: shiftedHost.id, hostLabel: activeAdverbHostLabel(orderedSpecs[0]?.content, orderedSpecs[0]?.placement), axis: 'LEX', source: 'external-lexical-insertion' });
+      spaces.push({ count: visibleSlotCount, reserveRows: safeReserveRows, slotStepRows, hostId: shiftedHost.id, hostLabel: activeAdverbHostLabel(orderedSpecs[0]?.content, orderedSpecs[0]?.placement), axis: 'LEX', source: 'external-lexical-insertion' });
     }
     layout.lexAdverbAxisSlots = slots;
     layout.lexAdverbAxisSpace = spaces;
@@ -3866,7 +3920,7 @@
     for (const target of targets) {
       const node = findLayoutNode(layout, target, mode);
       if (!node) continue;
-      const dy = rows + offset;
+      const dy = freeSubtreeShiftY(layout, node.id, rows + offset);
       shiftSubtreeY(layout, node.id, dy);
       applied.push({ target, nodeId: node.id, rows: dy, label: lexInsertionTargetLabel(target) });
       offset += Math.max(0, rows - 1);
@@ -3889,7 +3943,10 @@
   function getSyntaxLayout() {
     const firstSide = layoutFirstSide();
     const base = addOpnTopicalizationSlot(layoutTree(cloneTree(treeSpec()), 0, { firstSide, branchOrder: state.branchOrder, branchOverrides: state.branchOverrides }), STRUCTURE_CONFIG.syntaxRoot || 's');
-    return applyLexInsertionBranchExtensions(normalizeLayout(applyLexAdverbAxisSlotSpace(base)), 'syntax');
+    return assertUniqueNodeGridLines(
+      applyLexInsertionBranchExtensions(normalizeLayout(applyLexAdverbAxisSlotSpace(base)), 'syntax'),
+      'Syntax'
+    );
   }
 
   function layoutFunctionalRoleTree(order = 'left-first') {
@@ -3948,8 +4005,15 @@
           }
         }
       }
-      const fallbackX = mirror * (i + 2);
-      return { roleX: fallbackX, roleY: baseY + 30, leafX: fallbackX + mirror, leafY: baseY + 31, minX: Math.min(fallbackX, fallbackX + mirror), maxX: Math.max(fallbackX, fallbackX + mirror), minY: baseY + 30, maxY: baseY + 31 };
+      const maxRow = Math.max(0, ...occupiedRows);
+      const maxAbsColumn = Math.max(0, ...[...occupiedCols].map(value => Math.abs(Number(value) || 0)));
+      const roleX = mirror * (maxAbsColumn + 1);
+      const leafX = mirror * (maxAbsColumn + 2);
+      const roleY = maxRow + 1;
+      const leafY = maxRow + 2;
+      const fallback = { roleX, roleY, leafX, leafY, minX: Math.min(roleX, leafX), maxX: Math.max(roleX, leafX), minY: roleY, maxY: leafY };
+      if (freeAt(fallback)) return fallback;
+      throw new Error('OGN GRID-INVARIANT: geen vrije Functional HOR/VER-corridor gevonden.');
     }
 
     roles.forEach((item, i) => {
@@ -3970,7 +4034,10 @@
 
   function getFunctionalLayout() {
     const firstSide = layoutFirstSide();
-    return applyLexInsertionBranchExtensions(normalizeLayout(addOpnTopicalizationSlot(layoutTree(cloneTree(functionalSpec()), 0, { firstSide, branchOrder: state.branchOrder, branchOverrides: state.branchOverrides }), STRUCTURE_CONFIG.functionalRoot || 'ft-clause')), 'functional');
+    return assertUniqueNodeGridLines(
+      applyLexInsertionBranchExtensions(normalizeLayout(addOpnTopicalizationSlot(layoutTree(cloneTree(functionalSpec()), 0, { firstSide, branchOrder: state.branchOrder, branchOverrides: state.branchOverrides }), STRUCTURE_CONFIG.functionalRoot || 'ft-clause')), 'functional'),
+      'Functional'
+    );
   }
 
   function sortChildrenByRanks(children = [], rankFn) {
@@ -4063,12 +4130,15 @@
     const spec = mode === 'OSV' ? cloneTree(treeSpec()) : southAwareSyntaxSpec(mode);
     const base0 = addOpnTopicalizationSlot(layoutTree(spec, 0, { firstSide, branchOrder: state.branchOrder, branchOverrides: state.branchOverrides }), STRUCTURE_CONFIG.syntaxRoot || 's');
     const base = applyLexInsertionBranchExtensions(normalizeLayout(applyLexAdverbAxisSlotSpace(base0)), 'syntax');
-    return normalizeLayout(applySouthLogicalSyntaxGroupOrder(base, mode));
+    return assertUniqueNodeGridLines(normalizeLayout(applySouthLogicalSyntaxGroupOrder(base, mode)), `Syntax · LOG-volgorde ${mode}`);
   }
 
   function getSouthAwareFunctionalLayout() {
     const firstSide = layoutFirstSide();
-    return applyLexInsertionBranchExtensions(normalizeLayout(addOpnTopicalizationSlot(layoutTree(southAwareFunctionalSpec(), 0, { firstSide, branchOrder: state.branchOrder, branchOverrides: state.branchOverrides }), STRUCTURE_CONFIG.functionalRoot || 'ft-clause')), 'functional');
+    return assertUniqueNodeGridLines(
+      applyLexInsertionBranchExtensions(normalizeLayout(addOpnTopicalizationSlot(layoutTree(southAwareFunctionalSpec(), 0, { firstSide, branchOrder: state.branchOrder, branchOverrides: state.branchOverrides }), STRUCTURE_CONFIG.functionalRoot || 'ft-clause')), 'functional'),
+      `Functional · LOG-volgorde ${state.southLogicalMode || 'SOV'}`
+    );
   }
 
   function applySouthLogicalSyntaxGroupOrder(layout, mode = state.southLogicalMode || 'SOV') {
@@ -4550,7 +4620,7 @@
     const landscapeHandheld = isHandheldLandscapeViewport();
     if (mode === 'max') {
       if (landscapeHandheld) {
-        // v2.0.0-rc.43: landschap heeft veel breedte maar weinig hoogte.
+        // v2.0.0-rc.45: landschap heeft veel breedte maar weinig hoogte.
         // Maak de projectie daarom werkelijk platter in plaats van een hoge
         // portretlayout met cover-zoom af te snijden. Font en knopen behouden
         // hun leesbare maat; vooral de horizontale/verticale celafstand wordt
@@ -4683,7 +4753,7 @@
       // moeten de volledige LEX-inhoud links en regelboxen rechts bevatten.
       const left = westAxis - activeLexRenderLeftReach();
       const eastAxisRight = px(union.maxX, origin) + 118;
-      // v2.0.0-rc.43: in portret hoort niet alleen de groene SYNT-as, maar
+      // v2.0.0-rc.45: in portret hoort niet alleen de groene SYNT-as, maar
       // ook de volledige regelbox rechts ervan in de eerste MAX-fit. Gebruik
       // de unie van Syntax en Functional zodat een viewwissel niet verspringt.
       const syntaxRuleRight = projectedRuleRightEdge(
@@ -5350,6 +5420,7 @@
   }
 
   function drawTreeNodes(g, layout, origin, selectable = true, growthPlan = null) {
+    assertUniqueNodeGridLines(layout, 'renderlaag');
     const ordered = orderedTreeNodes(layout).filter(({ node }) => visibleAt(growthPlan, nodeGrowthStep(growthPlan, node.id)));
     const shapeLayer = svgEl('g', { class: 'node-shape-layer' });
     const labelLayer = svgEl('g', { class: 'node-label-layer' });
@@ -7139,7 +7210,7 @@
 
   function canvasAspectRatio() {
     syncMainTopbarLayout();
-    // v2.0.0-rc.43: in handheld-landscape reserveert het SVG zelf ruimte
+    // v2.0.0-rc.45: in handheld-landscape reserveert het SVG zelf ruimte
     // voor menu en Play. Gebruik daarom de werkelijk tekenbare SVG-maat en
     // niet de buitenste telefoonframe/canvas-wrap-maat.
     const svgRect = els.svg?.getBoundingClientRect?.();
@@ -7466,7 +7537,7 @@
       w: axes.w + padX * 2,
       h: axes.h + padY * 2
     };
-    // v2.0.0-rc.43: ook in landschap is MAX een contain-fit. De voormalige
+    // v2.0.0-rc.45: ook in landschap is MAX een contain-fit. De voormalige
     // cover-zoom vulde wel de breedte, maar sneed de rastertop en de volledige
     // LOG-as af. De plattere landschapscellen hierboven benutten de breedte
     // zonder semantische projecties buiten het scherm te plaatsen.
@@ -8796,6 +8867,7 @@
   }
 
   function serializeLayoutGraph(layout, view, rules) {
+    assertUniqueNodeGridLines(layout, `OPN-export ${view}`);
     return {
       view,
       root_id: layout?.node?.id || null,
@@ -9802,7 +9874,7 @@
       </fieldset>
       <section class="preconfig-candidates" aria-labelledby="preconfigCandidatesHeading">
         <h3 id="preconfigCandidatesHeading"><span class="help-lang-nl">Volgende voorconfig-kandidaten</span><span class="help-lang-en">Next pre-config candidates</span></h3>
-        <p><span class="help-lang-nl">Ontwerpvoorraad; in rc.43 nog niet schakelbaar.</span><span class="help-lang-en">Design backlog; not switchable in rc.43 yet.</span></p>
+        <p><span class="help-lang-nl">Ontwerpvoorraad; ook in rc.45 nog niet schakelbaar.</span><span class="help-lang-en">Design backlog; still not switchable in rc.45.</span></p>
         <ul>${PRECONFIG_CANDIDATES.map(candidate => `<li><span class="help-lang-nl">${candidate.label}</span><span class="help-lang-en">${candidate.labelEn}</span></li>`).join('')}</ul>
       </section>`;
     preconfigCard.querySelectorAll('[data-insertion-axis]').forEach(input => {

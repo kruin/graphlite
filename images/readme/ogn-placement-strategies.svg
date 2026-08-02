@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" role="img" aria-labelledby="title desc">
+  <title id="title">OGN search orders</title>
+  <desc id="desc">Two direct-placement runs start at the same central point; different candidate orders produce different growth patterns.</desc>
+  <rect width="1200" height="700" rx="42" fill="#f8fafc"/>
+  <rect x="55" y="75" width="510" height="545" rx="30" fill="#fff" stroke="#cbd5e1" stroke-width="3"/>
+  <rect x="635" y="75" width="510" height="545" rx="30" fill="#fff" stroke="#cbd5e1" stroke-width="3"/>
+  <g stroke="#e2e8f0" stroke-width="2">
+    <path d="M115 170H475M115 230H475M115 290H475M115 350H475M115 410H475M115 470H475M115 530H475M115 170V530M175 170V530M235 170V530M295 170V530M355 170V530M415 170V530M475 170V530"/>
+    <path d="M695 170H1055M695 230H1055M695 290H1055M695 350H1055M695 410H1055M695 470H1055M695 530H1055M695 170V530M755 170V530M815 170V530M875 170V530M935 170V530M995 170V530M1055 170V530"/>
+  </g>
+  <g fill="none" stroke="#94a3b8" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M295 350L115 230L175 410L235 170"/>
+    <path d="M875 350L935 170L995 290L1055 410"/>
+  </g>
+  <g data-ogn-node-set="search-order-a" fill="#fff" stroke-width="7">
+    <circle cx="295" cy="350" r="27" stroke="#2f67ff"/><circle cx="115" cy="230" r="27" stroke="#1f9d68"/><circle cx="175" cy="410" r="27" stroke="#8256d9"/><circle cx="235" cy="170" r="27" stroke="#ff8a3d"/>
+  </g>
+  <g data-ogn-node-set="search-order-b" fill="#fff" stroke-width="7">
+    <circle cx="875" cy="350" r="27" stroke="#2f67ff"/><circle cx="935" cy="170" r="27" stroke="#1f9d68"/><circle cx="995" cy="290" r="27" stroke="#8256d9"/><circle cx="1055" cy="410" r="27" stroke="#ff8a3d"/>
+  </g>
+  <g fill="#102038" font-family="Segoe UI,Arial,sans-serif" text-anchor="middle">
+    <text x="310" y="130" font-size="36" font-weight="850">Search order A</text>
+    <text x="890" y="130" font-size="36" font-weight="850">Search order B</text>
+    <g font-size="19" font-weight="850"><text x="295" y="357">0</text><text x="115" y="237">1</text><text x="175" y="417">2</text><text x="235" y="177">3</text><text x="875" y="357">0</text><text x="935" y="177">1</text><text x="995" y="297">2</text><text x="1055" y="417">3</text></g>
+    <text x="310" y="585" font-size="25" font-weight="650">same central start · different path</text>
+    <text x="890" y="585" font-size="25" font-weight="650">same central start · different path</text>
+  </g>
+  <rect x="330" y="640" width="540" height="44" rx="22" fill="#e9efff"/>
+  <text x="600" y="670" fill="#244fca" font-family="Segoe UI,Arial,sans-serif" font-size="25" font-weight="800" text-anchor="middle">write the first valid candidate found</text>
+</svg>

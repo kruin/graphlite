@@ -1,5 +1,19 @@
 
-## Actueel contract · v2.0.0-rc.43
+## Actueel contract · v2.0.0-rc.45
+
+### Harde OGN-knoopinvariant
+
+Voor twee verschillende knopen A en B geldt altijd:
+
+```text
+A ≠ B  ⇒  x(A) ≠ x(B)  én  y(A) ≠ y(B)
+```
+
+Geen twee knopen mogen dezelfde horizontale of verticale gridlijn bezetten.
+Zo'n overtreding heet **gridlijnhergebruik**: horizontaal hergebruik deelt een
+rij, verticaal hergebruik een kolom.
+Deze regel wordt na plaatsing en toepassingsverschuivingen, vóór render en vóór
+OPN-export gecontroleerd. Een ongeldige fallbackpositie wordt nooit getekend.
 
 De discrete HOR/VER-gridplaatsing blijft structureel leidend. Voor het tekenen
 voert de viewer daarnaast één bottom-up meetpass uit:

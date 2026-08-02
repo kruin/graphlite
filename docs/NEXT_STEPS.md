@@ -1,6 +1,6 @@
 # NEXT_STEPS
 
-Vervolgpunten na `v2.0.0-rc.43`:
+Vervolgpunten na `v2.0.0-rc.45`:
 
 1. De gereserveerde toepassing `Vraagzin` taalkundig afbakenen en haar
    benodigde voorconfig bepalen.

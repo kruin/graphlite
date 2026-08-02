@@ -1,5 +1,5 @@
 
-## Actuele beslissingen · v2.0.0-rc.43
+## Actuele beslissingen · v2.0.0-rc.45
 
 1. LOG is autoriteit voor de neutrale plaatsing.
 2. S, O en V zijn majors; alleen bijwoordinserties met `origin=LOG` of

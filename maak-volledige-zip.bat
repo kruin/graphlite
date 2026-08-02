@@ -23,6 +23,27 @@ set "OG_ZIP_APP_VERSION="
 if exist "%OG_ZIP_PROJECT_DIR%\VERSION.txt" set /p OG_ZIP_APP_VERSION=<"%OG_ZIP_PROJECT_DIR%\VERSION.txt"
 if defined OG_ZIP_APP_VERSION call :show_version
 
+where python >nul 2>nul
+if errorlevel 1 (
+  echo FOUT: Python ontbreekt; de carrouselafleiding kan niet worden gecontroleerd.
+  goto :failed
+)
+
+python "%OG_ZIP_PROJECT_DIR%\tools\check_publication_carousel.py"
+if errorlevel 1 (
+  echo.
+  echo FOUT: de publicatiecarrousel is niet aantoonbaar uit de actuele bron afgeleid.
+  echo Draai eerst maak-publicatie-carrousel.bat.
+  goto :failed
+)
+
+python "%OG_ZIP_PROJECT_DIR%\tools\check_publication_carousel_setup.py"
+if errorlevel 1 (
+  echo.
+  echo FOUT: de carrouselhulpmiddelen zijn niet compleet in de projectmap.
+  goto :failed
+)
+
 where powershell.exe >nul 2>nul
 if errorlevel 1 (
   echo FOUT: Windows PowerShell is niet gevonden.
@@ -42,7 +63,7 @@ powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -Command ^
   "  Get-ChildItem -LiteralPath $source -Recurse -File | Where-Object {" ^
   "    $relative=$_.FullName.Substring($source.Length+1);" ^
   "    $parts=$relative -split '[\\/]';" ^
-  "    -not (($parts -contains '.git') -or ($parts -contains '__pycache__') -or ($_.Name -match '(?i)_full_source.*\.zip(?:\.sha256)?$') -or ($_.Name -match '(?i)^(?:opengraph-)?local-config-log.*\.txt$') -or ($_.Name -match '(?i)\.(?:pyc|pyo|ds_store)$'))" ^
+  "    -not (($parts -contains '.git') -or ($parts -contains '__pycache__') -or ($parts -contains 'node_modules') -or ($_.Name -match '(?i)_full_source.*\.zip(?:\.sha256)?$') -or ($_.Name -match '(?i)^(?:opengraph-)?local-config-log.*\.txt$') -or ($_.Name -match '(?i)\.(?:pyc|pyo|ds_store)$'))" ^
   "  } | ForEach-Object {" ^
   "    $relative=$_.FullName.Substring($source.Length+1);" ^
   "    $destination=Join-Path $stageProject $relative;" ^

@@ -1,0 +1,1443 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OpenGraph Lite Viewer · publication carousel</title>
+<style>
+  :root {
+    --ink: #102038;
+    --muted: #526079;
+    --paper: #ffffff;
+    --mist: #eef3f8;
+    --line: #d7e0eb;
+    --lex: #2f67ff;
+    --lex-soft: #e9efff;
+    --synt: #1f9d68;
+    --synt-soft: #e6f7ef;
+    --log: #8256d9;
+    --log-soft: #f1ebff;
+    --accent: #ff8a3d;
+    --accent-soft: #fff0e6;
+    --danger: #db4b4b;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    min-height: 100%;
+    font-family: Inter, "Segoe UI", Arial, sans-serif;
+    color: var(--ink);
+    background: #ccd6e2;
+  }
+
+  body {
+    padding: 40px;
+  }
+
+  .deck-note {
+    width: min(1080px, 100%);
+    margin: 0 auto 28px;
+    padding: 18px 22px;
+    border: 1px solid #b9c6d5;
+    border-radius: 16px;
+    background: #f8fafc;
+    font-size: 18px;
+    line-height: 1.45;
+  }
+
+  .deck {
+    display: grid;
+    gap: 40px;
+    justify-content: center;
+  }
+
+  .slide {
+    position: relative;
+    width: 1080px;
+    height: 1080px;
+    overflow: hidden;
+    padding: 70px 74px 68px;
+    background:
+      radial-gradient(circle at 94% 2%, rgba(47, 103, 255, .10), transparent 31%),
+      linear-gradient(145deg, #ffffff 0%, #f7f9fc 66%, #eef3f8 100%);
+    box-shadow: 0 22px 55px rgba(16, 32, 56, .20);
+  }
+
+  .slide::after {
+    position: absolute;
+    right: -90px;
+    bottom: -110px;
+    width: 330px;
+    height: 330px;
+    border: 34px solid rgba(47, 103, 255, .055);
+    border-radius: 50%;
+    content: "";
+    pointer-events: none;
+  }
+
+  .slide-dark {
+    color: #f8fbff;
+    background:
+      radial-gradient(circle at 78% 18%, rgba(47, 103, 255, .35), transparent 34%),
+      radial-gradient(circle at 23% 88%, rgba(130, 86, 217, .26), transparent 30%),
+      linear-gradient(145deg, #0d1a2d 0%, #142847 58%, #172e50 100%);
+  }
+
+  .slide-dark::after {
+    border-color: rgba(255, 255, 255, .07);
+  }
+
+  .topline,
+  .footer {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .topline {
+    min-height: 34px;
+    margin-bottom: 34px;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: .03em;
+    text-transform: uppercase;
+  }
+
+  .brand-mark {
+    display: grid;
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    background:
+      linear-gradient(90deg, var(--lex) 0 33%, var(--synt) 33% 66%, var(--log) 66%);
+    box-shadow: 0 6px 16px rgba(16, 32, 56, .18);
+    place-items: center;
+  }
+
+  .brand-mark::after {
+    width: 10px;
+    height: 10px;
+    border: 3px solid #fff;
+    border-radius: 50%;
+    content: "";
+  }
+
+  .slide-number {
+    color: var(--muted);
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: .08em;
+  }
+
+  .slide-dark .slide-number {
+    color: #b7c5d9;
+  }
+
+  h1, h2, h3, p {
+    margin-top: 0;
+  }
+
+  h1 {
+    position: relative;
+    z-index: 2;
+    max-width: 880px;
+    margin-bottom: 28px;
+    font-size: 82px;
+    line-height: .98;
+    letter-spacing: -.055em;
+  }
+
+  h2 {
+    position: relative;
+    z-index: 2;
+    max-width: 900px;
+    margin-bottom: 28px;
+    font-size: 60px;
+    line-height: 1.02;
+    letter-spacing: -.04em;
+  }
+
+  h3 {
+    margin-bottom: 12px;
+    font-size: 30px;
+    line-height: 1.1;
+  }
+
+  .lead {
+    position: relative;
+    z-index: 2;
+    max-width: 855px;
+    color: var(--muted);
+    font-size: 34px;
+    line-height: 1.32;
+  }
+
+  .slide-dark .lead {
+    color: #c7d4e6;
+  }
+
+  .accent-line {
+    width: 150px;
+    height: 12px;
+    margin: 34px 0 30px;
+    border-radius: 99px;
+    background: linear-gradient(90deg, var(--lex), var(--synt), var(--log));
+  }
+
+  .hero-statement {
+    position: relative;
+    z-index: 2;
+    max-width: 880px;
+    margin-top: 150px;
+  }
+
+  .hero-kicker {
+    margin-bottom: 18px;
+    color: #9db9ff;
+    font-size: 27px;
+    font-weight: 800;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+  }
+
+  .hero-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-top: 42px;
+  }
+
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    min-height: 48px;
+    padding: 10px 18px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, .88);
+    color: var(--ink);
+    font-size: 22px;
+    font-weight: 750;
+  }
+
+  .slide-dark .pill {
+    border-color: rgba(255, 255, 255, .18);
+    background: rgba(255, 255, 255, .09);
+    color: #f7fbff;
+  }
+
+  .two-cards {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-top: 30px;
+  }
+
+  .card {
+    padding: 24px;
+    border: 1px solid var(--line);
+    border-radius: 24px;
+    background: rgba(255, 255, 255, .94);
+    box-shadow: 0 12px 26px rgba(16, 32, 56, .09);
+  }
+
+  .problem-card {
+    display: grid;
+    min-height: 385px;
+    padding: 20px;
+    grid-template-rows: auto 1fr auto;
+  }
+
+  .problem-card img {
+    width: 100%;
+    height: 230px;
+    margin: 5px 0 9px;
+    object-fit: contain;
+    object-position: center;
+  }
+
+  .problem-card h3 {
+    font-size: 27px;
+  }
+
+  .slide[data-slide="2"] .two-cards {
+    margin-top: 20px;
+  }
+
+  .slide[data-slide="2"] .card-label {
+    font-size: 20px;
+  }
+
+  .slide[data-slide="2"] .bottom-claim {
+    margin-top: 17px;
+    padding: 13px 19px;
+    font-size: 23px;
+  }
+
+  .card-label {
+    color: var(--muted);
+    font-size: 23px;
+    font-weight: 700;
+    line-height: 1.25;
+  }
+
+  .bottom-claim {
+    position: relative;
+    z-index: 2;
+    margin-top: 30px;
+    padding: 20px 24px;
+    border-left: 8px solid var(--accent);
+    border-radius: 0 18px 18px 0;
+    background: var(--accent-soft);
+    font-size: 27px;
+    font-weight: 750;
+    line-height: 1.28;
+  }
+
+  .diagram-card {
+    position: relative;
+    z-index: 2;
+    margin-top: 28px;
+    padding: 22px 24px;
+    border: 1px solid var(--line);
+    border-radius: 28px;
+    background: rgba(255, 255, 255, .94);
+    box-shadow: 0 16px 32px rgba(16, 32, 56, .10);
+  }
+
+  .projection-diagram {
+    padding: 12px 18px;
+  }
+
+  .projection-diagram svg {
+    height: 390px;
+  }
+
+  svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+    font-family: Inter, "Segoe UI", Arial, sans-serif;
+  }
+
+  .tree-edge {
+    fill: none;
+    stroke: #8ca0b7;
+    stroke-linecap: round;
+    stroke-width: 4;
+  }
+
+  .tree-node {
+    fill: #fff;
+    stroke: #99aabd;
+    stroke-width: 3;
+  }
+
+  .tree-label {
+    fill: var(--ink);
+    font-size: 22px;
+    font-weight: 850;
+    text-anchor: middle;
+  }
+
+  .word-node {
+    fill: #f8fafc;
+    stroke: #cad5e2;
+    stroke-width: 2.5;
+  }
+
+  .word-label {
+    fill: var(--ink);
+    font-size: 18px;
+    font-weight: 800;
+    text-anchor: middle;
+  }
+
+  .axis-line {
+    fill: none;
+    stroke-width: 4;
+    stroke-dasharray: 10 9;
+  }
+
+  .axis-label {
+    font-size: 21px;
+    font-weight: 900;
+    letter-spacing: .08em;
+  }
+
+  .lex-stroke { stroke: var(--lex); }
+  .synt-stroke { stroke: var(--synt); }
+  .log-stroke { stroke: var(--log); }
+  .lex-fill { fill: var(--lex); }
+  .synt-fill { fill: var(--synt); }
+  .log-fill { fill: var(--log); }
+
+  .separation-strip {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: stretch;
+    gap: 22px;
+    margin-top: 24px;
+  }
+
+  .separation-card {
+    display: grid;
+    min-height: 160px;
+    padding: 24px;
+    border-radius: 22px;
+    place-content: center;
+    text-align: center;
+  }
+
+  .separation-card strong {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 28px;
+  }
+
+  .separation-card span {
+    color: var(--muted);
+    font-size: 22px;
+    line-height: 1.3;
+  }
+
+  .separation-card.structure {
+    border: 2px solid #cad5e2;
+    background: #f6f8fb;
+  }
+
+  .separation-card.order {
+    border: 2px solid #bdccff;
+    background: var(--lex-soft);
+  }
+
+  .not-equal {
+    display: grid;
+    color: var(--danger);
+    font-size: 54px;
+    font-weight: 900;
+    place-items: center;
+  }
+
+  .legend-row {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: 22px;
+  }
+
+  .legend-item {
+    padding: 15px 18px;
+    border-radius: 16px;
+    font-size: 21px;
+    font-weight: 750;
+    line-height: 1.2;
+  }
+
+  .legend-item strong {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 24px;
+  }
+
+  .legend-item.lex { background: var(--lex-soft); color: #244fca; }
+  .legend-item.synt { background: var(--synt-soft); color: #177c51; }
+  .legend-item.log { background: var(--log-soft); color: #6944b2; }
+
+  .steps {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: 1fr 72px 1fr 72px 1fr;
+    align-items: stretch;
+    margin-top: 54px;
+  }
+
+  .step {
+    min-height: 370px;
+    padding: 26px 24px;
+    border: 1px solid var(--line);
+    border-radius: 24px;
+    background: rgba(255, 255, 255, .94);
+    box-shadow: 0 14px 28px rgba(16, 32, 56, .08);
+  }
+
+  .step-number {
+    display: grid;
+    width: 48px;
+    height: 48px;
+    margin-bottom: 28px;
+    border-radius: 15px;
+    background: var(--ink);
+    color: #fff;
+    font-size: 23px;
+    font-weight: 900;
+    place-items: center;
+  }
+
+  .step p {
+    color: var(--muted);
+    font-size: 22px;
+    line-height: 1.4;
+  }
+
+  .step .mini {
+    margin-top: 24px;
+    padding: 14px;
+    border-radius: 14px;
+    background: var(--mist);
+    color: var(--ink);
+    font-size: 20px;
+    font-weight: 750;
+    line-height: 1.25;
+  }
+
+  .step-arrow {
+    display: grid;
+    color: #91a1b5;
+    font-size: 46px;
+    font-weight: 900;
+    place-items: center;
+  }
+
+  .off-claim {
+    position: relative;
+    z-index: 2;
+    margin-top: 30px;
+    padding: 18px 22px;
+    border: 2px solid #b9e3d0;
+    border-radius: 18px;
+    background: var(--synt-soft);
+    color: #146b47;
+    font-size: 26px;
+    font-weight: 800;
+    text-align: center;
+  }
+
+  .ogn-grid-diagram,
+  .projection-stage {
+    padding: 18px 22px;
+  }
+
+  .ogn-grid-diagram svg,
+  .projection-stage svg {
+    height: 430px;
+  }
+
+  .process-steps {
+    margin-top: 38px;
+  }
+
+  .process-steps .step {
+    min-height: 350px;
+  }
+
+  .process-steps .step-number {
+    margin-bottom: 22px;
+  }
+
+  .strategy-cards,
+  .pass-cards {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-top: 30px;
+  }
+
+  .strategy-card,
+  .pass-card {
+    min-height: 440px;
+    padding: 24px;
+    border: 1px solid var(--line);
+    border-radius: 24px;
+    background: rgba(255, 255, 255, .95);
+    box-shadow: 0 12px 26px rgba(16, 32, 56, .09);
+  }
+
+  .strategy-card svg {
+    height: 235px;
+    margin: 10px 0 18px;
+  }
+
+  .strategy-card p,
+  .pass-card p {
+    color: var(--muted);
+    font-size: 22px;
+    line-height: 1.35;
+  }
+
+  .slide[data-slide="5"] h2 {
+    margin-bottom: 18px;
+    font-size: 56px;
+  }
+
+  .slide[data-slide="5"] .lead {
+    margin-bottom: 0;
+    font-size: 29px;
+    line-height: 1.25;
+  }
+
+  .slide[data-slide="5"] .strategy-cards {
+    margin-top: 20px;
+  }
+
+  .slide[data-slide="5"] .strategy-card {
+    min-height: 390px;
+    padding: 20px;
+  }
+
+  .slide[data-slide="5"] .strategy-card svg {
+    height: 195px;
+    margin: 6px 0 12px;
+  }
+
+  .slide[data-slide="5"] .strategy-card p {
+    margin-bottom: 0;
+    font-size: 20px;
+  }
+
+  .slide[data-slide="5"] .strategy-tag {
+    margin-top: 10px;
+    padding: 8px 12px;
+    font-size: 18px;
+  }
+
+  .slide[data-slide="5"] .bottom-claim {
+    margin-top: 16px;
+    padding: 13px 18px;
+    font-size: 21px;
+    line-height: 1.2;
+  }
+
+  .greedy-derived-card {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: 610px 1fr;
+    gap: 22px;
+    min-height: 420px;
+    margin-top: 24px;
+    padding: 20px;
+    border: 1px solid var(--line);
+    border-radius: 26px;
+    background: rgba(255, 255, 255, .95);
+    box-shadow: 0 14px 28px rgba(16, 32, 56, .08);
+  }
+
+  .greedy-derived-plot {
+    min-width: 0;
+    overflow: hidden;
+    border: 1px solid #d6e0ec;
+    border-radius: 20px;
+    background: #fbfdff;
+  }
+
+  .greedy-derived-plot svg {
+    display: block;
+    width: 100%;
+    height: 410px;
+  }
+
+  .greedy-derived-grid {
+    stroke: #dce5f0;
+    stroke-width: 1.4;
+  }
+
+  .greedy-derived-axis {
+    stroke: #9eb2cb;
+    stroke-width: 2.2;
+  }
+
+  .greedy-derived-path {
+    fill: none;
+    stroke: #946ee8;
+    stroke-width: 4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .greedy-derived-node circle {
+    fill: #fff;
+    stroke: var(--lex);
+    stroke-width: 4;
+  }
+
+  .greedy-derived-node.is-last circle {
+    fill: #e5f7ef;
+    stroke: var(--syn);
+    stroke-width: 5;
+  }
+
+  .greedy-derived-node text {
+    fill: var(--ink);
+    font-size: 12px;
+    font-weight: 900;
+    text-anchor: middle;
+  }
+
+  .greedy-derived-facts {
+    display: grid;
+    align-content: stretch;
+    gap: 12px;
+  }
+
+  .greedy-derived-facts article {
+    display: grid;
+    align-content: center;
+    padding: 15px 17px;
+    border-left: 6px solid var(--lex);
+    border-radius: 0 15px 15px 0;
+    background: var(--lex-soft);
+  }
+
+  .greedy-derived-facts article:nth-child(2) {
+    border-left-color: var(--syn);
+    background: var(--syn-soft);
+  }
+
+  .greedy-derived-facts article:last-child {
+    border-left-color: var(--orange);
+    background: var(--orange-soft);
+  }
+
+  .greedy-derived-facts strong {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 25px;
+  }
+
+  .greedy-derived-facts span {
+    color: var(--muted);
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.25;
+  }
+
+  .example-github {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 54px;
+    margin-top: 16px;
+    padding: 11px 18px;
+    border: 2px solid #c9d6e6;
+    border-radius: 16px;
+    background: #fff;
+    color: #244c91;
+    font-size: 20px;
+    font-weight: 900;
+    text-decoration: none;
+  }
+
+  .slide[data-slide="4"] h2,
+  .slide[data-slide="6"] h2 {
+    margin-bottom: 14px;
+    font-size: 56px;
+  }
+
+  .slide[data-slide="4"] .lead,
+  .slide[data-slide="6"] .lead {
+    margin-bottom: 0;
+    font-size: 29px;
+  }
+
+  .projection-axis-label {
+    font-size: 19px;
+    font-weight: 950;
+    letter-spacing: 2px;
+  }
+
+  .projection-marker-label {
+    font-size: 17px;
+    font-weight: 900;
+  }
+
+  .language-example-card {
+    position: relative;
+    z-index: 2;
+    margin-top: 20px;
+    padding: 16px 20px 15px;
+    border: 1px solid var(--line);
+    border-radius: 25px;
+    background: rgba(255, 255, 255, .96);
+    box-shadow: 0 14px 28px rgba(16, 32, 56, .08);
+  }
+
+  .language-example-card svg {
+    display: block;
+    width: 100%;
+    height: 500px;
+  }
+
+  .language-tree-edge {
+    fill: none;
+    stroke: #8fcdb0;
+    stroke-width: 3;
+  }
+
+  .language-tree-node {
+    fill: #fff;
+    stroke: #1f9d68;
+    stroke-width: 4;
+  }
+
+  .language-tree-label {
+    fill: var(--ink);
+    font-size: 15px;
+    font-weight: 950;
+    text-anchor: middle;
+  }
+
+  .language-lex-axis {
+    stroke: var(--lex);
+    stroke-width: 4;
+  }
+
+  .language-lex-move {
+    fill: none;
+    stroke: var(--lex);
+    stroke-width: 3;
+    stroke-dasharray: 8 7;
+  }
+
+  .language-lex-slot {
+    fill: #edf3ff;
+    stroke: #7ea2ff;
+    stroke-width: 3;
+  }
+
+  .language-lex-word {
+    fill: var(--ink);
+    font-size: 18px;
+    font-weight: 950;
+    text-anchor: middle;
+  }
+
+  .language-trace {
+    fill: #64748b;
+    font-size: 14px;
+    font-weight: 800;
+  }
+
+  .slide[data-slide="6"] .example-github {
+    margin-top: 10px;
+  }
+
+  .strategy-tag,
+  .application-tag {
+    display: inline-flex;
+    margin-top: 14px;
+    padding: 10px 14px;
+    border-radius: 999px;
+    background: var(--mist);
+    color: var(--ink);
+    font-size: 19px;
+    font-weight: 800;
+  }
+
+  .pass-card {
+    min-height: 405px;
+  }
+
+  .pass-card .step-number {
+    margin-bottom: 22px;
+  }
+
+  .pass-card ul {
+    margin: 20px 0 0;
+    padding-left: 24px;
+    color: var(--muted);
+    font-size: 21px;
+    line-height: 1.4;
+  }
+
+  .pass-card li + li {
+    margin-top: 8px;
+  }
+
+  .slide[data-slide="6"] .off-claim {
+    margin-top: 22px;
+    font-size: 23px;
+  }
+
+  .config-layout {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: .94fr 1.06fr;
+    gap: 28px;
+    margin-top: 34px;
+  }
+
+  .slide[data-slide="6"] .config-layout {
+    margin-top: 24px;
+  }
+
+  .slide[data-slide="6"] .config-stack {
+    min-height: 405px;
+  }
+
+  .slide[data-slide="6"] .feature-list {
+    gap: 11px;
+  }
+
+  .slide[data-slide="6"] .feature-row {
+    min-height: 82px;
+    padding: 13px 17px;
+  }
+
+  .slide[data-slide="6"] .feature-row strong {
+    font-size: 21px;
+  }
+
+  .slide[data-slide="6"] .feature-row span {
+    font-size: 18px;
+  }
+
+  .slide[data-slide="6"] .bottom-claim {
+    margin-top: 13px;
+    padding: 13px 19px;
+    font-size: 21px;
+  }
+
+  .config-stack {
+    position: relative;
+    min-height: 460px;
+  }
+
+  .config-sheet {
+    position: absolute;
+    width: 370px;
+    min-height: 250px;
+    padding: 25px;
+    border: 2px solid;
+    border-radius: 22px;
+    background: #fff;
+    box-shadow: 0 18px 32px rgba(16, 32, 56, .14);
+  }
+
+  .config-sheet.default {
+    top: 15px;
+    left: 5px;
+    border-color: #b9c6d5;
+    transform: rotate(-3deg);
+  }
+
+  .config-sheet.user {
+    top: 148px;
+    left: 70px;
+    border-color: #89a6ff;
+    background: #f5f7ff;
+    transform: rotate(3deg);
+  }
+
+  .config-sheet strong {
+    display: block;
+    margin-bottom: 20px;
+    font-size: 25px;
+  }
+
+  .config-line {
+    height: 12px;
+    margin: 11px 0;
+    border-radius: 99px;
+    background: #dce4ee;
+  }
+
+  .config-line.short { width: 62%; }
+  .config-line.override { background: #9fb4ff; }
+
+  .precedence {
+    position: absolute;
+    top: 112px;
+    right: 8px;
+    display: grid;
+    width: 76px;
+    height: 76px;
+    border-radius: 50%;
+    background: var(--lex);
+    color: #fff;
+    font-size: 42px;
+    font-weight: 900;
+    box-shadow: 0 12px 22px rgba(47, 103, 255, .28);
+    place-items: center;
+  }
+
+  .feature-list {
+    display: grid;
+    gap: 16px;
+  }
+
+  .feature-row {
+    display: grid;
+    min-height: 92px;
+    padding: 18px 20px;
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    background: rgba(255, 255, 255, .94);
+    grid-template-columns: 54px 1fr;
+    align-items: center;
+    gap: 15px;
+  }
+
+  .feature-icon {
+    display: grid;
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    background: var(--mist);
+    color: var(--ink);
+    font-size: 23px;
+    font-weight: 900;
+    place-items: center;
+  }
+
+  .feature-row strong {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 23px;
+  }
+
+  .feature-row span {
+    color: var(--muted);
+    font-size: 19px;
+    line-height: 1.25;
+  }
+
+  .question-grid {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    margin-top: 42px;
+  }
+
+  .question {
+    min-height: 152px;
+    padding: 22px;
+    border: 1px solid rgba(255, 255, 255, .16);
+    border-radius: 20px;
+    background: rgba(255, 255, 255, .08);
+    color: #eef5ff;
+    font-size: 25px;
+    font-weight: 720;
+    line-height: 1.28;
+  }
+
+  .question b {
+    display: block;
+    margin-bottom: 9px;
+    color: #9db9ff;
+    font-size: 19px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+  }
+
+  .cta {
+    position: relative;
+    z-index: 2;
+    margin-top: 38px;
+    padding: 24px 28px;
+    border-radius: 20px;
+    background: #fff;
+    color: var(--ink);
+  }
+
+  .cta strong {
+    display: block;
+    margin-bottom: 6px;
+    color: var(--lex);
+    font-size: 32px;
+  }
+
+  .cta span {
+    display: block;
+    font-size: 23px;
+    line-height: 1.35;
+  }
+
+  .footer {
+    position: absolute;
+    right: 74px;
+    bottom: 34px;
+    left: 74px;
+    z-index: 3;
+    color: var(--muted);
+    font-size: 18px;
+    font-weight: 700;
+  }
+
+  .slide-dark .footer {
+    color: #aebed3;
+  }
+
+  body.export {
+    width: 1080px;
+    min-height: 1080px;
+    padding: 0;
+    background: transparent;
+  }
+
+  body.export .deck-note {
+    display: none;
+  }
+
+  body.export .deck {
+    display: block;
+  }
+
+  body.export .slide {
+    display: none;
+    box-shadow: none;
+  }
+
+  body.export .slide.is-export {
+    display: block;
+  }
+
+  @media (max-width: 1120px) {
+    body:not(.export) {
+      padding: 16px;
+    }
+
+    body:not(.export) .slide {
+      transform: scale(calc((100vw - 32px) / 1080));
+      transform-origin: top center;
+      margin-bottom: calc(-1080px + (100vw - 32px));
+    }
+  }
+</style>
+</head>
+<body>
+<p class="deck-note">
+  Ready-to-export source for the seven publication slides. Open normally to
+  inspect the complete deck; the export script uses <code>?slide=1</code>
+  through <code>?slide=7</code>.
+</p>
+
+<main class="deck" aria-label="OpenGraph Lite Viewer publication carousel">
+  <section class="slide slide-dark" data-slide="1" aria-label="Slide 1: grid-line ownership">
+    <div class="topline">
+      <div class="brand"><span class="brand-mark"></span>Open Graph Notation</div>
+      <div class="slide-number">01 / 07</div>
+    </div>
+    <div class="hero-statement">
+      <p class="hero-kicker">OGN</p>
+      <h1>Every node owns its grid lines.</h1>
+      <div class="accent-line"></div>
+      <p class="lead">One horizontal grid line and one vertical grid line belong to the node. No other node may use either line.</p>
+      <div class="hero-tags">
+        <span class="pill">node</span>
+        <span class="pill">horizontal line</span>
+        <span class="pill">vertical line</span>
+        <span class="pill">line ownership</span>
+        <span class="pill">A ≠ B → no grid-line reuse</span>
+      </div>
+    </div>
+    <div class="footer"><span>Grid-line ownership</span><span>01 →</span></div>
+  </section>
+
+  <section class="slide" data-slide="2" aria-label="Slide 2: OGN free placement">
+    <div class="topline">
+      <div class="brand"><span class="brand-mark"></span>Open Graph Notation</div>
+      <div class="slide-number">02 / 07</div>
+    </div>
+    <h2>A position is free when both grid lines are free.</h2>
+    <p class="lead">Writing a node occupies one horizontal line and one vertical line.</p>
+    <div class="diagram-card ogn-grid-diagram">
+      <svg viewBox="0 0 880 430" role="img" aria-label="Three nodes occupy different interior rows and columns; the bottom row is empty">
+        <g stroke="#d7e0eb" stroke-width="2">
+          <path d="M90 50V350M190 50V350M290 50V350M390 50V350M490 50V350M590 50V350M690 50V350M790 50V350"/>
+          <path d="M90 50H790M90 100H790M90 150H790M90 200H790M90 250H790M90 300H790M90 350H790"/>
+        </g>
+        <g fill="none" stroke-width="6" opacity=".45">
+          <path d="M90 300H790M190 50V350" stroke="#2f67ff"/>
+          <path d="M90 100H790M390 50V350" stroke="#1f9d68"/>
+          <path d="M90 200H790M690 50V350" stroke="#8256d9"/>
+        </g>
+        <g data-ogn-node-set="carousel-slide-2" aria-label="Three nodes on separate interior rows and columns; bottom row empty" fill="#fff" stroke-width="6">
+          <circle cx="190" cy="300" r="36" stroke="#2f67ff"/>
+          <circle cx="390" cy="100" r="36" stroke="#1f9d68"/>
+          <circle cx="690" cy="200" r="36" stroke="#8256d9"/>
+        </g>
+        <g fill="#102038" font-size="25" font-weight="900" text-anchor="middle">
+          <text x="190" y="309">A</text><text x="390" y="109">B</text><text x="690" y="209">C</text>
+        </g>
+        <g aria-label="Three free positions on different rows and columns" fill="#f8fafc" stroke="#9aaabd" stroke-width="3" stroke-dasharray="8 7">
+          <circle cx="490" cy="50" r="24"/><circle cx="290" cy="150" r="24"/><circle cx="590" cy="250" r="24"/>
+        </g>
+        <text x="440" y="410" fill="#526079" font-size="18" font-weight="750" text-anchor="middle">A, B, C: separate rows + columns · dashed: free positions</text>
+      </svg>
+    </div>
+    <p class="bottom-claim">After writing a node, both of its grid lines are occupied.</p>
+    <div class="footer"><span>Free and occupied</span><span>02 →</span></div>
+  </section>
+
+  <section class="slide" data-slide="3" aria-label="Slide 3: sequential node writing">
+    <div class="topline">
+      <div class="brand"><span class="brand-mark"></span>OpenGraph Lite Viewer</div>
+      <div class="slide-number">03 / 07</div>
+    </div>
+    <h2>Write one node. Update the grid. Repeat.</h2>
+    <p class="lead">Every step starts from the occupancy created by all earlier steps.</p>
+    <div class="steps process-steps">
+      <article class="step">
+        <div class="step-number">1</div>
+        <h3>Read occupancy</h3>
+        <p>Which horizontal and vertical lines are already owned?</p>
+        <div class="mini">existing graph</div>
+      </article>
+      <div class="step-arrow">→</div>
+      <article class="step">
+        <div class="step-number">2</div>
+        <h3>Apply rule set</h3>
+        <p>Mark which remaining free positions are valid.</p>
+        <div class="mini">valid candidates</div>
+      </article>
+      <div class="step-arrow">→</div>
+      <article class="step">
+        <div class="step-number">3</div>
+        <h3>Write one node</h3>
+        <p>The first valid candidate found is written immediately.</p>
+        <div class="mini">then repeat</div>
+      </article>
+    </div>
+    <p class="off-claim">The renderer draws the selected position. It does not silently choose another one.</p>
+    <div class="footer"><span>Sequential writing</span><span>Swipe →</span></div>
+  </section>
+
+  <section class="slide" data-slide="4" aria-label="Slide 4: nodes project to the west, south and east axes">
+    <div class="topline">
+      <div class="brand"><span class="brand-mark"></span>OpenGraph Lite Viewer</div>
+      <div class="slide-number">04 / 07</div>
+    </div>
+    <h2>Nodes project to three axes.</h2>
+    <p class="lead">WEST · SOUTH · EAST</p>
+    <div class="diagram-card projection-stage">
+      <svg viewBox="0 0 880 430" role="img" aria-label="Three placed nodes project respectively to the west, south and east axes">
+        <g stroke="#d7e0eb" stroke-width="2">
+          <path d="M200 50V340M320 50V340M440 50V340M560 50V340M680 50V340"/>
+          <path d="M200 50H680M200 145H680M200 240H680M200 340H680"/>
+        </g>
+        <line x1="125" y1="55" x2="125" y2="340" stroke="#2f67ff" stroke-width="5" stroke-dasharray="10 8"/>
+        <line x1="755" y1="55" x2="755" y2="340" stroke="#1f9d68" stroke-width="5" stroke-dasharray="10 8"/>
+        <line x1="200" y1="390" x2="680" y2="390" stroke="#8256d9" stroke-width="5" stroke-dasharray="10 8"/>
+        <g class="projection-axis-label">
+          <text x="125" y="35" fill="#2f67ff" text-anchor="middle">WEST</text>
+          <text x="755" y="35" fill="#1f9d68" text-anchor="middle">EAST</text>
+          <text x="440" y="424" fill="#8256d9" text-anchor="middle">SOUTH</text>
+        </g>
+        <g data-ogn-node-set="carousel-slide-4" fill="#fff" stroke="#8193a8" stroke-width="5">
+          <circle cx="320" cy="145" r="34"/><circle cx="480" cy="240" r="34"/><circle cx="680" cy="340" r="34"/>
+        </g>
+        <g fill="#102038" font-size="24" font-weight="900" text-anchor="middle">
+          <text x="320" y="153">A</text><text x="480" y="248">B</text><text x="680" y="348">C</text>
+        </g>
+        <g fill="none" stroke-width="4">
+          <path d="M286 145H125" stroke="#2f67ff"/>
+          <path d="M480 274V390" stroke="#8256d9"/>
+          <path d="M714 340H755" stroke="#1f9d68"/>
+        </g>
+        <g>
+          <circle cx="125" cy="145" r="11" fill="#2f67ff"/>
+          <circle cx="480" cy="390" r="11" fill="#8256d9"/>
+          <circle cx="755" cy="340" r="11" fill="#1f9d68"/>
+        </g>
+      </svg>
+    </div>
+    <p class="off-claim">Each node stays on its grid position. Its projection appears on the selected axis.</p>
+    <div class="footer"><span>2 · OGN Projection</span><span>Swipe →</span></div>
+  </section>
+
+  <section class="slide" data-slide="5" aria-label="Slide 5: direct placement example Greedy Grow">
+    <div class="topline">
+      <div class="brand"><span class="brand-mark"></span>OpenGraph Lite Viewer</div>
+      <div class="slide-number">05 / 07</div>
+    </div>
+    <h2>Direct placement · Greedy Grow</h2>
+    <p class="lead">The first twelve dots of the accepted compact four-arm run.</p>
+    <div class="greedy-derived-card" data-greedy-engine="greedy-grow-engine.js">
+      <div class="greedy-derived-plot">
+        <svg id="greedyGrowDerivedSvg" viewBox="0 0 610 410" role="img" aria-label="First twelve Greedy Grow dots, derived from the accepted compact four-arm engine order"></svg>
+      </div>
+      <div class="greedy-derived-facts">
+        <article><strong>Start · centre</strong><span>Dot 0 owns the central row and column.</span></article>
+        <article><strong>Dots · 0–11</strong><span>The numbered path is the actual engine order.</span></article>
+        <article><strong>Runs · 12 · 31 · 96</strong><span>All preserved demos follow this order.</span></article>
+      </div>
+    </div>
+    <a class="example-github" href="https://github.com/kruin/graphlite" rel="noreferrer">GitHub · kruin/graphlite · Greedy Grow</a>
+    <div class="footer"><span>Direct example · Greedy Grow</span><span>Swipe →</span></div>
+  </section>
+
+  <section class="slide" data-slide="6" aria-label="Slide 6: calculated placement example Language Tree HOND BIJT MAN">
+    <div class="topline">
+      <div class="brand"><span class="brand-mark"></span>OpenGraph Lite Viewer</div>
+      <div class="slide-number">06 / 07</div>
+    </div>
+    <h2>Calculated placement · Language Tree</h2>
+    <p class="lead">HOND BIJT MAN · final stage</p>
+    <div class="language-example-card">
+      <svg viewBox="0 0 900 500" role="img" aria-label="Final HOND BIJT MAN Language Tree with HOND BIJT MAN moved onto the west LEX axis">
+        <g stroke="#e1e8f1" stroke-width="1.5">
+          <path d="M210 45V470M310 45V470M410 45V470M510 45V470M610 45V470M710 45V470M810 45V470"/>
+          <path d="M210 70H860M210 150H860M210 230H860M210 310H860M210 390H860M210 470H860"/>
+        </g>
+        <line class="language-lex-axis" x1="120" y1="65" x2="120" y2="445"/>
+        <text x="120" y="38" fill="#2f67ff" font-size="18" font-weight="950" text-anchor="middle" letter-spacing="1.5">LEX · WEST</text>
+
+        <g class="language-tree-edge">
+          <path d="M560 90L410 160M560 90L700 190"/>
+          <path d="M410 160L350 280"/>
+          <path d="M700 190L610 300M700 190L790 320"/>
+          <path d="M610 300L550 410M790 320L830 450"/>
+        </g>
+
+        <g data-ogn-node-set="carousel-slide-6-language-tree">
+          <circle class="language-tree-node" cx="560" cy="90" r="29"/>
+          <circle class="language-tree-node" cx="410" cy="160" r="29"/>
+          <circle class="language-tree-node" cx="350" cy="280" r="31"/>
+          <circle class="language-tree-node" cx="700" cy="190" r="29"/>
+          <circle class="language-tree-node" cx="610" cy="300" r="29"/>
+          <circle class="language-tree-node" cx="550" cy="410" r="31"/>
+          <circle class="language-tree-node" cx="790" cy="320" r="29"/>
+          <circle class="language-tree-node" cx="830" cy="450" r="31"/>
+        </g>
+        <g class="language-tree-label">
+          <text x="560" y="96">S</text><text x="410" y="166">NP</text><text x="350" y="285">HOND</text>
+          <text x="700" y="196">VP</text><text x="610" y="306">NP</text><text x="550" y="415">MAN</text>
+          <text x="790" y="326">V</text><text x="830" y="455">BIJT</text>
+        </g>
+
+        <g>
+          <rect class="language-lex-slot" x="42" y="112" width="156" height="52" rx="15"/>
+          <rect class="language-lex-slot" x="42" y="202" width="156" height="52" rx="15"/>
+          <rect class="language-lex-slot" x="42" y="292" width="156" height="52" rx="15"/>
+          <text class="language-lex-word" x="120" y="145">1 · HOND</text>
+          <text class="language-lex-word" x="120" y="235">2 · BIJT</text>
+          <text class="language-lex-word" x="120" y="325">3 · MAN</text>
+        </g>
+
+        <g class="language-lex-move">
+          <path d="M319 280C270 280 255 138 198 138"/>
+          <path d="M799 450C690 450 300 228 198 228"/>
+          <path d="M519 410C405 410 310 318 198 318"/>
+        </g>
+        <g class="language-trace">
+          <text x="250" y="267">t[HOND]</text>
+          <text x="677" y="442">t[BIJT]</text>
+          <text x="430" y="400">t[MAN]</text>
+        </g>
+      </svg>
+      <a class="example-github" href="https://github.com/kruin/graphlite" rel="noreferrer">GitHub · kruin/graphlite · Language Tree</a>
+    </div>
+    <div class="footer"><span>Calculated example · Language Tree</span><span>Swipe →</span></div>
+  </section>
+
+  <section class="slide slide-dark" data-slide="7" aria-label="Slide 7: OGN hierarchy and feedback">
+    <div class="topline">
+      <div class="brand"><span class="brand-mark"></span>OpenGraph Lite Viewer</div>
+      <div class="slide-number">07 / 07</div>
+    </div>
+    <h2>Core first. Examples follow.</h2>
+    <p class="lead">Nodes, three projection axes, then two concrete placement examples.</p>
+    <div class="question-grid">
+      <div class="question"><b>01 · core</b>Every node owns one horizontal and vertical grid line.</div>
+      <div class="question"><b>02 · projection</b>Placed nodes project to WEST, SOUTH or EAST.</div>
+      <div class="question"><b>03 · direct example</b>Greedy Grow.</div>
+      <div class="question"><b>04 · calculated example</b>Language Tree · HOND BIJT MAN.</div>
+    </div>
+    <div class="cta">
+      <strong>kruin.github.io/graphlite/</strong>
+      <span>Code: github.com/kruin/graphlite</span>
+    </div>
+    <div class="footer"><span>OpenGraph Lite Viewer · v2.0.0-rc.45</span><span>Feedback welcome</span></div>
+  </section>
+</main>
+
+<script src="../greedy-grow-engine.js"></script>
+<script>
+  (() => {
+    const engine = globalThis.OGNGreedyGrow;
+    const svg = document.getElementById('greedyGrowDerivedSvg');
+    if (!engine || !svg) throw new Error('Accepted Greedy Grow engine is unavailable.');
+
+    const state = engine.createState({ strategy: 'compact-four-arm', targetCount: 12 });
+    while (engine.placeNext(state)) {
+      // The public slide uses the exact same one-step write function as the lab.
+    }
+    if (!engine.validate(state.points) || state.points.length !== 12) {
+      throw new Error('Accepted Greedy Grow derivation failed its grid-line invariant.');
+    }
+
+    const ns = 'http://www.w3.org/2000/svg';
+    const add = (name, attributes, parent = svg) => {
+      const element = document.createElementNS(ns, name);
+      Object.entries(attributes).forEach(([key, value]) => element.setAttribute(key, String(value)));
+      parent.appendChild(element);
+      return element;
+    };
+    const cell = 29;
+    const originX = 305;
+    const originY = 205;
+    const min = -7;
+    const max = 7;
+    const grid = add('g', { class: 'greedy-derived-grid' });
+    for (let value = min; value <= max; value += 1) {
+      const x = originX + value * cell;
+      const y = originY + value * cell;
+      add('line', { x1: x, y1: 2, x2: x, y2: 408, class: value === 0 ? 'greedy-derived-axis' : '' }, grid);
+      add('line', { x1: 102, y1: y, x2: 508, y2: y, class: value === 0 ? 'greedy-derived-axis' : '' }, grid);
+    }
+    const pathData = state.points.map((point, index) => {
+      const x = originX + point.x * cell;
+      const y = originY + point.y * cell;
+      return `${index ? 'L' : 'M'} ${x} ${y}`;
+    }).join(' ');
+    add('path', { d: pathData, class: 'greedy-derived-path' });
+    const nodes = add('g', { 'data-ogn-derived-node-set': 'carousel-slide-5-greedy-grow' });
+    state.points.forEach((point, index) => {
+      const x = originX + point.x * cell;
+      const y = originY + point.y * cell;
+      const group = add('g', {
+        class: `greedy-derived-node${index === state.points.length - 1 ? ' is-last' : ''}`,
+        transform: `translate(${x} ${y})`,
+        'data-grid-x': point.x,
+        'data-grid-y': point.y,
+        'data-step': point.index
+      }, nodes);
+      add('circle', { cx: 0, cy: 0, r: 13 }, group);
+      const label = add('text', { x: 0, y: 4 }, group);
+      label.textContent = String(point.index);
+    });
+    document.documentElement.dataset.greedyDerived = 'true';
+
+    const requested = Number(new URLSearchParams(location.search).get('slide'));
+    if (!Number.isInteger(requested) || requested < 1 || requested > 7) return;
+    document.body.classList.add('export');
+    const slide = document.querySelector(`.slide[data-slide="${requested}"]`);
+    if (slide) slide.classList.add('is-export');
+  })();
+</script>
+</body>
+</html>

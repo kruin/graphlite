@@ -31,8 +31,12 @@ required_files = [
     "LEXICON_USAGE_PROFILE_TEST.md", "SOURCE_CHANGES_V2.0.0-rc.38.md",
     "SOURCE_CHANGES_V2.0.0-rc.39.md", "SOURCE_CHANGES_V2.0.0-rc.40.md",
     "SOURCE_CHANGES_V2.0.0-rc.41.md", "SOURCE_CHANGES_V2.0.0-rc.42.md",
-    "SOURCE_CHANGES_V2.0.0-rc.43.md", "PUBLICATIE_README.md",
-    "RECURSIVE_LAYOUT_AND_APPLICATION_CONTRACT.md",
+    "SOURCE_CHANGES_V2.0.0-rc.43.md", "SOURCE_CHANGES_V2.0.0-rc.44.md",
+    "SOURCE_CHANGES_V2.0.0-rc.45.md",
+    "PUBLICATIE_README.md", "RC44_PUBLICATION_CAROUSEL_TEST.md",
+    "RC45_OGN_CORE_EXPLANATION_TEST.md", "GREEDY_GROW_RECONSTRUCTION.md",
+    "greedy-grow.html", "greedy-grow.css", "greedy-grow-engine.js", "greedy-grow.js",
+    "RECURSIVE_LAYOUT_AND_APPLICATION_CONTRACT.md", "OGN_CORE_PLACEMENT_ARCHITECTURE.md",
     "RC35_README_LAYOUT_TEST.md", "RC36_BASE_PROFILE_TEST.md", "RC37_PRECONFIG_TEST.md",
     "RC38_MOBILE_LAYOUT_TEST.md", "RC39_VIEWPORT_SWITCH_TEST.md",
     "RC40_LANDSCAPE_COMPOSITION_TEST.md", "RC41_RECURSIVE_LAYOUT_TEST.md",
@@ -40,12 +44,18 @@ required_files = [
     "RC43_CONFIG_README_PROJECT_TEST.md",
     "OPN_STORAGE_FORMAT.md", "PRECONFIG_ARCHITECTURE.md", "projectie-master-spec.md",
     "config/default-config.json", "config/user-config.json", "config/README.md",
-    "docs/ADVERB_ORIGIN_MECHANISMS.md", "docs/OGN_BASE_PROFILE.md", "docs/PRECONFIG_ARCHITECTURE.md",
+    "docs/ADVERB_ORIGIN_MECHANISMS.md", "docs/OGN_BASE_PROFILE.md",
+    "docs/GREEDY_GROW_RECONSTRUCTION.md",
+    "docs/OGN_CORE_PLACEMENT_ARCHITECTURE.md", "docs/PRECONFIG_ARCHITECTURE.md",
     "docs/LAYOUT_SPEC.md", "docs/RECURSIVE_LAYOUT_AND_APPLICATION_CONTRACT.md", "docs/RENDER_EXPLANATION.md",
     "docs/RENDER_EXPLANATION_EN.md", "docs/TALIGE_UITBREIDINGEN.md", "docs/SOCIAL_EXPORT.md",
     "images/readme/traditional-tree-problem-too-wide.png", "images/readme/traditional-tree-problem-unreadable.png",
     "images/readme/traditional-tree-flexible-wide.png", "images/readme/traditional-tree-flexible-narrow.png", "manifest.webmanifest",
-    "maak-volledige-zip.bat", "start_local_viewer.bat", "start_local_viewer.py",
+    "images/readme/ogn-free-grid.svg", "images/readme/ogn-sequential-write.svg",
+    "images/readme/ogn-placement-strategies.svg", "images/readme/ogn-three-layers.svg",
+    "maak-publicatie-carrousel.bat", "installeer-carrousel-tools.bat", "maak-volledige-zip.bat",
+    "package.json", "package-lock.json",
+    "start_local_viewer.bat", "start_local_viewer.py",
     "check_release.bat", "publish_checked.bat",
     "tools/check_release.py", "tools/check_local_start.py", "tools/check_config_tabs_and_menus.py",
     "tools/check_examples_roundtrip.py", "tools/check_log_slot_distance.py",
@@ -58,9 +68,22 @@ required_files = [
     "tools/check_readme_carousel_editor.py", "tools/check_readme_carousel_editor_runtime.js",
     "tools/check_readme_item_editor.py", "tools/check_readme_item_editor_runtime.js",
     "tools/check_project_config_layers.py", "tools/check_project_config_layers_runtime.js",
+    "tools/check_greedy_grow_reconstruction.js",
+    "tools/check_node_grid_invariant.py",
     "tools/check_mobile_layout_rc38.py", "tools/check_mobile_layout_runtime.js",
     "tools/check_viewport_switch_runtime.js", "tools/check_landscape_composition_runtime.js",
     "tools/check_recursive_box_fit_runtime.js",
+    "tools/check_publication_carousel.py", "tools/check_publication_carousel_setup.py",
+    "tools/check_publication_carousel_tooling.js", "tools/export_publication_carousel.js",
+    "tools/build_publication_carousel_zip.py",
+    "publicatie-carrousel/index.html", "publicatie-carrousel/derived-manifest.json",
+    "publicatie-carrousel/slides/01-every-node-owns-grid-lines.png",
+    "publicatie-carrousel/slides/02-free-places-first.png",
+    "publicatie-carrousel/slides/03-one-node-at-a-time.png",
+    "publicatie-carrousel/slides/04-node-projection-west-south-east.png",
+    "publicatie-carrousel/slides/05-direct-placement-greedy-grow.png",
+    "publicatie-carrousel/slides/06-calculated-placement-language-tree.png",
+    "publicatie-carrousel/slides/07-core-first-examples-follow.png",
     "local-mobile-test.js",
 ]
 for rel in required_files:
@@ -84,8 +107,8 @@ server = read("server_nocache.py")
 publication_readme = read("PUBLICATIE_README.md")
 
 # Version identity and the paired entry pages.
-if not VERSION or VERSION != "v2.0.0-rc.43":
-    errors.append(f"VERSION.txt moet v2.0.0-rc.43 bevatten, gevonden: {VERSION!r}")
+if not VERSION or VERSION != "v2.0.0-rc.45":
+    errors.append(f"VERSION.txt moet v2.0.0-rc.45 bevatten, gevonden: {VERSION!r}")
 for rel in ["index.html", "viewer.html", "viewer.js", "reset-cache.html", "sw.js"]:
     if VERSION not in read(rel):
         errors.append(f"versie ontbreekt in {rel}")
@@ -164,6 +187,19 @@ require(index, 'id="helpPanelResizer"', "README-resizer in HTML")
 for marker in ['data-help-topic="opengraph"', 'data-help-topic="jan-todo"', 'data-help-topic="adverb-origins"']:
     require(index, marker, f"LEESMIJ-onderwerp {marker}")
 require(js, "stage.scrollTop = 0;", "README-item start bovenaan")
+for marker, label in [
+    ('href="greedy-grow.html"', "ingebouwde Greedy Grow-link"),
+    ("Greedy Grow · geaccepteerde reconstructie", "Nederlandse Greedy-status"),
+    ("Greedy Grow · accepted reconstruction", "Engelse Greedy-status"),
+]:
+    require(index, marker, label)
+for rel, marker in [
+    ("greedy-grow.html", "+1 · plaats direct"),
+    ("greedy-grow-engine.js", "future_plan_stored: false"),
+    ("GREEDY_GROW_RECONSTRUCTION.md", "samples/no_limit_96_demo.json"),
+]:
+    require(read(rel), marker, f"Greedy Grow-reconstructie {rel}")
+require(read("check_release.bat"), "check_greedy_grow_reconstruction.js", "Greedy-regressie in releaseflow")
 
 # Local portrait/landscape simulation must survive the later MAX rules and use
 # the version of the loaded viewer instead of a historical hardcoded value.
@@ -192,29 +228,50 @@ for marker, label in [
     require(css, marker, label)
 
 
-# First README item: two problem trees followed by two graphically motivated apparent solutions.
+# First README item: OGN Core before every specialized application.
+intro_match = re.search(
+    r'<article class="help-topic-panel readme-intro-panel is-active" '
+    r'data-help-topic="readme">(.*?)</article>',
+    index,
+    flags=re.S,
+)
+intro = intro_match.group(1) if intro_match else ""
+if not intro_match:
+    errors.append("actief README-startitem ontbreekt")
 for marker, label in [
-    ('traditional-tree-problem-too-wide.png', 'te brede probleemboom'),
-    ('traditional-tree-problem-unreadable.png', 'onleesbare probleemboom'),
-    ('traditional-tree-flexible-wide.png', 'brede grafische schijnoplossing'),
-    ('traditional-tree-flexible-narrow.png', 'smalle grafische schijnoplossing'),
-    ('data-readme-shape="wide"', 'brede carouselvorm'),
-    ('data-readme-shape="narrow"', 'smalle carouselvorm'),
-    ('MISSCHIEN WEL', 'lager geplaatst voorbeeldlabel'),
+    ("Open Graph Notation begint met vrije plaatsing", "Nederlandse OGN-kernstart"),
+    ("Open Graph Notation starts with free placement", "Engelse OGN-kernstart"),
+    ("ogn-free-grid.svg", "beeld vrije gridplaatsen"),
+    ("ogn-sequential-write.svg", "beeld sequentieel schrijven"),
+    ("ogn-placement-strategies.svg", "beeld zoekvolgorden"),
+    ("ogn-three-layers.svg", "beeld drie OGN-lagen"),
+    ("Every node owns its horizontal and vertical grid line", "gridbezit"),
+    ("zoekstrategie", "Nederlandse zoekstrategie in de OGN-kern"),
+    ("search strategy", "Engelse zoekstrategie in de OGN-kern"),
+    ("1 · OGN Free Placement", "vrije plaatsing als eerste laag"),
+    ("2 · OGN Projection", "projectie als tweede laag"),
+    ("3 · OGN Calculated Placement", "berekende plaatsing als derde laag"),
 ]:
-    require(index, marker, label)
-if index.count('data-readme-slide=""') != 4:
-    errors.append('eerste README-item moet twee probleembomen en twee grafische schijnoplossingen bevatten')
+    require(intro, marker, label)
+if "traditional-tree-" in intro:
+    errors.append("eerste README-item mag niet met traditionele taalbomen beginnen")
+for forbidden in ["Two-Pass Language Tree", "LEX", "SYNT", "LOG", "Random Placement"]:
+    if re.search(rf"\b{re.escape(forbidden)}\b", intro, flags=re.I):
+        errors.append(f"eerste README-item loopt vooruit op niet-geïntroduceerde context: {forbidden!r}")
+if intro.count('data-readme-slide=""') != 4:
+    errors.append("eerste README-item moet exact vier OGN-kernbeelden bevatten")
 if (ROOT / 'images/readme/traditional-sentence-tree-examples.svg').exists():
     errors.append('oude afbeelding met drie traditionele bomen bestaat nog')
 require(js, "carousel.dataset.activeShape", 'vormafhankelijke README-carousel')
-require(index, '<h3>Probleembomen</h3>', 'titel Probleembomen')
-require(index, 'grafisch gemotiveerde schijnoplossing', 'schijnoplossingstekst')
-require(index, 'syntactische structuur en lexicale woordvolgorde', 'eigenlijke probleemformulering')
-require(index, 'Die aanpak volgt in het volgende item.', 'verwijzing naar OGN-item')
 
-# OGN problem, JaN contract and placement-plan-first architecture.
+# OGN Core, JaN contract and placement-plan-first architecture.
 ogn_markers = [
+    "current occupancy",
+    "free positions",
+    "search strategy",
+    "OGN Free Placement",
+    "OGN Projection",
+    "OGN Calculated Placement",
     "central branching under S = structural relations",
     "LEX projection           = linear sentence word order",
     "The same central structure can therefore support different surface strings",
@@ -230,6 +287,79 @@ for rel in ["PROJECT_STATE_CURRENT.md", "LAYOUT_RULES.md", "LINGUISTIC_ACTIONS.m
     for marker in ["S:np-VP", "LEX", "plaatsingsplan"]:
         if marker.lower() not in text.lower():
             errors.append(f"{rel} mist actuele OGN/JaN-contractterm {marker!r}")
+for rel in [
+    "OGN_CORE_PLACEMENT_ARCHITECTURE.md",
+    "docs/OGN_CORE_PLACEMENT_ARCHITECTURE.md",
+]:
+    text = read(rel)
+    for marker in [
+        "OGN Free Placement",
+        "OGN Projection",
+        "OGN Calculated Placement",
+        "horizontale en verticale gridlijn",
+        "Greedy Grow",
+        "zoekstrategie",
+        "centrale gridpunt",
+        "omtrekkende beweging",
+        "tie-breaks",
+        "Two-Pass Language Tree",
+        "Greedy Grow hoort hier niet onder",
+        "A ≠ B  ⇒  x(A) ≠ x(B)  én  y(A) ≠ y(B)",
+        "twee verschillende knopen mogen nooit dezelfde verticale",
+        "fallbackknoop",
+        "gridlijnhergebruik",
+    ]:
+        require(text, marker, f"{rel} OGN-kerncontract")
+for rel in [
+    "README.md", "LEESMIJ.md", "docs/README.md", "docs/LEESMIJ.md",
+    "LAYOUT_RULES.md", "docs/LAYOUT_SPEC.md",
+    "RECURSIVE_LAYOUT_AND_APPLICATION_CONTRACT.md",
+    "docs/RECURSIVE_LAYOUT_AND_APPLICATION_CONTRACT.md",
+    "PUBLICATIE_README.md", "SOURCE_BASE.md",
+]:
+    text = read(rel)
+    if "A ≠ B" not in text or "x(A) ≠ x(B)" not in text or "y(A) ≠ y(B)" not in text:
+        errors.append(f"{rel} mist de leesbare harde A-ongelijk-B-invariant")
+for rel in ["index.html", "viewer.html"]:
+    text = read(rel)
+    for marker in ["Harde regel — A ≠ B", "Hard rule — A ≠ B", "geen fallbackknoop", "no fallback node"]:
+        require(text, marker, f"{rel} ingebedde OGN-invariant")
+require(
+    read("images/readme/ogn-free-grid.svg"),
+    "Three nodes occupy separate horizontal and vertical grid lines.",
+    "README-gridvoorbeeld met afzonderlijke lijnen",
+)
+for marker, label in [
+    ("function nodeGridLineConflicts(layout)", "centrale OGN-gridconflictdetectie"),
+    ("function assertUniqueNodeGridLines(layout", "harde OGN-gridinvariant"),
+    ("A != B vereist x(A) != x(B) en y(A) != y(B)", "leesbare A-ongelijk-B-foutmelding"),
+    ("assertUniqueNodeGridLines(layout, 'renderlaag')", "renderlaag faalt gesloten"),
+    ("assertUniqueNodeGridLines(layout, `OPN-export ${view}`)", "OPN-exportvalidatie"),
+]:
+    require(js, marker, label)
+require(read("check_release.bat"), "check_node_grid_invariant.py", "statische knoopgridcontrole in releaseflow")
+deferred_placement_terms = [
+    "inter" + "section",
+    "kruis" + "punt",
+    "kruis" + "ing",
+    "dia" + "gonal",
+    "diag" + "onaal",
+]
+for path in ROOT.rglob("*"):
+    if (
+        not path.is_file()
+        or ".git" in path.parts
+        or "__pycache__" in path.parts
+        or "node_modules" in path.parts
+    ):
+        continue
+    if path.suffix.lower() not in {".css", ".html", ".js", ".json", ".md", ".py", ".svg", ".txt"}:
+        continue
+    rel = path.relative_to(ROOT).as_posix()
+    text = path.read_text(encoding="utf-8", errors="ignore")
+    for term in deferred_placement_terms:
+        if re.search(rf"\b{re.escape(term)}", text, flags=re.I):
+            errors.append(f"{rel} loopt vooruit op een uitgesteld plaatsingsonderwerp")
 
 # Config overview, explanatory help and unchanged save semantics.
 for marker, label in [
@@ -319,16 +449,47 @@ for marker, label in [
 ]:
     require(read("config/README.md"), marker, label)
 for marker, label in [
+    ("## Direct plaatsbare carrousel", "direct plaatsbare publicatiecarrousel"),
+    ("## Plaatsen op Reddit", "Reddit-gallerywerkwijze"),
+    ("## Alt-teksten per slide", "alt-tekst per publicatieslide"),
+    ("1080 × 1080", "publicatieslide-afmetingen"),
+    ("publicatie-carrousel/index.html", "bewerkbare publicatiebron"),
+    ("publicatie-carrousel/derived-manifest.json", "afleidingsmanifest"),
+    ("maak-publicatie-carrousel.bat", "volledige carrouselafleiding"),
+    ("installeer-carrousel-tools.bat", "eenmalige Windows-installatie"),
+    ("Node.js 18 of hoger", "ondersteunde lokale Node-versie"),
+    ("Alleen publiceren", "werkwijze zonder lokale herbouw"),
+    ("maak-volledige-zip.bat", "carrousel terug in volledige projectzip"),
     ("## LinkedIn · Nederlands", "LinkedIn-publicatietekst"),
     ("## Reddit", "Reddit-publicatietekst"),
     ("## Facebook", "Facebook-publicatietekst"),
     ("## YouTube", "YouTube-publicatietekst"),
     ("## Bluesky / Mastodon / X", "korte social-publicatietekst"),
     ("## GitHub-releasebeschrijving", "GitHub-releasebeschrijving"),
-    ("[LIVE_DEMO_URL]", "in te vullen live-URL"),
-    ("v2.0.0-rc.43", "versiegebonden publicatietekst"),
+    ("https://kruin.github.io/graphlite/", "ingevulde live-URL"),
+    ("https://github.com/kruin/graphlite", "GitHub bij beide voorbeelden"),
+    ("v2.0.0-rc.45", "versiegebonden publicatietekst"),
+    ("directe plaatsing", "directe OGN-plaatsing in platformteksten"),
+    ("Greedy Grow", "Greedy Grow-publicatieuitleg"),
+    ("geaccepteerde reconstructie", "geaccepteerde Greedy-specificatie"),
+    ("12/31/96-demo's", "exacte bewaarde Greedy-demo's"),
+    ("Slide 5", "Greedy-carrouselafleiding op slide 5"),
+    ("zoekstrategie", "zoekstrategie in platformteksten"),
+    ("geen bewezen wereldwijd optimum", "begrensde Greedy-optimaliteitsclaim"),
+    ("Direct — Greedy Grow", "direct voorbeeld zonder soortuitleg"),
+    ("Calculated — Language Tree", "berekend Language Tree-voorbeeld"),
+    ("HOND BIJT MAN", "voorbeeldzin op berekende slide"),
+    ("LEX-as", "verplaatste woorden op LEX-as"),
 ]:
     require(publication_readme, marker, label)
+for marker, label in [
+    ('href="publicatie-carrousel/index.html"', "ingebouwde link naar publicatiecarrousel"),
+    ("zeven kant-en-klare vierkante PNG-slides", "ingebouwde Nederlandse publicatie-uitleg"),
+    ("seven ready-to-upload square PNG slides", "ingebouwde Engelse publicatie-uitleg"),
+    ("rc.45 is op 2 augustus 2026 handmatig goedgekeurd", "actueel Nederlands akkoord"),
+    ("rc.45 was manually approved on 2 August 2026", "actueel Engels akkoord"),
+]:
+    require(index, marker, label)
 
 # rc.42: recursive intrinsic subtree measurement and complete handheld fit.
 for marker, label in [
@@ -389,23 +550,43 @@ for rel, markers in {
         "PUBLICATIE_README.md",
         "browser-Config als laatste laag",
     ],
+    "RC44_PUBLICATION_CAROUSEL_TEST.md": [
+        "Akkoord rc.44: ja / nee",
+        "1080 × 1080",
+        "01 → 07",
+        "Reddit-proefplaatsing",
+        "PUBLICATION CAROUSEL CHECK: OK",
+    ],
+    "RC45_OGN_CORE_EXPLANATION_TEST.md": [
+        "Akkoord rc.45: ja",
+        "Datum akkoord: 2026-08-02",
+        "vrije gridposities",
+        "Greedy Grow",
+        "zoekstrategie",
+        "greedy-grow-engine.js",
+        "12/31/96-demo's",
+        "wereldwijd optimum",
+        "derived-manifest.json",
+        "geen carrouselzip is rechtstreeks aangepast",
+        "RELEASE CHECK: OK",
+    ],
 }.items():
     for marker in markers:
         require(read(rel), marker, f"{rel} handmatige controle")
-candidate_markers = {
-    "README.md": "rc.43 is a release candidate awaiting manual visual",
-    "docs/README.md": "rc.43 is a release candidate awaiting manual visual",
-    "LEESMIJ.md": "rc.43 is een releasekandidaat die nog handmatig visueel",
-    "docs/LEESMIJ.md": "rc.43 is een releasekandidaat die nog handmatig visueel",
-    "PROJECT_STATE_CURRENT.md": "rc.43 is een nieuwe releasekandidaat",
-    "docs/PROJECT_STATE_CURRENT.md": "rc.43 is een nieuwe releasekandidaat",
-    "HANDOVER_FOR_COLLABORATORS.md": "rc.43 wacht op handmatige goedkeuring",
-    "docs/HANDOVER_FOR_COLLABORATORS.md": "rc.43 wacht op handmatige goedkeuring",
-    "docs/RELEASE_NOTES.md": "nieuwe release candidate voor handmatige controle",
-    "docs/docs-home.html": "rc.43 is een nieuwe testkandidaat",
+approval_markers = {
+    "README.md": "rc.45 was manually approved on 2 August 2026",
+    "docs/README.md": "rc.45 was manually approved on 2 August 2026",
+    "LEESMIJ.md": "rc.45 is op 2 augustus 2026 handmatig goedgekeurd",
+    "docs/LEESMIJ.md": "rc.45 is op 2 augustus 2026 handmatig goedgekeurd",
+    "PROJECT_STATE_CURRENT.md": "rc.45 is op 2 augustus 2026 handmatig goedgekeurd",
+    "docs/PROJECT_STATE_CURRENT.md": "rc.45 is op 2 augustus 2026 handmatig goedgekeurd",
+    "HANDOVER_FOR_COLLABORATORS.md": "rc.45 is op 2 augustus 2026 handmatig goedgekeurd",
+    "docs/HANDOVER_FOR_COLLABORATORS.md": "rc.45 is op 2 augustus 2026 handmatig goedgekeurd",
+    "docs/RELEASE_NOTES.md": "## v2.0.0-rc.45 — OGN-kern vóór toepassingen",
+    "docs/docs-home.html": "rc.45 is op 2 augustus 2026 handmatig goedgekeurd",
 }
-for rel, marker in candidate_markers.items():
-    require(read(rel), marker, f"{rel} voorlopige rc.43-status")
+for rel, marker in approval_markers.items():
+    require(read(rel), marker, f"{rel} vastgelegd rc.45-akkoord")
 for rel in ["DOCUMENTATION_RULES.md", "docs/DOCUMENTATION_RULES.md"]:
     text = read(rel)
     for marker in [
@@ -415,6 +596,11 @@ for rel in ["DOCUMENTATION_RULES.md", "docs/DOCUMENTATION_RULES.md"]:
         "Vervolgvoorstel",
         "code-defaults → default-config → user-config → browser-Config",
         "PUBLICATIE_README.md",
+        "exact zeven slides van 1080 × 1080 pixels",
+        "platform- en communityinstellingen blijven bepalend",
+        "OGN Free Placement",
+        "OGN Projection",
+        "OGN Calculated Placement",
     ]:
         require(text, marker, f"{rel} verduidelijkingsregel")
 
@@ -469,11 +655,13 @@ if (ROOT / "startlocalviewer.bat").exists():
 
 for marker, label in [
     ('if not exist "VERSION.txt" goto :not_extracted', "controle op volledig uitpakken"),
+    ('if not exist "SOURCE_BUILD.txt" goto :not_extracted', "controle op actuele bronstand"),
     ('py.exe -3 start_local_viewer.py', "Python-launcher via py.exe"),
     ('python.exe start_local_viewer.py', "Python-launcher via python.exe"),
     ("Pak de gedownloade ZIP eerst volledig uit", "zichtbare uitpakinstructie"),
 ]:
     require(start_bat, marker, label)
+require(publish_bat, "SOURCE_BUILD.txt", "publicatiecontrole op bronstand")
 if "Invoke-WebRequest" in start_bat:
     errors.append("start_local_viewer.bat gebruikt nog de foutgevoelige PowerShell-probe")
 if "for /f" in start_bat.lower():
@@ -481,11 +669,16 @@ if "for /f" in start_bat.lower():
 local_launcher = read("start_local_viewer.py")
 for marker, label in [
     ("from server_nocache import probe_server_state", "gedeelde Python-probe"),
+    ("SOURCE_BUILD_FILE", "unieke lokale bronstand"),
+    ("andere OpenGraph-bron", "diagnose andere bron bij hetzelfde versienummer"),
     ('creationflags"] = getattr(subprocess, "CREATE_NEW_CONSOLE", 0)', "zichtbaar Windows-servervenster"),
     ("/reset-cache.html?", "verplichte reset-cache-URL"),
     ("Sluit het oude venster", "diagnose verkeerde serverversie"),
 ]:
     require(local_launcher, marker, label)
+source_build = read("SOURCE_BUILD.txt").strip()
+if source_build != "v2.0.0-rc.45-carousel-nodes-axes-examples-20260802.1":
+    errors.append(f"onverwachte of lege SOURCE_BUILD.txt: {source_build!r}")
 for stale in ['v4537', 'v2.0.0-rc.24']:
     if stale in start_bat or stale in debug_html:
         errors.append(f"oude lokale startversie staat nog in actieve start/debugbestanden: {stale}")
@@ -538,6 +731,8 @@ for phrase in ["MISSCHIEN WEL", "VAAK", "GEBETEN HEEFT"]:
 
 # JSON and OPN validation.
 for path in list(ROOT.rglob("*.json")) + list(ROOT.rglob("*.opn")):
+    if "node_modules" in path.parts:
+        continue
     try:
         doc = json.loads(path.read_text(encoding="utf-8"))
         if path.suffix.lower() == ".opn":
@@ -551,6 +746,8 @@ for path in list(ROOT.rglob("*.json")) + list(ROOT.rglob("*.opn")):
 # Local HTML links.
 attr = re.compile(r'(?:href|src)=["\']([^"\'#?]+)')
 for path in ROOT.rglob("*.html"):
+    if "node_modules" in path.parts:
+        continue
     for target in attr.findall(path.read_text(encoding="utf-8", errors="ignore")):
         if target.startswith(("http:", "https:", "mailto:", "data:", "javascript:", "/")):
             continue
@@ -578,8 +775,8 @@ def is_generated_release_archive(name: str) -> bool:
 # Browser downloads can add " (1)" before .zip. That local copy must behave
 # exactly like the canonical release archive and never become product source.
 for generated_name in [
-    "OpenGraph_Lite_Viewer_v2.0.0-rc.43_full_source.zip",
-    "OpenGraph_Lite_Viewer_v2.0.0-rc.43_full_source (1).zip",
+    "OpenGraph_Lite_Viewer_v2.0.0-rc.45_full_source.zip",
+    "OpenGraph_Lite_Viewer_v2.0.0-rc.45_full_source (1).zip",
     "graphlite_full_source.zip",
     "graphlite_full_source.tmp.12345.zip",
     "graphlite_full_source.zip.sha256",
@@ -591,7 +788,7 @@ for generated_name in [
 def manifest_file(path: Path) -> bool:
     rel = path.relative_to(ROOT)
     parts = rel.parts
-    if ".git" in parts or "__pycache__" in parts:
+    if ".git" in parts or "__pycache__" in parts or "node_modules" in parts:
         return False
     name = path.name
     lower = name.lower()

@@ -1,11 +1,28 @@
 # SOURCE_BASE
 
-- Release: `v2.0.0-rc.43`
+- Release: `v2.0.0-rc.45`
 - Volledige basis: `OpenGraph_Lite_Viewer_v1.0.16_stable_central_tree_views.zip`
 - Overnamebeleid: alle bestanden uit de bijlage behouden waar technisch mogelijk.
 - Functionele correctie: `Functional` is de tweede centrale view na `Syntax`; `LOG` blijft uitsluitend de zuidas/named projection.
-- Profielcontract: OGN Basis gebruikt alleen S/O/V-majors; ingeschakelde
-  toepassingen kunnen aanvullende plaatsingsdata toevoegen.
+- OGN-kerncontract: iedere knoop is baas op zijn eigen horizontale en verticale
+  gridlijn; hard geldt `A ≠ B ⇒ x(A) ≠ x(B) én y(A) ≠ y(B)`. Twee knopen
+  delen dus nooit een horizontale of verticale lijn. Knopen worden één voor
+  één op vrije plaatsen geschreven; zo'n overtreding heet gridlijnhergebruik
+  en een ongeldige fallback wordt niet getekend.
+- Plaatsingscontract algemeen: een ruleset bepaalt geldige plaatsen en een
+  zoekstrategie bepaalt de kandidaatvolgorde; de eerstgevonden geldige plek
+  wordt bij directe plaatsing meteen geschreven.
+- Geaccepteerde Greedy Grow-reconstructie: centraal startpunt, direct één knoop per stap en
+  geen toekomstig eindbeeld in state. De historische vierarmige volgorde
+  reproduceert de bewaarde 12/31/96-demo's exact. Experimentele zoekvolgorden
+  hebben vastgelegde tie-breaks; de gemeten omtrekkende beweging is geen
+  bewezen wereldwijd optimum. Geaccepteerd op 2 augustus 2026; slide 5 wordt
+  rechtstreeks uit dezelfde engine afgeleid.
+- Laagvolgorde: OGN Free Placement → OGN Projection → OGN Calculated
+  Placement. De Two-Pass Language Tree is één berekende toepassing.
+- Taalprofielcontract: het zichtbare profiel OGN Basis is de basis van de
+  taaltoepassing en gebruikt alleen S/O/V-majors; ingeschakelde toepassingen
+  kunnen aanvullende plaatsingsdata toevoegen.
 - Voorconfigcontract: algemene mogelijkheden gaan vooraf aan toepassingen;
   insertie is afzonderlijk schakelbaar op LEX, SYNT en LOG. Bijwoorden vereist
   LEX + LOG.
