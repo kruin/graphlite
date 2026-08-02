@@ -1,7 +1,7 @@
 # Handmatige controle — lijnbeeld en directe plaatsingsmodi
 
 Source build:
-`v2.0.0-rc.45-grid-style-direct-modes-eol-20260802.2`.
+`v2.0.0-rc.45-direct-config-hard-no-show-20260803.12`.
 
 ## Lijnbeeld
 

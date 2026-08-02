@@ -2,7 +2,7 @@
 
 - Release: `v2.0.0-rc.45`
 - Actuele source build:
-  `v2.0.0-rc.45-grid-style-direct-modes-eol-20260802.2`.
+  `v2.0.0-rc.45-direct-config-hard-no-show-20260803.12`.
 - Volledige basis: `OpenGraph_Lite_Viewer_v1.0.16_stable_central_tree_views.zip`
 - Overnamebeleid: alle bestanden uit de bijlage behouden waar technisch mogelijk.
 - Functionele correctie: `Functional` is de tweede centrale view na `Syntax`; `LOG` blijft uitsluitend de zuidas/named projection.
@@ -23,6 +23,21 @@
 - Interfacehiërarchie: Language Tree is de prominente berekende toepassing;
   Greedy Grow en Random zijn directe OGN-illustraties. Random gebruikt een
   afzonderlijke seedbare engine en wijzigt de Greedy-carrouselbron niet.
+- Random-standaard: kies iedere volgende vrije rij-kolomcombinatie ergens in
+  een vaste rechthoek die van de beschikbare interface wordt afgeleid.
+  Compact, Gebalanceerd, Ruim en het groeiende inhoudsveld blijven bestaande
+  alternatieven en opgeslagen keuzes worden niet geforceerd omgezet.
+- Random-ascontract: uitsluitend een voltooide ronde voegt haar gebruikte
+  rijen als cumulatieve WEST-hits en haar gebruikte kolommen als cumulatieve
+  SOUTH-hits toe. Een herhaalde hit maakt dezelfde spot zwaarder; toekomstige
+  rondes worden niet vooraf berekend of getekend.
+- Random-modelcontract: Uniform v1.0 blijft standaard en ongewijzigd.
+  Onzuiver uniform v0.1 mengt 20% herhaalgewicht uit voltooide eerdere
+  as-hits; ronde 1 is uniform en de unieke rij-/kolomregel blijft hard.
+- Configcontract: Algemeen, Calculated → Language Tree en Direct → Greedy
+  Grow / Random vormen gescheiden contexten met no-show voor irrelevante
+  velden. Ieder zichtbaar veld krijgt uitleg volgens
+  `CONFIG_UI_EXPLANATION_STANDARD.md`.
 - Lijnbeeldcontract: rasterkleur en raster-, projectie- en boxlijnzwaarte zijn
   onafhankelijk instelbaar; LEX, SYNT en LOG hebben afzonderlijke kleuren voor
   overeenkomstige assen, projectielijnen en boxen.

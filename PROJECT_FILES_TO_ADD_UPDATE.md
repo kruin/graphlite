@@ -28,11 +28,13 @@ PRECONFIG_ARCHITECTURE.md
 LAYOUT_RULES.md
 LINGUISTIC_ACTIONS.md
 DOCUMENTATION_RULES.md
+CONFIG_UI_EXPLANATION_STANDARD.md
 HANDOVER_FOR_COLLABORATORS.md
 DEPLOY_GITHUB_PAGES.md
 RECURSIVE_LAYOUT_AND_APPLICATION_CONTRACT.md
 OGN_CORE_PLACEMENT_ARCHITECTURE.md
 LINE_STYLE_AND_PLACEMENT_MODES.md
+DIRECT_PLACEMENT_CONFIG.md
 GREEDY_GROW_RECONSTRUCTION.md
 PUBLICATIE_README.md
 SOURCE_CHANGES_V2.0.0-rc.45.md
@@ -55,6 +57,7 @@ RC43_CONFIG_README_PROJECT_TEST.md
 RC44_PUBLICATION_CAROUSEL_TEST.md
 RC45_OGN_CORE_EXPLANATION_TEST.md
 RC45_LINE_STYLE_DIRECT_MODES_TEST.md
+RC45_DIRECT_PLACEMENT_CONFIG_TEST.md
 greedy-grow.html
 greedy-grow.css
 greedy-grow-engine.js
@@ -91,6 +94,7 @@ tools/check_log_slot_distance.py
 tools/check_greedy_grow_reconstruction.js
 tools/check_random_placement.js
 tools/check_line_style_and_direct_modes.py
+tools/check_direct_placement_config.py
 tools/normalize_text_files.py
 tools/check_text_normalization.py
 tools/check_feature_profiles.py
@@ -112,6 +116,8 @@ tools/check_local_start.py
 docs/OGN_BASE_PROFILE.md
 docs/OGN_CORE_PLACEMENT_ARCHITECTURE.md
 docs/LINE_STYLE_AND_PLACEMENT_MODES.md
+docs/DIRECT_PLACEMENT_CONFIG.md
+docs/CONFIG_UI_EXPLANATION_STANDARD.md
 docs/PRECONFIG_ARCHITECTURE.md
 docs/RECURSIVE_LAYOUT_AND_APPLICATION_CONTRACT.md
 tools/check_lex_horizontal_projection.py

@@ -55,6 +55,18 @@ berekende toepassing en plaatst **Greedy Grow** en **Random** eronder als
 directe OGN-illustraties. Een directe stap schrijft onmiddellijk één knoop op
 een ongebruikte rij én kolom; wisselen verandert de Language-Tree-data niet.
 
+Config is gescheiden in **Algemeen**, **Calculated → Language Tree** en
+**Direct → Greedy Grow / Random**; niet-relevante instellingen zijn no-show.
+Ieder zichtbaar veld heeft een compacte uitleg volgens
+[`CONFIG_UI_EXPLANATION_STANDARD.md`](CONFIG_UI_EXPLANATION_STANDARD.md).
+Uniform v1.0 blijft Random-standaard; Onzuiver uniform v0.1 mengt 20%
+herhaalvoorkeur uit voltooide eerdere as-hits. Seed en snelheid staan los van
+elkaar.
+
+Vanuit een actieve Greedy-Grow- of Random-modus is ook de toepassingsbalk
+no-show. Alleen Terug naar Main, de eigen velden met Uitleg en Config opslaan
+blijven zichtbaar; wisselen begint in Main.
+
 `Config → Beeld → Lijnbeeld` regelt rasterkleur, rasterzwaarte,
 projectielijnzwaarte en boxlijnzwaarte afzonderlijk. LEX, SYNT en LOG hebben
 elk een eigen kleur voor hun assen, projectielijnen en boxen. Zie

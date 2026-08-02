@@ -1,7 +1,7 @@
 # Lijnbeeld en plaatsingsmodi
 
 Status: technisch contract voor source build
-`v2.0.0-rc.45-grid-style-direct-modes-eol-20260802.2`.
+`v2.0.0-rc.45-direct-config-hard-no-show-20260803.12`.
 
 ## Plaatsingshiërarchie in de interface
 
@@ -36,6 +36,10 @@ De historische Greedy-Grow-engine blijft een afzonderlijke, ongewijzigde bron,
 omdat publicatieslide 5 daar aantoonbaar uit is afgeleid. Random gebruikt
 `random-placement-engine.js` en kan de geaccepteerde Greedy-reconstructie dus
 niet stilzwijgend veranderen.
+
+De twee directe methoden hebben onder **Config → Direct** ieder een eigen
+submenu. Hun volledige opties, Configsleutels en de reproduceerbare
+Random-herhalingsanalyse staan in `DIRECT_PLACEMENT_CONFIG.md`.
 
 ## Instelbaar lijnbeeld
 

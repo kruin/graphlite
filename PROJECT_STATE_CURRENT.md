@@ -5,10 +5,10 @@ Leidende status van OpenGraph Lite Viewer `v2.0.0-rc.45`.
 Controlestatus: rc.45 is op 2 augustus 2026 handmatig goedgekeurd, inclusief
 de Greedy Grow-reconstructie, bewijsgrens en afgeleide publicatieslide.
 
-## Actuele source build 20260802.2
+## Actuele source build 20260803.12
 
 - Exacte bronidentiteit:
-  `v2.0.0-rc.45-grid-style-direct-modes-eol-20260802.2`.
+  `v2.0.0-rc.45-direct-config-hard-no-show-20260803.12`.
 - Het hoofdmenu toont Language Tree prominent als primaire berekende
   toepassing, met Greedy Grow en Random als kleinere directe
   OGN-illustraties. De directe modi schrijven één knoop per stap en verbergen
@@ -23,6 +23,51 @@ de Greedy Grow-reconstructie, bewijsgrens en afgeleide publicatieslide.
   één afsluitende EOL structureel vast. `publish_checked.bat` normaliseert en
   voert `git add --renormalize` uit vóór de whitespacecontrole.
 - Het volledige contract staat in `LINE_STYLE_AND_PLACEMENT_MODES.md`.
+- Config is ingedeeld als Algemeen, Calculated → Language Tree en Direct →
+  Greedy Grow / Random. Per context zijn alle niet-relevante instellingen
+  no-show. De toepassingsbalk blijft alleen in de volledige Config zichtbaar;
+  vanuit actieve Greedy-Grow- of Random-modus is ook die balk no-show.
+- Ieder zichtbaar Direct-, Greedy- en Random-veld heeft een mobiele,
+  inklapbare uitleg volgens `CONFIG_UI_EXPLANATION_STANDARD.md`.
+- Greedy/Random Config verbergt daarnaast de viewerwerkbalk, runstatus,
+  voorbeeldweergave, feedback, canvas en save-uitleg. Alleen Terug naar Main,
+  de eigen velden met uitleg en compacte bewaren/herstellen-knoppen blijven
+  over; een andere context wordt eerst in Main gekozen.
+- Eén Random-iteratie is één complete run. De centrale knoop telt niet mee;
+  10 voltooide iteraties van 31 knopen leveren 300 projectie-hits per as.
+  Bezettingskans deelt tellingen door het ingestelde iteratieaantal; Relatief
+  schaalt op de hoogste telling van de voltooide rondes. Deze analyse plant de
+  actieve directe run niet vooruit. Greedy wordt niet zinloos herhaald.
+- Random Play en Next lopen knoop voor knoop door alle ingestelde iteraties;
+  Previous kan over een rungrens terug en Reset begint bij iteratie 1 volgens
+  het seedbeleid.
+- Na de laatste knoop van iedere Random-ronde worden gebruikte rijen als
+  cumulatieve projectie-hitspots op WEST en gebruikte kolommen op SOUTH
+  toegevoegd. Een herhaalde hit maakt dezelfde spot donkerder en zwaarder.
+  Onvoltooide en toekomstige rondes tellen niet mee; Reset wist de hits en
+  Previous rolt een opnieuw onvoltooide ronde terug.
+- Voor uniforme Random voorspelt de combinatoriek een vrijwel egaal asbeeld.
+  Bij `R = N` wordt iedere niet-centrale WEST-plek iedere ronde geraakt; voor
+  een ruimere as is de verwachte hitkans `(N - 1) / (R - 1)` of, op SOUTH,
+  `(N - 1) / (C - 1)`.
+- Random gebruikt bij een nieuwe standaardconfig **Ergens in beschikbare
+  ruimte** en maximale afmetingen **Interface**. De vaste rechthoek volgt de
+  beschikbare interfaceverhouding en iedere stap kiest uit alle nog vrije
+  rij-kolomcombinaties in die rechthoek. Compact, Gebalanceerd, Ruim en het
+  groeiende inhoudsveld blijven alternatieven; bestaande opgeslagen keuzes
+  worden niet geforceerd gewijzigd.
+- Uniform v1.0 blijft de standaard. Onzuiver uniform v0.1 mengt per vrije
+  ascoördinaat 80% uniform met 20% herhaalgewicht uit uitsluitend voltooide
+  eerdere rondes. Ronde 1 is uniform; unieke rijen en kolommen blijven hard.
+- Random Config bevat model, plaatsing, gridgrootte, conditionele vaste
+  kolommen/rijen, snelheid, iteraties en asbeeld. Vaste maten zijn minimaal het
+  aantal knopen. Snelheid hergebruikt de gedeelde Play-klok en verandert de
+  plaatsingsreeks niet.
+- Seed is een startcode van 1 t/m 4.294.967.295. `20260802` is de datumseed 2
+  augustus 2026; een groter getal geeft niet meer toeval of snelheid.
+- v0.2 (herhaalsterkte) en v0.3 (geheugenvenster) zijn alleen voorspelde
+  contracten en blijven no-show.
+- Het volledige Config-contract staat in `DIRECT_PLACEMENT_CONFIG.md`.
 
 ## OGN-kern en vaste uitlegvolgorde rc.45
 
@@ -74,9 +119,9 @@ de Greedy Grow-reconstructie, bewijsgrens en afgeleide publicatieslide.
   het Language Tree-eindstadium en de twee GitHub-links. Het handmatige akkoord staat in
   `RC45_OGN_CORE_EXPLANATION_TEST.md`.
 - De oorspronkelijke geaccepteerde rc.45-carrousel blijft ongewijzigd. De
-  latere source build 20260802.2 breidt de viewer wel uit met plaatsingsmodi,
-  lijnbeeld-Config en structurele tekstnormalisatie; graphdata en OPN-formaat
-  blijven ongewijzigd.
+  actuele source build 20260802.11 breidt de viewer wel uit met plaatsingsmodi,
+  geïsoleerde directe Config, lijnbeeld-Config en structurele
+  tekstnormalisatie; graphdata en OPN-formaat blijven ongewijzigd.
 
 ## Config, LEESMIJ en projectzip rc.43
 

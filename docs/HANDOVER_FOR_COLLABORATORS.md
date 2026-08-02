@@ -6,12 +6,29 @@ Releasebesluit: rc.45 is op 2 augustus 2026 handmatig goedgekeurd, inclusief
 de Greedy Grow-reconstructie en de rechtstreeks afgeleide publicatieslide.
 
 Actuele source build:
-`v2.0.0-rc.45-grid-style-direct-modes-eol-20260802.2`. Behoud Language Tree
+`v2.0.0-rc.45-direct-config-hard-no-show-20260803.12`. Behoud Language Tree
 als prominente berekende toepassing en Greedy Grow/Random als kleinere
 directe OGN-illustraties. Wijzig `greedy-grow-engine.js` niet voor Random: die
 engine is onderdeel van het afleidingsbewijs van publicatieslide 5. Random
 hoort in `random-placement-engine.js`. Bewaak het lijnbeeld en het structurele
 EOF/EOL-beleid volgens `LINE_STYLE_AND_PLACEMENT_MODES.md`.
+
+Organiseer Config als **Algemeen**, **Calculated → Language Tree** en **Direct
+→ Greedy Grow / Random**. Per context zijn niet-relevante instellingen
+no-show. Vanuit een actieve Greedy-Grow- of Random-modus is ook de
+toepassingsbalk no-show: alleen Terug naar Main, de eigen velden met uitleg en
+Config opslaan blijven zichtbaar. Wisselen van context begint in Main. Volg
+`CONFIG_UI_EXPLANATION_STANDARD.md`: ieder zichtbaar veld krijgt
+compacte, mobiele uitleg. Gedeelde keuzes blijven uitsluitend in
+`directPlacementGeneral`; Random-snelheid hergebruikt de gedeelde Play-klok.
+Random bevat daarnaast seed, resetbeleid, model, plaatsing, gridgrootte, vaste
+kolommen/rijen, iteratieaantal en asbeeldmodus. Uniform v1.0 blijft standaard;
+Onzuiver uniform v0.1 mengt 20% herhaalgewicht uit voltooide eerdere as-hits.
+v0.2 en v0.3 blijven no-show. Zie `DIRECT_PLACEMENT_CONFIG.md`.
+
+Random projecteert uitsluitend voltooide rondes naar cumulatieve WEST- en
+SOUTH-hitspots. Herhaalde hits maken dezelfde spot zwaarder; toekomstige
+rondes worden niet vooraf in het asbeeld opgenomen.
 
 De reserveringen Vraagzin, Nadruk en Onaffe zin zijn uitsluitend
 Config-voorraad. Voeg ze niet toe aan `FEATURE_DEFINITIONS`, state, opslag,

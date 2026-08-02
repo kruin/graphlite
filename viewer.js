@@ -1573,6 +1573,154 @@
     Object.freeze({ id: 'random', label: 'Random', labelEn: 'Random', kind: 'direct', strategy: 'random' })
   ]);
 
+  const DIRECT_TARGET_COUNT_OPTIONS = Object.freeze([
+    Object.freeze({ id: '12', label: '12 knopen', labelEn: '12 nodes' }),
+    Object.freeze({ id: '31', label: '31 knopen', labelEn: '31 nodes' }),
+    Object.freeze({ id: '48', label: '48 knopen', labelEn: '48 nodes' }),
+    Object.freeze({ id: '96', label: '96 knopen', labelEn: '96 nodes' })
+  ]);
+  const DIRECT_INTERVAL_OPTIONS = Object.freeze([
+    Object.freeze({ id: '1200', label: 'Langzaam · 1,2 s', labelEn: 'Slow · 1.2 s' }),
+    Object.freeze({ id: '650', label: 'Normaal · 0,65 s', labelEn: 'Normal · 0.65 s' }),
+    Object.freeze({ id: '300', label: 'Snel · 0,3 s', labelEn: 'Fast · 0.3 s' }),
+    Object.freeze({ id: '140', label: 'Zeer snel · 0,14 s', labelEn: 'Very fast · 0.14 s' })
+  ]);
+  const DIRECT_NODE_SIZE_OPTIONS = Object.freeze([
+    Object.freeze({ id: 'small', label: 'Klein', labelEn: 'Small' }),
+    Object.freeze({ id: 'normal', label: 'Normaal', labelEn: 'Normal' }),
+    Object.freeze({ id: 'large', label: 'Groot', labelEn: 'Large' })
+  ]);
+  const DIRECT_GRID_MARGIN_OPTIONS = Object.freeze([
+    Object.freeze({ id: 'compact', label: 'Compact · 1 cel', labelEn: 'Compact · 1 cell' }),
+    Object.freeze({ id: 'normal', label: 'Normaal · 1,5 cel', labelEn: 'Normal · 1.5 cells' }),
+    Object.freeze({ id: 'wide', label: 'Ruim · 3 cellen', labelEn: 'Wide · 3 cells' })
+  ]);
+  const GREEDY_STRATEGY_OPTIONS = Object.freeze([
+    Object.freeze({ id: 'compact-four-arm', label: 'Compact · vierarmige referentie', labelEn: 'Compact · four-arm reference' }),
+    Object.freeze({ id: 'near-center', label: 'Dicht bij centrum', labelEn: 'Near centre' }),
+    Object.freeze({ id: 'ring', label: 'Ring voor ring', labelEn: 'Ring by ring' }),
+    Object.freeze({ id: 'quadrant', label: 'Kwadranten spreiden', labelEn: 'Distribute quadrants' }),
+    Object.freeze({ id: 'max-turn', label: 'Grootste draai eerst', labelEn: 'Largest turn first' })
+  ]);
+  const GREEDY_ORIENTATION_OPTIONS = Object.freeze([
+    Object.freeze({ id: 'original', label: 'Origineel', labelEn: 'Original' }),
+    Object.freeze({ id: 'right', label: '90° rechtsom', labelEn: '90° clockwise' }),
+    Object.freeze({ id: 'half', label: '180°', labelEn: '180°' }),
+    Object.freeze({ id: 'left', label: '90° linksom', labelEn: '90° counter-clockwise' })
+  ]);
+  const RANDOM_SEED_POLICY_OPTIONS = Object.freeze([
+    Object.freeze({ id: 'advance', label: 'Nieuwe seed bij Reset', labelEn: 'New seed on Reset' }),
+    Object.freeze({ id: 'fixed', label: 'Vaste seed herhalen', labelEn: 'Repeat fixed seed' })
+  ]);
+  const RANDOM_DISTRIBUTION_OPTIONS = Object.freeze([
+    Object.freeze({ id: 'uniform-v1.0', label: 'Uniform v1.0', labelEn: 'Uniform v1.0' }),
+    Object.freeze({ id: 'impure-repeat-v0.1', label: 'Onzuiver uniform v0.1 · hit-herhaling', labelEn: 'Impure uniform v0.1 · hit repetition' })
+  ]);
+  const RANDOM_SPREAD_OPTIONS = Object.freeze([
+    Object.freeze({ id: 'available', label: 'Ergens in beschikbare ruimte', labelEn: 'Anywhere in available space' }),
+    Object.freeze({ id: 'compact', label: 'Compact', labelEn: 'Compact' }),
+    Object.freeze({ id: 'balanced', label: 'Gebalanceerd', labelEn: 'Balanced' }),
+    Object.freeze({ id: 'wide', label: 'Ruim', labelEn: 'Wide' })
+  ]);
+  const RANDOM_MAX_DIMENSION_OPTIONS = Object.freeze([
+    Object.freeze({ id: 'interface', label: 'Interface · beschikbare ruimte', labelEn: 'Interface · available space' }),
+    Object.freeze({ id: 'fixed', label: 'Vast grid · kolommen × rijen', labelEn: 'Fixed grid · columns × rows' }),
+    Object.freeze({ id: 'content', label: 'Inhoud · groeiend veld', labelEn: 'Content · growing field' })
+  ]);
+  const RANDOM_ITERATION_COUNT_OPTIONS = Object.freeze([
+    Object.freeze({ id: '1', label: '1 iteratie', labelEn: '1 iteration' }),
+    Object.freeze({ id: '3', label: '3 iteraties', labelEn: '3 iterations' }),
+    Object.freeze({ id: '10', label: '10 iteraties', labelEn: '10 iterations' }),
+    Object.freeze({ id: '25', label: '25 iteraties', labelEn: '25 iterations' }),
+    Object.freeze({ id: '50', label: '50 iteraties', labelEn: '50 iterations' }),
+    Object.freeze({ id: '100', label: '100 iteraties', labelEn: '100 iterations' })
+  ]);
+  const RANDOM_AXIS_IMAGE_MODE_OPTIONS = Object.freeze([
+    Object.freeze({ id: 'off', label: 'Uit · geen iteratie-effect', labelEn: 'Off · no iteration effect' }),
+    Object.freeze({ id: 'occupancy', label: 'Bezettingskans · telling ÷ iteraties', labelEn: 'Occupancy chance · count ÷ iterations' }),
+    Object.freeze({ id: 'relative', label: 'Relatief patroon · telling ÷ hoogste telling', labelEn: 'Relative pattern · count ÷ highest count' })
+  ]);
+  const RANDOM_ITERATION_SEED_STEP = 0x9e3779b9;
+  const DIRECT_NODE_RADIUS = Object.freeze({ small: 10, normal: 14, large: 18 });
+  const DIRECT_GRID_MARGIN = Object.freeze({ compact: 1, normal: 1.5, wide: 3 });
+  const DEFAULT_DIRECT_PLACEMENT_GENERAL = Object.freeze({
+    targetCount: 31,
+    intervalMs: 650,
+    showPath: true,
+    showNumbers: true,
+    showMetrics: true,
+    nodeSize: 'normal',
+    gridMargin: 'normal'
+  });
+  const DEFAULT_GREEDY_GROW_CONFIG = Object.freeze({
+    strategy: 'compact-four-arm',
+    orientation: 'original'
+  });
+  const DEFAULT_RANDOM_PLACEMENT_CONFIG = Object.freeze({
+    seed: 20260802,
+    seedPolicy: 'advance',
+    distribution: 'uniform-v1.0',
+    spread: 'available',
+    maxDimensions: 'interface',
+    fixedColumns: 48,
+    fixedRows: 48,
+    iterationCount: 10,
+    axisImageMode: 'occupancy'
+  });
+
+  function directOptionId(options, value, fallback) {
+    const candidate = String(value ?? '');
+    return options.some(option => option.id === candidate) ? candidate : fallback;
+  }
+
+  function directOptionLabel(options, value) {
+    const option = options.find(item => item.id === String(value));
+    if (!option) return String(value ?? '');
+    return isEnglish() ? (option.labelEn || option.label) : option.label;
+  }
+
+  function normalizeDirectPlacementGeneral(value = {}) {
+    return {
+      targetCount: Number(directOptionId(DIRECT_TARGET_COUNT_OPTIONS, value.targetCount, String(DEFAULT_DIRECT_PLACEMENT_GENERAL.targetCount))),
+      intervalMs: Number(directOptionId(DIRECT_INTERVAL_OPTIONS, value.intervalMs, String(DEFAULT_DIRECT_PLACEMENT_GENERAL.intervalMs))),
+      showPath: typeof value.showPath === 'boolean' ? value.showPath : DEFAULT_DIRECT_PLACEMENT_GENERAL.showPath,
+      showNumbers: typeof value.showNumbers === 'boolean' ? value.showNumbers : DEFAULT_DIRECT_PLACEMENT_GENERAL.showNumbers,
+      showMetrics: typeof value.showMetrics === 'boolean' ? value.showMetrics : DEFAULT_DIRECT_PLACEMENT_GENERAL.showMetrics,
+      nodeSize: directOptionId(DIRECT_NODE_SIZE_OPTIONS, value.nodeSize, DEFAULT_DIRECT_PLACEMENT_GENERAL.nodeSize),
+      gridMargin: directOptionId(DIRECT_GRID_MARGIN_OPTIONS, value.gridMargin, DEFAULT_DIRECT_PLACEMENT_GENERAL.gridMargin)
+    };
+  }
+
+  function normalizeGreedyGrowConfig(value = {}) {
+    return {
+      strategy: directOptionId(GREEDY_STRATEGY_OPTIONS, value.strategy, DEFAULT_GREEDY_GROW_CONFIG.strategy),
+      orientation: directOptionId(GREEDY_ORIENTATION_OPTIONS, value.orientation, DEFAULT_GREEDY_GROW_CONFIG.orientation)
+    };
+  }
+
+  function normalizeRandomPlacementConfig(value = {}) {
+    const seedNumber = Number(value.seed);
+    const seed = Number.isFinite(seedNumber)
+      ? Math.max(1, Math.min(0xffffffff, Math.floor(seedNumber)))
+      : DEFAULT_RANDOM_PLACEMENT_CONFIG.seed;
+    const legacyAxisMode = value.showAxisPattern === false ? 'off' : DEFAULT_RANDOM_PLACEMENT_CONFIG.axisImageMode;
+    return {
+      seed,
+      seedPolicy: directOptionId(RANDOM_SEED_POLICY_OPTIONS, value.seedPolicy, DEFAULT_RANDOM_PLACEMENT_CONFIG.seedPolicy),
+      distribution: directOptionId(RANDOM_DISTRIBUTION_OPTIONS, value.distribution, DEFAULT_RANDOM_PLACEMENT_CONFIG.distribution),
+      spread: directOptionId(RANDOM_SPREAD_OPTIONS, value.spread, DEFAULT_RANDOM_PLACEMENT_CONFIG.spread),
+      maxDimensions: directOptionId(RANDOM_MAX_DIMENSION_OPTIONS, value.maxDimensions, DEFAULT_RANDOM_PLACEMENT_CONFIG.maxDimensions),
+      fixedColumns: Math.max(1, Math.min(10000, Math.floor(Number(value.fixedColumns) || DEFAULT_RANDOM_PLACEMENT_CONFIG.fixedColumns))),
+      fixedRows: Math.max(1, Math.min(10000, Math.floor(Number(value.fixedRows) || DEFAULT_RANDOM_PLACEMENT_CONFIG.fixedRows))),
+      iterationCount: Number(directOptionId(
+        RANDOM_ITERATION_COUNT_OPTIONS,
+        value.iterationCount ?? value.repeatCount,
+        String(DEFAULT_RANDOM_PLACEMENT_CONFIG.iterationCount)
+      )),
+      axisImageMode: directOptionId(RANDOM_AXIS_IMAGE_MODE_OPTIONS, value.axisImageMode, legacyAxisMode)
+    };
+  }
+
   const TOP_MENU_CHOICES = [
     { id: 'projection', label: 'Projecties', cssClass: 'top-menu-projection', tip: 'Projecties: Alle, Bron, LEX, SYNT en LOG. Nuttig voor vergelijken van named projections.' },
     { id: 'sentence', label: 'Voorbeeldzin', cssClass: 'top-menu-sentence', tip: 'Voorbeeldzin: kies snel HOND BIJT MAN en varianten. Nuttig voor contrast tussen zinnen.' },
@@ -1886,8 +2034,13 @@
     projectionLineWeight: (function(){ try { return localStorage.getItem('opengraph_projection_line_weight') || 'normal'; } catch (_err) { return 'normal'; } })(),
     boxLineWeight: (function(){ try { return localStorage.getItem('opengraph_box_line_weight') || 'normal'; } catch (_err) { return 'normal'; } })(),
     placementMode: 'language-tree',
+    directPlacementGeneral: { ...DEFAULT_DIRECT_PLACEMENT_GENERAL },
+    greedyGrowConfig: { ...DEFAULT_GREEDY_GROW_CONFIG },
+    randomPlacementConfig: { ...DEFAULT_RANDOM_PLACEMENT_CONFIG },
     directPlacementState: null,
     directPlacementSeed: 20260802,
+    directPlacementIterationBaseSeed: 20260802,
+    directPlacementIterationIndex: 0,
     directPlacementTimer: null,
     centerMode: 'syntax',
     treeChoice: 'auto-min',
@@ -5163,16 +5316,234 @@
     return engine;
   }
 
+  function activeDirectMethodConfig(modeId = placementModeDefinition().id) {
+    return modeId === 'random'
+      ? normalizeRandomPlacementConfig(state.randomPlacementConfig)
+      : normalizeGreedyGrowConfig(state.greedyGrowConfig);
+  }
+
+  function directRenderedPoints(direct = ensureDirectPlacementState(), modeId = placementModeDefinition().id) {
+    if (!direct) return [];
+    const orientation = modeId === 'greedy-grow'
+      ? normalizeGreedyGrowConfig(state.greedyGrowConfig).orientation
+      : 'original';
+    return direct.points.map(point => {
+      if (orientation === 'right') return { ...point, x: -point.y, y: point.x };
+      if (orientation === 'half') return { ...point, x: -point.x, y: -point.y };
+      if (orientation === 'left') return { ...point, x: point.y, y: -point.x };
+      return { ...point };
+    });
+  }
+
+  function directNodeRadius() {
+    const general = normalizeDirectPlacementGeneral(state.directPlacementGeneral);
+    return DIRECT_NODE_RADIUS[general.nodeSize] || DIRECT_NODE_RADIUS.normal;
+  }
+
+  function directGridMargin() {
+    const general = normalizeDirectPlacementGeneral(state.directPlacementGeneral);
+    return DIRECT_GRID_MARGIN[general.gridMargin] || DIRECT_GRID_MARGIN.normal;
+  }
+
+  function randomPlacementDimensions(
+    config = normalizeRandomPlacementConfig(state.randomPlacementConfig),
+    general = normalizeDirectPlacementGeneral(state.directPlacementGeneral)
+  ) {
+    if (config.maxDimensions === 'fixed') {
+      return {
+        maxColumns: Math.max(general.targetCount, config.fixedColumns),
+        maxRows: Math.max(general.targetCount, config.fixedRows),
+        source: 'fixed'
+      };
+    }
+    if (config.maxDimensions !== 'interface') return { maxColumns: null, maxRows: null, source: 'content' };
+    const rect = els.svg?.getBoundingClientRect?.();
+    const width = rect?.width > 0 ? rect.width : Math.max(320, Number(window.innerWidth) || 1280);
+    const height = rect?.height > 0 ? rect.height : Math.max(240, (Number(window.innerHeight) || 900) - 96);
+    const visualRatio = Math.max(0.2, Math.min(5, width / height));
+    const coordinateRatio = Math.max(0.1, Math.min(10, visualRatio / ((cellX() / 2) / (cellY() / 2))));
+    const minimum = Math.max(1, general.targetCount);
+    const maxColumns = coordinateRatio >= 1
+      ? Math.ceil(minimum * coordinateRatio)
+      : minimum;
+    const maxRows = coordinateRatio >= 1
+      ? minimum
+      : Math.ceil(minimum / coordinateRatio);
+    return {
+      maxColumns: Math.max(minimum, Math.min(10000, maxColumns)),
+      maxRows: Math.max(minimum, Math.min(10000, maxRows)),
+      source: 'interface'
+    };
+  }
+
+  let randomAxisPatternCache = null;
+
+  function randomSeedForIteration(baseSeed, iterationIndex = 0) {
+    const base = (Math.floor(Number(baseSeed)) >>> 0) || DEFAULT_RANDOM_PLACEMENT_CONFIG.seed;
+    const index = Math.max(0, Math.floor(Number(iterationIndex) || 0));
+    return ((base + Math.imul(index, RANDOM_ITERATION_SEED_STEP)) >>> 0) || DEFAULT_RANDOM_PLACEMENT_CONFIG.seed;
+  }
+
+  function randomIterationProgress() {
+    const config = normalizeRandomPlacementConfig(state.randomPlacementConfig);
+    const total = Math.max(1, config.iterationCount);
+    const index = Math.max(0, Math.min(total - 1, Math.floor(Number(state.directPlacementIterationIndex) || 0)));
+    return { index, number: index + 1, total };
+  }
+
+  function randomCompletedIterationCount(direct = state.directPlacementState) {
+    const progress = randomIterationProgress();
+    const currentComplete = !!direct
+      && direct.strategy === 'random'
+      && direct.points.length >= direct.targetCount;
+    return Math.max(0, Math.min(progress.total, progress.index + (currentComplete ? 1 : 0)));
+  }
+
+  function setRandomIteration(iterationIndex = 0, options = {}) {
+    const progress = randomIterationProgress();
+    const index = Math.max(0, Math.min(progress.total - 1, Math.floor(Number(iterationIndex) || 0)));
+    state.directPlacementIterationIndex = index;
+    state.directPlacementSeed = randomSeedForIteration(state.directPlacementIterationBaseSeed, index);
+    state.directPlacementState = null;
+    const direct = ensureDirectPlacementState(true);
+    if (options.complete && direct) {
+      while (placementEngine().placeNext(direct)) {}
+    }
+    return direct;
+  }
+
+  function resetRandomIterationSeries(options = {}) {
+    const config = normalizeRandomPlacementConfig(state.randomPlacementConfig);
+    const previousBase = (Math.floor(Number(state.directPlacementIterationBaseSeed)) >>> 0) || config.seed;
+    state.directPlacementIterationBaseSeed = options.advanceBase && config.seedPolicy === 'advance'
+      ? randomSeedForIteration(previousBase, 1)
+      : config.seed;
+    state.directPlacementIterationIndex = 0;
+    state.directPlacementSeed = randomSeedForIteration(state.directPlacementIterationBaseSeed, 0);
+  }
+
+  function advanceRandomIteration() {
+    if (validPlacementMode(state.placementMode) !== 'random') return false;
+    const progress = randomIterationProgress();
+    if (progress.number >= progress.total) return false;
+    setRandomIteration(progress.index + 1);
+    return true;
+  }
+
+  function randomSeriesHistory(
+    runCount,
+    config = normalizeRandomPlacementConfig(state.randomPlacementConfig),
+    general = normalizeDirectPlacementGeneral(state.directPlacementGeneral),
+    dimensions = randomPlacementDimensions(config, general)
+  ) {
+    const engine = globalThis.OGNRandomPlacement;
+    const xCounts = new Map();
+    const yCounts = new Map();
+    const completedRuns = [];
+    if (!engine?.createState || !engine?.placeNext) return { xCounts, yCounts, completedRuns };
+    const total = Math.max(0, Math.min(config.iterationCount, Math.floor(Number(runCount) || 0)));
+    const baseSeed = (Math.floor(Number(state.directPlacementIterationBaseSeed)) >>> 0) || config.seed;
+    for (let runIndex = 0; runIndex < total; runIndex += 1) {
+      const run = engine.createState({
+        targetCount: general.targetCount,
+        intervalMs: general.intervalMs,
+        seed: randomSeedForIteration(baseSeed, runIndex),
+        spread: config.spread,
+        distribution: config.distribution,
+        priorHitsX: xCounts,
+        priorHitsY: yCounts,
+        maxColumns: dimensions.maxColumns,
+        maxRows: dimensions.maxRows
+      });
+      while (engine.placeNext(run)) {}
+      run.points.slice(1).forEach(point => {
+        xCounts.set(point.x, (xCounts.get(point.x) || 0) + 1);
+        yCounts.set(point.y, (yCounts.get(point.y) || 0) + 1);
+      });
+      completedRuns.push(run);
+    }
+    return { xCounts, yCounts, completedRuns };
+  }
+
+  function randomAxisPattern() {
+    const config = normalizeRandomPlacementConfig(state.randomPlacementConfig);
+    const general = normalizeDirectPlacementGeneral(state.directPlacementGeneral);
+    if (config.axisImageMode === 'off') return null;
+    const baseSeed = (Math.floor(Number(state.directPlacementIterationBaseSeed)) >>> 0) || config.seed;
+    const activeDirect = validPlacementMode(state.placementMode) === 'random' ? state.directPlacementState : null;
+    const completedIterationCount = randomCompletedIterationCount(activeDirect);
+    const dimensions = activeDirect
+      ? { maxColumns: activeDirect.maxColumns, maxRows: activeDirect.maxRows }
+      : randomPlacementDimensions(config, general);
+    const key = JSON.stringify({
+      seed: baseSeed,
+      distribution: config.distribution,
+      spread: config.spread,
+      maxDimensions: config.maxDimensions,
+      fixedColumns: config.fixedColumns,
+      fixedRows: config.fixedRows,
+      maxColumns: dimensions.maxColumns,
+      maxRows: dimensions.maxRows,
+      targetCount: general.targetCount,
+      iterationCount: config.iterationCount,
+      completedIterationCount,
+      axisImageMode: config.axisImageMode
+    });
+    if (randomAxisPatternCache?.key === key) return randomAxisPatternCache.value;
+    const history = randomSeriesHistory(completedIterationCount, config, general, dimensions);
+    const { xCounts, yCounts } = history;
+    const value = {
+      configuredIterationCount: config.iterationCount,
+      completedIterationCount,
+      axisImageMode: config.axisImageMode,
+      observationsPerAxis: completedIterationCount * Math.max(0, general.targetCount - 1),
+      x: [...xCounts.entries()].map(([coordinate, count]) => ({ coordinate, count })).sort((a, b) => a.coordinate - b.coordinate),
+      y: [...yCounts.entries()].map(([coordinate, count]) => ({ coordinate, count })).sort((a, b) => a.coordinate - b.coordinate),
+      maxCount: Math.max(1, ...xCounts.values(), ...yCounts.values())
+    };
+    randomAxisPatternCache = { key, value };
+    return value;
+  }
+
   function ensureDirectPlacementState(force = false) {
     if (!directPlacementActive()) return null;
     const mode = placementModeDefinition();
-    const strategy = mode.strategy || 'compact-four-arm';
-    if (force || !state.directPlacementState || state.directPlacementState.strategy !== strategy) {
+    const config = activeDirectMethodConfig(mode.id);
+    const general = normalizeDirectPlacementGeneral(state.directPlacementGeneral);
+    const strategy = mode.id === 'random' ? 'random' : config.strategy;
+    const seedMismatch = mode.id === 'random' && state.directPlacementState?.seed !== state.directPlacementSeed;
+    const spreadMismatch = mode.id === 'random' && state.directPlacementState?.spread !== config.spread;
+    const distributionMismatch = mode.id === 'random' && state.directPlacementState?.distribution !== config.distribution;
+    const dimensions = mode.id === 'random' ? randomPlacementDimensions(config, general) : {};
+    const dimensionsMismatch = mode.id === 'random' && (
+      state.directPlacementState?.maxColumns !== dimensions.maxColumns
+      || state.directPlacementState?.maxRows !== dimensions.maxRows
+    );
+    if (
+      force
+      || !state.directPlacementState
+      || state.directPlacementState.strategy !== strategy
+      || state.directPlacementState.targetCount !== general.targetCount
+      || state.directPlacementState.intervalMs !== general.intervalMs
+      || seedMismatch
+      || spreadMismatch
+      || distributionMismatch
+      || dimensionsMismatch
+    ) {
+      const history = mode.id === 'random' && config.distribution === 'impure-repeat-v0.1'
+        ? randomSeriesHistory(state.directPlacementIterationIndex, config, general, dimensions)
+        : { xCounts: new Map(), yCounts: new Map() };
       state.directPlacementState = placementEngine().createState({
         strategy,
-        targetCount: 31,
-        intervalMs: 650,
-        seed: state.directPlacementSeed
+        targetCount: general.targetCount,
+        intervalMs: general.intervalMs,
+        seed: state.directPlacementSeed,
+        spread: mode.id === 'random' ? config.spread : undefined,
+        distribution: mode.id === 'random' ? config.distribution : undefined,
+        priorHitsX: mode.id === 'random' ? history.xCounts : undefined,
+        priorHitsY: mode.id === 'random' ? history.yCounts : undefined,
+        maxColumns: dimensions.maxColumns,
+        maxRows: dimensions.maxRows
       });
     }
     return state.directPlacementState;
@@ -5185,6 +5556,12 @@
     const step = Math.max(0, direct.points.length - 1);
     const max = Math.max(0, direct.targetCount - 1);
     const method = mode.id === 'random' ? 'Random' : 'Greedy Grow';
+    if (mode.id === 'random') {
+      const iteration = randomIterationProgress();
+      return isEnglish()
+        ? `${method} · iteration ${iteration.number}/${iteration.total} · node ${step}/${max}`
+        : `${method} · iteratie ${iteration.number}/${iteration.total} · knoop ${step}/${max}`;
+    }
     return isEnglish()
       ? `${method} · direct · node ${step}/${max}`
       : `${method} · direct · knoop ${step}/${max}`;
@@ -5192,18 +5569,20 @@
 
   function resetDirectPlacement(options = {}) {
     stopDirectPlacementPlayback();
-    if (placementModeDefinition().id === 'random' && options.newSeed) {
-      state.directPlacementSeed = ((state.directPlacementSeed + 0x9e3779b9) >>> 0) || 20260802;
-    }
+    if (placementModeDefinition().id === 'random') resetRandomIterationSeries({ advanceBase: !!options.newSeed });
     state.directPlacementState = null;
     ensureDirectPlacementState(true);
     resetManualViewBox();
   }
 
   function directPlacementNext(rerender = true) {
-    const direct = ensureDirectPlacementState();
+    let direct = ensureDirectPlacementState();
     if (!direct) return null;
-    const placed = placementEngine().placeNext(direct);
+    let placed = placementEngine().placeNext(direct);
+    if (!placed && placementModeDefinition().id === 'random' && advanceRandomIteration()) {
+      direct = ensureDirectPlacementState();
+      placed = direct ? placementEngine().placeNext(direct) : null;
+    }
     if (!placed) stopDirectPlacementPlayback();
     if (rerender) render();
     return placed;
@@ -5211,32 +5590,47 @@
 
   function directPlacementPrevious(rerender = true) {
     stopDirectPlacementPlayback();
-    const direct = ensureDirectPlacementState();
-    const removed = direct ? placementEngine().undoLast(direct) : null;
+    let direct = ensureDirectPlacementState();
+    let removed = direct ? placementEngine().undoLast(direct) : null;
+    if (!removed && placementModeDefinition().id === 'random') {
+      const iteration = randomIterationProgress();
+      if (iteration.index > 0) {
+        direct = setRandomIteration(iteration.index - 1, { complete: true });
+        removed = direct ? { iterationBoundary: true, iterationIndex: iteration.index - 1 } : null;
+      }
+    }
     if (rerender) render();
     return removed;
   }
 
   function toggleDirectPlacementPlayback() {
-    const direct = ensureDirectPlacementState();
+    let direct = ensureDirectPlacementState();
     if (!direct) return;
     if (state.directPlacementTimer) {
       stopDirectPlacementPlayback();
       render();
       return;
     }
-    if (direct.points.length >= direct.targetCount) {
+    const randomComplete = placementModeDefinition().id === 'random'
+      && randomIterationProgress().number >= randomIterationProgress().total
+      && direct.points.length >= direct.targetCount;
+    if (direct.points.length >= direct.targetCount && (placementModeDefinition().id !== 'random' || randomComplete)) {
       resetDirectPlacement({ newSeed: placementModeDefinition().id === 'random' });
+      direct = ensureDirectPlacementState();
     }
-    directPlacementNext(false);
+    const first = directPlacementNext(false);
+    if (!first) {
+      render();
+      return;
+    }
     state.directPlacementTimer = window.setInterval(() => {
-      const current = ensureDirectPlacementState();
-      if (!current || current.points.length >= current.targetCount) {
+      const placed = directPlacementNext(false);
+      if (!placed) {
         stopDirectPlacementPlayback();
         render();
         return;
       }
-      directPlacementNext(true);
+      render();
     }, direct.intervalMs);
     render();
   }
@@ -5256,6 +5650,7 @@
     state.growthStep = 0;
     state.projectionBlockUnlocked = false;
     state.directPlacementState = null;
+    if (next === 'random') resetRandomIterationSeries();
     if (directPlacementActive()) ensureDirectPlacementState(true);
     resetManualViewBox();
     recordParadata('set-placement-mode', { from: previous, to: next, kind: placementModeDefinition().kind });
@@ -7981,30 +8376,132 @@
   function drawDirectPlacement() {
     const engine = placementEngine();
     const direct = ensureDirectPlacementState();
-    if (!direct || !engine.validate(direct.points)) {
+    const mode = placementModeDefinition();
+    const renderedPoints = directRenderedPoints(direct, mode.id);
+    if (!direct || !engine.validate(direct.points) || !engine.validate(renderedPoints)) {
       throw new Error('Directe OGN-plaatsing schendt de unieke rij/kolomregel.');
     }
-    const mode = placementModeDefinition();
+    const general = normalizeDirectPlacementGeneral(state.directPlacementGeneral);
+    const methodConfig = activeDirectMethodConfig(mode.id);
     const g = baseSvg(`direct-placement-view direct-${mode.id}`);
     const stepX = cellX() / 2;
     const stepY = cellY() / 2;
-    const bounds = engine.bounds(direct.points);
+    const axisPattern = mode.id === 'random' ? randomAxisPattern() : null;
+    const activeBounds = engine.bounds(renderedPoints);
+    const fixedArea = mode.id === 'random' && ['interface', 'fixed'].includes(methodConfig.maxDimensions)
+      ? direct.placementArea
+      : null;
+    const bounds = {
+      ...activeBounds,
+      minX: Math.min(
+        activeBounds.minX,
+        axisPattern?.x.length ? axisPattern.x[0].coordinate : activeBounds.minX,
+        fixedArea?.minX ?? activeBounds.minX
+      ),
+      maxX: Math.max(
+        activeBounds.maxX,
+        axisPattern?.x.length ? axisPattern.x[axisPattern.x.length - 1].coordinate : activeBounds.maxX,
+        fixedArea?.maxX ?? activeBounds.maxX
+      ),
+      minY: Math.min(
+        activeBounds.minY,
+        axisPattern?.y.length ? axisPattern.y[0].coordinate : activeBounds.minY,
+        fixedArea?.minY ?? activeBounds.minY
+      ),
+      maxY: Math.max(
+        activeBounds.maxY,
+        axisPattern?.y.length ? axisPattern.y[axisPattern.y.length - 1].coordinate : activeBounds.maxY,
+        fixedArea?.maxY ?? activeBounds.maxY
+      )
+    };
+    const margin = directGridMargin();
     const gridBox = {
-      x: (bounds.minX - 1.5) * stepX,
-      y: (bounds.minY - 1.5) * stepY,
-      w: Math.max(6 * stepX, (bounds.maxX - bounds.minX + 3) * stepX),
-      h: Math.max(6 * stepY, (bounds.maxY - bounds.minY + 3) * stepY)
+      x: (bounds.minX - margin) * stepX,
+      y: (bounds.minY - margin) * stepY,
+      w: Math.max(6 * stepX, (bounds.maxX - bounds.minX + (2 * margin)) * stepX),
+      h: Math.max(6 * stepY, (bounds.maxY - bounds.minY + (2 * margin)) * stepY)
     };
     state.lastGridBox = { ...gridBox };
     const grid = g.querySelector('.grid');
     if (grid) populateGridLines(grid, gridBox);
 
-    const pixelPoints = direct.points.map(point => ({
+    if (axisPattern) {
+      const patternGroup = svgEl('g', { class: 'direct-axis-pattern' });
+      const westX = gridBox.x - Math.max(10, stepX * 0.16);
+      const southY = gridBox.y + gridBox.h + Math.max(10, stepY * 0.2);
+      patternGroup.appendChild(svgEl('line', {
+        x1: westX,
+        x2: westX,
+        y1: gridBox.y,
+        y2: gridBox.y + gridBox.h,
+        class: 'direct-axis-hit-axis direct-axis-hit-axis-west'
+      }));
+      patternGroup.appendChild(svgEl('line', {
+        x1: gridBox.x,
+        x2: gridBox.x + gridBox.w,
+        y1: southY,
+        y2: southY,
+        class: 'direct-axis-hit-axis direct-axis-hit-axis-south'
+      }));
+      const axisDenominator = axisPattern.axisImageMode === 'relative'
+        ? axisPattern.maxCount
+        : axisPattern.configuredIterationCount;
+      const appendHitSpot = (axis, item, cx, cy) => {
+        const ratio = Math.max(0, Math.min(1, item.count / Math.max(1, axisDenominator)));
+        const cumulativeRatio = Math.max(0, Math.min(
+          1,
+          item.count / Math.max(1, axisPattern.configuredIterationCount)
+        ));
+        const sizeWeight = Math.sqrt(ratio);
+        const colorWeight = Math.sqrt(cumulativeRatio);
+        const spot = svgEl('circle', {
+          cx,
+          cy,
+          r: 4 + (sizeWeight * 5.5),
+          class: `direct-axis-hit-spot direct-axis-hit-${axis}`,
+          'data-hit-count': item.count,
+          'data-axis-coordinate': item.coordinate,
+          'data-hit-ratio': ratio.toFixed(4),
+          'data-cumulative-ratio': cumulativeRatio.toFixed(4),
+          'fill-opacity': 0.24 + (colorWeight * 0.76),
+          'stroke-width': 1.2 + (colorWeight * 3.2)
+        });
+        const axisLabel = axis === 'west' ? 'WEST' : 'SOUTH';
+        spot.appendChild(svgEl('title', {}, isEnglish()
+          ? `${axisLabel} · coordinate ${item.coordinate} · ${item.count} projection hit${item.count === 1 ? '' : 's'}`
+          : `${axisLabel} · coördinaat ${item.coordinate} · ${item.count} projectie-hit${item.count === 1 ? '' : 's'}`));
+        patternGroup.appendChild(spot);
+      };
+      axisPattern.y.forEach(item => {
+        appendHitSpot('west', item, westX, item.coordinate * stepY);
+      });
+      axisPattern.x.forEach(item => {
+        appendHitSpot('south', item, item.coordinate * stepX, southY);
+      });
+      patternGroup.appendChild(svgEl('text', {
+        x: westX - 10,
+        y: gridBox.y - 8,
+        'text-anchor': 'end',
+        class: 'direct-axis-pattern-label direct-axis-pattern-label-west'
+      }, isEnglish()
+        ? `WEST · PROJECTION HITS · ${axisPattern.completedIterationCount}/${axisPattern.configuredIterationCount} ROUNDS`
+        : `WEST · PROJECTIE-HITS · ${axisPattern.completedIterationCount}/${axisPattern.configuredIterationCount} RONDES`));
+      patternGroup.appendChild(svgEl('text', {
+        x: gridBox.x,
+        y: southY + stepY + 14,
+        class: 'direct-axis-pattern-label direct-axis-pattern-label-south'
+      }, isEnglish()
+        ? `SOUTH · PROJECTION HITS · ${axisPattern.completedIterationCount}/${axisPattern.configuredIterationCount} ROUNDS`
+        : `SOUTH · PROJECTIE-HITS · ${axisPattern.completedIterationCount}/${axisPattern.configuredIterationCount} RONDES`));
+      g.appendChild(patternGroup);
+    }
+
+    const pixelPoints = renderedPoints.map(point => ({
       ...point,
       px: point.x * stepX,
       py: point.y * stepY
     }));
-    if (pixelPoints.length > 1) {
+    if (general.showPath && pixelPoints.length > 1) {
       g.appendChild(svgEl('path', {
         d: pixelPoints.map((point, index) => `${index ? 'L' : 'M'} ${point.px} ${point.py}`).join(' '),
         class: 'direct-placement-path'
@@ -8017,18 +8514,30 @@
         class: `direct-placement-node${index === pixelPoints.length - 1 ? ' is-current' : ''}`,
         transform: `translate(${point.px} ${point.py})`
       });
-      group.appendChild(svgEl('circle', { r: 14 }));
-      group.appendChild(svgEl('text', { x: 0, y: 0 }, String(point.index)));
+      group.appendChild(svgEl('circle', { r: directNodeRadius() }));
+      if (general.showNumbers) group.appendChild(svgEl('text', { x: 0, y: 0 }, String(point.index)));
       nodes.appendChild(group);
     });
     g.appendChild(nodes);
 
     const titleY = gridBox.y - Math.max(42, stepY * 0.8);
+    const strategyOption = mode.id === 'random'
+      ? RANDOM_SPREAD_OPTIONS.find(option => option.id === methodConfig.spread)
+      : GREEDY_STRATEGY_OPTIONS.find(option => option.id === methodConfig.strategy);
+    const strategyLabel = isEnglish() ? strategyOption?.labelEn : strategyOption?.label;
+    const iteration = mode.id === 'random' ? randomIterationProgress() : null;
     g.appendChild(svgEl('text', { x: gridBox.x, y: titleY, class: 'axis-title direct-placement-title' },
-      mode.id === 'random' ? 'RANDOM · DIRECT OGN' : 'GREEDY GROW · DIRECT OGN'));
+      mode.id === 'random'
+        ? `RANDOM · ${isEnglish() ? 'ITERATION' : 'ITERATIE'} ${iteration.number}/${iteration.total} · DIRECT OGN`
+        : 'GREEDY GROW · DIRECT OGN'));
+    const repeatCaption = axisPattern
+      ? (isEnglish()
+        ? ` · ${axisPattern.completedIterationCount}/${axisPattern.configuredIterationCount} completed rounds · ${axisPattern.observationsPerAxis} projection hits per axis`
+        : ` · ${axisPattern.completedIterationCount}/${axisPattern.configuredIterationCount} voltooide rondes · ${axisPattern.observationsPerAxis} projectie-hits per as`)
+      : '';
     const caption = isEnglish()
-      ? `${direct.points.length} nodes · each new node immediately occupies one unused row and column`
-      : `${direct.points.length} knopen · iedere nieuwe knoop bezet direct één ongebruikte rij en kolom`;
+      ? `${strategyLabel || ''} · ${direct.points.length} nodes${repeatCaption} · each new node immediately occupies one unused row and column`
+      : `${strategyLabel || ''} · ${direct.points.length} knopen${repeatCaption} · iedere nieuwe knoop bezet direct één ongebruikte rij en kolom`;
     g.appendChild(svgEl('text', { x: gridBox.x, y: titleY + 24, class: 'direct-placement-caption' }, caption));
     els.svg.appendChild(g);
   }
@@ -8138,20 +8647,38 @@
     if (directPlacementActive()) {
       const direct = ensureDirectPlacementState();
       const mode = placementModeDefinition();
-      const field = placementEngine().bounds(direct.points);
+      const general = normalizeDirectPlacementGeneral(state.directPlacementGeneral);
+      const field = placementEngine().bounds(directRenderedPoints(direct, mode.id));
+      const axisPattern = mode.id === 'random' ? randomAxisPattern() : null;
+      const iteration = mode.id === 'random' ? randomIterationProgress() : null;
+      const repeatStatus = axisPattern
+        ? (isEnglish()
+          ? ` · ${axisPattern.completedIterationCount}/${axisPattern.configuredIterationCount} completed rounds · ${axisPattern.observationsPerAxis} projection hits/axis · ${axisPattern.axisImageMode}`
+          : ` · ${axisPattern.completedIterationCount}/${axisPattern.configuredIterationCount} voltooide rondes · ${axisPattern.observationsPerAxis} projectie-hits/as · ${axisPattern.axisImageMode}`)
+        : '';
       els.titleLine.textContent = mode.id === 'random'
-        ? (isEnglish() ? 'Random · direct OGN placement' : 'Random · directe OGN-plaatsing')
+        ? (isEnglish()
+          ? `Random · ${directOptionLabel(RANDOM_DISTRIBUTION_OPTIONS, direct.distribution)} · iteration ${iteration.number}/${iteration.total} · seed ${direct.seed}`
+          : `Random · ${directOptionLabel(RANDOM_DISTRIBUTION_OPTIONS, direct.distribution)} · iteratie ${iteration.number}/${iteration.total} · seed ${direct.seed}`)
         : (isEnglish() ? 'Greedy Grow · direct OGN placement' : 'Greedy Grow · directe OGN-plaatsing');
-      els.metaLine.textContent = isEnglish()
-        ? `${direct.points.length} nodes · field ${field.width} × ${field.height} · no future placement plan`
-        : `${direct.points.length} knopen · veld ${field.width} × ${field.height} · geen toekomstig plaatsingsplan`;
+      els.metaLine.textContent = general.showMetrics
+        ? (isEnglish()
+          ? `${direct.points.length} nodes · field ${field.width} × ${field.height} · perimeter ${field.perimeter}${repeatStatus} · no future placement plan`
+          : `${direct.points.length} knopen · veld ${field.width} × ${field.height} · omtrek ${field.perimeter}${repeatStatus} · geen toekomstig plaatsingsplan`)
+        : (isEnglish()
+          ? `${direct.points.length} nodes · no future placement plan`
+          : `${direct.points.length} knopen · geen toekomstig plaatsingsplan`);
       els.sentencePreview.textContent = isEnglish()
         ? 'OGN illustration; Language Tree remains the primary calculated application.'
         : 'OGN-illustratie; Language Tree blijft de primaire berekende toepassing.';
       if (els.actionFeedback) {
-        els.actionFeedback.textContent = isEnglish()
-          ? 'Use ←, → or Play. Every step writes the selected free position immediately.'
-          : 'Gebruik ←, → of Play. Iedere stap schrijft de gekozen vrije plaats onmiddellijk.';
+        els.actionFeedback.textContent = mode.id === 'random'
+          ? (isEnglish()
+            ? 'Use ←, → or Play. After every completed round, projection hits are added to the WEST and SOUTH axis spots.'
+            : 'Gebruik ←, → of Play. Na iedere voltooide ronde worden de projectie-hits aan de WEST- en SOUTH-asspots toegevoegd.')
+          : (isEnglish()
+            ? 'Use ←, → or Play. Every step writes the selected free position immediately.'
+            : 'Gebruik ←, → of Play. Iedere stap schrijft de gekozen vrije plaats onmiddellijk.');
         els.actionFeedback.className = 'action-feedback neutral';
       }
       return;
@@ -8380,6 +8907,10 @@
         ? `${mode.label}: direct OGN illustration. Language Tree remains the primary calculated application.`
         : `${mode.label}: directe OGN-illustratie. Language Tree blijft de primaire berekende toepassing.`;
     }
+    if (document.body?.classList.contains('config-screen-active')) {
+      syncConfigMethodScope();
+      activateConfigTab(configMethodScope ? 'direct' : activeConfigTab);
+    }
   }
 
   function renderMainChoiceMenus() {
@@ -8524,6 +9055,7 @@
     fillSelect(els.gridLineWeightSelect, LINE_WEIGHT_OPTIONS, validLineWeight(state.gridLineWeight));
     fillSelect(els.projectionLineWeightSelect, LINE_WEIGHT_OPTIONS, validLineWeight(state.projectionLineWeight));
     fillSelect(els.boxLineWeightSelect, LINE_WEIGHT_OPTIONS, validLineWeight(state.boxLineWeight));
+    syncDirectConfigControls();
     fillSelect(els.freeSlotCountSelect, FREE_SLOT_COUNTS, String(reservedFreeSlotCount()));
     if (featureEnabled('adverbs')) {
       fillSelect(els.lexFreeSlotCountSelect, LEX_FREE_SLOT_COUNTS, String(lexFreeSlotCount()));
@@ -8563,6 +9095,14 @@
     const activeGrowthEnabled = directState ? true : state.growthEnabled;
     const activeGrowthTimer = directState ? state.directPlacementTimer : state.growthTimer;
     const activeGrowthLabel = directState ? directPlacementLabel() : growthLabel();
+    const randomProgress = directState && placementModeDefinition().id === 'random'
+      ? randomIterationProgress()
+      : null;
+    const directCanPrevious = !!directState && (activeGrowthStep > 0 || (randomProgress?.index || 0) > 0);
+    const directCanNext = !!directState && (
+      activeGrowthStep < growthMax
+      || (!!randomProgress && randomProgress.number < randomProgress.total)
+    );
     if (!directState && growthSupported) {
       state.growthStep = clampGrowthStep(state.growthStep);
       if (state.growthStep > 0) state.lastSupportedGrowthStep = state.growthStep;
@@ -8578,12 +9118,12 @@
       els.growthStepInput.disabled = !!directState || !activeGrowthEnabled || !growthSupported;
     }
     if (els.growthStepLabel) els.growthStepLabel.textContent = activeGrowthLabel;
-    if (els.growthPrevButton) els.growthPrevButton.disabled = !activeGrowthEnabled || !growthSupported || activeGrowthStep <= 0;
-    if (els.growthNextButton) els.growthNextButton.disabled = !activeGrowthEnabled || !growthSupported || activeGrowthStep >= growthMax;
+    if (els.growthPrevButton) els.growthPrevButton.disabled = !activeGrowthEnabled || !growthSupported || (directState ? !directCanPrevious : activeGrowthStep <= 0);
+    if (els.growthNextButton) els.growthNextButton.disabled = !activeGrowthEnabled || !growthSupported || (directState ? !directCanNext : activeGrowthStep >= growthMax);
     if (els.growthResetButton) els.growthResetButton.disabled = !activeGrowthEnabled || !growthSupported;
     const growthPlayText = activeGrowthTimer ? (isEnglish() ? 'Pause' : 'Pauze') : 'Play';
-    const growthPrevDisabled = !activeGrowthEnabled || !growthSupported || activeGrowthStep <= 0;
-    const growthNextDisabled = !activeGrowthEnabled || !growthSupported || activeGrowthStep >= growthMax;
+    const growthPrevDisabled = !activeGrowthEnabled || !growthSupported || (directState ? !directCanPrevious : activeGrowthStep <= 0);
+    const growthNextDisabled = !activeGrowthEnabled || !growthSupported || (directState ? !directCanNext : activeGrowthStep >= growthMax);
     const growthResetDisabled = !activeGrowthEnabled || !growthSupported;
     if (els.growthPlayButton) {
       els.growthPlayButton.disabled = !growthSupported;
@@ -10012,6 +10552,7 @@
   const CONFIG_TAB_DEFINITIONS = [
     { id: 'preconfig', nl: 'Voorconfig', en: 'Pre-config' },
     { id: 'features', nl: 'Toepassingen', en: 'Applications' },
+    { id: 'direct', nl: 'Direct · gedeeld', en: 'Direct · shared' },
     { id: 'readme-carousels', nl: 'LEESMIJ-items', en: 'README topics' },
     { id: 'overview', nl: 'Overzicht', en: 'Overview' },
     { id: 'jan', nl: 'JaN · TODO', en: 'JaN · TODO' },
@@ -10020,7 +10561,25 @@
     { id: 'log-lex', nl: 'LOG & LEX', en: 'LOG & LEX' },
     { id: 'advanced', nl: 'Geavanceerd', en: 'Advanced' }
   ];
+  const CONFIG_SCOPE_DEFINITIONS = Object.freeze([
+    Object.freeze({ id: 'general', groupNl: 'Algemeen', groupEn: 'General', nl: 'Algemeen', en: 'General' }),
+    Object.freeze({ id: 'language-tree', groupNl: 'Calculated', groupEn: 'Calculated', nl: 'Language Tree', en: 'Language Tree' }),
+    Object.freeze({ id: 'greedy-grow', groupNl: 'Direct', groupEn: 'Direct', nl: 'Greedy Grow', en: 'Greedy Grow' }),
+    Object.freeze({ id: 'random', groupNl: 'Direct', groupEn: 'Direct', nl: 'Random', en: 'Random' })
+  ]);
+  const CONFIG_SCOPE_TABS = Object.freeze({
+    general: Object.freeze(['preconfig', 'direct', 'readme-carousels', 'overview', 'files']),
+    'language-tree': Object.freeze(['features', 'view', 'log-lex', 'jan', 'advanced']),
+    'greedy-grow': Object.freeze(['direct']),
+    random: Object.freeze(['direct'])
+  });
   let activeConfigTab = 'preconfig';
+  let activeConfigScope = 'general';
+  let configScopeManual = false;
+  let activeDirectConfigMenu = 'general';
+  let configMethodScope = '';
+  let lastFullConfigTab = 'preconfig';
+  let lastFullConfigScope = 'general';
   let readmeCarouselEditorTopicId = 'readme';
   let readmeCarouselEditorSlideIndex = 0;
   let readmeCarouselDefaultsCaptured = false;
@@ -10034,8 +10593,166 @@
     messageEn: ''
   };
 
+  function directMethodConfigScope() {
+    const mode = validPlacementMode(state.placementMode);
+    return mode === 'greedy-grow' || mode === 'random' ? mode : '';
+  }
+
+  function syncConfigMethodScope() {
+    if (configScopeManual && document.body?.classList.contains('config-screen-active')) {
+      syncConfigScopeUi();
+      return;
+    }
+    const nextScope = directMethodConfigScope();
+    if (nextScope && !configMethodScope) {
+      lastFullConfigTab = activeConfigTab;
+      lastFullConfigScope = activeConfigScope;
+    }
+    if (!nextScope && configMethodScope) {
+      activeConfigTab = lastFullConfigTab;
+      activeConfigScope = lastFullConfigScope;
+    }
+    configMethodScope = nextScope;
+    if (nextScope) activeConfigScope = nextScope;
+    document.body?.classList.toggle('config-direct-method-only', !!nextScope);
+    if (nextScope) {
+      activeConfigTab = 'direct';
+      activeDirectConfigMenu = nextScope;
+    } else {
+      activeDirectConfigMenu = 'general';
+    }
+    const tabList = document.querySelector('.config-tab-list');
+    if (tabList) tabList.hidden = !!nextScope;
+    syncConfigScopeUi();
+    const topbar = document.querySelector('.config-topbar');
+    if (topbar) {
+      const method = placementModeDefinition(nextScope || 'language-tree');
+      topbar.setAttribute('aria-label', nextScope
+        ? `${method.label} Config`
+        : (isEnglish() ? 'Configuration controls' : 'Configuratiescherm bediening'));
+    }
+  }
+
+  function configTabsForScope(scopeId = activeConfigScope) {
+    return CONFIG_SCOPE_TABS[scopeId] || CONFIG_SCOPE_TABS.general;
+  }
+
+  function syncConfigScopeUi() {
+    const definition = CONFIG_SCOPE_DEFINITIONS.find(scope => scope.id === activeConfigScope) || CONFIG_SCOPE_DEFINITIONS[0];
+    const scopeNav = document.querySelector('.config-scope-nav');
+    if (scopeNav) {
+      scopeNav.hidden = !!configMethodScope;
+      scopeNav.setAttribute('aria-hidden', String(!!configMethodScope));
+    }
+    document.querySelectorAll('[data-config-scope-button]').forEach(button => {
+      const active = button.dataset.configScopeButton === activeConfigScope;
+      button.classList.toggle('active', active);
+      button.setAttribute('aria-pressed', String(active));
+    });
+    const allowedTabs = new Set(configTabsForScope());
+    document.querySelectorAll('[data-config-tab-button]').forEach(button => {
+      button.hidden = !allowedTabs.has(button.dataset.configTabButton) || !!configMethodScope;
+    });
+    const tabList = document.querySelector('.config-tab-list');
+    if (tabList) tabList.hidden = !!configMethodScope;
+    const topbar = document.querySelector('.config-topbar');
+    if (topbar) {
+      const scopeLabel = isEnglish() ? definition.en : definition.nl;
+      const groupLabel = isEnglish() ? definition.groupEn : definition.groupNl;
+      topbar.setAttribute('aria-label', `${groupLabel} · ${scopeLabel} Config`);
+    }
+  }
+
+  function activateConfigScope(scopeId = 'general', focusScope = false, manual = true) {
+    const validScope = CONFIG_SCOPE_DEFINITIONS.some(scope => scope.id === scopeId) ? scopeId : 'general';
+    configScopeManual = !!manual;
+    if (!['greedy-grow', 'random'].includes(validScope)) {
+      lastFullConfigScope = validScope;
+      configMethodScope = '';
+      document.body?.classList.remove('config-direct-method-only');
+    } else {
+      if (!configMethodScope) {
+        lastFullConfigTab = activeConfigTab;
+        lastFullConfigScope = activeConfigScope;
+      }
+      configMethodScope = validScope;
+      document.body?.classList.add('config-direct-method-only');
+    }
+    activeConfigScope = validScope;
+    activeDirectConfigMenu = validScope === 'greedy-grow' || validScope === 'random' ? validScope : 'general';
+    syncConfigScopeUi();
+    const allowed = configTabsForScope(validScope);
+    const requested = allowed.includes(activeConfigTab) ? activeConfigTab : allowed[0];
+    activateConfigTab(requested);
+    if (focusScope) document.querySelector(`[data-config-scope-button="${validScope}"]`)?.focus?.();
+  }
+
+  function activateDirectConfigMenu(methodId = 'general') {
+    const validIds = ['general', 'greedy-grow', 'random'];
+    const forcedMethod = configMethodScope || '';
+    const validId = forcedMethod || (validIds.includes(methodId) ? methodId : 'general');
+    activeDirectConfigMenu = validId;
+    document.querySelectorAll('[data-direct-config-panel]').forEach(panel => {
+      const active = panel.dataset.directConfigPanel === validId;
+      panel.hidden = !active;
+      panel.classList.toggle('active', active);
+    });
+    syncDirectConfigControls();
+  }
+
+  function syncDirectConfigControls() {
+    const general = normalizeDirectPlacementGeneral(state.directPlacementGeneral);
+    const greedy = normalizeGreedyGrowConfig(state.greedyGrowConfig);
+    const random = normalizeRandomPlacementConfig(state.randomPlacementConfig);
+    const setChecked = (id, value) => { const input = document.getElementById(id); if (input) input.checked = !!value; };
+    setChecked('directShowPathInput', general.showPath);
+    setChecked('directShowNumbersInput', general.showNumbers);
+    setChecked('directShowMetricsInput', general.showMetrics);
+    fillSelect(document.getElementById('directTargetCountSelect'), DIRECT_TARGET_COUNT_OPTIONS, String(general.targetCount));
+    fillSelect(document.getElementById('directIntervalSelect'), DIRECT_INTERVAL_OPTIONS, String(general.intervalMs));
+    fillSelect(document.getElementById('directNodeSizeSelect'), DIRECT_NODE_SIZE_OPTIONS, general.nodeSize);
+    fillSelect(document.getElementById('directGridMarginSelect'), DIRECT_GRID_MARGIN_OPTIONS, general.gridMargin);
+    fillSelect(document.getElementById('greedyStrategySelect'), GREEDY_STRATEGY_OPTIONS, greedy.strategy);
+    fillSelect(document.getElementById('greedyOrientationSelect'), GREEDY_ORIENTATION_OPTIONS, greedy.orientation);
+    fillSelect(document.getElementById('randomSeedPolicySelect'), RANDOM_SEED_POLICY_OPTIONS, random.seedPolicy);
+    fillSelect(document.getElementById('randomDistributionSelect'), RANDOM_DISTRIBUTION_OPTIONS, random.distribution);
+    fillSelect(document.getElementById('randomSpreadSelect'), RANDOM_SPREAD_OPTIONS, random.spread);
+    fillSelect(document.getElementById('randomMaxDimensionsSelect'), RANDOM_MAX_DIMENSION_OPTIONS, random.maxDimensions);
+    fillSelect(document.getElementById('randomSpeedSelect'), DIRECT_INTERVAL_OPTIONS, String(general.intervalMs));
+    fillSelect(document.getElementById('randomIterationCountSelect'), RANDOM_ITERATION_COUNT_OPTIONS, String(random.iterationCount));
+    fillSelect(document.getElementById('randomAxisImageModeSelect'), RANDOM_AXIS_IMAGE_MODE_OPTIONS, random.axisImageMode);
+    const seedInput = document.getElementById('randomSeedInput');
+    if (seedInput && document.activeElement !== seedInput) seedInput.value = String(random.seed);
+    const fixedColumnsInput = document.getElementById('randomFixedColumnsInput');
+    const fixedRowsInput = document.getElementById('randomFixedRowsInput');
+    if (fixedColumnsInput && document.activeElement !== fixedColumnsInput) {
+      fixedColumnsInput.value = String(random.fixedColumns);
+      fixedColumnsInput.min = String(general.targetCount);
+    }
+    if (fixedRowsInput && document.activeElement !== fixedRowsInput) {
+      fixedRowsInput.value = String(random.fixedRows);
+      fixedRowsInput.min = String(general.targetCount);
+    }
+    const fixedGridFields = document.getElementById('randomFixedGridFields');
+    if (fixedGridFields) fixedGridFields.hidden = random.maxDimensions !== 'fixed';
+  }
+
+  function resetDirectStateForConfig(methodId) {
+    if (validPlacementMode(state.placementMode) !== methodId) return;
+    stopDirectPlacementPlayback();
+    if (methodId === 'random') resetRandomIterationSeries();
+    state.directPlacementState = null;
+    ensureDirectPlacementState(true);
+    resetManualViewBox();
+    render();
+  }
+
   function activateConfigTab(tabId = 'preconfig', focusTab = false) {
-    const validId = CONFIG_TAB_DEFINITIONS.some(tab => tab.id === tabId) ? tabId : 'preconfig';
+    const requestedId = configMethodScope ? 'direct' : tabId;
+    const allowedTabs = configTabsForScope();
+    const validId = CONFIG_TAB_DEFINITIONS.some(tab => tab.id === requestedId) && allowedTabs.includes(requestedId)
+      ? requestedId
+      : allowedTabs[0];
     activeConfigTab = validId;
     document.querySelectorAll('[data-config-tab-button]').forEach(button => {
       const active = button.dataset.configTabButton === validId;
@@ -10050,6 +10767,8 @@
       panel.classList.toggle('active', active);
     });
     if (validId === 'readme-carousels') syncReadmeCarouselEditorTopics();
+    if (validId === 'direct') activateDirectConfigMenu(configMethodScope || 'general');
+    syncConfigScopeUi();
   }
 
   function setupConfigTabs() {
@@ -10075,6 +10794,39 @@
     tabList.className = 'config-tab-list';
     tabList.setAttribute('role', 'tablist');
     tabList.setAttribute('aria-label', 'Config-onderdelen');
+
+    const scopeNav = document.createElement('nav');
+    scopeNav.className = 'config-scope-nav';
+    scopeNav.setAttribute('aria-label', 'Config: algemeen of per toepassing');
+    const scopeGroups = [
+      { id: 'general', nl: 'Algemeen', en: 'General', scopes: ['general'] },
+      { id: 'calculated', nl: 'Calculated', en: 'Calculated', scopes: ['language-tree'] },
+      { id: 'direct', nl: 'Direct', en: 'Direct', scopes: ['greedy-grow', 'random'] }
+    ];
+    scopeGroups.forEach(group => {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'config-scope-group';
+      wrapper.dataset.configScopeGroup = group.id;
+      const label = document.createElement('strong');
+      label.className = 'config-scope-group-label';
+      label.dataset.labelNl = group.nl;
+      label.dataset.labelEn = group.en;
+      label.textContent = group.nl;
+      wrapper.appendChild(label);
+      group.scopes.forEach(scopeId => {
+        const definition = CONFIG_SCOPE_DEFINITIONS.find(scope => scope.id === scopeId);
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'config-scope-button';
+        button.dataset.configScopeButton = scopeId;
+        button.dataset.labelNl = definition.nl;
+        button.dataset.labelEn = definition.en;
+        button.textContent = definition.nl;
+        button.addEventListener('click', () => activateConfigScope(scopeId));
+        wrapper.appendChild(button);
+      });
+      scopeNav.appendChild(wrapper);
+    });
 
     const panels = new Map();
     CONFIG_TAB_DEFINITIONS.forEach(tab => {
@@ -10175,18 +10927,117 @@
     overviewCard.innerHTML = `<h2><span class="help-lang-nl">Config-overzicht</span><span class="help-lang-en">Configuration overview</span></h2>
       <p class="inline-help"><span class="help-lang-nl">Open één onderdeel. De bestaande save-werkwijze blijft ongewijzigd.</span><span class="help-lang-en">Open one section. The existing save workflow remains unchanged.</span></p>
       <div class="config-dashboard">
-        <button type="button" data-config-jump="preconfig"><strong>Voorconfig</strong><span>Algemene mogelijkheden vóór toepassingen.</span></button>
-        <button type="button" data-config-jump="features"><strong>Toepassingen</strong><span>Bijwoorden en volgende uitbreidingen.</span></button>
-        <button type="button" data-config-jump="readme-carousels"><strong>LEESMIJ-items</strong><span>Tonen, tekst, beelden en onderschriften per item.</span></button>
-        <button type="button" data-config-jump="view"><strong>Basisweergave</strong><span>View, interface, raster en vulling.</span></button>
-        <button type="button" data-config-jump="jan"><strong>JaN-notatie · TODO</strong><span>S:np-VP; binair eerst, meertakkig later.</span></button>
-        <button type="button" data-config-jump="view"><strong>Boom & layout</strong><span>Takvolgorde, ruimte en fit.</span></button>
-        <button type="button" data-config-jump="log-lex"><strong data-config-log-lex-title>LEX</strong><span>LEX-plaatsing en, indien ingeschakeld, extra insertieprofielen.</span></button>
-        <button type="button" data-config-jump="view"><strong>Projecties</strong><span>LEX, SYNT en LOG.</span></button>
-        <button type="button" data-config-jump="files"><strong>Voorbeelden & editors</strong><span>Bestanden, export en voorbeelden.</span></button>
-        <button type="button" data-config-jump="advanced"><strong>Geavanceerd</strong><span>Regels en technische opties.</span></button>
+        <button type="button" data-config-scope="general" data-config-jump="preconfig"><strong>Algemeen · Voorconfig</strong><span>Algemene mogelijkheden vóór toepassingen.</span></button>
+        <button type="button" data-config-scope="general" data-config-jump="direct"><strong>Algemeen · Direct gedeeld</strong><span>Instellingen die Greedy Grow en Random delen.</span></button>
+        <button type="button" data-config-scope="general" data-config-jump="readme-carousels"><strong>Algemeen · LEESMIJ-items</strong><span>Tonen, tekst, beelden en onderschriften per item.</span></button>
+        <button type="button" data-config-scope="general" data-config-jump="files"><strong>Algemeen · Bestanden</strong><span>Projectconfig, export en voorbeelden.</span></button>
+        <button type="button" data-config-scope="language-tree" data-config-jump="features"><strong>Calculated · Language Tree</strong><span>Toepassingen, waaronder bijwoorden.</span></button>
+        <button type="button" data-config-scope="language-tree" data-config-jump="view"><strong>Language Tree · Beeld</strong><span>View, boom, layout, raster en projecties.</span></button>
+        <button type="button" data-config-scope="language-tree" data-config-jump="log-lex"><strong data-config-log-lex-title>Language Tree · LEX</strong><span>LOG- en LEX-plaatsing en actieve insertieprofielen.</span></button>
+        <button type="button" data-config-scope="language-tree" data-config-jump="jan"><strong>Language Tree · JaN · TODO</strong><span>S:np-VP; binair eerst, meertakkig later.</span></button>
+        <button type="button" data-config-scope="greedy-grow" data-config-jump="direct"><strong>Direct · Greedy Grow</strong><span>Uitsluitend de eigen Greedy-instellingen.</span></button>
+        <button type="button" data-config-scope="random" data-config-jump="direct"><strong>Direct · Random</strong><span>Uitsluitend de eigen Random-instellingen.</span></button>
       </div>`;
-    overviewCard.querySelectorAll('[data-config-jump]').forEach(button => button.addEventListener('click', () => activateConfigTab(button.dataset.configJump)));
+    overviewCard.querySelectorAll('[data-config-jump]').forEach(button => button.addEventListener('click', () => {
+      activateConfigScope(button.dataset.configScope || 'general');
+      activateConfigTab(button.dataset.configJump);
+    }));
+
+    const directConfigCard = document.createElement('section');
+    directConfigCard.className = 'panel-card direct-config-card';
+    directConfigCard.id = 'config-direct-placement';
+    directConfigCard.innerHTML = `
+      <section id="direct-config-panel-general" class="direct-config-method-panel" role="group" aria-label="Algemene directe Config" data-direct-config-panel="general">
+        <div class="direct-config-choice-grid">
+          <div class="direct-config-field"><label class="select-field"><span><span class="help-lang-nl">Knopen per run</span><span class="help-lang-en">Nodes per run</span></span><select id="directTargetCountSelect"></select></label><details class="config-control-explanation"><summary><span class="help-lang-nl">Uitleg</span><span class="help-lang-en">Explanation</span></summary><small><span class="help-lang-nl">Bepaalt hoeveel knopen één complete Greedy- of Random-run schrijft; het verandert niet het aantal iteraties.</span><span class="help-lang-en">Sets how many nodes one complete Greedy or Random run writes; it does not change the iteration count.</span></small></details></div>
+          <div class="direct-config-field"><label class="select-field"><span><span class="help-lang-nl">Play-snelheid</span><span class="help-lang-en">Play speed</span></span><select id="directIntervalSelect"></select></label><details class="config-control-explanation"><summary><span class="help-lang-nl">Uitleg</span><span class="help-lang-en">Explanation</span></summary><small><span class="help-lang-nl">Wachttijd tussen zichtbare stappen. Snelheid verandert nooit de gekozen knoopposities.</span><span class="help-lang-en">Delay between visible steps. Speed never changes the selected node positions.</span></small></details></div>
+          <div class="direct-config-field"><label class="select-field"><span><span class="help-lang-nl">Knoopgrootte</span><span class="help-lang-en">Node size</span></span><select id="directNodeSizeSelect"></select></label><details class="config-control-explanation"><summary><span class="help-lang-nl">Uitleg</span><span class="help-lang-en">Explanation</span></summary><small><span class="help-lang-nl">Alleen de zichtbare cirkelmaat; gridcoördinaten en plaatsingskeuze blijven gelijk.</span><span class="help-lang-en">Only the visible circle size; grid coordinates and placement choices remain unchanged.</span></small></details></div>
+          <div class="direct-config-field"><label class="select-field"><span><span class="help-lang-nl">Rastermarge</span><span class="help-lang-en">Grid margin</span></span><select id="directGridMarginSelect"></select></label><details class="config-control-explanation"><summary><span class="help-lang-nl">Uitleg</span><span class="help-lang-en">Explanation</span></summary><small><span class="help-lang-nl">Extra zichtbare rasterruimte rond het gebruikte veld; dit maakt geen nieuwe plaatsingsplekken.</span><span class="help-lang-en">Extra visible grid space around the used field; it does not create new placement positions.</span></small></details></div>
+        </div>
+        <div class="direct-config-choice-grid direct-config-toggle-grid">
+          <div class="direct-config-toggle-field"><label><input id="directShowPathInput" type="checkbox"/> <span class="help-lang-nl">Groeipad tonen</span><span class="help-lang-en">Show growth path</span></label><details class="config-control-explanation"><summary><span class="help-lang-nl">Uitleg</span><span class="help-lang-en">Explanation</span></summary><small><span class="help-lang-nl">Verbindt alleen reeds geschreven knopen in schrijfvolgorde; er wordt geen toekomstig pad berekend.</span><span class="help-lang-en">Connects only nodes already written in write order; no future path is calculated.</span></small></details></div>
+          <div class="direct-config-toggle-field"><label><input id="directShowNumbersInput" type="checkbox"/> <span class="help-lang-nl">Knoopnummers tonen</span><span class="help-lang-en">Show node numbers</span></label><details class="config-control-explanation"><summary><span class="help-lang-nl">Uitleg</span><span class="help-lang-en">Explanation</span></summary><small><span class="help-lang-nl">Toont de schrijfindex in de knoop; plaatsing en volgorde veranderen niet.</span><span class="help-lang-en">Shows the write index inside the node; placement and order do not change.</span></small></details></div>
+          <div class="direct-config-toggle-field"><label><input id="directShowMetricsInput" type="checkbox"/> <span class="help-lang-nl">Veldmaten en omtrek tonen</span><span class="help-lang-en">Show field size and perimeter</span></label><details class="config-control-explanation"><summary><span class="help-lang-nl">Uitleg</span><span class="help-lang-en">Explanation</span></summary><small><span class="help-lang-nl">Toont diagnostische maten van het actuele veld; dit is geen bewijs van een wereldwijd optimale omtrek.</span><span class="help-lang-en">Shows diagnostic measurements of the current field; this is not proof of a globally optimal perimeter.</span></small></details></div>
+        </div>
+        <p class="config-item-help"><span class="help-lang-nl">Deze instellingen gelden gelijk voor Greedy Grow en Random. Eén Random-iteratie gebruikt het hier gekozen aantal knopen.</span><span class="help-lang-en">These settings apply equally to Greedy Grow and Random. One Random iteration uses the node count selected here.</span></p>
+        <div class="direct-config-actions"><button id="resetDirectGeneralConfigButton" type="button"><span class="help-lang-nl">Herstel algemene standaard</span><span class="help-lang-en">Restore general defaults</span></button></div>
+      </section>
+      <section id="direct-config-panel-greedy" class="direct-config-method-panel" role="group" aria-label="Greedy Grow Config" data-direct-config-panel="greedy-grow" hidden>
+        <div class="direct-config-choice-grid">
+          <div class="direct-config-field direct-config-wide"><label class="select-field"><span><span class="help-lang-nl">Zoekstrategie</span><span class="help-lang-en">Search strategy</span></span><select id="greedyStrategySelect"></select></label><details class="config-control-explanation"><summary><span class="help-lang-nl">Uitleg</span><span class="help-lang-en">Explanation</span></summary><small><span class="help-lang-nl">Bepaalt in welke volgorde vrije kandidaten worden onderzocht. De eerste geldige kandidaat wordt direct geschreven.</span><span class="help-lang-en">Sets the order in which free candidates are examined. The first valid candidate is written immediately.</span></small></details></div>
+          <div class="direct-config-field"><label class="select-field"><span><span class="help-lang-nl">Oriëntatie</span><span class="help-lang-en">Orientation</span></span><select id="greedyOrientationSelect"></select></label><details class="config-control-explanation"><summary><span class="help-lang-nl">Uitleg</span><span class="help-lang-en">Explanation</span></summary><small><span class="help-lang-nl">Draait het complete resultaat voor weergave; de groeivolgorde zelf blijft gelijk.</span><span class="help-lang-en">Rotates the complete result for display; the growth order itself stays unchanged.</span></small></details></div>
+        </div>
+      </section>
+      <section id="direct-config-panel-random" class="direct-config-method-panel" role="group" aria-label="Random Config" data-direct-config-panel="random" hidden>
+        <div class="direct-config-choice-grid">
+          <div class="direct-config-field"><label class="select-field"><span>Seed</span><input id="randomSeedInput" type="number" min="1" max="4294967295" step="1" inputmode="numeric"/></label><details class="config-control-explanation"><summary><span class="help-lang-nl">Uitleg</span><span class="help-lang-en">Explanation</span></summary><small><span class="help-lang-nl">Startcode voor reproduceerbare Random. <code>20260802</code> is alleen de herkenbare datum 2 augustus 2026; een groter getal geeft niet meer toeval en maakt Play niet sneller. Dezelfde seed, versie, instellingen en gridgrootte geven dezelfde reeks.</span><span class="help-lang-en">Starting code for reproducible Random. <code>20260802</code> is merely the memorable date 2 August 2026; a larger number is not more random and does not make Play faster. The same seed, version, settings and grid size produce the same sequence.</span></small></details></div>
+          <div class="direct-config-field"><label class="select-field"><span><span class="help-lang-nl">Resetbeleid</span><span class="help-lang-en">Reset policy</span></span><select id="randomSeedPolicySelect"></select></label><details class="config-control-explanation"><summary><span class="help-lang-nl">Uitleg</span><span class="help-lang-en">Explanation</span></summary><small><span class="help-lang-nl"><em>Vaste seed</em> herhaalt dezelfde iteratieset. <em>Nieuwe seed</em> schuift bij Reset reproduceerbaar naar een andere startcode.</span><span class="help-lang-en"><em>Fixed seed</em> repeats the same iteration set. <em>New seed</em> advances reproducibly to another starting code on Reset.</span></small></details></div>
+          <div class="direct-config-field direct-config-wide"><label class="select-field"><span><span class="help-lang-nl">Random-model</span><span class="help-lang-en">Random model</span></span><select id="randomDistributionSelect"></select></label><details class="config-control-explanation"><summary><span class="help-lang-nl">Uitleg</span><span class="help-lang-en">Explanation</span></summary><small><span class="help-lang-nl"><em>Uniform v1.0</em> geeft iedere vrije coördinaat dezelfde kans. <em>Onzuiver uniform v0.1</em> mengt 20% voorkeur voor asplekken die in voltooide eerdere rondes vaker zijn geraakt; ronde 1 is nog uniform.</span><span class="help-lang-en"><em>Uniform v1.0</em> gives every free coordinate the same chance. <em>Impure uniform v0.1</em> mixes in a 20% preference for axis positions hit more often in completed earlier rounds; round 1 is still uniform.</span></small></details></div>
+          <div class="direct-config-field"><label class="select-field"><span><span class="help-lang-nl">Plaatsing</span><span class="help-lang-en">Placement</span></span><select id="randomSpreadSelect"></select></label><details class="config-control-explanation"><summary><span class="help-lang-nl">Uitleg</span><span class="help-lang-en">Explanation</span></summary><small><span class="help-lang-nl"><em>Ergens</em> gebruikt de hele beschikbare rechthoek. Compact, Gebalanceerd en Ruim beperken of vergroten de actuele zoekzone.</span><span class="help-lang-en"><em>Anywhere</em> uses the full available rectangle. Compact, Balanced and Wide restrict or enlarge the current search zone.</span></small></details></div>
+          <div class="direct-config-field"><label class="select-field"><span><span class="help-lang-nl">Gridgrootte</span><span class="help-lang-en">Grid size</span></span><select id="randomMaxDimensionsSelect"></select></label><details class="config-control-explanation"><summary><span class="help-lang-nl">Uitleg</span><span class="help-lang-en">Explanation</span></summary><small><span class="help-lang-nl"><em>Interface</em> volgt de beschikbare beeldverhouding, <em>Vast grid</em> gebruikt opgegeven kolommen en rijen, en <em>Inhoud</em> laat het veld meegroeien. Dit verandert de speelruimte, niet het aantal knopen.</span><span class="help-lang-en"><em>Interface</em> follows the available aspect ratio, <em>Fixed grid</em> uses configured columns and rows, and <em>Content</em> lets the field grow. This changes the available area, not the node count.</span></small></details></div>
+          <div id="randomFixedGridFields" class="random-fixed-grid-fields" hidden>
+            <div class="direct-config-field"><label class="select-field"><span><span class="help-lang-nl">Vaste kolommen</span><span class="help-lang-en">Fixed columns</span></span><input id="randomFixedColumnsInput" type="number" min="1" max="10000" step="1" inputmode="numeric"/></label><details class="config-control-explanation"><summary><span class="help-lang-nl">Uitleg</span><span class="help-lang-en">Explanation</span></summary><small><span class="help-lang-nl">Aantal verticale gridlijnen. Minder dan het aantal knopen wordt automatisch verhoogd tot dat minimum.</span><span class="help-lang-en">Number of vertical grid lines. A value below the node count is automatically raised to that minimum.</span></small></details></div>
+            <div class="direct-config-field"><label class="select-field"><span><span class="help-lang-nl">Vaste rijen</span><span class="help-lang-en">Fixed rows</span></span><input id="randomFixedRowsInput" type="number" min="1" max="10000" step="1" inputmode="numeric"/></label><details class="config-control-explanation"><summary><span class="help-lang-nl">Uitleg</span><span class="help-lang-en">Explanation</span></summary><small><span class="help-lang-nl">Aantal horizontale gridlijnen. Minder dan het aantal knopen wordt automatisch verhoogd tot dat minimum.</span><span class="help-lang-en">Number of horizontal grid lines. A value below the node count is automatically raised to that minimum.</span></small></details></div>
+          </div>
+          <div class="direct-config-field"><label class="select-field"><span><span class="help-lang-nl">Snelheid</span><span class="help-lang-en">Speed</span></span><select id="randomSpeedSelect"></select></label><details class="config-control-explanation"><summary><span class="help-lang-nl">Uitleg</span><span class="help-lang-en">Explanation</span></summary><small><span class="help-lang-nl">Milliseconden tussen twee zichtbare knoopplaatsingen. Alleen de animatie verandert; seed en posities blijven gelijk.</span><span class="help-lang-en">Milliseconds between two visible node placements. Only the animation changes; seed and positions remain unchanged.</span></small></details></div>
+          <div class="direct-config-field"><label class="select-field"><span><span class="help-lang-nl">Hoe vaak · volledige iteraties</span><span class="help-lang-en">How often · complete iterations</span></span><select id="randomIterationCountSelect"></select></label><details class="config-control-explanation"><summary><span class="help-lang-nl">Uitleg</span><span class="help-lang-en">Explanation</span></summary><small><span class="help-lang-nl">Aantal complete rondes voor Play, Next/Previous en het opgebouwde asbeeld. Het aantal knopen per ronde staat bij Algemeen.</span><span class="help-lang-en">Number of complete rounds used by Play, Next/Previous and the accumulated axis image. Nodes per round are configured under General.</span></small></details></div>
+          <div class="direct-config-field direct-config-wide"><label class="select-field"><span><span class="help-lang-nl">Impact op west- en zuidas</span><span class="help-lang-en">Impact on west and south axes</span></span><select id="randomAxisImageModeSelect"></select></label><details class="config-control-explanation"><summary><span class="help-lang-nl">Uitleg</span><span class="help-lang-en">Explanation</span></summary><small><span class="help-lang-nl">Alleen de weergave van voltooide projectie-hits: uit, bezettingskans of relatief patroon. Deze keuze verandert de Random-plaatsing niet.</span><span class="help-lang-en">Only controls the display of completed projection hits: off, occupancy chance or relative pattern. This choice does not change Random placement.</span></small></details></div>
+        </div>
+      </section>`;
+
+    const updateGeneral = (key, value, label) => {
+      state.directPlacementGeneral = normalizeDirectPlacementGeneral({ ...state.directPlacementGeneral, [key]: value });
+      appendConfigLog('change-direct-general', { key, value: state.directPlacementGeneral[key] });
+      markConfigDirty(label);
+      if (['targetCount', 'intervalMs'].includes(key) && directPlacementActive()) {
+        resetDirectStateForConfig(validPlacementMode(state.placementMode));
+      } else if (directPlacementActive()) render();
+      syncDirectConfigControls();
+    };
+    directConfigCard.querySelector('#directTargetCountSelect')?.addEventListener('change', event => updateGeneral('targetCount', Number(event.target.value), 'Direct · knopen per run'));
+    directConfigCard.querySelector('#directIntervalSelect')?.addEventListener('change', event => updateGeneral('intervalMs', Number(event.target.value), 'Direct · Play-snelheid'));
+    directConfigCard.querySelector('#directShowPathInput')?.addEventListener('change', event => updateGeneral('showPath', event.target.checked, 'Direct · groeipad'));
+    directConfigCard.querySelector('#directShowNumbersInput')?.addEventListener('change', event => updateGeneral('showNumbers', event.target.checked, 'Direct · knoopnummers'));
+    directConfigCard.querySelector('#directShowMetricsInput')?.addEventListener('change', event => updateGeneral('showMetrics', event.target.checked, 'Direct · diagnostiek'));
+    directConfigCard.querySelector('#directNodeSizeSelect')?.addEventListener('change', event => updateGeneral('nodeSize', event.target.value, 'Direct · knoopgrootte'));
+    directConfigCard.querySelector('#directGridMarginSelect')?.addEventListener('change', event => updateGeneral('gridMargin', event.target.value, 'Direct · rastermarge'));
+    const updateGreedy = (key, value, label) => {
+      state.greedyGrowConfig = normalizeGreedyGrowConfig({ ...state.greedyGrowConfig, [key]: value });
+      appendConfigLog('change-greedy-grow-config', { key, value: state.greedyGrowConfig[key] });
+      markConfigDirty(label);
+      if (key === 'orientation' && validPlacementMode(state.placementMode) === 'greedy-grow') render();
+      else resetDirectStateForConfig('greedy-grow');
+      syncDirectConfigControls();
+    };
+    directConfigCard.querySelector('#greedyStrategySelect')?.addEventListener('change', event => updateGreedy('strategy', event.target.value, 'Greedy Grow · strategie'));
+    directConfigCard.querySelector('#greedyOrientationSelect')?.addEventListener('change', event => updateGreedy('orientation', event.target.value, 'Greedy Grow · oriëntatie'));
+    const updateRandom = (key, value, label) => {
+      state.randomPlacementConfig = normalizeRandomPlacementConfig({ ...state.randomPlacementConfig, [key]: value });
+      if (key === 'seed') state.directPlacementSeed = state.randomPlacementConfig.seed;
+      appendConfigLog('change-random-placement-config', { key, value: state.randomPlacementConfig[key] });
+      markConfigDirty(label);
+      if (['seed', 'distribution', 'spread', 'maxDimensions', 'fixedColumns', 'fixedRows', 'iterationCount'].includes(key)) resetDirectStateForConfig('random');
+      else if (validPlacementMode(state.placementMode) === 'random') render();
+      syncDirectConfigControls();
+    };
+    directConfigCard.querySelector('#randomSeedInput')?.addEventListener('change', event => updateRandom('seed', Number(event.target.value), 'Random · seed'));
+    directConfigCard.querySelector('#randomSeedPolicySelect')?.addEventListener('change', event => updateRandom('seedPolicy', event.target.value, 'Random · resetbeleid'));
+    directConfigCard.querySelector('#randomDistributionSelect')?.addEventListener('change', event => updateRandom('distribution', event.target.value, 'Random · model'));
+    directConfigCard.querySelector('#randomSpreadSelect')?.addEventListener('change', event => updateRandom('spread', event.target.value, 'Random · plaatsing'));
+    directConfigCard.querySelector('#randomMaxDimensionsSelect')?.addEventListener('change', event => updateRandom('maxDimensions', event.target.value, 'Random · gridgrootte'));
+    directConfigCard.querySelector('#randomFixedColumnsInput')?.addEventListener('change', event => updateRandom('fixedColumns', Number(event.target.value), 'Random · vaste kolommen'));
+    directConfigCard.querySelector('#randomFixedRowsInput')?.addEventListener('change', event => updateRandom('fixedRows', Number(event.target.value), 'Random · vaste rijen'));
+    directConfigCard.querySelector('#randomSpeedSelect')?.addEventListener('change', event => updateGeneral('intervalMs', Number(event.target.value), 'Random · snelheid'));
+    directConfigCard.querySelector('#randomIterationCountSelect')?.addEventListener('change', event => updateRandom('iterationCount', Number(event.target.value), 'Random · aantal iteraties'));
+    directConfigCard.querySelector('#randomAxisImageModeSelect')?.addEventListener('change', event => updateRandom('axisImageMode', event.target.value, 'Random · impact op asbeeld'));
+    directConfigCard.querySelector('#resetDirectGeneralConfigButton')?.addEventListener('click', () => {
+      state.directPlacementGeneral = { ...DEFAULT_DIRECT_PLACEMENT_GENERAL };
+      appendConfigLog('reset-direct-general-config', state.directPlacementGeneral);
+      markConfigDirty('Direct · algemene standaard');
+      if (directPlacementActive()) resetDirectStateForConfig(validPlacementMode(state.placementMode));
+      syncDirectConfigControls();
+    });
+    syncDirectConfigControls();
 
     const preconfigCard = document.createElement('section');
     preconfigCard.className = 'panel-card config-preconfig-card';
@@ -10509,6 +11360,7 @@
 
     panels.get('preconfig').appendChild(preconfigCard);
     panels.get('features').appendChild(featuresCard);
+    panels.get('direct').appendChild(directConfigCard);
     panels.get('readme-carousels').appendChild(readmeCarouselCard);
     panels.get('overview').appendChild(overviewCard);
     panels.get('jan').appendChild(janCard);
@@ -10545,9 +11397,9 @@
       small.innerHTML = `<span class="help-lang-nl">${texts[0]}</span><span class="help-lang-en">${texts[1]}</span>`;
       label.appendChild(small);
     });
-    sidePanel.replaceChildren(tabList, saveSlot, ...panels.values());
+    sidePanel.replaceChildren(scopeNav, tabList, saveSlot, ...panels.values());
     sidePanel.dataset.configTabsReady = '1';
-    activateConfigTab(activeConfigTab);
+    activateConfigScope(activeConfigScope, false, false);
     applyFeatureVisibility();
     syncProjectConfigStatus();
   }
@@ -10603,6 +11455,16 @@
     document.querySelectorAll('[data-config-tab-button]').forEach(button => {
       button.textContent = en ? button.dataset.labelEn : button.dataset.labelNl;
     });
+    document.querySelectorAll('.config-scope-group-label').forEach(label => {
+      label.textContent = en ? label.dataset.labelEn : label.dataset.labelNl;
+    });
+    document.querySelectorAll('[data-config-scope-button]').forEach(button => {
+      button.textContent = en ? button.dataset.labelEn : button.dataset.labelNl;
+    });
+    document.querySelector('.config-scope-nav')?.setAttribute(
+      'aria-label',
+      en ? 'Configuration: general or by application' : 'Config: algemeen of per toepassing'
+    );
     const readmeShapeSelect = document.getElementById('readmeCarouselShapeSelect');
     if (readmeShapeSelect) {
       const wide = readmeShapeSelect.querySelector('option[value="wide"]');
@@ -11737,6 +12599,9 @@
     if (base.features || override.features) {
       merged.features = { ...(base.features || {}), ...(override.features || {}) };
     }
+    for (const key of ['directPlacementGeneral', 'directPlacementPresentation', 'greedyGrowConfig', 'randomPlacementConfig']) {
+      if (base[key] || override[key]) merged[key] = { ...(base[key] || {}), ...(override[key] || {}) };
+    }
     // Deze collecties zijn volledige gebruikerskeuzes. Als de user-config de
     // sleutel bevat, vervangt die de standaardcollectie ook wanneer zij leeg is.
     for (const key of ['readmeTopicEdits', 'readmeCarousels', 'sourceAxes', 'topMenusAbove', 'topMenuChoices']) {
@@ -11872,6 +12737,9 @@
       showRelations: !!state.showRelations,
       showLabels: !!state.showLabels,
       placementMode: validPlacementMode(state.placementMode),
+      directPlacementGeneral: normalizeDirectPlacementGeneral(state.directPlacementGeneral),
+      greedyGrowConfig: normalizeGreedyGrowConfig(state.greedyGrowConfig),
+      randomPlacementConfig: normalizeRandomPlacementConfig(state.randomPlacementConfig),
       lexProjectionColor: state.lexProjectionColor,
       syntProjectionColor: state.syntProjectionColor,
       logProjectionColor: state.logProjectionColor,
@@ -11975,6 +12843,39 @@
       state.viewFitMode = 'max';
     }
     if (typeof snapshot.placementMode === 'string') state.placementMode = validPlacementMode(snapshot.placementMode);
+    const legacyDirectMethod = snapshot.placementMode === 'random'
+      ? snapshot.randomPlacementConfig
+      : snapshot.greedyGrowConfig;
+    const hasLegacyDirectGeneral = Object.prototype.hasOwnProperty.call(snapshot, 'directPlacementPresentation')
+      || Number.isFinite(Number(legacyDirectMethod?.targetCount))
+      || Number.isFinite(Number(legacyDirectMethod?.intervalMs));
+    const migratedDirectGeneral = {
+      ...(snapshot.directPlacementPresentation || {}),
+      ...(Number.isFinite(Number(legacyDirectMethod?.targetCount)) ? { targetCount: legacyDirectMethod.targetCount } : {}),
+      ...(Number.isFinite(Number(legacyDirectMethod?.intervalMs)) ? { intervalMs: legacyDirectMethod.intervalMs } : {})
+    };
+    state.directPlacementGeneral = normalizeDirectPlacementGeneral(
+      Object.prototype.hasOwnProperty.call(snapshot, 'directPlacementGeneral')
+        ? snapshot.directPlacementGeneral
+        : hasLegacyDirectGeneral
+          ? migratedDirectGeneral
+          : state.directPlacementGeneral
+    );
+    state.greedyGrowConfig = normalizeGreedyGrowConfig(
+      Object.prototype.hasOwnProperty.call(snapshot, 'greedyGrowConfig')
+        ? snapshot.greedyGrowConfig
+        : state.greedyGrowConfig
+    );
+    state.randomPlacementConfig = normalizeRandomPlacementConfig(
+      Object.prototype.hasOwnProperty.call(snapshot, 'randomPlacementConfig')
+        ? snapshot.randomPlacementConfig
+        : state.randomPlacementConfig
+    );
+    state.directPlacementIterationBaseSeed = state.randomPlacementConfig.seed;
+    state.directPlacementIterationIndex = 0;
+    state.directPlacementSeed = randomSeedForIteration(state.directPlacementIterationBaseSeed, 0);
+    stopDirectPlacementPlayback();
+    state.directPlacementState = null;
     if (typeof snapshot.lexProjectionColor === 'string') state.lexProjectionColor = snapshot.lexProjectionColor;
     if (typeof snapshot.syntProjectionColor === 'string') state.syntProjectionColor = snapshot.syntProjectionColor;
     if (typeof snapshot.logProjectionColor === 'string') state.logProjectionColor = snapshot.logProjectionColor;
@@ -12108,6 +13009,7 @@
     const isMain = next === 'main';
     const isConfig = next === 'config';
     const isHelp = next === 'help';
+    if (!isConfig) configScopeManual = false;
     if (!isMain) stopDirectPlacementPlayback();
     document.body.classList.toggle('main-screen-active', isMain);
     document.body.classList.toggle('config-screen-active', isConfig);
@@ -12116,7 +13018,11 @@
     els.closeConfigButton?.setAttribute('aria-expanded', isConfig ? 'true' : 'false');
     els.openHelpButton?.setAttribute('aria-expanded', isHelp ? 'true' : 'false');
     els.closeHelpButton?.setAttribute('aria-expanded', isHelp ? 'true' : 'false');
-    if (isConfig) activateConfigTab(activeConfigTab);
+    if (isConfig) {
+      configScopeManual = false;
+      syncConfigMethodScope();
+      activateConfigTab(configMethodScope ? 'direct' : activeConfigTab);
+    }
     window.setTimeout(() => {
       syncExampleSelectSizing();
       syncMainTopbarLayout();

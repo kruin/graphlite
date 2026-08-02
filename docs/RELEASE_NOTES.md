@@ -1,9 +1,36 @@
 ## v2.0.0-rc.45 — OGN-kern vóór toepassingen
 
 - Status: op 2 augustus 2026 handmatig goedgekeurde release candidate.
-- Source build 20260802.2 integreert Language Tree als prominente berekende
+- Source build 20260802.11 integreert Language Tree als prominente berekende
   methode en Greedy Grow/Random als directe OGN-illustraties in hetzelfde
   hoofdmenu. Random gebruikt een afzonderlijke seedbare engine.
+- Config is ingedeeld als Algemeen, Calculated → Language Tree en Direct →
+  Greedy Grow / Random. Per context zijn niet-relevante velden no-show en elk
+  zichtbaar veld heeft compacte, mobiele uitleg.
+- Eén Random-iteratie is één complete run. Bij 31 knopen leveren 10 iteraties
+  na voltooiing precies 300 niet-centrale projectie-hits per as.
+  Bezettingskans deelt tellingen door het ingestelde iteratieaantal; Relatief
+  schaalt op de hoogste telling van voltooide rondes. De analyse blijft
+  diagnostiek en bewaart geen toekomstig plaatsingsplan.
+- Greedy toont twee eigen velden. Random toont alleen zijn eigen model,
+  seed/reset, plaatsing, gridgrootte, conditionele vaste maten, snelheid,
+  iteraties en asbeeld. Berekende uitvoer blijft buiten Config.
+- Random Play/Next lopen knoop voor knoop door alle ingestelde iteraties;
+  Previous kan reproduceerbaar over de rungrens terug en Reset begint bij
+  iteratie 1 volgens het seedbeleid.
+- Voltooide Random-rondes projecteren hun rijen cumulatief naar WEST-spots en
+  hun kolommen naar SOUTH-spots. Een volgende hit maakt dezelfde spot
+  donkerder en zwaarder; toekomstige rondes worden niet vooraf getekend.
+- De toegevoegde Random-standaard is **Ergens in beschikbare ruimte** met
+  maximale afmetingen **Interface**. Compact, Gebalanceerd, Ruim en het
+  groeiende inhoudsveld blijven als alternatieven bestaan.
+- Uniform v1.0 blijft de standaard. Onzuiver uniform v0.1 mengt 20%
+  herhaalgewicht uit voltooide eerdere as-hits en voorspelt mild meer contrast
+  binnen één vaste seedreeks. v0.2 en v0.3 zijn gedocumenteerd maar no-show.
+- `20260802` wordt uitgelegd als datumseed 2 augustus 2026; seedgrootte heeft
+  geen relatie met hoeveelheid toeval of Play-snelheid.
+- `CONFIG_UI_EXPLANATION_STANDARD.md` maakt uitleg per Configveld een vaste
+  bronregel voor volgende projectwijzigingen.
 - `Config → Beeld → Lijnbeeld` regelt rasterkleur en raster-, projectie- en
   boxlijnzwaarte; LEX, SYNT en LOG hebben afzonderlijke kleuren voor as, lijn
   en box.

@@ -36,6 +36,30 @@
     "showRelations": true,
     "showLabels": true,
     "placementMode": "language-tree",
+    "directPlacementGeneral": {
+      "targetCount": 31,
+      "intervalMs": 650,
+      "showPath": true,
+      "showNumbers": true,
+      "showMetrics": true,
+      "nodeSize": "normal",
+      "gridMargin": "normal"
+    },
+    "greedyGrowConfig": {
+      "strategy": "compact-four-arm",
+      "orientation": "original"
+    },
+    "randomPlacementConfig": {
+      "seed": 20260802,
+      "seedPolicy": "advance",
+      "distribution": "uniform-v1.0",
+      "spread": "available",
+      "maxDimensions": "interface",
+      "fixedColumns": 48,
+      "fixedRows": 48,
+      "iterationCount": 10,
+      "axisImageMode": "occupancy"
+    },
     "lexProjectionColor": "blue",
     "syntProjectionColor": "green",
     "logProjectionColor": "purple",

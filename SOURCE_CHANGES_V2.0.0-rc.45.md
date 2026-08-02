@@ -1,5 +1,194 @@
 # SOURCE_CHANGES v2.0.0-rc.45
 
+## Source build 20260803.12 — harde no-show voor directe methode-Config
+
+- Bij Config vanuit een actieve Greedy-Grow- of Random-modus is nu ook de
+  toepassings-/contextbalk volledig no-show.
+- Zichtbaar blijven uitsluitend **Terug naar Main**, de eigen bewerkbare
+  methodevelden met hun inklapbare uitleg en de compacte Config-save-acties.
+- Algemeen, Language Tree en de andere directe methode worden in dit scherm
+  niet getoond. Een andere context wordt eerst in Main gekozen.
+- De no-show geldt functioneel via het `hidden`-attribuut, semantisch voor
+  hulptechnologie en als CSS-veiligheidsregel. De regressiecontrole bewaakt
+  beide lagen.
+- Dit corrigeert source build 20260802.11, waarin de velden al geïsoleerd waren
+  maar de nieuwe toepassingsbalk nog zichtbaar bleef.
+
+Normatief: `DIRECT_PLACEMENT_CONFIG.md`.
+
+## Source build 20260802.11 — toepassings-Config en Onzuiver uniform v0.1
+
+- Config heeft een vaste eerste laag: **Algemeen**, **Calculated → Language
+  Tree** en **Direct → Greedy Grow / Random**. Per context zijn niet-relevante
+  instellingen no-show; de toepassingsbalk blijft beschikbaar om te wisselen.
+- Ieder zichtbaar Direct-, Greedy- en Random-veld heeft een compacte,
+  inklapbare uitleg. `CONFIG_UI_EXPLANATION_STANDARD.md` maakt dit een vaste
+  projectoverstijgende bronregel.
+- **Uniform v1.0** blijft bytegedragsmatig ongewijzigd en is de standaard.
+  **Onzuiver uniform v0.1 · hit-herhaling** is functioneel toegevoegd: per
+  vrije ascoördinaat 80% uniform plus 20% herhaalgewicht uit uitsluitend
+  voltooide eerdere rondes. Ronde 1 is uniform.
+- Random Config bevat nu expliciet model, gridgrootte, vaste kolommen/rijen en
+  snelheid. Vaste maten zijn minimaal het aantal knopen; snelheid gebruikt de
+  bestaande gedeelde Play-klok en beïnvloedt de plaatsingsreeks niet.
+- Seed is begrensd op 1 t/m 4.294.967.295. `20260802` wordt in Config en Help
+  uitgelegd als datumseed; een groter getal geeft niet meer toeval of snelheid.
+- De voorspellingen voor v0.2 (instelbare herhaalsterkte) en v0.3 (instelbaar
+  geheugenvenster) zijn vastgelegd, maar blijven no-show totdat zij volledig
+  functioneel en getest zijn.
+- Engine-, statische en browsercontroles bewaken reproduceerbaarheid, de harde
+  unieke rij-/kolomregel, v0.1-ascontrast, contextisolatie en mobiele uitleg.
+
+Normatief: `DIRECT_PLACEMENT_CONFIG.md` en
+`CONFIG_UI_EXPLANATION_STANDARD.md`.
+
+## Source build 20260802.10 — cumulatieve projectie-hits per Random-ronde
+
+- WEST en SOUTH zijn nu echte hitassen: gebruikte rijen projecteren naar
+  WEST-spots en gebruikte kolommen naar SOUTH-spots.
+- Een ronde draagt pas bij nadat haar laatste knoop is geschreven. Een
+  herhaalde hit verhoogt de telling van dezelfde spot en maakt die donkerder,
+  groter en zwaarder omlijnd.
+- Reset wist de cumulatieve hits. Previous verwijdert een ronde uit het
+  asbeeld zodra die ronde door terugstappen niet meer volledig is.
+- De vorige voorafberekende asverdeling is verwijderd. Alleen reeds voltooide
+  rondes worden deterministisch gereconstrueerd; toekomstige rondes worden
+  niet gegenereerd of getekend.
+- De documentatie geeft de voorspelling voor uniforme Random: verwachte
+  hitkans `(N - 1) / (aslijnen - 1)` per niet-centrale asplek en dus op termijn
+  een vrijwel egaal beeld.
+
+Normatief: `DIRECT_PLACEMENT_CONFIG.md`.
+
+## Source build 20260802.9 — Random gebruikt standaard de beschikbare ruimte
+
+- Random Config heeft één extra eigen veld: **Maximale afmetingen**.
+- De toegevoegde standaardcombinatie is **Ergens in beschikbare ruimte** met
+  **Interface · beschikbare ruimte**. Bij Reset wordt een vaste rechthoek met
+  de actuele interfaceverhouding en voldoende unieke rijen en kolommen
+  afgeleid.
+- Iedere Random-stap kiest rechtstreeks uit alle nog vrije
+  rij-kolomcombinaties in die rechthoek; er is voor deze standaard geen
+  kunstmatig compacte groeizone.
+- Compact, Gebalanceerd, Ruim en **Inhoud · groeiend veld** blijven bestaande
+  alternatieven. Eerder opgeslagen keuzes worden niet geforceerd omgezet en
+  de optielijsten blijven uitbreidbaar.
+- Engine-, Config- en browsercontroles bewaken de vaste rechthoek, de zes
+  eigen velden, de standaardwaarden en de harde unieke rij-/kolomregel.
+
+Normatief: `DIRECT_PLACEMENT_CONFIG.md`.
+
+## Source build 20260802.8 — minimale methode-Config
+
+- Greedy Grow en Random openen nu als kale taakschermen.
+- De viewerwerkbalk, run-/voorbeeldstatus, feedbackblokken, het canvas,
+  algemene Configuitleg en de grote save-kaart zijn daar verborgen.
+- Zichtbaar blijven uitsluitend **Terug naar Main**, de eigen bewerkbare
+  methodevelden en twee compacte knoppen voor bewaren en herstellen.
+- De Configwaarden en opslagsemantiek blijven gelijk; alleen de niet-relevante
+  schil is verwijderd.
+- De browsercontrole bewaakt ook dat werkbalk, status, Play-balk, save-uitleg
+  en savekop werkelijk niet zichtbaar zijn.
+
+Normatief: `DIRECT_PLACEMENT_CONFIG.md`.
+
+## Source build 20260802.7 — Random-config en iteratiebediening
+
+- Random Config bevat uitsluitend de vijf eigen bewerkbare velden: Seed,
+  Resetbeleid, Spreiding, Hoe vaak en Impact op west- en zuidas.
+- De berekende impactregel is uit Config verwijderd. Formules, betekenis en
+  voorbeelden staan voortaan in Help en `DIRECT_PLACEMENT_CONFIG.md`.
+- **Hoe vaak** bestuurt nu ook de actieve uitvoering. Play loopt knoop voor
+  knoop door alle ingestelde iteraties; Next en Previous werken over de
+  rungrens heen en Reset begint opnieuw bij iteratie 1 volgens het seedbeleid.
+- Main toont `iteratie n/totaal · knoop n/totaal`. De actieve runs en het
+  afgeleide asbeeld gebruiken dezelfde reproduceerbare seedreeks.
+- De knopstatus houdt rekening met de iteratieset: Next blijft na een complete
+  tussenrun beschikbaar en Previous blijft bij de start van een latere run
+  beschikbaar.
+- De automatische Configcontrole bewaakt de exacte vijf velden en verbiedt
+  berekende uitvoer in het paneel. De volledige bediening is bovendien in een
+  echte browser over drie iteraties gecontroleerd.
+
+Normatief: `DIRECT_PLACEMENT_CONFIG.md`.
+
+## Source build 20260802.6 — Configschil volgt de actieve methode
+
+- Bij actieve Greedy Grow opent Config rechtstreeks met alleen Terug naar
+  Main, de twee eigen velden en Config-save.
+- Bij actieve Random opent Config rechtstreeks met alleen Terug naar Main, de
+  vijf eigen velden, de berekende as-impact en Config-save.
+- De algemene hoofdtabbladen, het Algemeen/Greedy/Random-submenu, taalmenu,
+  README-knop, algemene Configuitleg en configlogknop zijn in beide
+  methodeschermen verborgen.
+- Met Language Tree actief blijft de volledige projectconfig beschikbaar;
+  `Config → Direct` toont daar uitsluitend Algemeen.
+- De vorige aanpassing beperkte wel de inhoud van de methodepanelen, maar liet
+  de buitenste algemene Configschil nog zichtbaar. Deze bronstand corrigeert
+  precies dat verschil.
+- De releasecontrole bewaakt zowel de exacte veldinhoud als de afscherming van
+  de volledige Configschil.
+
+Normatief: `DIRECT_PLACEMENT_CONFIG.md`.
+
+## Source build 20260802.5 — methodepanelen tonen alleen eigen Config
+
+- Het Greedy Grow-paneel bevat uitsluitend Zoekstrategie en Oriëntatie.
+- Het Random-paneel bevat uitsluitend Seed, Resetbeleid, Spreiding, Hoe vaak
+  en Impact op west- en zuidas, plus de daaruit berekende impactregel.
+- Uitlegblokken, Toon-knoppen, methodegebonden herstelknoppen en algemene
+  statusregels zijn uit beide methodepanelen verwijderd.
+- Gedeelde instellingen en hun herstelknop blijven uitsluitend onder
+  Algemeen. De Config-savebalk blijft volgens het algemene Configcontract
+  beschikbaar.
+- De releasecontrole telt de velden en weigert algemene of methodevreemde
+  bediening in Greedy Grow en Random.
+
+Normatief: `DIRECT_PLACEMENT_CONFIG.md`.
+
+## Source build 20260802.4 — Random-config geïsoleerd
+
+- `Config → Direct` bevat nu drie afgebakende submenu's: Algemeen, Greedy
+  Grow en Random.
+- Algemeen bevat alle gedeelde run- en weergavekeuzes. Greedy Grow bevat
+  uitsluitend strategie en oriëntatie. Random bevat uitsluitend seed,
+  resetbeleid, spreiding, **Hoe vaak** en **Impact op west- en zuidas**.
+- Eén Random-iteratie is één complete run met het algemene aantal knopen. De
+  centrale knoop telt niet mee: 10 iteraties met 31 knopen leveren precies
+  300 waarnemingen per as.
+- Het asbeeld kan uit, als Bezettingskans (`telling ÷ iteraties`) of als
+  Relatief patroon (`telling ÷ hoogste telling`) worden weergegeven.
+- Het Random-paneel toont de actuele rekensom direct onder de opties. De
+  iteratieanalyse blijft reproduceerbare diagnostiek en verandert de actieve
+  directe run niet.
+- Oudere rc.45-configs worden bij het laden naar
+  `directPlacementGeneral`, `greedyGrowConfig` en `randomPlacementConfig`
+  gemigreerd; een nieuwe save schrijft alleen het geïsoleerde model.
+- De automatische controle faalt wanneer een algemene of Greedy-optie opnieuw
+  in het Random-paneel verschijnt en controleert de 300 waarnemingen per as.
+
+Normatief: `DIRECT_PLACEMENT_CONFIG.md`.
+
+## Source build 20260802.3 — directe Config-submenu's
+
+- `Config → Direct` bevat één gedeeld presentatieblok en afzonderlijke
+  submenu's voor Greedy Grow en Random.
+- Greedy Grow configureert zijn vijf bestaande deterministische strategieën,
+  aantal, Play-snelheid en afgeleide weergaveoriëntatie. Herhaling is bewust
+  niet toegevoegd: dezelfde Greedy-invoer levert exact hetzelfde resultaat.
+- Random configureert aantal, snelheid, seed, resetbeleid en spreiding.
+- Random kan 1, 3, 10 of 25 deterministische vergelijkingsruns analyseren.
+  Marginale coördinaatfrequenties worden aan de west- en zuidas getekend; het
+  verplichte centrale startpunt telt niet mee.
+- De herhalingsanalyse is diagnostiek en plant de actieve directe run niet
+  vooruit. De harde unieke-rij/kolomregel blijft per run gelden.
+- Gedeelde presentatie en beide methodeblokken worden genest opgeslagen en
+  per sleutel samengevoegd tussen default-, user- en browser-Config.
+- `DIRECT_PLACEMENT_CONFIG.md`, een handmatige test en een automatische
+  releasecontrole leggen de nieuwe opties vast.
+
+Normatief: `DIRECT_PLACEMENT_CONFIG.md`.
+
 ## Source build 20260802.2 — lijnbeeld, directe modi en EOF/EOL
 
 - Language Tree blijft de primaire berekende toepassing in het hoofdmenu.
@@ -142,6 +331,6 @@ De normatieve beschrijving staat in
 ## Compatibiliteitsgrens
 
 De taalboom-graphdata en het OPN-formaat zijn niet gewijzigd. De oorspronkelijke
-rc.45-carrousel blijft byte- en hashgecontroleerd; source build 20260802.2
-wijzigt wel de viewerinterface, Config-weergave en het lijnrendercontract zoals
-hierboven beschreven.
+rc.45-carrousel blijft byte- en hashgecontroleerd; source build 20260802.7
+wijzigt wel de viewerinterface, geïsoleerde directe Config en het
+lijnrendercontract zoals hierboven beschreven.

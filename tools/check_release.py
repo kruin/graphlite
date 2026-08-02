@@ -39,6 +39,7 @@ required_files = [
     "greedy-grow.html", "greedy-grow.css", "greedy-grow-engine.js", "greedy-grow.js",
     "RECURSIVE_LAYOUT_AND_APPLICATION_CONTRACT.md", "OGN_CORE_PLACEMENT_ARCHITECTURE.md",
     "LINE_STYLE_AND_PLACEMENT_MODES.md", "RC45_LINE_STYLE_DIRECT_MODES_TEST.md",
+    "DIRECT_PLACEMENT_CONFIG.md", "CONFIG_UI_EXPLANATION_STANDARD.md", "RC45_DIRECT_PLACEMENT_CONFIG_TEST.md",
     "RC35_README_LAYOUT_TEST.md", "RC36_BASE_PROFILE_TEST.md", "RC37_PRECONFIG_TEST.md",
     "RC38_MOBILE_LAYOUT_TEST.md", "RC39_VIEWPORT_SWITCH_TEST.md",
     "RC40_LANDSCAPE_COMPOSITION_TEST.md", "RC41_RECURSIVE_LAYOUT_TEST.md",
@@ -49,6 +50,7 @@ required_files = [
     "docs/ADVERB_ORIGIN_MECHANISMS.md", "docs/OGN_BASE_PROFILE.md",
     "docs/GREEDY_GROW_RECONSTRUCTION.md",
     "docs/OGN_CORE_PLACEMENT_ARCHITECTURE.md", "docs/LINE_STYLE_AND_PLACEMENT_MODES.md",
+    "docs/DIRECT_PLACEMENT_CONFIG.md", "docs/CONFIG_UI_EXPLANATION_STANDARD.md",
     "docs/PRECONFIG_ARCHITECTURE.md",
     "docs/LAYOUT_SPEC.md", "docs/RECURSIVE_LAYOUT_AND_APPLICATION_CONTRACT.md", "docs/RENDER_EXPLANATION.md",
     "docs/RENDER_EXPLANATION_EN.md", "docs/TALIGE_UITBREIDINGEN.md", "docs/SOCIAL_EXPORT.md",
@@ -74,6 +76,7 @@ required_files = [
     "tools/check_project_config_layers.py", "tools/check_project_config_layers_runtime.js",
     "random-placement-engine.js", "tools/check_greedy_grow_reconstruction.js",
     "tools/check_random_placement.js", "tools/check_line_style_and_direct_modes.py",
+    "tools/check_direct_placement_config.py",
     "tools/check_node_grid_invariant.py",
     "tools/check_mobile_layout_rc38.py", "tools/check_mobile_layout_runtime.js",
     "tools/check_viewport_switch_runtime.js", "tools/check_landscape_composition_runtime.js",
@@ -223,6 +226,7 @@ for rel, marker in [
     require(read(rel), marker, f"Greedy Grow-reconstructie {rel}")
 require(read("check_release.bat"), "check_greedy_grow_reconstruction.js", "Greedy-regressie in releaseflow")
 require(read("check_release.bat"), "check_random_placement.js", "Random-regressie in releaseflow")
+require(read("check_release.bat"), "check_direct_placement_config.py", "directe Config-regressie in releaseflow")
 
 # Local portrait/landscape simulation must survive the later MAX rules and use
 # the version of the loaded viewer instead of a historical hardcoded value.
@@ -414,7 +418,7 @@ for marker, label in [
     ("function insertReadmeSlideFile()", "lokale afbeelding naar LEESMIJ-slide"),
     ("MAX_README_EMBEDDED_IMAGE_BYTES = 1250000", "LEESMIJ-bestandslimiet"),
     ("config-global-save-card", "globale Config-savekaart"),
-    ("sidePanel.replaceChildren(tabList, saveSlot, ...panels.values())", "Config-save op ieder tabblad"),
+    ("sidePanel.replaceChildren(scopeNav, tabList, saveSlot, ...panels.values())", "Config-save op ieder tabblad en toepassingscontext"),
     ("PROJECT_DEFAULT_CONFIG_PATH = 'config/default-config.json'", "project-standaardconfig"),
     ("PROJECT_USER_CONFIG_PATH = 'config/user-config.json'", "project-user-config"),
     ("function mergeProjectConfigSnapshots(", "projectconfig-overschrijving"),
@@ -700,7 +704,7 @@ for marker, label in [
 ]:
     require(local_launcher, marker, label)
 source_build = read("SOURCE_BUILD.txt").strip()
-if source_build != "v2.0.0-rc.45-grid-style-direct-modes-eol-20260802.2":
+if source_build != "v2.0.0-rc.45-direct-config-hard-no-show-20260803.12":
     errors.append(f"onverwachte of lege SOURCE_BUILD.txt: {source_build!r}")
 for stale in ['v4537', 'v2.0.0-rc.24']:
     if stale in start_bat or stale in debug_html:

@@ -75,6 +75,40 @@ currently unused row and column; language-only menus are hidden and the
 Language Tree data is left unchanged. Random uses a separate seeded engine,
 so it cannot alter the accepted Greedy Grow reconstruction.
 
+Config now has one fixed first layer: **General**, **Calculated → Language
+Tree** and **Direct → Greedy Grow / Random**. All irrelevant settings are
+no-show within a context. Greedy shows only strategy and orientation; Random
+only its own seed, reset policy, model, placement, grid size, conditional fixed
+dimensions, speed, iterations and axis image. Every visible field has a compact
+expandable explanation inside Config. A larger seed is not more random and
+does not change speed; `20260802` is merely the memorable date 2 August 2026.
+See [`CONFIG_UI_EXPLANATION_STANDARD.md`](CONFIG_UI_EXPLANATION_STANDARD.md).
+
+When Config is opened from an active Greedy Grow or Random mode, the
+application bar itself is also no-show. Only Back to Main, that method's own
+fields with Explanation, and Config save remain visible. Select another
+application in Main first.
+
+A new default Config uses **Uniform v1.0**, **Anywhere in available space** and
+**Interface · available space**. **Impure uniform v0.1** is a functional
+alternative that mixes in a 20% preference for axis positions hit more often
+in completed earlier rounds. Fixed grid, Compact, Balanced, Wide and the
+growing content field remain available. v0.2 and v0.3 remain no-show until they
+genuinely work. Play and Next cross run boundaries until all configured
+iterations are complete; Previous can cross back. For example,
+10 completed iterations with 31 nodes produce 10 × 30 = 300 projection hits
+per axis; the centre node is excluded. A round adds its rows as WEST hit spots
+and its columns as SOUTH hit spots only after its final node is written. A
+repeated hit makes the existing spot darker and heavier. Occupancy mode scales
+against the configured round total, while Relative mode scales against the
+highest count among completed rounds. No future round is generated for this
+axis image. Uniform Random predicts an increasingly even distribution, while
+v0.1 can mildly reinforce early differences; an
+axis with exactly `N` lines for `N` nodes is hit at every non-central position
+in every round. An unchanged Greedy strategy is deterministic and is therefore
+not repeated. See
+[`DIRECT_PLACEMENT_CONFIG.md`](DIRECT_PLACEMENT_CONFIG.md).
+
 Under `Config → View → Line appearance`, grid color and the weights of grid,
 projection and box lines can be set independently. LEX, SYNT and LOG also have
 independent colors—blue, green and purple by default—and matching axes,

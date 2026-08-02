@@ -5,10 +5,10 @@ Leidende status van OpenGraph Lite Viewer `v2.0.0-rc.45`.
 Controlestatus: rc.45 is op 2 augustus 2026 handmatig goedgekeurd, inclusief
 de Greedy Grow-reconstructie, bewijsgrens en afgeleide publicatieslide.
 
-## Actuele source build 20260802.2
+## Actuele source build 20260803.12
 
 - Exacte bronidentiteit:
-  `v2.0.0-rc.45-grid-style-direct-modes-eol-20260802.2`.
+  `v2.0.0-rc.45-direct-config-hard-no-show-20260803.12`.
 - Het hoofdmenu toont Language Tree prominent als primaire berekende
   toepassing, met Greedy Grow en Random als kleinere directe
   OGN-illustraties. De directe modi schrijven één knoop per stap en verbergen
@@ -23,6 +23,24 @@ de Greedy Grow-reconstructie, bewijsgrens en afgeleide publicatieslide.
   één afsluitende EOL structureel vast. `publish_checked.bat` normaliseert en
   voert `git add --renormalize` uit vóór de whitespacecontrole.
 - Het volledige contract staat in `LINE_STYLE_AND_PLACEMENT_MODES.md`.
+- Config is ingedeeld als Algemeen, Calculated → Language Tree en Direct →
+  Greedy Grow / Random. Per context zijn niet-relevante instellingen no-show;
+  ieder zichtbaar veld heeft compacte uitleg. Zie
+  `CONFIG_UI_EXPLANATION_STANDARD.md` en `DIRECT_PLACEMENT_CONFIG.md`.
+- Greedy/Random Config verbergt ook viewerwerkbalk, runstatus, feedback,
+  canvas, save-uitleg en de toepassingsbalk. Alleen Terug naar Main, de eigen
+  velden met uitleg en compacte bewaren/herstellen-knoppen blijven over; een
+  andere context wordt eerst in Main gekozen.
+- Iedere voltooide Random-ronde voegt cumulatieve projectie-hitspots toe op
+  WEST (rijen) en SOUTH (kolommen). Herhaalde hits maken dezelfde spot
+  donkerder en zwaarder; onvoltooide of toekomstige rondes tellen niet mee.
+- Een nieuwe Random-standaard kiest **Ergens in beschikbare ruimte** binnen
+  maximale afmetingen **Interface**. De bestaande Compact-, Gebalanceerd-,
+  Ruim- en groeiend-inhoudskeuzes blijven behouden en uitbreidbaar.
+- Uniform v1.0 blijft standaard. Onzuiver uniform v0.1 mengt 20%
+  herhaalgewicht uit voltooide eerdere as-hits. Gridgrootte, vaste maten en
+  snelheid zijn direct instelbaar; seed en snelheid hebben afzonderlijke
+  betekenis. v0.2 en v0.3 blijven no-show.
 
 ## OGN-kern en vaste uitlegvolgorde rc.45
 
@@ -70,9 +88,9 @@ de Greedy Grow-reconstructie, bewijsgrens en afgeleide publicatieslide.
   Language Tree-eindstadium en de twee GitHub-links. Het handmatige
   akkoord staat in `RC45_OGN_CORE_EXPLANATION_TEST.md`.
 - De oorspronkelijke geaccepteerde rc.45-carrousel blijft ongewijzigd. De
-  latere source build 20260802.2 breidt de viewer wel uit met plaatsingsmodi,
-  lijnbeeld-Config en structurele tekstnormalisatie; graphdata en OPN-formaat
-  blijven ongewijzigd.
+  actuele source build 20260802.11 breidt de viewer wel uit met plaatsingsmodi,
+  geïsoleerde directe Config, lijnbeeld-Config en structurele
+  tekstnormalisatie; graphdata en OPN-formaat blijven ongewijzigd.
 
 ## Config, LEESMIJ en projectzip rc.43
 

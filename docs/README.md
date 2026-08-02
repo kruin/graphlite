@@ -57,6 +57,18 @@ calculated application and places **Greedy Grow** and seeded **Random** below
 it as direct OGN illustrations. Direct steps write one node immediately on an
 unused row and column; switching modes does not change Language Tree data.
 
+Config is separated into **General**, **Calculated → Language Tree** and
+**Direct → Greedy Grow / Random**; irrelevant settings are no-show. Every
+visible field has a compact explanation under
+[`CONFIG_UI_EXPLANATION_STANDARD.md`](CONFIG_UI_EXPLANATION_STANDARD.md).
+Uniform v1.0 remains the Random default; Impure uniform v0.1 mixes in a 20%
+repetition preference from completed earlier axis hits. Seed and speed are
+independent.
+
+From an active Greedy Grow or Random mode, the application bar itself is also
+no-show. Only Back to Main, that method's own fields with Explanation, and
+Config save remain visible; switching starts in Main.
+
 `Config → View → Line appearance` independently controls grid color, grid
 weight, projection-line weight and box-line weight. LEX, SYNT and LOG each
 have a separate color for their axes, projection lines and boxes. See

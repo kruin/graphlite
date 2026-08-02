@@ -35,7 +35,7 @@ for marker, label in [
     ("panels.get('overview').appendChild(overviewCard);", "overzichtspaneel"),
     ("panels.get('jan').appendChild(janCard);", "JaN-paneel"),
     ("panels.get('files').append(projectConfigCard, readmeSlideFileCard, graphExportCard, opnCard, examplesCard);", "bestandssectie"),
-    ("sidePanel.replaceChildren(tabList, saveSlot, ...panels.values());", "globale Config-save boven alle tabpanelen"),
+    ("sidePanel.replaceChildren(scopeNav, tabList, saveSlot, ...panels.values());", "globale Config-save boven alle tabpanelen"),
     ("const CONFIG_ITEM_HELP = {", "instellingsuitleg"),
     ("Kiest de centrale Syntax- of Functional-view.", "uitleg centrale view"),
     ("een expliciete zinsplaats heeft voorrang", "uitleg lineaire plaatsingsprioriteit"),

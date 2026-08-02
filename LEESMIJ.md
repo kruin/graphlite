@@ -76,6 +76,39 @@ rij én kolom; taalgebonden menu's verdwijnen en de Language-Tree-data blijven
 ongewijzigd. Random gebruikt een afzonderlijke engine met seed en kan de
 geaccepteerde Greedy-Grow-reconstructie dus niet veranderen.
 
+Config heeft nu een vaste eerste laag: **Algemeen**, **Calculated → Language
+Tree** en **Direct → Greedy Grow / Random**. Per context zijn alle
+niet-relevante instellingen no-show. Greedy toont alleen strategie en
+oriëntatie; Random alleen zijn eigen seed, resetbeleid, model, plaatsing,
+gridgrootte, optionele vaste maten, snelheid, iteraties en asbeeld. Ieder
+zichtbaar veld heeft in Config een compacte inklapbare uitleg. Een grotere seed
+geeft niet meer toeval en verandert de snelheid niet; `20260802` is alleen de
+herkenbare datum 2 augustus 2026. Zie
+[`CONFIG_UI_EXPLANATION_STANDARD.md`](CONFIG_UI_EXPLANATION_STANDARD.md).
+
+Open je Config vanuit een actieve Greedy-Grow- of Random-modus, dan is ook de
+toepassingsbalk no-show. Je ziet alleen Terug naar Main, de eigen velden met
+Uitleg en Config opslaan. Kies een andere toepassing eerst in Main.
+
+Een nieuwe standaardconfig kiest **Uniform v1.0**, **Ergens in beschikbare
+ruimte** en **Interface · beschikbare ruimte**. **Onzuiver uniform v0.1** is
+een functioneel alternatief dat 20% voorkeur mengt voor asplekken die in
+voltooide eerdere rondes vaker zijn geraakt. Vast grid, Compact,
+Gebalanceerd, Ruim en het groeiende inhoudsveld blijven beschikbaar. v0.2 en
+v0.3 blijven no-show totdat zij werkelijk werken. Play en Next lopen over
+rungrenzen door totdat alle ingestelde iteraties klaar zijn; Previous kan over
+de grens terug. Tien iteraties met
+31 knopen leveren na voltooiing bijvoorbeeld
+10 × 30 = 300 projectie-hits per as; de centrale knoop telt niet mee. Een ronde
+voegt haar rijen pas na de laatste knoop als WEST-spots toe en haar kolommen
+als SOUTH-spots. Een herhaalde hit maakt dezelfde spot donkerder en zwaarder;
+toekomstige rondes worden niet vooraf getekend. Bij Bezettingskans wordt het
+spotgewicht tegen het ingestelde rondetotaal afgezet; Relatief schaalt op de
+hoogste telling van de voltooide rondes. Uniforme Random voorspelt op termijn
+een vrijwel egaal beeld; v0.1 kan vroege verschillen mild versterken. Een ongewijzigde
+Greedy-strategie is deterministisch en wordt daarom niet herhaald. Zie
+[`DIRECT_PLACEMENT_CONFIG.md`](DIRECT_PLACEMENT_CONFIG.md).
+
 Onder `Config → Beeld → Lijnbeeld` zijn rasterkleur en de zwaarte van raster-,
 projectie- en boxlijnen onafhankelijk instelbaar. LEX, SYNT en LOG hebben
 daarnaast elk een eigen kleur—standaard blauw, groen en paars—die door hun as,

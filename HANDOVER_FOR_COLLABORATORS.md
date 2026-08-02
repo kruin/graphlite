@@ -6,12 +6,47 @@ Releasebesluit: rc.45 is op 2 augustus 2026 handmatig goedgekeurd, inclusief
 de Greedy Grow-reconstructie en de rechtstreeks afgeleide publicatieslide.
 
 Actuele source build:
-`v2.0.0-rc.45-grid-style-direct-modes-eol-20260802.2`. Behoud Language Tree
+`v2.0.0-rc.45-direct-config-hard-no-show-20260803.12`. Behoud Language Tree
 als prominente berekende toepassing en Greedy Grow/Random als kleinere
 directe OGN-illustraties. Wijzig `greedy-grow-engine.js` niet voor Random: die
 engine is onderdeel van het afleidingsbewijs van publicatieslide 5. Random
 hoort in `random-placement-engine.js`. Bewaak het lijnbeeld en het structurele
 EOF/EOL-beleid volgens `LINE_STYLE_AND_PLACEMENT_MODES.md`.
+
+Organiseer Config altijd als **Algemeen**, **Calculated → Language Tree** en
+**Direct → Greedy Grow / Random**. Toon per context uitsluitend de eigen
+functionele velden; alle niet-relevante bediening is no-show. Bij openen vanuit
+een actieve Greedy-Grow- of Random-modus is ook de toepassingsbalk no-show.
+Alleen Terug naar Main, de eigen velden met uitleg en Config opslaan blijven
+zichtbaar; wisselen van context begint in Main. Volg voor ieder zichtbaar veld
+`CONFIG_UI_EXPLANATION_STANDARD.md`: compacte mobiele uitleg van effect,
+bereik, niet-effect en reproduceerbaarheid.
+Bewaar gedeelde run- en weergavekeuzes uitsluitend in
+`directPlacementGeneral`; `greedyGrowConfig` bevat alleen strategie en
+oriëntatie; `randomPlacementConfig` bevat seed, resetbeleid, Random-model,
+plaatsing, gridgrootte, vaste kolommen/rijen, iteratieaantal en asbeeldmodus.
+Random-snelheid gebruikt dezelfde `directPlacementGeneral.intervalMs` en wordt
+niet dubbel opgeslagen. De nieuwe standaard is
+**Ergens in beschikbare ruimte** met **Interface** als maximale afmetingen.
+Compact, Gebalanceerd, Ruim en het groeiende inhoudsveld blijven beschikbaar;
+bestaande opgeslagen keuzes worden niet geforceerd gemigreerd.
+Random-iteraties mogen de actieve run niet
+vooruitplannen. Play/Next moeten alle ingestelde iteraties doorlopen; Previous
+moet reproduceerbaar over een rungrens terug kunnen. Zie
+`DIRECT_PLACEMENT_CONFIG.md`.
+
+Het Random-asbeeld is strikt retrospectief. Een ronde telt pas na haar laatste
+knoop: rijen geven spots op WEST, kolommen spots op SOUTH en een herhaalde hit
+maakt dezelfde spot zwaarder. Reset wist de telling; Previous verwijdert de
+actuele ronde zodra die niet meer compleet is. Genereer geen toekomstige
+rondes om het asbeeld vooraf te vullen.
+
+Behoud **Uniform v1.0** exact en als standaard. **Onzuiver uniform v0.1** is
+functioneel: 80% uniform plus 20% herhaalgewicht uit voltooide eerdere
+as-hits. Ronde 1 is uniform. v0.2 (herhaalsterkte) en v0.3 (geheugenvenster)
+blijven no-show totdat zij volledig werken en getest zijn. Seed is een
+startcode van 1 t/m 4.294.967.295; een groter getal geeft niet meer toeval of
+snelheid. `20260802` is de herkenbare datumseed 2 augustus 2026.
 
 De reserveringen Vraagzin, Nadruk en Onaffe zin zijn uitsluitend
 Config-voorraad. Voeg ze niet toe aan `FEATURE_DEFINITIONS`, state, opslag,
