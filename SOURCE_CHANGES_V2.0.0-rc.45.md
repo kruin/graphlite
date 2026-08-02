@@ -1,5 +1,28 @@
 # SOURCE_CHANGES v2.0.0-rc.45
 
+## Source build 20260802.2 — lijnbeeld, directe modi en EOF/EOL
+
+- Language Tree blijft de primaire berekende toepassing in het hoofdmenu.
+  Greedy Grow en Random zijn daaronder geïntegreerd als directe
+  OGN-illustraties met dezelfde stap-, Play- en resetbediening.
+- Greedy Grow gebruikt ongewijzigd de geaccepteerde historische engine.
+  Random gebruikt een afzonderlijke seedbare engine, zodat de bestaande
+  carrouselafleiding niet door een nieuwe strategie kan worden vervuild.
+- Config bevat rasterkleur en afzonderlijke gewichten voor rasterlijnen,
+  projectielijnen en boxlijnen. LEX, SYNT en LOG hebben verschillende
+  standaardkleuren die door hun assen, lijnen en boxen worden gevolgd.
+- `.gitattributes` maakt de EOL-keuze onafhankelijk van globale Windows-Git-
+  instellingen. De normalizer bewaakt LF voor bron/documentatie, CRLF voor
+  Windows-scripts en exact één afsluitende EOL.
+- `publish_checked.bat` normaliseert vóór de checks en gebruikt daarna
+  `git add --renormalize`; een extra lege EOF-regel wordt dus vóór committekst
+  en push gevonden en hersteld.
+- Nieuwe controles bewaken Random, het lijnbeeld, de modushiërarchie en de
+  tekstnormalisatie. `tools/check_publication_carousel.py` blijft aantonen dat
+  de geaccepteerde Greedy-bron en de zeven slides niet uit elkaar zijn gelopen.
+
+Normatief: `LINE_STYLE_AND_PLACEMENT_MODES.md`.
+
 rc.45 herschrijft de algemene OGN-uitleg. De vaste volgorde is:
 
 ```text
@@ -116,8 +139,9 @@ De normatieve beschrijving staat in
 - De gebruiker heeft de reconstructie en afbakening op 2 augustus 2026
   handmatig goedgekeurd. Publicatieslide 5 wordt uit dezelfde engine afgeleid.
 
-## Niet gewijzigd
+## Compatibiliteitsgrens
 
-rc.45 verandert geen taalboom-graphdata, Config-opslag, OPN-formaat of
-viewer-rendercontract. Greedy Grow is als afzonderlijke directe OGN-proef
-toegevoegd; de bestaande technische lagen blijven verder intact.
+De taalboom-graphdata en het OPN-formaat zijn niet gewijzigd. De oorspronkelijke
+rc.45-carrousel blijft byte- en hashgecontroleerd; source build 20260802.2
+wijzigt wel de viewerinterface, Config-weergave en het lijnrendercontract zoals
+hierboven beschreven.

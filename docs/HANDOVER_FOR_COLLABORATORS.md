@@ -5,6 +5,14 @@ Overdracht voor OpenGraph Lite Viewer v2.0.0-rc.45.
 Releasebesluit: rc.45 is op 2 augustus 2026 handmatig goedgekeurd, inclusief
 de Greedy Grow-reconstructie en de rechtstreeks afgeleide publicatieslide.
 
+Actuele source build:
+`v2.0.0-rc.45-grid-style-direct-modes-eol-20260802.2`. Behoud Language Tree
+als prominente berekende toepassing en Greedy Grow/Random als kleinere
+directe OGN-illustraties. Wijzig `greedy-grow-engine.js` niet voor Random: die
+engine is onderdeel van het afleidingsbewijs van publicatieslide 5. Random
+hoort in `random-placement-engine.js`. Bewaak het lijnbeeld en het structurele
+EOF/EOL-beleid volgens `LINE_STYLE_AND_PLACEMENT_MODES.md`.
+
 De reserveringen Vraagzin, Nadruk en Onaffe zin zijn uitsluitend
 Config-voorraad. Voeg ze niet toe aan `FEATURE_DEFINITIONS`, state, opslag,
 export of rendering voordat hun eigen voorconfig, contract en tests zijn

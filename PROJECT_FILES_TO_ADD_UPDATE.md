@@ -16,6 +16,8 @@ actuele projectmapnaam; een versienummer staat niet in de BAT vastgezet.
 ## Leidende losse bestanden
 
 ```text
+.editorconfig
+.gitattributes
 VERSION.txt
 README.md
 LEESMIJ.md
@@ -30,6 +32,7 @@ HANDOVER_FOR_COLLABORATORS.md
 DEPLOY_GITHUB_PAGES.md
 RECURSIVE_LAYOUT_AND_APPLICATION_CONTRACT.md
 OGN_CORE_PLACEMENT_ARCHITECTURE.md
+LINE_STYLE_AND_PLACEMENT_MODES.md
 GREEDY_GROW_RECONSTRUCTION.md
 PUBLICATIE_README.md
 SOURCE_CHANGES_V2.0.0-rc.45.md
@@ -51,10 +54,12 @@ RC42_README_CAROUSEL_EDITOR_TEST.md
 RC43_CONFIG_README_PROJECT_TEST.md
 RC44_PUBLICATION_CAROUSEL_TEST.md
 RC45_OGN_CORE_EXPLANATION_TEST.md
+RC45_LINE_STYLE_DIRECT_MODES_TEST.md
 greedy-grow.html
 greedy-grow.css
 greedy-grow-engine.js
 greedy-grow.js
+random-placement-engine.js
 publicatie-carrousel/index.html
 publicatie-carrousel/slides/01-every-node-owns-grid-lines.png
 publicatie-carrousel/slides/02-free-places-first.png
@@ -84,6 +89,10 @@ images/readme/log-minor-spacing.svg
 images/readme/play-log-space-lex.svg
 tools/check_log_slot_distance.py
 tools/check_greedy_grow_reconstruction.js
+tools/check_random_placement.js
+tools/check_line_style_and_direct_modes.py
+tools/normalize_text_files.py
+tools/check_text_normalization.py
 tools/check_feature_profiles.py
 tools/check_feature_profiles_runtime.js
 tools/check_readme_carousel_editor.py
@@ -102,6 +111,7 @@ tools/check_recursive_box_fit_runtime.js
 tools/check_local_start.py
 docs/OGN_BASE_PROFILE.md
 docs/OGN_CORE_PLACEMENT_ARCHITECTURE.md
+docs/LINE_STYLE_AND_PLACEMENT_MODES.md
 docs/PRECONFIG_ARCHITECTURE.md
 docs/RECURSIVE_LAYOUT_AND_APPLICATION_CONTRACT.md
 tools/check_lex_horizontal_projection.py

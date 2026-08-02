@@ -1,1 +1,1 @@
-v2.0.0-rc.45-carousel-nodes-axes-examples-20260802.1
+v2.0.0-rc.45-grid-style-direct-modes-eol-20260802.2

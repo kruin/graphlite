@@ -65,6 +65,24 @@ The explanatory order is fixed:
 
 See [`OGN_CORE_PLACEMENT_ARCHITECTURE.md`](OGN_CORE_PLACEMENT_ARCHITECTURE.md).
 
+## Placement methods and configurable lines
+
+The **Language Tree** menu now contains the placement hierarchy itself.
+Language Tree remains the prominent, primary calculated application. **Greedy
+Grow** and **Random** appear below it as smaller direct OGN illustrations. In
+a direct mode, every arrow/Play step immediately writes one node on a
+currently unused row and column; language-only menus are hidden and the
+Language Tree data is left unchanged. Random uses a separate seeded engine,
+so it cannot alter the accepted Greedy Grow reconstruction.
+
+Under `Config → View → Line appearance`, grid color and the weights of grid,
+projection and box lines can be set independently. LEX, SYNT and LOG also have
+independent colors—blue, green and purple by default—and matching axes,
+projection lines and boxes follow their own color. These are presentation
+settings only; they never change coordinates or placement validity. See
+[`LINE_STYLE_AND_PLACEMENT_MODES.md`](LINE_STYLE_AND_PLACEMENT_MODES.md) for
+the complete mapping and the structural EOF/EOL policy used by publication.
+
 ## Current calculated application: Two-Pass Language Tree
 
 The current viewer implements a **Two-Pass Language Tree** as one calculated

@@ -159,6 +159,7 @@
     mainViewMenu: document.getElementById('mainViewMenu'),
     mainViewSummary: document.getElementById('mainViewSummary'),
     mainViewOptions: document.getElementById('mainViewOptions'),
+    languageTreeViewPicker: document.getElementById('languageTreeViewPicker'),
     mainInterfaceMenu: document.getElementById('mainInterfaceMenu'),
     mainInterfaceSummary: document.getElementById('mainInterfaceSummary'),
     mainInterfaceOptions: document.getElementById('mainInterfaceOptions'),
@@ -201,6 +202,10 @@
     mobileRightMenuWidthSelect: document.getElementById('mobileRightMenuWidthSelect'),
     syntProjectionColorSelect: document.getElementById('syntProjectionColorSelect'),
     logProjectionColorSelect: document.getElementById('logProjectionColorSelect'),
+    gridColorSelect: document.getElementById('gridColorSelect'),
+    gridLineWeightSelect: document.getElementById('gridLineWeightSelect'),
+    projectionLineWeightSelect: document.getElementById('projectionLineWeightSelect'),
+    boxLineWeightSelect: document.getElementById('boxLineWeightSelect'),
     freeSlotCountSelect: document.getElementById('freeSlotCountSelect'),
     projectionBoxDraggableInput: document.getElementById('projectionBoxDraggableInput'),
     southBoxDraggableInput: document.getElementById('southBoxDraggableInput'),
@@ -1498,6 +1503,7 @@
   ];
 
   const PROJECTION_COLOR_OPTIONS = [
+    { id: 'blue', label: 'blauw', labelEn: 'blue', css: '#2563eb' },
     { id: 'green', label: 'groen', labelEn: 'green', css: '#16a34a' },
     { id: 'purple', label: 'paars', labelEn: 'purple', css: '#7c3aed' },
     { id: 'orange', label: 'oranje', labelEn: 'orange', css: '#f97316' },
@@ -1511,6 +1517,61 @@
       || PROJECTION_COLOR_OPTIONS.find(option => option.id === fallback)
       || PROJECTION_COLOR_OPTIONS[0]).css;
   }
+
+  function gridColorCss(id = 'soft-slate') {
+    return (GRID_COLOR_OPTIONS.find(option => option.id === id) || GRID_COLOR_OPTIONS[0]).css;
+  }
+
+  function validLineWeight(value, fallback = 'normal') {
+    return Object.prototype.hasOwnProperty.call(LINE_WEIGHT_PROFILES, value) ? value : fallback;
+  }
+
+  function validPlacementMode(value = 'language-tree') {
+    return PLACEMENT_MODES.some(mode => mode.id === value) ? value : 'language-tree';
+  }
+
+  function placementModeDefinition(value = state?.placementMode) {
+    const id = validPlacementMode(value);
+    return PLACEMENT_MODES.find(mode => mode.id === id) || PLACEMENT_MODES[0];
+  }
+
+  function directPlacementActive() {
+    return placementModeDefinition().kind === 'direct';
+  }
+
+  const GRID_COLOR_OPTIONS = [
+    { id: 'soft-slate', label: 'zacht grijsblauw', labelEn: 'soft slate', css: '#94a3b8' },
+    { id: 'slate', label: 'grijsblauw', labelEn: 'slate', css: '#64748b' },
+    { id: 'blue-grey', label: 'blauwgrijs', labelEn: 'blue grey', css: '#7891ad' },
+    { id: 'neutral', label: 'neutraal grijs', labelEn: 'neutral grey', css: '#9ca3af' }
+  ];
+
+  const LINE_WEIGHT_OPTIONS = [
+    { id: 'light', label: 'licht', labelEn: 'light' },
+    { id: 'normal', label: 'normaal', labelEn: 'normal' },
+    { id: 'strong', label: 'zwaar', labelEn: 'strong' }
+  ];
+
+  const LINE_WEIGHT_PROFILES = Object.freeze({
+    light: Object.freeze({
+      grid: 0.48, gridMajor: 0.68, gridOpacity: 0.24, gridMajorOpacity: 0.34,
+      projection: 1.15, projectionAxis: 1.38, box: 0.48
+    }),
+    normal: Object.freeze({
+      grid: 0.78, gridMajor: 1.05, gridOpacity: 0.38, gridMajorOpacity: 0.54,
+      projection: 1.72, projectionAxis: 2.05, box: 0.78
+    }),
+    strong: Object.freeze({
+      grid: 1.12, gridMajor: 1.48, gridOpacity: 0.58, gridMajorOpacity: 0.74,
+      projection: 2.45, projectionAxis: 2.82, box: 1.16
+    })
+  });
+
+  const PLACEMENT_MODES = Object.freeze([
+    Object.freeze({ id: 'language-tree', label: 'Language Tree', labelEn: 'Language Tree', kind: 'calculated', primary: true }),
+    Object.freeze({ id: 'greedy-grow', label: 'Greedy Grow', labelEn: 'Greedy Grow', kind: 'direct', strategy: 'compact-four-arm' }),
+    Object.freeze({ id: 'random', label: 'Random', labelEn: 'Random', kind: 'direct', strategy: 'random' })
+  ]);
 
   const TOP_MENU_CHOICES = [
     { id: 'projection', label: 'Projecties', cssClass: 'top-menu-projection', tip: 'Projecties: Alle, Bron, LEX, SYNT en LOG. Nuttig voor vergelijken van named projections.' },
@@ -1817,8 +1878,17 @@
     projectionBoxDraggable: (function(){ try { return localStorage.getItem('opengraph_projection_box_draggable') !== '0'; } catch (_err) { return true; } })(),
     projectionBoxManual: (function(){ try { const raw = localStorage.getItem('opengraph_projection_box_manual_v1014'); return raw ? JSON.parse(raw) : null; } catch (_err) { return null; } })(),
     projectionBoxDrag: null,
+    lexProjectionColor: (function(){ try { return localStorage.getItem('opengraph_projection_color_lex') || 'blue'; } catch (_err) { return 'blue'; } })(),
     syntProjectionColor: (function(){ try { return localStorage.getItem('opengraph_projection_color_synt') || 'green'; } catch (_err) { return 'green'; } })(),
     logProjectionColor: (function(){ try { return localStorage.getItem('opengraph_projection_color_log') || 'purple'; } catch (_err) { return 'purple'; } })(),
+    gridColor: (function(){ try { return localStorage.getItem('opengraph_grid_color') || 'soft-slate'; } catch (_err) { return 'soft-slate'; } })(),
+    gridLineWeight: (function(){ try { return localStorage.getItem('opengraph_grid_line_weight') || 'normal'; } catch (_err) { return 'normal'; } })(),
+    projectionLineWeight: (function(){ try { return localStorage.getItem('opengraph_projection_line_weight') || 'normal'; } catch (_err) { return 'normal'; } })(),
+    boxLineWeight: (function(){ try { return localStorage.getItem('opengraph_box_line_weight') || 'normal'; } catch (_err) { return 'normal'; } })(),
+    placementMode: 'language-tree',
+    directPlacementState: null,
+    directPlacementSeed: 20260802,
+    directPlacementTimer: null,
     centerMode: 'syntax',
     treeChoice: 'auto-min',
     functionalOrder: 'left-first',
@@ -4692,6 +4762,7 @@
   }
 
   function projectionAxisGridBox(fallback = null) {
+    if (directPlacementActive()) return fallback;
     if (!isMainScreenActive() || !['axes', 'source', 'lex', 'synt', 'log'].includes(state.projection)) return fallback;
     let context = null;
     try {
@@ -5073,6 +5144,149 @@
       clearInterval(state.growthTimer);
       state.growthTimer = null;
     }
+  }
+
+  function stopDirectPlacementPlayback() {
+    if (state.directPlacementTimer) {
+      clearInterval(state.directPlacementTimer);
+      state.directPlacementTimer = null;
+    }
+  }
+
+  function placementEngine() {
+    const engine = placementModeDefinition().id === 'random'
+      ? globalThis.OGNRandomPlacement
+      : globalThis.OGNGreedyGrow;
+    if (!engine || typeof engine.createState !== 'function' || typeof engine.placeNext !== 'function') {
+      throw new Error('De directe OGN-engine is niet geladen.');
+    }
+    return engine;
+  }
+
+  function ensureDirectPlacementState(force = false) {
+    if (!directPlacementActive()) return null;
+    const mode = placementModeDefinition();
+    const strategy = mode.strategy || 'compact-four-arm';
+    if (force || !state.directPlacementState || state.directPlacementState.strategy !== strategy) {
+      state.directPlacementState = placementEngine().createState({
+        strategy,
+        targetCount: 31,
+        intervalMs: 650,
+        seed: state.directPlacementSeed
+      });
+    }
+    return state.directPlacementState;
+  }
+
+  function directPlacementLabel() {
+    const direct = ensureDirectPlacementState();
+    if (!direct) return '';
+    const mode = placementModeDefinition();
+    const step = Math.max(0, direct.points.length - 1);
+    const max = Math.max(0, direct.targetCount - 1);
+    const method = mode.id === 'random' ? 'Random' : 'Greedy Grow';
+    return isEnglish()
+      ? `${method} · direct · node ${step}/${max}`
+      : `${method} · direct · knoop ${step}/${max}`;
+  }
+
+  function resetDirectPlacement(options = {}) {
+    stopDirectPlacementPlayback();
+    if (placementModeDefinition().id === 'random' && options.newSeed) {
+      state.directPlacementSeed = ((state.directPlacementSeed + 0x9e3779b9) >>> 0) || 20260802;
+    }
+    state.directPlacementState = null;
+    ensureDirectPlacementState(true);
+    resetManualViewBox();
+  }
+
+  function directPlacementNext(rerender = true) {
+    const direct = ensureDirectPlacementState();
+    if (!direct) return null;
+    const placed = placementEngine().placeNext(direct);
+    if (!placed) stopDirectPlacementPlayback();
+    if (rerender) render();
+    return placed;
+  }
+
+  function directPlacementPrevious(rerender = true) {
+    stopDirectPlacementPlayback();
+    const direct = ensureDirectPlacementState();
+    const removed = direct ? placementEngine().undoLast(direct) : null;
+    if (rerender) render();
+    return removed;
+  }
+
+  function toggleDirectPlacementPlayback() {
+    const direct = ensureDirectPlacementState();
+    if (!direct) return;
+    if (state.directPlacementTimer) {
+      stopDirectPlacementPlayback();
+      render();
+      return;
+    }
+    if (direct.points.length >= direct.targetCount) {
+      resetDirectPlacement({ newSeed: placementModeDefinition().id === 'random' });
+    }
+    directPlacementNext(false);
+    state.directPlacementTimer = window.setInterval(() => {
+      const current = ensureDirectPlacementState();
+      if (!current || current.points.length >= current.targetCount) {
+        stopDirectPlacementPlayback();
+        render();
+        return;
+      }
+      directPlacementNext(true);
+    }, direct.intervalMs);
+    render();
+  }
+
+  function setPlacementMode(value) {
+    const next = validPlacementMode(value);
+    const previous = validPlacementMode(state.placementMode);
+    if (next === previous) {
+      closeMainChoiceMenus();
+      render();
+      return;
+    }
+    stopGrowthPlayback();
+    stopDirectPlacementPlayback();
+    state.placementMode = next;
+    state.growthEnabled = false;
+    state.growthStep = 0;
+    state.projectionBlockUnlocked = false;
+    state.directPlacementState = null;
+    if (directPlacementActive()) ensureDirectPlacementState(true);
+    resetManualViewBox();
+    recordParadata('set-placement-mode', { from: previous, to: next, kind: placementModeDefinition().kind });
+    closeMainChoiceMenus();
+    render();
+  }
+
+  function toggleActivePlacementPlayback() {
+    if (directPlacementActive()) toggleDirectPlacementPlayback();
+    else toggleGrowthPlayback();
+  }
+
+  function activePlacementPrevious() {
+    if (directPlacementActive()) directPlacementPrevious(true);
+    else { stopGrowthPlayback(); state.growthEnabled = true; setGrowthStep(state.growthStep - 1); }
+  }
+
+  function activePlacementNext() {
+    if (directPlacementActive()) { stopDirectPlacementPlayback(); directPlacementNext(true); }
+    else { stopGrowthPlayback(); state.growthEnabled = true; setGrowthStep(state.growthStep + 1); }
+  }
+
+  function activePlacementReset() {
+    if (directPlacementActive()) {
+      resetDirectPlacement({ newSeed: placementModeDefinition().id === 'random' });
+      render();
+      return;
+    }
+    applyProjectionAxes(SOURCE_AXIS_IDS);
+    resetForNewExample();
+    render();
   }
 
   function setGrowthStep(value, rerender = true) {
@@ -7100,9 +7314,20 @@
 
   function applyProjectionColors() {
     const root = document.documentElement;
-    root.style.setProperty('--lex', '#2563eb');
+    const gridProfile = LINE_WEIGHT_PROFILES[validLineWeight(state.gridLineWeight)];
+    const projectionProfile = LINE_WEIGHT_PROFILES[validLineWeight(state.projectionLineWeight)];
+    const boxProfile = LINE_WEIGHT_PROFILES[validLineWeight(state.boxLineWeight)];
+    root.style.setProperty('--lex', projectionColorCss(state.lexProjectionColor, 'blue'));
     root.style.setProperty('--synt', projectionColorCss(state.syntProjectionColor, 'green'));
     root.style.setProperty('--log', projectionColorCss(state.logProjectionColor, 'purple'));
+    root.style.setProperty('--og-grid-color', gridColorCss(state.gridColor));
+    root.style.setProperty('--og-grid-line-width', String(gridProfile.grid));
+    root.style.setProperty('--og-grid-major-line-width', String(gridProfile.gridMajor));
+    root.style.setProperty('--og-grid-line-opacity', String(gridProfile.gridOpacity));
+    root.style.setProperty('--og-grid-major-line-opacity', String(gridProfile.gridMajorOpacity));
+    root.style.setProperty('--og-projection-line-width', String(projectionProfile.projection));
+    root.style.setProperty('--og-projection-axis-width', String(projectionProfile.projectionAxis));
+    root.style.setProperty('--og-box-line-width', String(boxProfile.box));
   }
 
   function setSvgPresentationVars() {
@@ -7609,7 +7834,7 @@
       // oude stabiliteitskader was bijna tweemaal zo groot als die inhoud en
       // maakte daardoor vooral desktoptekst onleesbaar klein.
       ignored.forEach(node => { node.style.display = 'none'; });
-      const projectionView = ['axes', 'source', 'lex', 'synt', 'log'].includes(state.projection);
+      const projectionView = !directPlacementActive() && ['axes', 'source', 'lex', 'synt', 'log'].includes(state.projection);
       const maximumFrame = isMainScreenActive() && projectionView
         ? maximumProjectionFrameBox()
         : null;
@@ -7650,7 +7875,7 @@
     // v2.0.0-rc.14: alle projectie-views gebruiken één geometrisch viewport,
     // onafhankelijk van welke overlay zichtbaar is. Dit sluit auto-fit-
     // verschillen uit en voorkomt elke horizontale of verticale verspringing.
-    if (isMainScreenActive() && ['axes', 'source', 'lex', 'synt', 'log'].includes(state.projection)) {
+    if (isMainScreenActive() && !directPlacementActive() && ['axes', 'source', 'lex', 'synt', 'log'].includes(state.projection)) {
       const frame = projectionStableFrameBox();
       const gridMargin = Math.max(18, Math.min(42, Math.max(frame.w, frame.h) * 0.018));
       state.lastGridBox = {
@@ -7753,6 +7978,61 @@
     return g;
   }
 
+  function drawDirectPlacement() {
+    const engine = placementEngine();
+    const direct = ensureDirectPlacementState();
+    if (!direct || !engine.validate(direct.points)) {
+      throw new Error('Directe OGN-plaatsing schendt de unieke rij/kolomregel.');
+    }
+    const mode = placementModeDefinition();
+    const g = baseSvg(`direct-placement-view direct-${mode.id}`);
+    const stepX = cellX() / 2;
+    const stepY = cellY() / 2;
+    const bounds = engine.bounds(direct.points);
+    const gridBox = {
+      x: (bounds.minX - 1.5) * stepX,
+      y: (bounds.minY - 1.5) * stepY,
+      w: Math.max(6 * stepX, (bounds.maxX - bounds.minX + 3) * stepX),
+      h: Math.max(6 * stepY, (bounds.maxY - bounds.minY + 3) * stepY)
+    };
+    state.lastGridBox = { ...gridBox };
+    const grid = g.querySelector('.grid');
+    if (grid) populateGridLines(grid, gridBox);
+
+    const pixelPoints = direct.points.map(point => ({
+      ...point,
+      px: point.x * stepX,
+      py: point.y * stepY
+    }));
+    if (pixelPoints.length > 1) {
+      g.appendChild(svgEl('path', {
+        d: pixelPoints.map((point, index) => `${index ? 'L' : 'M'} ${point.px} ${point.py}`).join(' '),
+        class: 'direct-placement-path'
+      }));
+    }
+
+    const nodes = svgEl('g', { class: 'direct-placement-nodes' });
+    pixelPoints.forEach((point, index) => {
+      const group = svgEl('g', {
+        class: `direct-placement-node${index === pixelPoints.length - 1 ? ' is-current' : ''}`,
+        transform: `translate(${point.px} ${point.py})`
+      });
+      group.appendChild(svgEl('circle', { r: 14 }));
+      group.appendChild(svgEl('text', { x: 0, y: 0 }, String(point.index)));
+      nodes.appendChild(group);
+    });
+    g.appendChild(nodes);
+
+    const titleY = gridBox.y - Math.max(42, stepY * 0.8);
+    g.appendChild(svgEl('text', { x: gridBox.x, y: titleY, class: 'axis-title direct-placement-title' },
+      mode.id === 'random' ? 'RANDOM · DIRECT OGN' : 'GREEDY GROW · DIRECT OGN'));
+    const caption = isEnglish()
+      ? `${direct.points.length} nodes · each new node immediately occupies one unused row and column`
+      : `${direct.points.length} knopen · iedere nieuwe knoop bezet direct één ongebruikte rij en kolom`;
+    g.appendChild(svgEl('text', { x: gridBox.x, y: titleY + 24, class: 'direct-placement-caption' }, caption));
+    els.svg.appendChild(g);
+  }
+
   function pendingLexAnalysis() {
     const raw = Array.isArray(state.example?.lexInsertions) ? state.example.lexInsertions : [];
     for (const spec of raw) {
@@ -7774,6 +8054,7 @@
   function renderLexAmbiguityPrompt() {
     const panel = els.lexAmbiguityPanel;
     if (!panel || !els.lexAmbiguityOptions) return;
+    if (directPlacementActive()) { panel.classList.add('hidden'); panel.setAttribute('aria-hidden', 'true'); return; }
     const pending = pendingLexAnalysis();
     if (!pending) { panel.classList.add('hidden'); panel.setAttribute('aria-hidden', 'true'); return; }
     const { spec, analysis } = pending;
@@ -7806,7 +8087,8 @@
       syncPortraitStageMode();
       syncMainTopbarLayout();
       syncControls();
-      if (state.projection === 'source') drawSource();
+      if (directPlacementActive()) drawDirectPlacement();
+      else if (state.projection === 'source') drawSource();
       else if (state.projection === 'lex') drawLex();
       else if (state.projection === 'synt') drawSynt();
       else if (state.projection === 'log') drawLog();
@@ -7817,6 +8099,7 @@
       renderStatus();
       renderSelection();
       applyLanguage();
+      syncPlacementModeUi();
       renderLexAmbiguityPrompt();
     } catch (err) {
       console.error('OpenGraph render failed', err);
@@ -7852,6 +8135,27 @@
   }
 
   function renderStatus() {
+    if (directPlacementActive()) {
+      const direct = ensureDirectPlacementState();
+      const mode = placementModeDefinition();
+      const field = placementEngine().bounds(direct.points);
+      els.titleLine.textContent = mode.id === 'random'
+        ? (isEnglish() ? 'Random · direct OGN placement' : 'Random · directe OGN-plaatsing')
+        : (isEnglish() ? 'Greedy Grow · direct OGN placement' : 'Greedy Grow · directe OGN-plaatsing');
+      els.metaLine.textContent = isEnglish()
+        ? `${direct.points.length} nodes · field ${field.width} × ${field.height} · no future placement plan`
+        : `${direct.points.length} knopen · veld ${field.width} × ${field.height} · geen toekomstig plaatsingsplan`;
+      els.sentencePreview.textContent = isEnglish()
+        ? 'OGN illustration; Language Tree remains the primary calculated application.'
+        : 'OGN-illustratie; Language Tree blijft de primaire berekende toepassing.';
+      if (els.actionFeedback) {
+        els.actionFeedback.textContent = isEnglish()
+          ? 'Use ←, → or Play. Every step writes the selected free position immediately.'
+          : 'Gebruik ←, → of Play. Iedere stap schrijft de gekozen vrije plaats onmiddellijk.';
+        els.actionFeedback.className = 'action-feedback neutral';
+      }
+      return;
+    }
     const syntaxModeLabel = isEnglish() ? 'OPN syntax tree' : 'OPN-syntaxboom';
     const functionalModeLabel = isEnglish() ? 'Functional structure' : 'Functional functionele structuur';
     els.titleLine.textContent = `${activeSentenceText()} · ${state.projectionLabel || projectionLabel()} · ${state.centerMode === 'syntax' ? syntaxModeLabel : functionalModeLabel}`;
@@ -7966,8 +8270,13 @@
     rightMenuWidthSelect: { auto: 'right column: auto/rest', wide: 'right column: wide', 'very-wide': 'right column: very wide', max: 'right column: maximum' },
     rightMenuWidthSelectTop: { auto: 'right column: auto/rest', wide: 'right column: wide', 'very-wide': 'right column: very wide', max: 'right column: maximum' },
     mobileRightMenuWidthSelect: { auto: 'right column: auto/rest', wide: 'right column: wide', 'very-wide': 'right column: very wide', max: 'right column: maximum' },
-    syntProjectionColorSelect: { green: 'green', purple: 'purple', orange: 'orange', teal: 'teal', red: 'red', slate: 'slate' },
-    logProjectionColorSelect: { green: 'green', purple: 'purple', orange: 'orange', teal: 'teal', red: 'red', slate: 'slate' },
+    lexProjectionColorSelect: { blue: 'blue', green: 'green', purple: 'purple', orange: 'orange', teal: 'teal', red: 'red', slate: 'slate' },
+    syntProjectionColorSelect: { blue: 'blue', green: 'green', purple: 'purple', orange: 'orange', teal: 'teal', red: 'red', slate: 'slate' },
+    logProjectionColorSelect: { blue: 'blue', green: 'green', purple: 'purple', orange: 'orange', teal: 'teal', red: 'red', slate: 'slate' },
+    gridColorSelect: { 'soft-slate': 'soft slate', slate: 'slate', 'blue-grey': 'blue grey', neutral: 'neutral grey' },
+    gridLineWeightSelect: { light: 'light', normal: 'normal', strong: 'strong' },
+    projectionLineWeightSelect: { light: 'light', normal: 'normal', strong: 'strong' },
+    boxLineWeightSelect: { light: 'light', normal: 'normal', strong: 'strong' },
     freeSlotCountSelect: { 0: 'tree rows: 0', 1: 'tree rows: 1', 2: 'tree rows: 2', 3: 'tree rows: 3', 4: 'tree rows: 4', 5: 'tree rows: 5', 6: 'tree rows: 6' },
     lexFreeSlotCountSelect: { 0: 'LOG minors: 0', 1: 'LOG minors: 1', 2: 'LOG minors: 2', 3: 'LOG minors: 3', 4: 'LOG minors: 4', 5: 'LOG minors: 5', 6: 'LOG minors: 6', 7: 'LOG minors: 7', 8: 'LOG minors: 8' },
     mobileLexFreeSlotCountSelect: { 0: 'LOG minors: 0', 1: 'LOG minors: 1', 2: 'LOG minors: 2', 3: 'LOG minors: 3', 4: 'LOG minors: 4', 5: 'LOG minors: 5', 6: 'LOG minors: 6', 7: 'LOG minors: 7', 8: 'LOG minors: 8' },
@@ -8044,6 +8353,35 @@
     });
   }
 
+  function syncPlacementModeUi() {
+    const mode = placementModeDefinition();
+    const direct = mode.kind === 'direct';
+    document.body?.classList.toggle('placement-direct-active', direct);
+    document.body?.classList.toggle('placement-language-tree-active', !direct);
+    document.querySelectorAll('[data-placement-mode]').forEach(button => {
+      const active = button.dataset.placementMode === mode.id;
+      button.classList.toggle('active', active);
+      button.setAttribute('aria-pressed', String(active));
+    });
+    if (els.languageTreeViewPicker) els.languageTreeViewPicker.hidden = direct;
+    if (els.mainViewSummary) {
+      els.mainViewSummary.textContent = mode.id === 'language-tree' ? 'Language Tree' : mode.label;
+      els.mainViewSummary.title = isEnglish()
+        ? 'Language Tree is calculated; Greedy Grow and Random place nodes directly.'
+        : 'Language Tree is berekend; Greedy Grow en Random plaatsen knopen direct.';
+    }
+    if (els.mainSentenceMenu) els.mainSentenceMenu.hidden = direct;
+    if (els.mainAdverbMenu) els.mainAdverbMenu.hidden = direct || !featureEnabled('adverbs');
+    if (els.sourceAxisMenu) els.sourceAxisMenu.hidden = direct;
+    if (els.mainExtraMenu) els.mainExtraMenu.hidden = direct;
+    const subtitle = document.querySelector('.header-subtitle');
+    if (subtitle && direct) {
+      subtitle.textContent = isEnglish()
+        ? `${mode.label}: direct OGN illustration. Language Tree remains the primary calculated application.`
+        : `${mode.label}: directe OGN-illustratie. Language Tree blijft de primaire berekende toepassing.`;
+    }
+  }
+
   function renderMainChoiceMenus() {
     if (els.mainSentenceSummary) {
       els.mainSentenceSummary.textContent = isEnglish() ? 'Sentence' : 'Zin';
@@ -8053,10 +8391,7 @@
       els.mainAdverbSummary.textContent = isEnglish() ? 'Adverb' : 'Bijwoord';
       els.mainAdverbSummary.title = isEnglish() ? 'Choose an adverb' : 'Kies een bijwoord';
     }
-    if (els.mainViewSummary) {
-      els.mainViewSummary.textContent = state.centerMode === 'ft' ? 'Functional' : 'Syntax';
-      els.mainViewSummary.title = isEnglish() ? 'Choose Syntax or Functional' : 'Kies Syntax of Functional';
-    }
+    syncPlacementModeUi();
     if (els.mainInterfaceSummary) {
       els.mainInterfaceSummary.textContent = isEnglish() ? 'Interface' : 'Interface';
       els.mainInterfaceSummary.title = isEnglish() ? 'Choose automatic, desktop, mobile portrait or mobile landscape' : 'Kies automatisch, desktop, mobiel staand of mobiel liggend';
@@ -8182,8 +8517,13 @@
     fillSelect(els.rightMenuWidthSelect, RIGHT_MENU_WIDTHS, validRightMenuMode());
     fillSelect(els.rightMenuWidthSelectTop, RIGHT_MENU_WIDTHS, validRightMenuMode());
     fillSelect(els.mobileRightMenuWidthSelect, RIGHT_MENU_WIDTHS, validRightMenuMode());
+    fillSelect(els.lexProjectionColorSelect, PROJECTION_COLOR_OPTIONS, state.lexProjectionColor);
     fillSelect(els.syntProjectionColorSelect, PROJECTION_COLOR_OPTIONS, state.syntProjectionColor);
     fillSelect(els.logProjectionColorSelect, PROJECTION_COLOR_OPTIONS, state.logProjectionColor);
+    fillSelect(els.gridColorSelect, GRID_COLOR_OPTIONS, state.gridColor);
+    fillSelect(els.gridLineWeightSelect, LINE_WEIGHT_OPTIONS, validLineWeight(state.gridLineWeight));
+    fillSelect(els.projectionLineWeightSelect, LINE_WEIGHT_OPTIONS, validLineWeight(state.projectionLineWeight));
+    fillSelect(els.boxLineWeightSelect, LINE_WEIGHT_OPTIONS, validLineWeight(state.boxLineWeight));
     fillSelect(els.freeSlotCountSelect, FREE_SLOT_COUNTS, String(reservedFreeSlotCount()));
     if (featureEnabled('adverbs')) {
       fillSelect(els.lexFreeSlotCountSelect, LEX_FREE_SLOT_COUNTS, String(lexFreeSlotCount()));
@@ -8216,30 +8556,35 @@
     if (els.showLabelsInput) els.showLabelsInput.checked = state.showLabels;
     if (els.projectionBoxDraggableInput) els.projectionBoxDraggableInput.checked = !!state.projectionBoxDraggable;
     if (els.southBoxDraggableInput) els.southBoxDraggableInput.checked = !!state.southBoxDraggable;
-    const growthSupported = growthSupportedProjection();
-    const growthMax = growthSupported ? growthStepMax() : 0;
-    if (growthSupported) {
+    const directState = directPlacementActive() ? ensureDirectPlacementState() : null;
+    const growthSupported = !!directState || growthSupportedProjection();
+    const growthMax = directState ? Math.max(0, directState.targetCount - 1) : (growthSupported ? growthStepMax() : 0);
+    const activeGrowthStep = directState ? Math.max(0, directState.points.length - 1) : state.growthStep;
+    const activeGrowthEnabled = directState ? true : state.growthEnabled;
+    const activeGrowthTimer = directState ? state.directPlacementTimer : state.growthTimer;
+    const activeGrowthLabel = directState ? directPlacementLabel() : growthLabel();
+    if (!directState && growthSupported) {
       state.growthStep = clampGrowthStep(state.growthStep);
       if (state.growthStep > 0) state.lastSupportedGrowthStep = state.growthStep;
     }
     if (els.growthEnabledInput) {
-      els.growthEnabledInput.checked = state.growthEnabled;
-      els.growthEnabledInput.disabled = !growthSupported;
+      els.growthEnabledInput.checked = activeGrowthEnabled;
+      els.growthEnabledInput.disabled = !!directState || !growthSupported;
     }
     if (els.growthStepInput) {
       els.growthStepInput.min = 0;
       els.growthStepInput.max = growthMax;
-      els.growthStepInput.value = growthSupported ? state.growthStep : state.lastSupportedGrowthStep;
-      els.growthStepInput.disabled = !state.growthEnabled || !growthSupported;
+      els.growthStepInput.value = growthSupported ? activeGrowthStep : state.lastSupportedGrowthStep;
+      els.growthStepInput.disabled = !!directState || !activeGrowthEnabled || !growthSupported;
     }
-    if (els.growthStepLabel) els.growthStepLabel.textContent = growthLabel();
-    if (els.growthPrevButton) els.growthPrevButton.disabled = !state.growthEnabled || !growthSupported || state.growthStep <= 0;
-    if (els.growthNextButton) els.growthNextButton.disabled = !state.growthEnabled || !growthSupported || state.growthStep >= growthMax;
-    if (els.growthResetButton) els.growthResetButton.disabled = !state.growthEnabled || !growthSupported;
-    const growthPlayText = state.growthTimer ? 'Pauze' : 'Play';
-    const growthPrevDisabled = !state.growthEnabled || !growthSupported || state.growthStep <= 0;
-    const growthNextDisabled = !state.growthEnabled || !growthSupported || state.growthStep >= growthMax;
-    const growthResetDisabled = !state.growthEnabled || !growthSupported;
+    if (els.growthStepLabel) els.growthStepLabel.textContent = activeGrowthLabel;
+    if (els.growthPrevButton) els.growthPrevButton.disabled = !activeGrowthEnabled || !growthSupported || activeGrowthStep <= 0;
+    if (els.growthNextButton) els.growthNextButton.disabled = !activeGrowthEnabled || !growthSupported || activeGrowthStep >= growthMax;
+    if (els.growthResetButton) els.growthResetButton.disabled = !activeGrowthEnabled || !growthSupported;
+    const growthPlayText = activeGrowthTimer ? (isEnglish() ? 'Pause' : 'Pauze') : 'Play';
+    const growthPrevDisabled = !activeGrowthEnabled || !growthSupported || activeGrowthStep <= 0;
+    const growthNextDisabled = !activeGrowthEnabled || !growthSupported || activeGrowthStep >= growthMax;
+    const growthResetDisabled = !activeGrowthEnabled || !growthSupported;
     if (els.growthPlayButton) {
       els.growthPlayButton.disabled = !growthSupported;
       els.growthPlayButton.textContent = growthPlayText;
@@ -8252,8 +8597,8 @@
     if (els.mainGrowthNextButton) els.mainGrowthNextButton.disabled = growthNextDisabled;
     if (els.mainResetButton) els.mainResetButton.textContent = 'Reset';
     if (els.mainGrowthStepLabel) {
-      els.mainGrowthStepLabel.textContent = growthLabel();
-      els.mainGrowthStepLabel.title = growthLabel();
+      els.mainGrowthStepLabel.textContent = activeGrowthLabel;
+      els.mainGrowthStepLabel.title = activeGrowthLabel;
     }
     if (els.mainSouthModeButton) {
       els.mainSouthModeButton.textContent = southLogicalModeLabel(state.southLogicalMode || 'SOV');
@@ -8265,8 +8610,8 @@
     if (els.mainSouthNextButton) els.mainSouthNextButton.title = isEnglish() ? 'Next LOG order' : 'Volgende LOG-volgorde';
     const mainSouthControl = document.querySelector('[data-south-logical-control]');
     if (mainSouthControl) {
-      mainSouthControl.classList.remove('is-hidden');
-      mainSouthControl.setAttribute('aria-hidden', 'false');
+      mainSouthControl.classList.toggle('is-hidden', !!directState);
+      mainSouthControl.setAttribute('aria-hidden', directState ? 'true' : 'false');
     }
     document.querySelectorAll('[data-main-projection]').forEach(button => {
       const active = button.dataset.mainProjection === state.projection;
@@ -8281,8 +8626,8 @@
     if (els.mobileGrowthNextButton) els.mobileGrowthNextButton.disabled = growthNextDisabled;
     if (els.mobileGrowthResetButton) els.mobileGrowthResetButton.disabled = growthResetDisabled;
     if (els.mobileGrowthStepLabel) {
-      els.mobileGrowthStepLabel.textContent = growthLabel();
-      els.mobileGrowthStepLabel.title = growthLabel();
+      els.mobileGrowthStepLabel.textContent = activeGrowthLabel;
+      els.mobileGrowthStepLabel.title = activeGrowthLabel;
     }
     document.querySelectorAll('.projection-tab').forEach(tab => {
       const active = tab.dataset.projection === state.projection;
@@ -10184,6 +10529,10 @@
       lexFreeSlotPlacementSelect: ['Legt scope/host vast, los van de lineaire LEX-plaats.', 'Records scope/host independently of linear LEX position.'],
       lexInsertionContentSelect: ['Kiest de inhoud van de actieve insertie.', 'Chooses the content of the active insertion.'],
       showGridInput: ['Toont of verbergt het raster; knoopposities blijven gelijk.', 'Shows or hides the grid; node positions remain unchanged.'],
+      gridColorSelect: ['Kleur van het raster tussen de buitenste actieve assen.', 'Color of the grid between the outer active axes.'],
+      gridLineWeightSelect: ['Zwaarte van gewone en hoofdrasterlijnen.', 'Weight of regular and major grid lines.'],
+      projectionLineWeightSelect: ['Zwaarte van bron-naar-aslijnen en de named projection-assen.', 'Weight of source-to-axis lines and named projection axes.'],
+      boxLineWeightSelect: ['Zwaarte van structurele, LEX-, SYNT- en LOG-boxcontouren.', 'Weight of structural, LEX, SYNT and LOG box outlines.'],
       showRelationsInput: ['Toont of verbergt tak- en projectielijnen.', 'Shows or hides branch and projection lines.'],
       showLabelsInput: ['Toont of verbergt zichtbare boomlabels.', 'Shows or hides visible tree labels.']
     };
@@ -10294,9 +10643,12 @@
     setLabelSpan('mainViewFitSelectTop', en ? 'Window fit' : 'Venstervulling');
     setLabelSpan('freeSlotCountSelect', en ? 'Free tree rows' : 'Boom vrije rijen');
     setLabelSpan('lexProjectionColorSelect', en ? 'LEX color' : 'LEX-kleur');
-    if (els.lexProjectionColorSelect?.options?.[0]) els.lexProjectionColorSelect.options[0].textContent = en ? 'blue' : 'blauw';
     setLabelSpan('syntProjectionColorSelect', en ? 'SYNT color' : 'SYNT-kleur');
     setLabelSpan('logProjectionColorSelect', en ? 'LOG color' : 'LOG-kleur');
+    setLabelSpan('gridColorSelect', en ? 'Grid color' : 'Rasterkleur');
+    setLabelSpan('gridLineWeightSelect', en ? 'Grid lines' : 'Rasterlijnen');
+    setLabelSpan('projectionLineWeightSelect', en ? 'Projection lines' : 'Projectielijnen');
+    setLabelSpan('boxLineWeightSelect', en ? 'Box outlines' : 'Boxlijnen');
     setInputLabelText('#projectionBoxDraggableInput', en ? 'draggable' : 'verplaatsbaar');
     setInputLabelText('#southBoxDraggableInput', en ? 'draggable' : 'verplaatsbaar');
     setLabelSpan('projectionBoxDraggableInput', en ? 'Projections box' : 'Projecties-box');
@@ -10328,7 +10680,9 @@
     setLabelSpan('lexFreeSlotPlacementSelect', en ? 'Scope host (secondary)' : 'Scopehost (secundair)');
     setLabelSpan('lexInsertionContentSelect', en ? 'Adverb / content' : 'Bijwoord / inhoud');
     document.querySelectorAll('.projection-color-field legend').forEach(node => { node.textContent = en ? 'Projection colors' : 'Projectiekleuren'; });
-    document.querySelectorAll('.projection-color-field .top-menu-choice-help').forEach(node => { node.textContent = en ? 'LEX and LEX projection lines stay blue. Choose colors for the other named projections here.' : 'LEX en de LEX-projectielijnen blijven blauw. Kies hier de kleuren voor de andere named projections.'; });
+    document.querySelectorAll('.projection-color-field .top-menu-choice-help').forEach(node => { node.textContent = en ? 'LEX, SYNT and LOG use distinct defaults and can each be colored independently.' : 'LEX, SYNT en LOG hebben verschillende standaardkleuren en zijn ieder afzonderlijk instelbaar.'; });
+    document.querySelectorAll('.line-style-field legend').forEach(node => { node.textContent = en ? 'Line appearance' : 'Lijnbeeld'; });
+    document.querySelectorAll('.line-style-field .top-menu-choice-help').forEach(node => { node.textContent = en ? 'Adjust the grid between the axes, projection lines and box outlines independently. Boxes inherit their projection color.' : 'Stel het raster tussen de assen, projectielijnen en boxcontouren afzonderlijk in. Boxen volgen de kleur van hun projectie.'; });
     document.querySelectorAll('.lex-adverb-insert-field legend').forEach(node => { node.textContent = en ? 'LOG minors for adverbs' : 'LOG-minors voor bijwoorden'; });
     document.querySelectorAll('.lex-adverb-insert-field > .top-menu-choice-help').forEach(node => {
       node.textContent = en
@@ -10461,6 +10815,7 @@
     if (els.sourceAxisSummaryLabel) els.sourceAxisSummaryLabel.textContent = en ? 'Projections' : 'Projecties';
     renderMainChoiceMenus();
     applyFeatureVisibility();
+    syncPlacementModeUi();
     syncProjectConfigStatus();
     applySelectedLanguageTexts();
   }
@@ -11516,8 +11871,14 @@
       showGrid: !!state.showGrid,
       showRelations: !!state.showRelations,
       showLabels: !!state.showLabels,
+      placementMode: validPlacementMode(state.placementMode),
+      lexProjectionColor: state.lexProjectionColor,
       syntProjectionColor: state.syntProjectionColor,
       logProjectionColor: state.logProjectionColor,
+      gridColor: state.gridColor,
+      gridLineWeight: validLineWeight(state.gridLineWeight),
+      projectionLineWeight: validLineWeight(state.projectionLineWeight),
+      boxLineWeight: validLineWeight(state.boxLineWeight),
       projectionBoxDraggable: !!state.projectionBoxDraggable,
       projectionBoxManual: state.projectionBoxManual || null,
       southBoxDraggable: !!state.southBoxDraggable,
@@ -11613,8 +11974,14 @@
       state.layoutDensity = 'max';
       state.viewFitMode = 'max';
     }
+    if (typeof snapshot.placementMode === 'string') state.placementMode = validPlacementMode(snapshot.placementMode);
+    if (typeof snapshot.lexProjectionColor === 'string') state.lexProjectionColor = snapshot.lexProjectionColor;
     if (typeof snapshot.syntProjectionColor === 'string') state.syntProjectionColor = snapshot.syntProjectionColor;
     if (typeof snapshot.logProjectionColor === 'string') state.logProjectionColor = snapshot.logProjectionColor;
+    if (typeof snapshot.gridColor === 'string') state.gridColor = snapshot.gridColor;
+    if (typeof snapshot.gridLineWeight === 'string') state.gridLineWeight = validLineWeight(snapshot.gridLineWeight);
+    if (typeof snapshot.projectionLineWeight === 'string') state.projectionLineWeight = validLineWeight(snapshot.projectionLineWeight);
+    if (typeof snapshot.boxLineWeight === 'string') state.boxLineWeight = validLineWeight(snapshot.boxLineWeight);
     if (typeof snapshot.projectionBoxDraggable === 'boolean') state.projectionBoxDraggable = snapshot.projectionBoxDraggable;
     if (snapshot.projectionBoxManual && Number.isFinite(snapshot.projectionBoxManual.left) && Number.isFinite(snapshot.projectionBoxManual.top)) state.projectionBoxManual = snapshot.projectionBoxManual;
     else if ('projectionBoxManual' in snapshot) state.projectionBoxManual = null;
@@ -11641,8 +12008,13 @@
       : snapshot.topMenuChoices;
     if (Array.isArray(savedTopMenus)) state.topMenusAbove = normalizeTopMenusAbove(savedTopMenus);
     try {
+      localStorage.setItem('opengraph_projection_color_lex', state.lexProjectionColor);
       localStorage.setItem('opengraph_projection_color_synt', state.syntProjectionColor);
       localStorage.setItem('opengraph_projection_color_log', state.logProjectionColor);
+      localStorage.setItem('opengraph_grid_color', state.gridColor);
+      localStorage.setItem('opengraph_grid_line_weight', state.gridLineWeight);
+      localStorage.setItem('opengraph_projection_line_weight', state.projectionLineWeight);
+      localStorage.setItem('opengraph_box_line_weight', state.boxLineWeight);
       localStorage.setItem('opengraph_projection_box_draggable', state.projectionBoxDraggable ? '1' : '0');
       localStorage.setItem('opengraph_south_box_draggable', state.southBoxDraggable ? '1' : '0');
       localStorage.setItem('opengraph_source_axes_v200rc9', JSON.stringify(normalizedSourceAxes()));
@@ -11736,6 +12108,7 @@
     const isMain = next === 'main';
     const isConfig = next === 'config';
     const isHelp = next === 'help';
+    if (!isMain) stopDirectPlacementPlayback();
     document.body.classList.toggle('main-screen-active', isMain);
     document.body.classList.toggle('config-screen-active', isConfig);
     document.body.classList.toggle('help-screen-active', isHelp);
@@ -12080,8 +12453,16 @@
     els.rightMenuWidthSelectTop?.addEventListener('change', event => setRightMenuMode(event.target.value));
     els.mobileRightMenuWidthSelect?.addEventListener('change', event => setRightMenuMode(event.target.value));
     els.freeSlotCountSelect?.addEventListener('change', event => { state.freeSlotCount = Math.max(0, Math.min(6, Number(event.target.value) || 0)); resetManualViewBox(); render(); });
+    els.lexProjectionColorSelect?.addEventListener('change', event => { state.lexProjectionColor = event.target.value || 'blue'; try { localStorage.setItem('opengraph_projection_color_lex', state.lexProjectionColor); } catch (_err) {} appendConfigLog('change-lex-color', { lexProjectionColor: state.lexProjectionColor }); markConfigDirty('LEX-kleur'); render(); });
     els.syntProjectionColorSelect?.addEventListener('change', event => { state.syntProjectionColor = event.target.value || 'green'; try { localStorage.setItem('opengraph_projection_color_synt', state.syntProjectionColor); } catch (_err) {} appendConfigLog('change-synt-color', { syntProjectionColor: state.syntProjectionColor }); markConfigDirty('SYNT-kleur'); render(); });
     els.logProjectionColorSelect?.addEventListener('change', event => { state.logProjectionColor = event.target.value || 'purple'; try { localStorage.setItem('opengraph_projection_color_log', state.logProjectionColor); } catch (_err) {} appendConfigLog('change-log-color', { logProjectionColor: state.logProjectionColor }); markConfigDirty('LOG-kleur'); render(); });
+    els.gridColorSelect?.addEventListener('change', event => { state.gridColor = event.target.value || 'soft-slate'; try { localStorage.setItem('opengraph_grid_color', state.gridColor); } catch (_err) {} appendConfigLog('change-grid-color', { gridColor: state.gridColor }); markConfigDirty('Rasterkleur'); render(); });
+    els.gridLineWeightSelect?.addEventListener('change', event => { state.gridLineWeight = validLineWeight(event.target.value); try { localStorage.setItem('opengraph_grid_line_weight', state.gridLineWeight); } catch (_err) {} appendConfigLog('change-grid-weight', { gridLineWeight: state.gridLineWeight }); markConfigDirty('Rasterlijnen'); render(); });
+    els.projectionLineWeightSelect?.addEventListener('change', event => { state.projectionLineWeight = validLineWeight(event.target.value); try { localStorage.setItem('opengraph_projection_line_weight', state.projectionLineWeight); } catch (_err) {} appendConfigLog('change-projection-weight', { projectionLineWeight: state.projectionLineWeight }); markConfigDirty('Projectielijnen'); render(); });
+    els.boxLineWeightSelect?.addEventListener('change', event => { state.boxLineWeight = validLineWeight(event.target.value); try { localStorage.setItem('opengraph_box_line_weight', state.boxLineWeight); } catch (_err) {} appendConfigLog('change-box-weight', { boxLineWeight: state.boxLineWeight }); markConfigDirty('Boxlijnen'); render(); });
+    document.querySelectorAll('[data-placement-mode]').forEach(button => {
+      button.addEventListener('click', () => setPlacementMode(button.dataset.placementMode));
+    });
     els.projectionBoxDraggableInput?.addEventListener('change', event => { updateProjectionBoxDraggable(event.target.checked); appendConfigLog('change-projection-box-draggable', { enabled: !!event.target.checked }); markConfigDirty('Projecties-box'); });
     els.southBoxDraggableInput?.addEventListener('change', event => { updateSouthBoxDraggable(event.target.checked); appendConfigLog('change-south-box-draggable', { enabled: !!event.target.checked }); markConfigDirty('Taalactiebox'); });
     const updateLexFreeSlotCount = event => { state.lexFreeSlotCount = Math.max(0, Math.min(8, Number(event.target.value) || 0)); resetManualViewBox(); render(); };
@@ -12139,10 +12520,10 @@
     els.growthNextButton?.addEventListener('click', () => { stopGrowthPlayback(); state.growthEnabled = true; setGrowthStep(state.growthStep + 1); });
     els.growthResetButton?.addEventListener('click', () => { state.growthEnabled = true; state.projectionBlockUnlocked = false; stopGrowthPlayback(); setGrowthStep(0); });
     els.growthPlayButton?.addEventListener('click', toggleGrowthPlayback);
-    els.mainGrowthPlayButton?.addEventListener('click', toggleGrowthPlayback);
-    els.mainGrowthPrevButton?.addEventListener('click', () => { stopGrowthPlayback(); state.growthEnabled = true; setGrowthStep(state.growthStep - 1); });
-    els.mainGrowthNextButton?.addEventListener('click', () => { stopGrowthPlayback(); state.growthEnabled = true; setGrowthStep(state.growthStep + 1); });
-    els.mainResetButton?.addEventListener('click', () => { applyProjectionAxes(SOURCE_AXIS_IDS); resetForNewExample(); render(); });
+    els.mainGrowthPlayButton?.addEventListener('click', toggleActivePlacementPlayback);
+    els.mainGrowthPrevButton?.addEventListener('click', activePlacementPrevious);
+    els.mainGrowthNextButton?.addEventListener('click', activePlacementNext);
+    els.mainResetButton?.addEventListener('click', activePlacementReset);
     els.mainSouthPrevButton?.addEventListener('click', () => { stopGrowthPlayback(); cycleSouthLogicalMode(-1); });
     els.mainSouthNextButton?.addEventListener('click', () => { stopGrowthPlayback(); cycleSouthLogicalMode(1); });
     els.mainSouthModeButton?.addEventListener('click', () => { stopGrowthPlayback(); cycleSouthLogicalMode(1); });
@@ -12180,10 +12561,10 @@
         render();
       });
     });
-    els.mobileGrowthPlayButton?.addEventListener('click', toggleGrowthPlayback);
-    els.mobileGrowthPrevButton?.addEventListener('click', () => { stopGrowthPlayback(); state.growthEnabled = true; setGrowthStep(state.growthStep - 1); });
-    els.mobileGrowthNextButton?.addEventListener('click', () => { stopGrowthPlayback(); state.growthEnabled = true; setGrowthStep(state.growthStep + 1); });
-    els.mobileGrowthResetButton?.addEventListener('click', () => { state.growthEnabled = true; stopGrowthPlayback(); setGrowthStep(0); });
+    els.mobileGrowthPlayButton?.addEventListener('click', toggleActivePlacementPlayback);
+    els.mobileGrowthPrevButton?.addEventListener('click', activePlacementPrevious);
+    els.mobileGrowthNextButton?.addEventListener('click', activePlacementNext);
+    els.mobileGrowthResetButton?.addEventListener('click', activePlacementReset);
     els.resetExampleButton?.addEventListener('click', () => { applyProjectionAxes(SOURCE_AXIS_IDS); resetForNewExample(); render(); });
     els.fitButton?.addEventListener('click', runFit);
     els.mobileFitButton?.addEventListener('click', runFit);
@@ -12238,7 +12619,7 @@
     els.discardConfigButton?.addEventListener('click', discardConfigChanges);
     els.downloadConfigLogButton?.addEventListener('click', downloadConfigLog);
     document.getElementById('configScreen')?.addEventListener('change', event => {
-      if (event.target?.id && !['syntProjectionColorSelect','logProjectionColorSelect','projectionBoxDraggableInput','southBoxDraggableInput'].includes(event.target.id)) markConfigDirty(event.target.id);
+      if (event.target?.id && !['lexProjectionColorSelect','syntProjectionColorSelect','logProjectionColorSelect','gridColorSelect','gridLineWeightSelect','projectionLineWeightSelect','boxLineWeightSelect','projectionBoxDraggableInput','southBoxDraggableInput'].includes(event.target.id)) markConfigDirty(event.target.id);
     });
     els.downloadJsonButton?.addEventListener('click', downloadJson);
     els.downloadOpnButton?.addEventListener('click', downloadOpn);
@@ -12275,9 +12656,19 @@
       if (event.key === '1') setProjection('axes');
       else if (event.key === '2') setProjection('source');
       else if (event.key === '3') setProjection('lex');
-      else if (event.key.toLowerCase() === 'g') { state.growthEnabled = !state.growthEnabled; if (!state.growthEnabled) stopGrowthPlayback(); }
-      else if (event.key.toLowerCase() === 'n') { state.growthEnabled = true; setGrowthStep(state.growthStep + 1, false); }
-      else if (event.key.toLowerCase() === 'p') { state.growthEnabled = true; setGrowthStep(state.growthStep - 1, false); }
+      else if (event.key.toLowerCase() === 'g') {
+        if (directPlacementActive()) { toggleDirectPlacementPlayback(); return; }
+        state.growthEnabled = !state.growthEnabled;
+        if (!state.growthEnabled) stopGrowthPlayback();
+      }
+      else if (event.key.toLowerCase() === 'n') {
+        if (directPlacementActive()) directPlacementNext(false);
+        else { state.growthEnabled = true; setGrowthStep(state.growthStep + 1, false); }
+      }
+      else if (event.key.toLowerCase() === 'p') {
+        if (directPlacementActive()) directPlacementPrevious(false);
+        else { state.growthEnabled = true; setGrowthStep(state.growthStep - 1, false); }
+      }
       else if (event.key.toLowerCase() === 'f') runFit();
       else if (event.key === 'ArrowLeft') { panViewByClientDelta(60, 0); event.preventDefault(); return; }
       else if (event.key === 'ArrowRight') { panViewByClientDelta(-60, 0); event.preventDefault(); return; }

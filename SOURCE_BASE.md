@@ -1,6 +1,8 @@
 # SOURCE_BASE
 
 - Release: `v2.0.0-rc.45`
+- Actuele source build:
+  `v2.0.0-rc.45-grid-style-direct-modes-eol-20260802.2`.
 - Volledige basis: `OpenGraph_Lite_Viewer_v1.0.16_stable_central_tree_views.zip`
 - Overnamebeleid: alle bestanden uit de bijlage behouden waar technisch mogelijk.
 - Functionele correctie: `Functional` is de tweede centrale view na `Syntax`; `LOG` blijft uitsluitend de zuidas/named projection.
@@ -18,6 +20,14 @@
   hebben vastgelegde tie-breaks; de gemeten omtrekkende beweging is geen
   bewezen wereldwijd optimum. Geaccepteerd op 2 augustus 2026; slide 5 wordt
   rechtstreeks uit dezelfde engine afgeleid.
+- Interfacehiërarchie: Language Tree is de prominente berekende toepassing;
+  Greedy Grow en Random zijn directe OGN-illustraties. Random gebruikt een
+  afzonderlijke seedbare engine en wijzigt de Greedy-carrouselbron niet.
+- Lijnbeeldcontract: rasterkleur en raster-, projectie- en boxlijnzwaarte zijn
+  onafhankelijk instelbaar; LEX, SYNT en LOG hebben afzonderlijke kleuren voor
+  overeenkomstige assen, projectielijnen en boxen.
+- Tekstbroncontract: `.gitattributes` bepaalt LF/CRLF en de normalizer bewaakt
+  exact één afsluitende EOL vóór release en staging.
 - Laagvolgorde: OGN Free Placement → OGN Projection → OGN Calculated
   Placement. De Two-Pass Language Tree is één berekende toepassing.
 - Taalprofielcontract: het zichtbare profiel OGN Basis is de basis van de

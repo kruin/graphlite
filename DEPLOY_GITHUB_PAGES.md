@@ -77,19 +77,23 @@ URL-placeholders pas in voor de concrete publicatie.
 
 ## Staging
 
-De BAT staged tracked wijzigingen met:
+Vóór de releasecheck normaliseert de BAT alle bekende tekstbestanden:
 
 ```bat
-git add -u -- .
+python tools\normalize_text_files.py --write
 ```
 
-Daarna voegt hij alleen nieuwe, niet-genegeerde bestanden toe via:
+Daarna past Git de actuele `.gitattributes` ook op bestaande indexinhoud toe en
+staged de BAT alle wijzigingen:
 
 ```bat
-git ls-files --others --exclude-standard
+git add --renormalize -- .
+git add -A -- .
+git diff --cached --check
 ```
 
-Genegeerde bestanden blokkeren de publicatie niet.
+Genegeerde bestanden blokkeren de publicatie niet. Full-sourcezips en lokale
+test-/logbestanden worden bovendien expliciet uit de index gehouden.
 
 ## Niet publiceren naar Pages-root
 
@@ -143,7 +147,13 @@ Laat `.nojekyll` in de root staan zodat GitHub Pages alle bestanden direct serve
 
 ## Line endings
 
-`.gitattributes` legt line-endings vast voor Windows, GitHub Pages en zip-builds.
+`.gitattributes` legt line-endings vast voor Windows, GitHub Pages en
+zip-builds: bron, web en documentatie gebruiken LF; Windows-scripts gebruiken
+CRLF. `tools/normalize_text_files.py` bewaakt daarnaast exact één afsluitende
+EOL en verwijdert een extra lege regel aan EOF. `publish_checked.bat` voert de
+herstelmodus uit vóór checks, commitboodschap en staging. Daardoor keren de
+reeks `LF will be replaced by CRLF` en een late `new blank line at EOF`-fout
+niet als handwerk terug.
 
 
 ## .gitignore

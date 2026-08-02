@@ -5,6 +5,25 @@ Leidende status van OpenGraph Lite Viewer `v2.0.0-rc.45`.
 Controlestatus: rc.45 is op 2 augustus 2026 handmatig goedgekeurd, inclusief
 de Greedy Grow-reconstructie, bewijsgrens en afgeleide publicatieslide.
 
+## Actuele source build 20260802.2
+
+- Exacte bronidentiteit:
+  `v2.0.0-rc.45-grid-style-direct-modes-eol-20260802.2`.
+- Het hoofdmenu toont Language Tree prominent als primaire berekende
+  toepassing, met Greedy Grow en Random als kleinere directe
+  OGN-illustraties. De directe modi schrijven één knoop per stap en verbergen
+  bediening die uitsluitend bij de taalboom hoort.
+- Random heeft een afzonderlijke seedbare engine. De geaccepteerde
+  `greedy-grow-engine.js` blijft bytegelijk aan de carrouselbron en de
+  afleidingscontrole blijft geldig.
+- `Config → Beeld → Lijnbeeld` regelt rasterkleur en raster-, projectie- en
+  boxlijnzwaarte. LEX, SYNT en LOG hebben elk een eigen kleur voor as,
+  projectielijnen en overeenkomstige boxen.
+- `.gitattributes` en `tools/normalize_text_files.py` leggen LF/CRLF en exact
+  één afsluitende EOL structureel vast. `publish_checked.bat` normaliseert en
+  voert `git add --renormalize` uit vóór de whitespacecontrole.
+- Het volledige contract staat in `LINE_STYLE_AND_PLACEMENT_MODES.md`.
+
 ## OGN-kern en vaste uitlegvolgorde rc.45
 
 - De algemene Open Graph Notation begint bij een open grid met vrije posities.
@@ -50,8 +69,10 @@ de Greedy Grow-reconstructie, bewijsgrens en afgeleide publicatieslide.
   WEST/SOUTH/EAST-projecties, de engine-afleiding van Greedy Grow, het
   Language Tree-eindstadium en de twee GitHub-links. Het handmatige
   akkoord staat in `RC45_OGN_CORE_EXPLANATION_TEST.md`.
-- rc.45 verandert geen graph-, Config-, opslag- of renderfunctionaliteit van
-  de viewer; de rc.43-functionaliteit blijft geërfd.
+- De oorspronkelijke geaccepteerde rc.45-carrousel blijft ongewijzigd. De
+  latere source build 20260802.2 breidt de viewer wel uit met plaatsingsmodi,
+  lijnbeeld-Config en structurele tekstnormalisatie; graphdata en OPN-formaat
+  blijven ongewijzigd.
 
 ## Config, LEESMIJ en projectzip rc.43
 

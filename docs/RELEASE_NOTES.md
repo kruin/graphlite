@@ -1,6 +1,14 @@
 ## v2.0.0-rc.45 — OGN-kern vóór toepassingen
 
 - Status: op 2 augustus 2026 handmatig goedgekeurde release candidate.
+- Source build 20260802.2 integreert Language Tree als prominente berekende
+  methode en Greedy Grow/Random als directe OGN-illustraties in hetzelfde
+  hoofdmenu. Random gebruikt een afzonderlijke seedbare engine.
+- `Config → Beeld → Lijnbeeld` regelt rasterkleur en raster-, projectie- en
+  boxlijnzwaarte; LEX, SYNT en LOG hebben afzonderlijke kleuren voor as, lijn
+  en box.
+- `.gitattributes` plus `tools/normalize_text_files.py` voorkomen terugkerende
+  LF/CRLF-drift en verwijderen extra lege EOF-regels vóór het stagen.
 - De algemene OGN-uitleg begint nu bij vrije plaatsing op een open grid:
   iedere knoop bezit één horizontale en één verticale gridlijn en wordt één
   voor één op een vrije positie geschreven.
@@ -37,8 +45,9 @@
   hetzelfde rc.45-versienummer herkennen en blokkeren. Daardoor wijst een
   oude, nog draaiende server niet meer ongemerkt naar een bron zonder
   `greedy-grow.html`.
-- De bestaande viewer-, graph-, Config-, opslag- en taalboomrendering blijven
-  ongewijzigd; Greedy Grow is als afzonderlijke directe OGN-proef toegevoegd.
+- Taalboom-graphdata en OPN-opslag blijven ongewijzigd. De latere source build
+  wijzigt wel hoofdmenu, Config-weergave en lijnrendering; de geaccepteerde
+  carrousel en Greedy-engine blijven hashgecontroleerd ongewijzigd.
 
 ## v2.0.0-rc.44 — Direct plaatsbare publicatiecarrousel
 

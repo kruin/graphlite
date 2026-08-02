@@ -42,6 +42,20 @@ De laatste beschikbare laag heeft voor dezelfde instelling voorrang. Een
 browser-Config reist niet vanzelf mee; daarvoor moet hij eerst naar
 `config/user-config.json` worden geschreven.
 
+## Nieuwe weergave- en moduswaarden
+
+Dezelfde lagen bewaren ook:
+
+- `placementMode`: `language-tree`, `greedy-grow` of `random`; standaard blijft
+  `language-tree`;
+- `gridColor` en `gridLineWeight`;
+- `projectionLineWeight` en `boxLineWeight`;
+- `lexProjectionColor`, `syntProjectionColor` en `logProjectionColor`.
+
+De drie lijngewichten gebruiken `light`, `normal` of `strong`. Deze waarden
+sturen uitsluitend kleur, lijnbreedte en dekking; zij wijzigen geen
+gridcoördinaten of OGN-plaatsingsregels.
+
 ## Releasegrens
 
 Beide JSON-bestanden horen in iedere projectzip. Controleer vóór publicatie dat

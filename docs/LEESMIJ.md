@@ -48,6 +48,18 @@ Plaatsing**. De Two-Pass Language Tree verschijnt pas in de derde laag als één
 toepassing. Zie
 [`OGN_CORE_PLACEMENT_ARCHITECTURE.md`](OGN_CORE_PLACEMENT_ARCHITECTURE.md).
 
+## Plaatsingsmethoden en lijnbeeld
+
+Het menu **Language Tree** houdt Language Tree prominent als primaire
+berekende toepassing en plaatst **Greedy Grow** en **Random** eronder als
+directe OGN-illustraties. Een directe stap schrijft onmiddellijk één knoop op
+een ongebruikte rij én kolom; wisselen verandert de Language-Tree-data niet.
+
+`Config → Beeld → Lijnbeeld` regelt rasterkleur, rasterzwaarte,
+projectielijnzwaarte en boxlijnzwaarte afzonderlijk. LEX, SYNT en LOG hebben
+elk een eigen kleur voor hun assen, projectielijnen en boxen. Zie
+[`LINE_STYLE_AND_PLACEMENT_MODES.md`](LINE_STYLE_AND_PLACEMENT_MODES.md).
+
 ## Huidige berekende toepassing: Two-Pass Language Tree
 
 Het profiel `OGN Basis` is de basis van de huidige taaltoepassing. Het bevat

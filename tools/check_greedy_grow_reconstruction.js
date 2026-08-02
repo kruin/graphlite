@@ -16,8 +16,8 @@ function read(relative) {
   return fs.readFileSync(path.join(ROOT, relative), 'utf8');
 }
 
-function generate(strategy, count) {
-  const state = engine.createState({ strategy, targetCount: count });
+function generate(strategy, count, options = {}) {
+  const state = engine.createState({ strategy, targetCount: count, ...options });
   while (engine.placeNext(state)) {
     // Iedere aanroep schrijft hoogstens één nieuwe knoop.
   }

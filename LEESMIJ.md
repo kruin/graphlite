@@ -66,6 +66,24 @@ De vaste uitlegvolgorde is:
 Zie
 [`OGN_CORE_PLACEMENT_ARCHITECTURE.md`](OGN_CORE_PLACEMENT_ARCHITECTURE.md).
 
+## Plaatsingsmethoden en instelbaar lijnbeeld
+
+Het menu **Language Tree** bevat nu de plaatsingshiërarchie zelf. Language
+Tree blijft de prominente, primaire berekende toepassing. **Greedy Grow** en
+**Random** staan er kleiner onder als directe OGN-illustraties. In een directe
+modus schrijft iedere pijl-/Play-stap onmiddellijk één knoop op een nog vrije
+rij én kolom; taalgebonden menu's verdwijnen en de Language-Tree-data blijven
+ongewijzigd. Random gebruikt een afzonderlijke engine met seed en kan de
+geaccepteerde Greedy-Grow-reconstructie dus niet veranderen.
+
+Onder `Config → Beeld → Lijnbeeld` zijn rasterkleur en de zwaarte van raster-,
+projectie- en boxlijnen onafhankelijk instelbaar. LEX, SYNT en LOG hebben
+daarnaast elk een eigen kleur—standaard blauw, groen en paars—die door hun as,
+projectielijnen en boxen wordt gevolgd. Dit verandert alleen de presentatie,
+nooit coördinaten of plaatsingsgeldigheid. Zie
+[`LINE_STYLE_AND_PLACEMENT_MODES.md`](LINE_STYLE_AND_PLACEMENT_MODES.md) voor
+de volledige koppeling en het structurele EOF/EOL-publicatiebeleid.
+
 ## Huidige berekende toepassing: Two-Pass Language Tree
 
 De huidige viewer implementeert de **Two-Pass Language Tree** als één

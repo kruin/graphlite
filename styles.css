@@ -7811,3 +7811,172 @@ body.viewport-handheld-landscape.main-screen-active .main-play-reset-controls bu
   padding: .08rem .42rem !important;
   font-size: .72rem !important;
 }
+
+/* rc.45 source build 20260802.2: één configureerbaar lijnbeeld. Deze regels staan bewust als laatste,
+   zodat oudere minimale-lijnprofielen de actuele Config niet overschrijven. */
+:root {
+  --og-grid-color: #94a3b8;
+  --og-grid-line-width: .78;
+  --og-grid-major-line-width: 1.05;
+  --og-grid-line-opacity: .38;
+  --og-grid-major-line-opacity: .54;
+  --og-projection-line-width: 1.72;
+  --og-projection-axis-width: 2.05;
+  --og-box-line-width: .78;
+}
+
+.projection-color-field,
+.line-style-field {
+  border: 1px dashed color-mix(in srgb, var(--line), transparent 22%);
+  border-radius: .9rem;
+  padding: .55rem;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(7rem, 1fr));
+  gap: .5rem;
+  margin: .45rem 0;
+}
+.projection-color-field { grid-template-columns: repeat(3, minmax(7rem, 1fr)); }
+.projection-color-field legend,
+.line-style-field legend {
+  font-weight: 950;
+  color: var(--muted);
+  padding-inline: .25rem;
+}
+.projection-color-field .top-menu-choice-help,
+.line-style-field .top-menu-choice-help { grid-column: 1 / -1; }
+
+body.main-screen-active #graphSvg .grid-line {
+  stroke: var(--og-grid-color) !important;
+  stroke-width: var(--og-grid-line-width) !important;
+  opacity: var(--og-grid-line-opacity) !important;
+}
+body.main-screen-active #graphSvg .grid-line.major {
+  stroke: var(--og-grid-color) !important;
+  stroke-width: var(--og-grid-major-line-width) !important;
+  opacity: var(--og-grid-major-line-opacity) !important;
+}
+body.main-screen-active #graphSvg .grid-axis {
+  stroke: color-mix(in srgb, var(--og-grid-color), var(--text) 34%) !important;
+  stroke-width: var(--og-grid-major-line-width) !important;
+  opacity: calc(var(--og-grid-major-line-opacity) + .12) !important;
+}
+
+body.main-screen-active #graphSvg .projection-line,
+body.main-screen-active #graphSvg .projection-line.horizontal,
+body.main-screen-active #graphSvg .projection-line.orthogonal,
+body.main-screen-active #graphSvg .logical-projection-line,
+body.main-screen-active #graphSvg .logical-source-line,
+body.main-screen-active #graphSvg .projected-rule-line {
+  stroke-width: var(--og-projection-line-width) !important;
+  opacity: .9 !important;
+}
+body.main-screen-active #graphSvg .projection-axis-line,
+body.main-screen-active #graphSvg .logical-axis,
+body.main-screen-active #graphSvg .lex-axis,
+body.main-screen-active #graphSvg .lex-axis-line {
+  stroke-width: var(--og-projection-axis-width) !important;
+  opacity: .96 !important;
+}
+
+body.main-screen-active #graphSvg .lex-slot-box,
+body.main-screen-active #graphSvg .lex-local-slot,
+body.main-screen-active #graphSvg .lex-free-slot {
+  stroke: var(--lex) !important;
+  stroke-width: var(--og-box-line-width) !important;
+}
+body.main-screen-active #graphSvg .synt-box,
+body.main-screen-active #graphSvg .category-box,
+body.main-screen-active #graphSvg .syntax-rule-box,
+body.main-screen-active #graphSvg .projected-rule-box,
+body.main-screen-active #graphSvg .tree-subbox,
+body.main-screen-active #graphSvg .jan-subtree-box {
+  stroke: var(--synt) !important;
+  stroke-width: var(--og-box-line-width) !important;
+}
+body.main-screen-active #graphSvg .logical-order-box,
+body.main-screen-active #graphSvg .log-role-box,
+body.main-screen-active #graphSvg .logical-order-badge,
+body.main-screen-active #graphSvg .logical-order-badge-interactive {
+  stroke: var(--log) !important;
+  stroke-width: var(--og-box-line-width) !important;
+}
+
+/* Language Tree blijft de primaire toepassing; directe OGN-proeven zijn
+   kleinere nevendoorgangen in hetzelfde View-menu. */
+.top-menu-view-popover { width: min(25rem, calc(100vw - .6rem)); }
+.placement-mode-picker,
+.language-tree-view-picker { display: grid; gap: .35rem; }
+.placement-mode-picker { margin-bottom: .5rem; }
+.placement-mode-picker h3,
+.language-tree-view-picker h3 {
+  margin: 0;
+  color: var(--muted);
+  font-size: .72rem;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.placement-mode-direct-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: .3rem;
+}
+.placement-mode-option {
+  min-height: 3rem;
+  display: grid;
+  justify-items: start;
+  align-content: center;
+  gap: .12rem;
+  text-align: left;
+}
+.placement-mode-option.is-primary {
+  min-height: 3.5rem;
+  border-width: 2px;
+}
+.placement-mode-option small { color: var(--muted); font-weight: 750; }
+.placement-mode-option.active {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent), var(--panel) 88%);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent), transparent 45%);
+}
+.placement-mode-option.active small { color: var(--text); }
+body.placement-direct-active .main-grid-controls,
+body.placement-direct-active .main-south-control,
+body.placement-direct-active .lex-ambiguity-panel {
+  display: none !important;
+}
+
+#graphSvg .direct-placement-path {
+  fill: none;
+  stroke: color-mix(in srgb, var(--accent), transparent 30%);
+  stroke-width: 1.25;
+  stroke-dasharray: 5 5;
+  vector-effect: non-scaling-stroke;
+}
+#graphSvg .direct-placement-node circle {
+  fill: var(--panel);
+  stroke: var(--accent);
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+}
+#graphSvg .direct-placement-node.is-current circle {
+  fill: color-mix(in srgb, var(--accent), var(--panel) 82%);
+  stroke-width: 3;
+}
+#graphSvg .direct-placement-node text {
+  fill: var(--text);
+  font-size: calc(12px * var(--og-font-scale));
+  font-weight: 900;
+  text-anchor: middle;
+  dominant-baseline: central;
+}
+#graphSvg .direct-placement-caption {
+  fill: var(--muted);
+  font-size: calc(13px * var(--og-font-scale));
+  font-weight: 800;
+}
+
+@media (max-width: 720px) {
+  .projection-color-field,
+  .line-style-field { grid-template-columns: 1fr; }
+  .placement-mode-direct-options { grid-template-columns: 1fr; }
+}

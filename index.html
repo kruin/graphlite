@@ -79,9 +79,20 @@
 </div>
 </details>
 <details class="compact-choice-menu main-view-menu top-menu-item" id="mainViewMenu">
-<summary id="mainViewSummary" title="Choose Syntax or Functional">Syntax</summary>
+<summary id="mainViewSummary" title="Choose a placement method">Language Tree</summary>
 <div aria-label="View kiezen" class="compact-choice-popover top-menu-popover top-menu-view-popover">
+<section class="placement-mode-picker" aria-label="Plaatsingsmethode">
+<h3><span class="help-lang-nl">Plaatsingsmethode</span><span class="help-lang-en">Placement method</span></h3>
+<button class="placement-mode-option is-primary" data-placement-mode="language-tree" type="button"><strong>Language Tree</strong><small><span class="help-lang-nl">berekend · hoofdtoepassing</span><span class="help-lang-en">calculated · primary application</span></small></button>
+<div class="placement-mode-direct-options">
+<button class="placement-mode-option" data-placement-mode="greedy-grow" type="button"><strong>Greedy Grow</strong><small><span class="help-lang-nl">direct · OGN-illustratie</span><span class="help-lang-en">direct · OGN illustration</span></small></button>
+<button class="placement-mode-option" data-placement-mode="random" type="button"><strong>Random</strong><small><span class="help-lang-nl">direct · OGN-illustratie</span><span class="help-lang-en">direct · OGN illustration</span></small></button>
+</div>
+</section>
+<section class="language-tree-view-picker" id="languageTreeViewPicker">
+<h3><span class="help-lang-nl">Language Tree-view</span><span class="help-lang-en">Language Tree view</span></h3>
 <div aria-label="View kiezen" class="compact-choice-list main-menu-option-list main-menu-view-options" id="mainViewOptions" role="listbox"></div>
+</section>
 </div>
 </details>
 <details class="compact-choice-menu main-interface-menu top-menu-item" id="mainInterfaceMenu">
@@ -678,10 +689,18 @@
 <p class="inline-help" id="projectionHelp">Open Graph: gridregel en projectiemechanisme. In de taalweergave gebruiken LEX, SYNT en LOG eigen selectieregels. Bronknopen projecteren eerst naar projectiemerkers; as-verplaatsingen komen daarna.</p>
 <fieldset aria-label="Projectiekleuren" class="projection-color-field">
 <legend>Projectiekleuren</legend>
-<p class="top-menu-choice-help">LEX en de LEX-projectielijnen blijven blauw. Kies hier de kleuren voor de andere named projections.</p>
-<label class="field mini-field" title="LEX blijft blauw, inclusief projectielijnen en projectiemerkers."><span>LEX-kleur</span><select disabled="" id="lexProjectionColorSelect"><option value="blue">blauw</option></select></label>
+<p class="top-menu-choice-help">LEX, SYNT en LOG hebben standaard ieder een eigen kleur. Alle drie zijn afzonderlijk instelbaar.</p>
+<label class="field mini-field"><span>LEX-kleur</span><select id="lexProjectionColorSelect"></select></label>
 <label class="field mini-field"><span>SYNT-kleur</span><select id="syntProjectionColorSelect"></select></label>
 <label class="field mini-field"><span>LOG-kleur</span><select id="logProjectionColorSelect"></select></label>
+</fieldset>
+<fieldset aria-label="Lijnbeeld" class="line-style-field">
+<legend>Lijnbeeld</legend>
+<p class="top-menu-choice-help">Maak het raster tussen de assen, projectielijnen en boxcontouren afzonderlijk lichter of zwaarder. Boxen volgen de kleur van hun projectie.</p>
+<label class="field mini-field"><span>Rasterkleur</span><select id="gridColorSelect"></select></label>
+<label class="field mini-field"><span>Rasterlijnen</span><select id="gridLineWeightSelect"></select></label>
+<label class="field mini-field"><span>Projectielijnen</span><select id="projectionLineWeightSelect"></select></label>
+<label class="field mini-field"><span>Boxlijnen</span><select id="boxLineWeightSelect"></select></label>
 </fieldset>
 <fieldset aria-label="Config opslaan" class="config-save-field">
 <legend>Config opslaan</legend>
@@ -863,6 +882,8 @@
       document.head.appendChild(script);
     })();
   </script>
-<script defer="" src="viewer.js?v2.0.0-rc.45&amp;cb=4"></script>
+<script defer="" src="greedy-grow-engine.js?v2.0.0-rc.45"></script>
+<script defer="" src="random-placement-engine.js?v2.0.0-rc.45"></script>
+<script defer="" src="viewer.js?v2.0.0-rc.45&amp;cb=5"></script>
 </body>
 </html>

@@ -130,6 +130,13 @@ Open `greedy-grow.html` via de lokale viewer. Kies een strategie en gebruik
 de laatst geschreven knoop. De JSON-download legt uitsluitend de actuele
 state vast en vermeldt expliciet `future_plan_stored: false`.
 
+De compacte vierarmige strategie is daarnaast bereikbaar via het
+Language-Tree-menu van de hoofdviewer: **Greedy Grow · direct**. Dat is een
+illustratieroute naar exact dezelfde engine, geen tweede implementatie.
+**Random · direct** staat ernaast, maar gebruikt bewust de afzonderlijke
+`random-placement-engine.js`. Daardoor kan Random deze geaccepteerde
+reconstructie of de daarvan afgeleide publicatieslide niet wijzigen.
+
 ## 7. Vastgelegde acceptatiegrens
 
 De reconstructie is op 2 augustus 2026 naar de openbare Greedy-Grow-uitleg

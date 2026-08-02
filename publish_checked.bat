@@ -51,6 +51,19 @@ echo Bronstand  : %SOURCE_BUILD%
 echo Release-zip: %RELEASE_ZIP%
 echo.
 
+where python >nul 2>nul
+if errorlevel 1 (
+  echo FOUT: python ontbreekt; tekstnormalisatie kan niet worden uitgevoerd.
+  goto :fail
+)
+
+echo Tekstbestanden normaliseren ^(Git + EOF/EOL^)...
+python tools\normalize_text_files.py --write
+if errorlevel 1 (
+  echo FOUT: tekstnormalisatie mislukt.
+  goto :fail
+)
+
 call check_release.bat
 if errorlevel 1 (
   echo FOUT: releasecontrole mislukt.
@@ -83,6 +96,11 @@ if not defined COMMITMSG (
 
 echo.
 echo Staging sitebestanden...
+git add --renormalize -- .
+if errorlevel 1 (
+  echo FOUT: Git-renormalisatie mislukt.
+  goto :fail
+)
 git add -A -- .
 if errorlevel 1 (
   echo FOUT: git add mislukt.

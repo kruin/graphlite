@@ -50,6 +50,18 @@ Placement**. The Two-Pass Language Tree appears only in the third layer as one
 application. See
 [`OGN_CORE_PLACEMENT_ARCHITECTURE.md`](OGN_CORE_PLACEMENT_ARCHITECTURE.md).
 
+## Placement methods and line appearance
+
+The **Language Tree** menu keeps Language Tree prominent as the primary
+calculated application and places **Greedy Grow** and seeded **Random** below
+it as direct OGN illustrations. Direct steps write one node immediately on an
+unused row and column; switching modes does not change Language Tree data.
+
+`Config → View → Line appearance` independently controls grid color, grid
+weight, projection-line weight and box-line weight. LEX, SYNT and LOG each
+have a separate color for their axes, projection lines and boxes. See
+[`LINE_STYLE_AND_PLACEMENT_MODES.md`](LINE_STYLE_AND_PLACEMENT_MODES.md).
+
 ## Current calculated application: Two-Pass Language Tree
 
 The current viewer's `OGN Base` profile is the base of its language

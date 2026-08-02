@@ -98,6 +98,19 @@ reconstructie en bewijsgrens op 2 augustus 2026 goedgekeurd. Publicatieslide 5
 wordt rechtstreeks uit `greedy-grow-engine.js` afgeleid en toont de eerste
 twaalf stappen van dezelfde geaccepteerde volgorde.
 
+### Directe illustraties in de hoofdinterface
+
+Het hoofdmenu bewaakt het onderscheid tussen voorbeeld en toepassing:
+
+- **Language Tree** staat prominent als primaire berekende toepassing;
+- **Greedy Grow** is een directe illustratie via de geaccepteerde engine;
+- **Random** is een directe illustratie via een afzonderlijke seedbare engine.
+
+Beide directe modi gebruiken de actuele bezetting en schrijven per stap exact
+één knoop. Random selecteert uit de op dat moment vrije rij-kolomcombinaties;
+dezelfde seed maakt undo plus opnieuw vooruitgaan reproduceerbaar. Zij bouwen
+geen taalboom en activeren dus ook geen taal-, LEX/SYNT/LOG- of LOG-menu's.
+
 ## 2. OGN Projection
 
 Projectie begint pas nadat bronknopen een plaats op het centrale grid hebben.
@@ -151,6 +164,7 @@ zij dus nog geen algemene collision- of repacking-solver.
 | Ruleset | Rule Set | Bepaalt welke vrije kandidaatposities geldig zijn |
 | Zoekstrategie | Search Strategy | Bepaalt de testvolgorde; de eerstgevonden geldige plek wordt direct geschreven |
 | Greedy Grow | Greedy Grow | Geaccepteerde directe reconstructie vanaf het centrale gridpunt; historische vierarmige volgorde exact herhaald, optimale veldomtrek niet bewezen |
+| Random | Random | Seedbare directe illustratie die per stap uit de huidige vrije rij-kolomcombinaties kiest |
 | OGN-projectie | OGN Projection | Afgeleide marker/ordening vanuit een geplaatste bronknoop |
 | OGN Berekende Plaatsing | OGN Calculated Placement | Toepassing die eerst een plaatsingsplan berekent |
 | Two-Pass Language Tree | Two-Pass Language Tree | Berekende taalboomtoepassing met structurele en visuele pass |

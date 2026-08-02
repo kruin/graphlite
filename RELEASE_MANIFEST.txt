@@ -1,3 +1,4 @@
+.editorconfig
 .gitattributes
 .gitignore
 .nojekyll
@@ -9,6 +10,7 @@ DOCUMENTATION_RULES.md
 GREEDY_GROW_RECONSTRUCTION.md
 HANDOVER_FOR_COLLABORATORS.md
 LAYOUT_RULES.md
+LINE_STYLE_AND_PLACEMENT_MODES.md
 LEESMIJ.md
 LEXICON_USAGE_PROFILES_AND_DISAMBIGUATION.md
 LEXICON_USAGE_PROFILE_TEST.md
@@ -37,6 +39,7 @@ RC42_RESERVED_APPLICATIONS_TEST.md
 RC43_CONFIG_README_PROJECT_TEST.md
 RC44_PUBLICATION_CAROUSEL_TEST.md
 RC45_OGN_CORE_EXPLANATION_TEST.md
+RC45_LINE_STYLE_DIRECT_MODES_TEST.md
 README.md
 RECURSIVE_LAYOUT_AND_APPLICATION_CONTRACT.md
 SOURCE_BASE.md
@@ -98,6 +101,7 @@ docs/GREEDY_GROW_RECONSTRUCTION.md
 docs/HANDOVER_FOR_COLLABORATORS.md
 docs/KNOWN_ISSUES.md
 docs/LAYOUT_RULES.md
+docs/LINE_STYLE_AND_PLACEMENT_MODES.md
 docs/LAYOUT_SPEC.md
 docs/LEESMIJ.md
 docs/LEXICON_AND_EXAMPLES_SPEC.md
@@ -160,6 +164,7 @@ greedy-grow-engine.js
 greedy-grow.css
 greedy-grow.html
 greedy-grow.js
+random-placement-engine.js
 index.html
 installeer-carrousel-tools.bat
 lex-movement-rules.html
@@ -219,6 +224,7 @@ tools/check_examples_roundtrip.py
 tools/check_feature_profiles.py
 tools/check_feature_profiles_runtime.js
 tools/check_greedy_grow_reconstruction.js
+tools/check_random_placement.js
 tools/check_landscape_composition_runtime.js
 tools/check_lex_horizontal_projection.py
 tools/check_lexicon_usage_profiles.py
@@ -226,6 +232,7 @@ tools/check_linkedin_video_export.py
 tools/check_linkedin_video_runtime.js
 tools/check_local_start.py
 tools/check_log_slot_distance.py
+tools/check_line_style_and_direct_modes.py
 tools/check_mobile_layout_rc38.py
 tools/check_mobile_layout_runtime.js
 tools/check_node_grid_invariant.py
@@ -243,6 +250,8 @@ tools/check_readme_item_editor.py
 tools/check_readme_item_editor_runtime.js
 tools/check_recursive_box_fit_runtime.js
 tools/check_release.py
+tools/normalize_text_files.py
+tools/check_text_normalization.py
 tools/check_release_zip_batch.py
 tools/check_social_and_linguistic_export.py
 tools/check_viewport_switch_runtime.js
