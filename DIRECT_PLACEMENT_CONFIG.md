@@ -1,18 +1,24 @@
 # Config voor directe plaatsing
 
 Status: technisch contract voor source build
-`v2.0.0-rc.45-direct-config-hard-no-show-20260803.12`.
+`v2.0.0-rc.45-config-scope-man-source-height-20260813.1`.
 
 ## Config: Algemeen en per toepassing
 
 Config heeft voortaan één vaste eerste laag:
 
-1. **Algemeen** bevat alleen projectbrede of door toepassingen gedeelde
-   instellingen;
+1. **Algemeen** bevat uitsluitend toepassingsonafhankelijke interface-,
+   LEESMIJ- en bestandsinstellingen;
 2. **Calculated → Language Tree** bevat uitsluitend de instellingen van de
    berekende Language-Tree-toepassing;
-3. **Direct → Greedy Grow** bevat uitsluitend de twee eigen Greedy-instellingen;
-4. **Direct → Random** bevat uitsluitend de eigen Random-instellingen.
+3. **Direct → Gedeeld** bevat uitsluitend bediening die Greedy Grow en Random
+   werkelijk samen gebruiken;
+4. **Direct → Greedy Grow** bevat uitsluitend de twee eigen Greedy-instellingen;
+5. **Direct → Random** bevat uitsluitend de eigen Random-instellingen.
+
+Voorconfig, uitbreidingen, boom, voorbeelden, LEX, SYNT en LOG staan nooit in
+Algemeen. Omgekeerd staan algemene interface-, LEESMIJ- en bestandsinstellingen
+niet in Language Tree.
 
 Binnen één gekozen context geldt **no-show** voor iedere niet-relevante
 instelling: zij wordt niet grijs of alleen-lezen getoond, maar volledig
@@ -33,7 +39,7 @@ directe methodecontext verborgen. Config-save blijft beschikbaar.
 Language Tree blijft de primaire berekende toepassing; Greedy Grow en Random
 blijven directe OGN-illustraties.
 
-## Algemeen
+## Direct → Gedeeld
 
 | Optie | Waarden | Effect |
 |---|---|---|
@@ -46,8 +52,8 @@ blijven directe OGN-illustraties.
 | Rastermarge | compact / normaal / ruim | Reserveert 1, 1,5 of 3 cellen rond het veld. |
 
 Deze keuzes horen niet in Random-config of Greedy-config, omdat zij voor beide
-methoden dezelfde betekenis hebben. Zij staan onder **Algemeen → Direct ·
-gedeeld**. Dezelfde Play-snelheid verschijnt voor het gemak ook als bewerkbaar
+methoden dezelfde betekenis hebben. Zij staan onder **Direct → Gedeeld**. Dezelfde
+Play-snelheid verschijnt voor het gemak ook als bewerkbaar
 veld in Random; technisch gebruikt zij dezelfde gedeelde klok en geen tweede,
 conflicterende Configwaarde.
 

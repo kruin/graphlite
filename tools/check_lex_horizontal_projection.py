@@ -39,9 +39,9 @@ def extract_function(name: str) -> str:
 required_source = [
     "d: `M ${startX} ${p.py} H ${endX}`",
     "'horizontale bronprojectie'",
-    "'Plaats LOG → LEX'",
     "stage: 'combined'",
-    "Per bronwoord volgt hoogstens één zichtbare LEX-verplaatsing",
+    "reservation-only-no-movement",
+    "alleen een expliciete Wissel mag verplaatsen",
 ]
 for marker in required_source:
     if marker not in SOURCE:
@@ -101,7 +101,11 @@ function projectedPostV2SlotY() {{ return 200; }}
 const item = {{ id: 'bijt', label: 'BIJT', source: 'predicate', role: 'predicate' }};
 const items = [item];
 state.example.lexItems = items;
-const sourceMap = new Map([['predicate', {{ px: 700, py: 420 }}]]);
+const sourceMap = new Map([
+  ['subject', {{ px: 620, py: 320 }}],
+  ['predicate', {{ px: 700, py: 420 }}],
+  ['object', {{ px: 780, py: 520 }}]
+]);
 const y0 = 100;
 
 const projectionY = projectionAnchorY(item, 0, y0, sourceMap, items);
@@ -119,8 +123,8 @@ const trio = [
   {{ id: 'man', label: 'MAN', source: 'object', role: 'object' }}
 ];
 const trioMoves = orderedLexMovements(trio);
-if (trioMoves.length !== 3 || trioMoves.some(move => move.stage !== 'combined')) {{
-  throw new Error(`HOND BIJT MAN moet precies drie gecombineerde verplaatsingen hebben, kreeg ${{trioMoves.length}}`);
+if (trioMoves.length !== 1 || trioMoves[0].item !== item || trioMoves[0].stage !== 'combined') {{
+  throw new Error(`HOND BIJT MAN mag alleen BIJT verplaatsen, kreeg ${{trioMoves.map(move => move.item.label).join('|')}}`);
 }}
 
 const horizontal = projectedLexItemY(item, 0, y0, sourceMap, items, {{ executedMovementCount: 0 }});
@@ -129,7 +133,21 @@ const finalY = projectedLexItemY(item, 0, y0, sourceMap, items);
 if (horizontal !== 420) throw new Error(`fase LEX moet BIJT laag op 420 tonen, kreeg ${{horizontal}}`);
 if (afterMove !== 180 || finalY !== 180) throw new Error(`BIJT moet in één stap rechtstreeks naar V2 180 gaan, kreeg ${{afterMove}}/${{finalY}}`);
 
-console.log('HORIZONTALE LEX CHECK: OK (BIJT 420 → rechtstreeks V2 180; één zichtbare stap)');
+const man = trio[2];
+const manProjectionY = projectionAnchorY(man, 2, y0, sourceMap, trio);
+const manReservedY = baseLexY(man, 2, y0, sourceMap, trio);
+const manFinalY = projectedLexItemY(man, 2, y0, sourceMap, trio);
+if (manProjectionY !== 520 || manFinalY !== 520) {{
+  throw new Error(`MAN moet exact op bronhoogte 520 blijven, kreeg ${{manProjectionY}}/${{manFinalY}}`);
+}}
+if (manReservedY === manFinalY) {{
+  throw new Error('testopzet moet bewijzen dat LOG-reservering en zichtbare MAN-hoogte afzonderlijk zijn');
+}}
+if (logicalPlacementMovementForItem(man, 2, trio) !== null) {{
+  throw new Error('LOG-reservering mag voor MAN geen zichtbare verplaatsingsopdracht opleveren');
+}}
+
+console.log('HORIZONTALE LEX CHECK: OK (BIJT 420 → V2 180; MAN blijft bronhoogte 520; reservering verplaatst niets)');
 """
 
 with tempfile.NamedTemporaryFile("w", suffix=".js", encoding="utf-8", delete=False) as handle:

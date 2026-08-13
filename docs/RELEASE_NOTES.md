@@ -1,12 +1,17 @@
 ## v2.0.0-rc.45 — OGN-kern vóór toepassingen
 
 - Status: op 2 augustus 2026 handmatig goedgekeurde release candidate.
-- Source build 20260802.11 integreert Language Tree als prominente berekende
+- Source build 20260813.1 integreert Language Tree als prominente berekende
   methode en Greedy Grow/Random als directe OGN-illustraties in hetzelfde
   hoofdmenu. Random gebruikt een afzonderlijke seedbare engine.
-- Config is ingedeeld als Algemeen, Calculated → Language Tree en Direct →
-  Greedy Grow / Random. Per context zijn niet-relevante velden no-show en elk
-  zichtbaar veld heeft compacte, mobiele uitleg.
+- Config is strikt ingedeeld als Algemeen, Calculated → Language Tree en
+  Direct → Gedeeld / Greedy Grow / Random. Algemeen bevat geen Voorconfig,
+  boom, voorbeelden, LEX, SYNT of LOG; die staan uitsluitend bij Language
+  Tree. Per context zijn niet-relevante velden no-show.
+- LOG plant mogelijke LEX-plaatsen maar verplaatst zonder expliciete
+  Language-Tree-regel geen bronknoop. In `HOND BIJT MAN` blijft `MAN` op de
+  exacte MAN-bronhoogte en wisselt alleen `BIJT` naar V2. De verdikking in
+  Play 2/3 is uitsluitend een tijdelijke LEX-ruimte-indicator.
 - Eén Random-iteratie is één complete run. Bij 31 knopen leveren 10 iteraties
   na voltooiing precies 300 niet-centrale projectie-hits per as.
   Bezettingskans deelt tellingen door het ingestelde iteratieaantal; Relatief
@@ -31,7 +36,7 @@
   geen relatie met hoeveelheid toeval of Play-snelheid.
 - `CONFIG_UI_EXPLANATION_STANDARD.md` maakt uitleg per Configveld een vaste
   bronregel voor volgende projectwijzigingen.
-- `Config → Beeld → Lijnbeeld` regelt rasterkleur en raster-, projectie- en
+- `Config → Algemeen → Interface & weergave → Lijnbeeld` regelt rasterkleur en raster-, projectie- en
   boxlijnzwaarte; LEX, SYNT en LOG hebben afzonderlijke kleuren voor as, lijn
   en box.
 - `.gitattributes` plus `tools/normalize_text_files.py` voorkomen terugkerende
@@ -347,6 +352,9 @@
 - `HOND BIJT MAN` heeft precies drie zichtbare verplaatsingen. De langere zin
   met `MISSCHIEN WEL` en `VAAK` heeft vier verplaatsingen voor haar vier
   boombronnen, zonder extra neerwaartse tussensprongen.
+  Dit beschrijft de historische rc.21-presentatie; source build 20260813.1
+  herstelt het expliciete-regelcontract en verplaatst in `HOND BIJT MAN`
+  uitsluitend `BIJT`.
 - Een gevuld TOPIC- of V2-slot toont niet langer ook `TOPIC/XP` of
   `vrij slot`. Compacte genummerde trajectlabels voorkomen onderlinge
   overschrijving.

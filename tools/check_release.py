@@ -390,9 +390,11 @@ for path in ROOT.rglob("*"):
 
 # Config overview, explanatory help and unchanged save semantics.
 for marker, label in [
-    ("let activeConfigTab = 'preconfig';", "Config start op Voorconfig"),
+    ("let activeConfigTab = 'general-ui';", "Config start op Algemeen"),
     ("{ id: 'preconfig', nl: 'Voorconfig', en: 'Pre-config' }", "Config-voorconfigsectie"),
-    ("{ id: 'features', nl: 'Toepassingen', en: 'Applications' }", "Config-toepassingensectie"),
+    ("{ id: 'features', nl: 'Uitbreidingen', en: 'Extensions' }", "Language-Tree-uitbreidingen"),
+    ("general: Object.freeze(['general-ui', 'readme-carousels', 'overview', 'files'])", "toepassingsvrije algemene Config"),
+    ("'language-tree': Object.freeze(['preconfig', 'features', 'view', 'log-lex', 'examples', 'jan', 'advanced'])", "afzonderlijke Language-Tree-Config"),
     ("const INSERTION_AXIS_DEFINITIONS = Object.freeze({", "insertie per as"),
     ("insertionAxes: Object.freeze(['lex', 'log'])", "Bijwoorden vereist LEX + LOG"),
     ("defaultEnabled: false", "Bijwoorden standaard uit"),
@@ -704,7 +706,7 @@ for marker, label in [
 ]:
     require(local_launcher, marker, label)
 source_build = read("SOURCE_BUILD.txt").strip()
-if source_build != "v2.0.0-rc.45-direct-config-hard-no-show-20260803.12":
+if source_build != "v2.0.0-rc.45-config-scope-man-source-height-20260813.1":
     errors.append(f"onverwachte of lege SOURCE_BUILD.txt: {source_build!r}")
 for stale in ['v4537', 'v2.0.0-rc.24']:
     if stale in start_bat or stale in debug_html:

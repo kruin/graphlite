@@ -57,8 +57,10 @@ calculated application and places **Greedy Grow** and seeded **Random** below
 it as direct OGN illustrations. Direct steps write one node immediately on an
 unused row and column; switching modes does not change Language Tree data.
 
-Config is separated into **General**, **Calculated → Language Tree** and
-**Direct → Greedy Grow / Random**; irrelevant settings are no-show. Every
+Config is strictly separated into **General**, **Calculated → Language Tree**
+and **Direct → Shared / Greedy Grow / Random**. General contains no pre-config,
+tree, examples, LEX, SYNT, or LOG; those exist only under Language Tree.
+Irrelevant settings are no-show. Every
 visible field has a compact explanation under
 [`CONFIG_UI_EXPLANATION_STANDARD.md`](CONFIG_UI_EXPLANATION_STANDARD.md).
 Uniform v1.0 remains the Random default; Impure uniform v0.1 mixes in a 20%
@@ -211,16 +213,15 @@ See `LEXICON_USAGE_PROFILES_AND_DISAMBIGUATION.md`.
 ## Projection contract
 
 ```text
-source node → horizontal LEX projection → one direct move to the resolved LEX target
+source node → horizontal LEX projection at source height → only an explicit switch may move it
 ```
 
 `S`, `O` and `V` are majors. An adverbial insertion may be a LOG minor, a direct LEX insertion, or a group combining both origins. Every minor adds one fixed slot to the distance between its bounding
-majors. LOG determines the neutral target row, but never the projection
-origin: every lexical source first projects horizontally at its source height.
-An explicit topic or V2 rule may replace that neutral target before drawing.
-The viewer therefore shows at most one LEX-axis move and one source trace per
-source word, without an intermediate LOG trace. The example sentence does not
-determine layout. See `projectie-master-spec.md`.
+majors. LOG plans possible LEX positions but does not thereby move a source
+node: every lexical source projects horizontally at source height and remains
+there unless an explicit topic/V2/post-V2 rule applies. In `HOND BIJT MAN`,
+`MAN` therefore stays exactly at MAN source height; only `BIJT` switches under
+V2. See `projectie-master-spec.md`.
 
 ## Start
 

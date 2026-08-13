@@ -1,1 +1,1 @@
-v2.0.0-rc.45-direct-config-hard-no-show-20260803.12
+v2.0.0-rc.45-config-scope-man-source-height-20260813.1

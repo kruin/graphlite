@@ -1,7 +1,7 @@
 # Lijnbeeld en plaatsingsmodi
 
 Status: technisch contract voor source build
-`v2.0.0-rc.45-direct-config-hard-no-show-20260803.12`.
+`v2.0.0-rc.45-config-scope-man-source-height-20260813.1`.
 
 ## Plaatsingshiërarchie in de interface
 
@@ -43,7 +43,10 @@ reproduceerbare Random-herhalingsanalyse.
 
 ## Instelbaar lijnbeeld
 
-Onder **Config → Beeld → Lijnbeeld** staan:
+Onder **Config → Algemeen → Interface & weergave → Lijnbeeld** staan
+Rasterkleur, Rasterlijnen, Projectielijnen en Boxlijnen. De drie
+toepassingsspecifieke kleuren staan onder **Calculated → Language Tree → Boom
+& projecties → Projectiekleuren**:
 
 | Instelling | Effect |
 |---|---|

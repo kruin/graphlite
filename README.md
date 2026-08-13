@@ -75,9 +75,11 @@ currently unused row and column; language-only menus are hidden and the
 Language Tree data is left unchanged. Random uses a separate seeded engine,
 so it cannot alter the accepted Greedy Grow reconstruction.
 
-Config now has one fixed first layer: **General**, **Calculated → Language
-Tree** and **Direct → Greedy Grow / Random**. All irrelevant settings are
-no-show within a context. Greedy shows only strategy and orientation; Random
+Config now has strictly separated contexts: **General**, **Calculated →
+Language Tree**, and **Direct → Shared / Greedy Grow / Random**. General holds
+only application-independent interface, README, and file settings; pre-config,
+tree, examples, LEX, SYNT, and LOG exist only under Language Tree. All
+irrelevant settings are no-show within a context. Greedy shows only strategy and orientation; Random
 only its own seed, reset policy, model, placement, grid size, conditional fixed
 dimensions, speed, iterations and axis image. Every visible field has a compact
 expandable explanation inside Config. A larger seed is not more random and
@@ -284,16 +286,15 @@ See `LEXICON_USAGE_PROFILES_AND_DISAMBIGUATION.md`.
 ## Projection contract
 
 ```text
-source node → horizontal LEX projection → one direct move to the resolved LEX target
+source node → horizontal LEX projection at source height → only an explicit switch may move it
 ```
 
 `S`, `O` and `V` are majors. An adverbial insertion may be a LOG minor, a direct LEX insertion, or a group combining both origins. Every minor adds one fixed slot to the distance between its bounding
-majors. LOG determines the neutral target row, but never the projection
-origin: every lexical source first projects horizontally at its source height.
-An explicit topic or V2 rule may replace that neutral target before drawing.
-The viewer therefore shows at most one LEX-axis move and one source trace per
-source word, without an intermediate LOG trace. The example sentence does not
-determine layout. See `projectie-master-spec.md`.
+majors. LOG plans possible LEX positions but does not thereby move a source
+node: every lexical source projects horizontally at source height and remains
+there unless an explicit topic/V2/post-V2 rule applies. In `HOND BIJT MAN`,
+`MAN` therefore stays exactly at MAN source height; only `BIJT` switches under
+V2. See `projectie-master-spec.md`.
 
 ## Start
 

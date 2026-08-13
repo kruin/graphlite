@@ -55,8 +55,10 @@ berekende toepassing en plaatst **Greedy Grow** en **Random** eronder als
 directe OGN-illustraties. Een directe stap schrijft onmiddellijk één knoop op
 een ongebruikte rij én kolom; wisselen verandert de Language-Tree-data niet.
 
-Config is gescheiden in **Algemeen**, **Calculated → Language Tree** en
-**Direct → Greedy Grow / Random**; niet-relevante instellingen zijn no-show.
+Config is strikt gescheiden in **Algemeen**, **Calculated → Language Tree** en
+**Direct → Gedeeld / Greedy Grow / Random**. Algemeen bevat geen Voorconfig,
+boom, voorbeelden, LEX, SYNT of LOG; die staan uitsluitend bij Language Tree.
+Niet-relevante instellingen zijn no-show.
 Ieder zichtbaar veld heeft een compacte uitleg volgens
 [`CONFIG_UI_EXPLANATION_STANDARD.md`](CONFIG_UI_EXPLANATION_STANDARD.md).
 Uniform v1.0 blijft Random-standaard; Onzuiver uniform v0.1 mengt 20%
@@ -67,7 +69,7 @@ Vanuit een actieve Greedy-Grow- of Random-modus is ook de toepassingsbalk
 no-show. Alleen Terug naar Main, de eigen velden met Uitleg en Config opslaan
 blijven zichtbaar; wisselen begint in Main.
 
-`Config → Beeld → Lijnbeeld` regelt rasterkleur, rasterzwaarte,
+`Config → Algemeen → Interface & weergave → Lijnbeeld` regelt rasterkleur, rasterzwaarte,
 projectielijnzwaarte en boxlijnzwaarte afzonderlijk. LEX, SYNT en LOG hebben
 elk een eigen kleur voor hun assen, projectielijnen en boxen. Zie
 [`LINE_STYLE_AND_PLACEMENT_MODES.md`](LINE_STYLE_AND_PLACEMENT_MODES.md).
@@ -220,16 +222,15 @@ Zie `LEXICON_USAGE_PROFILES_AND_DISAMBIGUATION.md`.
 ## Projectiecontract
 
 ```text
-bronknoop → horizontale LEX-projectie → één rechtstreekse verplaatsing naar het bepaalde LEX-doel
+bronknoop → horizontale LEX-projectie op bronhoogte → alleen een expliciete Wissel kan verplaatsen
 ```
 
 `S`, `O` en `V` zijn majors. Een bijwoordelijke insertie kan een LOG-minor zijn, een directe LEX-insertie zijn, of beide bronnen combineren. Iedere minor vergroot de afstand tussen de begrenzende majors met
-één vast slot. LOG bepaalt de neutrale doelrij, maar nooit de oorsprong van de
-projectie: iedere lexicale bron projecteert eerst horizontaal op zijn
-bronhoogte. Een expliciete topic- of V2-regel mag dat neutrale doel vóór het
-tekenen vervangen. Daardoor toont de viewer per bronwoord hoogstens één
-LEX-verplaatsing en één brontrace, zonder LOG-tussentrace. De voorbeeldzin
-bepaalt de layout niet. Zie `projectie-master-spec.md`.
+één vast slot. LOG plant mogelijke LEX-plaatsen, maar verplaatst daarmee geen
+bronknoop: iedere lexicale bron projecteert horizontaal op zijn bronhoogte en
+blijft daar zonder expliciete topic-/V2-/post-V2-regel. In `HOND BIJT MAN`
+blijft `MAN` dus exact op MAN-hoogte; alleen `BIJT` wisselt volgens V2. Zie
+`projectie-master-spec.md`.
 
 ## Start
 
@@ -296,7 +297,7 @@ https://kruin.github.io/graphlite/reset-cache.html?ogv=v2.0.0-rc.45
 ## Desktopweergave
 
 De leesbare weergave over het volledige venster is de standaard. Deze staat
-direct bovenaan onder `Config → Beeld`:
+direct bovenaan onder `Config → Calculated → Language Tree → Boom & projecties`:
 
 ```text
 Boomruimte   = MAX · groot letterbeeld / lage boom
@@ -377,13 +378,13 @@ afzonderlijke fasen:
 
 ```text
 1. LOG-as tekenen en majors/minors plaatsen
-2. LOG-afgeleide ruimte op de LEX-as reserveren
-3. lexicale bronnen horizontaal naar LEX projecteren en iedere bron eenmaal
-   naar het bepaalde doel verplaatsen
+2. geplande LEX-ruimte tonen met een tijdelijke doorschijnende indicator
+3. lexicale bronnen horizontaal op bronhoogte projecteren en uitsluitend
+   expliciete topic-/V2-/post-V2-Wissels uitvoeren
 ```
 
-Het doel is de LOG-afgeleide rij, tenzij een expliciete topic-/V2-regel die rij
-vervangt. SYNT en de overige projectiepanelen verschijnen in de laatste stap.
+De indicator in fase 2/3 is geen knoop, projectielijn of OGN-element en
+verplaatst niets. SYNT en de overige projectiepanelen verschijnen in de laatste stap.
 De knop voor de vorige stap keert exact dezelfde volgorde om: eerst verdwijnt
 de laatste projectielaag, daarna volgen de LEX-verplaatsingen, de LEX-ruimte,
 LOG en ten slotte de centrale boom.

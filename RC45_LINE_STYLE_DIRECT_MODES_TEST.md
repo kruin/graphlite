@@ -1,13 +1,14 @@
 # Handmatige controle — lijnbeeld en directe plaatsingsmodi
 
 Source build:
-`v2.0.0-rc.45-direct-config-hard-no-show-20260803.12`.
+`v2.0.0-rc.45-config-scope-man-source-height-20260813.1`.
 
 ## Lijnbeeld
 
 - [ ] Open Language Tree met LEX, SYNT en LOG zichtbaar.
 - [ ] Het raster tussen de buitenassen is duidelijk leesbaar.
-- [ ] Kies onder `Config → Beeld → Lijnbeeld` Rasterlijnen `licht`, `normaal`
+- [ ] Kies onder `Config → Algemeen → Interface & weergave → Lijnbeeld`
+  Rasterlijnen `licht`, `normaal`
   en `zwaar`; het lijngewicht verandert zonder knopen te verplaatsen.
 - [ ] Herhaal dit voor Projectielijnen en Boxlijnen.
 - [ ] Kies andere kleuren voor LEX, SYNT en LOG; de overeenkomstige assen,

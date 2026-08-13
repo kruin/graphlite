@@ -1,4 +1,4 @@
-# Projectie-master-spec · horizontale LEX-projectie → één bepaald einddoel
+# Projectie-master-spec · bronhoogte, planning en expliciete Wissels
 
 Normatieve projectiespecificatie voor OpenGraph Lite Viewer `v2.0.0-rc.45`.
 
@@ -9,16 +9,16 @@ De afleiding loopt in deze volgorde:
 ```text
 structure-config
 → LOG-majors en LOG-minors
-→ horizontale LEX-bronprojectie
-→ LOG berekent de neutrale LEX-doelrij
-→ expliciete regels kunnen dit doel vervangen (onder meer topic en V2)
-→ één zichtbare verplaatsing naar het bepaalde einddoel
+→ LOG plant mogelijke LEX-plaatsen
+→ horizontale LEX-bronprojectie op bronhoogte
+→ alleen expliciete regels mogen een bronknoop verplaatsen
 → voorbeeldzin als validatie
 ```
 
-`LOG` is de autoriteit voor de neutrale lineaire doelplaatsing, niet voor de
-oorsprong van de projectie. Die oorsprong is altijd de bronknoophoogte. De
-voorbeeldzin levert geen coördinaten en bepaalt geen basisvolgorde.
+`LOG` is de autoriteit voor de lineaire plaatsingsplanning, niet voor een
+zichtbare verplaatsing van een bronknoop. De projectieoorsprong én de blijvende
+positie van een bronknoop zonder expliciete regel zijn altijd de
+bronknoophoogte. De voorbeeldzin levert geen coördinaten.
 
 ## 2. Majors, minors en logische afstand
 
@@ -66,7 +66,7 @@ blijft `after` leidend en wordt de plaats direct na die major gekozen.
 Meerdere minors in hetzelfde interval worden geordend op hun expliciete
 `order`; die volgorde is stabiel.
 
-## 4. Bron → LEX → LOG-doel
+## 4. Bron → LEX; LOG plant, een regel verplaatst
 
 Iedere lexicale bron projecteert eerst exact horizontaal naar de LEX-as:
 
@@ -75,8 +75,9 @@ y(LEX-bronanker) = y(bronknoop)
 ```
 
 De projectielijn bevat dus geen verticale sectie. De LOG-slotvolgorde levert
-vervolgens neutrale **doelrijen** op LEX. Op het horizontale bronanker blijft
-één trace staan.
+vervolgens geplande plaatsen op LEX. Die planning is geen
+verplaatsingsopdracht. Zonder expliciete Language-Tree-regel blijft het woord
+op het horizontale bronanker en verschijnt geen trace.
 
 Majors kunnen meer dan één lexicaal bronitem leveren, bijvoorbeeld `pv` en
 `vdw` binnen major `V`; die items krijgen opeenvolgende LOG-doelrijen binnen
@@ -89,10 +90,11 @@ Pas daarna worden expliciete LEX-regels logisch toegepast:
 - V2/persoonsvorm;
 - andere later gespecificeerde Wissels.
 
-De presentatie voegt deze twee logische beslissingen samen: het woord
-verplaatst rechtstreeks van zijn bronanker naar het uiteindelijke doel. Een
-expliciete topic-/V2-regel veroorzaakt dus geen tweede pijl en geen tweede
-trace. De SYNT- en Functional-bronstructuren worden niet gemuteerd.
+Alleen wanneer zo'n expliciete regel geldt, verplaatst het woord rechtstreeks
+van zijn bronanker naar het bijbehorende doel. Er verschijnt dan één pijl en
+één trace. De SYNT- en Functional-bronstructuren worden niet gemuteerd. In
+`HOND BIJT MAN` blijven `HOND` en `MAN` op hun eigen bronhoogte; uitsluitend
+`BIJT` wisselt naar V2.
 
 ## 5. Configuratiecontract
 
@@ -183,14 +185,15 @@ LOG → SPACE → LEX
 ```
 
 1. `LOG` tekent eerst de zuidas en plaatst majors/minors.
-2. `SPACE` reserveert lege rijen op LEX volgens de LOG-slotvolgorde.
+2. `SPACE` plant lege plaatsen op LEX volgens de LOG-slotvolgorde. De
+   doorschijnende verdikking met dwarskapjes is alleen een tijdelijke
+   LEX-ruimte-indicator van de viewer, geen OGN-element.
 3. `LEX` toont de lexicale bronnen eerst op hun horizontale bronankers en
-   verplaatst elk bronwoord eenmaal naar het vooraf bepaalde einddoel.
+   voert uitsluitend de expliciete topic-/V2-/post-V2-Wissels uit.
 
-LOG bepaalt het neutrale doel en topic/V2 kan dit doel vóór het tekenen
-vervangen. Er verschijnt geen tussenverplaatsing. Pas in de eindstap volgen de
-overige projectiepanelen. `SPACE` verandert het aantal bezette slots, maar rekt
-de vaste gridstap niet uit.
+LOG plant ruimte maar verplaatst niets. Pas in de eindstap volgen de overige
+projectiepanelen. `SPACE` verandert het aantal geplande slots, maar rekt de
+vaste gridstap niet uit.
 
 ## 7. Opslag en validatie
 
@@ -214,8 +217,8 @@ slots vergroten.
 De releasetest `tools/check_lex_horizontal_projection.py` verifieert met
 `BIJT` dat eerst de lage bronhoogte wordt gebruikt en daarna in één zichtbare
 stap rechtstreeks het V2-einddoel. Zij bewaakt ook dat de bronprojectielijn
-geen verticale sectie bevat en dat `HOND BIJT MAN` precies drie gecombineerde
-verplaatsingen heeft.
+geen verticale sectie bevat, dat `HOND BIJT MAN` uitsluitend `BIJT` verplaatst
+en dat `MAN` exact op de bronhoogte van de centrale MAN-knoop blijft.
 
 `tools/check_projection_cleanup.py` bewaakt daarnaast de directe verticale
 LOG-projectie, het opruimen van gevulde lege slots, de ingebouwde

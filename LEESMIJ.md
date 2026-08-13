@@ -76,9 +76,11 @@ rij én kolom; taalgebonden menu's verdwijnen en de Language-Tree-data blijven
 ongewijzigd. Random gebruikt een afzonderlijke engine met seed en kan de
 geaccepteerde Greedy-Grow-reconstructie dus niet veranderen.
 
-Config heeft nu een vaste eerste laag: **Algemeen**, **Calculated → Language
-Tree** en **Direct → Greedy Grow / Random**. Per context zijn alle
-niet-relevante instellingen no-show. Greedy toont alleen strategie en
+Config heeft nu strikt gescheiden contexten: **Algemeen**, **Calculated →
+Language Tree** en **Direct → Gedeeld / Greedy Grow / Random**. Algemeen bevat
+alleen toepassingsonafhankelijke interface-, LEESMIJ- en bestandsinstellingen;
+Voorconfig, boom, voorbeelden, LEX, SYNT en LOG staan uitsluitend bij Language
+Tree. Per context zijn alle niet-relevante instellingen no-show. Greedy toont alleen strategie en
 oriëntatie; Random alleen zijn eigen seed, resetbeleid, model, plaatsing,
 gridgrootte, optionele vaste maten, snelheid, iteraties en asbeeld. Ieder
 zichtbaar veld heeft in Config een compacte inklapbare uitleg. Een grotere seed
@@ -109,7 +111,7 @@ een vrijwel egaal beeld; v0.1 kan vroege verschillen mild versterken. Een ongewi
 Greedy-strategie is deterministisch en wordt daarom niet herhaald. Zie
 [`DIRECT_PLACEMENT_CONFIG.md`](DIRECT_PLACEMENT_CONFIG.md).
 
-Onder `Config → Beeld → Lijnbeeld` zijn rasterkleur en de zwaarte van raster-,
+Onder `Config → Algemeen → Interface & weergave → Lijnbeeld` zijn rasterkleur en de zwaarte van raster-,
 projectie- en boxlijnen onafhankelijk instelbaar. LEX, SYNT en LOG hebben
 daarnaast elk een eigen kleur—standaard blauw, groen en paars—die door hun as,
 projectielijnen en boxen wordt gevolgd. Dit verandert alleen de presentatie,
@@ -293,16 +295,15 @@ Zie `LEXICON_USAGE_PROFILES_AND_DISAMBIGUATION.md`.
 ## Projectiecontract
 
 ```text
-bronknoop → horizontale LEX-projectie → één rechtstreekse verplaatsing naar het bepaalde LEX-doel
+bronknoop → horizontale LEX-projectie op bronhoogte → alleen een expliciete Wissel kan verplaatsen
 ```
 
 `S`, `O` en `V` zijn majors. Een bijwoordelijke insertie kan een LOG-minor zijn, een directe LEX-insertie zijn, of beide bronnen combineren. Iedere minor vergroot de afstand tussen de begrenzende majors met
-één vast slot. LOG bepaalt de neutrale doelrij, maar nooit de oorsprong van de
-projectie: iedere lexicale bron projecteert eerst horizontaal op zijn
-bronhoogte. Een expliciete topic- of V2-regel mag dat neutrale doel vóór het
-tekenen vervangen. Daardoor toont de viewer per bronwoord hoogstens één
-LEX-verplaatsing en één brontrace, zonder LOG-tussentrace. De voorbeeldzin
-bepaalt de layout niet. Zie `projectie-master-spec.md`.
+één vast slot. LOG plant mogelijke LEX-plaatsen, maar verplaatst daarmee geen
+bronknoop: iedere lexicale bron projecteert horizontaal op zijn bronhoogte en
+blijft daar zonder expliciete topic-/V2-/post-V2-regel. In `HOND BIJT MAN`
+blijft `MAN` dus exact op MAN-hoogte; alleen `BIJT` wisselt volgens V2. Zie
+`projectie-master-spec.md`.
 
 ## Start
 
@@ -369,7 +370,7 @@ https://kruin.github.io/graphlite/reset-cache.html?ogv=v2.0.0-rc.45
 ## Desktopweergave
 
 De leesbare weergave over het volledige venster is de standaard. Deze staat
-direct bovenaan onder `Config → Beeld`:
+direct bovenaan onder `Config → Calculated → Language Tree → Boom & projecties`:
 
 ```text
 Boomruimte   = MAX · groot letterbeeld / lage boom
@@ -462,13 +463,13 @@ afzonderlijke fasen:
 
 ```text
 1. LOG-as tekenen en majors/minors plaatsen
-2. LOG-afgeleide ruimte op de LEX-as reserveren
-3. lexicale bronnen horizontaal naar LEX projecteren en iedere bron eenmaal
-   naar het bepaalde doel verplaatsen
+2. geplande LEX-ruimte tonen met een tijdelijke doorschijnende indicator
+3. lexicale bronnen horizontaal op bronhoogte projecteren en uitsluitend
+   expliciete topic-/V2-/post-V2-Wissels uitvoeren
 ```
 
-Het doel is de LOG-afgeleide rij, tenzij een expliciete topic-/V2-regel die rij
-vervangt. SYNT en de overige projectiepanelen verschijnen in de laatste stap.
+De indicator in fase 2/3 is geen knoop, projectielijn of OGN-element en
+verplaatst niets. SYNT en de overige projectiepanelen verschijnen in de laatste stap.
 De knop voor de vorige stap keert exact dezelfde volgorde om: eerst verdwijnt
 de laatste projectielaag, daarna volgen de LEX-verplaatsingen, de LEX-ruimte,
 LOG en ten slotte de centrale boom.

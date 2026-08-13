@@ -6,10 +6,16 @@ Dit is de documentatiekopie van
 Config is toepassingsgericht en gebruikt overal **no-show** voor irrelevante
 velden:
 
-- **Algemeen**: projectbrede en gedeelde instellingen;
+- **Algemeen**: uitsluitend toepassingsonafhankelijke interface-, LEESMIJ- en
+  bestandsinstellingen;
 - **Calculated → Language Tree**: uitsluitend Language Tree;
+- **Direct → Gedeeld**: uitsluitend instellingen die Greedy Grow en Random
+  werkelijk samen gebruiken;
 - **Direct → Greedy Grow**: uitsluitend de twee eigen Greedy-velden;
 - **Direct → Random**: uitsluitend de eigen Random-velden.
+
+Voorconfig, uitbreidingen, boom, voorbeelden, LEX, SYNT en LOG staan alleen
+onder Language Tree en verschijnen nergens in Algemeen.
 
 In de actieve Greedy-Grow- of Random-modus is ook de Config-hiërarchie zelf
 no-show. Config toont dan alleen **Terug naar Main**, de eigen bewerkbare

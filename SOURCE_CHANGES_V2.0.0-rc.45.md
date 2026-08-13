@@ -1,5 +1,29 @@
 # SOURCE_CHANGES v2.0.0-rc.45
 
+## Source build 20260813.1 — Configgrenzen en MAN op bronhoogte
+
+- **Algemeen** bevat nu uitsluitend toepassingsonafhankelijke interface-,
+  LEESMIJ- en bestandsinstellingen. Voorconfig, uitbreidingen, boom,
+  voorbeelden, LEX, SYNT en LOG staan uitsluitend onder **Calculated →
+  Language Tree**. Gedeelde directe instellingen hebben de eigen context
+  **Direct → Gedeeld**.
+- Openen van Config vanuit Language Tree kiest direct de Language-Tree-context;
+  vanuit Greedy Grow en Random blijft de bestaande harde methode-no-show
+  gelden.
+- De LOG-slotplanning reserveert mogelijke LEX-plaatsen, maar is niet langer
+  zelf een zichtbare verplaatsingsopdracht. Zonder expliciete topic-, V2- of
+  post-V2-regel blijft een bronknoop exact op bronhoogte.
+- In `HOND BIJT MAN` blijven daardoor `HOND` en `MAN` op hun eigen
+  bronknoophoogte; uitsluitend `BIJT` wisselt naar V2.
+- De doorschijnende verdikking met dwarskapjes in Play-fase 2/3 heet nu de
+  **tijdelijke LEX-ruimte-indicator**. Zij toont de spanne van geplande plaatsen,
+  is geen OGN-element en verplaatst niets.
+- De regressietest onderscheidt planning en zichtbare beweging en controleert
+  de exacte MAN-bronhoogte.
+
+Normatief: `DIRECT_PLACEMENT_CONFIG.md`, `LEX_MOVEMENT_RULES.md` en
+`projectie-master-spec.md`.
+
 ## Source build 20260803.12 — harde no-show voor directe methode-Config
 
 - Bij Config vanuit een actieve Greedy-Grow- of Random-modus is nu ook de

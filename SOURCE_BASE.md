@@ -2,7 +2,7 @@
 
 - Release: `v2.0.0-rc.45`
 - Actuele source build:
-  `v2.0.0-rc.45-direct-config-hard-no-show-20260803.12`.
+  `v2.0.0-rc.45-config-scope-man-source-height-20260813.1`.
 - Volledige basis: `OpenGraph_Lite_Viewer_v1.0.16_stable_central_tree_views.zip`
 - Overnamebeleid: alle bestanden uit de bijlage behouden waar technisch mogelijk.
 - Functionele correctie: `Functional` is de tweede centrale view na `Syntax`; `LOG` blijft uitsluitend de zuidas/named projection.

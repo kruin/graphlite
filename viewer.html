@@ -124,7 +124,7 @@
 <button id="mainSouthModeButton" title="Volgende LOG-volgorde: SOV, SVO, OVS, OSV-!, VSO-!, VOS-!" type="button">SOV</button>
 <button id="mainSouthNextButton" title="Volgende LOG-volgorde" type="button">›</button>
 </div>
-<p class="main-menu-help" id="mainSouthExplanation">Wijzigt de LOG-volgorde. LOG-slots bepalen de neutrale LEX-basis; een expliciete regel kan vóór het tekenen het einddoel vervangen.</p>
+<p class="main-menu-help" id="mainSouthExplanation">Wijzigt de LOG-volgorde en geplande LEX-plaatsen. LOG alleen verplaatst geen bronknoop; uitsluitend een expliciete Language-Tree-regel mag dat doen.</p>
 </div>
 </details>
 <details class="compact-choice-menu language-menu top-menu-item top-menu-action" id="mainLanguageMenu">
@@ -362,7 +362,7 @@
 <article class="help-topic-panel" data-help-topic="direct-random">
 <div class="help-lang-nl">
 <h3>Random · Config en iteraties</h3>
-<p>Config is gescheiden in <strong>Algemeen</strong>, <strong>Calculated → Language Tree</strong> en <strong>Direct → Greedy Grow / Random</strong>. Per context zijn niet-relevante instellingen no-show. Open je Config vanuit actieve Greedy Grow of Random, dan is ook de toepassingsbalk no-show: alleen Terug naar Main, de eigen velden met <em>Uitleg</em> en Config opslaan blijven zichtbaar. Kies een andere toepassing eerst in Main. Random bevat alleen eigen bewerkbare velden; vaste kolommen en rijen verschijnen uitsluitend bij <em>Vast grid</em>.</p>
+<p>Config is strikt gescheiden in <strong>Algemeen</strong>, <strong>Calculated → Language Tree</strong> en <strong>Direct → Gedeeld / Greedy Grow / Random</strong>. Algemeen bevat uitsluitend toepassingsonafhankelijke interface-, LEESMIJ- en bestandsinstellingen; Voorconfig, boom, voorbeelden, LEX, SYNT en LOG staan alleen bij Language Tree. Per context zijn niet-relevante instellingen no-show. Open je Config vanuit actieve Greedy Grow of Random, dan is ook de toepassingsbalk no-show: alleen Terug naar Main, de eigen velden met <em>Uitleg</em> en Config opslaan blijven zichtbaar. Kies een andere toepassing eerst in Main.</p>
 <p><strong>Seed</strong> is de reproduceerbare startcode van de toevalsreeks, van 1 t/m 4.294.967.295. <code>20260802</code> is alleen de herkenbare datum 2 augustus 2026. Een groot getal geeft niet meer toeval en maakt Play niet sneller. Dezelfde seed, programmaversie, Random-model, plaatsing, gridgrootte en runlengte leveren dezelfde reeks. <strong>Resetbeleid</strong> bepaalt of Reset opnieuw bij de ingestelde seed begint of met een volgende vaste startseed.</p>
 <p><strong>Random-model</strong> staat standaard op <em>Uniform v1.0</em>. <em>Onzuiver uniform v0.1 · hit-herhaling</em> mengt 80% uniforme kans met 20% voorkeur voor asplekken die in voltooide eerdere rondes vaker zijn geraakt. Ronde 1 is uniform. De harde unieke rij- en kolomregel blijft gelden.</p>
 <p><strong>Plaatsing</strong> staat standaard op <em>Ergens in beschikbare ruimte</em>: iedere stap kiest direct een vrije rij en kolom ergens binnen de hele beschikbare rechthoek. Compact, Gebalanceerd en Ruim blijven alternatieven.</p>
@@ -377,7 +377,7 @@
 </div>
 <div class="help-lang-en">
 <h3>Random · Config and iterations</h3>
-<p>Config is separated into <strong>General</strong>, <strong>Calculated → Language Tree</strong> and <strong>Direct → Greedy Grow / Random</strong>. Irrelevant settings are no-show within each context. When Config is opened from active Greedy Grow or Random, the application bar itself is no-show: only Back to Main, the method's own fields with <em>Explanation</em>, and Config save remain visible. Select another application in Main first. Random contains only its own editable fields; fixed columns and rows appear only for <em>Fixed grid</em>.</p>
+<p>Config is strictly separated into <strong>General</strong>, <strong>Calculated → Language Tree</strong>, and <strong>Direct → Shared / Greedy Grow / Random</strong>. General contains only application-independent interface, README, and file settings; pre-config, tree, examples, LEX, SYNT, and LOG exist only under Language Tree. Irrelevant settings are no-show within each context. When Config is opened from active Greedy Grow or Random, the application bar itself is no-show: only Back to Main, the method's own fields with <em>Explanation</em>, and Config save remain visible.</p>
 <p><strong>Seed</strong> is the reproducible starting code of the random sequence, from 1 through 4,294,967,295. <code>20260802</code> is merely the memorable date 2 August 2026. A large number is not more random and does not make Play faster. The same seed, program version, Random model, placement, grid size and run length produce the same sequence. <strong>Reset policy</strong> determines whether Reset starts again from the configured seed or from a next fixed starting seed.</p>
 <p><strong>Random model</strong> defaults to <em>Uniform v1.0</em>. <em>Impure uniform v0.1 · hit repetition</em> mixes an 80% uniform chance with a 20% preference for axis positions hit more often in completed earlier rounds. Round 1 is uniform. The hard unique-row-and-column rule remains in force.</p>
 <p><strong>Placement</strong> defaults to <em>Anywhere in available space</em>: every step directly chooses an unused row and column anywhere within the full available rectangle. Compact, Balanced and Wide remain alternatives.</p>
@@ -448,16 +448,16 @@
 </div>
 </article>
 <article class="help-topic-panel" data-help-topic="lex-axis">
-<div class="help-lang-nl"><h3>LEX</h3><p>LEX is de named projection voor de LOG-afgeleide woordvolgorde.</p><p>LOG bepaalt eerst het neutrale doel; topic/V2 kan dat doel vóór het tekenen vervangen. Ieder bronwoord projecteert horizontaal en verplaatst daarna hoogstens één keer, met één brontrace.</p></div>
-<div class="help-lang-en"><h3>LEX</h3><p>LEX is the named projection for LOG-derived word order.</p><p>LOG determines the neutral target first; topic/V2 may replace it before drawing. Each source word projects horizontally and then moves at most once, leaving one source trace.</p></div>
+<div class="help-lang-nl"><h3>LEX</h3><p>LEX is de westelijke named projection van Language Tree.</p><p>Ieder bronwoord projecteert horizontaal op bronhoogte. LOG plant mogelijke plaatsen, maar alleen een expliciete topic-/V2-/post-V2-regel verplaatst een bronknoop. In HOND BIJT MAN blijft MAN op MAN-hoogte.</p></div>
+<div class="help-lang-en"><h3>LEX</h3><p>LEX is the west named projection of Language Tree.</p><p>Every source word projects horizontally at source height. LOG plans possible positions, but only an explicit topic/V2/post-V2 rule moves a source node. In HOND BIJT MAN, MAN remains at MAN source height.</p></div>
 </article>
 <article class="help-topic-panel" data-help-topic="synt-axis">
 <div class="help-lang-nl"><h3>SYNT</h3><p>SYNT is de named projection voor syntactische regels. Regels worden op bronhoogte getoond, bijvoorbeeld <code>S → NP VP</code> en <code>VP → V NP</code>.</p></div>
 <div class="help-lang-en"><h3>SYNT</h3><p>SYNT is the named projection for syntactic rules. Rules are shown at source height, for example <code>S → NP VP</code> and <code>VP → V NP</code>.</p></div>
 </article>
 <article class="help-topic-panel" data-help-topic="log-axis">
-<div class="help-lang-nl"><h3>LOG</h3><p data-feature-absent="adverbs">LOG is de named projection op de zuidas. S, O en V zijn majors op vaste slots. Hun volledige LOG-volgorde bepaalt de neutrale LEX-rijen.</p><p data-feature="adverbs" hidden="">LOG is de named projection op de zuidas. S, O en V zijn majors; ingeschakelde inserties kunnen minors toevoegen. Iedere minor vergroot de afstand tussen zijn begrenzende majors met één vast slot. De volledige LOG-volgorde bepaalt de neutrale LEX-rijen.</p></div>
-<div class="help-lang-en"><h3>LOG</h3><p data-feature-absent="adverbs">LOG is the named projection on the south axis. S, O and V are majors on fixed slots. Their complete LOG order determines the neutral LEX rows.</p><p data-feature="adverbs" hidden="">LOG is the named projection on the south axis. S, O and V are majors; enabled insertions may add minors. Each minor increases the distance between its bounding majors by one fixed slot. The full LOG order determines the neutral LEX rows.</p></div>
+<div class="help-lang-nl"><h3>LOG</h3><p data-feature-absent="adverbs">LOG is de named projection op de zuidas. S, O en V zijn majors op vaste slots. Hun LOG-volgorde plant mogelijke LEX-plaatsen maar verplaatst geen bronknoop.</p><p data-feature="adverbs" hidden="">LOG is de named projection op de zuidas. S, O en V zijn majors; ingeschakelde inserties kunnen minors toevoegen. Iedere minor vergroot de geplande afstand tussen zijn begrenzende majors met één vast slot. Alleen een expliciete Language-Tree-regel mag een bronknoop verplaatsen.</p></div>
+<div class="help-lang-en"><h3>LOG</h3><p data-feature-absent="adverbs">LOG is the named projection on the south axis. S, O and V are majors on fixed slots. Their LOG order plans possible LEX positions but does not move a source node.</p><p data-feature="adverbs" hidden="">LOG is the named projection on the south axis. S, O and V are majors; enabled insertions may add minors. Each minor increases the planned distance between its bounding majors by one fixed slot. Only an explicit Language Tree rule may move a source node.</p></div>
 </article>
 <article class="help-topic-panel" data-help-topic="tree-notation">
 <div class="help-lang-nl">
@@ -514,8 +514,8 @@
 <div class="help-lang-en"><h3>Language actions</h3><p>Language actions change a projection or placement layer. They do not automatically mutate the central syntax tree.</p></div>
 </article>
 <article class="help-topic-panel" data-help-topic="lex-movement">
-<div class="help-lang-nl"><h3>LEX-wissels</h3><p>Een LEX-wissel verandert het bepaalde einddoel op de LEX-projectie. De centrale graph transformeert niet.</p><p>LOG bepaalt eerst de neutrale basis; Comp, vooropplaatsing/topic en V2/PV kunnen daarna logisch een ander doel kiezen. De tekening combineert dit tot één pijl en één trace op de bronrij.</p></div>
-<div class="help-lang-en"><h3>LEX exchanges</h3><p>A LEX exchange changes the resolved final target on the LEX projection. The central graph does not transform.</p><p>LOG determines the neutral basis first; Comp, fronting/topic and V2/finite verb may then logically select another target. The drawing combines this into one arrow and one trace on the source row.</p></div>
+<div class="help-lang-nl"><h3>LEX-wissels</h3><p>Een LEX-wissel is een expliciete Language-Tree-regel op de LEX-projectie. De centrale graph transformeert niet.</p><p>LOG plant mogelijke plaatsen maar activeert geen beweging. Comp, vooropplaatsing/topic en V2/PV kunnen een zichtbare Wissel activeren: één pijl en één trace op de bronrij.</p></div>
+<div class="help-lang-en"><h3>LEX exchanges</h3><p>A LEX exchange is an explicit Language Tree rule on the LEX projection. The central graph does not transform.</p><p>LOG plans possible positions but activates no movement. Comp, fronting/topic, and V2/finite verb can activate one visible exchange: one arrow and one trace on the source row.</p></div>
 </article>
 <article class="help-topic-panel" data-feature="adverbs" data-help-topic="adverbs" hidden="">
 <div class="help-lang-nl"><h3>Bijwoorden</h3><p>Een bijwoordelijke realisatie eindigt op LEX, maar heeft niet altijd dezelfde bron. Een semantische operator kan als <strong>LOG→LEX</strong>-realisatie worden geplaatst; een partikel of lokaal focus-/graadelement kan als <strong>directe LEX-insertie</strong> worden geplaatst. Een gemengde groep, zoals <code>misschien wel</code>, kan één zichtbaar slot gebruiken met componenten uit beide bronnen.</p><p>De bron, scope en lineaire LEX-plaats zijn afzonderlijke eigenschappen. Alleen LOG-profielen verschijnen als minor op de zuidas; directe LEX-profielen reserveren uitsluitend een LEX-plaats.</p></div>
@@ -792,7 +792,7 @@
 <button id="lexRightButton" type="button">→</button>
 <button id="applyLexRuleButton" type="button">Pas regel toe</button>
 </div>
-<p class="inline-help">Bronknopen projecteren horizontaal naar LEX. LOG en eventuele Wisselregels bepalen daarna samen één einddoel: V2/PV naar slot 2, topicalisatie naar slot 1. Per bronwoord blijft één brontrace; de centrale boom blijft ongewijzigd.</p>
+<p class="inline-help">Bronknopen projecteren horizontaal naar LEX en blijven zonder expliciete regel op bronhoogte. Alleen een echte Wisselregel verplaatst: V2/PV naar slot 2, topicalisatie naar slot 1. Een verplaatst woord laat één brontrace; de centrale boom blijft ongewijzigd.</p>
 </section>
 <section class="panel-card relation-card">
 <h2>Relaties / regels</h2>
@@ -865,7 +865,7 @@
 <label title="Functionele variant: verlengt de grens tussen predicaat en argumentstructuur."><input data-lex-extension-target="clause-boundary" type="checkbox"/> CLAUSE-grens</label>
 <p class="top-menu-choice-help" data-lex-extension-help="">Takverlenging wordt geladen.</p>
 </fieldset>
-<p class="top-menu-choice-help">Bijwoordelijke inserties gebruiken een profiel met bron LOG, LEX of LOG+LEX. Alleen LOG-profielen verschijnen op de zuidas; alle profielen krijgen vóór het tekenen een LEX-doel. Vooropplaatsing en V2 kunnen dit einddoel daarna vervangen.</p>
+<p class="top-menu-choice-help">Bijwoordelijke inserties gebruiken een profiel met bron LOG, LEX of LOG+LEX. Alleen LOG-profielen verschijnen op de zuidas. De LOG-planning bepaalt beschikbare plaatsen maar verplaatst geen bronknoop; vooropplaatsing en V2 zijn afzonderlijke expliciete Wisselregels.</p>
 </div>
 <div aria-label="OPN-document opslaan en openen" class="mobile-sheet-section">
 <h3>OPN-document</h3>

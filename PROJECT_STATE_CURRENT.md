@@ -5,10 +5,10 @@ Leidende status van OpenGraph Lite Viewer `v2.0.0-rc.45`.
 Controlestatus: rc.45 is op 2 augustus 2026 handmatig goedgekeurd, inclusief
 de Greedy Grow-reconstructie, bewijsgrens en afgeleide publicatieslide.
 
-## Actuele source build 20260803.12
+## Actuele source build 20260813.1
 
 - Exacte bronidentiteit:
-  `v2.0.0-rc.45-direct-config-hard-no-show-20260803.12`.
+  `v2.0.0-rc.45-config-scope-man-source-height-20260813.1`.
 - Het hoofdmenu toont Language Tree prominent als primaire berekende
   toepassing, met Greedy Grow en Random als kleinere directe
   OGN-illustraties. De directe modi schrijven één knoop per stap en verbergen
@@ -16,19 +16,25 @@ de Greedy Grow-reconstructie, bewijsgrens en afgeleide publicatieslide.
 - Random heeft een afzonderlijke seedbare engine. De geaccepteerde
   `greedy-grow-engine.js` blijft bytegelijk aan de carrouselbron en de
   afleidingscontrole blijft geldig.
-- `Config → Beeld → Lijnbeeld` regelt rasterkleur en raster-, projectie- en
+- `Config → Algemeen → Interface & weergave → Lijnbeeld` regelt rasterkleur en raster-, projectie- en
   boxlijnzwaarte. LEX, SYNT en LOG hebben elk een eigen kleur voor as,
   projectielijnen en overeenkomstige boxen.
 - `.gitattributes` en `tools/normalize_text_files.py` leggen LF/CRLF en exact
   één afsluitende EOL structureel vast. `publish_checked.bat` normaliseert en
   voert `git add --renormalize` uit vóór de whitespacecontrole.
 - Het volledige contract staat in `LINE_STYLE_AND_PLACEMENT_MODES.md`.
-- Config is ingedeeld als Algemeen, Calculated → Language Tree en Direct →
-  Greedy Grow / Random. Per context zijn alle niet-relevante instellingen
-  no-show. De toepassingsbalk blijft alleen in de volledige Config zichtbaar;
+- Config is strikt ingedeeld als Algemeen, Calculated → Language Tree en
+  Direct → Gedeeld / Greedy Grow / Random. Algemeen bevat geen Voorconfig,
+  boom, voorbeelden, LEX, SYNT of LOG; die staan uitsluitend onder Language
+  Tree. Per context zijn alle niet-relevante instellingen no-show. De toepassingsbalk blijft alleen in de volledige Config zichtbaar;
   vanuit actieve Greedy-Grow- of Random-modus is ook die balk no-show.
 - Ieder zichtbaar Direct-, Greedy- en Random-veld heeft een mobiele,
   inklapbare uitleg volgens `CONFIG_UI_EXPLANATION_STANDARD.md`.
+- LOG plant mogelijke LEX-plaatsen maar verplaatst zonder expliciete
+  Language-Tree-regel geen bronknoop. In `HOND BIJT MAN` blijft `MAN` exact op
+  MAN-bronhoogte en wisselt uitsluitend `BIJT` naar V2. De doorschijnende
+  verdikking in Play 2/3 is alleen een tijdelijke LEX-ruimte-indicator, geen
+  OGN-element en geen oorzaak van beweging.
 - Greedy/Random Config verbergt daarnaast de viewerwerkbalk, runstatus,
   voorbeeldweergave, feedback, canvas en save-uitleg. Alleen Terug naar Main,
   de eigen velden met uitleg en compacte bewaren/herstellen-knoppen blijven
@@ -286,8 +292,10 @@ de Greedy Grow-reconstructie, bewijsgrens en afgeleide publicatieslide.
 
 ## Desktop-MAX
 
-- `Config → Beeld → Boomruimte` staat standaard op `MAX`.
-- `Config → Beeld → Venstervulling` staat standaard op `MAX`.
+- `Config → Calculated → Language Tree → Boom & projecties → Boomruimte`
+  staat standaard op `MAX`.
+- `Config → Algemeen → Interface & weergave → Venstervulling` staat
+  standaard op `MAX`.
 - MAX gebruikt het volledige resterende browservenster en een
   SVG-fontschaal van `1.70`.
 - Raster, hulplabel en het historische ruime stabiliteitskader tellen niet
@@ -317,7 +325,8 @@ structure-config
 - Iedere werkelijke LOG-minor bezet één vast slot en vergroot de afstand tussen
   zijn begrenzende majors met één.
 - De bronknoop bepaalt altijd de hoogte van het LEX-projectieanker.
-- LOG is autoriteit voor de neutrale LEX-doelrij.
+- LOG is autoriteit voor de geplande LEX-plaatsen, niet voor zichtbare
+  bronknoopverplaatsing.
 - Bronanker → bepaald einddoel is één verplaatsing langs de LEX-as, met één
   brontrace.
 - De losse surface-string levert geen layoutcoördinaten. Expliciete

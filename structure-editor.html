@@ -142,7 +142,7 @@ aux:AUX / pv`;
 
     const defaultLogSection = `<section id="opengraph-log-config" data-authority="LOG" data-position-unit="slot" data-major-gap="1" data-minor-width="1" data-expands-major-gap="true" data-axis-slot-pixels="176" data-lex-slot-pixels="64" data-lex-position-source="LOG" data-lex-projection-origin="SOURCE-Y" data-lex-placement-mode="horizontal-then-move" data-example-controls-layout="false" data-play-phases="LOG SPACE LEX" data-play-space-mode="reserve-empty-lex-rows" aria-label="LOG-slotconfig">
       <h2>LOG-slotconfig</h2>
-      <p class="note">S, O en V zijn majors. Iedere bijwoord-minor vergroot de begrensde majorafstand met één vast slot. LOG bepaalt de neutrale LEX-rijen; de voorbeeldzin valideert alleen. Play gebruikt de fasen LOG → SPACE → LEX.</p>
+      <p class="note">S, O en V zijn majors. Iedere bijwoord-minor vergroot de geplande majorafstand met één vast slot. LOG plant LEX-plaatsen maar verplaatst geen bronknoop; alleen een expliciete Language-Tree-regel doet dat. Play gebruikt de fasen LOG → SPACE → LEX.</p>
       <div class="log-major-config" data-id="S" data-label="Subject" data-source="subject" data-role="subject">S [major source=subject]</div>
       <div class="log-major-config" data-id="O" data-label="Object" data-source="object" data-role="object">O [major source=object]</div>
       <div class="log-major-config" data-id="V" data-label="Verb" data-sources="predicate pv vdw" data-role="predicate">V [major sources=predicate+pv+vdw]</div>
@@ -174,7 +174,7 @@ aux:AUX / pv`;
       section.querySelectorAll('.log-class-config').forEach(node => node.remove());
       const note = section.querySelector('.note');
       if (note) {
-        note.textContent = 'S, O en V zijn de LOG-majors. LOG bepaalt hun neutrale LEX-rijen; de voorbeeldzin valideert alleen. Play gebruikt de fasen LOG → SPACE → LEX.';
+        note.textContent = 'S, O en V zijn de LOG-majors. LOG plant LEX-plaatsen maar verplaatst geen bronknoop; alleen een expliciete Language-Tree-regel doet dat. Play gebruikt de fasen LOG → SPACE → LEX.';
       }
       section.dataset.profile = 'base';
       return section.outerHTML;

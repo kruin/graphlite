@@ -6,7 +6,7 @@ Releasebesluit: rc.45 is op 2 augustus 2026 handmatig goedgekeurd, inclusief
 de Greedy Grow-reconstructie en de rechtstreeks afgeleide publicatieslide.
 
 Actuele source build:
-`v2.0.0-rc.45-direct-config-hard-no-show-20260803.12`. Behoud Language Tree
+`v2.0.0-rc.45-config-scope-man-source-height-20260813.1`. Behoud Language Tree
 als prominente berekende toepassing en Greedy Grow/Random als kleinere
 directe OGN-illustraties. Wijzig `greedy-grow-engine.js` niet voor Random: die
 engine is onderdeel van het afleidingsbewijs van publicatieslide 5. Random
@@ -14,7 +14,10 @@ hoort in `random-placement-engine.js`. Bewaak het lijnbeeld en het structurele
 EOF/EOL-beleid volgens `LINE_STYLE_AND_PLACEMENT_MODES.md`.
 
 Organiseer Config als **Algemeen**, **Calculated → Language Tree** en **Direct
-→ Greedy Grow / Random**. Per context zijn niet-relevante instellingen
+→ Gedeeld / Greedy Grow / Random**. Algemeen bevat uitsluitend
+toepassingsonafhankelijke interface-, LEESMIJ- en bestandsinstellingen;
+Voorconfig, boom, voorbeelden, LEX, SYNT en LOG staan alleen onder Language
+Tree. Per context zijn niet-relevante instellingen
 no-show. Vanuit een actieve Greedy-Grow- of Random-modus is ook de
 toepassingsbalk no-show: alleen Terug naar Main, de eigen velden met uitleg en
 Config opslaan blijven zichtbaar. Wisselen van context begint in Main. Volg
@@ -25,6 +28,11 @@ Random bevat daarnaast seed, resetbeleid, model, plaatsing, gridgrootte, vaste
 kolommen/rijen, iteratieaantal en asbeeldmodus. Uniform v1.0 blijft standaard;
 Onzuiver uniform v0.1 mengt 20% herhaalgewicht uit voltooide eerdere as-hits.
 v0.2 en v0.3 blijven no-show. Zie `DIRECT_PLACEMENT_CONFIG.md`.
+
+LOG-planning is nooit zelfstandig een bronknoopverplaatsing. Zonder expliciete
+topic-/V2-/post-V2-regel blijft ieder woord op bronhoogte. In `HOND BIJT MAN`
+blijft `MAN` op MAN-hoogte en wisselt alleen `BIJT`; de verdikking in Play 2/3
+is slechts een tijdelijke LEX-ruimte-indicator.
 
 Random projecteert uitsluitend voltooide rondes naar cumulatieve WEST- en
 SOUTH-hitspots. Herhaalde hits maken dezelfde spot zwaarder; toekomstige

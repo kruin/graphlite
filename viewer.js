@@ -5837,7 +5837,7 @@
     const lexBaseStep = phaseStep('LEX');
     const movementStart = structureStep + playPhases.length + 1;
     if (step === logStep) return `${step}/${max} · 1/3 LOG`;
-    if (step === spaceStep) return `${step}/${max} · 2/3 ruimte`;
+    if (step === spaceStep) return `${step}/${max} · 2/3 gereserveerde LEX-ruimte · geen verplaatsing`;
     if (step === lexBaseStep) return `${step}/${max} · 3/3 horizontale LEX-projectie`;
     if (step >= movementStart && step < movementStart + movementCount) {
       const currentMove = step - movementStart + 1;
@@ -6482,6 +6482,13 @@
 
   function logicalPlacementMovementForItem(item, index, items = state.example?.lexItems || []) {
     if (!logicalAuthorityEnabled() || !item?.source) return null;
+    // Een LOG-rij is eerst plannings-/reserveringsinformatie. Zij is geen
+    // zelfstandige toestemming om een bronknoop van zijn horizontale
+    // bronhoogte te halen. Alleen een expliciete Language-Tree-regel (zoals
+    // topic, V2 of post-V2) maakt van dat plan een zichtbare LEX-Wissel.
+    // Zo blijven in HOND BIJT MAN zowel HOND als MAN exact bronuitgelijnd.
+    const explicit = movementForItem(item, index, items);
+    if (!explicit) return null;
     const logicalRow = logicalLexPlan(items).byIndex.get(index);
     if (!Number.isFinite(logicalRow)) return null;
     const word = String(item.label || item.role || item.source || 'LEX').toUpperCase();
@@ -6496,8 +6503,8 @@
 
   function orderedLexMovements(items = state.example?.lexItems || []) {
     // Eén bronwoord krijgt hoogstens één zichtbare LEX-verplaatsing. LOG
-    // berekent de neutrale doelrij en topic/V2 kan die doelrij vervangen,
-    // maar de presentatie tekent geen afzonderlijke tussensprong meer.
+    // reserveert mogelijke doelrijen, maar alleen een expliciete
+    // Language-Tree-regel mag een bronwoord werkelijk verplaatsen.
     return items
       .map((item, index) => {
         const logical = logicalPlacementMovementForItem(item, index, items);
@@ -6541,9 +6548,9 @@
 
   function movementForItem(item, index, items = activeLexItems()) {
     if (!item?.source) return null;
-    // rc.14: LOG bepaalt de neutrale LEX-basis. Alleen de expliciete
-    // plaatsingsregels topic/vooropplaatsing en V2 voeren daarna een Wissel
-    // uit; overige items blijven op hun LOG-afgeleide basisrij.
+    // LOG kan LEX-ruimte reserveren. Alleen de expliciete plaatsingsregels
+    // topic/vooropplaatsing, V2 en post-V2 voeren een zichtbare Wissel uit;
+    // overige bronitems blijven op hun horizontale bronhoogte.
     const topic = topicMovementForItem(item, index);
     if (topic) return topic;
     if (isMainV2Rule() && isFiniteVerbForV2(item)) {
@@ -6779,9 +6786,9 @@
     const horizontalProjectionMode = !!sourceMap && horizontalLexProjectionEnabled();
     const systemY0 = sourceMap ? projectedLexSystemY0(y0, sourceMap) : y0;
     drawAxisTitle(g, x - 98, systemY0 - 70, options.spaceOnly
-      ? 'LEX-projectie · fase 2/3 · ruimte uit LOG-slots'
+      ? 'LEX-projectie · fase 2/3 · LOG-ruimte reserveren · geen verplaatsing'
       : logicalAuthorityEnabled()
-      ? 'LEX-projectie · horizontale bronpositie → één uiteindelijke LOG/LEX-doelrij'
+      ? 'LEX-projectie · bronhoogte → alleen een expliciete Wissel mag verplaatsen'
       : (horizontalProjectionMode ? 'LEX-projectie · projectiemerkers + Wisselregels' : 'LEX-as · lokale plaatsingsregels'));
 
     const itemYs = items.map((item, i) => projectedLexItemY(item, i, y0, sourceMap, items, options));
@@ -6827,7 +6834,12 @@
       if (uniqueRows.length) {
         const firstY = uniqueRows[0].y;
         const lastY = uniqueRows[uniqueRows.length - 1].y;
-        g.appendChild(svgEl('rect', {
+        const reservationGroup = svgEl('g', {
+          class: 'lex-space-reservation-group',
+          'data-purpose': 'reservation-only-no-movement'
+        });
+        reservationGroup.appendChild(svgEl('title', {}, 'Gereserveerde LOG-ruimte op LEX; dit verplaatst geen bronknoop.'));
+        reservationGroup.appendChild(svgEl('rect', {
           x: x - 8,
           y: firstY - 18,
           width: 16,
@@ -6836,7 +6848,7 @@
           class: 'lex-space-reservation'
         }));
         [firstY, lastY].forEach(rowY => {
-          g.appendChild(svgEl('line', {
+          reservationGroup.appendChild(svgEl('line', {
             x1: x - 15,
             y1: rowY,
             x2: x + 15,
@@ -6844,12 +6856,13 @@
             class: 'lex-space-reservation-cap'
           }));
         });
+        g.appendChild(reservationGroup);
       }
       drawCanvasGuideText(
         g,
         x + 150,
         axisMinY + 18,
-        'Fase 2/3: reserveer eerst de LOG-afgeleide LEX-rijen; plaats de woorden pas in de volgende fase.',
+        'Fase 2/3: de verdikking markeert alleen gereserveerde LOG-ruimte; geen bronknoop verplaatst.',
         'wissel-label'
       );
       return positions;
@@ -6868,8 +6881,8 @@
 
     const ruleText = logicalAuthorityEnabled()
       ? (featureEnabled('adverbs')
-        ? `Bronknoop → horizontale LEX-projectie → één doelrij; LOG berekent de neutrale rij en topic/V2 kan die vervangen. Per bronwoord volgt hoogstens één zichtbare LEX-verplaatsing. ${lexFreeSlotCount()} minor(s) vergroten de logische afstand (${logInsertionIntervalLabel()}).`
-        : 'Bronknoop → horizontale LEX-projectie → één doelrij; LOG-majors bepalen de neutrale rij en topic/V2 kan die vervangen. Per bronwoord volgt hoogstens één zichtbare LEX-verplaatsing.')
+        ? `Bronknoop → horizontale bronhoogte. LOG reserveert ruimte; alleen topic/V2/post-V2 mag een bronknoop verplaatsen. ${lexFreeSlotCount()} minor(s) vergroten de logische afstand (${logInsertionIntervalLabel()}).`
+        : 'Bronknoop → horizontale bronhoogte. LOG reserveert ruimte; alleen een expliciete topic-, V2- of post-V2-regel mag een bronknoop verplaatsen.')
       : (isMainV2Rule()
         ? 'Projectie: bronknopen → blauwe projectiemerkers. Daarna Wissels naar lege plekken 0/1/2.'
         : 'Projectie: bronknopen → blauwe projectiemerkers. Daarna plaatsingsregels; Comp gebruikt slot 0.');
@@ -6927,7 +6940,8 @@
         g.appendChild(svgEl('rect', { x: x - 62, y: y - 28, width: 124, height: 56, rx: 14, class: cls }));
       }
       const hasPendingLogicalMove = !!logicalPlacementMovementForItem(item, i, items) && !logicalMovement;
-      const slotLabel = hasPendingLogicalMove ? 'H' : lexSlotIndex(item, i, items, explicitMovement);
+      const staysAtSourceHeight = horizontalProjectionMode && item.source && !movementForItem(item, i, items);
+      const slotLabel = (hasPendingLogicalMove || staysAtSourceHeight) ? 'H' : lexSlotIndex(item, i, items, explicitMovement);
       g.appendChild(svgEl('text', { x: x - 76, y: y + 5, class: 'lex-index' }, slotLabel));
       g.appendChild(svgEl('text', { x, y: y + 5, class: item.source ? 'lex-label' : 'lex-local-label' }, item.label));
     });
@@ -7145,7 +7159,7 @@
     if (!items.length) return;
     const cls = options.cls || 'log';
     const title = options.title || 'LOG-projectie';
-    const subtitle = options.subtitle || 'LOG-slots bepalen de afstand; dezelfde slots bepalen daarna de neutrale LEX-positie.';
+    const subtitle = options.subtitle || 'LOG-slots bepalen de geplande afstand en beschikbare LEX-plaatsen; zij verplaatsen geen bronknoop.';
     const orderCode = logicalOrderCode(items);
     const sequenceCode = logicalSequenceCode(items);
     const distanceSummary = logicalDistanceSummary(items);
@@ -7302,9 +7316,9 @@
       ];
       if (featureEnabled('adverbs')) {
         rows[2] += ` · interval ${logInsertionIntervalLabel()}`;
-        rows.push('LOG-majors en -minors bepalen de neutrale LEX-rijen; de voorbeeldzin valideert alleen.');
+        rows.push('LOG-majors en -minors plannen LEX-plaatsen; alleen een expliciete Language-Tree-regel verplaatst een bronknoop.');
       } else {
-        rows.push('De LOG-majors S/O/V bepalen de neutrale LEX-rijen; de voorbeeldzin valideert alleen.');
+        rows.push('De LOG-majors S/O/V plannen LEX-plaatsen maar verplaatsen geen bronknoop.');
       }
       return rows;
     }
@@ -7519,8 +7533,8 @@
         cls: 'log',
         title: 'LOG · geselecteerde named projection op vaste zuidaspositie',
         subtitle: featureEnabled('adverbs')
-          ? `LOG ordent majors en bijwoord-minors op vaste slots; de LOG-volgorde bepaalt daarna de neutrale LEX-rijen.${southModeWarningText()}`
-          : `LOG ordent S/O/V-majors op vaste slots; de LOG-volgorde bepaalt daarna de neutrale LEX-rijen.${southModeWarningText()}`,
+          ? `LOG ordent majors en bijwoord-minors op vaste slots en plant LEX-plaatsen; alleen een expliciete regel verplaatst een bronknoop.${southModeWarningText()}`
+          : `LOG ordent S/O/V-majors op vaste slots en plant LEX-plaatsen zonder een bronknoop te verplaatsen.${southModeWarningText()}`,
         badgeText: southLogicalModeLabel(state.southLogicalMode || 'SOV'),
         order: southLogicalOrder(),
         items: ctx.southItems,
@@ -7563,8 +7577,8 @@
       if (state.centerMode === 'ft') drawFunctionalRules(g, eastAxisX, centralLayout, origin, plan);
       else drawSyntaxRules(g, eastAxisX, 126, centralLayout, origin, plan);
       drawLogPhase(featureEnabled('adverbs')
-        ? `Majors en minors staan op vaste LOG-slots; elke minor vergroot de afstand en schuift de neutrale LEX-basis mee.${southModeWarningText()}`
-        : `De majors S, O en V staan op vaste LOG-slots en bepalen de neutrale LEX-basis.${southModeWarningText()}`);
+        ? `Majors en minors staan op vaste LOG-slots; elke minor vergroot de gereserveerde LEX-afstand. Bronknopen blijven zonder expliciete Wissel op bronhoogte.${southModeWarningText()}`
+        : `De majors S, O en V staan op vaste LOG-slots en reserveren LEX-ruimte. Bronknopen blijven zonder expliciete Wissel op bronhoogte.${southModeWarningText()}`);
     };
     if (!growthPlan?.active || state.projectionBlockUnlocked) {
       // Projecties > Alle betekent: centrale view met alle named projections.
@@ -7586,11 +7600,11 @@
         : undefined;
       drawLexAxis(g, westAxisX, 126, activeLexItems(), sourceMap, { executedMovementCount });
       drawAxisTitle(g, eastAxisX, 116, 'SYNT-projectie verschijnt in de laatste stap');
-      drawLogPhase(`Fase 3/3: bronknopen projecteren eerst horizontaal naar LEX; daarna volgen de verplaatsingen langs de as.${southModeWarningText()}`);
+      drawLogPhase(`Fase 3/3: bronknopen projecteren horizontaal naar LEX; alleen expliciete Language-Tree-regels verplaatsen daarna een knoop langs de as.${southModeWarningText()}`);
     } else if (showSpaceStep) {
       drawLexAxis(g, westAxisX, 126, activeLexItems(), sourceMap, { spaceOnly: true });
       drawAxisTitle(g, eastAxisX, 116, 'SYNT-projectie verschijnt in de laatste stap');
-      drawLogPhase(`Fase 2/3: de LOG-afstand reserveert nu lege rijen op LEX; inhoud volgt pas daarna.${southModeWarningText()}`);
+      drawLogPhase(`Fase 2/3: de LOG-afstand reserveert lege rijen op LEX. De verdikking is uitsluitend een ruimtemarkering en verplaatst niets.${southModeWarningText()}`);
     } else if (showLogStep) {
       drawAxisTitle(g, westAxisX - 45, 116, 'LEX verschijnt na het reserveren van ruimte');
       drawAxisTitle(g, eastAxisX, 116, 'SYNT-projectie verschijnt in de laatste stap');
@@ -8692,20 +8706,20 @@
     const logStatus = `LOG=${logicalSequenceCode(logicalSequence)} · ${logicalDistanceSummary(logicalSequence)}${directLexCount ? ` · direct-LEX=${directLexCount}` : ''}`;
     const featureStatus = featureEnabled('adverbs') ? ` · ${activeAdverbStatusLabel()}` : '';
     els.metaLine.textContent = isEnglish()
-      ? `${state.example.phase} · ${movementSummaryLabel()}${featureStatus} · ${logStatus} → neutral LEX · sentence validation=${activeSentenceText()}${noticeText}`
-      : `${state.example.phase} · ${movementSummaryLabel()}${featureStatus} · ${logStatus} → neutrale LEX · zinsvalidatie=${activeSentenceText()}${noticeText}`;
+      ? `${state.example.phase} · ${movementSummaryLabel()}${featureStatus} · ${logStatus} → reserved LEX space · sentence validation=${activeSentenceText()}${noticeText}`
+      : `${state.example.phase} · ${movementSummaryLabel()}${featureStatus} · ${logStatus} → gereserveerde LEX-ruimte · zinsvalidatie=${activeSentenceText()}${noticeText}`;
     if (els.sentencePreview) els.sentencePreview.innerHTML = activeSentenceHtml();
     const baseFeedback = isEnglish()
       ? (state.projection === 'source'
         ? 'Source shows the selected OPN source from structure-config.html. At Source, LEX, SYNT and LOG axes can be combined independently. The View menu switches between the Syntax view and the Functional view (functional CLAUSE roles). Syntax and Functional views use bottom-up recursive box layout; left/right controls both layouts; branch order can be global, compact-auto or align-auto.'
         : (featureEnabled('adverbs')
-          ? 'Derivation: structure config → lexical usage profile → LOG minors and/or direct LEX insertions → complete LEX placement plan → optional topic/V2 target override. The sample sentence selects an instance analysis; it does not rewrite the lexicon.'
-          : 'Derivation: structure config → LOG majors → neutral LEX rows → optional topic/V2 target override. The sample sentence selects the lexical items; it does not rewrite the structure.'))
+          ? 'Derivation: structure config → lexical usage profile → LOG minors and/or direct LEX insertions → reserved LEX rows → explicit topic/V2/post-V2 moves only. A source node without such a rule remains at source height.'
+          : 'Derivation: structure config → LOG majors → reserved LEX rows → explicit topic/V2/post-V2 moves only. A source node without such a rule remains at source height.'))
       : (state.projection === 'source'
         ? 'Bron toont de gekozen OPN-bron uit structure-config.html; LEX-, SYNT- en LOG-as zijn daar onafhankelijk combineerbaar. Het View-menu wisselt tussen de Syntax-view en de Functional-view (functionele CLAUSE/rollen). Syntax en Functional gebruiken bottom-up recursieve box-layout; left/right stuurt beide layouts; takvolgorde kan globaal, compact-auto of align-auto zijn.'
         : (featureEnabled('adverbs')
-          ? 'Afleiding: structure-config → lexicaal gebruiksprofiel → LOG-minors en/of directe LEX-inserties → volledig LEX-plaatsingsplan → eventuele topic/V2-doelvervanging. De voorbeeldzin kiest een zinsanalyse en herschrijft het lexicon niet.'
-          : 'Afleiding: structure-config → LOG-majors → neutrale LEX-rijen → eventuele topic/V2-doelvervanging. De voorbeeldzin kiest de lexicale items en herschrijft de structuur niet.'));
+          ? 'Afleiding: structure-config → lexicaal gebruiksprofiel → LOG-minors en/of directe LEX-inserties → gereserveerde LEX-rijen → uitsluitend expliciete topic-/V2-/post-V2-Wissels. Een bronknoop zonder zo’n regel blijft op bronhoogte.'
+          : 'Afleiding: structure-config → LOG-majors → gereserveerde LEX-rijen → uitsluitend expliciete topic-/V2-/post-V2-Wissels. Een bronknoop zonder zo’n regel blijft op bronhoogte.'));
     const validationMsg = state.exampleValidationMessages?.length ? ` · ${state.exampleValidationMessages[0]}` : '';
     const noticeMsg = state.example.notice ? ` · ${state.example.notice}` : '';
     const osvMsg = SOUTH_LOGICAL_MOVEMENT_REQUIRED_MODES.has(state.southLogicalMode || 'SOV')
@@ -8716,11 +8730,11 @@
     els.explainHeading.textContent = `${isEnglish() ? 'Explanation' : 'Uitleg'} · ${activeSentenceText()}`;
     els.explainText.textContent = featureEnabled('adverbs')
       ? (isEnglish()
-        ? `LOG supplies semantic placement for LOG profiles. Current LOG sequence: ${logicalSequenceCode(logicalSequence)} (${logicalDistanceSummary(logicalSequence)}). Every LOG minor increases the distance between its bounding majors by one slot. Direct LEX profiles reserve a LEX row without a LOG minor; topic/V2 may replace a target before one visible move and one source trace are drawn. The sample sentence validates the surface result and does not determine the layout.`
-        : `LOG levert de semantische plaatsing voor LOG-profielen. Huidige LOG-sequentie: ${logicalSequenceCode(logicalSequence)} (${logicalDistanceSummary(logicalSequence)}). Iedere LOG-minor vergroot de afstand tussen zijn begrenzende majors met één slot. Directe LEX-profielen reserveren een LEX-rij zonder LOG-minor; topic/V2 kan een doel vervangen vóór één zichtbare verplaatsing en één brontrace worden getekend. De voorbeeldzin valideert de surface-uitkomst en bepaalt de layout niet.`)
+        ? `LOG supplies semantic placement for LOG profiles. Current LOG sequence: ${logicalSequenceCode(logicalSequence)} (${logicalDistanceSummary(logicalSequence)}). Every LOG minor increases the reserved distance between its bounding majors by one slot. Reservation alone never moves a source node; only an explicit topic/V2/post-V2 rule draws one move and one source trace.`
+        : `LOG levert de semantische plaatsing voor LOG-profielen. Huidige LOG-sequentie: ${logicalSequenceCode(logicalSequence)} (${logicalDistanceSummary(logicalSequence)}). Iedere LOG-minor vergroot de gereserveerde afstand tussen zijn begrenzende majors met één slot. Reservering alleen verplaatst nooit een bronknoop; uitsluitend een expliciete topic-/V2-/post-V2-regel tekent één Wissel en één brontrace.`)
       : (isEnglish()
-        ? `Current LOG sequence: ${logicalSequenceCode(logicalSequence)} (${logicalDistanceSummary(logicalSequence)}). The S/O/V majors determine neutral LEX rows; topic/V2 may replace a target before one visible move and one source trace are drawn. The sample sentence validates the surface result and does not determine the layout.`
-        : `Huidige LOG-sequentie: ${logicalSequenceCode(logicalSequence)} (${logicalDistanceSummary(logicalSequence)}). De majors S/O/V bepalen de neutrale LEX-rijen; topic/V2 kan een doel vervangen vóór één zichtbare verplaatsing en één brontrace worden getekend. De voorbeeldzin valideert de surface-uitkomst en bepaalt de layout niet.`);
+        ? `Current LOG sequence: ${logicalSequenceCode(logicalSequence)} (${logicalDistanceSummary(logicalSequence)}). The S/O/V majors reserve LEX rows. Reservation alone never moves a source node; only an explicit topic/V2/post-V2 rule does.`
+        : `Huidige LOG-sequentie: ${logicalSequenceCode(logicalSequence)} (${logicalDistanceSummary(logicalSequence)}). De majors S/O/V reserveren LEX-rijen. Reservering alleen verplaatst nooit een bronknoop; uitsluitend een expliciete topic-/V2-/post-V2-regel doet dat.`);
   }
 
   function projectionLabel() {
@@ -8737,22 +8751,22 @@
     if (isEnglish()) {
       if (state.projection === 'source') return `Source: the Syntax and Functional structures are read from structure-config.html. Selected axes at Source: ${sourceAxesShortLabel()}. LEX, SYNT and LOG can be combined without moving or rescaling the central view.`;
       if (state.projection === 'lex') return featureEnabled('adverbs')
-        ? 'LEX: west named projection. LOG profiles project from the south axis; direct LEX profiles do not. Both enter one precomputed placement plan before topic/V2 may replace a target.'
-        : 'LEX: west named projection. Lexical sources project horizontally to neutral rows derived from the LOG majors; topic/V2 may replace a target.';
+        ? 'LEX: west named projection. Every source projects horizontally at source height. LOG profiles reserve rows; only explicit topic/V2/post-V2 rules move source nodes.'
+        : 'LEX: west named projection. Every lexical source projects horizontally at source height; only an explicit topic/V2/post-V2 rule may move it.';
       if (state.projection === 'synt') return 'SYNT: isolated syntax-rule set. Rules are placed at their source height; the central tree is only used as a hidden height anchor.';
       if (state.projection === 'log') return featureEnabled('adverbs')
         ? 'LOG: south named projection. S, O and V are majors. Only insertions with a LOG or LOG+LEX profile appear as minors; direct LEX profiles remain absent from this axis.'
-        : 'LOG: south named projection. S, O and V are majors on fixed slots and determine the neutral LEX rows.';
+        : 'LOG: south named projection. S, O and V are majors on fixed slots and plan LEX positions without moving source nodes.';
       return 'All: central view selected by the View menu. LEX, SYNT and LOG use named projections with their own projection markers and selection rules.';
     }
     if (state.projection === 'source') return `Bron: de Syntax- en Functional-structuren worden gelezen uit structure-config.html. Gekozen assen bij Bron: ${sourceAxesShortLabel()}. LEX, SYNT en LOG kunnen gecombineerd worden zonder de centrale view te verplaatsen of te herschalen.`;
     if (state.projection === 'lex') return featureEnabled('adverbs')
-      ? 'LEX: westelijke named projection. LOG-profielen projecteren vanaf de zuidas; directe LEX-profielen niet. Beide komen vooraf in één plaatsingsplan voordat topic/V2 een doel kan vervangen.'
-      : 'LEX: westelijke named projection. Lexicale bronnen projecteren horizontaal naar neutrale rijen uit de LOG-majors; topic/V2 kan een doel vervangen.';
+      ? 'LEX: westelijke named projection. Iedere bron projecteert horizontaal op bronhoogte. LOG-profielen reserveren rijen; alleen expliciete topic-/V2-/post-V2-regels verplaatsen bronknopen.'
+      : 'LEX: westelijke named projection. Iedere lexicale bron projecteert horizontaal op bronhoogte; alleen een expliciete topic-/V2-/post-V2-regel mag haar verplaatsen.';
     if (state.projection === 'synt') return 'SYNT: geïsoleerde syntax-regelset. Regels staan op bronhoogte; de centrale boom dient alleen als verborgen hoogteanker.';
     if (state.projection === 'log') return featureEnabled('adverbs')
       ? 'LOG: named projection op de zuidas. S, O en V zijn majors. Alleen inserties met een LOG- of LOG+LEX-profiel verschijnen als minor; directe LEX-profielen ontbreken op deze as.'
-      : 'LOG: named projection op de zuidas. S, O en V zijn majors op vaste slots en bepalen de neutrale LEX-rijen.';
+      : 'LOG: named projection op de zuidas. S, O en V zijn majors op vaste slots en plannen LEX-plaatsen zonder bronknopen te verplaatsen.';
     return 'Alle: centrale view via View-menu. LEX, SYNT en LOG gebruiken named projections met eigen projectiemerkers en selectieregels.';
   }
 
@@ -8944,8 +8958,8 @@
     if (els.mainSouthHeading) els.mainSouthHeading.textContent = isEnglish() ? 'LOG order' : 'LOG-volgorde';
     if (els.mainSouthExplanation) {
       els.mainSouthExplanation.textContent = isEnglish()
-        ? 'Changes the LOG order. LOG slots determine the neutral LEX basis; an explicit rule may replace the final target before drawing.'
-        : 'Wijzigt de LOG-volgorde. LOG-slots bepalen de neutrale LEX-basis; een expliciete regel kan vóór het tekenen het einddoel vervangen.';
+        ? 'Changes the LOG order and reserved LEX rows. It never moves a source node by itself; only an explicit Language Tree rule may do that.'
+        : 'Wijzigt de LOG-volgorde en de gereserveerde LEX-rijen. Dit verplaatst nooit vanzelf een bronknoop; alleen een expliciete Language-Tree-regel mag dat doen.';
     }
     fillCompactChoiceMenu(els.mainSentenceOptions, EXAMPLES, state.example.id, els.mainExampleSelect, id => {
       state.example = EXAMPLES.find(e => e.id === id) || EXAMPLES[0];
@@ -8997,8 +9011,8 @@
           ? `Legacy branch extension: ${[...selected].map(lexInsertionTargetLabel).join(' + ')}. Under LOG authority this is metadata only; adverb distance comes from LOG minors.`
           : `Oude takverlenging: ${[...selected].map(lexInsertionTargetLabel).join(' + ')}. Onder LOG-autoriteit is dit alleen metadata; bijwoordafstand komt uit LOG-minors.`)
         : (isEnglish()
-          ? 'No branch extension. LOG minors determine adverb distance and project to neutral LEX rows.'
-          : 'Geen takverlenging. LOG-minors bepalen de bijwoordafstand en projecteren naar neutrale LEX-rijen.'))
+          ? 'No branch extension. LOG minors determine planned adverb distance; they do not move source nodes.'
+          : 'Geen takverlenging. LOG-minors bepalen de geplande bijwoordafstand; zij verplaatsen geen bronknopen.'))
       : (selected.size
         ? (isEnglish() ? `Branch extension: ${[...selected].map(lexInsertionTargetLabel).join(' + ')}.` : `Takverlenging: ${[...selected].map(lexInsertionTargetLabel).join(' + ')}.`)
         : (isEnglish() ? 'No branch extension.' : 'Geen takverlenging.'));
@@ -10550,35 +10564,39 @@
   }
 
   const CONFIG_TAB_DEFINITIONS = [
+    { id: 'general-ui', nl: 'Interface & weergave', en: 'Interface & display' },
     { id: 'preconfig', nl: 'Voorconfig', en: 'Pre-config' },
-    { id: 'features', nl: 'Toepassingen', en: 'Applications' },
+    { id: 'features', nl: 'Uitbreidingen', en: 'Extensions' },
     { id: 'direct', nl: 'Direct · gedeeld', en: 'Direct · shared' },
     { id: 'readme-carousels', nl: 'LEESMIJ-items', en: 'README topics' },
     { id: 'overview', nl: 'Overzicht', en: 'Overview' },
     { id: 'jan', nl: 'JaN · TODO', en: 'JaN · TODO' },
     { id: 'files', nl: 'Bestanden & export', en: 'Files & export' },
-    { id: 'view', nl: 'Beeld', en: 'View' },
+    { id: 'view', nl: 'Boom & projecties', en: 'Tree & projections' },
     { id: 'log-lex', nl: 'LOG & LEX', en: 'LOG & LEX' },
-    { id: 'advanced', nl: 'Geavanceerd', en: 'Advanced' }
+    { id: 'examples', nl: 'Voorbeelden', en: 'Examples' },
+    { id: 'advanced', nl: 'Compatibiliteit', en: 'Compatibility' }
   ];
   const CONFIG_SCOPE_DEFINITIONS = Object.freeze([
     Object.freeze({ id: 'general', groupNl: 'Algemeen', groupEn: 'General', nl: 'Algemeen', en: 'General' }),
     Object.freeze({ id: 'language-tree', groupNl: 'Calculated', groupEn: 'Calculated', nl: 'Language Tree', en: 'Language Tree' }),
+    Object.freeze({ id: 'direct-shared', groupNl: 'Direct', groupEn: 'Direct', nl: 'Gedeeld', en: 'Shared' }),
     Object.freeze({ id: 'greedy-grow', groupNl: 'Direct', groupEn: 'Direct', nl: 'Greedy Grow', en: 'Greedy Grow' }),
     Object.freeze({ id: 'random', groupNl: 'Direct', groupEn: 'Direct', nl: 'Random', en: 'Random' })
   ]);
   const CONFIG_SCOPE_TABS = Object.freeze({
-    general: Object.freeze(['preconfig', 'direct', 'readme-carousels', 'overview', 'files']),
-    'language-tree': Object.freeze(['features', 'view', 'log-lex', 'jan', 'advanced']),
+    general: Object.freeze(['general-ui', 'readme-carousels', 'overview', 'files']),
+    'language-tree': Object.freeze(['preconfig', 'features', 'view', 'log-lex', 'examples', 'jan', 'advanced']),
+    'direct-shared': Object.freeze(['direct']),
     'greedy-grow': Object.freeze(['direct']),
     random: Object.freeze(['direct'])
   });
-  let activeConfigTab = 'preconfig';
+  let activeConfigTab = 'general-ui';
   let activeConfigScope = 'general';
   let configScopeManual = false;
   let activeDirectConfigMenu = 'general';
   let configMethodScope = '';
-  let lastFullConfigTab = 'preconfig';
+  let lastFullConfigTab = 'general-ui';
   let lastFullConfigScope = 'general';
   let readmeCarouselEditorTopicId = 'readme';
   let readmeCarouselEditorSlideIndex = 0;
@@ -10639,6 +10657,7 @@
 
   function syncConfigScopeUi() {
     const definition = CONFIG_SCOPE_DEFINITIONS.find(scope => scope.id === activeConfigScope) || CONFIG_SCOPE_DEFINITIONS[0];
+    if (document.body) document.body.dataset.configScope = activeConfigScope;
     const scopeNav = document.querySelector('.config-scope-nav');
     if (scopeNav) {
       scopeNav.hidden = !!configMethodScope;
@@ -10747,7 +10766,7 @@
     render();
   }
 
-  function activateConfigTab(tabId = 'preconfig', focusTab = false) {
+  function activateConfigTab(tabId = 'general-ui', focusTab = false) {
     const requestedId = configMethodScope ? 'direct' : tabId;
     const allowedTabs = configTabsForScope();
     const validId = CONFIG_TAB_DEFINITIONS.some(tab => tab.id === requestedId) && allowedTabs.includes(requestedId)
@@ -10801,7 +10820,7 @@
     const scopeGroups = [
       { id: 'general', nl: 'Algemeen', en: 'General', scopes: ['general'] },
       { id: 'calculated', nl: 'Calculated', en: 'Calculated', scopes: ['language-tree'] },
-      { id: 'direct', nl: 'Direct', en: 'Direct', scopes: ['greedy-grow', 'random'] }
+      { id: 'direct', nl: 'Direct', en: 'Direct', scopes: ['direct-shared', 'greedy-grow', 'random'] }
     ];
     scopeGroups.forEach(group => {
       const wrapper = document.createElement('div');
@@ -10866,17 +10885,43 @@
     maxCallout.className = 'config-max-callout';
     maxCallout.innerHTML = '<strong class="config-max-badge">MAX</strong><span data-config-max-text></span>';
 
+    const generalUiCard = document.createElement('section');
+    generalUiCard.className = 'panel-card config-general-ui-card';
+    generalUiCard.dataset.configCard = 'general-ui';
+    generalUiCard.innerHTML = `
+      <div class="help-lang-nl">
+        <h2>Algemeen · interface en weergave</h2>
+        <p class="inline-help">Alleen instellingen die buiten één toepassing staan. Hier staat niets van Language Tree, Greedy Grow of Random.</p>
+      </div>
+      <div class="help-lang-en">
+        <h2>General · interface and display</h2>
+        <p class="inline-help">Only settings that are independent of a single application. Nothing from Language Tree, Greedy Grow or Random is shown here.</p>
+      </div>`;
+    const generalViewGrid = document.createElement('div');
+    generalViewGrid.className = 'config-primary-view-grid config-general-view-grid';
+    generalViewGrid.setAttribute('aria-label', 'Algemene interface-instellingen');
+
     const primaryViewGrid = document.createElement('div');
     primaryViewGrid.className = 'config-primary-view-grid';
-    primaryViewGrid.setAttribute('aria-label', 'Primaire beeldinstellingen');
+    primaryViewGrid.setAttribute('aria-label', 'Language Tree-beeldinstellingen');
     const helpLayoutLabel = document.createElement('label');
     helpLayoutLabel.className = 'select-field';
     helpLayoutLabel.innerHTML = `<span><span class="help-lang-nl">LEESMIJ-indeling</span><span class="help-lang-en">README layout</span></span><select id="helpLayoutModeSelect"><option value="auto">Automatic</option><option value="stacked">List above text</option><option value="side">List left, text right</option></select><small class="config-item-help"><span class="help-lang-nl">Automatisch gebruikt links-rechts alleen op mobiel liggend; elders staat de lijst boven de tekst.</span><span class="help-lang-en">Automatic uses side-by-side only on mobile landscape; elsewhere the list is above the text.</span></small>`;
-    [els.layoutDensitySelect, els.viewFitSelect, els.freeSlotCountSelect].forEach(select => {
+    [els.layoutDensitySelect, els.freeSlotCountSelect].forEach(select => {
       const label = select?.closest?.('label');
       if (label) primaryViewGrid.appendChild(label);
     });
-    primaryViewGrid.appendChild(helpLayoutLabel);
+    const viewFitLabel = els.viewFitSelect?.closest?.('label');
+    if (viewFitLabel) generalViewGrid.appendChild(viewFitLabel);
+    generalViewGrid.appendChild(helpLayoutLabel);
+    generalUiCard.appendChild(generalViewGrid);
+    const lineStyleField = treeCard.querySelector('.line-style-field');
+    if (lineStyleField) generalUiCard.appendChild(lineStyleField);
+    const generalDisplayChecks = document.createElement('div');
+    generalDisplayChecks.className = 'check-grid config-general-display-checks';
+    const showGridLabel = treeCard.querySelector('#showGridInput')?.closest?.('label');
+    if (showGridLabel) generalDisplayChecks.appendChild(showGridLabel);
+    if (generalDisplayChecks.children.length) generalUiCard.appendChild(generalDisplayChecks);
     const helpLayoutSelect = helpLayoutLabel.querySelector('select');
     helpLayoutSelect.value = state.helpLayoutMode;
     helpLayoutSelect.addEventListener('change', event => {
@@ -10904,7 +10949,7 @@
     advancedCard.dataset.configCard = 'advanced';
     const advancedHeading = document.createElement('h2');
     advancedCard.appendChild(advancedHeading);
-    ['.lex-extension-field', '.top-menu-choice-field:not(.lex-extension-field)'].forEach(selector => {
+    ['.lex-extension-field'].forEach(selector => {
       const field = treeCard.querySelector(selector);
       if (field) advancedCard.appendChild(field);
     });
@@ -10925,18 +10970,11 @@
     overviewCard.className = 'panel-card config-overview-dashboard';
     overviewCard.id = 'config-overview';
     overviewCard.innerHTML = `<h2><span class="help-lang-nl">Config-overzicht</span><span class="help-lang-en">Configuration overview</span></h2>
-      <p class="inline-help"><span class="help-lang-nl">Open één onderdeel. De bestaande save-werkwijze blijft ongewijzigd.</span><span class="help-lang-en">Open one section. The existing save workflow remains unchanged.</span></p>
+      <p class="inline-help"><span class="help-lang-nl">Dit overzicht bevat uitsluitend algemene onderdelen. Kies Language Tree of Direct in de balk erboven voor een toepassing.</span><span class="help-lang-en">This overview contains only general sections. Choose Language Tree or Direct in the bar above for an application.</span></p>
       <div class="config-dashboard">
-        <button type="button" data-config-scope="general" data-config-jump="preconfig"><strong>Algemeen · Voorconfig</strong><span>Algemene mogelijkheden vóór toepassingen.</span></button>
-        <button type="button" data-config-scope="general" data-config-jump="direct"><strong>Algemeen · Direct gedeeld</strong><span>Instellingen die Greedy Grow en Random delen.</span></button>
+        <button type="button" data-config-scope="general" data-config-jump="general-ui"><strong>Algemeen · Interface & weergave</strong><span>Toepassingsonafhankelijke interface, raster en presentatie.</span></button>
         <button type="button" data-config-scope="general" data-config-jump="readme-carousels"><strong>Algemeen · LEESMIJ-items</strong><span>Tonen, tekst, beelden en onderschriften per item.</span></button>
-        <button type="button" data-config-scope="general" data-config-jump="files"><strong>Algemeen · Bestanden</strong><span>Projectconfig, export en voorbeelden.</span></button>
-        <button type="button" data-config-scope="language-tree" data-config-jump="features"><strong>Calculated · Language Tree</strong><span>Toepassingen, waaronder bijwoorden.</span></button>
-        <button type="button" data-config-scope="language-tree" data-config-jump="view"><strong>Language Tree · Beeld</strong><span>View, boom, layout, raster en projecties.</span></button>
-        <button type="button" data-config-scope="language-tree" data-config-jump="log-lex"><strong data-config-log-lex-title>Language Tree · LEX</strong><span>LOG- en LEX-plaatsing en actieve insertieprofielen.</span></button>
-        <button type="button" data-config-scope="language-tree" data-config-jump="jan"><strong>Language Tree · JaN · TODO</strong><span>S:np-VP; binair eerst, meertakkig later.</span></button>
-        <button type="button" data-config-scope="greedy-grow" data-config-jump="direct"><strong>Direct · Greedy Grow</strong><span>Uitsluitend de eigen Greedy-instellingen.</span></button>
-        <button type="button" data-config-scope="random" data-config-jump="direct"><strong>Direct · Random</strong><span>Uitsluitend de eigen Random-instellingen.</span></button>
+        <button type="button" data-config-scope="general" data-config-jump="files"><strong>Algemeen · Bestanden</strong><span>Projectconfig, OPN en algemene export.</span></button>
       </div>`;
     overviewCard.querySelectorAll('[data-config-jump]').forEach(button => button.addEventListener('click', () => {
       activateConfigScope(button.dataset.configScope || 'general');
@@ -11044,12 +11082,12 @@
     preconfigCard.id = 'config-preconfig';
     preconfigCard.innerHTML = `
       <div class="help-lang-nl">
-        <h2>Voorconfig · infrastructuur</h2>
-        <p class="inline-help">Een voorconfig schakelt een algemene mogelijkheid in, maar voegt zelf nog geen taalinhoud toe. Toepassingen gebruiken daarna alleen de mogelijkheden die hier gereedstaan.</p>
+        <h2>Language Tree · voorconfig</h2>
+        <p class="inline-help">Deze voorconfig schakelt infrastructuur van Language Tree in, maar voegt zelf nog geen taalinhoud toe. Uitbreidingen van Language Tree gebruiken daarna alleen wat hier gereedstaat.</p>
       </div>
       <div class="help-lang-en">
-        <h2>Pre-config · infrastructure</h2>
-        <p class="inline-help">A pre-config enables a general capability without adding linguistic content. Applications then use only capabilities enabled here.</p>
+        <h2>Language Tree · pre-config</h2>
+        <p class="inline-help">This pre-config enables Language Tree infrastructure without adding linguistic content. Language Tree extensions then use only what is enabled here.</p>
       </div>
       <fieldset class="preconfig-capability-list">
         <legend><span class="help-lang-nl">Insertie per as</span><span class="help-lang-en">Insertion per axis</span></legend>
@@ -11102,12 +11140,12 @@
     featuresCard.id = 'config-features';
     featuresCard.innerHTML = `
       <div class="help-lang-nl">
-        <h2>OGN Basis & toepassingen</h2>
-        <p class="inline-help">OGN Basis bevat de gewone boom, het raster, LEX/SYNT/LOG met S/O/V-majors en voorbeeldzinnen zonder extra inserties. Een uitgewerkte toepassing wordt pas beschikbaar wanneer haar voorconfig gereed is; een gereserveerde toepassing heeft nog geen werking.</p>
+        <h2>Language Tree · basisprofiel en uitbreidingen</h2>
+        <p class="inline-help">Het Language-Tree-basisprofiel bevat de gewone taalboom, LEX/SYNT/LOG met S/O/V-majors en voorbeeldzinnen zonder extra inserties. Dit is niet de algemene OGN-kern. Een uitgewerkte uitbreiding wordt pas beschikbaar wanneer haar voorconfig gereed is; een gereserveerde uitbreiding heeft nog geen werking.</p>
       </div>
       <div class="help-lang-en">
-        <h2>OGN Base & applications</h2>
-        <p class="inline-help">OGN Base contains the ordinary tree, grid, LEX/SYNT/LOG with S/O/V majors, and samples without extra insertions. An implemented application becomes available only after its pre-config is ready; a reserved application has no behaviour yet.</p>
+        <h2>Language Tree · base profile and extensions</h2>
+        <p class="inline-help">The Language Tree base profile contains the ordinary language tree, LEX/SYNT/LOG with S/O/V majors, and samples without extra insertions. It is not the general OGN core. An implemented extension becomes available only after its pre-config is ready; a reserved extension has no behaviour yet.</p>
       </div>
       <div class="feature-profile-status" id="featureProfileStatus" role="status"></div>
       <fieldset class="feature-extra-list">
@@ -11358,15 +11396,17 @@
     janCard.id = 'config-jan';
     janCard.innerHTML = `<div class="help-lang-nl"><h2>JaN · Just another Notation</h2><p><code>S:np-VP</code>, nadrukkelijk niet <code>S:NP-VP</code>.</p><p>Onderzoeksnotatie: <code>S+ np-VP</code>. Eerst voor binaire bomen; later voor niet-binaire, meertakkige bomen.</p><p>TODO: <code>heeft gebeten</code> ↔ <code>gebeten heeft</code>.</p></div><div class="help-lang-en"><h2>JaN · Just another Notation</h2><p><code>S:np-VP</code>, explicitly not <code>S:NP-VP</code>.</p><p>Research notation: <code>S+ np-VP</code>. Binary trees first; non-binary multi-branching trees later.</p><p>TODO: <code>heeft gebeten</code> ↔ <code>gebeten heeft</code>.</p></div>`;
 
+    panels.get('general-ui').appendChild(generalUiCard);
     panels.get('preconfig').appendChild(preconfigCard);
     panels.get('features').appendChild(featuresCard);
     panels.get('direct').appendChild(directConfigCard);
     panels.get('readme-carousels').appendChild(readmeCarouselCard);
     panels.get('overview').appendChild(overviewCard);
     panels.get('jan').appendChild(janCard);
-    panels.get('files').append(projectConfigCard, readmeSlideFileCard, graphExportCard, opnCard, examplesCard);
+    panels.get('files').append(projectConfigCard, readmeSlideFileCard, graphExportCard, opnCard);
     panels.get('view').appendChild(treeCard);
     panels.get('log-lex').append(logSettingsCard, lexCard, relationCard);
+    panels.get('examples').appendChild(examplesCard);
     panels.get('advanced').appendChild(advancedCard);
     const CONFIG_ITEM_HELP = {
       centralModeSelect: ['Kiest de centrale Syntax- of Functional-view.', 'Chooses the central Syntax or Functional view.'],
@@ -11450,8 +11490,8 @@
     setText('.main-view-field span', 'View');
     setText('.main-projection-field span', en ? 'Proj.' : 'Proj.');
     setText('.mobile-adverb-field span', en ? 'Adverbs' : 'Bijwoorden');
-    setText('.config-topbar h2', en ? 'All settings' : 'Alle instellingen');
-    setText('.config-topbar p', en ? 'Pre-config opens first. Enable infrastructure per axis before selecting an application.' : 'Voorconfig opent als eerste. Schakel infrastructuur per as in voordat je een toepassing kiest.');
+    setText('.config-topbar h2', en ? 'Configuration by context' : 'Config per context');
+    setText('.config-topbar p', en ? 'General and each application are separate. Only the settings of the selected context are shown.' : 'Algemeen en iedere toepassing zijn gescheiden. Alleen de instellingen van de gekozen context worden getoond.');
     document.querySelectorAll('[data-config-tab-button]').forEach(button => {
       button.textContent = en ? button.dataset.labelEn : button.dataset.labelNl;
     });
@@ -11482,10 +11522,10 @@
     setText('[data-config-card="relations"] > h2', en ? 'Relations / rules' : 'Relaties / regels');
     setText('.config-save-menu-kicker', en ? 'SAVE OR SHARE NOW' : 'DIRECT OPSLAAN OF DELEN');
     setText('[data-config-card="graph-export"] > h2', en ? 'Save, export and share' : 'Opslaan, exporteren en delen');
-    setText('[data-config-card="advanced"] > h2', en ? 'Advanced settings' : 'Geavanceerde instellingen');
+    setText('[data-config-card="advanced"] > h2', en ? 'Language Tree compatibility' : 'Language Tree-compatibiliteit');
     setText('[data-config-max-text]', en
-      ? 'Default: Tree spacing MAX and Window fit MAX — large type, a lower tree and full use of the app window.'
-      : 'Standaard: Boomruimte MAX en Venstervulling MAX — groot letterbeeld, een lage boom en volledig gebruik van het appvenster.');
+      ? 'Language Tree default: Tree spacing MAX and six free tree rows — large type with a deliberately low tree.'
+      : 'Language Tree-standaard: Boomruimte MAX en zes vrije boomrijen — groot letterbeeld met een bewust lage boom.');
     setText('.right-menu-width-callout .inline-help', en ? 'Set the width of the right menu directly. The grid uses only the space needed for the active view; the remaining space goes to this column.' : 'Kies hier direct de breedte van het rechter menu. Het grid gebruikt alleen de benodigde ruimte voor de actieve view; de rest gaat naar deze kolom.');
     setText('[data-config-card="tree"] > .sticky-note', en ? 'View selects Syntax or Functional. Window fit describes how the tree uses the available app window.' : 'View kiest Syntax of Functional. Venstervulling beschrijft hoe de boom het beschikbare appvenster gebruikt.');
 
@@ -11501,7 +11541,7 @@
     setLabelSpan('branchOtherSelect', en ? 'Other' : 'Overig');
     setLabelSpan('layoutDensitySelect', en ? 'Tree spacing' : 'Boomruimte');
     setLabelSpan('mainLayoutDensitySelectTop', en ? 'Tree spacing' : 'Boomruimte');
-    setLabelSpan('viewFitSelect', en ? 'Window fit' : 'Venstervulling', en ? 'How the tree uses the available app window. MAX fills it.' : 'Hoe de boom het beschikbare appvenster gebruikt. MAX vult het volledig.');
+    setLabelSpan('viewFitSelect', en ? 'Window fit' : 'Venstervulling', en ? 'How the active graph uses the available app window. MAX fills it.' : 'Hoe de actieve graph het beschikbare appvenster gebruikt. MAX vult het volledig.');
     setLabelSpan('mainViewFitSelectTop', en ? 'Window fit' : 'Venstervulling');
     setLabelSpan('freeSlotCountSelect', en ? 'Free tree rows' : 'Boom vrije rijen');
     setLabelSpan('lexProjectionColorSelect', en ? 'LEX color' : 'LEX-kleur');
@@ -11548,8 +11588,8 @@
     document.querySelectorAll('.lex-adverb-insert-field legend').forEach(node => { node.textContent = en ? 'LOG minors for adverbs' : 'LOG-minors voor bijwoorden'; });
     document.querySelectorAll('.lex-adverb-insert-field > .top-menu-choice-help').forEach(node => {
       node.textContent = en
-        ? 'Place each adverb first as a minor in a LOG interval. Every minor adds one fixed distance unit between its surrounding majors. This LOG order supplies the neutral LEX rows; the sample sentence only validates.'
-        : 'Plaats ieder bijwoord eerst als minor in een LOG-interval. Elke minor voegt één vaste afstandseenheid toe tussen de omringende majors. Die LOG-volgorde levert de neutrale LEX-rijen; de voorbeeldzin valideert alleen.';
+        ? 'Place each adverb first as a minor in a LOG interval. Every minor adds one fixed planned distance unit between its surrounding majors. This planning does not move a source node.'
+        : 'Plaats ieder bijwoord eerst als minor in een LOG-interval. Elke minor voegt één vaste geplande afstandseenheid toe tussen de omringende majors. Deze planning verplaatst geen bronknoop.';
     });
     setLabelSpan('lexRuleSelect', en ? 'Utterance-type rule' : 'Uitingtype-regel');
 
@@ -11663,8 +11703,8 @@
     setText('#closeConfigButton, #closeHelpButton', en ? '← Back to: Main' : '← Terug naar: Main');
     setText('#openConfigButton, #openConfigFromHelpButton', 'Config');
     setText('#openHelpButton, #openHelpFromConfigButton', en ? 'README' : 'LEESMIJ');
-    setText('.config-topbar h2', en ? 'Configuration overview' : 'Config-overzicht');
-    setText('.config-topbar p', en ? 'First set the pre-config, then choose an application. Save still uses Yes · save config / No · restore last saved config.' : 'Stel eerst de Voorconfig in en kies daarna een toepassing. Opslaan blijft Ja · bewaar config / Nee · herstel laatst bewaarde config.');
+    setText('.config-topbar h2', en ? 'Configuration by context' : 'Config per context');
+    setText('.config-topbar p', en ? 'General and each application are separate. Only the settings of the selected context are shown.' : 'Algemeen en iedere toepassing zijn gescheiden. Alleen de instellingen van de gekozen context worden getoond.');
     setText('.help-topbar .intro-kicker', en ? 'README' : 'LEESMIJ');
     setText('.help-topbar h2', en ? 'Project information' : 'Projectinformatie');
     setText('.help-topbar p', en ? 'README topics and the selected text are both visible immediately. Drag the divider to enlarge or reduce the text panel.' : 'LEESMIJ-onderwerpen en de geselecteerde tekst zijn direct zichtbaar. Sleep de scheidingslijn om het tekstscherm groter of kleiner te maken.');
@@ -13004,7 +13044,7 @@
     download(`opengraph-local-config-log-${VERSION}.txt`, lines.join('\n'), 'text/plain');
   }
 
-  function setAppScreen(screen = 'main') {
+  function setAppScreen(screen = 'main', preferredConfigScope = '') {
     const next = ['main', 'config', 'help'].includes(screen) ? screen : 'main';
     const isMain = next === 'main';
     const isConfig = next === 'config';
@@ -13021,6 +13061,14 @@
     if (isConfig) {
       configScopeManual = false;
       syncConfigMethodScope();
+      if (!configMethodScope && ['general', 'language-tree', 'direct-shared'].includes(preferredConfigScope)) {
+        activeConfigScope = preferredConfigScope;
+        const allowedTabs = configTabsForScope(preferredConfigScope);
+        if (!allowedTabs.includes(activeConfigTab)) activeConfigTab = allowedTabs[0];
+        lastFullConfigScope = activeConfigScope;
+        lastFullConfigTab = activeConfigTab;
+        syncConfigScopeUi();
+      }
       activateConfigTab(configMethodScope ? 'direct' : activeConfigTab);
     }
     window.setTimeout(() => {
@@ -13033,8 +13081,8 @@
     }, 0);
   }
 
-  function setConfigScreen(open) {
-    setAppScreen(open ? 'config' : 'main');
+  function setConfigScreen(open, preferredConfigScope = '') {
+    setAppScreen(open ? 'config' : 'main', preferredConfigScope);
   }
 
   function setHelpScreen(open) {
@@ -13300,9 +13348,13 @@
       resetManualViewBox();
       render();
     });
-    els.openConfigButton?.addEventListener('click', () => { if (els.mainExtraMenu) els.mainExtraMenu.open = false; if (els.mainActionsMenu) els.mainActionsMenu.open = false; setConfigScreen(true); });
+    els.openConfigButton?.addEventListener('click', () => {
+      if (els.mainExtraMenu) els.mainExtraMenu.open = false;
+      if (els.mainActionsMenu) els.mainActionsMenu.open = false;
+      setConfigScreen(true, validPlacementMode(state.placementMode));
+    });
     els.closeConfigButton?.addEventListener('click', () => setConfigScreen(false));
-    els.openConfigFromHelpButton?.addEventListener('click', () => setConfigScreen(true));
+    els.openConfigFromHelpButton?.addEventListener('click', () => setConfigScreen(true, 'general'));
     els.openHelpButton?.addEventListener('click', () => { if (els.mainExtraMenu) els.mainExtraMenu.open = false; if (els.mainActionsMenu) els.mainActionsMenu.open = false; setHelpScreen(true); });
     els.openHelpFromConfigButton?.addEventListener('click', () => setHelpScreen(true));
     els.closeHelpButton?.addEventListener('click', () => setHelpScreen(false));

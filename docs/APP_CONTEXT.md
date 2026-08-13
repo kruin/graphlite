@@ -1,15 +1,20 @@
 # Actuele contractlaag · v2.0.0-rc.45
 
-Config scheidt nu `Voorconfig → Toepassingen`. Insertie is vooraf en
-onafhankelijk schakelbaar op LEX, SYNT en LOG. Bijwoorden vereist LEX + LOG;
-een asschakelaar voegt zonder toepassing geen taalinhoud toe.
+Config scheidt nu **Algemeen**, **Calculated → Language Tree** en **Direct →
+Gedeeld / Greedy Grow / Random**. Algemeen bevat uitsluitend
+toepassingsonafhankelijke interface-, LEESMIJ- en bestandsinstellingen.
+Voorconfig, uitbreidingen, boom, voorbeelden, LEX, SYNT en LOG staan alleen
+onder Language Tree. Insertie is daar vooraf en onafhankelijk schakelbaar op
+LEX, SYNT en LOG. Bijwoorden vereist LEX + LOG; een asschakelaar voegt zonder
+toepassing geen taalinhoud toe.
 
-De projectiekern is `bronknoop → horizontale LEX-projectie → LOG-doel via
-LEX-Wissel → expliciete Wissels → voorbeeldzin als validatie`. LOG gebruikt
-vaste slots; iedere bijwoord-minor vergroot de relevante majorafstand. LOG
-bepaalt doelrijen, nooit de bronhoogte van de projectie. De voorbeeldzin
-stuurt de layout niet. Bij automatische plaatsing bepaalt `.log-class-config`
-het interval; oude voorbeeldpositiehints worden genegeerd.
+De projectiekern is `bronknoop → horizontale LEX-projectie op bronhoogte →
+alleen een expliciete Language-Tree-regel kan verplaatsen`. LOG gebruikt vaste
+slots; iedere bijwoord-minor vergroot de relevante geplande afstand. De
+LOG-planning alleen verplaatst nooit een bronknoop. In `HOND BIJT MAN` blijft
+`MAN` exact op MAN-bronhoogte en wisselt alleen `BIJT` volgens V2. De
+doorschijnende verdikking in Play 2/3 is slechts een tijdelijke
+LEX-ruimte-indicator van de viewer.
 `Syntax → Functional` zijn centrale views en `LEX / SYNT / LOG` named
 projections. Onderstaande tekst is historisch waar zij hiermee botst.
 
