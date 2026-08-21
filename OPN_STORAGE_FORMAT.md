@@ -136,11 +136,11 @@ De eerste Language Tree-extensie gebruikt profiel `multi-ogn` met extra
   "layout_resolution": {
     "schema": "ogn-joint-flip-constraints-v1",
     "mode": "joint",
-    "objective": ["satisfy-required-relations", "minimize-flip-count", "minimize-rigid-shift"],
+    "objective": ["satisfy-required-relations", "minimize-flip-count", "minimize-changed-dimensions", "minimize-rigid-shift"],
     "currentSupport": {
-      "status": "multiple-relation-rendering-context-pro-memorie",
-      "active": ["existing-layout", "rigid-shift-s2", "check-all-relation-alignments", "render-satisfied-coreferences"],
-      "deferred": ["joint-branch-flip-search"]
+      "status": "joint-branch-flip-search-active-context-pro-memorie",
+      "active": ["joint-branch-flip-search", "four-binary-placement-variants", "rigid-shift-s2", "check-all-relation-alignments", "render-satisfied-coreferences"],
+      "deferred": []
     }
   },
   "play": {
@@ -186,7 +186,10 @@ MAN; `surface_sentences` bewaart de gerealiseerde anafoor. Schema v1 met
 
 `composition.play` bewaart de didactische tijdlijn afzonderlijk van de
 bronbomen. Eerst wordt S1 voltooid, daarna S2. Context-inserties hebben een
-eigen Play-stap. Een hoofdzin krijgt V2; een omdat-bijzin houdt V-finaal en
+eigen Play-stap. Als een zin niet-normale branches gebruikt, bewaart haar
+unitrecord `branch_flip_ids` en één `branch_flip_step`; de tijdlijn behandelt
+die gezamenlijke variantwisseling atomair. Een hoofdzin krijgt V2; een
+omdat-bijzin houdt V-finaal en
 heeft geen V2-stap. Daarna volgen alle Text-coreferenties en hun LEX-vormen.
 `reverse=exact` betekent dat
 pijl-terug precies de laatst toegevoegde laag verwijdert.
@@ -194,12 +197,16 @@ pijl-terug precies de laatst toegevoegde laag verwijdert.
 `composition.relations[]` bewaart uitsluitend Text–Text-coreferentie uit de
 actieve combinatie. Context blijft p.m.
 De bestaande enkelvoudige `composition.relation` blijft daarnaast aanwezig
-voor de primair gerenderde relatie en backward compatibility. De huidige
-importvalidator controleert die primaire relatie; alle reeds uitgelijnde
-coreferenties worden gerenderd. Joint flipsearch blijft toekomstig werk.
+voor de primair gerenderde relatie en backward compatibility. De
+importvalidator controleert die primaire relatie; de compositor toetst alle
+vereiste relaties samen en rendert ze na een geldige gezamenlijke oplossing.
 
 `composition.layout_resolution` bewaart de gezamenlijke variabelen,
-constraints, doelen en de machineleesbare implementatiegrens. Zie
+constraints, doelen, branches en `resolution.selectedVariants`. Alleen een
+branch met `linearization: "child-order"` kan kort–lang tevens als omgekeerde
+LEX-childvolgorde projecteren. Paradata bewaart bovendien
+`requested_flip_variants` en `selected_flip_variants`, zodat `auto` en een
+expliciete Configkeuze achteraf onderscheiden blijven. Zie
 `ANAPHOR_LANGUAGE_TREE_EXTENSION.md` en `FLIP_CONSTRAINT_SOLVER.md`.
 
 

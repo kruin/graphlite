@@ -11,7 +11,13 @@ S2-bomen. `HIJ` en `HEM` realiseren die bronknopen op LEX; `GISTEREN`,
 `VANDAAG`, `ER`, `NIET MEER` en `OMDAT` zijn zelfstandige Context-inserties
 zonder Text-boomknoop.
 **De boer slaat de ezel omdat hij hem bezit.** bevat zowel `BOER→HIJ` als
-`EZEL→HEM`; `BEZIT` blijft finaal. Nadere Context-uitwerking blijft p.m. Zie
+`EZEL→HEM`; `BEZIT` blijft finaal. Nadere Context-uitwerking blijft p.m.
+De actieve flipfixture **De man slaat de hond omdat die hem heeft gebeten.**
+verbindt `HOND→DIE` en `MAN→HEM`. Iedere gedeclareerde binaire tak kiest in
+één gezamenlijke constraintoplossing normaal, links–rechts, kort–lang of
+beide. Alleen `linearization: "child-order"` keert ook LEX-children om:
+`HEEFT GEBETEN` ↔ `GEBETEN HEEFT`. Zie
+[`FLIP_CONSTRAINT_SOLVER.md`](FLIP_CONSTRAINT_SOLVER.md),
 [`CONTEXT_TAXONOMY.md`](CONTEXT_TAXONOMY.md),
 [`TEXT_AND_CONTEXT.md`](TEXT_AND_CONTEXT.md),
 [`MULTI_OGN_ANAPHOR.md`](MULTI_OGN_ANAPHOR.md),

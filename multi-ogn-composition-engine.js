@@ -7,6 +7,7 @@
 
   const SCHEMA = 'ogn-multi-composition-v2';
   const LEGACY_SCHEMA = 'ogn-multi-composition-v1';
+  const BRANCH_VARIANTS = Object.freeze(['normal', 'left-right', 'short-long', 'both']);
 
   function finiteNumber(value, label) {
     const number = Number(value);
@@ -111,6 +112,142 @@
       throw new Error('Een OGN-eenheid is intern vervormd; compositie mag uitsluitend star verschuiven.');
     }
     return first;
+  }
+
+  function normalizeBranchCandidate(value, index = 0) {
+    const candidate = value && typeof value === 'object' ? value : {};
+    const id = String(candidate.id || `branch-${index + 1}`).trim();
+    const unitId = String(candidate.unitId || candidate.unit_id || '').trim();
+    const nodeId = String(candidate.nodeId || candidate.node_id || '').trim();
+    if (!id || !unitId || !nodeId) {
+      throw new Error(`Flipkandidaat ${index + 1} vereist id, unitId en nodeId.`);
+    }
+    const requested = Array.isArray(candidate.variants) && candidate.variants.length
+      ? candidate.variants.map(item => String(item || '').trim().toLowerCase())
+      : [...BRANCH_VARIANTS];
+    const variants = [...new Set(requested)];
+    if (!variants.length || variants.some(variant => !BRANCH_VARIANTS.includes(variant))) {
+      throw new Error(`Flipkandidaat ${id} bevat een onbekende variant.`);
+    }
+    if (!variants.includes('normal')) variants.unshift('normal');
+    return Object.freeze({
+      id,
+      unitId,
+      nodeId,
+      variants: Object.freeze(variants),
+      defaultVariant: 'normal',
+      operation: 'binary-placement-variant',
+      linearization: String(candidate.linearization || 'none').trim().toLowerCase() === 'child-order'
+        ? 'child-order'
+        : 'none'
+    });
+  }
+
+  function normalizeBranchCandidates(values = []) {
+    const ids = new Set();
+    const endpoints = new Set();
+    return Object.freeze((Array.isArray(values) ? values : []).map((value, index) => {
+      const candidate = normalizeBranchCandidate(value, index);
+      const endpoint = `${candidate.unitId}:${candidate.nodeId}`;
+      if (ids.has(candidate.id)) throw new Error(`Dubbele flipkandidaat-id: ${candidate.id}.`);
+      if (endpoints.has(endpoint)) throw new Error(`Vertakking ${endpoint} is meer dan eenmaal als flipkandidaat gedeclareerd.`);
+      ids.add(candidate.id);
+      endpoints.add(endpoint);
+      return candidate;
+    }));
+  }
+
+  function enumerateBranchAssignments(branches = [], selectedVariants = {}) {
+    const candidates = normalizeBranchCandidates(branches);
+    const forced = selectedVariants && typeof selectedVariants === 'object' ? selectedVariants : {};
+    const assignments = [];
+    function visit(index, assignment) {
+      if (index >= candidates.length) {
+        assignments.push(Object.freeze({ ...assignment }));
+        return;
+      }
+      const branch = candidates[index];
+      const requested = String(forced[branch.id] || 'auto').trim().toLowerCase();
+      const variants = requested === 'auto' || !requested
+        ? branch.variants
+        : branch.variants.includes(requested) ? [requested] : [];
+      if (!variants.length) throw new Error(`Flipvariant ${requested} is niet toegestaan voor ${branch.id}.`);
+      variants.forEach(variant => visit(index + 1, { ...assignment, [branch.id]: variant }));
+    }
+    visit(0, {});
+    return Object.freeze(assignments);
+  }
+
+  function variantDimensions(variant) {
+    const value = String(variant || 'normal');
+    if (value === 'left-right') return 1;
+    if (value === 'short-long') return 1;
+    if (value === 'both') return 2;
+    return 0;
+  }
+
+  function scoreJointCandidate(candidate, branches) {
+    const composition = candidate?.composition;
+    if (!composition) return null;
+    const required = (composition.relationAlignments || []).filter(alignment => alignment.required !== false);
+    if (required.some(alignment => alignment.satisfied !== true)) return null;
+    const assignment = candidate.assignment || {};
+    const changedBranches = branches.filter(branch => String(assignment[branch.id] || 'normal') !== 'normal').length;
+    const changedDimensions = branches.reduce((total, branch) => total + variantDimensions(assignment[branch.id]), 0);
+    const lowerShift = composition.units?.find(unit => Number(unit.order) === 2)?.shift || { dx: 0, dy: 0 };
+    const rigidShift = Math.abs(Number(lowerShift.dx) || 0) + Math.abs(Number(lowerShift.dy) || 0);
+    const signature = branches.map(branch => `${branch.unitId}:${branch.nodeId}:${assignment[branch.id] || 'normal'}`).join('|');
+    return Object.freeze([changedBranches, changedDimensions, rigidShift, signature]);
+  }
+
+  function compareJointScores(first, second) {
+    for (let index = 0; index < 3; index += 1) {
+      if (first[index] !== second[index]) return first[index] - second[index];
+    }
+    return String(first[3]).localeCompare(String(second[3]), 'en');
+  }
+
+  function solveJoint(input = {}) {
+    if (typeof input.buildCandidate !== 'function') {
+      throw new Error('De gezamenlijke flipsolver vereist buildCandidate(assignment).');
+    }
+    const branches = normalizeBranchCandidates(input.branches || []);
+    const assignments = enumerateBranchAssignments(branches, input.selectedVariants || {});
+    const valid = [];
+    const rejected = [];
+    assignments.forEach(assignment => {
+      try {
+        const composition = input.buildCandidate(assignment);
+        const candidate = { assignment, composition };
+        const score = scoreJointCandidate(candidate, branches);
+        if (score) valid.push({ ...candidate, score });
+        else rejected.push({ assignment, reason: 'required-alignments-unsatisfied' });
+      } catch (error) {
+        rejected.push({ assignment, reason: String(error?.message || error) });
+      }
+    });
+    valid.sort((first, second) => compareJointScores(first.score, second.score));
+    const selected = valid[0];
+    if (!selected) {
+      throw new Error('FLIP CONFLICT: geen gezamenlijke variant kan alle vereiste S1–S2-uitlijningen oplossen.');
+    }
+    return Object.freeze({
+      ...selected.composition,
+      layoutResolution: Object.freeze({
+        schema: 'ogn-joint-flip-resolution-v1',
+        status: 'solved',
+        exploredCandidates: assignments.length,
+        validCandidates: valid.length,
+        selectedVariants: Object.freeze({ ...selected.assignment }),
+        selectedBranches: Object.freeze(branches.map(branch => Object.freeze({
+          ...branch,
+          variant: selected.assignment[branch.id] || 'normal',
+          changedDimensions: variantDimensions(selected.assignment[branch.id])
+        }))),
+        score: Object.freeze([...selected.score]),
+        rejectedCandidates: rejected.length
+      })
+    });
   }
 
   function composePair(input = {}) {
@@ -266,8 +403,15 @@
   return Object.freeze({
     SCHEMA,
     LEGACY_SCHEMA,
+    BRANCH_VARIANTS,
     SUPPORTED_SCHEMAS: Object.freeze([SCHEMA, LEGACY_SCHEMA]),
     composePair,
+    normalizeBranchCandidate,
+    normalizeBranchCandidates,
+    enumerateBranchAssignments,
+    variantDimensions,
+    scoreJointCandidate,
+    solveJoint,
     rigidDeltaBeforeAfter,
     sharedCoordinates,
     validateUnit

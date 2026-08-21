@@ -43,6 +43,20 @@
       "notes": ["S1 uses V2; S2 is subordinate and leaves BEZIT clause-final.", "OMDAT and causal interpretation belong to Context; neither is a central Text node."]
     },
     {
+      "id": "user-man-dog-because-perfect",
+      "provenance": {"kind": "user-supplied", "citation": null},
+      "class": "multiple-text-coreferences-with-joint-binary-flip",
+      "normalized": {"S1": "De man slaat de hond", "S2": "omdat die hem heeft gebeten."},
+      "relations": [
+        {"schema": "ogn-referent-anaphor-v1", "id": "hond-die", "referent": "S1:HOND", "anaphorSource": "S2:HOND", "lexSurface": "DIE", "type": "coreference"},
+        {"schema": "ogn-referent-anaphor-v1", "id": "man-hem", "referent": "S1:MAN", "anaphorSource": "S2:MAN", "lexSurface": "HEM", "type": "coreference"}
+      ],
+      "lexInsertions": [{"unitId": "S2", "surface": "OMDAT", "category": "COMP", "layer": "Context"}],
+      "contextStatus": "p.m.",
+      "compatibility": "central-text-coreference-v1-plus-joint-flip",
+      "notes": ["User-supplied regression fixture, not a literature citation.", "The four placement variants are normal, left-right, short-long and both.", "Short-long reverses the V-cluster LEX order from HEEFT GEBETEN to GEBETEN HEEFT; left-right alone does not."]
+    },
+    {
       "id": "drt-farmer-donkey",
       "provenance": {
         "kind": "short-source-example-and-dutch-normalization",

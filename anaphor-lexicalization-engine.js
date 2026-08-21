@@ -13,7 +13,7 @@
     }),
     Object.freeze({
       id: 'die', surface: 'DIE', category: 'PRON', kind: 'demonstrative-pronoun',
-      antecedents: Object.freeze(['man', 'vrouw', 'boer']), roles: Object.freeze(['subject']), recommended: false,
+      antecedents: Object.freeze(['man', 'vrouw', 'boer', 'hond']), roles: Object.freeze(['subject']), recommended: false,
       label: 'DIE · aanwijzend voornaamwoord'
     }),
     Object.freeze({

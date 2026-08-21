@@ -48,8 +48,14 @@ Dezelfde lagen bewaren ook:
 
 - `placementMode`: `language-tree`, `multi-ogn-anaphor`, `greedy-grow` of
   `random`; standaard blijft `language-tree`;
-- `anaphorLexicalization`: het lexiconprofiel voor de LEX-realisatie van het
-  coreferentiële S2-subject; standaard `hij`;
+- `anaphorCombinationId` en `anaphorCombinations`: de actieve en beschikbare
+  S1–S2-combinaties;
+- `anaphorLexicalizations`: het lexiconprofiel per combinatie voor de primaire
+  coreferentiële S2-Text-bron; andere relaties bewaren hun eigen profiel;
+- `anaphorFlipVariants`: per combinatie een map van branch-id naar `auto`,
+  `normal`, `left-right`, `short-long` of `both`. `auto` laat de gezamenlijke
+  solver alle vereiste Text-coreferenties en één starre S2-shift tegelijk
+  oplossen;
 - `gridColor` en `gridLineWeight`;
 - `projectionLineWeight` en `boxLineWeight`;
 - `lexProjectionColor`, `syntProjectionColor` en `logProjectionColor`.

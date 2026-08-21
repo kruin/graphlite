@@ -10,9 +10,14 @@ Anaphor connects only central Text source nodes across independently
 calculated S1 and S2 trees; `HIJ` and `HEM` realize those nodes on LEX.
 `GISTEREN`, `VANDAAG`, `ER`, `NIET MEER` and `OMDAT` are independent Context
 insertions, never central tree nodes. **De boer slaat de ezel omdat hij hem
-bezit.** contains
-both `BOER→HIJ` and `EZEL→HEM`; `BEZIT` remains clause-final. Further
-Further Context modeling remains p.m. See
+bezit.** contains both `BOER→HIJ` and `EZEL→HEM`; `BEZIT` remains
+clause-final. Further
+Context modeling remains p.m. The active flip fixture **De man slaat de hond
+omdat die hem heeft gebeten.** links `HOND→DIE` and `MAN→HEM`. Its declared
+binary branches each select normal, left–right, short–long or both in one joint
+constraint solution. Only `linearization: "child-order"` also reverses LEX
+children: `HEEFT GEBETEN` ↔ `GEBETEN HEEFT`. See
+[`FLIP_CONSTRAINT_SOLVER.md`](FLIP_CONSTRAINT_SOLVER.md),
 [`CONTEXT_TAXONOMY.md`](CONTEXT_TAXONOMY.md),
 [`TEXT_AND_CONTEXT.md`](TEXT_AND_CONTEXT.md),
 [`MULTI_OGN_ANAPHOR.md`](MULTI_OGN_ANAPHOR.md),

@@ -30,11 +30,18 @@ insertions on LEX and never central tree nodes. The additional
 example **De boer slaat de ezel omdat hij hem bezit.** has two Text links,
 `BOER→HIJ` and `EZEL→HEM`; `OMDAT` is a Context insertion and its subordinate
 clause keeps `BEZIT` final without V2. Further Context modeling remains p.m.
+The active flip fixture **De man slaat de hond omdat die hem heeft gebeten.**
+links `HOND→DIE` and `MAN→HEM`. Each declared binary branch has four
+placement variants: normal, left–right, short–long and both. The joint solver
+selects all branch variants and the rigid S2 shift in one constraint problem;
+only a branch marked `linearization: "child-order"` also reverses its LEX
+children, as in `HEEFT GEBETEN` ↔ `GEBETEN HEEFT`. See
+[`FLIP_CONSTRAINT_SOLVER.md`](FLIP_CONSTRAINT_SOLVER.md).
 The supplied Context tree is documented in
 [`CONTEXT_TAXONOMY.md`](CONTEXT_TAXONOMY.md). See
 [`TEXT_AND_CONTEXT.md`](TEXT_AND_CONTEXT.md). Definitions are in
 [`ANAPHOR_AND_S1_S2_RELATION_DEFINITIONS.md`](ANAPHOR_AND_S1_S2_RELATION_DEFINITIONS.md);
-eight positive, negative and ambiguous pairs are documented in
+nine positive, negative and ambiguous pairs are documented in
 [`S1_S2_RELATION_TEST_FIXTURES.md`](S1_S2_RELATION_TEST_FIXTURES.md).
 
 ## OGN Core: free placement first

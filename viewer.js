@@ -1612,6 +1612,37 @@
       || combinations[0];
   }
 
+  const ANAPHOR_FLIP_VARIANTS = Object.freeze(['auto', 'normal', 'left-right', 'short-long', 'both']);
+
+  function configuredAnaphorFlipVariants(demo = activeMultiOgnAnaphorDemo()) {
+    const configured = state?.anaphorFlipVariants?.[demo.id];
+    const source = configured && typeof configured === 'object' && !Array.isArray(configured)
+      ? configured
+      : {};
+    return Object.fromEntries((demo.layoutResolution?.branches || []).map(branch => {
+      const requested = String(source[branch.id] || 'auto').trim().toLowerCase();
+      const selected = ANAPHOR_FLIP_VARIANTS.includes(requested) && (requested === 'auto' || branch.variants.includes(requested))
+        ? requested
+        : 'auto';
+      return [branch.id, selected];
+    }));
+  }
+
+  function setConfiguredAnaphorFlipVariant(branchId, variant, demo = activeMultiOgnAnaphorDemo()) {
+    const requested = String(variant || 'auto').trim().toLowerCase();
+    const branch = (demo.layoutResolution?.branches || []).find(item => item.id === branchId);
+    if (!branch) throw new Error(`Onbekende flipvertakking: ${branchId}.`);
+    if (!ANAPHOR_FLIP_VARIANTS.includes(requested) || (requested !== 'auto' && !branch.variants.includes(requested))) {
+      throw new Error(`Flipvariant ${requested} is niet toegestaan voor ${branchId}.`);
+    }
+    if (!state.anaphorFlipVariants || typeof state.anaphorFlipVariants !== 'object') state.anaphorFlipVariants = {};
+    state.anaphorFlipVariants[demo.id] = {
+      ...(state.anaphorFlipVariants[demo.id] || {}),
+      [branchId]: requested
+    };
+    return requested;
+  }
+
   let ANAPHOR_LEXICALIZATION_PROFILES = Object.freeze(
     (globalThis.OGNAnaphorLexicon?.DEFAULT_PROFILES || []).map(profile => ({ ...profile }))
   );
@@ -2165,6 +2196,7 @@
     anaphorCombinations: normalizeAnaphorCombinationConfigs(DEFAULT_ANAPHOR_COMBINATION_CONFIGS),
     anaphorCombinationId: DEFAULT_ANAPHOR_COMBINATION_ID,
     anaphorLexicalizations: {},
+    anaphorFlipVariants: {},
     anaphorLexicalization: 'hij',
     directPlacementGeneral: { ...DEFAULT_DIRECT_PLACEMENT_GENERAL },
     greedyGrowConfig: { ...DEFAULT_GREEDY_GROW_CONFIG },
@@ -3508,6 +3540,14 @@
     return 'auto';
   }
 
+  function explicitBinaryBranchVariant(node, options = {}) {
+    const variants = options.branchVariants && typeof options.branchVariants === 'object'
+      ? options.branchVariants
+      : {};
+    const variant = String(variants[String(node?.id || '')] || '').trim().toLowerCase();
+    return ['normal', 'left-right', 'short-long', 'both'].includes(variant) ? variant : null;
+  }
+
   function layoutWidth(layout) {
     return layout.box.maxX - layout.box.minX + 1;
   }
@@ -3560,15 +3600,28 @@
   }
 
   function composeBranch(node, childLayouts, options = {}, sidePreference = 0) {
+    const binaryVariant = childLayouts.length === 2 ? explicitBinaryBranchVariant(node, options) : null;
     const order = explicitBranchOrder(node, options);
     const normalChildren = childLayouts;
     const flippedChildren = [...childLayouts].reverse();
 
-    function layoutWithChildOrder(childrenForOrder) {
+    function layoutWithChildOrder(childrenForOrder, placementSide = sidePreference) {
       if (childrenForOrder.length === 2) {
-        return layoutBinary(node, cloneLayout(childrenForOrder[0]), cloneLayout(childrenForOrder[1]), options, sidePreference);
+        return layoutBinary(node, cloneLayout(childrenForOrder[0]), cloneLayout(childrenForOrder[1]), options, placementSide);
       }
-      return layoutNAry(node, childrenForOrder.map(cloneLayout), options, sidePreference);
+      return layoutNAry(node, childrenForOrder.map(cloneLayout), options, placementSide);
+    }
+
+    // Een binaire OGN-vertakking heeft twee onafhankelijke plaatsingsdimensies:
+    // links↔rechts en kort↔lang. Samen leveren zij vier toestanden. De
+    // kort↔lang-variant keert de child-volgorde én de eerste zijde om, zodat
+    // iedere child zijn zijde behoudt maar de korte/lange plaats inneemt.
+    if (binaryVariant) {
+      const baseSide = preferredFirstSide(options, sidePreference);
+      if (binaryVariant === 'left-right') return layoutWithChildOrder(normalChildren, -baseSide);
+      if (binaryVariant === 'short-long') return layoutWithChildOrder(flippedChildren, -baseSide);
+      if (binaryVariant === 'both') return layoutWithChildOrder(flippedChildren, baseSide);
+      return layoutWithChildOrder(normalChildren, baseSide);
     }
 
     if (order === 'normal') return layoutWithChildOrder(normalChildren);
@@ -4333,31 +4386,120 @@
     );
   }
 
-  function multiOgnSentenceLayout(sentence) {
-    // De eerste multi-OGN-versie is bewust deterministisch. Iedere zin wordt
-    // met dezelfde vaste Language Tree-strategie berekend; pas daarna mag de
-    // compositie-engine de complete tweede eenheid star verschuiven.
+  function multiOgnSentenceLayout(sentence, branchVariants = {}) {
+    // Iedere zin blijft een zelfstandig geldige OGN. Een flip kiest uitsluitend
+    // een van de vier plaatsingsvarianten van een gedeclareerde binaire tak;
+    // daarna mag de compositie-engine alleen de complete tweede eenheid star
+    // verschuiven.
     const layout = normalizeLayout(layoutTree(cloneTree(sentence.tree), 0, {
       firstSide: -1,
       branchOrder: 'normal',
-      branchOverrides: { top: 'normal', middle: 'normal', other: 'normal' }
+      branchOverrides: { top: 'normal', middle: 'normal', other: 'normal' },
+      branchVariants
     }));
     return assertUniqueNodeGridLines(layout, `multi-OGN ${sentence.id} vóór compositie`);
   }
 
-  function multiOgnAnaphorComposition() {
+  function treeNodeIdSet(node, result = new Set()) {
+    if (!node) return result;
+    if (node.id) result.add(String(node.id));
+    (node.children || []).forEach(child => treeNodeIdSet(child, result));
+    return result;
+  }
+
+  function multiOgnLexForVariants(sentence, demo, selectedVariants = {}) {
+    const ordered = sentence.lex.map(item => ({ ...item }));
+    (demo.layoutResolution?.branches || []).filter(branch =>
+      branch.unitId === sentence.id && branch.linearization === 'child-order'
+    ).forEach(branch => {
+      const variant = String(selectedVariants[branch.id] || 'normal');
+      if (variant !== 'short-long' && variant !== 'both') return;
+      const branchNode = findTreeSpecNode(sentence.tree, node => node.id === branch.nodeId);
+      if (!branchNode || (branchNode.children || []).length !== 2) return;
+      const firstIds = treeNodeIdSet(branchNode.children[0]);
+      const secondIds = treeNodeIdSet(branchNode.children[1]);
+      const positions = [];
+      const firstItems = [];
+      const secondItems = [];
+      ordered.forEach((item, index) => {
+        const nodeId = String(item.nodeId || '');
+        if (firstIds.has(nodeId)) {
+          positions.push(index);
+          firstItems.push(item);
+        } else if (secondIds.has(nodeId)) {
+          positions.push(index);
+          secondItems.push(item);
+        }
+      });
+      const replacement = [...secondItems, ...firstItems];
+      positions.sort((a, b) => a - b).forEach((position, index) => {
+        ordered[position] = replacement[index];
+      });
+    });
+    return ordered;
+  }
+
+  function sentenceCaseFromLexItems(items = []) {
+    const words = items.map(item => String(item.label || '').trim().toLocaleLowerCase('nl-NL')).filter(Boolean);
+    if (!words.length) return '';
+    let sentence = words.join(' ');
+    sentence = sentence.charAt(0).toLocaleUpperCase('nl-NL') + sentence.slice(1);
+    return /[.!?]$/.test(sentence) ? sentence : `${sentence}.`;
+  }
+
+  function multiOgnAnaphorComposition(options = {}) {
     const engine = globalThis.OGNMultiComposition;
-    if (!engine?.composePair) throw new Error('Multi-OGN-compositie-engine ontbreekt.');
+    if (!engine?.composePair || !engine?.solveJoint) throw new Error('Multi-OGN-compositie-engine ontbreekt.');
     const demo = activeMultiOgnAnaphorDemo();
     const [s1, s2] = demo.sentences;
-    const composed = engine.composePair({
-      upper: { id: s1.id, layout: multiOgnSentenceLayout(s1), lexInsertions: s1.lexInsertions },
-      lower: { id: s2.id, layout: multiOgnSentenceLayout(s2), lexInsertions: s2.lexInsertions },
-      relation: demo.relation,
-      relations: demo.relations,
-      gapRows: demo.gapRows
-    });
+    const branches = demo.layoutResolution?.branches || [];
+    const exactVariants = options.exactVariants && typeof options.exactVariants === 'object'
+      ? Object.fromEntries(branches.map(branch => [branch.id, String(options.exactVariants[branch.id] || 'normal')]))
+      : null;
+    const requestedVariants = exactVariants || (options.forceNormal === true
+      ? Object.fromEntries(branches.map(branch => [branch.id, 'normal']))
+      : configuredAnaphorFlipVariants(demo));
+    const layoutCache = new Map();
+    function layoutForSentence(sentence, assignment) {
+      const sentenceBranches = branches.filter(branch => branch.unitId === sentence.id);
+      const branchVariants = Object.fromEntries(sentenceBranches.map(branch => [branch.nodeId, assignment[branch.id] || 'normal']));
+      const cacheKey = `${sentence.id}:${sentenceBranches.map(branch => `${branch.id}=${assignment[branch.id] || 'normal'}`).join('|')}`;
+      if (!layoutCache.has(cacheKey)) layoutCache.set(cacheKey, multiOgnSentenceLayout(sentence, branchVariants));
+      return layoutCache.get(cacheKey);
+    }
+    function composeAssignment(assignment) {
+      return engine.composePair({
+        upper: { id: s1.id, layout: layoutForSentence(s1, assignment), lexInsertions: s1.lexInsertions },
+        lower: { id: s2.id, layout: layoutForSentence(s2, assignment), lexInsertions: s2.lexInsertions },
+        relation: demo.relation,
+        relations: demo.relations,
+        gapRows: demo.gapRows
+      });
+    }
+    const composed = options.allowUnsatisfied === true
+      ? (() => {
+        const assignment = Object.fromEntries(branches.map(branch => [branch.id, requestedVariants[branch.id] || 'normal']));
+        const intermediate = composeAssignment(assignment);
+        return {
+          ...intermediate,
+          layoutResolution: {
+            schema: 'ogn-joint-flip-resolution-v1',
+            status: 'play-intermediate',
+            exploredCandidates: 1,
+            validCandidates: intermediate.relationAlignments.filter(item => item.required !== false).every(item => item.satisfied) ? 1 : 0,
+            selectedVariants: assignment,
+            selectedBranches: branches.map(branch => ({
+              ...branch,
+              variant: assignment[branch.id] || 'normal',
+              changedDimensions: engine.variantDimensions(assignment[branch.id] || 'normal')
+            })),
+            rejectedCandidates: 0
+          }
+        };
+      })()
+      : engine.solveJoint({ branches, selectedVariants: requestedVariants, buildCandidate: composeAssignment });
     composed.units.forEach(unit => assertUniqueNodeGridLines(unit.layout, `multi-OGN ${unit.id} na compositie`));
+    const selectedVariants = composed.layoutResolution?.selectedVariants || {};
     const lexicalization = activeAnaphorLexicalization();
     const lexicalizationEngine = globalThis.OGNAnaphorLexicon;
     const insertionById = new Map(demo.sentences.flatMap(sentence => {
@@ -4368,31 +4510,8 @@
     const relationBySource = new Map(demo.relations.map(relation => [
       `${relation.anaphor.unitId}:${relation.anaphor.nodeId}`, relation
     ]));
-    return {
-      ...composed,
-      demo,
-      configuredRelations: demo.relations.map(relation => ({ ...relation })),
-      layoutResolution: jsonClone(demo.layoutResolution, {}),
-      surfaceTitle: multiOgnSurfaceTitle(lexicalization),
-      sourceSentences: demo.sentences.map(sentence => sentence.text),
-      surfaceSentences: [demo.sentences[0].text, multiOgnSurfaceSentence2(lexicalization)],
-      relation: {
-        ...composed.relation,
-        schema: demo.relation.schema,
-        dependencyDirection: demo.relation.dependencyDirection,
-        sourceReferent: { ...demo.relation.referent },
-        anaphor: { ...demo.relation.anaphor },
-        lexicalization: {
-          type: 'anaphor-lex-projection',
-          sourceNodeId: demo.relation.anaphor.nodeId,
-          antecedentLexeme: demo.antecedentLexeme,
-          profileId: lexicalization.id,
-          surface: lexicalization.surface,
-          category: lexicalization.category,
-          kind: lexicalization.kind
-        }
-      },
-      lexItems: demo.sentences.flatMap(sentence => sentence.lex.map((item, index) => {
+    const lexItems = demo.sentences.flatMap(sentence =>
+      multiOgnLexForVariants(sentence, demo, selectedVariants).map((item, index) => {
         const insertion = item.insertionId ? insertionById.get(`${sentence.id}:${item.insertionId}`) : null;
         const relation = item.nodeId ? relationBySource.get(`${sentence.id}:${item.nodeId}`) : null;
         const primaryAnaphor = relation?.id === demo.relation.id;
@@ -4418,7 +4537,41 @@
           sentenceOrder: sentence.order,
           wordOrder: index + 1
         };
-      }))
+      })
+    );
+    const surfaceSentence2 = demo.surfaceFromLex
+      ? sentenceCaseFromLexItems(lexItems.filter(item => item.unitId === 'S2').sort((a, b) => a.wordOrder - b.wordOrder))
+      : multiOgnSurfaceSentence2(lexicalization);
+    return {
+      ...composed,
+      demo,
+      configuredRelations: demo.relations.map(relation => ({ ...relation })),
+      layoutResolution: {
+        ...jsonClone(demo.layoutResolution, {}),
+        resolution: jsonClone(composed.layoutResolution, {})
+      },
+      selectedFlipVariants: { ...selectedVariants },
+      requestedFlipVariants: { ...requestedVariants },
+      surfaceTitle: `${demo.sentences[0].text} ${surfaceSentence2}`.trim(),
+      sourceSentences: demo.sentences.map(sentence => sentence.text),
+      surfaceSentences: [demo.sentences[0].text, surfaceSentence2],
+      relation: {
+        ...composed.relation,
+        schema: demo.relation.schema,
+        dependencyDirection: demo.relation.dependencyDirection,
+        sourceReferent: { ...demo.relation.referent },
+        anaphor: { ...demo.relation.anaphor },
+        lexicalization: {
+          type: 'anaphor-lex-projection',
+          sourceNodeId: demo.relation.anaphor.nodeId,
+          antecedentLexeme: demo.antecedentLexeme,
+          profileId: lexicalization.id,
+          surface: lexicalization.surface,
+          category: lexicalization.category,
+          kind: lexicalization.kind
+        }
+      },
+      lexItems
     };
   }
 
@@ -4449,17 +4602,20 @@
     };
   }
 
-  function multiOgnAnaphorPlayTimeline() {
+  function multiOgnAnaphorPlayTimeline(composition = multiOgnAnaphorComposition()) {
     const engine = globalThis.OGNAnaphorPlay;
     if (!engine?.buildTimeline || !engine?.stateAt || !engine?.phaseAt || !engine?.freeV2Y) {
       throw new Error('Anafoor-Play-engine ontbreekt.');
     }
-    return engine.buildTimeline(activeMultiOgnAnaphorDemo().sentences);
+    return engine.buildTimeline(
+      activeMultiOgnAnaphorDemo().sentences,
+      composition.layoutResolution?.resolution?.selectedBranches || []
+    );
   }
 
-  function multiOgnAnaphorPlayPlan() {
+  function multiOgnAnaphorPlayPlan(composition = multiOgnAnaphorComposition()) {
     const engine = globalThis.OGNAnaphorPlay;
-    const timeline = multiOgnAnaphorPlayTimeline();
+    const timeline = multiOgnAnaphorPlayTimeline(composition);
     const active = multiOgnAnaphorActive() && growthActive();
     const current = active
       ? Math.max(0, Math.min(timeline.max, Number(state.growthStep) || 0))
@@ -4473,6 +4629,20 @@
       current,
       phase: engine.phaseAt(timeline, current)
     };
+  }
+
+  function multiOgnAnaphorVisibleComposition(finalComposition, playPlan) {
+    if (!playPlan?.active) return finalComposition;
+    const branches = finalComposition.layoutResolution?.resolution?.selectedBranches || [];
+    if (!branches.some(branch => String(branch.variant || 'normal') !== 'normal')) return finalComposition;
+    const exactVariants = Object.fromEntries(branches.map(branch => {
+      const unit = multiOgnUnitPlayState(playPlan, branch.unitId);
+      return [branch.id, unit?.branchFlipped ? branch.variant : 'normal'];
+    }));
+    if (Object.entries(exactVariants).every(([branchId, variant]) =>
+      variant === finalComposition.selectedFlipVariants?.[branchId]
+    )) return finalComposition;
+    return multiOgnAnaphorComposition({ exactVariants, allowUnsatisfied: true });
   }
 
   function multiOgnUnitPlayState(plan, unitId) {
@@ -6017,6 +6187,17 @@
       return isEnglish()
         ? `step ${step}/${max}: ${unit.id} tree ${count}/${unit.nodeIds.length}`
         : `stap ${step}/${max}: ${unit.id}-boom ${count}/${unit.nodeIds.length}`;
+    }
+    if (phase.kind === 'branch-flip') {
+      const composition = multiOgnAnaphorComposition();
+      const branches = composition.layoutResolution?.resolution?.selectedBranches || [];
+      const variants = (phase.branchIds || []).map(branchId => {
+        const branch = branches.find(item => item.id === branchId);
+        return `${branchId}=${branch?.variant || 'normal'}`;
+      }).join(', ');
+      return isEnglish()
+        ? `step ${step}/${max}: ${phase.unitId} joint flip · ${variants}`
+        : `stap ${step}/${max}: ${phase.unitId} gezamenlijke flip · ${variants}`;
     }
     if (phase.kind === 'lex-base') {
       return isEnglish()
@@ -8683,12 +8864,14 @@
   }
 
   function drawMultiOgnAnaphor() {
-    const composition = multiOgnAnaphorComposition();
-    const relationLabels = multiOgnPrimaryRelationLabels(composition);
-    const playPlan = multiOgnAnaphorPlayPlan();
+    const finalComposition = multiOgnAnaphorComposition();
+    const playPlan = multiOgnAnaphorPlayPlan(finalComposition);
+    const composition = multiOgnAnaphorVisibleComposition(finalComposition, playPlan);
+    const relationLabels = multiOgnPrimaryRelationLabels(finalComposition);
     const g = baseSvg('multi-ogn-anaphor-view');
     const origin = { x: 760, y: 112 };
     const unitById = new Map(composition.units.map(unit => [unit.id, unit]));
+    const finalUnitById = new Map(finalComposition.units.map(unit => [unit.id, unit]));
     const playUnitState = unitId => multiOgnUnitPlayState(playPlan, unitId);
     const nodePoint = (unitId, nodeId) => {
       const node = unitById.get(unitId)?.layout?.nodes?.find(candidate => candidate.id === nodeId);
@@ -8698,12 +8881,18 @@
       ? { py: py(item.gridY, origin), role: 'lexical-insertion' }
       : nodePoint(item.unitId, item.nodeId);
     const insertionRows = composition.lexItems.filter(item => item.insertionId).map(item => Number(item.gridY));
-    const axisMinY = Math.min(composition.box.minY, ...insertionRows);
-    const axisMaxY = Math.max(composition.box.maxY, ...insertionRows);
-    const axisX = px(composition.box.minX, origin) - Math.max(190, cellX() * 1.85);
+    const stableBox = {
+      minX: Math.min(composition.box.minX, finalComposition.box.minX),
+      maxX: Math.max(composition.box.maxX, finalComposition.box.maxX),
+      minY: Math.min(composition.box.minY, finalComposition.box.minY),
+      maxY: Math.max(composition.box.maxY, finalComposition.box.maxY)
+    };
+    const axisMinY = Math.min(stableBox.minY, ...insertionRows);
+    const axisMaxY = Math.max(stableBox.maxY, ...insertionRows);
+    const axisX = px(stableBox.minX, origin) - Math.max(190, cellX() * 1.85);
     const axisTop = py(axisMinY, origin) - Math.max(52, cellY() * 0.9);
     const axisBottom = py(axisMaxY, origin) + Math.max(54, cellY() * 0.9);
-    const treeRight = px(composition.box.maxX, origin) + Math.max(90, cellX() * 0.75);
+    const treeRight = px(stableBox.maxX, origin) + Math.max(90, cellX() * 0.75);
     const titleY = axisTop - Math.max(76, cellY() * 1.25);
     const framePadX = Math.max(54, cellX() * 0.48);
     const framePadY = Math.max(36, cellY() * 0.56);
@@ -8720,7 +8909,13 @@
     composition.units.forEach(unit => {
       const unitPlay = playUnitState(unit.id);
       const reserved = playPlan.active && !unitPlay?.treeStarted;
-      const box = unit.layout.box;
+      const finalBox = finalUnitById.get(unit.id)?.layout?.box || unit.layout.box;
+      const box = {
+        minX: Math.min(unit.layout.box.minX, finalBox.minX),
+        maxX: Math.max(unit.layout.box.maxX, finalBox.maxX),
+        minY: Math.min(unit.layout.box.minY, finalBox.minY),
+        maxY: Math.max(unit.layout.box.maxY, finalBox.maxY)
+      };
       const x = px(box.minX, origin) - framePadX;
       const y = py(box.minY, origin) - framePadY;
       const width = px(box.maxX, origin) - px(box.minX, origin) + framePadX * 2;
@@ -9180,9 +9375,10 @@
 
   function renderStatus() {
     if (multiOgnAnaphorActive()) {
-      const composition = multiOgnAnaphorComposition();
-      const relationLabels = multiOgnPrimaryRelationLabels(composition);
-      const playPlan = multiOgnAnaphorPlayPlan();
+      const finalComposition = multiOgnAnaphorComposition();
+      const playPlan = multiOgnAnaphorPlayPlan(finalComposition);
+      const composition = multiOgnAnaphorVisibleComposition(finalComposition, playPlan);
+      const relationLabels = multiOgnPrimaryRelationLabels(finalComposition);
       const lower = composition.units[1];
       const visibleTitle = multiOgnAnaphorVisibleTitle(composition, playPlan);
       els.titleLine.textContent = isEnglish()
@@ -9323,9 +9519,10 @@
   function renderSideLists() {
     els.lexOrderList.replaceChildren();
     if (multiOgnAnaphorActive()) {
-      const composition = multiOgnAnaphorComposition();
-      const relationLabels = multiOgnPrimaryRelationLabels(composition);
-      const playPlan = multiOgnAnaphorPlayPlan();
+      const finalComposition = multiOgnAnaphorComposition();
+      const playPlan = multiOgnAnaphorPlayPlan(finalComposition);
+      const composition = multiOgnAnaphorVisibleComposition(finalComposition, playPlan);
+      const relationLabels = multiOgnPrimaryRelationLabels(finalComposition);
       composition.lexItems.forEach((item, index) => {
         if (!multiOgnUnitPlayState(playPlan, item.unitId)?.lexBaseVisible) return;
         const label = item.lexicalization && !playPlan.lexicalizationVisible ? item.sourceLabel : item.label;
@@ -9654,6 +9851,87 @@
     status.classList.toggle('is-error', !!error);
   }
 
+  function syncAnaphorFlipControls() {
+    const container = document.getElementById('anaphorFlipControls');
+    if (!container) return;
+    const demo = activeMultiOgnAnaphorDemo();
+    const branches = demo.layoutResolution?.branches || [];
+    const requested = configuredAnaphorFlipVariants(demo);
+    let selected = {};
+    let conflict = '';
+    try {
+      selected = multiOgnAnaphorComposition().selectedFlipVariants || {};
+    } catch (error) {
+      conflict = String(error?.message || error);
+    }
+    container.replaceChildren();
+    if (!branches.length) {
+      const empty = document.createElement('p');
+      empty.className = 'config-item-help';
+      empty.textContent = isEnglish()
+        ? 'This combination declares no flippable binary branches.'
+        : 'Deze combinatie declareert geen flipbare binaire vertakkingen.';
+      container.appendChild(empty);
+      return;
+    }
+    const labels = {
+      auto: ['automatisch', 'automatic'],
+      normal: ['normaal', 'normal'],
+      'left-right': ['links–rechts', 'left–right'],
+      'short-long': ['kort–lang', 'short–long'],
+      both: ['beide', 'both']
+    };
+    branches.forEach(branch => {
+      const field = document.createElement('label');
+      field.className = 'select-field anaphor-flip-field';
+      const caption = document.createElement('span');
+      caption.textContent = `${branch.unitId} · ${branch.nodeId}`;
+      const select = document.createElement('select');
+      select.dataset.anaphorFlipBranch = branch.id;
+      ['auto', ...branch.variants].forEach(variant => {
+        const option = document.createElement('option');
+        option.value = variant;
+        option.textContent = labels[variant]?.[isEnglish() ? 1 : 0] || variant;
+        select.appendChild(option);
+      });
+      select.value = requested[branch.id] || 'auto';
+      const help = document.createElement('small');
+      help.className = 'config-item-help';
+      const resolved = selected[branch.id] || 'normal';
+      const linearization = branch.linearization === 'child-order'
+        ? (isEnglish() ? ' · short–long also reverses the LEX child order' : ' · kort–lang keert ook de LEX-childvolgorde om')
+        : '';
+      help.textContent = conflict
+        ? conflict
+        : (isEnglish()
+          ? `Joint result: ${labels[resolved]?.[1] || resolved}${linearization}.`
+          : `Gezamenlijke uitkomst: ${labels[resolved]?.[0] || resolved}${linearization}.`);
+      select.addEventListener('change', event => {
+        const previous = configuredAnaphorFlipVariants(demo)[branch.id] || 'auto';
+        try {
+          const variant = setConfiguredAnaphorFlipVariant(branch.id, event.target.value, demo);
+          multiOgnAnaphorComposition();
+          recordParadata('set-anaphor-flip-variant', { combination: demo.id, branch: branch.id, variant });
+          appendConfigLog('change-anaphor-flip-variant', { combination: demo.id, branch: branch.id, variant });
+          markConfigDirty('Anafoor-flip');
+          resetForNewExample();
+          render();
+        } catch (error) {
+          setConfiguredAnaphorFlipVariant(branch.id, previous, demo);
+          event.target.value = previous;
+          setAnaphorCombinationEditorStatus(
+            `Flip niet toegepast: ${error?.message || error}`,
+            `Flip not applied: ${error?.message || error}`,
+            true
+          );
+          syncAnaphorFlipControls();
+        }
+      });
+      field.append(caption, select, help);
+      container.appendChild(field);
+    });
+  }
+
   function syncAnaphorCombinationControls() {
     const combinations = compiledAnaphorCombinations();
     const active = activeMultiOgnAnaphorDemo();
@@ -9674,10 +9952,11 @@
     if (editor && document.activeElement !== editor) {
       editor.value = JSON.stringify(normalizeAnaphorCombinationConfigs(state.anaphorCombinations), null, 2);
     }
+    syncAnaphorFlipControls();
     if (document.getElementById('anaphorCombinationsEditorStatus')?.textContent) return;
     setAnaphorCombinationEditorStatus(
-      'De ingebouwde lijst bevat vier combinaties. Anafoor verbindt uitsluitend centrale Text-bronknopen; Context blijft p.m. LEX-inserties hebben een eigen insertionId.',
-      'The bundled list contains four combinations. Anaphor links central Text source nodes only; Context remains p.m. LEX insertions have their own insertionId.'
+      'De ingebouwde lijst bevat vijf combinaties. Anafoor verbindt uitsluitend centrale Text-bronknopen; Context blijft p.m. LEX-inserties hebben een eigen insertionId.',
+      'The bundled list contains five combinations. Anaphor links central Text source nodes only; Context remains p.m. LEX insertions have their own insertionId.'
     );
   }
 
@@ -9693,6 +9972,9 @@
       state.anaphorCombinationId = ids.has(previousId) ? previousId : compiledAnaphorCombinations()[0].id;
       state.anaphorLexicalizations = Object.fromEntries(
         Object.entries(state.anaphorLexicalizations || {}).filter(([combinationId]) => ids.has(combinationId))
+      );
+      state.anaphorFlipVariants = Object.fromEntries(
+        Object.entries(state.anaphorFlipVariants || {}).filter(([combinationId]) => ids.has(combinationId))
       );
       const selected = anaphorLexicalizationResolution(configuredAnaphorLexicalizationId()).selected.id;
       state.anaphorLexicalization = selected;
@@ -9723,6 +10005,7 @@
     state.anaphorCombinations = normalizeAnaphorCombinationConfigs(DEFAULT_ANAPHOR_COMBINATION_CONFIGS);
     state.anaphorCombinationId = DEFAULT_ANAPHOR_COMBINATION_ID;
     state.anaphorLexicalizations = { [DEFAULT_ANAPHOR_COMBINATION_ID]: 'hij' };
+    state.anaphorFlipVariants = {};
     state.anaphorLexicalization = 'hij';
     state.placementMode = 'multi-ogn-anaphor';
     appendConfigLog('reset-anaphor-combinations', { active: DEFAULT_ANAPHOR_COMBINATION_ID });
@@ -10463,9 +10746,10 @@
   function defaultDocumentMetadata() {
     const now = new Date().toISOString();
     const multiOgn = multiOgnAnaphorActive();
+    const multiOgnTitle = multiOgn ? multiOgnAnaphorComposition().surfaceTitle : '';
     return {
       document_id: globalThis.crypto?.randomUUID?.() || `opn-${Date.now()}-${Math.random().toString(16).slice(2)}`,
-      title: multiOgn ? multiOgnSurfaceTitle() : (state.example?.title || state.example?.sentence || 'OpenGraph-document'),
+      title: multiOgn ? multiOgnTitle : (state.example?.title || state.example?.sentence || 'OpenGraph-document'),
       language: state.language || 'nl',
       created_at: now,
       source: multiOgn
@@ -10528,7 +10812,7 @@
 
   function buildMultiOgnOpnDocument(includeParadata = true) {
     const composition = multiOgnAnaphorComposition();
-    const playTimeline = multiOgnAnaphorPlayTimeline();
+    const playTimeline = multiOgnAnaphorPlayTimeline(composition);
     const baseMetadata = ensureDocumentMetadata();
     const now = new Date().toISOString();
     const units = composition.units.map(unit => {
@@ -10629,7 +10913,9 @@
             schema: playTimeline.schema,
             order: [
               ...playTimeline.units.flatMap(unit => [
-                `${unit.id}-tree`, `${unit.id}-lex-source`,
+                `${unit.id}-tree`,
+                ...(unit.branchFlipStep !== null ? [`${unit.id}-branch-flip`] : []),
+                `${unit.id}-lex-source`,
                 ...(unit.lexInsertionIds.length ? [`${unit.id}-lex-insertions`] : []),
                 ...(unit.finiteVerbMoveStep !== null ? [`${unit.id}-v2`] : [])
               ]),
@@ -10639,6 +10925,8 @@
               id: unit.id,
               node_order: [...unit.nodeIds],
               node_steps: { ...unit.nodeSteps },
+              branch_flip_ids: [...unit.branchFlipIds],
+              branch_flip_step: unit.branchFlipStep,
               lex_base_step: unit.lexBaseStep,
               lex_insertion_ids: [...unit.lexInsertionIds],
               lex_insertion_step: unit.lexInsertionStep,
@@ -10694,6 +10982,8 @@
           interpretation_id: composition.demo.interpretationId || null,
           configured_relation_ids: composition.configuredRelations.map(relation => relation.id),
           anaphor_lexicalization: composition.relation.lexicalization.profileId,
+          requested_flip_variants: jsonClone(composition.requestedFlipVariants, {}),
+          selected_flip_variants: jsonClone(composition.selectedFlipVariants, {}),
           growth: { enabled: !!state.growthEnabled, step: state.growthStep },
           manual_viewbox: state.manualViewBox ? jsonClone(state.manualViewBox, null) : null,
           display: {
@@ -12297,7 +12587,7 @@
     const janCard = document.createElement('section');
     janCard.className = 'panel-card config-jan-card';
     janCard.id = 'config-jan';
-    janCard.innerHTML = `<div class="help-lang-nl"><h2>JaN · Just another Notation</h2><p><code>S:np-VP</code>, nadrukkelijk niet <code>S:NP-VP</code>.</p><p>Onderzoeksnotatie: <code>S+ np-VP</code>. Eerst voor binaire bomen; later voor niet-binaire, meertakkige bomen.</p><p>TODO: <code>heeft gebeten</code> ↔ <code>gebeten heeft</code>.</p></div><div class="help-lang-en"><h2>JaN · Just another Notation</h2><p><code>S:np-VP</code>, explicitly not <code>S:NP-VP</code>.</p><p>Research notation: <code>S+ np-VP</code>. Binary trees first; non-binary multi-branching trees later.</p><p>TODO: <code>heeft gebeten</code> ↔ <code>gebeten heeft</code>.</p></div>`;
+    janCard.innerHTML = `<div class="help-lang-nl"><h2>JaN · Just another Notation</h2><p><code>S:np-VP</code>, nadrukkelijk niet <code>S:NP-VP</code>.</p><p>Onderzoeksnotatie: <code>S+ np-VP</code>. Eerst voor binaire bomen; later voor niet-binaire, meertakkige bomen.</p><p>Actieve flipfixture: <code>heeft gebeten</code> ↔ <code>gebeten heeft</code>.</p></div><div class="help-lang-en"><h2>JaN · Just another Notation</h2><p><code>S:np-VP</code>, explicitly not <code>S:NP-VP</code>.</p><p>Research notation: <code>S+ np-VP</code>. Binary trees first; non-binary multi-branching trees later.</p><p>Active flip fixture: <code>heeft gebeten</code> ↔ <code>gebeten heeft</code>.</p></div>`;
 
     const multiOgnCard = document.createElement('section');
     multiOgnCard.className = 'panel-card config-multi-ogn-card';
@@ -12314,7 +12604,7 @@
           <li><code>relations[]</code> bevat uitsluitend Text-coreferentie; GISTEREN, VANDAAG en OMDAT zijn Context-inserties met een eigen <code>insertionId</code>.</li>
           <li>De geconfigureerde bronknoop van de anafoor blijft staan; pas de LEX-projectie realiseert bijvoorbeeld HIJ.</li>
         </ol>
-        <p class="config-item-help"><strong>Meerdere relaties:</strong> iedere geldige, uitgelijnde Text-coreferentie wordt getekend en zelfstandig op LEX gerealiseerd. De voorbereide solver kiest later branch-flips en de starre S2-shift <em>gezamenlijk</em>; bij conflict worden geen losse knopen geforceerd.</p>
+        <p class="config-item-help"><strong>Meerdere relaties:</strong> de actieve solver kiest de vierwaardige branchvarianten en de starre S2-shift <em>gezamenlijk</em>. Alleen een oplossing die alle vereiste Text-coreferenties uitlijnt wordt getekend; bij conflict worden geen losse knopen geforceerd.</p>
         <p class="config-item-help"><strong>Text en Context:</strong> tijd, plaats, toestand, causaliteit en alle inserties vallen buiten Text. GISTEREN, VANDAAG, ER, NIET MEER en OMDAT staan daarom nooit in de centrale Text-boom. De geminimaliseerde Context-boom blijft p.m.</p>
         <p class="config-item-help"><strong>Literatuurgrens:</strong> twee gewone links passen in <code>relations[]</code>. Eén groepsanafoor met meerdere antecedenten vereist later één hyperrelatie en mag niet als losse identiteitslijnen worden ingevoerd. <code>interpretationId</code> kiest bij ambiguïteit eerst een volledige semantische lezing; flip lost daarna alleen de geometrie op.</p>
       </div>
@@ -12329,7 +12619,7 @@
           <li><code>relations[]</code> contains Text coreference only; GISTEREN, VANDAAG and OMDAT are Context insertions with their own <code>insertionId</code>.</li>
           <li>The configured anaphor source node remains in place; only its LEX projection realizes, for example, HIJ.</li>
         </ol>
-        <p class="config-item-help"><strong>Multiple relations:</strong> every valid, aligned Text coreference is rendered and independently lexicalized on LEX. The future solver will select branch flips and rigid S2 displacement <em>jointly</em>; conflicts never force individual nodes.</p>
+        <p class="config-item-help"><strong>Multiple relations:</strong> the active solver selects four-state branch variants and rigid S2 displacement <em>jointly</em>. Only a solution aligning every required Text coreference is rendered; conflicts never force individual nodes.</p>
         <p class="config-item-help"><strong>Text and Context:</strong> time, place, state, causality and all insertions lie outside Text. GISTEREN, VANDAAG, ER, NIET MEER and OMDAT never occur in either central Text tree. The minimized Context tree remains p.m.</p>
         <p class="config-item-help"><strong>Literature boundary:</strong> two ordinary links fit in <code>relations[]</code>. One group anaphor with several antecedents requires a future hyperrelation and must not be encoded as separate identity lines. For ambiguity, <code>interpretationId</code> first selects one complete semantic reading; flip then solves geometry only.</p>
       </div>
@@ -12344,6 +12634,11 @@
         <small class="config-item-help" id="anaphorLexicalizationStatus"></small>
       </label>
       <p class="config-item-help"><span class="help-lang-nl">De opties komen uit <code>lexicon-config.html</code>. Niet-passende vormen blijven zichtbaar maar zijn uitgeschakeld.</span><span class="help-lang-en">Options come from <code>lexicon-config.html</code>. Inapplicable forms remain visible but disabled.</span></p>
+      <fieldset class="config-subgroup anaphor-flip-controls-group">
+        <legend><span class="help-lang-nl">Flip · binaire plaatsingsvarianten</span><span class="help-lang-en">Flip · binary placement variants</span></legend>
+        <p class="config-item-help"><span class="help-lang-nl">Per gedeclareerde tak: normaal, links–rechts, kort–lang of beide. Automatisch laat de gezamenlijke solver kiezen.</span><span class="help-lang-en">Per declared branch: normal, left–right, short–long or both. Automatic delegates the choice to the joint solver.</span></p>
+        <div id="anaphorFlipControls"></div>
+      </fieldset>
       <label class="anaphor-combinations-editor-field" for="anaphorCombinationsJsonInput">
         <span><span class="help-lang-nl">Combinaties · JSON-lijst</span><span class="help-lang-en">Combinations · JSON list</span></span>
         <textarea id="anaphorCombinationsJsonInput" rows="18" spellcheck="false"></textarea>
@@ -12382,19 +12677,30 @@
     "mode":"joint",
     "variables":[
       {"type":"branch-flip","units":["S1","S2"],
-       "candidates":"declared-flippable-branches"},
+       "candidates":"declared-flippable-branches",
+       "operation":"binary-placement-variant",
+       "dimensions":["left-right","short-long"],
+       "variants":["normal","left-right","short-long","both"]},
       {"type":"rigid-shift","unitId":"S2","axes":["x","y"]}
     ],
     "constraints":[
       {"type":"relation-alignment","source":"relations[*].alignment"},
       {"type":"unique-row-and-column","scope":"per-unit"}
     ],
-    "objective":["satisfy-required-relations","minimize-flip-count","minimize-rigid-shift"],
-    "firstFixture":{"nodeId":"vp-perfectum",
-      "alternatives":["aux-vdw","vdw-aux"]},
-    "currentSupport":{"status":"multiple-relation-rendering-context-pro-memorie",
-      "active":["existing-layout","rigid-shift-s2","check-all-relation-alignments","render-satisfied-coreferences"],
-      "deferred":["joint-branch-flip-search"]},
+    "objective":["satisfy-required-relations","minimize-flip-count","minimize-changed-dimensions","minimize-rigid-shift"],
+    "branches":[
+      {"id":"s1-root","unitId":"S1","nodeId":"mf-s1-s",
+       "variants":["normal","left-right","short-long","both"],"linearization":"none"},
+      {"id":"s1-vp","unitId":"S1","nodeId":"mf-s1-vp",
+       "variants":["normal","left-right","short-long","both"],"linearization":"none"},
+      {"id":"s2-vcluster","unitId":"S2","nodeId":"mf-s2-vcluster",
+       "variants":["normal","left-right","short-long","both"],"linearization":"child-order"}
+    ],
+    "firstFixture":{"nodeId":"mf-s2-vcluster",
+      "alternatives":["heeft-gebeten","gebeten-heeft"]},
+    "currentSupport":{"status":"joint-branch-flip-search-active-context-pro-memorie",
+      "active":["joint-branch-flip-search","four-binary-placement-variants","rigid-shift-s2","check-all-relation-alignments","render-satisfied-coreferences"],
+      "deferred":[]},
     "onConflict":"report-no-forced-node-move"
   }
 }</code></pre>
@@ -13662,7 +13968,7 @@
     }
     // Deze collecties zijn volledige gebruikerskeuzes. Als de user-config de
     // sleutel bevat, vervangt die de standaardcollectie ook wanneer zij leeg is.
-    for (const key of ['readmeTopicEdits', 'readmeCarousels', 'sourceAxes', 'topMenusAbove', 'topMenuChoices', 'anaphorCombinations', 'anaphorLexicalizations']) {
+    for (const key of ['readmeTopicEdits', 'readmeCarousels', 'sourceAxes', 'topMenusAbove', 'topMenuChoices', 'anaphorCombinations', 'anaphorLexicalizations', 'anaphorFlipVariants']) {
       if (Object.prototype.hasOwnProperty.call(override, key)) merged[key] = override[key];
     }
     return merged;
@@ -13798,6 +14104,7 @@
       anaphorCombinationId: activeMultiOgnAnaphorDemo().id,
       anaphorCombinations: normalizeAnaphorCombinationConfigs(state.anaphorCombinations),
       anaphorLexicalizations: { ...state.anaphorLexicalizations },
+      anaphorFlipVariants: jsonClone(state.anaphorFlipVariants, {}),
       anaphorLexicalization: activeAnaphorLexicalization().id,
       directPlacementGeneral: normalizeDirectPlacementGeneral(state.directPlacementGeneral),
       greedyGrowConfig: normalizeGreedyGrowConfig(state.greedyGrowConfig),
@@ -13928,6 +14235,18 @@
       || (typeof snapshot.anaphorLexicalization === 'string' ? snapshot.anaphorLexicalization : configuredAnaphorLexicalizationId());
     state.anaphorLexicalization = anaphorLexicalizationResolution(requestedAnaphorProfile).selected.id;
     state.anaphorLexicalizations[state.anaphorCombinationId] = state.anaphorLexicalization;
+    state.anaphorFlipVariants = {};
+    if (snapshot.anaphorFlipVariants && typeof snapshot.anaphorFlipVariants === 'object' && !Array.isArray(snapshot.anaphorFlipVariants)) {
+      Object.entries(snapshot.anaphorFlipVariants).forEach(([combinationId, values]) => {
+        if (!configuredCombinationIds.has(combinationId) || !values || typeof values !== 'object' || Array.isArray(values)) return;
+        const demo = compiledAnaphorCombinations().find(combination => combination.id === combinationId);
+        const allowed = new Map((demo?.layoutResolution?.branches || []).map(branch => [branch.id, new Set(['auto', ...branch.variants])]));
+        const selected = Object.fromEntries(Object.entries(values).filter(([branchId, variant]) =>
+          allowed.get(branchId)?.has(String(variant || '').trim().toLowerCase())
+        ).map(([branchId, variant]) => [branchId, String(variant).trim().toLowerCase()]));
+        if (Object.keys(selected).length) state.anaphorFlipVariants[combinationId] = selected;
+      });
+    }
     const legacyDirectMethod = snapshot.placementMode === 'random'
       ? snapshot.randomPlacementConfig
       : snapshot.greedyGrowConfig;

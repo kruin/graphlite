@@ -14,12 +14,13 @@ const json = relative => JSON.parse(read(relative));
 const clone = value => JSON.parse(JSON.stringify(value));
 
 const configured = combinations.normalizeCombinations();
-assert.equal(configured.length, 4, 'vier actieve anafoorcombinaties verwacht');
+assert.equal(configured.length, 5, 'vijf actieve anafoorcombinaties verwacht');
 assert.deepEqual(configured.map(item => item.id), [
   'ik-zie-man-hij-draagt-hoed',
   'ik-zag-man-gisteren-vandaag-was-hij-er-niet-meer',
   'boer-bezit-ezel-hij-slaat-hem',
-  'boer-slaat-ezel-omdat-hij-hem-bezit'
+  'boer-slaat-ezel-omdat-hij-hem-bezit',
+  'man-slaat-hond-omdat-die-hem-heeft-gebeten'
 ]);
 assert.ok(configured.every(item => item.relations.every(relation => relation.type === 'coreference')),
   'Anafoor accepteert uitsluitend centrale Text-coreferentie');
@@ -72,6 +73,20 @@ assert.equal(lexicon.resolve(lexicon.DEFAULT_PROFILES, 'hem', 'ezel', 'object').
 assert.equal(lexicon.resolve(lexicon.DEFAULT_PROFILES, 'hem', 'boer', 'subject').selected.id, 'hij');
 assert.equal(lexicon.surfaceFromTemplate({surface:'HIJ'}, because.surfaceTemplate,
   {'ezel-hem': {surface:'HEM'}}), 'omdat hij hem bezit.');
+
+const perfectFlip = configured[4];
+assert.equal(perfectFlip.provenance.kind, 'user-supplied');
+assert.equal(perfectFlip.surfaceFromLex, true);
+assert.deepEqual(perfectFlip.relations.map(item => item.id), ['hond-die', 'man-hem']);
+assert.equal(perfectFlip.context.status, 'p.m.');
+assert.equal(perfectFlip.sentences[1].clauseType, 'subordinate');
+assert.equal(perfectFlip.sentences[1].finiteVerbPlacement, 'final');
+assert.equal(perfectFlip.sentences[1].lexInsertions[0].label, 'OMDAT');
+assert.equal(lexicon.resolve(lexicon.DEFAULT_PROFILES, 'die', 'hond', 'subject').selected.surface, 'DIE');
+assert.equal(lexicon.resolve(lexicon.DEFAULT_PROFILES, 'hem', 'man', 'object').selected.surface, 'HEM');
+assert.deepEqual(perfectFlip.layoutResolution.branches.map(branch => branch.id), ['s1-root', 's1-vp', 's2-vcluster']);
+assert.deepEqual(perfectFlip.layoutResolution.branches[2].variants, ['normal', 'left-right', 'short-long', 'both']);
+assert.equal(perfectFlip.layoutResolution.branches[2].linearization, 'child-order');
 
 const duplicate = clone(farmerDonkey);
 duplicate.relations[1].id = duplicate.relations[0].id;
@@ -154,11 +169,26 @@ assert.equal(timeline.units[1].finiteVerbMoveStep, null);
 assert.equal(play.phaseAt(timeline,timeline.units[1].lexInsertionStep).kind,'lex-insertions');
 assert.equal(play.stateAt(timeline,timeline.max).units[1].finiteVerbMoved,false);
 
-const fileConfigured = combinations.normalizeCombinations(json('config/default-config.json').config.anaphorCombinations);
-assert.deepEqual(fileConfigured.map(item => item.relations.length),[1,1,2,2]);
+const flipTimeline = play.buildTimeline(perfectFlip.sentences, [
+  {id:'s1-root',unitId:'S1',variant:'left-right'},
+  {id:'s1-vp',unitId:'S1',variant:'left-right'},
+  {id:'s2-vcluster',unitId:'S2',variant:'short-long'}
+]);
+assert.deepEqual(flipTimeline.units[0].branchFlipIds, ['s1-root', 's1-vp']);
+assert.deepEqual(flipTimeline.units[1].branchFlipIds, ['s2-vcluster']);
+assert.equal(play.phaseAt(flipTimeline, flipTimeline.units[0].branchFlipStep).kind, 'branch-flip');
+assert.equal(play.stateAt(flipTimeline, flipTimeline.units[0].branchFlipStep - 1).units[0].branchFlipped, false);
+assert.equal(play.stateAt(flipTimeline, flipTimeline.units[0].branchFlipStep).units[0].branchFlipped, true);
+assert.equal(play.stateAt(flipTimeline, flipTimeline.units[1].branchFlipStep - 1).units[1].branchFlipped, false);
+assert.equal(play.stateAt(flipTimeline, flipTimeline.units[1].branchFlipStep).units[1].branchFlipped, true);
+
+const defaultConfig = json('config/default-config.json').config;
+assert.deepEqual(defaultConfig.anaphorFlipVariants, {});
+const fileConfigured = combinations.normalizeCombinations(defaultConfig.anaphorCombinations);
+assert.deepEqual(fileConfigured.map(item => item.relations.length),[1,1,2,2,2]);
 
 const fixtureCatalog = json('samples/s1-s2-relation-fixtures.json');
-assert.equal(fixtureCatalog.fixtures.length,8);
+assert.equal(fixtureCatalog.fixtures.length,9);
 assert.ok(fixtureCatalog.fixtures.every(fixture =>
   (fixture.assertedRelations || []).every(item => item.type === 'coreference')));
 const baseline = fixtureCatalog.fixtures.find(item => item.id === 'user-man-yesterday-today');
@@ -171,11 +201,16 @@ assert.deepEqual(fixtureCatalog.contextModel,{
 const becauseFixture = fixtureCatalog.fixtures.find(item => item.id === 'user-farmer-donkey-because');
 assert.equal(becauseFixture.expected.hardRelationCount,2);
 assert.equal(becauseFixture.expected.s2FiniteVerbPlacement,'final');
+const perfectFixture = fixtureCatalog.fixtures.find(item => item.id === 'user-man-dog-because-perfect');
+assert.equal(perfectFixture.expected.hardRelationCount,2);
+assert.deepEqual(perfectFixture.flip.variants,['normal','left-right','short-long','both']);
+assert.equal(perfectFixture.flip.vclusterLinearization['short-long'],'GEBETEN HEEFT');
 
 const literature = json('samples/anaphor-s1-s2-literature-catalog.json');
 const userEntry = literature.entries.find(entry => entry.id === 'user-man-temporal');
 assert.deepEqual(userEntry.relations.map(item => item.type),['coreference']);
 assert.equal(literature.entries.find(entry => entry.id === 'user-farmer-donkey-because').relations.length,2);
+assert.equal(literature.entries.find(entry => entry.id === 'user-man-dog-because-perfect').relations.length,2);
 assert.ok(literature.entries.filter(entry => entry.provenance.url).length >= 5);
 
 for (const [main,copy] of [
@@ -212,9 +247,10 @@ for (const marker of [
   "layer: insertion ? 'Context' : 'Text'",
   "source_layer: item.layer",
   'lex_insertion_step: unit.lexInsertionStep',
+  'branch_flip_step: unit.branchFlipStep',
   "finite_verb_placement: unit.finiteVerbPlacement",
   "cross_ogn_column_semantics: 'column-sharing-alone-does-not-declare-coreference'"
 ]) assert.ok(viewer.includes(marker),'viewer-marker ontbreekt: '+marker);
 assert.equal(read('index.html'),read('viewer.html'),'index.html en viewer.html moeten identiek zijn');
 
-console.log('LANGUAGE TREE EXTENSIE 1 CHECK: OK (Text/Context; 4 combinaties; geminimaliseerde Context-OGN p.m.; Context-inserties; 2 anaforen; 8 fixtures)');
+console.log('LANGUAGE TREE EXTENSIE 1 CHECK: OK (Text/Context; 5 combinaties; joint flip; geminimaliseerde Context-OGN p.m.; 9 fixtures)');

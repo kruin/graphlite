@@ -5,10 +5,10 @@ Leidende status van OpenGraph Lite Viewer `v2.0.0-rc.45`.
 Controlestatus: rc.45 is op 2 augustus 2026 handmatig goedgekeurd, inclusief
 de Greedy Grow-reconstructie, bewijsgrens en afgeleide publicatieslide.
 
-## Actuele source build 20260821.16
+## Actuele source build 20260821.17
 
 - Exacte bronidentiteit:
-  `v2.0.0-rc.45-sources-language-tree-anafoor-extensie-20260821.16`.
+  `v2.0.0-rc.45-sources-language-tree-anafoor-extensie-flip-20260821.17`.
 - De publicatienormalizer verwijdert voortaan ook spaties en tabs aan ieder
   regeleinde. Inspringing, interne lege regels, UTF-8 BOM en de juiste
   LF/CRLF-keuze blijven behouden. `git diff --cached --check` blokkeert
@@ -42,15 +42,23 @@ de Greedy Grow-reconstructie, bewijsgrens en afgeleide publicatieslide.
   Context-inserties en alleen een V2-Wissel wanneer de zinsregel dat
   voorschrijft. Daarna verschijnen alle uitgelijnde Text-coreferenties en hun
   LEX-realisaties. Terug is exact dezelfde tijdlijn in omgekeerde richting.
-- Config bevat vier echte S1–S2-keuzes. In het opdrachtgeversvoorbeeld
+- Config bevat vijf echte S1–S2-keuzes. In het opdrachtgeversvoorbeeld
   **Ik zag de man gisteren. Vandaag was hij er niet meer.** is alleen
   `MAN→HIJ` een Text-relatie; `GISTEREN`, `VANDAAG`, `ER` en `NIET MEER`
   zijn Context-inserties.
   **De boer slaat de ezel omdat hij hem bezit.** bevat `BOER→HIJ` én
   `EZEL→HEM`; `OMDAT` is Context en `BEZIT` blijft finaal.
+  **De man slaat de hond omdat die hem heeft gebeten.** bevat
+  `HOND→DIE` én `MAN→HEM`; `OMDAT` is Context.
+- Flip heeft per gedeclareerde binaire branch vier varianten: `normal`,
+  `left-right`, `short-long` en `both`. De actieve gezamenlijke solver kiest
+  de branchvarianten in S1 en S2 plus één starre S2-shift. Kort–lang betekent
+  plaatsingsafstand; alleen `linearization: "child-order"` keert ook de
+  LEX-childvolgorde om. Play toont de gekozen flips per zin atomair en terug
+  is exact omgekeerd.
 - `ANAPHOR_AND_S1_S2_RELATION_DEFINITIONS.md` definieert anafoor, antecedent,
   discourse-referent, coreferentie, temporele/locatieve referentie,
-  toestandsverandering en discourse-relatie. Acht positieve, negatieve en
+  toestandsverandering en discourse-relatie. Negen positieve, negatieve en
   ambigue paren staan machineleesbaar in
   `samples/s1-s2-relation-fixtures.json`.
 - Voor `HOND BIJT MAN` blijven HOND en MAN exact op hun recursief berekende

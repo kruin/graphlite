@@ -169,6 +169,14 @@ bevat `BOER–EZEL–BEZIT`. De twee Text-links zijn `BOER→HIJ` en `EZEL→HEM
 `OMDAT` is een Context-insertie op LEX; S2 is een bijzin en behoudt
 `BEZIT` aan het einde.
 
+Een derde door de opdrachtgever aangeleverde fixture is **De man slaat de
+hond omdat die hem heeft gebeten.** S1 bevat `MAN–HOND–SLAAT`; S2 bevat
+`HOND–MAN–V-CLUSTER(HEEFT,GEBETEN)`. De Text-links zijn `HOND→DIE` en
+`MAN→HEM`; `OMDAT` blijft Context. Deze fixture is geen literatuurcitaat. Zij
+is de productieregressie voor vier binaire flipvarianten en voor de gezamenlijke
+oplossing van twee uitlijningen. Alleen de V-clusterbranch mag kort–lang ook
+als `HEEFT GEBETEN ↔ GEBETEN HEEFT` lineariseren.
+
 ## Config-notatie: nu en later
 
 Meerdere afzonderlijke links gebruiken het bestaande schema:
@@ -223,11 +231,12 @@ geometrisch geldige oplossing.
 1. Nederlandse kalibratiefixture: één Text-link, vier Context-inserties en
    middenpositie van de anafoor.
 2. Boer–ezel: twee afzonderlijke Text-links; ook als omdat-bijzin zonder V2.
-3. Friedman–Brennan: twee links plus expliciete interpretatiekeuze.
-4. John–winkel: gemengde LEX-profielen.
-5. Michael–Maria en Lisa–Bart: voorlopig alleen schema-/fouttests voor de
+3. Man–hond: twee links, vier flipvarianten en perfectumcluster.
+4. Friedman–Brennan: twee links plus expliciete interpretatiekeuze.
+5. John–winkel: gemengde LEX-profielen.
+6. Michael–Maria en Lisa–Bart: voorlopig alleen schema-/fouttests voor de
    toekomstige hyperrelatie.
-6. Kwantificationele subordinatie: researchfixture, niet als gewone
+7. Kwantificationele subordinatie: researchfixture, niet als gewone
    `coreference` importeren.
 
 De machineleesbare samenvatting staat in

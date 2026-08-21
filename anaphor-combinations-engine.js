@@ -9,6 +9,8 @@
   const RELATION_SCHEMA = 'ogn-referent-anaphor-v1';
   const LEXICAL_INSERTION_SCHEMA = 'ogn-lexical-insertion-v1';
   const LAYOUT_RESOLUTION_SCHEMA = 'ogn-joint-flip-constraints-v1';
+  const BRANCH_FLIP_SCHEMA = 'ogn-binary-branch-variants-v1';
+  const BRANCH_VARIANTS = Object.freeze(['normal', 'left-right', 'short-long', 'both']);
   const RESERVED_CONTEXT = Object.freeze({
     notation: 'Open Graph Notation',
     representation: 'minimized-tree',
@@ -24,7 +26,9 @@
         type: 'branch-flip',
         units: Object.freeze(['S1', 'S2']),
         candidates: 'declared-flippable-branches',
-        operation: 'reverse-child-subtrees'
+        operation: 'binary-placement-variant',
+        dimensions: Object.freeze(['left-right', 'short-long']),
+        variants: BRANCH_VARIANTS
       }),
       Object.freeze({ id: 's2-shift', type: 'rigid-shift', unitId: 'S2', axes: Object.freeze(['x', 'y']) })
     ]),
@@ -33,12 +37,19 @@
       Object.freeze({ id: 'unit-grid-invariant', type: 'unique-row-and-column', scope: 'per-unit' }),
       Object.freeze({ id: 'preserve-units', type: 'rigid-after-layout', units: Object.freeze(['S1', 'S2']) })
     ]),
-    objective: Object.freeze(['satisfy-required-relations', 'minimize-flip-count', 'minimize-rigid-shift']),
+    objective: Object.freeze([
+      'satisfy-required-relations', 'minimize-flip-count',
+      'minimize-changed-dimensions', 'minimize-rigid-shift'
+    ]),
     currentSupport: Object.freeze({
-      status: 'multiple-relation-rendering-context-pro-memorie',
-      active: Object.freeze(['existing-layout', 'rigid-shift-s2', 'check-all-relation-alignments', 'render-satisfied-coreferences']),
-      deferred: Object.freeze(['joint-branch-flip-search'])
+      status: 'joint-branch-flip-search-active-context-pro-memorie',
+      active: Object.freeze([
+        'joint-branch-flip-search', 'four-binary-placement-variants', 'rigid-shift-s2',
+        'check-all-relation-alignments', 'render-satisfied-coreferences'
+      ]),
+      deferred: Object.freeze([])
     }),
+    branches: Object.freeze([]),
     firstFixture: Object.freeze({
       id: 'perfectum-vcluster-order',
       nodeId: 'vp-perfectum',
@@ -377,6 +388,94 @@
       ]),
       context: RESERVED_CONTEXT,
       layoutResolution: DEFAULT_LAYOUT_RESOLUTION
+    }),
+    Object.freeze({
+      schema: COMBINATION_SCHEMA,
+      id: 'man-slaat-hond-omdat-die-hem-heeft-gebeten',
+      label: 'Anafoor · De man slaat de hond omdat die hem heeft gebeten',
+      labelEn: 'Anaphor · The man hits the dog because it bit him',
+      title: 'De man slaat de hond omdat hond man heeft gebeten.',
+      surfacePredicateObject: 'hem heeft gebeten.',
+      surfaceTemplate: 'omdat {ANAPHOR} {ANAPHOR:man-hem} heeft gebeten.',
+      surfaceFromLex: true,
+      interpretationId: 'man-dog-causal-perfect',
+      gapRows: 3,
+      provenance: Object.freeze({ kind: 'user-supplied', catalogId: 'user-man-dog-because-perfect' }),
+      sentences: Object.freeze([
+        Object.freeze({
+          id: 'S1', order: 1, text: 'De man slaat de hond', clauseType: 'main', finiteVerbPlacement: 'v2',
+          tree: Object.freeze({
+            id: 'mf-s1-s', label: 'S', cat: 'S', kind: 'cat', children: Object.freeze([
+              Object.freeze({ id: 'mf-s1-man', label: 'MAN', cat: 'N', role: 'subject', source: 'mf-s1-man', lexeme: 'man', kind: 'leaf', children: Object.freeze([]) }),
+              Object.freeze({ id: 'mf-s1-vp', label: 'VP', cat: 'VP', kind: 'cat', children: Object.freeze([
+                Object.freeze({ id: 'mf-s1-hond', label: 'HOND', cat: 'N', role: 'object', source: 'mf-s1-hond', lexeme: 'hond', kind: 'leaf', children: Object.freeze([]) }),
+                Object.freeze({ id: 'mf-s1-slaat', label: 'SLAAT', cat: 'V', role: 'predicate', source: 'mf-s1-slaat', kind: 'leaf', children: Object.freeze([]) })
+              ]) })
+            ])
+          }),
+          lex: Object.freeze([
+            Object.freeze({ nodeId: 'mf-s1-man', label: 'MAN' }),
+            Object.freeze({ nodeId: 'mf-s1-slaat', label: 'SLAAT' }),
+            Object.freeze({ nodeId: 'mf-s1-hond', label: 'HOND' })
+          ])
+        }),
+        Object.freeze({
+          id: 'S2', order: 2, text: 'omdat hond man heeft gebeten.', clauseType: 'subordinate', finiteVerbPlacement: 'final',
+          tree: Object.freeze({
+            id: 'mf-s2-s', label: 'S', cat: 'S', kind: 'cat', children: Object.freeze([
+              Object.freeze({ id: 'mf-s2-hond', label: 'HOND', cat: 'N', role: 'subject', source: 'mf-s2-hond', lexeme: 'hond', kind: 'leaf', children: Object.freeze([]) }),
+              Object.freeze({ id: 'mf-s2-vp', label: 'VP', cat: 'VP', kind: 'cat', children: Object.freeze([
+                Object.freeze({ id: 'mf-s2-man', label: 'MAN', cat: 'N', role: 'object', source: 'mf-s2-man', lexeme: 'man', kind: 'leaf', children: Object.freeze([]) }),
+                Object.freeze({ id: 'mf-s2-vcluster', label: 'V-CLUSTER', cat: 'V', role: 'predicate', source: 'mf-s2-vcluster', kind: 'cat', children: Object.freeze([
+                  Object.freeze({ id: 'mf-s2-heeft', label: 'HEEFT', cat: 'V', role: 'auxiliary', source: 'mf-s2-heeft', kind: 'leaf', children: Object.freeze([]) }),
+                  Object.freeze({ id: 'mf-s2-gebeten', label: 'GEBETEN', cat: 'VDW', role: 'participle', source: 'mf-s2-gebeten', kind: 'leaf', children: Object.freeze([]) })
+                ]) })
+              ]) })
+            ])
+          }),
+          lexInsertions: Object.freeze([Object.freeze({
+            schema: LEXICAL_INSERTION_SCHEMA, id: 'lex-mf-s2-omdat', label: 'OMDAT', layer: 'Context', axis: 'LEX', origin: 'LEX', category: 'COMP', role: 'complementizer',
+            placement: Object.freeze({ position: 'before', anchorNodeId: 'mf-s2-hond', slot: 0 })
+          })]),
+          lex: Object.freeze([
+            Object.freeze({ insertionId: 'lex-mf-s2-omdat', label: 'OMDAT', projection: 'lexical-insertion' }),
+            Object.freeze({ nodeId: 'mf-s2-hond', label: 'HOND', projection: 'anaphor-lexicalization' }),
+            Object.freeze({ nodeId: 'mf-s2-man', label: 'MAN', projection: 'anaphor-lexicalization' }),
+            Object.freeze({ nodeId: 'mf-s2-heeft', label: 'HEEFT' }),
+            Object.freeze({ nodeId: 'mf-s2-gebeten', label: 'GEBETEN' })
+          ])
+        })
+      ]),
+      relations: Object.freeze([
+        Object.freeze({
+          schema: RELATION_SCHEMA, id: 'hond-die', type: 'coreference', dependencyDirection: 'referent-to-anaphor',
+          referent: Object.freeze({ unitId: 'S1', nodeId: 'mf-s1-hond', lexeme: 'hond' }),
+          anaphor: Object.freeze({ unitId: 'S2', nodeId: 'mf-s2-hond', sourceLabel: 'HOND' }),
+          lexicalization: Object.freeze({ axis: 'LEX', profile: 'die' }),
+          alignment: Object.freeze({ type: 'shared-column', required: true }), line: Object.freeze({ shape: 'straight', direction: 'none' })
+        }),
+        Object.freeze({
+          schema: RELATION_SCHEMA, id: 'man-hem', type: 'coreference', dependencyDirection: 'referent-to-anaphor',
+          referent: Object.freeze({ unitId: 'S1', nodeId: 'mf-s1-man', lexeme: 'man' }),
+          anaphor: Object.freeze({ unitId: 'S2', nodeId: 'mf-s2-man', sourceLabel: 'MAN' }),
+          lexicalization: Object.freeze({ axis: 'LEX', profile: 'hem' }),
+          alignment: Object.freeze({ type: 'shared-column', required: true }), line: Object.freeze({ shape: 'straight', direction: 'none' })
+        })
+      ]),
+      context: RESERVED_CONTEXT,
+      layoutResolution: Object.freeze({
+        ...DEFAULT_LAYOUT_RESOLUTION,
+        branches: Object.freeze([
+          Object.freeze({ id: 's1-root', unitId: 'S1', nodeId: 'mf-s1-s', variants: BRANCH_VARIANTS }),
+          Object.freeze({ id: 's1-vp', unitId: 'S1', nodeId: 'mf-s1-vp', variants: BRANCH_VARIANTS }),
+          Object.freeze({ id: 's2-vcluster', unitId: 'S2', nodeId: 'mf-s2-vcluster', variants: BRANCH_VARIANTS, linearization: 'child-order' })
+        ]),
+        firstFixture: Object.freeze({
+          id: 'perfectum-vcluster-order',
+          nodeId: 'mf-s2-vcluster',
+          alternatives: Object.freeze(['heeft-gebeten', 'gebeten-heeft'])
+        })
+      })
     })
   ]);
 
@@ -588,6 +687,48 @@
     return tail.charAt(0).toLocaleLowerCase('nl-NL') + tail.slice(1);
   }
 
+  function normalizeFlipBranches(values, sentenceById) {
+    const ids = new Set();
+    const endpoints = new Set();
+    return (Array.isArray(values) ? values : []).map((value, index) => {
+      const input = value && typeof value === 'object' ? value : {};
+      const id = cleanId(input.id, `branch-${index + 1}`);
+      const unitId = String(input.unitId || input.unit_id || '').trim();
+      const nodeId = String(input.nodeId || input.node_id || '').trim();
+      const sentence = sentenceById.get(unitId);
+      if (!sentence) throw new Error(`Flipkandidaat ${id}: unitId ${unitId || '(leeg)'} bestaat niet.`);
+      const branch = collectNodes(sentence.tree).get(nodeId);
+      if (!branch) throw new Error(`Flipkandidaat ${id}: vertakking ${unitId}:${nodeId || '(leeg)'} bestaat niet.`);
+      if (!Array.isArray(branch.children) || branch.children.length !== 2) {
+        throw new Error(`Flipkandidaat ${id}: alleen een binaire vertakking kan links–rechts en kort–lang wisselen.`);
+      }
+      const variants = [...new Set((Array.isArray(input.variants) && input.variants.length
+        ? input.variants : BRANCH_VARIANTS).map(item => String(item || '').trim().toLowerCase()))];
+      if (variants.some(variant => !BRANCH_VARIANTS.includes(variant))) {
+        throw new Error(`Flipkandidaat ${id}: onbekende flipvariant.`);
+      }
+      if (!variants.includes('normal')) variants.unshift('normal');
+      const endpoint = `${unitId}:${nodeId}`;
+      if (ids.has(id)) throw new Error(`Dubbele flipkandidaat-id: ${id}.`);
+      if (endpoints.has(endpoint)) throw new Error(`Vertakking ${endpoint} is dubbel als flipkandidaat gedeclareerd.`);
+      ids.add(id);
+      endpoints.add(endpoint);
+      return {
+        schema: BRANCH_FLIP_SCHEMA,
+        id,
+        unitId,
+        nodeId,
+        variants,
+        defaultVariant: 'normal',
+        operation: 'binary-placement-variant',
+        dimensions: ['left-right', 'short-long'],
+        linearization: String(input.linearization || 'none').trim().toLowerCase() === 'child-order'
+          ? 'child-order'
+          : 'none'
+      };
+    });
+  }
+
   function normalizeCombination(value, index = 0) {
     if (!value || typeof value !== 'object' || Array.isArray(value)) {
       throw new Error(`Anafoorcombinatie ${index + 1} is geen object.`);
@@ -733,6 +874,10 @@
     const cloneListOr = (candidate, fallback) => Array.isArray(candidate) && candidate.length
       ? clone(candidate)
       : clone(fallback);
+    const flipBranches = normalizeFlipBranches(
+      layoutResolutionInput.branches || layoutResolutionInput.branchCandidates || [],
+      sentenceById
+    );
 
     return {
       schema: COMBINATION_SCHEMA,
@@ -743,6 +888,7 @@
       antecedentLexeme,
       surfacePredicateObject: String(value.surfacePredicateObject || sentenceTail(sentences[1])).trim(),
       surfaceTemplate,
+      surfaceFromLex: value.surfaceFromLex === true,
       ...(String(value.interpretationId || '').trim() ? { interpretationId: cleanId(value.interpretationId, 'interpretation-1') } : {}),
       ...(value.provenance && typeof value.provenance === 'object' && !Array.isArray(value.provenance)
         ? { provenance: clone(value.provenance) }
@@ -759,6 +905,7 @@
         constraints: cloneListOr(layoutResolutionInput.constraints, DEFAULT_LAYOUT_RESOLUTION.constraints),
         objective: cloneListOr(layoutResolutionInput.objective, DEFAULT_LAYOUT_RESOLUTION.objective).map(String),
         currentSupport: clone(layoutResolutionInput.currentSupport || DEFAULT_LAYOUT_RESOLUTION.currentSupport),
+        branches: flipBranches,
         firstFixture: clone(layoutResolutionInput.firstFixture || DEFAULT_LAYOUT_RESOLUTION.firstFixture),
         onConflict: 'report-no-forced-node-move'
       }
@@ -789,6 +936,7 @@
       title: combination.title,
       surfacePredicateObject: combination.surfacePredicateObject,
       surfaceTemplate: combination.surfaceTemplate,
+      ...(combination.surfaceFromLex ? { surfaceFromLex: true } : {}),
       ...(combination.interpretationId ? { interpretationId: combination.interpretationId } : {}),
       ...(combination.provenance ? { provenance: clone(combination.provenance) } : {}),
       gapRows: combination.gapRows,
@@ -819,11 +967,14 @@
     RELATION_SCHEMA,
     LEXICAL_INSERTION_SCHEMA,
     LAYOUT_RESOLUTION_SCHEMA,
+    BRANCH_FLIP_SCHEMA,
+    BRANCH_VARIANTS,
     DEFAULT_LAYOUT_RESOLUTION,
     DEFAULT_COMBINATIONS,
     clone,
     collectNodes,
     planLexInsertionRows,
+    normalizeFlipBranches,
     normalizeCombination,
     normalizeCombinations,
     toConfigCombination,

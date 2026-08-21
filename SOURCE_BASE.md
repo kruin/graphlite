@@ -2,7 +2,7 @@
 
 - Release: `v2.0.0-rc.45`
 - Actuele source build:
-  `v2.0.0-rc.45-sources-language-tree-anafoor-extensie-20260821.16`.
+  `v2.0.0-rc.45-sources-language-tree-anafoor-extensie-flip-20260821.17`.
 - Leidende samenvoegbasis:
   `OpenGraph_Lite_Viewer_v2.0.0-rc.45_full_source(5)(1).zip`
   (source build `v2.0.0-rc.45-direct-config-context-only-20260802.6`).
@@ -40,6 +40,13 @@
 - Correctie 20260821.16: de projectnormalizer verwijdert ook trailing
   whitespace op iedere tekstregel vóór de releasecontrole en Git-staging;
   Markdown-hard-break-spaties blokkeren `git diff --cached --check` niet meer.
+- Correctie 20260821.17: Flip gebruikt vier binaire plaatsingsvarianten
+  (`normal`, `left-right`, `short-long`, `both`) en lost alle gedeclareerde
+  S1–S2-coreferenties met één gezamenlijke solver en starre S2-shift op.
+  De vijfde combinatie **De man slaat de hond omdat die hem heeft gebeten**
+  test `HOND→DIE`, `MAN→HEM` en
+  `HEEFT GEBETEN↔GEBETEN HEEFT`. Config, Play, OPN en negen fixtures zijn
+  bijgewerkt.
 - Volledige basis: `OpenGraph_Lite_Viewer_v1.0.16_stable_central_tree_views.zip`
 - Overnamebeleid: alle bestanden uit de bijlage behouden waar technisch mogelijk.
 - Functionele correctie: `Functional` is de tweede centrale view na `Syntax`; `LOG` blijft uitsluitend de zuidas/named projection.

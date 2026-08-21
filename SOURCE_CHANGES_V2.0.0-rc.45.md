@@ -1,5 +1,29 @@
 # SOURCE_CHANGES v2.0.0-rc.45
 
+## Source build 20260821.17 — vier flipvarianten en gezamenlijke oplossing
+
+- Een binaire flip heeft twee onafhankelijke dimensies: links–rechts en
+  kort–lang. Zij leveren exact `normal`, `left-right`, `short-long` en `both`.
+  Kort–lang is plaatsingsafstand, niet subtree-omvang.
+- `multi-ogn-composition-engine.js` enumereert alle toegestane varianten over
+  S1 en S2 en kiest één kandidaat die alle vereiste Text-coreferenties met
+  één starre S2-shift uitlijnt. Een conflict forceert geen losse knoop.
+- De vijfde Configcombinatie is **De man slaat de hond omdat die hem heeft
+  gebeten.** De bronrelaties zijn `HOND(S1)↔HOND(S2)` en
+  `MAN(S1)↔MAN(S2)`; LEX realiseert `DIE` en `HEM`. `OMDAT` blijft Context.
+- Drie gedeclareerde branches leveren 64 kandidaten; 16 zijn geldig. De
+  deterministische standaardoplossing is `s1-root=left-right`,
+  `s1-vp=left-right`, `s2-vcluster=normal`.
+- Alleen een branch met `linearization: "child-order"` projecteert kort–lang
+  tevens als omgekeerde LEX-childvolgorde. Daardoor zijn `HEEFT GEBETEN` en
+  `GEBETEN HEEFT` twee varianten van dezelfde V-clusterbranch.
+- Config bewaart per combinatie `auto` of een expliciete variant per branch.
+  Play toont de gekozen flips per zin als één atomaire stap en speelt exact
+  terug. OPN bewaart branches, gekozen varianten en flipstappen.
+- `tools/check_anaphor_flip.js` bewaakt de vier varianten, de 64 kandidaten,
+  beide coreferenties, conflictgedrag en beide clustervolgorden. De
+  machineleesbare regressieset telt nu negen fixtures.
+
 ## Source build 20260821.16 — trailing whitespace automatisch verwijderen
 
 - `TEXT_AND_CONTEXT.md` en de gespiegelde versie in `docs/` gebruiken geen

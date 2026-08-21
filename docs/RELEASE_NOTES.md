@@ -1,6 +1,6 @@
 ## v2.0.0-rc.45 — OGN-kern vóór toepassingen
 
-- Source build 20260821.16 gebruikt de actuele Sources-projectzip als leidende
+- Source build 20260821.17 gebruikt de actuele Sources-projectzip als leidende
   basis en formaliseert Anafoor als Language Tree-extensie 1.
 - De automatische publicatienormalizer verwijdert ook trailing whitespace
   aan ieder tekstregel-einde. Markdown-documenten kunnen de staged
@@ -27,9 +27,15 @@
 - **De boer slaat de ezel omdat hij hem bezit.** bevat de twee gelijktijdige
   Text-coreferenties `BOER→HIJ` en `EZEL→HEM`. `OMDAT` is een
   Context-insertie; `BEZIT` blijft in de bijzin finaal zonder V2.
+- **De man slaat de hond omdat die hem heeft gebeten.** bevat
+  `HOND→DIE` en `MAN→HEM`. Drie gedeclareerde binaire branches hebben elk de
+  varianten normaal, links–rechts, kort–lang en beide. De actieve gezamenlijke
+  solver toetst alle 64 kandidaten, beide uitlijningen en één starre
+  S2-shift. Alleen de V-clusterbranch lineariseert kort–lang tevens als
+  `GEBETEN HEEFT`.
 - De begrippen anafoor, antecedent, discourse-referent, coreferentie,
   temporele/locatieve referentie, toestandsverandering en discourse-relatie
-  zijn normatief vastgelegd. Acht positieve, negatieve en ambigue S1–S2-paren
+  zijn normatief vastgelegd. Negen positieve, negatieve en ambigue S1–S2-paren
   vormen een machineleesbare regressieset.
 - Anafoor-Play toont S1 volledig vóór S2, inclusief hun Context-inserties en
   alleen toegestane V2-verplaatsingen. Daarna volgen alle uitgelijnde

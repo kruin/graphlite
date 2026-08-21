@@ -111,6 +111,22 @@ assert.equal(becauseTimeline.units[1].finiteVerbMoveStep, null);
 assert.deepEqual(becauseTimeline.units[1].lexInsertionIds, ['lex-s2-omdat']);
 assert.equal(play.stateAt(becauseTimeline, becauseTimeline.max).units[1].finiteVerbMoved, false);
 
+const flipBranches = [
+  { id: 's1-root', unitId: 'S1', variant: 'left-right' },
+  { id: 's1-vp', unitId: 'S1', variant: 'left-right' },
+  { id: 's2-vcluster', unitId: 'S2', variant: 'short-long' }
+];
+const flipTimeline = play.buildTimeline(configured[4].sentences, flipBranches);
+assert.deepEqual(flipTimeline.units[0].branchFlipIds, ['s1-root', 's1-vp']);
+assert.deepEqual(flipTimeline.units[1].branchFlipIds, ['s2-vcluster']);
+assert.equal(play.phaseAt(flipTimeline, flipTimeline.units[0].branchFlipStep).kind, 'branch-flip');
+assert.equal(play.stateAt(flipTimeline, flipTimeline.units[0].branchFlipStep - 1).units[0].branchFlipped, false);
+assert.equal(play.stateAt(flipTimeline, flipTimeline.units[0].branchFlipStep).units[0].branchFlipped, true);
+assert.equal(play.stateAt(flipTimeline, flipTimeline.units[1].branchFlipStep - 1).units[1].branchFlipped, false);
+assert.equal(play.stateAt(flipTimeline, flipTimeline.units[1].branchFlipStep).units[1].branchFlipped, true);
+assert.equal(play.stateAt(flipTimeline, flipTimeline.units[1].branchFlipStep - 1).units[0].branchFlipped, true,
+  'terugspelen moet de S2-flip eerder verwijderen dan de S1-flip');
+
 for (const source of [index, viewerHtml]) {
   assert.match(source, /multi-ogn-anaphor-play-engine\.js/, 'Play-engine moet vóór viewer.js worden geladen');
 }
@@ -120,6 +136,8 @@ assert.match(viewer, /bijzin zonder V2/, 'omdat-bijzin mag geen V2-Wissel tonen'
 assert.match(viewer, /'data-v2-moved': visiblyMoved \? 'true' : 'false'/, 'V2-verplaatsing mist inspecteerbare status');
 assert.match(viewer, /lexicalizationSummary/, 'laatste bron→anafoorstap ontbreekt');
 assert.match(viewer, /'S2-anaphor-lexicalizations'/, 'OPN-export moet de laatste Play-fase bewaren');
+assert.match(viewer, /'branch-flip'/, 'Play moet joint flip als inspecteerbare stap bewaren');
+assert.match(viewer, /branch_flip_step: unit\.branchFlipStep/, 'OPN-export moet de flipstap bewaren');
 assert.match(viewer, /reverse: 'exact'/, 'OPN-export moet exact reverse bewaren');
 assert.ok(combinations.indexOf("id: 's1-man'") < combinations.indexOf("id: 's1-zie'"), 'S1-bron moet object vóór eindwerkwoord houden');
 assert.ok(combinations.indexOf("id: 's2-hoed'") < combinations.indexOf("id: 's2-draagt'"), 'S2-bron moet object vóór eindwerkwoord houden');
@@ -128,4 +146,4 @@ assert.doesNotMatch(css, /placement-multi-ogn-active \.main-play-reset-bar/,
 assert.doesNotMatch(css, /placement-multi-ogn-active \.mobile-growth-nav/,
   'Anafoor mag mobiele Play-bediening niet verbergen');
 
-console.log('MULTI-OGN ANAPHOR PLAY: OK (S1 → V2 · S2 → V2 · MAN↔MAN · MAN→HIJ · exact reverse)');
+console.log('MULTI-OGN ANAPHOR PLAY: OK (S1 → joint flip → V2 · S2 → clusterflip · dubbele anafoor · exact reverse)');

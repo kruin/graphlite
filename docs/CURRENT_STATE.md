@@ -1,6 +1,6 @@
 # Actuele contractlaag · v2.0.0-rc.15
 
-> **Source build 20260821.16:** **Text** is uitsluitend de centrale uiting;
+> **Source build 20260821.17:** **Text** is uitsluitend de centrale uiting;
 > **Context** is alles daaromheen. Beide zijn afzonderlijke Open Graph
 > Notation-structuren; Context wordt later een geminimaliseerde boom. Iedere
 > insertie behoort tot Context.
@@ -12,8 +12,11 @@
 > Play toont eerst S1 en daarna S2, met alleen toegestane V2-Wissels, gevolgd
 > door alle uitgelijnde Text-coreferenties en hun LEX-realisaties. **De boer
 > slaat de ezel omdat hij hem bezit.** toont `BOER→HIJ` én `EZEL→HEM`;
-> `BEZIT` blijft in de bijzin finaal. Context blijft p.m. Definities en
-> acht regressieparen staan in
+> `BEZIT` blijft in de bijzin finaal. **De man slaat de hond omdat die hem
+> heeft gebeten.** toont `HOND→DIE` en `MAN→HEM`. De actieve solver kiest per
+> gedeclareerde binaire branch uit `normal`, `left-right`, `short-long` en
+> `both`, plus één starre S2-shift; Play toont de gekozen flips atomair.
+> Context blijft p.m. Definities en negen regressieparen staan in
 > `ANAPHOR_AND_S1_S2_RELATION_DEFINITIONS.md` en
 > `S1_S2_RELATION_TEST_FIXTURES.md`. Zie ook `MULTI_OGN_ANAPHOR.md`.
 

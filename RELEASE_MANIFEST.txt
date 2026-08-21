@@ -274,6 +274,7 @@ tools/check_direct_placement_config.py
 tools/check_mobile_layout_rc38.py
 tools/check_mobile_layout_runtime.js
 tools/check_multi_ogn_anaphor.js
+tools/check_anaphor_flip.js
 tools/check_multi_ogn_anaphor_play.js
 tools/check_anaphor_language_tree_extension.js
 tools/sync_anaphor_default_config.js

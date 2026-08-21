@@ -28,6 +28,8 @@ node tools\check_random_placement.js
 if errorlevel 1 exit /b 1
 node tools\check_multi_ogn_anaphor.js
 if errorlevel 1 exit /b 1
+node tools\check_anaphor_flip.js
+if errorlevel 1 exit /b 1
 node tools\check_multi_ogn_anaphor_play.js
 if errorlevel 1 exit /b 1
 node tools\check_anaphor_language_tree_extension.js

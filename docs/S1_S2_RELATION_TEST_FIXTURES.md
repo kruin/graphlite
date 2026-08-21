@@ -20,6 +20,7 @@ weergave niet door elkaar mogen lopen:
 | `unresolved-there-control` | Ik zag de man gisteren. | Vandaag was hij daar niet meer. | geen harde plaatsrelatie zonder plaatsantecedent |
 | `ambiguous-double-pronoun` | Anna sprak met Eva. | Daarna belde zij haar. | twee complete lezingen; semantiek kiezen vóór layout/flip |
 | `user-farmer-donkey-because` | De boer slaat de ezel | omdat hij hem bezit. | Text `BOER→HIJ`, `EZEL→HEM`; Context-insertie `OMDAT`; bijzin zonder V2 |
+| `user-man-dog-because-perfect` | De man slaat de hond | omdat die hem heeft gebeten. | Text `HOND→DIE`, `MAN→HEM`; Context `OMDAT`; vier flipvarianten |
 
 De geconstrueerde fixtures zijn tests, geen literatuurcitaten. De afzonderlijke
 literatuurcatalogus staat in `ANAPHOR_S1_S2_LITERATURE_CATALOG.md`.
@@ -58,3 +59,24 @@ noemt die plaats niet. Ook aanwezigheid tijdens *zien* is een pragmatische
 afleiding, geen apart uitgesproken predicaat. Tijd, plaats en toestand zijn
 uitsluitend Context-observaties; de woorden `GISTEREN`, `VANDAAG`, `ER` en
 `NIET MEER` zijn Context-inserties buiten de Text-boom.
+
+## Dubbele anafoor plus perfectumcluster
+
+Voor de door de opdrachtgever aangeleverde flipfixture geldt:
+
+- S1-Text: `MAN` subject, `HOND` object, `SLAAT` predicaat;
+- S2-Text: `HOND` subject, `MAN` object,
+  `V-CLUSTER(HEEFT,GEBETEN)` predicaat;
+- relaties: `HOND(S1)↔HOND(S2)` met LEX `DIE`, en
+  `MAN(S1)↔MAN(S2)` met LEX `HEM`;
+- Context: `OMDAT`, zonder centrale Text-knoop;
+- geen V2 in S2: het is een omdat-bijzin;
+- drie gedeclareerde binaire branches met ieder de varianten `normal`,
+  `left-right`, `short-long` en `both`.
+
+De volledige zoekruimte bevat 64 kandidaten. De standaardoplossing is
+`s1-root=left-right`, `s1-vp=left-right`, `s2-vcluster=normal`. Zij lijnt beide
+relaties met één starre S2-shift uit. Voor de V-clusterbranch geven `normal`
+en `left-right` de LEX-volgorde `HEEFT GEBETEN`; `short-long` en `both` geven
+`GEBETEN HEEFT`. Bij de twee andere branches verandert kort–lang uitsluitend
+de plaatsingsafstand.

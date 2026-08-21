@@ -16,11 +16,19 @@ centrale **Text**-coreferentie; `GISTEREN`, `VANDAAG`, `ER` en `NIET MEER`
 zijn **Context**-inserties op LEX en geen centrale boomknopen. In **De boer
 slaat de ezel omdat hij hem bezit.** zijn `BOER→HIJ` en `EZEL→HEM` twee
 Text-anaforen; `OMDAT` is een Context-insertie en `BEZIT` blijft finaal zonder
-V2. Nadere Context-uitwerking blijft p.m. De aangeleverde Context-boom staat
+V2. Nadere Context-uitwerking blijft p.m.
+De actieve flipfixture **De man slaat de hond omdat die hem heeft gebeten.**
+verbindt `HOND→DIE` en `MAN→HEM`. Iedere gedeclareerde binaire tak heeft vier
+plaatsingsvarianten: normaal, links–rechts, kort–lang en beide. De gezamenlijke
+solver kiest alle takvarianten en de starre S2-verschuiving in één
+constraintprobleem; alleen een tak met `linearization: "child-order"` keert
+ook zijn LEX-children om, zoals `HEEFT GEBETEN` ↔ `GEBETEN HEEFT`. Zie
+[`FLIP_CONSTRAINT_SOLVER.md`](FLIP_CONSTRAINT_SOLVER.md). De aangeleverde
+Context-boom staat
 in [`CONTEXT_TAXONOMY.md`](CONTEXT_TAXONOMY.md). Zie
 [`TEXT_AND_CONTEXT.md`](TEXT_AND_CONTEXT.md). De definities staan in
 [`ANAPHOR_AND_S1_S2_RELATION_DEFINITIONS.md`](ANAPHOR_AND_S1_S2_RELATION_DEFINITIONS.md);
-acht positieve, negatieve en ambigue paren staan in
+negen positieve, negatieve en ambigue paren staan in
 [`S1_S2_RELATION_TEST_FIXTURES.md`](S1_S2_RELATION_TEST_FIXTURES.md).
 
 OpenGraph Lite Viewer is een viewer en testomgeving voor de algemene Open

@@ -21,7 +21,7 @@
     return ids;
   }
 
-  function buildTimeline(sentences = []) {
+  function buildTimeline(sentences = [], selectedBranches = []) {
     if (!Array.isArray(sentences) || sentences.length !== 2) {
       throw new Error('Anafoor-Play vereist precies twee zinnen.');
     }
@@ -34,6 +34,11 @@
         cursor += 1;
         nodeSteps[nodeId] = cursor;
       });
+      const branchFlipIds = (Array.isArray(selectedBranches) ? selectedBranches : [])
+        .filter(branch => String(branch?.unitId || '') === String(sentence?.id || `S${index + 1}`)
+          && String(branch?.variant || 'normal') !== 'normal')
+        .map(branch => String(branch.id || '').trim()).filter(Boolean);
+      const branchFlipStep = branchFlipIds.length ? ++cursor : null;
       const lexBaseStep = ++cursor;
       const lexInsertionIds = (Array.isArray(sentence?.lexInsertions) ? sentence.lexInsertions : [])
         .map(insertion => String(insertion.id || '').trim()).filter(Boolean);
@@ -48,6 +53,8 @@
         nodeSteps: Object.freeze(nodeSteps),
         firstNodeStep: nodeSteps[nodeIds[0]],
         lastNodeStep: nodeSteps[nodeIds[nodeIds.length - 1]],
+        branchFlipIds: Object.freeze(branchFlipIds),
+        branchFlipStep,
         lexBaseStep,
         lexInsertionIds: Object.freeze(lexInsertionIds),
         lexInsertionStep,
@@ -81,6 +88,8 @@
         visibleNodeIds: Object.freeze(unit.nodeIds.filter(nodeId => step >= unit.nodeSteps[nodeId])),
         treeStarted: step >= unit.firstNodeStep,
         treeComplete: step >= unit.lastNodeStep,
+        branchFlipped: unit.branchFlipStep === null ? true : step >= unit.branchFlipStep,
+        branchFlipIds: unit.branchFlipIds,
         lexBaseVisible: step >= unit.lexBaseStep,
         lexInsertionsVisible: unit.lexInsertionStep === null ? false : step >= unit.lexInsertionStep,
         finiteVerbMoved: unit.finiteVerbMoveStep === null ? false : step >= unit.finiteVerbMoveStep,
@@ -97,6 +106,9 @@
     for (const unit of timeline?.units || []) {
       if (step >= unit.firstNodeStep && step <= unit.lastNodeStep) {
         return Object.freeze({ kind: 'tree', step, unitId: unit.id });
+      }
+      if (unit.branchFlipStep !== null && step === unit.branchFlipStep) {
+        return Object.freeze({ kind: 'branch-flip', step, unitId: unit.id, branchIds: unit.branchFlipIds });
       }
       if (step === unit.lexBaseStep) return Object.freeze({ kind: 'lex-base', step, unitId: unit.id });
       if (unit.lexInsertionStep !== null && step === unit.lexInsertionStep) {

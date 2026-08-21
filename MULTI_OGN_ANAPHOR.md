@@ -130,7 +130,8 @@ combinatie en bewaart per combinatie het LEX-profiel in
 De meegeleverde lijst bevat nu het oorspronkelijke man–hoed-geval, de
 opdrachtgeversfixture **Ik zag de man gisteren. Vandaag was hij er niet meer.**
 en de literatuur-normalisatie **Een boer bezit een ezel. Hij slaat hem.**.
-De vierde keuze is **De boer slaat de ezel omdat hij hem bezit.** Het
+De vierde keuze is **De boer slaat de ezel omdat hij hem bezit.** De vijfde is
+**De man slaat de hond omdat die hem heeft gebeten.** Het
 tijdsvoorbeeld declareert uitsluitend Text-coreferentie `MAN→HIJ`;
 `GISTEREN`, `VANDAAG`, `ER` en `NIET MEER` zijn Context-inserties. Beide
 boer–ezelgevallen
@@ -138,6 +139,10 @@ declareren `BOER→HIJ` en `EZEL→HEM`. `OMDAT` is een Context-insertie;
 `BEZIT` blijft finaal in de bijzin. De volledige researchselectie en de
 grens tussen gewone links en hyperrelaties staat in
 `ANAPHOR_S1_S2_LITERATURE_CATALOG.md`.
+
+De vijfde keuze declareert `HOND→DIE` en `MAN→HEM`. De S2-bronboom bevat
+daarom HOND als subject en MAN als object; DIE en HEM bestaan uitsluitend op
+LEX. Het werkwoordcluster bevat de Text-bronnen HEEFT en GEBETEN.
 
 Iedere combinatie gebruikt een lijst `relations[]` met uitsluitend centrale
 Text-coreferentie. De renderer tekent alle reeds uitgelijnde links en
@@ -158,7 +163,8 @@ Nieuwe OPN-export gebruikt
   versie wordt gerenderd;
 - het gekozen LEX-profiel, zijn oppervlaktevorm en bronknoop;
 - de gezamenlijke LEX-volgorde met `source_label` en zichtbaar `label`;
-- de voorbereide gezamenlijke flipconstraints en de actuele supportgrens.
+- de gezamenlijke flipconstraints, gevraagde Configvarianten en gekozen
+  oplossing.
 
 OPN-v1 met de oudere directe bronknoop `s2-hij` blijft alleen voor import
 ondersteund. Nieuwe export schrijft die representatie niet meer.
@@ -166,24 +172,31 @@ ondersteund. Nieuwe export schrijft die representatie niet meer.
 ## Flipcontract
 
 Flip wordt niet als vaste reeks `S2 → S1` uitgevoerd. Alle gedeclareerde
-branch-flips en de starre S2-shift horen later in één gezamenlijke zoekruimte.
-De minimale fixture is `HEEFT GEBETEN ↔ GEBETEN HEEFT`; dit test de generieke
-binaire branch-flip en is geen aparte perfectummodule. Zie
-`FLIP_CONSTRAINT_SOLVER.md`.
+branchvarianten en de starre S2-shift worden actief in één gezamenlijke
+zoekruimte opgelost. Iedere binaire branch kent vier toestanden: `normal`,
+`left-right`, `short-long` en `both`. Links–rechts bepaalt de zijde;
+kort–lang bepaalt de plaatsingsafstand en verandert alleen bij
+`linearization: "child-order"` tevens de LEX-childvolgorde.
 
-In deze build is die joint search nog niet actief. De anafoorweergave gebruikt
-de bestaande layouts, één starre S2-verschuiving en alle reeds uitgelijnde
-Text-coreferenties.
+De fixture **De man slaat de hond omdat die hem heeft gebeten** gebruikt drie
+gedeclareerde branches en twee harde uitlijningen. De solver onderzoekt 64
+kandidaten en kiest deterministisch één geldige variantset. Daardoor zijn
+`HEEFT GEBETEN ↔ GEBETEN HEEFT` varianten van dezelfde generieke bewerking,
+niet van een aparte perfectummodule. Config kan per branch `auto` of een
+expliciete variant kiezen; Play toont de gekozen flips per zin als één
+atomaire stap. Zie `FLIP_CONSTRAINT_SOLVER.md`.
 
 ## Grenzen en controles
 
 Deze versie heeft precies twee OGN-eenheden en S1 vóór S2. Config en OPN mogen
-meerdere coreferentieparen bevatten; de geometrische weergave toont alle
-reeds uitgelijnde paren zonder losse Text-knopen te verplaatsen. Vrije
+meerdere coreferentieparen bevatten; de geometrische weergave lost alle harde
+paren gezamenlijk op zonder losse Text-knopen te verplaatsen. Vrije
 zinsinvoer, catafoor en
 ketens met meer dan twee zinnen vallen buiten deze toepassing.
 
 `tools/check_multi_ogn_anaphor.js` bewaakt de recursieve berekening, MAN–MAN,
-de lexiconprofielen en het ontbreken van ad-hoc-coördinaten. De browsertest
+de lexiconprofielen en het ontbreken van ad-hoc-coördinaten.
+`tools/check_anaphor_flip.js` bewaakt de vier varianten, alle 64 kandidaten,
+beide coreferenties en de twee werkwoordclustervolgorden. De browsertest
 controleert daarnaast de getekende bronknopen, LEX-realisatie, Config-keuze en
 OPN-v2-roundtrip.

@@ -119,7 +119,17 @@ function sourceFunction(source, name) {
   const marker = `function ${name}(`;
   const start = source.indexOf(marker);
   assert.ok(start >= 0, `productiefunctie ontbreekt: ${name}`);
-  const bodyStart = source.indexOf('{', start);
+  const openParenthesis = source.indexOf('(', start);
+  let parenthesisDepth = 0;
+  let closeParenthesis = -1;
+  for (let index = openParenthesis; index < source.length; index += 1) {
+    if (source[index] === '(') parenthesisDepth += 1;
+    if (source[index] === ')') {
+      parenthesisDepth -= 1;
+      if (parenthesisDepth === 0) { closeParenthesis = index; break; }
+    }
+  }
+  const bodyStart = source.indexOf('{', closeParenthesis);
   let depth = 0;
   let quote = null;
   let escaped = false;
@@ -159,16 +169,18 @@ assert.match(sentenceLayoutSource, /assertUniqueNodeGridLines\(layout/,
   'iedere afzonderlijk berekende Anafoor-boom moet vóór compositie worden gevalideerd');
 
 const compositionSource = sourceFunction(sources.js, 'multiOgnAnaphorComposition');
-assert.match(compositionSource, /layout:\s*multiOgnSentenceLayout\(s1\)/,
+assert.match(compositionSource, /layoutForSentence\(s1,\s*assignment\)/,
   'S1 moet afzonderlijk worden berekend');
-assert.match(compositionSource, /layout:\s*multiOgnSentenceLayout\(s2\)/,
+assert.match(compositionSource, /layoutForSentence\(s2,\s*assignment\)/,
   'S2 moet afzonderlijk worden berekend');
 assert.match(compositionSource, /engine\.composePair\(/,
   'pas na beide boomberekeningen mag de multi-OGN-compositie starten');
+assert.match(compositionSource, /engine\.solveJoint\(/,
+  'alle gedeclareerde flips moeten gezamenlijk worden opgelost');
 
 for (const [source, markers] of [
   [sources.html, ['data-placement-mode="multi-ogn-anaphor"', 'multi-ogn-composition-engine.js', 'anaphor-lexicalization-engine.js', 'anaphor-combinations-engine.js', 'multi-ogn-anaphor-play-engine.js']],
-  [sources.js, ['function activeMultiOgnAnaphorDemo()', 'function drawMultiOgnAnaphor()', "'data-directed': 'false'", 'composePair({', 'anaphorLexicalizationSelect', 'function multiOgnAnaphorPlayPlan()']],
+  [sources.js, ['function activeMultiOgnAnaphorDemo()', 'function drawMultiOgnAnaphor()', "'data-directed': 'false'", 'composePair({', 'anaphorLexicalizationSelect', 'function multiOgnAnaphorPlayPlan(']],
   [sources.css, ['.multi-ogn-coreference-line', '.multi-ogn-lex-axis', '.anaphor-lexicalization-result']],
   [sources.lexicon, ['data-id="anaphor-subject"', 'data-id="anaphor-object"', 'surface=HIJ', 'surface=HEM', 'surface=DIE_MAN', 'surface=DIE_VROUW']],
   [sources.docs, ['antecedent', 'anafoor', 'coreferentieel', 'star verschuiven', 'per afzonderlijke OGN', 'MAN–MAN', 'DIE MAN']]
@@ -177,7 +189,7 @@ for (const [source, markers] of [
 }
 
 const configured = combinations.normalizeCombinations();
-assert.equal(configured.length, 4);
+assert.equal(configured.length, 5);
 assert.equal(configured[0].relations[0].referent.nodeId, 's1-man');
 assert.equal(configured[0].relations[0].anaphor.nodeId, 's2-man');
 assert.equal(configured[0].layoutResolution.mode, 'joint');
@@ -189,5 +201,12 @@ assert.deepEqual(configured[2].relations.map(relation => relation.id), ['boer-hi
 assert.deepEqual(configured[3].relations.map(relation => relation.id), ['boer-hij', 'ezel-hem']);
 assert.equal(configured[3].sentences[1].finiteVerbPlacement, 'final');
 assert.equal(configured[3].sentences[1].lexInsertions[0].label, 'OMDAT');
+const flipFixture = configured[4];
+assert.deepEqual(flipFixture.relations.map(relation => relation.id), ['hond-die', 'man-hem']);
+assert.deepEqual(flipFixture.layoutResolution.branches.map(branch => branch.id), ['s1-root', 's1-vp', 's2-vcluster']);
+assert.deepEqual(flipFixture.layoutResolution.branches[2].variants, ['normal', 'left-right', 'short-long', 'both']);
+assert.equal(flipFixture.layoutResolution.branches[2].linearization, 'child-order');
+assert.equal(lexicalizer.resolve(lexicalizer.DEFAULT_PROFILES, 'die', 'hond', 'subject').selected.id, 'die');
+assert.deepEqual(engine.BRANCH_VARIANTS, ['normal', 'left-right', 'short-long', 'both']);
 
-console.log('MULTI-OGN ANAPHOR CHECK: OK (recursieve S1/S2-bomen; broncoreferentie MAN–MAN; HIJ/DIE/DIE MAN uitsluitend als toepasselijke LEX-realisatie)');
+console.log('MULTI-OGN ANAPHOR CHECK: OK (recursieve S1/S2-bomen; joint flip links–rechts/kort–lang; dubbele HOND–DIE en MAN–HEM-projectie)');

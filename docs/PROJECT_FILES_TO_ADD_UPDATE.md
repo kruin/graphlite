@@ -26,6 +26,8 @@ projectie-master-spec.md
 OPN_STORAGE_FORMAT.md
 MULTI_OGN_ANAPHOR.md
 ANAPHOR_LANGUAGE_TREE_EXTENSION.md
+TEXT_AND_CONTEXT.md
+FLIP_CONSTRAINT_SOLVER.md
 ANAPHOR_S1_S2_LITERATURE_CATALOG.md
 ANAPHOR_AND_S1_S2_RELATION_DEFINITIONS.md
 S1_S2_RELATION_TEST_FIXTURES.md
@@ -34,6 +36,7 @@ anaphor-combinations-engine.js
 anaphor-lexicalization-engine.js
 multi-ogn-anaphor-play-engine.js
 tools/check_multi_ogn_anaphor.js
+tools/check_anaphor_flip.js
 tools/check_multi_ogn_anaphor_play.js
 tools/check_anaphor_language_tree_extension.js
 tools/check_multi_ogn_anaphor_runtime.js

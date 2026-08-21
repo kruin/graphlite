@@ -227,7 +227,17 @@
                 "S2"
               ],
               "candidates": "declared-flippable-branches",
-              "operation": "reverse-child-subtrees"
+              "operation": "binary-placement-variant",
+              "dimensions": [
+                "left-right",
+                "short-long"
+              ],
+              "variants": [
+                "normal",
+                "left-right",
+                "short-long",
+                "both"
+              ]
             },
             {
               "id": "s2-shift",
@@ -263,20 +273,21 @@
           "objective": [
             "satisfy-required-relations",
             "minimize-flip-count",
+            "minimize-changed-dimensions",
             "minimize-rigid-shift"
           ],
           "currentSupport": {
-            "status": "multiple-relation-rendering-context-pro-memorie",
+            "status": "joint-branch-flip-search-active-context-pro-memorie",
             "active": [
-              "existing-layout",
+              "joint-branch-flip-search",
+              "four-binary-placement-variants",
               "rigid-shift-s2",
               "check-all-relation-alignments",
               "render-satisfied-coreferences"
             ],
-            "deferred": [
-              "joint-branch-flip-search"
-            ]
+            "deferred": []
           },
+          "branches": [],
           "firstFixture": {
             "id": "perfectum-vcluster-order",
             "nodeId": "vp-perfectum",
@@ -552,7 +563,17 @@
                 "S2"
               ],
               "candidates": "declared-flippable-branches",
-              "operation": "reverse-child-subtrees"
+              "operation": "binary-placement-variant",
+              "dimensions": [
+                "left-right",
+                "short-long"
+              ],
+              "variants": [
+                "normal",
+                "left-right",
+                "short-long",
+                "both"
+              ]
             },
             {
               "id": "s2-shift",
@@ -588,20 +609,21 @@
           "objective": [
             "satisfy-required-relations",
             "minimize-flip-count",
+            "minimize-changed-dimensions",
             "minimize-rigid-shift"
           ],
           "currentSupport": {
-            "status": "multiple-relation-rendering-context-pro-memorie",
+            "status": "joint-branch-flip-search-active-context-pro-memorie",
             "active": [
-              "existing-layout",
+              "joint-branch-flip-search",
+              "four-binary-placement-variants",
               "rigid-shift-s2",
               "check-all-relation-alignments",
               "render-satisfied-coreferences"
             ],
-            "deferred": [
-              "joint-branch-flip-search"
-            ]
+            "deferred": []
           },
+          "branches": [],
           "firstFixture": {
             "id": "perfectum-vcluster-order",
             "nodeId": "vp-perfectum",
@@ -840,7 +862,17 @@
                 "S2"
               ],
               "candidates": "declared-flippable-branches",
-              "operation": "reverse-child-subtrees"
+              "operation": "binary-placement-variant",
+              "dimensions": [
+                "left-right",
+                "short-long"
+              ],
+              "variants": [
+                "normal",
+                "left-right",
+                "short-long",
+                "both"
+              ]
             },
             {
               "id": "s2-shift",
@@ -876,20 +908,21 @@
           "objective": [
             "satisfy-required-relations",
             "minimize-flip-count",
+            "minimize-changed-dimensions",
             "minimize-rigid-shift"
           ],
           "currentSupport": {
-            "status": "multiple-relation-rendering-context-pro-memorie",
+            "status": "joint-branch-flip-search-active-context-pro-memorie",
             "active": [
-              "existing-layout",
+              "joint-branch-flip-search",
+              "four-binary-placement-variants",
               "rigid-shift-s2",
               "check-all-relation-alignments",
               "render-satisfied-coreferences"
             ],
-            "deferred": [
-              "joint-branch-flip-search"
-            ]
+            "deferred": []
           },
+          "branches": [],
           "firstFixture": {
             "id": "perfectum-vcluster-order",
             "nodeId": "vp-perfectum",
@@ -1153,7 +1186,17 @@
                 "S2"
               ],
               "candidates": "declared-flippable-branches",
-              "operation": "reverse-child-subtrees"
+              "operation": "binary-placement-variant",
+              "dimensions": [
+                "left-right",
+                "short-long"
+              ],
+              "variants": [
+                "normal",
+                "left-right",
+                "short-long",
+                "both"
+              ]
             },
             {
               "id": "s2-shift",
@@ -1189,26 +1232,433 @@
           "objective": [
             "satisfy-required-relations",
             "minimize-flip-count",
+            "minimize-changed-dimensions",
             "minimize-rigid-shift"
           ],
           "currentSupport": {
-            "status": "multiple-relation-rendering-context-pro-memorie",
+            "status": "joint-branch-flip-search-active-context-pro-memorie",
             "active": [
-              "existing-layout",
+              "joint-branch-flip-search",
+              "four-binary-placement-variants",
               "rigid-shift-s2",
               "check-all-relation-alignments",
               "render-satisfied-coreferences"
             ],
-            "deferred": [
-              "joint-branch-flip-search"
-            ]
+            "deferred": []
           },
+          "branches": [],
           "firstFixture": {
             "id": "perfectum-vcluster-order",
             "nodeId": "vp-perfectum",
             "alternatives": [
               "aux-vdw",
               "vdw-aux"
+            ]
+          },
+          "onConflict": "report-no-forced-node-move"
+        }
+      },
+      {
+        "schema": "ogn-anaphor-combination-v1",
+        "id": "man-slaat-hond-omdat-die-hem-heeft-gebeten",
+        "label": "Anafoor · De man slaat de hond omdat die hem heeft gebeten",
+        "labelEn": "Anaphor · The man hits the dog because it bit him",
+        "title": "De man slaat de hond omdat hond man heeft gebeten.",
+        "surfacePredicateObject": "hem heeft gebeten.",
+        "surfaceTemplate": "omdat {ANAPHOR} {ANAPHOR:man-hem} heeft gebeten.",
+        "surfaceFromLex": true,
+        "interpretationId": "man-dog-causal-perfect",
+        "provenance": {
+          "kind": "user-supplied",
+          "catalogId": "user-man-dog-because-perfect"
+        },
+        "gapRows": 3,
+        "sentences": [
+          {
+            "id": "S1",
+            "order": 1,
+            "text": "De man slaat de hond",
+            "clauseType": "main",
+            "finiteVerbPlacement": "v2",
+            "tree": {
+              "id": "mf-s1-s",
+              "label": "S",
+              "cat": "S",
+              "kind": "cat",
+              "children": [
+                {
+                  "id": "mf-s1-man",
+                  "label": "MAN",
+                  "cat": "N",
+                  "role": "subject",
+                  "source": "mf-s1-man",
+                  "lexeme": "man",
+                  "kind": "leaf",
+                  "children": []
+                },
+                {
+                  "id": "mf-s1-vp",
+                  "label": "VP",
+                  "cat": "VP",
+                  "kind": "cat",
+                  "children": [
+                    {
+                      "id": "mf-s1-hond",
+                      "label": "HOND",
+                      "cat": "N",
+                      "role": "object",
+                      "source": "mf-s1-hond",
+                      "lexeme": "hond",
+                      "kind": "leaf",
+                      "children": []
+                    },
+                    {
+                      "id": "mf-s1-slaat",
+                      "label": "SLAAT",
+                      "cat": "V",
+                      "role": "predicate",
+                      "source": "mf-s1-slaat",
+                      "kind": "leaf",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            "lex": [
+              {
+                "nodeId": "mf-s1-man",
+                "label": "MAN"
+              },
+              {
+                "nodeId": "mf-s1-slaat",
+                "label": "SLAAT"
+              },
+              {
+                "nodeId": "mf-s1-hond",
+                "label": "HOND"
+              }
+            ],
+            "lexInsertions": []
+          },
+          {
+            "id": "S2",
+            "order": 2,
+            "text": "omdat hond man heeft gebeten.",
+            "clauseType": "subordinate",
+            "finiteVerbPlacement": "final",
+            "tree": {
+              "id": "mf-s2-s",
+              "label": "S",
+              "cat": "S",
+              "kind": "cat",
+              "children": [
+                {
+                  "id": "mf-s2-hond",
+                  "label": "HOND",
+                  "cat": "N",
+                  "role": "subject",
+                  "source": "mf-s2-hond",
+                  "lexeme": "hond",
+                  "kind": "leaf",
+                  "children": []
+                },
+                {
+                  "id": "mf-s2-vp",
+                  "label": "VP",
+                  "cat": "VP",
+                  "kind": "cat",
+                  "children": [
+                    {
+                      "id": "mf-s2-man",
+                      "label": "MAN",
+                      "cat": "N",
+                      "role": "object",
+                      "source": "mf-s2-man",
+                      "lexeme": "man",
+                      "kind": "leaf",
+                      "children": []
+                    },
+                    {
+                      "id": "mf-s2-vcluster",
+                      "label": "V-CLUSTER",
+                      "cat": "V",
+                      "role": "predicate",
+                      "source": "mf-s2-vcluster",
+                      "kind": "cat",
+                      "children": [
+                        {
+                          "id": "mf-s2-heeft",
+                          "label": "HEEFT",
+                          "cat": "V",
+                          "role": "auxiliary",
+                          "source": "mf-s2-heeft",
+                          "kind": "leaf",
+                          "children": []
+                        },
+                        {
+                          "id": "mf-s2-gebeten",
+                          "label": "GEBETEN",
+                          "cat": "VDW",
+                          "role": "participle",
+                          "source": "mf-s2-gebeten",
+                          "kind": "leaf",
+                          "children": []
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            "lexInsertions": [
+              {
+                "schema": "ogn-lexical-insertion-v1",
+                "id": "lex-mf-s2-omdat",
+                "label": "OMDAT",
+                "layer": "Context",
+                "axis": "LEX",
+                "origin": "LEX",
+                "category": "COMP",
+                "role": "complementizer",
+                "placement": {
+                  "position": "before",
+                  "anchorNodeId": "mf-s2-hond",
+                  "slot": 0
+                }
+              }
+            ],
+            "lex": [
+              {
+                "insertionId": "lex-mf-s2-omdat",
+                "label": "OMDAT",
+                "projection": "lexical-insertion"
+              },
+              {
+                "nodeId": "mf-s2-hond",
+                "label": "HOND",
+                "projection": "anaphor-lexicalization"
+              },
+              {
+                "nodeId": "mf-s2-man",
+                "label": "MAN",
+                "projection": "anaphor-lexicalization"
+              },
+              {
+                "nodeId": "mf-s2-heeft",
+                "label": "HEEFT"
+              },
+              {
+                "nodeId": "mf-s2-gebeten",
+                "label": "GEBETEN"
+              }
+            ]
+          }
+        ],
+        "relations": [
+          {
+            "schema": "ogn-referent-anaphor-v1",
+            "id": "hond-die",
+            "type": "coreference",
+            "status": "intended-reading",
+            "dependencyDirection": "referent-to-anaphor",
+            "referent": {
+              "unitId": "S1",
+              "nodeId": "mf-s1-hond",
+              "lexeme": "hond",
+              "sourceLabel": "HOND"
+            },
+            "anaphor": {
+              "unitId": "S2",
+              "nodeId": "mf-s2-hond",
+              "sourceLabel": "HOND"
+            },
+            "lexicalization": {
+              "axis": "LEX",
+              "profile": "die"
+            },
+            "alignment": {
+              "type": "shared-column",
+              "required": true
+            },
+            "line": {
+              "shape": "straight",
+              "direction": "none"
+            }
+          },
+          {
+            "schema": "ogn-referent-anaphor-v1",
+            "id": "man-hem",
+            "type": "coreference",
+            "status": "intended-reading",
+            "dependencyDirection": "referent-to-anaphor",
+            "referent": {
+              "unitId": "S1",
+              "nodeId": "mf-s1-man",
+              "lexeme": "man",
+              "sourceLabel": "MAN"
+            },
+            "anaphor": {
+              "unitId": "S2",
+              "nodeId": "mf-s2-man",
+              "sourceLabel": "MAN"
+            },
+            "lexicalization": {
+              "axis": "LEX",
+              "profile": "hem"
+            },
+            "alignment": {
+              "type": "shared-column",
+              "required": true
+            },
+            "line": {
+              "shape": "straight",
+              "direction": "none"
+            }
+          }
+        ],
+        "context": {
+          "notation": "Open Graph Notation",
+          "representation": "minimized-tree",
+          "status": "p.m."
+        },
+        "layoutResolution": {
+          "schema": "ogn-joint-flip-constraints-v1",
+          "mode": "joint",
+          "variables": [
+            {
+              "id": "branch-flips",
+              "type": "branch-flip",
+              "units": [
+                "S1",
+                "S2"
+              ],
+              "candidates": "declared-flippable-branches",
+              "operation": "binary-placement-variant",
+              "dimensions": [
+                "left-right",
+                "short-long"
+              ],
+              "variants": [
+                "normal",
+                "left-right",
+                "short-long",
+                "both"
+              ]
+            },
+            {
+              "id": "s2-shift",
+              "type": "rigid-shift",
+              "unitId": "S2",
+              "axes": [
+                "x",
+                "y"
+              ]
+            }
+          ],
+          "constraints": [
+            {
+              "id": "required-alignments",
+              "type": "relation-alignment",
+              "source": "relations[*].alignment",
+              "requiredOnly": true
+            },
+            {
+              "id": "unit-grid-invariant",
+              "type": "unique-row-and-column",
+              "scope": "per-unit"
+            },
+            {
+              "id": "preserve-units",
+              "type": "rigid-after-layout",
+              "units": [
+                "S1",
+                "S2"
+              ]
+            }
+          ],
+          "objective": [
+            "satisfy-required-relations",
+            "minimize-flip-count",
+            "minimize-changed-dimensions",
+            "minimize-rigid-shift"
+          ],
+          "currentSupport": {
+            "status": "joint-branch-flip-search-active-context-pro-memorie",
+            "active": [
+              "joint-branch-flip-search",
+              "four-binary-placement-variants",
+              "rigid-shift-s2",
+              "check-all-relation-alignments",
+              "render-satisfied-coreferences"
+            ],
+            "deferred": []
+          },
+          "branches": [
+            {
+              "schema": "ogn-binary-branch-variants-v1",
+              "id": "s1-root",
+              "unitId": "S1",
+              "nodeId": "mf-s1-s",
+              "variants": [
+                "normal",
+                "left-right",
+                "short-long",
+                "both"
+              ],
+              "defaultVariant": "normal",
+              "operation": "binary-placement-variant",
+              "dimensions": [
+                "left-right",
+                "short-long"
+              ],
+              "linearization": "none"
+            },
+            {
+              "schema": "ogn-binary-branch-variants-v1",
+              "id": "s1-vp",
+              "unitId": "S1",
+              "nodeId": "mf-s1-vp",
+              "variants": [
+                "normal",
+                "left-right",
+                "short-long",
+                "both"
+              ],
+              "defaultVariant": "normal",
+              "operation": "binary-placement-variant",
+              "dimensions": [
+                "left-right",
+                "short-long"
+              ],
+              "linearization": "none"
+            },
+            {
+              "schema": "ogn-binary-branch-variants-v1",
+              "id": "s2-vcluster",
+              "unitId": "S2",
+              "nodeId": "mf-s2-vcluster",
+              "variants": [
+                "normal",
+                "left-right",
+                "short-long",
+                "both"
+              ],
+              "defaultVariant": "normal",
+              "operation": "binary-placement-variant",
+              "dimensions": [
+                "left-right",
+                "short-long"
+              ],
+              "linearization": "child-order"
+            }
+          ],
+          "firstFixture": {
+            "id": "perfectum-vcluster-order",
+            "nodeId": "mf-s2-vcluster",
+            "alternatives": [
+              "heeft-gebeten",
+              "gebeten-heeft"
             ]
           },
           "onConflict": "report-no-forced-node-move"
@@ -1253,6 +1703,7 @@
     "southBoxDraggable": true,
     "southBoxManual": null,
     "freeSlotCount": 2,
-    "topMenusAbove": []
+    "topMenusAbove": [],
+    "anaphorFlipVariants": {}
   }
 }

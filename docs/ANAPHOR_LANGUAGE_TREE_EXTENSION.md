@@ -35,18 +35,20 @@ behouden elk hun eigen bronboom, gridinvariant en knoopidentiteiten.
 In S2 is `MAN` het berekende subject. `HIJ`, `DIE`, `DIE MAN` of `DIE VROUW`
 ontstaat alleen door de geselecteerde LEX-lexicalisatie van de relatie.
 
-Naast de basiscombinatie zijn drie aanvullende keuzes meegeleverd; Config
-bevat daarmee vier echte S1–S2-combinaties:
+Naast de basiscombinatie zijn vier aanvullende keuzes meegeleverd; Config
+bevat daarmee vijf echte S1–S2-combinaties:
 
 | Id | S1 | LEX-oppervlakte S2 | Relaties |
 |---|---|---|---|
 | `ik-zag-man-gisteren-vandaag-was-hij-er-niet-meer` | Ik zag de man gisteren. | Vandaag was hij er niet meer. | Text: `MAN→HIJ`; Context-inserties: `GISTEREN`, `VANDAAG`, `ER`, `NIET MEER` |
 | `boer-bezit-ezel-hij-slaat-hem` | Een boer bezit een ezel. | Hij slaat hem. | `BOER→HIJ`, `EZEL→HEM` |
 | `boer-slaat-ezel-omdat-hij-hem-bezit` | De boer slaat de ezel | omdat hij hem bezit. | Text: `BOER→HIJ`, `EZEL→HEM`; Context-insertie: `OMDAT` |
+| `man-slaat-hond-omdat-die-hem-heeft-gebeten` | De man slaat de hond | omdat die hem heeft gebeten. | Text: `HOND→DIE`, `MAN→HEM`; Context-insertie: `OMDAT`; gezamenlijke flip |
 
-De man–gisteren-combinatie is door de opdrachtgever aangeleverd. De
-boer–ezel-combinatie is een Nederlandse normalisatie van een bekende
-DRT-fixture. Bronverantwoording en aanvullende fixtures staan in
+De man–gisteren-combinatie en de man–hond-combinatie zijn door de
+opdrachtgever aangeleverd. De boer–ezel-combinatie is een Nederlandse
+normalisatie van een bekende DRT-fixture. Bronverantwoording en aanvullende
+fixtures staan in
 `ANAPHOR_S1_S2_LITERATURE_CATALOG.md`.
 
 ## Selectie en schermruimte
@@ -71,15 +73,18 @@ zichtbare S1-bounding-box gebruiken en S1 schermvullend maken.
 De volgorde is:
 
 1. S1-boom knoop voor knoop;
-2. horizontale S1-LEX-bronprojectie;
-3. eventuele S1-Context-inserties rechtstreeks op LEX;
-4. S1-V2-Wissel wanneer S1 een hoofdzin is;
-5. S2-boom knoop voor knoop;
-6. horizontale S2-LEX-bronprojectie;
-7. eventuele S2-Context-inserties rechtstreeks op LEX;
-8. S2-V2-Wissel alleen voor een hoofdzin; een omdat-bijzin behoudt V-finaal;
-9. alle uitgelijnde Text-bronrelaties referent ↔ anafoor;
-10. LEX-realisatie van alle gekoppelde anafoorbronnen.
+2. indien gekozen: één atomaire S1-flipstap voor alle niet-normale
+   branchvarianten;
+3. horizontale S1-LEX-bronprojectie;
+4. eventuele S1-Context-inserties rechtstreeks op LEX;
+5. S1-V2-Wissel wanneer S1 een hoofdzin is;
+6. S2-boom knoop voor knoop;
+7. indien gekozen: één atomaire S2-flipstap;
+8. horizontale S2-LEX-bronprojectie;
+9. eventuele S2-Context-inserties rechtstreeks op LEX;
+10. S2-V2-Wissel alleen voor een hoofdzin; een omdat-bijzin behoudt V-finaal;
+11. alle uitgelijnde Text-bronrelaties referent ↔ anafoor;
+12. LEX-realisatie van alle gekoppelde anafoorbronnen.
 
 Terugspelen verwijdert exact dezelfde lagen in omgekeerde volgorde.
 
@@ -110,6 +115,8 @@ wijzen.
 
 `anaphorCombinationId` kiest de actieve combinatie.
 `anaphorLexicalizations` bewaart per combinatie het actieve lexiconprofiel.
+`anaphorFlipVariants` bewaart per combinatie en branch een expliciete variant;
+een ontbrekende waarde of `auto` laat de gezamenlijke solver kiezen.
 
 `surfaceTemplate` vereist het primaire invulpunt `{ANAPHOR}`. Een tweede
 anafoor gebruikt `{ANAPHOR:ezel-hem}`. Daardoor
@@ -225,19 +232,25 @@ gedocumenteerd, maar wordt bewust nog niet door v1 geaccepteerd.
 De anafoorextensie definieert geen eigen, sequentiële flipprocedure. Zij
 verwijst naar het generieke contract in `FLIP_CONSTRAINT_SOLVER.md`.
 
-De voorbereide `layoutResolution` gebruikt:
+De actieve `layoutResolution` gebruikt:
 
-- één gezamenlijke zoekruimte voor toegestane branch-flips in S1 en S2;
+- één gezamenlijke zoekruimte met vier plaatsingsvarianten per
+  gedeclareerde binaire branch in S1 en S2;
 - de starre S2-verschuiving als aanvullende variabele;
 - alle vereiste `relations[*].alignment`-waarden als harde constraints;
 - minimalisatie van flipcount en daarna verschuiving als doelen.
 
-De perfectumalternatieven `aux-vdw` en `vdw-aux` vormen de eerste kleine
-fixture van de generieke flip, niet een anafoorspecifieke voorstap.
+De vier varianten zijn `normal`, `left-right`, `short-long` en `both`.
+Links–rechts bepaalt de zijde; kort–lang bepaalt de plaatsingsafstand. Alleen
+een branch met `linearization: "child-order"` projecteert kort–lang tevens als
+omgekeerde LEX-childvolgorde. Zo levert het V-cluster zowel `HEEFT GEBETEN`
+als `GEBETEN HEEFT`, zonder afzonderlijke perfectummodule.
 
-In de huidige versie is joint search uitgesteld. Actief zijn de bestaande
-layouts, één starre S2-verschuiving en alle reeds uitgelijnde Text-relaties.
-Config en OPN bewaren dit onder `layoutResolution.currentSupport`.
+De solver enumereert alle toegestane combinaties, berekent beide Language
+Trees opnieuw en accepteert alleen kandidaten waarvoor alle vereiste
+Text-relaties met één starre S2-shift uitlijnen. Een conflict forceert nooit
+een losse knoop. De gekozen variantset wordt in Config, Play en OPN
+gerapporteerd.
 
 ## LEX-profielen
 
@@ -246,7 +259,7 @@ De lexiconconstructie `anaphor-subject` levert onder meer:
 | Profiel | Oppervlakte | Toepasselijkheid |
 |---|---|---|
 | `hij` | HIJ | man, boer |
-| `die` | DIE | man, vrouw, boer |
+| `die` | DIE | man, vrouw, boer, hond |
 | `die-man` | DIE MAN | man |
 | `die-vrouw` | DIE VROUW | vrouw |
 | `hem` | HEM | ezel, man, boer; alleen object |
@@ -282,6 +295,9 @@ Werkend:
 - alle inserties als Context op LEX, zonder centrale boomknoop;
 - vaste S1+S2-viewport tijdens Play;
 - S1, daarna S2, daarna alle uitgelijnde Text-relaties en LEX-anaforen;
+- vier binaire plaatsingsvarianten en gezamenlijke flipsearch over S1 en S2;
+- Config-keuze `auto` of een expliciete variant per gedeclareerde branch;
+- atomaire flipstappen in Play met exact omgekeerd terugspelen;
 - V2 in hoofdzinnen en V-finaal zonder V2 in de omdat-bijzin;
 - per-combinatiekeuze van LEX-profiel;
 - een oppervlakte-template met `{ANAPHOR}` en `{ANAPHOR:relatie-id}`;
@@ -289,8 +305,6 @@ Werkend:
 
 Voorbereid, nog niet werkend:
 
-- gelijktijdige geometrische oplossing via nog uitgestelde branch-flips;
-- joint branch-flip search over S1 en S2;
 - catafoor, ketens van meer dan twee zinnen en n-aire branchpermutaties.
 - groepscoreferentie met één anafoor en meerdere antecedenten;
 - kwantificationele subordinatie en automatische interpretatiekeuze.

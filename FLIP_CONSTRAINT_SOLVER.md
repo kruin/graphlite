@@ -13,35 +13,52 @@ generieke bewerking. Het is geen afzonderlijk algoritme en geen voorwaarde die
 eerst in productie moet worden uitgevoerd voordat de anafoorextensie kan
 worden geconfigureerd.
 
-## De primitieve flip
+## Vier varianten van een binaire vertakking
 
 Een flip geldt voor precies één gedeclareerde vertakking met twee complete
-child-subtrees:
+child-subtrees A en B. Zij heeft twee onafhankelijke plaatsingsdimensies:
 
-| Voor | Na |
-|---|---|
-| child A, child B | child B, child A |
+1. **links–rechts**: welke child aan welke zijde van de parent staat;
+2. **kort–lang**: welke child de korte/hoge en welke de lange/lage plaats krijgt.
 
-De bewerking:
+Daaruit volgen exact vier varianten:
 
-- wisselt uitsluitend de plaatsingsvolgorde van de twee complete subtrees;
+| Variant | A | B | LEX-childvolgorde |
+|---|---|---|---|
+| `normal` | links–kort | rechts–lang | A, B |
+| `left-right` | rechts–kort | links–lang | A, B |
+| `short-long` | links–lang | rechts–kort | B, A, uitsluitend bij `linearization: "child-order"` |
+| `both` | rechts–lang | links–kort | B, A, uitsluitend bij `linearization: "child-order"` |
+
+Kort en lang duiden dus **plaatsingsafstand** aan, niet de omvang van de
+subtree. Links–rechts verandert op zichzelf nooit de woordvolgorde. Alleen een
+expliciet lineariserende branch, zoals een werkwoordcluster, projecteert
+kort–lang tevens als omgekeerde childvolgorde op LEX.
+
+Iedere variant:
+
 - behoudt knoop-id’s, categorieën, grammaticale rollen en interne topologie;
 - verplaatst geen losse knoop;
-- is geen LEX-Wissel, V2-verplaatsing of anafoorprojectie;
+- is geen V2-verplaatsing of anafoorprojectie;
 - wordt vóór de definitieve recursieve plaatsingsberekening gekozen.
 
 Een n-aire vertakking wordt in deze versie niet impliciet gespiegeld. Daarvoor
 moet later een expliciete permutatiebewerking worden gedeclareerd.
 
-## Eerste fixture: perfectumcluster
+## Eerste fixture: dubbele anafoor met perfectumcluster
 
-De minimale fixture gebruikt de binaire vertakking `vp-perfectum` met de
-bronnen `pv` (AUX) en `vdw` (voltooid deelwoord):
+De productiefixture is **De man slaat de hond omdat die hem heeft gebeten**.
+De centrale bomen bevatten `HOND(S1)↔HOND(S2)` en
+`MAN(S1)↔MAN(S2)`; LEX realiseert die S2-bronnen als respectievelijk
+`DIE` en `HEM`. `OMDAT` is een Context-insertie.
+
+De binaire vertakking `mf-s2-vcluster` bevat `HEEFT` (AUX) en `GEBETEN`
+(voltooid deelwoord):
 
 | Configuratie | Child-volgorde | Zichtbare clusterlezing |
 |---|---|---|
-| `aux-vdw` | `pv, vdw` | HEEFT GEBETEN |
-| `vdw-aux` | `vdw, pv` | GEBETEN HEEFT |
+| `normal` of `left-right` | `HEEFT, GEBETEN` | HEEFT GEBETEN |
+| `short-long` of `both` | `GEBETEN, HEEFT` | GEBETEN HEEFT |
 
 De test moet aantonen dat één flip uitsluitend deze twee complete children
 omkeert en dat alle identiteiten en rollen gelijk blijven.
@@ -55,8 +72,9 @@ twee bewerkingen mogen niet worden samengevoegd.
 
 Bij meerdere referent–anafoorrelaties kunnen verschillende branches van S1 en
 S2 invloed hebben op de vereiste kolommen. Een vaste procedure “probeer eerst
-S2, daarna S1” kan een geldige of betere combinatie missen. Daarom worden alle
-toegestane flips als booleaanse variabelen in één kandidaatconfiguratie gezet.
+S2, daarna S1” kan een geldige of betere combinatie missen. Daarom krijgt
+iedere gedeclareerde binaire branch één vierwaardige plaatsingsvariabele in
+één gezamenlijke kandidaatconfiguratie.
 
 De solver kiest tegelijkertijd:
 
@@ -90,8 +108,10 @@ De volgorde is normatief:
 3. behoud beide bomen intern; na berekening mag alleen de complete S2 star
    verschuiven;
 4. minimaliseer het aantal flips;
-5. minimaliseer daarna de absolute starre verschuiving;
-6. gebruik bij verdere gelijkstand een stabiele lexicografische volgorde van
+5. minimaliseer daarna het aantal gewijzigde dimensies; `both` wijzigt er
+   twee, `left-right` en `short-long` ieder één;
+6. minimaliseer daarna de absolute starre verschuiving;
+7. gebruik bij verdere gelijkstand een stabiele lexicografische volgorde van
    unit-id en branch-id.
 
 Een optimumdoel mag nooit een harde constraint opheffen.
@@ -109,7 +129,9 @@ Een optimumdoel mag nooit een harde constraint opheffen.
         "type": "branch-flip",
         "units": ["S1", "S2"],
         "candidates": "declared-flippable-branches",
-        "operation": "reverse-child-subtrees"
+        "operation": "binary-placement-variant",
+        "dimensions": ["left-right", "short-long"],
+        "variants": ["normal", "left-right", "short-long", "both"]
       },
       {
         "id": "s2-shift",
@@ -139,7 +161,31 @@ Een optimumdoel mag nooit een harde constraint opheffen.
     "objective": [
       "satisfy-required-relations",
       "minimize-flip-count",
+      "minimize-changed-dimensions",
       "minimize-rigid-shift"
+    ],
+    "branches": [
+      {
+        "id": "s1-root",
+        "unitId": "S1",
+        "nodeId": "mf-s1-s",
+        "variants": ["normal", "left-right", "short-long", "both"],
+        "linearization": "none"
+      },
+      {
+        "id": "s1-vp",
+        "unitId": "S1",
+        "nodeId": "mf-s1-vp",
+        "variants": ["normal", "left-right", "short-long", "both"],
+        "linearization": "none"
+      },
+      {
+        "id": "s2-vcluster",
+        "unitId": "S2",
+        "nodeId": "mf-s2-vcluster",
+        "variants": ["normal", "left-right", "short-long", "both"],
+        "linearization": "child-order"
+      }
     ],
     "firstFixture": {
       "id": "perfectum-vcluster-order",
@@ -151,19 +197,22 @@ Een optimumdoel mag nooit een harde constraint opheffen.
 }
 ```
 
-`candidates` moet later worden vervangen of aangevuld met concrete branch-id’s
-wanneer een combinatie slechts een beperkte flipruimte toestaat. Zonder
-declaratie is een branch niet automatisch flippable.
+`branches[]` begrenst de concrete zoekruimte per combinatie. Zonder zo’n
+declaratie is een branch niet flippable. Config kan per branch `auto` kiezen
+of precies één van de vier varianten afdwingen. Een afgedwongen combinatie
+die niet alle vereiste relaties kan uitlijnen, wordt als conflict geweigerd.
 
 ## Deterministische zoekprocedure
 
-Voor `k` gedeclareerde binaire branches zijn er maximaal `2^k`
-flipconfiguraties. Alleen expliciet toegestane branches tellen mee; daardoor
-blijft de eerste implementatie klein en controleerbaar.
+Voor `k` gedeclareerde binaire branches zijn er maximaal `4^k`
+plaatsingsconfiguraties. Als een branch minder varianten toestaat, is het
+werkelijke aantal het product van de aantallen toegestane varianten. Alleen
+expliciet gedeclareerde branches tellen mee; daardoor blijft de zoekruimte
+klein en controleerbaar.
 
 Per kandidaat:
 
-1. pas de flipkeuzes toe op de boomtopologie;
+1. pas de plaatsingsvariant per branch toe zonder de bronboom te muteren;
 2. bereken S1 en S2 ieder volledig met Language Tree;
 3. valideer de invariant per eenheid;
 4. bereken `dx_i` voor alle gedeclareerde Text-coreferenties met
@@ -176,24 +225,32 @@ Per kandidaat:
 De renderer ontvangt uitsluitend de gekozen, volledig berekende kandidaat en
 neemt zelf geen flip- of plaatsingsbeslissing.
 
-## Huidige implementatiegrens
+## Actieve implementatie
 
-De bestaande Language Tree-layout kan branches al normaal of geflipt
-berekenen. De anafoorconfig bewaart sinds dit contract ook de gezamenlijke
-solvervariabelen, constraints en doelen.
+De anafoorweergave enumereert de vier toegestane varianten van alle
+gedeclareerde branches over S1 en S2, berekent iedere kandidaat recursief en
+kiest daarna één gezamenlijke oplossing plus één starre S2-shift. De keuze
+en de gevraagde Config-overrides worden in OPN en paradata gerapporteerd.
 
-Nog niet actief in de anafoorweergave:
+Voor de fixture **De man slaat de hond omdat die hem heeft gebeten** zijn drie
+branches gedeclareerd. De volledige ruimte telt `4³ = 64` kandidaten; 16
+kandidaten voldoen aan beide uitlijningen. De deterministische standaardkeuze
+is:
 
-- enumeratie van meerdere branch-flipvariabelen over S1 en S2;
-- het zoeken naar extra flips wanneer meerdere Text-coreferenties niet
-  vanzelf gezamenlijk uitlijnen;
-- selectie en rapportage van de optimale gezamenlijke kandidaat.
+```text
+s1-root     = left-right
+s1-vp       = left-right
+s2-vcluster = normal
+```
 
-De huidige anafoorweergave gebruikt de bestaande layouts, één starre
-S2-verschuiving en **tekent iedere reeds uitgelijnde Text-coreferentie**.
+Daarmee zijn `HOND(S1)↔HOND(S2)` en `MAN(S1)↔MAN(S2)` gelijktijdig
+uitgelijnd. Een geforceerde ongeldige combinatie levert `FLIP CONFLICT` op;
+de compositor verplaatst nooit een losse knoop.
+
+Play behandelt de uiteindelijk gekozen niet-normale branches per zin in één
+atomaire flipstap. Terugspelen herstelt exact de voorafgaande varianttoestand.
 Context-inserties hebben geen Text-knoop en leveren geen flipconstraint;
-nadere Context-modellering blijft p.m. `currentSupport` in Config en
-OPN maakt de resterende joint-searchgrens machineleesbaar.
+nadere Context-modellering blijft p.m.
 
 De literatuurcatalogus `ANAPHOR_S1_S2_LITERATURE_CATALOG.md` bevat de eerste
 meervoudige regressiefixtures. Met name `BOER→HIJ` plus `EZEL→HEM` maakt

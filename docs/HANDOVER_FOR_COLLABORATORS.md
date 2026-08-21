@@ -6,7 +6,7 @@ Releasebesluit: rc.45 is op 2 augustus 2026 handmatig goedgekeurd, inclusief
 de Greedy Grow-reconstructie en de rechtstreeks afgeleide publicatieslide.
 
 Actuele source build:
-`v2.0.0-rc.45-sources-language-tree-anafoor-extensie-20260821.16`. Behoud Language Tree
+`v2.0.0-rc.45-sources-language-tree-anafoor-extensie-flip-20260821.17`. Behoud Language Tree
 als prominente berekende toepassing en Greedy Grow/Random als kleinere
 directe OGN-illustraties. Wijzig `greedy-grow-engine.js` niet voor Random: die
 engine is onderdeel van het afleidingsbewijs van publicatieslide 5. Random
@@ -45,6 +45,14 @@ wijzigen:
 **HOND en MAN blijven exact op hun bronhoogte; alleen BIJT wisselt naar de
 vrije LEX-gridrij halverwege beide bronrijen**; de eindvolgorde is
 **HOND BIJT MAN**.
+
+Behoud ook de gezamenlijke flipsolver. Iedere gedeclareerde binaire branch
+heeft precies de vier varianten `normal`, `left-right`, `short-long` en
+`both`. Kort–lang betekent plaatsingsafstand; alleen een branch met
+`linearization: "child-order"` verandert daarmee ook de LEX-childvolgorde.
+Los alle harde Text-coreferenties en de starre S2-shift in één kandidaat op;
+verplaats nooit een losse knoop bij conflict. De regressiefixture is **De man
+slaat de hond omdat die hem heeft gebeten**, met `HOND→DIE` en `MAN→HEM`.
 
 Behoud ook de Anafoor-Play-tijdlijn: eerst S1, dan S2, daarna alle
 uitgelijnde Text-coreferenties en pas ten slotte de anaforische LEX-vormen.

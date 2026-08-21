@@ -130,9 +130,39 @@ De twee onafhankelijke Text-anaforen zijn:
 `OMDAT` en de causale interpretatie behoren tot Context. `OMDAT` is geen
 boomknoop en `BEZIT` ondergaat in de bijzin geen V2-Wissel.
 
-## 6. Play en opslag
+## 6. Analyse: de man slaat de hond omdat die hem heeft gebeten
+
+Ook deze samengestelde uiting bestaat uit twee centrale Text-eenheden:
+
+| | S1 · hoofdzin | S2 · omdat-bijzin |
+| --- | --- | --- |
+| Text-subject | `MAN` | `HOND` |
+| Text-object | `HOND` | `MAN` |
+| Text-predicaat | `SLAAT` | `V-CLUSTER(HEEFT, GEBETEN)` |
+| Context-insertie | geen | `OMDAT`, rechtstreeks op LEX |
+| LEX-oppervlakte | `de man slaat de hond` | `omdat die hem heeft gebeten` |
+
+De twee onafhankelijke Text-anaforen zijn:
+
+1. `HOND(S1) ↔ HOND(S2)`; LEX: `HOND(S2) → DIE`.
+2. `MAN(S1) ↔ MAN(S2)`; LEX: `MAN(S2) → HEM`.
+
+De bronknopen blijven dus HOND en MAN. `DIE` en `HEM` zijn geen
+Context-inserties maar anaforische LEX-realisaties van die Text-bronnen.
+`OMDAT` en causaliteit behoren wel tot Context.
+
+Voor de gezamenlijke geometrie zijn drie binaire Text-branches als
+flipkandidaat gedeclareerd. Iedere branch kent `normal`, `left-right`,
+`short-long` en `both`. Links–rechts wisselt de zijde; kort–lang wisselt de
+plaatsingsafstand. Alleen het expliciet lineariserende V-cluster projecteert
+kort–lang ook als `HEEFT GEBETEN ↔ GEBETEN HEEFT` op LEX. De solver kiest
+alle branches en de starre S2-shift tegelijk, zodat beide coreferenties
+gelijktijdig uitlijnen.
+
+## 7. Play en opslag
 
 Play bouwt steeds eerst de volledige S1-Text en daarna de volledige S2-Text.
+Na de knoopopbouw kan per zin één atomaire flipstap volgen.
 Per zin volgen de horizontale Text-projectie naar LEX, eventuele
 Context-inserties en uitsluitend waar toegestaan een V2-Wissel. Daarna
 verschijnen alle uitgelijnde Text-coreferenties en hun LEX-realisaties.

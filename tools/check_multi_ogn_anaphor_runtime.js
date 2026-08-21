@@ -415,7 +415,7 @@ async function readDownload(page, selector) {
     await new Promise(resolve => local.server.close(resolve));
   }
 
-  console.log('MULTI-OGN ANAPHOR RUNTIME: OK (Text/Context · geminimaliseerde Context-OGN p.m. · 4 combinaties · dubbele anafoor · Context-inserties · Play · OPN-v2)');
+  console.log('MULTI-OGN ANAPHOR RUNTIME: OK (Text/Context · geminimaliseerde Context-OGN p.m. · 5 combinaties · joint flip · dubbele anafoor · Context-inserties · Play · OPN-v2)');
 })().catch(error => {
   console.error(error);
   process.exit(1);

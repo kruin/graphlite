@@ -36,6 +36,7 @@ required_files = [
     "SOURCE_CHANGES_V2.0.0-rc.43.md", "SOURCE_CHANGES_V2.0.0-rc.44.md",
     "SOURCE_CHANGES_V2.0.0-rc.45.md",
     "MULTI_OGN_ANAPHOR.md", "ANAPHOR_LANGUAGE_TREE_EXTENSION.md",
+    "FLIP_CONSTRAINT_SOLVER.md", "docs/FLIP_CONSTRAINT_SOLVER.md",
     "TEXT_AND_CONTEXT.md", "docs/TEXT_AND_CONTEXT.md", "CONTEXT_TAXONOMY.md",
     "docs/CONTEXT_TAXONOMY.md", "references/context-taxonomy.svg",
     "ANAPHOR_S1_S2_LITERATURE_CATALOG.md", "ANAPHOR_AND_S1_S2_RELATION_DEFINITIONS.md",
@@ -84,7 +85,7 @@ required_files = [
     "tools/check_linkedin_video_export.py", "tools/check_linkedin_video_runtime.js",
     "tools/check_play_reverse.py", "tools/check_release_zip_batch.py",
     "tools/check_opn_storage.py", "tools/check_lexicon_usage_profiles.py",
-    "tools/check_multi_ogn_anaphor_play.js", "tools/check_anaphor_language_tree_extension.js",
+    "tools/check_anaphor_flip.js", "tools/check_multi_ogn_anaphor_play.js", "tools/check_anaphor_language_tree_extension.js",
     "tools/check_multi_ogn_anaphor_runtime.js", "tools/check_multi_ogn_anaphor_runtime_dependencies.js",
     "tools/check_feature_profiles.py", "tools/check_feature_profiles_runtime.js",
     "tools/check_readme_carousel_editor.py", "tools/check_readme_carousel_editor_runtime.js",
@@ -253,6 +254,7 @@ require(read("check_release.bat"), "check_greedy_grow_reconstruction.js", "Greed
 require(read("check_release.bat"), "check_random_placement.js", "Random-regressie in releaseflow")
 require(read("check_release.bat"), "check_direct_placement_config.py", "directe Config-regressie in releaseflow")
 require(read("check_release.bat"), "check_multi_ogn_anaphor.js", "multi-OGN-regressie in releaseflow")
+require(read("check_release.bat"), "check_anaphor_flip.js", "gezamenlijke Anafoor-flipregressie in releaseflow")
 require(read("check_release.bat"), "check_multi_ogn_anaphor_play.js", "Anafoor-Play-regressie in releaseflow")
 require(read("check_release.bat"), "check_anaphor_language_tree_extension.js", "Language Tree-extensie-regressie in releaseflow")
 require(read("check_release.bat"), "check_multi_ogn_anaphor_runtime_dependencies.js", "optionele Anafoor-browserafhankelijkheden in releaseflow")
@@ -281,13 +283,18 @@ for marker, label in [
     ("function validateImportedMultiOgnComposition(", "multi-OGN-importvalidatie"),
     ("'data-directed': 'false'", "ongerichte coreferentie"),
     ("anaphorLexicalizationSelect", "anaforische LEX-profielkeuze"),
-    ("function multiOgnAnaphorPlayPlan()", "gefaseerd Anafoor-Play-plan"),
+    ("function multiOgnAnaphorPlayPlan(", "gefaseerd Anafoor-Play-plan"),
     ("subordinate ? 'bijzin zonder V2' : 'met V2-verplaatsing'", "zinsgewijze Anafoor-Play-volgorde en bijzins-V2"),
 ]:
     require(js, marker, label)
 require(read("anaphor-combinations-engine.js"), "referentNodeId: anaphor.nodeId", "S2-bronreferent uit Config")
 require(read("anaphor-combinations-engine.js"), "layer: 'Context'", "inserties zijn Context")
 require(read("anaphor-combinations-engine.js"), "finiteVerbPlacement: 'final'", "bijzin zonder V2")
+require(read("anaphor-combinations-engine.js"), "operation: 'binary-placement-variant'", "vierwaardige binaire flipnotatie")
+require(read("anaphor-combinations-engine.js"), "id: 'man-slaat-hond-omdat-die-hem-heeft-gebeten'", "dubbele man–hond-anafoorfixture")
+require(read("multi-ogn-composition-engine.js"), "const BRANCH_VARIANTS = Object.freeze(['normal', 'left-right', 'short-long', 'both'])", "vier flipvarianten")
+require(read("multi-ogn-composition-engine.js"), "function solveJoint(", "gezamenlijke flipsolver")
+require(read("multi-ogn-anaphor-play-engine.js"), "kind: 'branch-flip'", "atomaire flipstap in Play")
 require(read("TEXT_AND_CONTEXT.md"), "Iedere insertie behoort tot Context", "normatieve Text/Context-indeling")
 require(read("CONTEXT_TAXONOMY.md"), "geminimaliseerde boom", "Context is een nog te ontwikkelen geminimaliseerde OGN-boom")
 require(read("references/context-taxonomy.svg"), 'data-ogn-unit="CONTEXT"', "zelfstandige Context-OGN")
@@ -770,7 +777,7 @@ for marker, label in [
 ]:
     require(local_launcher, marker, label)
 source_build = read("SOURCE_BUILD.txt").strip()
-if source_build != "v2.0.0-rc.45-sources-language-tree-anafoor-extensie-20260821.16":
+if source_build != "v2.0.0-rc.45-sources-language-tree-anafoor-extensie-flip-20260821.17":
     errors.append(f"onverwachte of lege SOURCE_BUILD.txt: {source_build!r}")
 for stale in ['v4537', 'v2.0.0-rc.24']:
     if stale in start_bat or stale in debug_html:

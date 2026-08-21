@@ -117,6 +117,25 @@
       "contextStatus": "p.m.",
       "contextNotes": ["Causaliteit en OMDAT behoren tot Context.", "S2 is een bijzin: BEZIT blijft aan het einde; geen V2."],
       "expected": {"hardRelationCount": 2, "geometricConstraintCount": 2, "contextInsertionCount": 1, "s2FiniteVerbPlacement": "final"}
+    },
+    {
+      "id": "user-man-dog-because-perfect",
+      "provenance": {"kind": "user-supplied"},
+      "S1": "De man slaat de hond",
+      "S2": "omdat die hem heeft gebeten.",
+      "assertedRelations": [
+        {"schema": "ogn-referent-anaphor-v1", "id": "hond-die", "type": "coreference", "referent": "S1:HOND", "anaphorSource": "S2:HOND", "lexSurface": "DIE"},
+        {"schema": "ogn-referent-anaphor-v1", "id": "man-hem", "type": "coreference", "referent": "S1:MAN", "anaphorSource": "S2:MAN", "lexSurface": "HEM"}
+      ],
+      "lexInsertions": [{"unitId": "S2", "id": "lex-mf-s2-omdat", "layer": "Context", "surface": "OMDAT", "category": "COMP"}],
+      "contextStatus": "p.m.",
+      "contextNotes": ["Causaliteit en OMDAT behoren tot Context.", "De centrale S2-boom bevat HOND en MAN; DIE en HEM ontstaan uitsluitend op LEX."],
+      "flip": {
+        "variants": ["normal", "left-right", "short-long", "both"],
+        "jointDefault": {"s1-root": "left-right", "s1-vp": "left-right", "s2-vcluster": "normal"},
+        "vclusterLinearization": {"normal": "HEEFT GEBETEN", "left-right": "HEEFT GEBETEN", "short-long": "GEBETEN HEEFT", "both": "GEBETEN HEEFT"}
+      },
+      "expected": {"hardRelationCount": 2, "geometricConstraintCount": 2, "contextInsertionCount": 1, "s2FiniteVerbPlacement": "final", "flippableBranchCount": 3}
     }
   ]
 }
