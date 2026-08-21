@@ -50,6 +50,24 @@ Beschrijf deze begrippen altijd afzonderlijk:
 Voor OpenGraph is `20260802` een herkenbare datumseed: 2 augustus 2026. Het
 geldige bereik is `1` tot en met `4.294.967.295`.
 
+## Plaatsen, kandidaten en verplaatsingen
+
+Wanneer een Configwaarde een lege kandidaatplaats toevoegt, moet de uitleg
+altijd afzonderlijk benoemen:
+
+- welke bestaande plaatsen als bezet gelden;
+- of het getal kandidaten, inhoudseenheden of beide telt;
+- welke fallback geldt wanneer de gekozen zone te klein is;
+- of bestaande inhoud wordt verschoven;
+- of de instelling zelf een verplaatsing kan activeren.
+
+Voor LEX zijn generieke lege plekken vóór, na en tussen voorlopig no-show en
+geen Configwaarden. Leg in plaats daarvan steeds de actieve grens uit:
+upward-Wissels worden vanaf de zichtbare bronhoogte gemeten;
+toepassingsinserties en direct Comp hebben geen bronpijl; downward is
+inactief. Zodra vóór/na/tussen later worden geëvalueerd, moeten bereik,
+bezetting, fallback, opslag en niet-effect opnieuw expliciet worden bepaald.
+
 ## Bronnen en controle
 
 - Neem dit bestand op in iedere volledige projectbron waarin Config voorkomt.

@@ -1,0 +1,201 @@
+# Flip — generieke bewerking en gezamenlijke constraintsolver
+
+Normatief ontwerpcontract voor flip in Language Tree en zijn extensies.
+
+## Besluit
+
+Er komt geen aparte “eerste flip” voor het perfectum en geen hardgecodeerde
+volgorde `flip S2 → flip S1`. OGF/Language Tree gebruikt één generieke
+branch-flip en kan alle toegestane flips binnen één zoekprobleem kiezen.
+
+`HEEFT GEBETEN ↔ GEBETEN HEEFT` is de kleinste regressiefixture voor die
+generieke bewerking. Het is geen afzonderlijk algoritme en geen voorwaarde die
+eerst in productie moet worden uitgevoerd voordat de anafoorextensie kan
+worden geconfigureerd.
+
+## De primitieve flip
+
+Een flip geldt voor precies één gedeclareerde vertakking met twee complete
+child-subtrees:
+
+| Voor | Na |
+|---|---|
+| child A, child B | child B, child A |
+
+De bewerking:
+
+- wisselt uitsluitend de plaatsingsvolgorde van de twee complete subtrees;
+- behoudt knoop-id’s, categorieën, grammaticale rollen en interne topologie;
+- verplaatst geen losse knoop;
+- is geen LEX-Wissel, V2-verplaatsing of anafoorprojectie;
+- wordt vóór de definitieve recursieve plaatsingsberekening gekozen.
+
+Een n-aire vertakking wordt in deze versie niet impliciet gespiegeld. Daarvoor
+moet later een expliciete permutatiebewerking worden gedeclareerd.
+
+## Eerste fixture: perfectumcluster
+
+De minimale fixture gebruikt de binaire vertakking `vp-perfectum` met de
+bronnen `pv` (AUX) en `vdw` (voltooid deelwoord):
+
+| Configuratie | Child-volgorde | Zichtbare clusterlezing |
+|---|---|---|
+| `aux-vdw` | `pv, vdw` | HEEFT GEBETEN |
+| `vdw-aux` | `vdw, pv` | GEBETEN HEEFT |
+
+De test moet aantonen dat één flip uitsluitend deze twee complete children
+omkeert en dat alle identiteiten en rollen gelijk blijven.
+
+Een hoofdzin als `HOND HEEFT MAN GEBETEN` bevat daarnaast een afzonderlijke
+V2-regel: de persoonsvorm `HEEFT` vult LEX-slot 2. De branch-flip bepaalt de
+bronvolgorde in het V-cluster; de LEX-Wissel bepaalt de hoofdzinrealisatie. Die
+twee bewerkingen mogen niet worden samengevoegd.
+
+## Waarom gezamenlijk oplossen
+
+Bij meerdere referent–anafoorrelaties kunnen verschillende branches van S1 en
+S2 invloed hebben op de vereiste kolommen. Een vaste procedure “probeer eerst
+S2, daarna S1” kan een geldige of betere combinatie missen. Daarom worden alle
+toegestane flips als booleaanse variabelen in één kandidaatconfiguratie gezet.
+
+De solver kiest tegelijkertijd:
+
+- nul of meer gedeclareerde branch-flips in S1;
+- nul of meer gedeclareerde branch-flips in S2;
+- één starre verschuiving van de complete S2-eenheid.
+
+De invoer is altijd één vooraf gekozen `interpretationId` met een complete
+set `relations[]`. Flip lost alleen geometrie op. Het mechanisme mag bij
+ambigue voornaamwoorden geen referenten omwisselen om de layout passend te
+maken.
+
+Voor een kandidaatlayout en relatie `i` is de vereiste horizontale
+verschuiving:
+
+```text
+dx_i = x(referent_i) - x(anaphor_i)
+```
+
+Eén starre S2-verschuiving kan alle vereiste kolomrelaties tegelijk oplossen
+als en slechts als alle `dx_i` gelijk zijn. Na iedere gezamenlijke
+flipconfiguratie worden deze waarden opnieuw berekend. Ongelijke waarden zijn
+een ongeldige kandidaat; de solver mag dan geen afzonderlijke knoop forceren.
+
+## Constraints en doelen
+
+De volgorde is normatief:
+
+1. voldoe aan alle relaties met `alignment.required = true`;
+2. behoud per Language Tree de unieke rij- en kolominvariant;
+3. behoud beide bomen intern; na berekening mag alleen de complete S2 star
+   verschuiven;
+4. minimaliseer het aantal flips;
+5. minimaliseer daarna de absolute starre verschuiving;
+6. gebruik bij verdere gelijkstand een stabiele lexicografische volgorde van
+   unit-id en branch-id.
+
+Een optimumdoel mag nooit een harde constraint opheffen.
+
+## Config-notatie
+
+```json
+{
+  "layoutResolution": {
+    "schema": "ogn-joint-flip-constraints-v1",
+    "mode": "joint",
+    "variables": [
+      {
+        "id": "branch-flips",
+        "type": "branch-flip",
+        "units": ["S1", "S2"],
+        "candidates": "declared-flippable-branches",
+        "operation": "reverse-child-subtrees"
+      },
+      {
+        "id": "s2-shift",
+        "type": "rigid-shift",
+        "unitId": "S2",
+        "axes": ["x", "y"]
+      }
+    ],
+    "constraints": [
+      {
+        "id": "required-alignments",
+        "type": "relation-alignment",
+        "source": "relations[*].alignment",
+        "requiredOnly": true
+      },
+      {
+        "id": "unit-grid-invariant",
+        "type": "unique-row-and-column",
+        "scope": "per-unit"
+      },
+      {
+        "id": "preserve-units",
+        "type": "rigid-after-layout",
+        "units": ["S1", "S2"]
+      }
+    ],
+    "objective": [
+      "satisfy-required-relations",
+      "minimize-flip-count",
+      "minimize-rigid-shift"
+    ],
+    "firstFixture": {
+      "id": "perfectum-vcluster-order",
+      "nodeId": "vp-perfectum",
+      "alternatives": ["aux-vdw", "vdw-aux"]
+    },
+    "onConflict": "report-no-forced-node-move"
+  }
+}
+```
+
+`candidates` moet later worden vervangen of aangevuld met concrete branch-id’s
+wanneer een combinatie slechts een beperkte flipruimte toestaat. Zonder
+declaratie is een branch niet automatisch flippable.
+
+## Deterministische zoekprocedure
+
+Voor `k` gedeclareerde binaire branches zijn er maximaal `2^k`
+flipconfiguraties. Alleen expliciet toegestane branches tellen mee; daardoor
+blijft de eerste implementatie klein en controleerbaar.
+
+Per kandidaat:
+
+1. pas de flipkeuzes toe op de boomtopologie;
+2. bereken S1 en S2 ieder volledig met Language Tree;
+3. valideer de invariant per eenheid;
+4. bereken `dx_i` voor alle gedeclareerde Text-coreferenties met
+   `alignment.type = "shared-column"` en de noodzakelijke verticale afstand;
+5. verwerp de kandidaat als vereiste `dx_i`-waarden verschillen;
+6. verschuif S2 eenmaal star;
+7. valideer alle relaties en kruis-eenheidconflicten;
+8. bereken de objectiefscore.
+
+De renderer ontvangt uitsluitend de gekozen, volledig berekende kandidaat en
+neemt zelf geen flip- of plaatsingsbeslissing.
+
+## Huidige implementatiegrens
+
+De bestaande Language Tree-layout kan branches al normaal of geflipt
+berekenen. De anafoorconfig bewaart sinds dit contract ook de gezamenlijke
+solvervariabelen, constraints en doelen.
+
+Nog niet actief in de anafoorweergave:
+
+- enumeratie van meerdere branch-flipvariabelen over S1 en S2;
+- het zoeken naar extra flips wanneer meerdere Text-coreferenties niet
+  vanzelf gezamenlijk uitlijnen;
+- selectie en rapportage van de optimale gezamenlijke kandidaat.
+
+De huidige anafoorweergave gebruikt de bestaande layouts, één starre
+S2-verschuiving en **tekent iedere reeds uitgelijnde Text-coreferentie**.
+Context-inserties hebben geen Text-knoop en leveren geen flipconstraint;
+nadere Context-modellering blijft p.m. `currentSupport` in Config en
+OPN maakt de resterende joint-searchgrens machineleesbaar.
+
+De literatuurcatalogus `ANAPHOR_S1_S2_LITERATURE_CATALOG.md` bevat de eerste
+meervoudige regressiefixtures. Met name `BOER→HIJ` plus `EZEL→HEM` maakt
+zichtbaar waarom alle vereiste verschuivingsverschillen `dx_i` in één keer
+moeten worden getoetst.

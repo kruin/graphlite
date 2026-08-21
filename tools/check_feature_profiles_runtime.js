@@ -154,7 +154,8 @@ async function waitForViewer(page) {
     assert.equal(await page.locator('.example-input:visible').count(), 12);
     await page.goto(new URL('lexicon-config.html?profile=base', baseUrl).toString(), { waitUntil: 'networkidle' });
     assert.equal(await page.locator('.lexicon-entry[data-kind="adv"]:visible').count(), 0);
-    assert.equal(await page.locator('.lexicon-construction:visible').count(), 0);
+    assert.equal(await page.locator('.lexicon-construction[data-feature="adverbs"]:visible').count(), 0);
+    assert.equal(await page.locator('.lexicon-construction[data-id="anaphor-subject"]:visible').count(), 1);
     await page.goto(new URL('structure-config.html?profile=base', baseUrl).toString(), { waitUntil: 'networkidle' });
     assert.equal(await page.locator('.log-class-config:visible').count(), 0);
     await page.goto(new URL('docs/docs-home.html?profile=base', baseUrl).toString(), { waitUntil: 'networkidle' });

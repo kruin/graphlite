@@ -1,5 +1,28 @@
 # OpenGraph Lite Viewer v2.0.0-rc.45
 
+## Language Tree · extensie 1 · Anafoor
+
+Het vaste voorbeeld berekent de bronbomen **S1: Ik zie een man. S2: Man draagt
+een hoed.** afzonderlijk. Beide coreferentiële bronknopen blijven MAN en het
+gedeclareerde primaire paar deelt één kolom. Pas de LEX-projectie realiseert het
+tweede MAN als HIJ (of als toepasselijk alternatief DIE of DIE MAN), zodat de
+standaardoppervlakte **Ik zie een man. Hij draagt een hoed.** luidt. De
+MAN–MAN-verbinding is een rechte verticale lijn zonder pijl of richting. Zie
+[`MULTI_OGN_ANAPHOR.md`](MULTI_OGN_ANAPHOR.md). Config bevat ook het
+opdrachtgeverspaar **Ik zag de man gisteren. Vandaag was hij er niet meer.**:
+**Text** en **Context** zijn afzonderlijke Open Graph Notation-structuren;
+Context is een nog te ontwikkelen geminimaliseerde boom. `MAN→HIJ` is
+centrale **Text**-coreferentie; `GISTEREN`, `VANDAAG`, `ER` en `NIET MEER`
+zijn **Context**-inserties op LEX en geen centrale boomknopen. In **De boer
+slaat de ezel omdat hij hem bezit.** zijn `BOER→HIJ` en `EZEL→HEM` twee
+Text-anaforen; `OMDAT` is een Context-insertie en `BEZIT` blijft finaal zonder
+V2. Nadere Context-uitwerking blijft p.m. De aangeleverde Context-boom staat
+in [`CONTEXT_TAXONOMY.md`](CONTEXT_TAXONOMY.md). Zie
+[`TEXT_AND_CONTEXT.md`](TEXT_AND_CONTEXT.md). De definities staan in
+[`ANAPHOR_AND_S1_S2_RELATION_DEFINITIONS.md`](ANAPHOR_AND_S1_S2_RELATION_DEFINITIONS.md);
+acht positieve, negatieve en ambigue paren staan in
+[`S1_S2_RELATION_TEST_FIXTURES.md`](S1_S2_RELATION_TEST_FIXTURES.md).
+
 OpenGraph Lite Viewer is een viewer en testomgeving voor de algemene Open
 Graph Notation. Deze versie gebruikt de volledige v1.0.16-bronset als
 functionele basis.
@@ -76,42 +99,22 @@ rij én kolom; taalgebonden menu's verdwijnen en de Language-Tree-data blijven
 ongewijzigd. Random gebruikt een afzonderlijke engine met seed en kan de
 geaccepteerde Greedy-Grow-reconstructie dus niet veranderen.
 
-Config heeft nu strikt gescheiden contexten: **Algemeen**, **Calculated →
-Language Tree** en **Direct → Gedeeld / Greedy Grow / Random**. Algemeen bevat
-alleen toepassingsonafhankelijke interface-, LEESMIJ- en bestandsinstellingen;
-Voorconfig, boom, voorbeelden, LEX, SYNT en LOG staan uitsluitend bij Language
-Tree. Per context zijn alle niet-relevante instellingen no-show. Greedy toont alleen strategie en
-oriëntatie; Random alleen zijn eigen seed, resetbeleid, model, plaatsing,
-gridgrootte, optionele vaste maten, snelheid, iteraties en asbeeld. Ieder
-zichtbaar veld heeft in Config een compacte inklapbare uitleg. Een grotere seed
-geeft niet meer toeval en verandert de snelheid niet; `20260802` is alleen de
-herkenbare datum 2 augustus 2026. Zie
-[`CONFIG_UI_EXPLANATION_STANDARD.md`](CONFIG_UI_EXPLANATION_STANDARD.md).
-
-Open je Config vanuit een actieve Greedy-Grow- of Random-modus, dan is ook de
-toepassingsbalk no-show. Je ziet alleen Terug naar Main, de eigen velden met
-Uitleg en Config opslaan. Kies een andere toepassing eerst in Main.
-
-Een nieuwe standaardconfig kiest **Uniform v1.0**, **Ergens in beschikbare
-ruimte** en **Interface · beschikbare ruimte**. **Onzuiver uniform v0.1** is
-een functioneel alternatief dat 20% voorkeur mengt voor asplekken die in
-voltooide eerdere rondes vaker zijn geraakt. Vast grid, Compact,
-Gebalanceerd, Ruim en het groeiende inhoudsveld blijven beschikbaar. v0.2 en
-v0.3 blijven no-show totdat zij werkelijk werken. Play en Next lopen over
-rungrenzen door totdat alle ingestelde iteraties klaar zijn; Previous kan over
-de grens terug. Tien iteraties met
-31 knopen leveren na voltooiing bijvoorbeeld
-10 × 30 = 300 projectie-hits per as; de centrale knoop telt niet mee. Een ronde
-voegt haar rijen pas na de laatste knoop als WEST-spots toe en haar kolommen
-als SOUTH-spots. Een herhaalde hit maakt dezelfde spot donkerder en zwaarder;
-toekomstige rondes worden niet vooraf getekend. Bij Bezettingskans wordt het
-spotgewicht tegen het ingestelde rondetotaal afgezet; Relatief schaalt op de
-hoogste telling van de voltooide rondes. Uniforme Random voorspelt op termijn
-een vrijwel egaal beeld; v0.1 kan vroege verschillen mild versterken. Een ongewijzigde
+Config volgt nu de actieve plaatsingsmodus. Met Language Tree actief toont
+`Config → Direct` alleen **Algemeen**: het gedeelde aantal knopen per run, de
+Play-snelheid, het groeipad, de knoopnummers, diagnostiek, knoopgrootte en
+rastermarge. Met Greedy Grow actief opent Config rechtstreeks met alleen
+strategie en weergaveoriëntatie. Met Random actief opent Config rechtstreeks
+met alleen seed, resetbeleid, spreiding, het aantal complete iteraties, het
+west-/zuidasbeeld en de berekende impact. Alle overige Configtabbladen en
+bediening zijn in deze twee methodeschermen verborgen. Tien iteraties met
+31 knopen leveren bijvoorbeeld
+10 × 30 = 300 waarnemingen per as; de centrale knoop telt niet mee. In de stand
+Bezettingskans wordt iedere telling door het aantal iteraties gedeeld; Relatief
+schaalt op de hoogste telling in de actuele steekproef. Een ongewijzigde
 Greedy-strategie is deterministisch en wordt daarom niet herhaald. Zie
 [`DIRECT_PLACEMENT_CONFIG.md`](DIRECT_PLACEMENT_CONFIG.md).
 
-Onder `Config → Algemeen → Interface & weergave → Lijnbeeld` zijn rasterkleur en de zwaarte van raster-,
+Onder `Config → Beeld → Lijnbeeld` zijn rasterkleur en de zwaarte van raster-,
 projectie- en boxlijnen onafhankelijk instelbaar. LEX, SYNT en LOG hebben
 daarnaast elk een eigen kleur—standaard blauw, groen en paars—die door hun as,
 projectielijnen en boxen wordt gevolgd. Dit verandert alleen de presentatie,
@@ -203,7 +206,9 @@ voorbeeld **Direct — Greedy Grow**; slide 6 is
 LEX-as. Beide voorbeeldslides verwijzen naar `github.com/kruin/graphlite`.
 
 Wil je alleen publiceren, gebruik dan de meegeleverde PNG's; installeren is
-niet nodig. Wil je de carrousel wijzigen, werk dan bij voorkeur in de
+niet nodig. Ook `publish_checked.bat` vereist geen Playwright: de optionele
+Anafoor-browsertest meldt ontbrekende Playwright of Chromium en publicatie
+gaat gewoon door. Wil je de carrousel wijzigen, werk dan bij voorkeur in de
 uitgepakte volledige projectzip. Draai daar éénmalig
 `installeer-carrousel-tools.bat`, bewerk uitsluitend de HTML-bron en draai
 daarna `maak-publicatie-carrousel.bat`. Node.js 18 of hoger is vereist; jouw
@@ -295,15 +300,16 @@ Zie `LEXICON_USAGE_PROFILES_AND_DISAMBIGUATION.md`.
 ## Projectiecontract
 
 ```text
-bronknoop → horizontale LEX-projectie op bronhoogte → alleen een expliciete Wissel kan verplaatsen
+bronknoop → horizontale LEX-projectie → één rechtstreekse verplaatsing naar het bepaalde LEX-doel
 ```
 
 `S`, `O` en `V` zijn majors. Een bijwoordelijke insertie kan een LOG-minor zijn, een directe LEX-insertie zijn, of beide bronnen combineren. Iedere minor vergroot de afstand tussen de begrenzende majors met
-één vast slot. LOG plant mogelijke LEX-plaatsen, maar verplaatst daarmee geen
-bronknoop: iedere lexicale bron projecteert horizontaal op zijn bronhoogte en
-blijft daar zonder expliciete topic-/V2-/post-V2-regel. In `HOND BIJT MAN`
-blijft `MAN` dus exact op MAN-hoogte; alleen `BIJT` wisselt volgens V2. Zie
-`projectie-master-spec.md`.
+één vast slot. LOG bepaalt de neutrale doelrij, maar nooit de oorsprong van de
+projectie: iedere lexicale bron projecteert eerst horizontaal op zijn
+bronhoogte. Een expliciete topic- of V2-regel mag dat neutrale doel vóór het
+tekenen vervangen. Daardoor toont de viewer per bronwoord hoogstens één
+LEX-verplaatsing en één brontrace, zonder LOG-tussentrace. De voorbeeldzin
+bepaalt de layout niet. Zie `projectie-master-spec.md`.
 
 ## Start
 
@@ -370,7 +376,7 @@ https://kruin.github.io/graphlite/reset-cache.html?ogv=v2.0.0-rc.45
 ## Desktopweergave
 
 De leesbare weergave over het volledige venster is de standaard. Deze staat
-direct bovenaan onder `Config → Calculated → Language Tree → Boom & projecties`:
+direct bovenaan onder `Config → Beeld`:
 
 ```text
 Boomruimte   = MAX · groot letterbeeld / lage boom
@@ -463,13 +469,13 @@ afzonderlijke fasen:
 
 ```text
 1. LOG-as tekenen en majors/minors plaatsen
-2. geplande LEX-ruimte tonen met een tijdelijke doorschijnende indicator
-3. lexicale bronnen horizontaal op bronhoogte projecteren en uitsluitend
-   expliciete topic-/V2-/post-V2-Wissels uitvoeren
+2. LOG-afgeleide ruimte op de LEX-as reserveren
+3. lexicale bronnen horizontaal naar LEX projecteren en iedere bron eenmaal
+   naar het bepaalde doel verplaatsen
 ```
 
-De indicator in fase 2/3 is geen knoop, projectielijn of OGN-element en
-verplaatst niets. SYNT en de overige projectiepanelen verschijnen in de laatste stap.
+Het doel is de LOG-afgeleide rij, tenzij een expliciete topic-/V2-regel die rij
+vervangt. SYNT en de overige projectiepanelen verschijnen in de laatste stap.
 De knop voor de vorige stap keert exact dezelfde volgorde om: eerst verdwijnt
 de laatste projectielaag, daarna volgen de LEX-verplaatsingen, de LEX-ruimte,
 LOG en ten slotte de centrale boom.

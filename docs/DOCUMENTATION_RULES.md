@@ -85,22 +85,6 @@ Een release candidate geldt pas als handmatig akkoord wanneer de bijbehorende
 controlelijst is ingevuld. Een geslaagde automatische controle vervangt dat
 visuele akkoord niet.
 
-## Config-uitleg en toepassingsisolatie
-
-Volg voor ieder Configscherm `CONFIG_UI_EXPLANATION_STANDARD.md`:
-
-- organiseer eerst **Algemeen**, daarna per toepassing en, waar relevant, per
-  plaatsingssoort **Calculated** of **Direct**;
-- toon binnen een gekozen toepassing uitsluitend de eigen functionele,
-  bewerkbare velden; niet-relevante velden zijn **no-show**;
-- verberg vanuit een actieve directe methode ook de context-/toepassingsbalk:
-  alleen Terug naar Main, de eigen velden met uitleg en Config opslaan blijven;
-- geef ieder zichtbaar veld een compacte, op mobiel bedienbare uitleg van
-  effect, bereik, standaard, niet-effect en afhankelijkheden;
-- houd berekende status en toekomstige niet-functionele opties buiten Config;
-- scheid seed altijd van snelheid: een seed is een reproduceerbare startcode,
-  geen hoeveelheid toeval en geen tempo-instelling.
-
 ## Verplichte projectzip-uitleg
 
 Iedere actuele releasebeschrijving maakt onderscheid tussen:

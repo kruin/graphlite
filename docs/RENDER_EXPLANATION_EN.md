@@ -10,9 +10,14 @@ Config is for settings. Long explanation blocks must not interrupt active config
 
 1. First compute the central tree and its boxes.
 2. Then draw the projection axes: LEX, SYNTAX and LOG.
-3. Project terminal nodes to the LEX axis.
+3. Project terminal nodes horizontally to the LEX axis at source height.
 4. Place free LEX inserts in reserved slots.
-5. Draw any LEX movement rules or exchanges.
+5. Draw only explicit topic/V1/V2 movement rules or exchanges. LOG planning
+   alone never moves a source word.
+
+In `HOND BIJT MAN`, HOND and MAN remain at their exact source heights; only
+BIJT moves to the free LEX grid row halfway between them. This target is
+derived from the tree heights, not from a fixed `S + 64 px` offset.
 
 The central tree remains unchanged.
 

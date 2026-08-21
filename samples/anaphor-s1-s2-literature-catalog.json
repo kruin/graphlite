@@ -1,0 +1,184 @@
+{
+  "schema": "ogn-anaphor-literature-catalog-v1",
+  "language": "nl",
+  "sourceExampleLanguage": "en",
+  "purpose": "Source-grounded and normalized fixtures for Language Tree extension 1 Anaphor",
+  "entries": [
+    {
+      "id": "user-man-temporal",
+      "provenance": {
+        "kind": "user-supplied",
+        "citation": null
+      },
+      "class": "single-text-coreference-with-context-insertions",
+      "normalized": {
+        "S1": "Ik zag de man gisteren.",
+        "S2": "Vandaag was hij er niet meer."
+      },
+      "relations": [
+        {"schema": "ogn-referent-anaphor-v1", "id": "man-hij", "referent": "S1:MAN", "anaphorSource": "S2:MAN", "lexSurface": "HIJ", "type": "coreference"}
+      ],
+      "lexInsertions": [
+        {"unitId": "S1", "surface": "GISTEREN", "layer": "Context"},
+        {"unitId": "S2", "surface": "VANDAAG", "layer": "Context"},
+        {"unitId": "S2", "surface": "ER", "layer": "Context"},
+        {"unitId": "S2", "surface": "NIET MEER", "layer": "Context"}
+      ],
+      "contextStatus": "p.m.",
+      "compatibility": "central-text-coreference-v1",
+      "notes": ["The anaphor is medial in S2 surface order; use a surface template.", "GISTEREN/VANDAAG, their one-day contrast, setting and state belong to Context, not Anafoor."]
+    },
+    {
+      "id": "user-farmer-donkey-because",
+      "provenance": {"kind": "user-supplied", "citation": null},
+      "class": "multiple-text-coreferences-with-subordinate-clause",
+      "normalized": {"S1": "De boer slaat de ezel", "S2": "omdat hij hem bezit."},
+      "relations": [
+        {"schema": "ogn-referent-anaphor-v1", "id": "boer-hij", "referent": "S1:BOER", "anaphorSource": "S2:BOER", "lexSurface": "HIJ", "type": "coreference"},
+        {"schema": "ogn-referent-anaphor-v1", "id": "ezel-hem", "referent": "S1:EZEL", "anaphorSource": "S2:EZEL", "lexSurface": "HEM", "type": "coreference"}
+      ],
+      "lexInsertions": [{"unitId": "S2", "surface": "OMDAT", "category": "COMP", "layer": "Context"}],
+      "contextStatus": "p.m.",
+      "compatibility": "central-text-coreference-v1",
+      "notes": ["S1 uses V2; S2 is subordinate and leaves BEZIT clause-final.", "OMDAT and causal interpretation belong to Context; neither is a central Text node."]
+    },
+    {
+      "id": "drt-farmer-donkey",
+      "provenance": {
+        "kind": "short-source-example-and-dutch-normalization",
+        "sourceExample": "A farmer owns a donkey. He beats it.",
+        "citation": "Venhuizen & Brouwer, Semantic Theory 2022: Discourse Representation Theory, slides 11-19",
+        "url": "https://www.coli.uni-saarland.de/courses/semantics-22/lectures/ST08-DRT.pdf"
+      },
+      "class": "multiple-links",
+      "normalized": {
+        "S1": "Een boer bezit een ezel.",
+        "S2": "Hij slaat hem."
+      },
+      "relations": [
+        {"id": "boer-hij", "referent": "S1:BOER", "anaphor": "S2:HIJ", "type": "coreference"},
+        {"id": "ezel-hem", "referent": "S1:EZEL", "anaphor": "S2:HEM", "type": "coreference"}
+      ],
+      "compatibility": "relations-v1",
+      "ambiguity": {"status": "resolved"}
+    },
+    {
+      "id": "bfp-friedman-brennan",
+      "provenance": {
+        "kind": "short-source-example-and-referent-explicit-normalization",
+        "sourceExample": "Friedman races her on weekends. She often beats her.",
+        "citation": "Brennan, Friedman & Pollard 1987, A Centering Approach to Pronouns, pp. 157-158",
+        "url": "https://aclanthology.org/P87-1022/"
+      },
+      "class": "multiple-links-ambiguous",
+      "normalized": {
+        "S1": "Friedman racet tegen Brennan.",
+        "S2": "Zij verslaat haar vaak."
+      },
+      "interpretations": [
+        {
+          "id": "centering-preferred",
+          "relations": [
+            {"id": "friedman-zij", "referent": "S1:FRIEDMAN", "anaphor": "S2:ZIJ", "type": "coreference"},
+            {"id": "brennan-haar", "referent": "S1:BRENNAN", "anaphor": "S2:HAAR", "type": "coreference"}
+          ]
+        },
+        {
+          "id": "role-swapped",
+          "relations": [
+            {"id": "brennan-zij", "referent": "S1:BRENNAN", "anaphor": "S2:ZIJ", "type": "coreference"},
+            {"id": "friedman-haar", "referent": "S1:FRIEDMAN", "anaphor": "S2:HAAR", "type": "coreference"}
+          ]
+        }
+      ],
+      "compatibility": "relations-v1-after-interpretation-selection"
+    },
+    {
+      "id": "gjw-john-store",
+      "provenance": {
+        "kind": "short-source-example-and-dutch-normalization",
+        "sourceExample": "John went to his favorite music store to buy a piano. He had frequented the store for many years.",
+        "citation": "Grosz, Joshi & Weinstein 1995, Centering, example 1a-b",
+        "url": "https://aclanthology.org/J95-2003/"
+      },
+      "class": "multiple-links-mixed-expression-types",
+      "normalized": {
+        "S1": "John bezocht zijn favoriete muziekwinkel.",
+        "S2": "Hij kende de winkel al jaren."
+      },
+      "relations": [
+        {"id": "john-hij", "referent": "S1:JOHN", "anaphor": "S2:HIJ", "type": "coreference", "lexicalizationKind": "personal-pronoun"},
+        {"id": "winkel-de-winkel", "referent": "S1:MUZIEKWINKEL", "anaphor": "S2:DE WINKEL", "type": "coreference", "lexicalizationKind": "definite-np"}
+      ],
+      "compatibility": "relations-v1-with-additional-lexical-profile"
+    },
+    {
+      "id": "quantificational-subordination",
+      "provenance": {
+        "kind": "short-source-example-and-dutch-normalization",
+        "sourceExample": "Every man loves a woman. They kiss them.",
+        "citation": "Grudzinska & Zawadowski 2014, System with Generalized Quantifiers on Dependent Types for Anaphora, example 2",
+        "url": "https://aclanthology.org/W14-1402/"
+      },
+      "class": "multiple-links-quantificational",
+      "normalized": {
+        "S1": "Iedere man houdt van een vrouw.",
+        "S2": "Zij kussen hen."
+      },
+      "relations": [
+        {"id": "men-set-zij", "referent": "S1:MEN-SET", "anaphor": "S2:ZIJ", "type": "quantificational-subordination"},
+        {"id": "dependent-women-set-hen", "referent": "S1:DEPENDENT-WOMEN-SET", "anaphor": "S2:HEN", "type": "quantificational-subordination"}
+      ],
+      "compatibility": "research-only-requires-discourse-domains"
+    },
+    {
+      "id": "plural-split-antecedent",
+      "provenance": {
+        "kind": "short-source-example-and-dutch-normalization",
+        "sourceExample": "Michael met Maria at the cinema. They had a great time.",
+        "citation": "Eschenbach et al. 1989, Remarks on Plural Anaphora, example 1d",
+        "url": "https://aclanthology.org/E89-1022/"
+      },
+      "class": "multiple-antecedent-single-anaphor",
+      "normalized": {
+        "S1": "Michael ontmoette Maria bij de bioscoop.",
+        "S2": "Zij hadden het erg leuk."
+      },
+      "hyperrelations": [
+        {
+          "id": "michael-maria-zij",
+          "antecedents": ["S1:MICHAEL", "S1:MARIA"],
+          "composition": {"operator": "sum", "groupId": "michael+maria"},
+          "anaphor": "S2:ZIJ",
+          "type": "group-coreference"
+        }
+      ],
+      "compatibility": "v2-draft-hyperrelation"
+    },
+    {
+      "id": "nominal-multiple-antecedent",
+      "provenance": {
+        "kind": "short-source-example-and-dutch-normalization",
+        "sourceExample": "Lisa smiled at Bart. The children were happy.",
+        "citation": "Burga et al. 2016, Towards Multiple Antecedent Coreference Resolution in Specialized Discourse, examples 7 and 9",
+        "url": "https://aclanthology.org/L16-1325/"
+      },
+      "class": "multiple-antecedent-nominal-anaphor",
+      "normalized": {
+        "S1": "Lisa glimlachte naar Bart.",
+        "S2": "De kinderen waren blij."
+      },
+      "hyperrelations": [
+        {
+          "id": "lisa-bart-kinderen",
+          "antecedents": ["S1:LISA", "S1:BART"],
+          "composition": {"operator": "sum", "groupId": "lisa+bart"},
+          "anaphor": "S2:DE-KINDEREN",
+          "type": "group-coreference",
+          "lexicalizationKind": "definite-plural-np"
+        }
+      ],
+      "compatibility": "v2-draft-hyperrelation"
+    }
+  ]
+}

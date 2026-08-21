@@ -1,0 +1,122 @@
+{
+  "schema": "ogn-s1-s2-relation-fixtures-v1",
+  "language": "nl",
+  "purpose": "Central Text anaphor regression fixtures; every insertion belongs to a future minimized Context Open Graph Notation tree.",
+  "contextModel": {"notation": "Open Graph Notation", "representation": "minimized-tree", "status": "p.m."},
+  "relationSchemas": {"coreference": "ogn-referent-anaphor-v1"},
+  "fixtures": [
+    {
+      "id": "user-man-yesterday-today",
+      "provenance": {"kind": "user-supplied"},
+      "S1": "Ik zag de man gisteren.",
+      "S2": "Vandaag was hij er niet meer.",
+      "assertedRelations": [
+        {"schema": "ogn-referent-anaphor-v1", "id": "man-hij", "type": "coreference", "referent": "S1:MAN", "anaphorSource": "S2:MAN", "lexSurface": "HIJ"}
+      ],
+      "lexInsertions": [
+        {"unitId": "S1", "id": "lex-s1-gisteren", "layer": "Context", "surface": "GISTEREN"},
+        {"unitId": "S2", "id": "lex-s2-vandaag", "layer": "Context", "surface": "VANDAAG"},
+        {"unitId": "S2", "id": "lex-s2-er", "layer": "Context", "surface": "ER"},
+        {"unitId": "S2", "id": "lex-s2-niet-meer", "layer": "Context", "surface": "NIET MEER"}
+      ],
+      "contextStatus": "p.m.",
+      "contextNotes": ["GISTEREN en VANDAAG verschillen één dag.", "Een plaats voor ER is niet expliciet benoemd.", "NIET MEER duidt een toestandsverschil aan."],
+      "expected": {"hardRelationCount": 1, "geometricConstraintCount": 1, "contextInsertionCount": 4}
+    },
+    {
+      "id": "explicit-place-anaphor",
+      "provenance": {"kind": "constructed-regression-fixture"},
+      "S1": "Gisteren zag ik de man in het park.",
+      "S2": "Vandaag was hij daar niet meer.",
+      "assertedRelations": [
+        {"schema": "ogn-referent-anaphor-v1", "id": "man-hij", "type": "coreference", "referent": "S1:MAN", "anaphorSource": "S2:MAN", "lexSurface": "HIJ"}
+      ],
+      "contextStatus": "p.m.",
+      "contextNotes": ["Tijd, plaats en de eventuele relatie PARK–DAAR behoren tot Context."],
+      "expected": {"hardRelationCount": 1}
+    },
+    {
+      "id": "explicit-place-and-state",
+      "provenance": {"kind": "constructed-regression-fixture"},
+      "S1": "Gisteren was de man in het park.",
+      "S2": "Vandaag was hij daar niet meer.",
+      "assertedRelations": [
+        {"schema": "ogn-referent-anaphor-v1", "id": "man-hij", "type": "coreference", "referent": "S1:MAN", "anaphorSource": "S2:MAN", "lexSurface": "HIJ"}
+      ],
+      "contextStatus": "p.m.",
+      "contextNotes": ["Tijd, plaats en aanwezig–niet-meer-aanwezig behoren tot Context."],
+      "expected": {"hardRelationCount": 1}
+    },
+    {
+      "id": "entity-only-control",
+      "provenance": {"kind": "constructed-negative-control"},
+      "S1": "Ik zag een man.",
+      "S2": "Hij droeg een hoed.",
+      "assertedRelations": [
+        {"schema": "ogn-referent-anaphor-v1", "id": "man-hij", "type": "coreference", "referent": "S1:MAN", "anaphorSource": "S2:MAN", "lexSurface": "HIJ"}
+      ],
+      "expected": {"hardRelationCount": 1, "forbiddenInferences": ["temporal-reference", "locative-reference"]}
+    },
+    {
+      "id": "temporal-only-control",
+      "provenance": {"kind": "constructed-negative-control"},
+      "S1": "Gisteren regende het.",
+      "S2": "Vandaag schijnt de zon.",
+      "assertedRelations": [],
+      "contextStatus": "p.m.",
+      "contextNotes": ["GISTEREN en VANDAAG zijn Context; expletief HET is geen antecedent van ZON."],
+      "expected": {"hardRelationCount": 0, "forbiddenInferences": ["coreference"]}
+    },
+    {
+      "id": "unresolved-there-control",
+      "provenance": {"kind": "constructed-negative-control"},
+      "S1": "Ik zag de man gisteren.",
+      "S2": "Vandaag was hij daar niet meer.",
+      "assertedRelations": [
+        {"schema": "ogn-referent-anaphor-v1", "id": "man-hij", "type": "coreference", "referent": "S1:MAN", "anaphorSource": "S2:MAN", "lexSurface": "HIJ"}
+      ],
+      "contextStatus": "p.m.",
+      "contextNotes": ["Voor DAAR bestaat geen expliciet plaatsantecedent; verzin geen Text-knoop."],
+      "expected": {"hardRelationCount": 1, "forbiddenHardLinks": ["UNKNOWN-PLACE->DAAR"]}
+    },
+    {
+      "id": "ambiguous-double-pronoun",
+      "provenance": {"kind": "constructed-ambiguity-fixture"},
+      "S1": "Anna sprak met Eva.",
+      "S2": "Daarna belde zij haar.",
+      "interpretations": [
+        {
+          "id": "anna-called-eva",
+          "relations": [
+            {"schema": "ogn-referent-anaphor-v1", "id": "anna-zij", "type": "coreference", "referent": "S1:ANNA", "anaphorSource": "S2:ANNA", "lexSurface": "ZIJ"},
+            {"schema": "ogn-referent-anaphor-v1", "id": "eva-haar", "type": "coreference", "referent": "S1:EVA", "anaphorSource": "S2:EVA", "lexSurface": "HAAR"}
+          ]
+        },
+        {
+          "id": "eva-called-anna",
+          "relations": [
+            {"schema": "ogn-referent-anaphor-v1", "id": "eva-zij", "type": "coreference", "referent": "S1:EVA", "anaphorSource": "S2:EVA", "lexSurface": "ZIJ"},
+            {"schema": "ogn-referent-anaphor-v1", "id": "anna-haar", "type": "coreference", "referent": "S1:ANNA", "anaphorSource": "S2:ANNA", "lexSurface": "HAAR"}
+          ]
+        }
+      ],
+      "contextStatus": "p.m.",
+      "contextNotes": ["DAARNA is een Context-insertie."],
+      "expected": {"interpretationCount": 2, "relationsPerInterpretation": 2, "requiresInterpretationSelectionBeforeLayout": true}
+    },
+    {
+      "id": "user-farmer-donkey-because",
+      "provenance": {"kind": "user-supplied"},
+      "S1": "De boer slaat de ezel",
+      "S2": "omdat hij hem bezit.",
+      "assertedRelations": [
+        {"schema": "ogn-referent-anaphor-v1", "id": "boer-hij", "type": "coreference", "referent": "S1:BOER", "anaphorSource": "S2:BOER", "lexSurface": "HIJ"},
+        {"schema": "ogn-referent-anaphor-v1", "id": "ezel-hem", "type": "coreference", "referent": "S1:EZEL", "anaphorSource": "S2:EZEL", "lexSurface": "HEM"}
+      ],
+      "lexInsertions": [{"unitId": "S2", "id": "lex-s2-omdat", "layer": "Context", "surface": "OMDAT", "category": "COMP"}],
+      "contextStatus": "p.m.",
+      "contextNotes": ["Causaliteit en OMDAT behoren tot Context.", "S2 is een bijzin: BEZIT blijft aan het einde; geen V2."],
+      "expected": {"hardRelationCount": 2, "geometricConstraintCount": 2, "contextInsertionCount": 1, "s2FiniteVerbPlacement": "final"}
+    }
+  ]
+}

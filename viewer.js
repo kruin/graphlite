@@ -1162,6 +1162,9 @@
     { id: '8', label: 'LEX-slots: 8' }
   ];
 
+  // Ontwerpvoorraad, bewust niet gekoppeld aan Config, opslag of rendering.
+  const DEFERRED_LEX_OPEN_SLOT_PLACEMENTS = Object.freeze(['before', 'after', 'between']);
+
   const VALID_ADVERB_HOST_BOXES = new Set(['S', 'NP', 'VP', 'V', 'V-CLUSTER', 'PP', 'AP']);
 
   const ADVERB_PLACEMENT_RULES = [
@@ -1446,11 +1449,11 @@
 
   const LEX_SLOT_PLACEMENTS = [
     { id: 'above-selected-box', label: 'scopehost: geselecteerde box', labelEn: 'scope host: selected box', host: 'selected', tip: 'Secundaire scope-informatie. De LOG-afstand wordt uitsluitend door het gekozen LOG-interval bepaald.' },
-    { id: 'above-s', label: 'scopehost: S', labelEn: 'scope host: S', host: 'S', tip: 'Zins-/propositiescope. Deze host bepaalt niet de LOG-afstand of de neutrale LEX-rij.' },
+    { id: 'above-s', label: 'scopehost: S', labelEn: 'scope host: S', host: 'S', tip: 'Zins-/propositiescope. Deze host bepaalt niet de LOG-afstand of een zichtbare LEX-Wissel.' },
     { id: 'above-np', label: 'scopehost: NP', labelEn: 'scope host: NP', host: 'NP', tip: 'NP-/focusscope. De minorpositie wordt apart op de LOG-as gekozen.' },
     { id: 'above-vp', label: 'scopehost: VP', labelEn: 'scope host: VP', host: 'VP', tip: 'Gebeurtenis-/VP-scope. De LOG-minor maakt de afstand; de VP-subboom schuift niet.' },
     { id: 'above-v', label: 'scopehost: V', labelEn: 'scope host: V', host: 'V', tip: 'V-nabije scope. De LOG-minor maakt de afstand; de V-box schuift niet.' },
-    { id: 'above-vcluster', label: 'scopehost: V-CLUSTER', labelEn: 'scope host: V-CLUSTER', host: 'V-CLUSTER', tip: 'Scope over het V-cluster, zonder plaatsing in het cluster. LOG bepaalt de neutrale LEX-rij.' },
+    { id: 'above-vcluster', label: 'scopehost: V-CLUSTER', labelEn: 'scope host: V-CLUSTER', host: 'V-CLUSTER', tip: 'Scope over het V-cluster, zonder plaatsing in het cluster. LOG plant de LEX-ruimte.' },
     { id: 'above-pp', label: 'scopehost: PP', labelEn: 'scope host: PP', host: 'PP', tip: 'PP-gerelateerde scope. De LOG-minorpositie blijft afzonderlijk configureerbaar.' },
     { id: 'above-ap', label: 'scopehost: AP', labelEn: 'scope host: AP', host: 'AP', tip: 'AP-/graadscope. De LOG-minorpositie blijft afzonderlijk configureerbaar.' }
   ];
@@ -1539,6 +1542,14 @@
     return placementModeDefinition().kind === 'direct';
   }
 
+  function languageTreeActive() {
+    return placementModeDefinition().id === 'language-tree';
+  }
+
+  function multiOgnAnaphorActive() {
+    return placementModeDefinition().id === 'multi-ogn-anaphor';
+  }
+
   const GRID_COLOR_OPTIONS = [
     { id: 'soft-slate', label: 'zacht grijsblauw', labelEn: 'soft slate', css: '#94a3b8' },
     { id: 'slate', label: 'grijsblauw', labelEn: 'slate', css: '#64748b' },
@@ -1569,9 +1580,153 @@
 
   const PLACEMENT_MODES = Object.freeze([
     Object.freeze({ id: 'language-tree', label: 'Language Tree', labelEn: 'Language Tree', kind: 'calculated', primary: true }),
+    Object.freeze({ id: 'multi-ogn-anaphor', label: 'Language Tree · extensie Anafoor', labelEn: 'Language Tree · Anaphor extension', kind: 'calculated', composition: 'multi-ogn', extensionOf: 'language-tree', extensionOrder: 1 }),
     Object.freeze({ id: 'greedy-grow', label: 'Greedy Grow', labelEn: 'Greedy Grow', kind: 'direct', strategy: 'compact-four-arm' }),
     Object.freeze({ id: 'random', label: 'Random', labelEn: 'Random', kind: 'direct', strategy: 'random' })
   ]);
+
+  function anaphorCombinationsEngine() {
+    const engine = globalThis.OGNAnaphorCombinations;
+    if (!engine?.normalizeCombinations || !engine?.toConfigList) {
+      throw new Error('Anafoorcombinatie-engine ontbreekt.');
+    }
+    return engine;
+  }
+
+  function defaultAnaphorCombinationConfigs() {
+    const engine = anaphorCombinationsEngine();
+    return engine.toConfigList(engine.DEFAULT_COMBINATIONS);
+  }
+
+  function normalizeAnaphorCombinationConfigs(values) {
+    return anaphorCombinationsEngine().toConfigList(values);
+  }
+
+  function compiledAnaphorCombinations(values = state?.anaphorCombinations) {
+    return anaphorCombinationsEngine().normalizeCombinations(values);
+  }
+
+  function activeMultiOgnAnaphorDemo() {
+    const combinations = compiledAnaphorCombinations();
+    return combinations.find(combination => combination.id === state?.anaphorCombinationId)
+      || combinations[0];
+  }
+
+  let ANAPHOR_LEXICALIZATION_PROFILES = Object.freeze(
+    (globalThis.OGNAnaphorLexicon?.DEFAULT_PROFILES || []).map(profile => ({ ...profile }))
+  );
+
+  function configuredAnaphorLexicalizationId() {
+    const demo = activeMultiOgnAnaphorDemo();
+    return state?.anaphorLexicalizations?.[demo.id]
+      || demo.relation.lexicalization.profile
+      || state?.anaphorLexicalization
+      || 'hij';
+  }
+
+  function anaphorLexicalizationResolution(requestedId = configuredAnaphorLexicalizationId()) {
+    const engine = globalThis.OGNAnaphorLexicon;
+    if (!engine?.resolve) throw new Error('Anafoor-LEX-lexiconengine ontbreekt.');
+    return engine.resolve(
+      ANAPHOR_LEXICALIZATION_PROFILES,
+      requestedId,
+      activeMultiOgnAnaphorDemo().antecedentLexeme,
+      'subject'
+    );
+  }
+
+  function activeAnaphorLexicalization() {
+    return anaphorLexicalizationResolution().selected;
+  }
+
+  function multiOgnSurfaceSentence2(profile = activeAnaphorLexicalization()) {
+    const engine = globalThis.OGNAnaphorLexicon;
+    const demo = activeMultiOgnAnaphorDemo();
+    if (engine?.surfaceFromTemplate && demo.surfaceTemplate) {
+      const relationProfiles = Object.fromEntries(demo.relations.slice(1).map(relation => {
+        const sentence = demo.sentences.find(item => item.id === relation.anaphor.unitId);
+        const source = findTreeSpecNode(sentence?.tree, node => node.id === relation.anaphor.nodeId);
+        const resolved = engine.resolve(ANAPHOR_LEXICALIZATION_PROFILES, relation.lexicalization.profile,
+          relation.referent.lexeme, source?.role || '');
+        return [relation.id, resolved.selected];
+      }));
+      return engine.surfaceFromTemplate(profile, demo.surfaceTemplate, relationProfiles);
+    }
+    return engine.surfaceSentence(profile, demo.surfacePredicateObject);
+  }
+
+  function multiOgnSurfaceTitle(profile = activeAnaphorLexicalization()) {
+    const demo = activeMultiOgnAnaphorDemo();
+    return `${demo.sentences[0].text} ${multiOgnSurfaceSentence2(profile)}`.trim();
+  }
+
+  const DEFAULT_ANAPHOR_COMBINATION_CONFIGS = Object.freeze(defaultAnaphorCombinationConfigs());
+  const DEFAULT_ANAPHOR_COMBINATION_ID = DEFAULT_ANAPHOR_COMBINATION_CONFIGS[0].id;
+  const ANAPHOR_SENTENCE_CHOICE_PREFIX = 'anaphor-combination:';
+
+  function anaphorSentenceChoiceId(combinationId = state?.anaphorCombinationId) {
+    return `${ANAPHOR_SENTENCE_CHOICE_PREFIX}${combinationId || DEFAULT_ANAPHOR_COMBINATION_ID}`;
+  }
+
+  function sentenceChoiceOptions() {
+    const ordinary = EXAMPLES.map(example => ({ ...example, choiceKind: 'language-tree' }));
+    const anaphors = compiledAnaphorCombinations().map(combination => ({
+      id: anaphorSentenceChoiceId(combination.id),
+      combinationId: combination.id,
+      choiceKind: 'language-tree-extension-anaphor',
+      label: combination.label,
+      labelEn: combination.labelEn,
+      title: combination.label,
+      titleEn: combination.labelEn
+    }));
+    return [...ordinary, ...anaphors];
+  }
+
+  function activeSentenceChoiceId() {
+    return multiOgnAnaphorActive()
+      ? anaphorSentenceChoiceId(activeMultiOgnAnaphorDemo().id)
+      : state.example.id;
+  }
+
+  function selectSentenceChoice(choiceId, options = {}) {
+    const id = String(choiceId || '');
+    const anaphorChoice = id.startsWith(ANAPHOR_SENTENCE_CHOICE_PREFIX);
+    const previousMode = validPlacementMode(state.placementMode);
+    if (anaphorChoice) {
+      const combinationId = id.slice(ANAPHOR_SENTENCE_CHOICE_PREFIX.length);
+      const combination = compiledAnaphorCombinations().find(item => item.id === combinationId)
+        || compiledAnaphorCombinations()[0];
+      state.anaphorCombinationId = combination.id;
+      state.placementMode = 'multi-ogn-anaphor';
+      const profile = state.anaphorLexicalizations[combination.id]
+        || combination.relation.lexicalization.profile
+        || 'hij';
+      const selectedProfile = anaphorLexicalizationResolution(profile).selected.id;
+      state.anaphorLexicalization = selectedProfile;
+      state.anaphorLexicalizations[combination.id] = selectedProfile;
+      recordParadata('select-anaphor-combination', {
+        combination: combination.id,
+        relations: combination.relations.map(relation => relation.id)
+      });
+    } else {
+      state.example = EXAMPLES.find(example => example.id === id) || EXAMPLES[0];
+      if (multiOgnAnaphorActive()) state.placementMode = 'language-tree';
+      recordParadata('select-example', { example: state.example.id });
+    }
+    state.documentMetadata = null;
+    state.maximumContentFit = null;
+    state.multiOgnPlayFitBox = null;
+    resetForNewExample();
+    if (previousMode !== state.placementMode) {
+      recordParadata('set-placement-mode', {
+        from: previousMode,
+        to: state.placementMode,
+        reason: 'sentence-choice'
+      });
+    }
+    if (options.closeMenus !== false) closeMainChoiceMenus();
+    if (options.render !== false) render();
+  }
 
   const DIRECT_TARGET_COUNT_OPTIONS = Object.freeze([
     Object.freeze({ id: '12', label: '12 knopen', labelEn: '12 nodes' }),
@@ -1612,20 +1767,10 @@
     Object.freeze({ id: 'advance', label: 'Nieuwe seed bij Reset', labelEn: 'New seed on Reset' }),
     Object.freeze({ id: 'fixed', label: 'Vaste seed herhalen', labelEn: 'Repeat fixed seed' })
   ]);
-  const RANDOM_DISTRIBUTION_OPTIONS = Object.freeze([
-    Object.freeze({ id: 'uniform-v1.0', label: 'Uniform v1.0', labelEn: 'Uniform v1.0' }),
-    Object.freeze({ id: 'impure-repeat-v0.1', label: 'Onzuiver uniform v0.1 · hit-herhaling', labelEn: 'Impure uniform v0.1 · hit repetition' })
-  ]);
   const RANDOM_SPREAD_OPTIONS = Object.freeze([
-    Object.freeze({ id: 'available', label: 'Ergens in beschikbare ruimte', labelEn: 'Anywhere in available space' }),
     Object.freeze({ id: 'compact', label: 'Compact', labelEn: 'Compact' }),
     Object.freeze({ id: 'balanced', label: 'Gebalanceerd', labelEn: 'Balanced' }),
     Object.freeze({ id: 'wide', label: 'Ruim', labelEn: 'Wide' })
-  ]);
-  const RANDOM_MAX_DIMENSION_OPTIONS = Object.freeze([
-    Object.freeze({ id: 'interface', label: 'Interface · beschikbare ruimte', labelEn: 'Interface · available space' }),
-    Object.freeze({ id: 'fixed', label: 'Vast grid · kolommen × rijen', labelEn: 'Fixed grid · columns × rows' }),
-    Object.freeze({ id: 'content', label: 'Inhoud · groeiend veld', labelEn: 'Content · growing field' })
   ]);
   const RANDOM_ITERATION_COUNT_OPTIONS = Object.freeze([
     Object.freeze({ id: '1', label: '1 iteratie', labelEn: '1 iteration' }),
@@ -1640,7 +1785,6 @@
     Object.freeze({ id: 'occupancy', label: 'Bezettingskans · telling ÷ iteraties', labelEn: 'Occupancy chance · count ÷ iterations' }),
     Object.freeze({ id: 'relative', label: 'Relatief patroon · telling ÷ hoogste telling', labelEn: 'Relative pattern · count ÷ highest count' })
   ]);
-  const RANDOM_ITERATION_SEED_STEP = 0x9e3779b9;
   const DIRECT_NODE_RADIUS = Object.freeze({ small: 10, normal: 14, large: 18 });
   const DIRECT_GRID_MARGIN = Object.freeze({ compact: 1, normal: 1.5, wide: 3 });
   const DEFAULT_DIRECT_PLACEMENT_GENERAL = Object.freeze({
@@ -1659,11 +1803,7 @@
   const DEFAULT_RANDOM_PLACEMENT_CONFIG = Object.freeze({
     seed: 20260802,
     seedPolicy: 'advance',
-    distribution: 'uniform-v1.0',
-    spread: 'available',
-    maxDimensions: 'interface',
-    fixedColumns: 48,
-    fixedRows: 48,
+    spread: 'compact',
     iterationCount: 10,
     axisImageMode: 'occupancy'
   });
@@ -1671,12 +1811,6 @@
   function directOptionId(options, value, fallback) {
     const candidate = String(value ?? '');
     return options.some(option => option.id === candidate) ? candidate : fallback;
-  }
-
-  function directOptionLabel(options, value) {
-    const option = options.find(item => item.id === String(value));
-    if (!option) return String(value ?? '');
-    return isEnglish() ? (option.labelEn || option.label) : option.label;
   }
 
   function normalizeDirectPlacementGeneral(value = {}) {
@@ -1700,18 +1834,12 @@
 
   function normalizeRandomPlacementConfig(value = {}) {
     const seedNumber = Number(value.seed);
-    const seed = Number.isFinite(seedNumber)
-      ? Math.max(1, Math.min(0xffffffff, Math.floor(seedNumber)))
-      : DEFAULT_RANDOM_PLACEMENT_CONFIG.seed;
+    const seed = Number.isFinite(seedNumber) ? (Math.floor(seedNumber) >>> 0) || DEFAULT_RANDOM_PLACEMENT_CONFIG.seed : DEFAULT_RANDOM_PLACEMENT_CONFIG.seed;
     const legacyAxisMode = value.showAxisPattern === false ? 'off' : DEFAULT_RANDOM_PLACEMENT_CONFIG.axisImageMode;
     return {
       seed,
       seedPolicy: directOptionId(RANDOM_SEED_POLICY_OPTIONS, value.seedPolicy, DEFAULT_RANDOM_PLACEMENT_CONFIG.seedPolicy),
-      distribution: directOptionId(RANDOM_DISTRIBUTION_OPTIONS, value.distribution, DEFAULT_RANDOM_PLACEMENT_CONFIG.distribution),
       spread: directOptionId(RANDOM_SPREAD_OPTIONS, value.spread, DEFAULT_RANDOM_PLACEMENT_CONFIG.spread),
-      maxDimensions: directOptionId(RANDOM_MAX_DIMENSION_OPTIONS, value.maxDimensions, DEFAULT_RANDOM_PLACEMENT_CONFIG.maxDimensions),
-      fixedColumns: Math.max(1, Math.min(10000, Math.floor(Number(value.fixedColumns) || DEFAULT_RANDOM_PLACEMENT_CONFIG.fixedColumns))),
-      fixedRows: Math.max(1, Math.min(10000, Math.floor(Number(value.fixedRows) || DEFAULT_RANDOM_PLACEMENT_CONFIG.fixedRows))),
       iterationCount: Number(directOptionId(
         RANDOM_ITERATION_COUNT_OPTIONS,
         value.iterationCount ?? value.repeatCount,
@@ -2034,13 +2162,15 @@
     projectionLineWeight: (function(){ try { return localStorage.getItem('opengraph_projection_line_weight') || 'normal'; } catch (_err) { return 'normal'; } })(),
     boxLineWeight: (function(){ try { return localStorage.getItem('opengraph_box_line_weight') || 'normal'; } catch (_err) { return 'normal'; } })(),
     placementMode: 'language-tree',
+    anaphorCombinations: normalizeAnaphorCombinationConfigs(DEFAULT_ANAPHOR_COMBINATION_CONFIGS),
+    anaphorCombinationId: DEFAULT_ANAPHOR_COMBINATION_ID,
+    anaphorLexicalizations: {},
+    anaphorLexicalization: 'hij',
     directPlacementGeneral: { ...DEFAULT_DIRECT_PLACEMENT_GENERAL },
     greedyGrowConfig: { ...DEFAULT_GREEDY_GROW_CONFIG },
     randomPlacementConfig: { ...DEFAULT_RANDOM_PLACEMENT_CONFIG },
     directPlacementState: null,
     directPlacementSeed: 20260802,
-    directPlacementIterationBaseSeed: 20260802,
-    directPlacementIterationIndex: 0,
     directPlacementTimer: null,
     centerMode: 'syntax',
     treeChoice: 'auto-min',
@@ -2078,6 +2208,7 @@
     growthTimer: null,
     exampleValidationMessages: [],
     maximumContentFit: null,
+    multiOgnPlayFitBox: null,
     manualViewBox: null,
     viewDrag: null,
     viewClickSuppressed: false,
@@ -2412,8 +2543,8 @@
     }
     const marked = adv.placement === 'marked' ? (isEnglish() ? ', marked' : ', gemarkeerd') : '';
     return isEnglish()
-      ? `adverb=${adv.word} · LOG minor ${intervalText}${marked} → neutral LEX`
-      : `bijwoord=${adv.word} · LOG-minor ${intervalText}${marked} → neutrale LEX`;
+      ? `adverb=${adv.word} · LOG minor ${intervalText}${marked} → LEX planning`
+      : `bijwoord=${adv.word} · LOG-minor ${intervalText}${marked} → LEX-planning`;
   }
 
   function adverbOptionIsMarked(option) {
@@ -2594,6 +2725,36 @@
       notices.push(`marked/topic: ${object.label} blijft object en patiens; lees als: (Die) ${object.label.toLowerCase()} heeft ${subject?.label?.toLowerCase() || 'agens'} ${String(part).toLowerCase()}.`);
     }
     return { ok: reasons.length === 0, reasons, notices };
+  }
+
+  async function loadAnaphorLexicalizationProfiles() {
+    const engine = globalThis.OGNAnaphorLexicon;
+    if (!engine?.normalizedProfiles) throw new Error('Anafoor-LEX-lexiconengine ontbreekt.');
+    ANAPHOR_LEXICALIZATION_PROFILES = Object.freeze(engine.normalizedProfiles(engine.DEFAULT_PROFILES));
+    try {
+      const response = await fetch(`lexicon-config.html?${VERSION}`, { cache: 'no-store' });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const doc = new DOMParser().parseFromString(await response.text(), 'text/html');
+      const constructions = doc.querySelectorAll('#opengraph-lexicon-config .lexicon-construction[data-id^="anaphor-"]');
+      const profiles = [...constructions].flatMap(construction => [...construction.querySelectorAll('.construction-profile')]).map(profile => ({
+        id: String(profile.dataset.id || '').trim(),
+        components: String(profile.dataset.components || '').trim(),
+        function: String(profile.dataset.function || 'anaphoric-lexicalization').trim(),
+        scope: String(profile.dataset.scope || 'coreference').trim(),
+        recommended: String(profile.dataset.recommended || '').toLowerCase() === 'true',
+        label: String(profile.textContent || profile.dataset.id || '').replace(/\s+/g, ' ').trim()
+      })).filter(profile => profile.id);
+      if (profiles.length) ANAPHOR_LEXICALIZATION_PROFILES = Object.freeze(engine.normalizedProfiles(profiles));
+    } catch (_err) {
+      // De ingebouwde profielen houden file:// en een ontbrekende lexiconfetch bruikbaar.
+    }
+    const demo = activeMultiOgnAnaphorDemo();
+    const requested = state.anaphorLexicalizations?.[demo.id]
+      || state.anaphorLexicalization
+      || demo.relation.lexicalization.profile;
+    state.anaphorLexicalization = anaphorLexicalizationResolution(requested).selected.id;
+    state.anaphorLexicalizations[demo.id] = state.anaphorLexicalization;
+    syncAnaphorLexicalizationControl();
   }
 
   async function loadLexiconUsageProfiles() {
@@ -4172,6 +4333,171 @@
     );
   }
 
+  function multiOgnSentenceLayout(sentence) {
+    // De eerste multi-OGN-versie is bewust deterministisch. Iedere zin wordt
+    // met dezelfde vaste Language Tree-strategie berekend; pas daarna mag de
+    // compositie-engine de complete tweede eenheid star verschuiven.
+    const layout = normalizeLayout(layoutTree(cloneTree(sentence.tree), 0, {
+      firstSide: -1,
+      branchOrder: 'normal',
+      branchOverrides: { top: 'normal', middle: 'normal', other: 'normal' }
+    }));
+    return assertUniqueNodeGridLines(layout, `multi-OGN ${sentence.id} vóór compositie`);
+  }
+
+  function multiOgnAnaphorComposition() {
+    const engine = globalThis.OGNMultiComposition;
+    if (!engine?.composePair) throw new Error('Multi-OGN-compositie-engine ontbreekt.');
+    const demo = activeMultiOgnAnaphorDemo();
+    const [s1, s2] = demo.sentences;
+    const composed = engine.composePair({
+      upper: { id: s1.id, layout: multiOgnSentenceLayout(s1), lexInsertions: s1.lexInsertions },
+      lower: { id: s2.id, layout: multiOgnSentenceLayout(s2), lexInsertions: s2.lexInsertions },
+      relation: demo.relation,
+      relations: demo.relations,
+      gapRows: demo.gapRows
+    });
+    composed.units.forEach(unit => assertUniqueNodeGridLines(unit.layout, `multi-OGN ${unit.id} na compositie`));
+    const lexicalization = activeAnaphorLexicalization();
+    const lexicalizationEngine = globalThis.OGNAnaphorLexicon;
+    const insertionById = new Map(demo.sentences.flatMap(sentence => {
+      const unit = composed.units.find(item => item.id === sentence.id);
+      return anaphorCombinationsEngine().planLexInsertionRows(sentence, unit.layout)
+        .map(insertion => [`${sentence.id}:${insertion.id}`, insertion]);
+    }));
+    const relationBySource = new Map(demo.relations.map(relation => [
+      `${relation.anaphor.unitId}:${relation.anaphor.nodeId}`, relation
+    ]));
+    return {
+      ...composed,
+      demo,
+      configuredRelations: demo.relations.map(relation => ({ ...relation })),
+      layoutResolution: jsonClone(demo.layoutResolution, {}),
+      surfaceTitle: multiOgnSurfaceTitle(lexicalization),
+      sourceSentences: demo.sentences.map(sentence => sentence.text),
+      surfaceSentences: [demo.sentences[0].text, multiOgnSurfaceSentence2(lexicalization)],
+      relation: {
+        ...composed.relation,
+        schema: demo.relation.schema,
+        dependencyDirection: demo.relation.dependencyDirection,
+        sourceReferent: { ...demo.relation.referent },
+        anaphor: { ...demo.relation.anaphor },
+        lexicalization: {
+          type: 'anaphor-lex-projection',
+          sourceNodeId: demo.relation.anaphor.nodeId,
+          antecedentLexeme: demo.antecedentLexeme,
+          profileId: lexicalization.id,
+          surface: lexicalization.surface,
+          category: lexicalization.category,
+          kind: lexicalization.kind
+        }
+      },
+      lexItems: demo.sentences.flatMap(sentence => sentence.lex.map((item, index) => {
+        const insertion = item.insertionId ? insertionById.get(`${sentence.id}:${item.insertionId}`) : null;
+        const relation = item.nodeId ? relationBySource.get(`${sentence.id}:${item.nodeId}`) : null;
+        const primaryAnaphor = relation?.id === demo.relation.id;
+        const sourceNode = item.nodeId
+          ? findTreeSpecNode(sentence.tree, node => node.id === item.nodeId)
+          : null;
+        const relationLexicalization = relation
+          ? (primaryAnaphor ? lexicalization : lexicalizationEngine.resolve(
+            ANAPHOR_LEXICALIZATION_PROFILES, relation.lexicalization.profile,
+            relation.referent.lexeme, sourceNode?.role || ''
+          ).selected)
+          : null;
+        return {
+          ...item,
+          sourceKind: insertion ? 'lexical-insertion' : 'tree-node',
+          layer: insertion ? 'Context' : 'Text',
+          ...(insertion ? { gridY: insertion.y, axis: 'LEX', origin: 'LEX' } : {}),
+          sourceLabel: item.label,
+          label: relationLexicalization ? relationLexicalization.surface : item.label,
+          lexicalization: relationLexicalization,
+          relationId: relation?.id || null,
+          unitId: sentence.id,
+          sentenceOrder: sentence.order,
+          wordOrder: index + 1
+        };
+      }))
+    };
+  }
+
+  function findTreeSpecNode(node, predicate) {
+    if (!node) return null;
+    if (predicate(node)) return node;
+    for (const child of node.children || []) {
+      const found = findTreeSpecNode(child, predicate);
+      if (found) return found;
+    }
+    return null;
+  }
+
+  function multiOgnPrimaryRelationLabels(composition = multiOgnAnaphorComposition()) {
+    const source = composition.demo.relation;
+    const referentNode = findTreeSpecNode(
+      composition.demo.sentences.find(sentence => sentence.id === source.referent.unitId)?.tree,
+      node => node.id === source.referent.nodeId
+    );
+    const anaphorNode = findTreeSpecNode(
+      composition.demo.sentences.find(sentence => sentence.id === source.anaphor.unitId)?.tree,
+      node => node.id === source.anaphor.nodeId
+    );
+    return {
+      referent: String(referentNode?.label || source.antecedentLabel || source.referent.lexeme || 'REFERENT').toUpperCase(),
+      anaphorSource: String(anaphorNode?.label || source.anaphor.sourceLabel || source.referentLabel || 'ANAPHOR').toUpperCase(),
+      surface: composition.relation.lexicalization.surface
+    };
+  }
+
+  function multiOgnAnaphorPlayTimeline() {
+    const engine = globalThis.OGNAnaphorPlay;
+    if (!engine?.buildTimeline || !engine?.stateAt || !engine?.phaseAt || !engine?.freeV2Y) {
+      throw new Error('Anafoor-Play-engine ontbreekt.');
+    }
+    return engine.buildTimeline(activeMultiOgnAnaphorDemo().sentences);
+  }
+
+  function multiOgnAnaphorPlayPlan() {
+    const engine = globalThis.OGNAnaphorPlay;
+    const timeline = multiOgnAnaphorPlayTimeline();
+    const active = multiOgnAnaphorActive() && growthActive();
+    const current = active
+      ? Math.max(0, Math.min(timeline.max, Number(state.growthStep) || 0))
+      : timeline.max;
+    const visible = engine.stateAt(timeline, current);
+    return {
+      timelineUnits: timeline.units,
+      ...timeline,
+      ...visible,
+      active,
+      current,
+      phase: engine.phaseAt(timeline, current)
+    };
+  }
+
+  function multiOgnUnitPlayState(plan, unitId) {
+    return plan?.units?.find(unit => unit.id === unitId) || null;
+  }
+
+  function multiOgnUnitGrowthPlan(plan, unitId) {
+    if (!plan?.active) return null;
+    const timelineUnit = plan?.timelineUnits?.find(unit => unit.id === unitId)
+      || multiOgnAnaphorPlayTimeline().units.find(unit => unit.id === unitId);
+    if (!timelineUnit) return { active: true, current: plan.current, nodeStep: new Map() };
+    return {
+      active: true,
+      current: plan.current,
+      nodeStep: new Map(Object.entries(timelineUnit.nodeSteps))
+    };
+  }
+
+  function multiOgnAnaphorVisibleTitle(composition, plan = multiOgnAnaphorPlayPlan()) {
+    if (!plan?.active || plan.lexicalizationVisible) return composition.surfaceTitle;
+    const s2 = multiOgnUnitPlayState(plan, 'S2');
+    if (s2?.treeStarted) return composition.sourceSentences.join(' ');
+    return composition.sourceSentences[0];
+  }
+
   function layoutFunctionalRoleTree(order = 'left-first') {
     // v4427: dedicated non-binary functional OPN layout with topicalization slot.
     // The root is CLAUSE. It is not a predicate-root tree and not a binary tree.
@@ -4915,7 +5241,7 @@
   }
 
   function projectionAxisGridBox(fallback = null) {
-    if (directPlacementActive()) return fallback;
+    if (directPlacementActive() || multiOgnAnaphorActive()) return fallback;
     if (!isMainScreenActive() || !['axes', 'source', 'lex', 'synt', 'log'].includes(state.projection)) return fallback;
     let context = null;
     try {
@@ -5212,7 +5538,8 @@
   }
 
   function growthSupportedProjection(projection = state.projection) {
-    return ['axes', 'source', 'log'].includes(projection);
+    if (multiOgnAnaphorActive()) return true;
+    return languageTreeActive() && ['axes', 'source', 'log'].includes(projection);
   }
 
   function growthActive() {
@@ -5268,6 +5595,7 @@
 
   function growthStepMax() {
     if (!growthSupportedProjection()) return 0;
+    if (multiOgnAnaphorActive()) return multiOgnAnaphorPlayTimeline().max;
     const metrics = collectGrowthMetrics(activeCentralSpec());
     const structureSteps = metrics.count;
     const movementCount = orderedLexMovements(activeLexItems()).length;
@@ -5345,158 +5673,42 @@
     return DIRECT_GRID_MARGIN[general.gridMargin] || DIRECT_GRID_MARGIN.normal;
   }
 
-  function randomPlacementDimensions(
-    config = normalizeRandomPlacementConfig(state.randomPlacementConfig),
-    general = normalizeDirectPlacementGeneral(state.directPlacementGeneral)
-  ) {
-    if (config.maxDimensions === 'fixed') {
-      return {
-        maxColumns: Math.max(general.targetCount, config.fixedColumns),
-        maxRows: Math.max(general.targetCount, config.fixedRows),
-        source: 'fixed'
-      };
-    }
-    if (config.maxDimensions !== 'interface') return { maxColumns: null, maxRows: null, source: 'content' };
-    const rect = els.svg?.getBoundingClientRect?.();
-    const width = rect?.width > 0 ? rect.width : Math.max(320, Number(window.innerWidth) || 1280);
-    const height = rect?.height > 0 ? rect.height : Math.max(240, (Number(window.innerHeight) || 900) - 96);
-    const visualRatio = Math.max(0.2, Math.min(5, width / height));
-    const coordinateRatio = Math.max(0.1, Math.min(10, visualRatio / ((cellX() / 2) / (cellY() / 2))));
-    const minimum = Math.max(1, general.targetCount);
-    const maxColumns = coordinateRatio >= 1
-      ? Math.ceil(minimum * coordinateRatio)
-      : minimum;
-    const maxRows = coordinateRatio >= 1
-      ? minimum
-      : Math.ceil(minimum / coordinateRatio);
-    return {
-      maxColumns: Math.max(minimum, Math.min(10000, maxColumns)),
-      maxRows: Math.max(minimum, Math.min(10000, maxRows)),
-      source: 'interface'
-    };
-  }
-
   let randomAxisPatternCache = null;
 
-  function randomSeedForIteration(baseSeed, iterationIndex = 0) {
-    const base = (Math.floor(Number(baseSeed)) >>> 0) || DEFAULT_RANDOM_PLACEMENT_CONFIG.seed;
-    const index = Math.max(0, Math.floor(Number(iterationIndex) || 0));
-    return ((base + Math.imul(index, RANDOM_ITERATION_SEED_STEP)) >>> 0) || DEFAULT_RANDOM_PLACEMENT_CONFIG.seed;
-  }
-
-  function randomIterationProgress() {
+  function randomAxisPattern() {
     const config = normalizeRandomPlacementConfig(state.randomPlacementConfig);
-    const total = Math.max(1, config.iterationCount);
-    const index = Math.max(0, Math.min(total - 1, Math.floor(Number(state.directPlacementIterationIndex) || 0)));
-    return { index, number: index + 1, total };
-  }
-
-  function randomCompletedIterationCount(direct = state.directPlacementState) {
-    const progress = randomIterationProgress();
-    const currentComplete = !!direct
-      && direct.strategy === 'random'
-      && direct.points.length >= direct.targetCount;
-    return Math.max(0, Math.min(progress.total, progress.index + (currentComplete ? 1 : 0)));
-  }
-
-  function setRandomIteration(iterationIndex = 0, options = {}) {
-    const progress = randomIterationProgress();
-    const index = Math.max(0, Math.min(progress.total - 1, Math.floor(Number(iterationIndex) || 0)));
-    state.directPlacementIterationIndex = index;
-    state.directPlacementSeed = randomSeedForIteration(state.directPlacementIterationBaseSeed, index);
-    state.directPlacementState = null;
-    const direct = ensureDirectPlacementState(true);
-    if (options.complete && direct) {
-      while (placementEngine().placeNext(direct)) {}
-    }
-    return direct;
-  }
-
-  function resetRandomIterationSeries(options = {}) {
-    const config = normalizeRandomPlacementConfig(state.randomPlacementConfig);
-    const previousBase = (Math.floor(Number(state.directPlacementIterationBaseSeed)) >>> 0) || config.seed;
-    state.directPlacementIterationBaseSeed = options.advanceBase && config.seedPolicy === 'advance'
-      ? randomSeedForIteration(previousBase, 1)
-      : config.seed;
-    state.directPlacementIterationIndex = 0;
-    state.directPlacementSeed = randomSeedForIteration(state.directPlacementIterationBaseSeed, 0);
-  }
-
-  function advanceRandomIteration() {
-    if (validPlacementMode(state.placementMode) !== 'random') return false;
-    const progress = randomIterationProgress();
-    if (progress.number >= progress.total) return false;
-    setRandomIteration(progress.index + 1);
-    return true;
-  }
-
-  function randomSeriesHistory(
-    runCount,
-    config = normalizeRandomPlacementConfig(state.randomPlacementConfig),
-    general = normalizeDirectPlacementGeneral(state.directPlacementGeneral),
-    dimensions = randomPlacementDimensions(config, general)
-  ) {
+    const general = normalizeDirectPlacementGeneral(state.directPlacementGeneral);
+    if (config.axisImageMode === 'off') return null;
+    const key = JSON.stringify({
+      seed: config.seed,
+      spread: config.spread,
+      targetCount: general.targetCount,
+      iterationCount: config.iterationCount,
+      axisImageMode: config.axisImageMode
+    });
+    if (randomAxisPatternCache?.key === key) return randomAxisPatternCache.value;
     const engine = globalThis.OGNRandomPlacement;
+    if (!engine?.createState || !engine?.placeNext) return null;
     const xCounts = new Map();
     const yCounts = new Map();
-    const completedRuns = [];
-    if (!engine?.createState || !engine?.placeNext) return { xCounts, yCounts, completedRuns };
-    const total = Math.max(0, Math.min(config.iterationCount, Math.floor(Number(runCount) || 0)));
-    const baseSeed = (Math.floor(Number(state.directPlacementIterationBaseSeed)) >>> 0) || config.seed;
-    for (let runIndex = 0; runIndex < total; runIndex += 1) {
+    for (let runIndex = 0; runIndex < config.iterationCount; runIndex += 1) {
+      const seed = ((config.seed + Math.imul(runIndex, 0x9e3779b9)) >>> 0) || DEFAULT_RANDOM_PLACEMENT_CONFIG.seed;
       const run = engine.createState({
         targetCount: general.targetCount,
         intervalMs: general.intervalMs,
-        seed: randomSeedForIteration(baseSeed, runIndex),
-        spread: config.spread,
-        distribution: config.distribution,
-        priorHitsX: xCounts,
-        priorHitsY: yCounts,
-        maxColumns: dimensions.maxColumns,
-        maxRows: dimensions.maxRows
+        seed,
+        spread: config.spread
       });
       while (engine.placeNext(run)) {}
       run.points.slice(1).forEach(point => {
         xCounts.set(point.x, (xCounts.get(point.x) || 0) + 1);
         yCounts.set(point.y, (yCounts.get(point.y) || 0) + 1);
       });
-      completedRuns.push(run);
     }
-    return { xCounts, yCounts, completedRuns };
-  }
-
-  function randomAxisPattern() {
-    const config = normalizeRandomPlacementConfig(state.randomPlacementConfig);
-    const general = normalizeDirectPlacementGeneral(state.directPlacementGeneral);
-    if (config.axisImageMode === 'off') return null;
-    const baseSeed = (Math.floor(Number(state.directPlacementIterationBaseSeed)) >>> 0) || config.seed;
-    const activeDirect = validPlacementMode(state.placementMode) === 'random' ? state.directPlacementState : null;
-    const completedIterationCount = randomCompletedIterationCount(activeDirect);
-    const dimensions = activeDirect
-      ? { maxColumns: activeDirect.maxColumns, maxRows: activeDirect.maxRows }
-      : randomPlacementDimensions(config, general);
-    const key = JSON.stringify({
-      seed: baseSeed,
-      distribution: config.distribution,
-      spread: config.spread,
-      maxDimensions: config.maxDimensions,
-      fixedColumns: config.fixedColumns,
-      fixedRows: config.fixedRows,
-      maxColumns: dimensions.maxColumns,
-      maxRows: dimensions.maxRows,
-      targetCount: general.targetCount,
-      iterationCount: config.iterationCount,
-      completedIterationCount,
-      axisImageMode: config.axisImageMode
-    });
-    if (randomAxisPatternCache?.key === key) return randomAxisPatternCache.value;
-    const history = randomSeriesHistory(completedIterationCount, config, general, dimensions);
-    const { xCounts, yCounts } = history;
     const value = {
-      configuredIterationCount: config.iterationCount,
-      completedIterationCount,
+      iterationCount: config.iterationCount,
       axisImageMode: config.axisImageMode,
-      observationsPerAxis: completedIterationCount * Math.max(0, general.targetCount - 1),
+      observationsPerAxis: config.iterationCount * Math.max(0, general.targetCount - 1),
       x: [...xCounts.entries()].map(([coordinate, count]) => ({ coordinate, count })).sort((a, b) => a.coordinate - b.coordinate),
       y: [...yCounts.entries()].map(([coordinate, count]) => ({ coordinate, count })).sort((a, b) => a.coordinate - b.coordinate),
       maxCount: Math.max(1, ...xCounts.values(), ...yCounts.values())
@@ -5513,12 +5725,6 @@
     const strategy = mode.id === 'random' ? 'random' : config.strategy;
     const seedMismatch = mode.id === 'random' && state.directPlacementState?.seed !== state.directPlacementSeed;
     const spreadMismatch = mode.id === 'random' && state.directPlacementState?.spread !== config.spread;
-    const distributionMismatch = mode.id === 'random' && state.directPlacementState?.distribution !== config.distribution;
-    const dimensions = mode.id === 'random' ? randomPlacementDimensions(config, general) : {};
-    const dimensionsMismatch = mode.id === 'random' && (
-      state.directPlacementState?.maxColumns !== dimensions.maxColumns
-      || state.directPlacementState?.maxRows !== dimensions.maxRows
-    );
     if (
       force
       || !state.directPlacementState
@@ -5527,23 +5733,13 @@
       || state.directPlacementState.intervalMs !== general.intervalMs
       || seedMismatch
       || spreadMismatch
-      || distributionMismatch
-      || dimensionsMismatch
     ) {
-      const history = mode.id === 'random' && config.distribution === 'impure-repeat-v0.1'
-        ? randomSeriesHistory(state.directPlacementIterationIndex, config, general, dimensions)
-        : { xCounts: new Map(), yCounts: new Map() };
       state.directPlacementState = placementEngine().createState({
         strategy,
         targetCount: general.targetCount,
         intervalMs: general.intervalMs,
         seed: state.directPlacementSeed,
-        spread: mode.id === 'random' ? config.spread : undefined,
-        distribution: mode.id === 'random' ? config.distribution : undefined,
-        priorHitsX: mode.id === 'random' ? history.xCounts : undefined,
-        priorHitsY: mode.id === 'random' ? history.yCounts : undefined,
-        maxColumns: dimensions.maxColumns,
-        maxRows: dimensions.maxRows
+        spread: mode.id === 'random' ? config.spread : undefined
       });
     }
     return state.directPlacementState;
@@ -5556,12 +5752,6 @@
     const step = Math.max(0, direct.points.length - 1);
     const max = Math.max(0, direct.targetCount - 1);
     const method = mode.id === 'random' ? 'Random' : 'Greedy Grow';
-    if (mode.id === 'random') {
-      const iteration = randomIterationProgress();
-      return isEnglish()
-        ? `${method} · iteration ${iteration.number}/${iteration.total} · node ${step}/${max}`
-        : `${method} · iteratie ${iteration.number}/${iteration.total} · knoop ${step}/${max}`;
-    }
     return isEnglish()
       ? `${method} · direct · node ${step}/${max}`
       : `${method} · direct · knoop ${step}/${max}`;
@@ -5569,20 +5759,21 @@
 
   function resetDirectPlacement(options = {}) {
     stopDirectPlacementPlayback();
-    if (placementModeDefinition().id === 'random') resetRandomIterationSeries({ advanceBase: !!options.newSeed });
+    const randomConfig = normalizeRandomPlacementConfig(state.randomPlacementConfig);
+    if (placementModeDefinition().id === 'random' && options.newSeed && randomConfig.seedPolicy === 'advance') {
+      state.directPlacementSeed = ((state.directPlacementSeed + 0x9e3779b9) >>> 0) || 20260802;
+    } else if (placementModeDefinition().id === 'random' && randomConfig.seedPolicy === 'fixed') {
+      state.directPlacementSeed = randomConfig.seed;
+    }
     state.directPlacementState = null;
     ensureDirectPlacementState(true);
     resetManualViewBox();
   }
 
   function directPlacementNext(rerender = true) {
-    let direct = ensureDirectPlacementState();
+    const direct = ensureDirectPlacementState();
     if (!direct) return null;
-    let placed = placementEngine().placeNext(direct);
-    if (!placed && placementModeDefinition().id === 'random' && advanceRandomIteration()) {
-      direct = ensureDirectPlacementState();
-      placed = direct ? placementEngine().placeNext(direct) : null;
-    }
+    const placed = placementEngine().placeNext(direct);
     if (!placed) stopDirectPlacementPlayback();
     if (rerender) render();
     return placed;
@@ -5590,47 +5781,32 @@
 
   function directPlacementPrevious(rerender = true) {
     stopDirectPlacementPlayback();
-    let direct = ensureDirectPlacementState();
-    let removed = direct ? placementEngine().undoLast(direct) : null;
-    if (!removed && placementModeDefinition().id === 'random') {
-      const iteration = randomIterationProgress();
-      if (iteration.index > 0) {
-        direct = setRandomIteration(iteration.index - 1, { complete: true });
-        removed = direct ? { iterationBoundary: true, iterationIndex: iteration.index - 1 } : null;
-      }
-    }
+    const direct = ensureDirectPlacementState();
+    const removed = direct ? placementEngine().undoLast(direct) : null;
     if (rerender) render();
     return removed;
   }
 
   function toggleDirectPlacementPlayback() {
-    let direct = ensureDirectPlacementState();
+    const direct = ensureDirectPlacementState();
     if (!direct) return;
     if (state.directPlacementTimer) {
       stopDirectPlacementPlayback();
       render();
       return;
     }
-    const randomComplete = placementModeDefinition().id === 'random'
-      && randomIterationProgress().number >= randomIterationProgress().total
-      && direct.points.length >= direct.targetCount;
-    if (direct.points.length >= direct.targetCount && (placementModeDefinition().id !== 'random' || randomComplete)) {
+    if (direct.points.length >= direct.targetCount) {
       resetDirectPlacement({ newSeed: placementModeDefinition().id === 'random' });
-      direct = ensureDirectPlacementState();
     }
-    const first = directPlacementNext(false);
-    if (!first) {
-      render();
-      return;
-    }
+    directPlacementNext(false);
     state.directPlacementTimer = window.setInterval(() => {
-      const placed = directPlacementNext(false);
-      if (!placed) {
+      const current = ensureDirectPlacementState();
+      if (!current || current.points.length >= current.targetCount) {
         stopDirectPlacementPlayback();
         render();
         return;
       }
-      render();
+      directPlacementNext(true);
     }, direct.intervalMs);
     render();
   }
@@ -5649,8 +5825,11 @@
     state.growthEnabled = false;
     state.growthStep = 0;
     state.projectionBlockUnlocked = false;
+    state.selectedNodeId = null;
+    state.documentMetadata = null;
     state.directPlacementState = null;
-    if (next === 'random') resetRandomIterationSeries();
+    state.maximumContentFit = null;
+    state.multiOgnPlayFitBox = null;
     if (directPlacementActive()) ensureDirectPlacementState(true);
     resetManualViewBox();
     recordParadata('set-placement-mode', { from: previous, to: next, kind: placementModeDefinition().kind });
@@ -5660,17 +5839,17 @@
 
   function toggleActivePlacementPlayback() {
     if (directPlacementActive()) toggleDirectPlacementPlayback();
-    else toggleGrowthPlayback();
+    else if (languageTreeActive() || multiOgnAnaphorActive()) toggleGrowthPlayback();
   }
 
   function activePlacementPrevious() {
     if (directPlacementActive()) directPlacementPrevious(true);
-    else { stopGrowthPlayback(); state.growthEnabled = true; setGrowthStep(state.growthStep - 1); }
+    else if (languageTreeActive() || multiOgnAnaphorActive()) { stopGrowthPlayback(); state.growthEnabled = true; setGrowthStep(state.growthStep - 1); }
   }
 
   function activePlacementNext() {
     if (directPlacementActive()) { stopDirectPlacementPlayback(); directPlacementNext(true); }
-    else { stopGrowthPlayback(); state.growthEnabled = true; setGrowthStep(state.growthStep + 1); }
+    else if (languageTreeActive() || multiOgnAnaphorActive()) { stopGrowthPlayback(); state.growthEnabled = true; setGrowthStep(state.growthStep + 1); }
   }
 
   function activePlacementReset() {
@@ -5679,6 +5858,7 @@
       render();
       return;
     }
+    if (!languageTreeActive() && !multiOgnAnaphorActive()) return;
     applyProjectionAxes(SOURCE_AXIS_IDS);
     resetForNewExample();
     render();
@@ -5820,8 +6000,58 @@
     return Math.max(nodeGrowthStep(plan, edge.from), nodeGrowthStep(plan, edge.to));
   }
 
+  function multiOgnAnaphorGrowthLabel() {
+    const timeline = multiOgnAnaphorPlayTimeline();
+    const demo = activeMultiOgnAnaphorDemo();
+    const relation = demo.relation;
+    const referentLabel = String(relation.antecedentLabel || relation.referent.lexeme || 'REFERENT').toUpperCase();
+    const anaphorLabel = String(relation.referentLabel || relation.anaphor.sourceLabel || 'ANAPHOR').toUpperCase();
+    const max = timeline.max;
+    const step = Math.max(0, Math.min(max, Number(state.growthStep) || 0));
+    if (!state.growthEnabled) return isEnglish() ? `Growth off · max ${max}` : `Groei uit · max ${max}`;
+    if (step === 0) return isEnglish() ? `step 0/${max}: grid/titles` : `stap 0/${max}: raster/titels`;
+    const phase = globalThis.OGNAnaphorPlay.phaseAt(timeline, step);
+    const unit = timeline.units.find(item => item.id === phase.unitId);
+    if (phase.kind === 'tree' && unit) {
+      const count = unit.nodeIds.filter(nodeId => step >= unit.nodeSteps[nodeId]).length;
+      return isEnglish()
+        ? `step ${step}/${max}: ${unit.id} tree ${count}/${unit.nodeIds.length}`
+        : `stap ${step}/${max}: ${unit.id}-boom ${count}/${unit.nodeIds.length}`;
+    }
+    if (phase.kind === 'lex-base') {
+      return isEnglish()
+        ? `step ${step}/${max}: ${phase.unitId} horizontal LEX source projection`
+        : `stap ${step}/${max}: ${phase.unitId} horizontale LEX-bronprojectie`;
+    }
+    if (phase.kind === 'lex-insertions') {
+      const sentence = demo.sentences.find(item => item.id === phase.unitId);
+      const labels = (sentence?.lexInsertions || []).map(item => item.label).join(', ');
+      return isEnglish()
+        ? `step ${step}/${max}: ${phase.unitId} direct LEX insertion ${labels}`
+        : `stap ${step}/${max}: ${phase.unitId} directe LEX-insertie ${labels}`;
+    }
+    if (phase.kind === 'finite-verb-move') {
+      const sentence = demo.sentences.find(item => item.id === phase.unitId);
+      const predicate = findTreeSpecNode(sentence?.tree, node => node.role === 'predicate' && node.kind === 'leaf');
+      const verb = String(predicate?.label || 'V').toUpperCase();
+      return isEnglish()
+        ? `step ${step}/${max}: ${phase.unitId} ${verb} → free V2 row`
+        : `stap ${step}/${max}: ${phase.unitId} ${verb} → vrije V2-rij`;
+    }
+    if (phase.kind === 'coreference') {
+      return isEnglish()
+        ? `step ${step}/${max}: ${referentLabel} ↔ ${anaphorLabel} coreference`
+        : `stap ${step}/${max}: ${referentLabel} ↔ ${anaphorLabel}-coreferentie`;
+    }
+    const surface = activeAnaphorLexicalization().surface;
+    return isEnglish()
+      ? `step ${step}/${max}: LEX anaphor ${anaphorLabel} → ${surface}`
+      : `stap ${step}/${max}: LEX-anafoor ${anaphorLabel} → ${surface}`;
+  }
+
   function growthLabel() {
     if (!growthSupportedProjection()) return 'Groei n.v.t.';
+    if (multiOgnAnaphorActive()) return multiOgnAnaphorGrowthLabel();
     const max = growthStepMax();
     const step = clampGrowthStep(state.growthStep);
     if (!state.growthEnabled) return `Groei uit · max ${max}`;
@@ -5837,7 +6067,7 @@
     const lexBaseStep = phaseStep('LEX');
     const movementStart = structureStep + playPhases.length + 1;
     if (step === logStep) return `${step}/${max} · 1/3 LOG`;
-    if (step === spaceStep) return `${step}/${max} · 2/3 gereserveerde LEX-ruimte · geen verplaatsing`;
+    if (step === spaceStep) return `${step}/${max} · 2/3 ruimte`;
     if (step === lexBaseStep) return `${step}/${max} · 3/3 horizontale LEX-projectie`;
     if (step >= movementStart && step < movementStart + movementCount) {
       const currentMove = step - movementStart + 1;
@@ -6295,6 +6525,12 @@
     }));
   }
 
+  function lexConfiguredOpenSlots(y0, occupiedYs = []) {
+    void y0;
+    void occupiedYs;
+    return [];
+  }
+
   function drawLexConfiguredFreeSlot(g, x, slot) {
     const content = slot.content || lexInsertionContentDef();
     const marked = slot.marked ? (isEnglish() ? ' · marked' : ' · gemarkeerd') : '';
@@ -6384,12 +6620,15 @@
   }
 
   function topicMovementForItem(item, index) {
-    // v4450: in Nederlandse V2-hoofdzinnen bezet het eerste zinsdeel slot 1.
-    // Dat geldt ook wanneer dat eerste zinsdeel het subject is. Het eerste
-    // lexicale zinsdeel laat dus altijd een trace achter op de oude basispositie.
+    // Een gewone subject-initiële hoofdzin activeert geen TOPIC-Wissel. Alleen
+    // een expliciet vooropgeplaatst niet-subject (zoals TRUI in TRUI BREIT
+    // VROUW) gebruikt slot 1 en laat een trace op zijn bronhoogte achter.
     if (!isMainV2Rule()) return null;
     if (activeAdverbIsFronted()) return null;
     if (index !== 0 || !item?.source) return null;
+    const source = String(item.source || '').toLowerCase();
+    const role = String(item.role || '').toLowerCase();
+    if (source === 'subject' || role === 'subject') return null;
     return { kind: 'topic', slot: 'topic', caption: 'Wissel TOPIC', trace: `t[${item.role || item.source}]` };
   }
 
@@ -6482,11 +6721,11 @@
 
   function logicalPlacementMovementForItem(item, index, items = state.example?.lexItems || []) {
     if (!logicalAuthorityEnabled() || !item?.source) return null;
-    // Een LOG-rij is eerst plannings-/reserveringsinformatie. Zij is geen
-    // zelfstandige toestemming om een bronknoop van zijn horizontale
-    // bronhoogte te halen. Alleen een expliciete Language-Tree-regel (zoals
-    // topic, V2 of post-V2) maakt van dat plan een zichtbare LEX-Wissel.
-    // Zo blijven in HOND BIJT MAN zowel HOND als MAN exact bronuitgelijnd.
+    // Een LOG-rij plant/reserveert een mogelijke LEX-plaats. Zij is geen
+    // zelfstandige opdracht om een bronwoord van zijn horizontale
+    // bronhoogte te halen. Alleen een expliciete Language-Tree-regel (topic,
+    // V1 of V2) kan die reservering als zichtbare Wissel gebruiken.
+    // Daardoor blijven in HOND BIJT MAN zowel HOND als MAN exact staan.
     const explicit = movementForItem(item, index, items);
     if (!explicit) return null;
     const logicalRow = logicalLexPlan(items).byIndex.get(index);
@@ -6502,7 +6741,7 @@
   }
 
   function orderedLexMovements(items = state.example?.lexItems || []) {
-    // Eén bronwoord krijgt hoogstens één zichtbare LEX-verplaatsing. LOG
+    // Per bronwoord volgt hoogstens één zichtbare LEX-verplaatsing. LOG
     // reserveert mogelijke doelrijen, maar alleen een expliciete
     // Language-Tree-regel mag een bronwoord werkelijk verplaatsen.
     return items
@@ -6548,9 +6787,9 @@
 
   function movementForItem(item, index, items = activeLexItems()) {
     if (!item?.source) return null;
-    // LOG kan LEX-ruimte reserveren. Alleen de expliciete plaatsingsregels
-    // topic/vooropplaatsing, V2 en post-V2 voeren een zichtbare Wissel uit;
-    // overige bronitems blijven op hun horizontale bronhoogte.
+    // LOG kan LEX-ruimte reserveren. Alleen expliciete plaatsingsregels voeren
+    // een zichtbare Wissel uit; overige bronitems blijven horizontaal op hun
+    // recursief berekende bronhoogte.
     const topic = topicMovementForItem(item, index);
     if (topic) return topic;
     if (isMainV2Rule() && isFiniteVerbForV2(item)) {
@@ -6757,7 +6996,36 @@
     return rootY === null ? topicSlotY(y0, items) : rootY - 64;
   }
 
+  function projectedFreeV2GapY(sourceMap = null, items = state.example?.lexItems || []) {
+    // In de ongemarkeerde S-V-O-hoofdzin is de vrije V2-plek de ongebruikte
+    // LEX-rij tussen de horizontaal behouden subject- en objectprojectie.
+    // De plek wordt dus uit de recursief berekende bronhoogten afgeleid en
+    // nooit meer als een vaste pixelafstand onder S aangenomen.
+    if (!sourceMap || activeAdverbIsFronted() || showTopicSlot(items)) return null;
+    const subjectIndex = items.findIndex(item => {
+      const source = String(item?.source || '').toLowerCase();
+      const role = String(item?.role || '').toLowerCase();
+      return source === 'subject' || role === 'subject';
+    });
+    const v2Index = items.findIndex((item, index) => movementForItem(item, index, items)?.slot === 'v2');
+    const objectIndex = items.findIndex(item => {
+      const source = String(item?.source || '').toLowerCase();
+      const role = String(item?.role || '').toLowerCase();
+      return source === 'object' || role === 'object';
+    });
+    if (!(subjectIndex >= 0 && subjectIndex < v2Index && v2Index < objectIndex)) return null;
+    if (movementForItem(items[subjectIndex], subjectIndex, items)
+        || movementForItem(items[objectIndex], objectIndex, items)) return null;
+    const subjectPoint = sourceMap.get(items[subjectIndex].source);
+    const objectPoint = sourceMap.get(items[objectIndex].source);
+    if (!Number.isFinite(subjectPoint?.py) || !Number.isFinite(objectPoint?.py)
+        || objectPoint.py <= subjectPoint.py) return null;
+    return subjectPoint.py + (objectPoint.py - subjectPoint.py) / 2;
+  }
+
   function projectedV2SlotY(y0, sourceMap = null, items = state.example?.lexItems || []) {
+    const freeGapY = projectedFreeV2GapY(sourceMap, items);
+    if (Number.isFinite(freeGapY)) return freeGapY;
     const rootY = projectedLexRootY(sourceMap);
     if (rootY === null) return v2SlotY(y0, items);
     if (activeAdverbIsFronted() && isMainV2Rule()) return rootY + 64;
@@ -6769,8 +7037,20 @@
     return v2Y + (Number(movement?.postV2Index || 0) + 1) * 64;
   }
 
+  function projectedStationarySourceY(item, index, y0, sourceMap = null, items = state.example?.lexItems || [], options = {}) {
+    // Een niet-verplaatst bronwoord blijft ook bij actieve LOG-planning exact
+    // op zijn eigen bronhoogte. In de beginfase geldt dat eveneens voor een
+    // woord waarvan de expliciete Wissel nog niet is uitgevoerd.
+    if (!item?.source || !sourceMap || !horizontalLexProjectionEnabled()) return null;
+    if (appliedMovementForItem(item, index, items, options)) return null;
+    const sourcePoint = sourceMap.get(item.source);
+    return Number.isFinite(sourcePoint?.py) ? sourcePoint.py : null;
+  }
+
   function projectedLexItemY(item, index, y0, sourceMap = null, items = state.example?.lexItems || [], options = {}) {
     if (!item?.source) return item.slot === 'comp' ? projectedCompSlotY(y0, sourceMap) : lexWordOrderY(index, y0);
+    const stationarySourceY = projectedStationarySourceY(item, index, y0, sourceMap, items, options);
+    if (Number.isFinite(stationarySourceY)) return stationarySourceY;
     const logicalPlacement = appliedLogicalPlacementForItem(item, index, items, options);
     const neutralY = logicalPlacement
       ? baseLexY(item, index, y0, sourceMap, items)
@@ -6786,7 +7066,7 @@
     const horizontalProjectionMode = !!sourceMap && horizontalLexProjectionEnabled();
     const systemY0 = sourceMap ? projectedLexSystemY0(y0, sourceMap) : y0;
     drawAxisTitle(g, x - 98, systemY0 - 70, options.spaceOnly
-      ? 'LEX-projectie · fase 2/3 · LOG-ruimte reserveren · geen verplaatsing'
+      ? 'LEX-projectie · fase 2/3 · ruimte uit LOG-slots'
       : logicalAuthorityEnabled()
       ? 'LEX-projectie · bronhoogte → alleen een expliciete Wissel mag verplaatsen'
       : (horizontalProjectionMode ? 'LEX-projectie · projectiemerkers + Wisselregels' : 'LEX-as · lokale plaatsingsregels'));
@@ -6834,12 +7114,7 @@
       if (uniqueRows.length) {
         const firstY = uniqueRows[0].y;
         const lastY = uniqueRows[uniqueRows.length - 1].y;
-        const reservationGroup = svgEl('g', {
-          class: 'lex-space-reservation-group',
-          'data-purpose': 'reservation-only-no-movement'
-        });
-        reservationGroup.appendChild(svgEl('title', {}, 'Gereserveerde LOG-ruimte op LEX; dit verplaatst geen bronknoop.'));
-        reservationGroup.appendChild(svgEl('rect', {
+        g.appendChild(svgEl('rect', {
           x: x - 8,
           y: firstY - 18,
           width: 16,
@@ -6848,7 +7123,7 @@
           class: 'lex-space-reservation'
         }));
         [firstY, lastY].forEach(rowY => {
-          reservationGroup.appendChild(svgEl('line', {
+          g.appendChild(svgEl('line', {
             x1: x - 15,
             y1: rowY,
             x2: x + 15,
@@ -6856,13 +7131,12 @@
             class: 'lex-space-reservation-cap'
           }));
         });
-        g.appendChild(reservationGroup);
       }
       drawCanvasGuideText(
         g,
         x + 150,
         axisMinY + 18,
-        'Fase 2/3: de verdikking markeert alleen gereserveerde LOG-ruimte; geen bronknoop verplaatst.',
+        'Fase 2/3: reserveer eerst de door LOG geplande LEX-ruimte; dit verplaatst nog geen bronwoord.',
         'wissel-label'
       );
       return positions;
@@ -6881,8 +7155,8 @@
 
     const ruleText = logicalAuthorityEnabled()
       ? (featureEnabled('adverbs')
-        ? `Bronknoop → horizontale bronhoogte. LOG reserveert ruimte; alleen topic/V2/post-V2 mag een bronknoop verplaatsen. ${lexFreeSlotCount()} minor(s) vergroten de logische afstand (${logInsertionIntervalLabel()}).`
-        : 'Bronknoop → horizontale bronhoogte. LOG reserveert ruimte; alleen een expliciete topic-, V2- of post-V2-regel mag een bronknoop verplaatsen.')
+        ? `Bronknoop → horizontale bronhoogte. LOG reserveert ruimte; alleen een expliciete topic-, V1- of V2-regel mag een bronwoord verplaatsen. ${lexFreeSlotCount()} minor(s) vergroten de logische afstand (${logInsertionIntervalLabel()}).`
+        : 'Bronknoop → horizontale bronhoogte. LOG reserveert ruimte; alleen een expliciete topic-, V1- of V2-regel mag een bronwoord verplaatsen.')
       : (isMainV2Rule()
         ? 'Projectie: bronknopen → blauwe projectiemerkers. Daarna Wissels naar lege plekken 0/1/2.'
         : 'Projectie: bronknopen → blauwe projectiemerkers. Daarna plaatsingsregels; Comp gebruikt slot 0.');
@@ -7159,7 +7433,7 @@
     if (!items.length) return;
     const cls = options.cls || 'log';
     const title = options.title || 'LOG-projectie';
-    const subtitle = options.subtitle || 'LOG-slots bepalen de geplande afstand en beschikbare LEX-plaatsen; zij verplaatsen geen bronknoop.';
+    const subtitle = options.subtitle || 'LOG-slots bepalen de geplande afstand; zij verplaatsen geen bronwoord.';
     const orderCode = logicalOrderCode(items);
     const sequenceCode = logicalSequenceCode(items);
     const distanceSummary = logicalDistanceSummary(items);
@@ -7316,9 +7590,9 @@
       ];
       if (featureEnabled('adverbs')) {
         rows[2] += ` · interval ${logInsertionIntervalLabel()}`;
-        rows.push('LOG-majors en -minors plannen LEX-plaatsen; alleen een expliciete Language-Tree-regel verplaatst een bronknoop.');
+        rows.push('LOG-majors en -minors plannen LEX-ruimte; alleen expliciete Wissels verplaatsen een bronwoord.');
       } else {
-        rows.push('De LOG-majors S/O/V plannen LEX-plaatsen maar verplaatsen geen bronknoop.');
+        rows.push('De LOG-majors S/O/V plannen LEX-ruimte zonder bronwoorden te verplaatsen.');
       }
       return rows;
     }
@@ -7533,8 +7807,8 @@
         cls: 'log',
         title: 'LOG · geselecteerde named projection op vaste zuidaspositie',
         subtitle: featureEnabled('adverbs')
-          ? `LOG ordent majors en bijwoord-minors op vaste slots en plant LEX-plaatsen; alleen een expliciete regel verplaatst een bronknoop.${southModeWarningText()}`
-          : `LOG ordent S/O/V-majors op vaste slots en plant LEX-plaatsen zonder een bronknoop te verplaatsen.${southModeWarningText()}`,
+          ? `LOG ordent majors en bijwoord-minors op vaste slots en plant LEX-ruimte; alleen expliciete Wissels verplaatsen bronwoorden.${southModeWarningText()}`
+          : `LOG ordent S/O/V-majors op vaste slots en plant LEX-ruimte zonder bronwoorden te verplaatsen.${southModeWarningText()}`,
         badgeText: southLogicalModeLabel(state.southLogicalMode || 'SOV'),
         order: southLogicalOrder(),
         items: ctx.southItems,
@@ -7577,8 +7851,8 @@
       if (state.centerMode === 'ft') drawFunctionalRules(g, eastAxisX, centralLayout, origin, plan);
       else drawSyntaxRules(g, eastAxisX, 126, centralLayout, origin, plan);
       drawLogPhase(featureEnabled('adverbs')
-        ? `Majors en minors staan op vaste LOG-slots; elke minor vergroot de gereserveerde LEX-afstand. Bronknopen blijven zonder expliciete Wissel op bronhoogte.${southModeWarningText()}`
-        : `De majors S, O en V staan op vaste LOG-slots en reserveren LEX-ruimte. Bronknopen blijven zonder expliciete Wissel op bronhoogte.${southModeWarningText()}`);
+        ? `Majors en minors staan op vaste LOG-slots; elke minor vergroot de geplande afstand zonder een bronwoord te verplaatsen.${southModeWarningText()}`
+        : `De majors S, O en V staan op vaste LOG-slots en plannen LEX-ruimte zonder bronwoorden te verplaatsen.${southModeWarningText()}`);
     };
     if (!growthPlan?.active || state.projectionBlockUnlocked) {
       // Projecties > Alle betekent: centrale view met alle named projections.
@@ -7600,11 +7874,11 @@
         : undefined;
       drawLexAxis(g, westAxisX, 126, activeLexItems(), sourceMap, { executedMovementCount });
       drawAxisTitle(g, eastAxisX, 116, 'SYNT-projectie verschijnt in de laatste stap');
-      drawLogPhase(`Fase 3/3: bronknopen projecteren horizontaal naar LEX; alleen expliciete Language-Tree-regels verplaatsen daarna een knoop langs de as.${southModeWarningText()}`);
+      drawLogPhase(`Fase 3/3: bronknopen projecteren eerst horizontaal naar LEX; daarna volgen de verplaatsingen langs de as.${southModeWarningText()}`);
     } else if (showSpaceStep) {
       drawLexAxis(g, westAxisX, 126, activeLexItems(), sourceMap, { spaceOnly: true });
       drawAxisTitle(g, eastAxisX, 116, 'SYNT-projectie verschijnt in de laatste stap');
-      drawLogPhase(`Fase 2/3: de LOG-afstand reserveert lege rijen op LEX. De verdikking is uitsluitend een ruimtemarkering en verplaatst niets.${southModeWarningText()}`);
+      drawLogPhase(`Fase 2/3: de LOG-afstand reserveert nu lege rijen op LEX; inhoud volgt pas daarna.${southModeWarningText()}`);
     } else if (showLogStep) {
       drawAxisTitle(g, westAxisX - 45, 116, 'LEX verschijnt na het reserveren van ruimte');
       drawAxisTitle(g, eastAxisX, 116, 'SYNT-projectie verschijnt in de laatste stap');
@@ -7753,8 +8027,24 @@
     return { x: 0, y: 0, w: 1500, h: 900 };
   }
 
+  function multiOgnAnaphorViewportBox() {
+    const frame = validStoredViewBox(state.multiOgnPlayFitBox);
+    if (!frame) return null;
+    const margin = Math.max(28, Math.min(72, Math.max(frame.w, frame.h) * 0.032));
+    return expandBoxToAspect({
+      x: frame.x - margin,
+      y: frame.y - margin,
+      w: frame.w + margin * 2,
+      h: frame.h + margin * 2
+    }, canvasAspectRatio());
+  }
+
   function stableGrowthViewBox() {
     if (!growthActive()) return null;
+    // De Anafoor-extensie gebruikt vanaf stap 0 één expliciet frame voor S1,
+    // de nog lege S2-zone en de volledige gezamenlijke LEX-as. De fit mag dus
+    // nooit worden herberekend uit alleen de reeds zichtbare S1-inhoud.
+    if (multiOgnAnaphorActive()) return multiOgnAnaphorViewportBox() || fallbackViewBox();
     if (validViewFitMode() === 'max') {
       if (state.maximumContentFit) {
         return handheldMaximumViewBox(state.maximumContentFit);
@@ -7815,7 +8105,7 @@
   }
 
   function syncExampleSelectSizing() {
-    const labels = (EXAMPLES || []).map(ex => String(ex?.title || ex?.sentence || ex?.id || ''));
+    const labels = sentenceChoiceOptions().map(option => String(option?.title || option?.sentence || option?.label || option?.id || ''));
     const longest = labels.reduce((max, value) => Math.max(max, value.length), 12);
     const ch = Math.max(12, Math.min(44, longest + 2));
     document.documentElement.style.setProperty('--main-example-select-ch', `${ch}ch`);
@@ -8155,6 +8445,7 @@
     if (!handheld || !fit || !Number.isFinite(aspect) || aspect <= 0) {
       return expandBoxToAspect(fit, aspect);
     }
+    if (multiOgnAnaphorActive()) return expandBoxToAspect(fit, aspect);
     // Gebruik de Syntax/Functional-unie als focus. Daardoor blijft MAX op
     // mobiel even groot en op dezelfde plaats bij een viewwissel, terwijl het
     // getekende raster zelf exact op de actuele assen blijft eindigen.
@@ -8243,7 +8534,7 @@
       // oude stabiliteitskader was bijna tweemaal zo groot als die inhoud en
       // maakte daardoor vooral desktoptekst onleesbaar klein.
       ignored.forEach(node => { node.style.display = 'none'; });
-      const projectionView = !directPlacementActive() && ['axes', 'source', 'lex', 'synt', 'log'].includes(state.projection);
+      const projectionView = languageTreeActive() && ['axes', 'source', 'lex', 'synt', 'log'].includes(state.projection);
       const maximumFrame = isMainScreenActive() && projectionView
         ? maximumProjectionFrameBox()
         : null;
@@ -8277,6 +8568,10 @@
 
   function computeAutoFitBox() {
     if (!els.svg) return fallbackViewBox();
+    if (multiOgnAnaphorActive()) {
+      const multiOgnBox = multiOgnAnaphorViewportBox();
+      if (multiOgnBox) return multiOgnBox;
+    }
     if (isMainScreenActive() && validViewFitMode() === 'max') {
       const maximumFit = computeMaximumContentFitBox();
       if (maximumFit) return maximumFit;
@@ -8284,7 +8579,7 @@
     // v2.0.0-rc.14: alle projectie-views gebruiken één geometrisch viewport,
     // onafhankelijk van welke overlay zichtbaar is. Dit sluit auto-fit-
     // verschillen uit en voorkomt elke horizontale of verticale verspringing.
-    if (isMainScreenActive() && !directPlacementActive() && ['axes', 'source', 'lex', 'synt', 'log'].includes(state.projection)) {
+    if (isMainScreenActive() && languageTreeActive() && ['axes', 'source', 'lex', 'synt', 'log'].includes(state.projection)) {
       const frame = projectionStableFrameBox();
       const gridMargin = Math.max(18, Math.min(42, Math.max(frame.w, frame.h) * 0.018));
       state.lastGridBox = {
@@ -8387,6 +8682,284 @@
     return g;
   }
 
+  function drawMultiOgnAnaphor() {
+    const composition = multiOgnAnaphorComposition();
+    const relationLabels = multiOgnPrimaryRelationLabels(composition);
+    const playPlan = multiOgnAnaphorPlayPlan();
+    const g = baseSvg('multi-ogn-anaphor-view');
+    const origin = { x: 760, y: 112 };
+    const unitById = new Map(composition.units.map(unit => [unit.id, unit]));
+    const playUnitState = unitId => multiOgnUnitPlayState(playPlan, unitId);
+    const nodePoint = (unitId, nodeId) => {
+      const node = unitById.get(unitId)?.layout?.nodes?.find(candidate => candidate.id === nodeId);
+      return node ? { ...node, px: px(node.x, origin), py: py(node.y, origin) } : null;
+    };
+    const lexPoint = item => item.insertionId
+      ? { py: py(item.gridY, origin), role: 'lexical-insertion' }
+      : nodePoint(item.unitId, item.nodeId);
+    const insertionRows = composition.lexItems.filter(item => item.insertionId).map(item => Number(item.gridY));
+    const axisMinY = Math.min(composition.box.minY, ...insertionRows);
+    const axisMaxY = Math.max(composition.box.maxY, ...insertionRows);
+    const axisX = px(composition.box.minX, origin) - Math.max(190, cellX() * 1.85);
+    const axisTop = py(axisMinY, origin) - Math.max(52, cellY() * 0.9);
+    const axisBottom = py(axisMaxY, origin) + Math.max(54, cellY() * 0.9);
+    const treeRight = px(composition.box.maxX, origin) + Math.max(90, cellX() * 0.75);
+    const titleY = axisTop - Math.max(76, cellY() * 1.25);
+    const framePadX = Math.max(54, cellX() * 0.48);
+    const framePadY = Math.max(36, cellY() * 0.56);
+
+    drawAxisTitle(g, axisX - 72, titleY, isEnglish()
+      ? 'LANGUAGE TREE · EXTENSION 1 · ANAPHOR'
+      : 'LANGUAGE TREE · EXTENSIE 1 · ANAFOOR');
+    const subordinate = composition.demo.sentences[1]?.clauseType === 'subordinate';
+    drawCanvasGuideText(g, axisX - 72, titleY + 28, isEnglish()
+      ? `Play: S1 with V2 movement → S2 ${subordinate ? 'subordinate clause without V2' : 'with V2 movement'} → ${composition.configuredRelations.length} coreference link(s) → anaphors on LEX.`
+      : `Play: S1 met V2-verplaatsing → S2 ${subordinate ? 'bijzin zonder V2' : 'met V2-verplaatsing'} → ${composition.configuredRelations.length} coreferentielink(s) → anaforen op LEX.`, 'rule-label');
+
+    const frameLayer = svgEl('g', { class: 'multi-ogn-unit-frame-layer' });
+    composition.units.forEach(unit => {
+      const unitPlay = playUnitState(unit.id);
+      const reserved = playPlan.active && !unitPlay?.treeStarted;
+      const box = unit.layout.box;
+      const x = px(box.minX, origin) - framePadX;
+      const y = py(box.minY, origin) - framePadY;
+      const width = px(box.maxX, origin) - px(box.minX, origin) + framePadX * 2;
+      const height = py(box.maxY, origin) - py(box.minY, origin) + framePadY * 2;
+      const sentence = composition.demo.sentences.find(item => item.id === unit.id);
+      frameLayer.appendChild(svgEl('rect', {
+        x, y, width, height, rx: 22,
+        class: `multi-ogn-unit-frame${reserved ? ' is-reserved' : ''}`,
+        'data-ogn-unit': unit.id,
+        'data-grid-invariant-scope': 'per-ogn',
+        'data-play-visible': String(!reserved),
+        'data-play-reserved': String(reserved)
+      }));
+      frameLayer.appendChild(svgEl('text', {
+        x: x + 18, y: y + 26,
+        class: `multi-ogn-unit-label${reserved ? ' is-reserved' : ''}`
+      }, `${unit.id} · Language Tree ${unit.order}`));
+      frameLayer.appendChild(svgEl('text', {
+        x: x + 18, y: y + 50,
+        class: `multi-ogn-sentence-label${reserved ? ' is-reserved' : ''}`
+      }, reserved
+        ? (isEnglish() ? 'reserved · built after the preceding sentence' : 'gereserveerd · wordt na de vorige zin gebouwd')
+        : (sentence?.text || unit.id)));
+    });
+    g.appendChild(frameLayer);
+
+    const leafRadius = treeNodeRenderMetrics().leafRadius;
+    const freeV2YByUnit = new Map(composition.units.map(unit => {
+      const sentence = composition.demo.sentences.find(item => item.id === unit.id);
+      if (sentence?.finiteVerbPlacement === 'final') return [unit.id, null];
+      const subject = unit.layout.nodes.find(node => node.role === 'subject' && node.kind === 'leaf');
+      const subjectPoint = subject ? nodePoint(unit.id, subject.id) : null;
+      const object = unit.layout.nodes.find(node => node.role === 'object' && node.kind === 'leaf');
+      const objectPoint = object ? nodePoint(unit.id, object.id) : null;
+      const followingAnchor = objectPoint || unit.layout.nodes
+        .filter(node => node.kind === 'leaf' && node.role !== 'predicate' && node.id !== subject?.id)
+        .map(node => nodePoint(unit.id, node.id))
+        .filter(point => point && subjectPoint && point.py > subjectPoint.py)
+        .sort((a, b) => a.py - b.py)[0];
+      const frontedInsertion = composition.lexItems.find(item => item.unitId === unit.id && item.insertionId
+        && (sentence.lexInsertions || []).find(insertion => insertion.id === item.insertionId)?.placement?.fronted);
+      if (frontedInsertion && subjectPoint) {
+        return [unit.id, globalThis.OGNAnaphorPlay.freeV2Y(lexPoint(frontedInsertion).py, subjectPoint.py)];
+      }
+      if (!subjectPoint || !followingAnchor) {
+        throw new Error(`${unit.id} mist een subject of volgend LEX-anker voor de vrije V2-rij.`);
+      }
+      return [unit.id, globalThis.OGNAnaphorPlay.freeV2Y(subjectPoint.py, followingAnchor.py)];
+    }));
+
+    const visibleLexUnits = composition.units.filter(unit => playUnitState(unit.id)?.lexBaseVisible);
+    if (visibleLexUnits.length) {
+      const lexLayer = svgEl('g', {
+        class: 'multi-ogn-shared-lex',
+        'data-lex-order': 'S1-before-S2',
+        'data-composition-role': 'shared-lex-axis',
+        'data-play-step': playPlan.current
+      });
+      const currentAxisBottom = visibleLexUnits.some(unit => unit.id === 'S2')
+        ? axisBottom
+        : Math.max(...composition.lexItems
+          .filter(item => item.unitId === 'S1')
+          .map(item => lexPoint(item)?.py || axisTop)) + 48;
+      lexLayer.appendChild(svgEl('text', { x: axisX - 78, y: axisTop - 24, class: 'axis-title multi-ogn-lex-title' },
+        visibleLexUnits.some(unit => unit.id === 'S2') ? 'LEX · SEQUENTIE {S1, S2}' : 'LEX · S1'));
+      lexLayer.appendChild(svgEl('line', {
+        x1: axisX, y1: axisTop, x2: axisX, y2: currentAxisBottom,
+        class: 'multi-ogn-lex-axis lex-axis-line'
+      }));
+      let previousUnit = '';
+      composition.lexItems.forEach((item, index) => {
+        const unitState = playUnitState(item.unitId);
+        if (!unitState?.lexBaseVisible) return;
+        const lexicalInsertion = !!item.insertionId;
+        if (lexicalInsertion && !unitState.lexInsertionsVisible) return;
+        const point = lexPoint(item);
+        if (!point) throw new Error(`LEX-bronknoop ontbreekt: ${item.nodeId || item.insertionId}`);
+        const isFiniteVerb = !lexicalInsertion && point.role === 'predicate';
+        const visiblyMoved = isFiniteVerb && unitState.finiteVerbMoved;
+        const itemY = visiblyMoved ? freeV2YByUnit.get(item.unitId) : point.py;
+        const lexicalized = !!item.lexicalization && playPlan.lexicalizationVisible;
+        const visibleLabel = lexicalized ? item.label : item.sourceLabel;
+        const itemWidth = Math.max(120, Math.ceil(measuredTextWidth(visibleLabel, 15, 850) + 42));
+        if (state.showRelations && !lexicalInsertion) {
+          lexLayer.appendChild(svgEl('path', {
+            d: `M ${axisX + itemWidth / 2 + 2} ${point.py} H ${point.px - leafRadius}`,
+            class: `projection-line lex multi-ogn-lex-projection${lexicalized ? ' anaphor-lexicalization-projection' : ''}`,
+            'data-source-node-id': item.nodeId,
+            'data-ogn-unit': item.unitId,
+            'data-source-label': item.sourceLabel,
+            'data-surface-label': visibleLabel,
+            'data-lexicalization-profile': lexicalized ? item.lexicalization?.id : null
+          }));
+        }
+        if (visiblyMoved) {
+          drawLexTrace(lexLayer, axisX, point.py, `t[${item.sourceLabel}]`, `${item.unitId} horizontale bronprojectie`);
+          drawLexWissel(lexLayer, axisX, point.py, itemY, `${item.unitId} · Wissel V2`, Math.max(0, item.sentenceOrder - 1));
+        }
+        lexLayer.appendChild(svgEl('rect', {
+          x: axisX - itemWidth / 2, y: itemY - 24, width: itemWidth, height: 48, rx: 13,
+          class: `multi-ogn-lex-item lex-slot-box${lexicalInsertion ? ' multi-ogn-lex-insertion' : ''}${visiblyMoved ? ' moved-slot' : ''}${lexicalized ? ' anaphor-lexicalization-result' : ''}`,
+          'data-node-id': lexicalInsertion ? null : item.nodeId,
+          'data-insertion-id': lexicalInsertion ? item.insertionId : null,
+          'data-source-kind': item.sourceKind,
+          'data-source-layer': item.layer,
+          'data-lex-index': index + 1,
+          'data-sentence-order': item.sentenceOrder,
+          'data-source-label': item.sourceLabel,
+          'data-surface-label': visibleLabel,
+          'data-lexicalization-profile': lexicalized ? item.lexicalization?.id : null,
+          'data-source-y': point.py,
+          'data-target-y': itemY,
+          'data-v2-moved': visiblyMoved ? 'true' : 'false'
+        }));
+        lexLayer.appendChild(svgEl('text', { x: axisX, y: itemY + 5, class: 'lex-label multi-ogn-lex-label' }, visibleLabel));
+        if (lexicalInsertion) {
+          lexLayer.appendChild(svgEl('text', {
+            x: axisX + itemWidth / 2 + 16, y: itemY - 12,
+            class: 'multi-ogn-anaphor-projection-label'
+          }, isEnglish() ? 'Context · direct LEX insertion' : 'Context · directe LEX-insertie'));
+        }
+        if (lexicalized) {
+          lexLayer.appendChild(svgEl('text', {
+            x: axisX + itemWidth / 2 + 16,
+            y: itemY - 12,
+            class: 'multi-ogn-anaphor-projection-label'
+          }, `${item.sourceLabel} → ${visibleLabel} · LEX`));
+        }
+        if (previousUnit !== item.unitId) {
+          lexLayer.appendChild(svgEl('text', { x: axisX - 78, y: itemY + 5, class: 'multi-ogn-lex-unit-label' }, item.unitId));
+          previousUnit = item.unitId;
+        }
+      });
+      g.appendChild(lexLayer);
+    }
+
+    const treeEdgeLayer = svgEl('g', { class: 'multi-ogn-tree-edge-layer' });
+    composition.units.forEach(unit => {
+      if (!playUnitState(unit.id)?.treeStarted) return;
+      const unitGroup = svgEl('g', {
+        class: 'multi-ogn-unit multi-ogn-tree-edges',
+        'data-ogn-unit': unit.id,
+        'data-calculation-order': unit.order
+      });
+      drawTreeEdges(unitGroup, unit.layout, origin, multiOgnUnitGrowthPlan(playPlan, unit.id));
+      treeEdgeLayer.appendChild(unitGroup);
+    });
+    g.appendChild(treeEdgeLayer);
+
+    const relation = composition.relation;
+    const antecedent = nodePoint(relation.antecedent.unitId, relation.antecedent.nodeId);
+    const referent = nodePoint(relation.referent.unitId, relation.referent.nodeId);
+    if (!antecedent || !referent || Math.abs(antecedent.px - referent.px) > 0.01) {
+      throw new Error('De primaire referent- en anafoorbronknopen liggen niet op exact dezelfde verticale gridlijn.');
+    }
+    if (state.showRelations && playPlan.coreferenceVisible) {
+      composition.configuredRelations.forEach((configured, index) => {
+        const alignment = composition.relationAlignments.find(item => item.id === configured.id);
+        if (!alignment?.satisfied) return;
+        const upperPoint = nodePoint(configured.referent.unitId, configured.referent.nodeId);
+        const lowerPoint = nodePoint(configured.anaphor.unitId, configured.anaphor.nodeId);
+        if (!upperPoint || !lowerPoint || Math.abs(upperPoint.px - lowerPoint.px) > 0.01) return;
+        const lexItem = composition.lexItems.find(item => item.relationId === configured.id);
+        const surface = lexItem?.label || configured.lexicalization.profile.toUpperCase();
+        const coreferenceGroup = svgEl('g', {
+          class: 'multi-ogn-coreference',
+          'data-relation': configured.id,
+          'data-relation-index': String(index + 1),
+          'data-configured-relation-count': String(composition.configuredRelations.length),
+          'data-antecedent': configured.referent.nodeId,
+          'data-referent': configured.anaphor.nodeId,
+          'data-lexicalization-profile': lexItem?.lexicalization?.id || configured.lexicalization.profile,
+          'data-directed': 'false',
+          'data-grid-scope': 'cross-ogn-declared'
+        });
+        coreferenceGroup.appendChild(svgEl('title', {}, isEnglish()
+          ? `${upperPoint.label} ↔ ${lowerPoint.label}: declared source coreference; LEX ${lowerPoint.label} → ${surface}.`
+          : `${upperPoint.label} ↔ ${lowerPoint.label}: gedeclareerde broncoreferentie; LEX ${lowerPoint.label} → ${surface}.`));
+        coreferenceGroup.appendChild(svgEl('line', {
+          x1: upperPoint.px, y1: upperPoint.py + leafRadius,
+          x2: lowerPoint.px, y2: lowerPoint.py - leafRadius,
+          class: 'multi-ogn-coreference-line'
+        }));
+        g.appendChild(coreferenceGroup);
+      });
+    }
+
+    const treeNodeLayer = svgEl('g', { class: 'multi-ogn-tree-node-layer' });
+    composition.units.forEach(unit => {
+      if (!playUnitState(unit.id)?.treeStarted) return;
+      const unitGroup = svgEl('g', {
+        class: 'multi-ogn-unit multi-ogn-tree-nodes',
+        'data-ogn-unit': unit.id,
+        'data-rigid-shift-x': unit.shift.dx,
+        'data-rigid-shift-y': unit.shift.dy
+      });
+      drawTreeNodes(unitGroup, unit.layout, origin, false, multiOgnUnitGrowthPlan(playPlan, unit.id));
+      treeNodeLayer.appendChild(unitGroup);
+    });
+    g.appendChild(treeNodeLayer);
+    composition.configuredRelations.forEach(configured => {
+      g.querySelectorAll(`[data-node-id="${configured.referent.nodeId}"]`).forEach(node => node.classList.add('coreference-antecedent'));
+      g.querySelectorAll(`[data-node-id="${configured.anaphor.nodeId}"]`).forEach(node => node.classList.add('coreference-referent'));
+    });
+
+    const lexicalizationSummary = composition.lexItems.filter(item => item.lexicalization)
+      .map(item => `${item.sourceLabel} → ${item.label}`).join(' · ');
+    const bottomNote = playPlan.lexicalizationVisible
+      ? (isEnglish()
+        ? `Source: ${composition.configuredRelations.length} S1 ↔ S2 coreference link(s) · LEX: ${lexicalizationSummary}`
+        : `Bron: ${composition.configuredRelations.length} S1 ↔ S2-coreferentielink(s) · LEX: ${lexicalizationSummary}`)
+      : (playPlan.coreferenceVisible
+        ? (isEnglish()
+          ? `Source relation: S1 ${relationLabels.referent} ↔ S2 ${relationLabels.anaphorSource} · straight, undirected line`
+          : `Bronrelatie: S1 ${relationLabels.referent} ↔ S2 ${relationLabels.anaphorSource} · rechte, ongerichte lijn`)
+        : growthLabel());
+    drawCanvasGuideText(g, axisX - 72, axisBottom + 42, bottomNote, 'rule-label multi-ogn-relation-note');
+    const stabilityBox = {
+      x: axisX - 118,
+      y: titleY - 44,
+      w: treeRight - axisX + 168,
+      h: axisBottom - titleY + 132
+    };
+    state.multiOgnPlayFitBox = { ...stabilityBox };
+    state.lastGridBox = { ...stabilityBox };
+    g.appendChild(svgEl('rect', {
+      x: stabilityBox.x,
+      y: stabilityBox.y,
+      width: stabilityBox.w,
+      height: stabilityBox.h,
+      fill: 'transparent',
+      opacity: '0',
+      'pointer-events': 'none',
+      'aria-hidden': 'true',
+      class: 'multi-ogn-play-stability-frame'
+    }));
+    els.svg.appendChild(g);
+  }
+
   function drawDirectPlacement() {
     const engine = placementEngine();
     const direct = ensureDirectPlacementState();
@@ -8396,37 +8969,17 @@
       throw new Error('Directe OGN-plaatsing schendt de unieke rij/kolomregel.');
     }
     const general = normalizeDirectPlacementGeneral(state.directPlacementGeneral);
-    const methodConfig = activeDirectMethodConfig(mode.id);
     const g = baseSvg(`direct-placement-view direct-${mode.id}`);
     const stepX = cellX() / 2;
     const stepY = cellY() / 2;
     const axisPattern = mode.id === 'random' ? randomAxisPattern() : null;
     const activeBounds = engine.bounds(renderedPoints);
-    const fixedArea = mode.id === 'random' && ['interface', 'fixed'].includes(methodConfig.maxDimensions)
-      ? direct.placementArea
-      : null;
     const bounds = {
       ...activeBounds,
-      minX: Math.min(
-        activeBounds.minX,
-        axisPattern?.x.length ? axisPattern.x[0].coordinate : activeBounds.minX,
-        fixedArea?.minX ?? activeBounds.minX
-      ),
-      maxX: Math.max(
-        activeBounds.maxX,
-        axisPattern?.x.length ? axisPattern.x[axisPattern.x.length - 1].coordinate : activeBounds.maxX,
-        fixedArea?.maxX ?? activeBounds.maxX
-      ),
-      minY: Math.min(
-        activeBounds.minY,
-        axisPattern?.y.length ? axisPattern.y[0].coordinate : activeBounds.minY,
-        fixedArea?.minY ?? activeBounds.minY
-      ),
-      maxY: Math.max(
-        activeBounds.maxY,
-        axisPattern?.y.length ? axisPattern.y[axisPattern.y.length - 1].coordinate : activeBounds.maxY,
-        fixedArea?.maxY ?? activeBounds.maxY
-      )
+      minX: axisPattern?.x.length ? Math.min(activeBounds.minX, axisPattern.x[0].coordinate) : activeBounds.minX,
+      maxX: axisPattern?.x.length ? Math.max(activeBounds.maxX, axisPattern.x[axisPattern.x.length - 1].coordinate) : activeBounds.maxX,
+      minY: axisPattern?.y.length ? Math.min(activeBounds.minY, axisPattern.y[0].coordinate) : activeBounds.minY,
+      maxY: axisPattern?.y.length ? Math.max(activeBounds.maxY, axisPattern.y[axisPattern.y.length - 1].coordinate) : activeBounds.maxY
     };
     const margin = directGridMargin();
     const gridBox = {
@@ -8441,72 +8994,41 @@
 
     if (axisPattern) {
       const patternGroup = svgEl('g', { class: 'direct-axis-pattern' });
-      const westX = gridBox.x - Math.max(10, stepX * 0.16);
-      const southY = gridBox.y + gridBox.h + Math.max(10, stepY * 0.2);
-      patternGroup.appendChild(svgEl('line', {
-        x1: westX,
-        x2: westX,
-        y1: gridBox.y,
-        y2: gridBox.y + gridBox.h,
-        class: 'direct-axis-hit-axis direct-axis-hit-axis-west'
-      }));
-      patternGroup.appendChild(svgEl('line', {
-        x1: gridBox.x,
-        x2: gridBox.x + gridBox.w,
-        y1: southY,
-        y2: southY,
-        class: 'direct-axis-hit-axis direct-axis-hit-axis-south'
-      }));
-      const axisDenominator = axisPattern.axisImageMode === 'relative'
-        ? axisPattern.maxCount
-        : axisPattern.configuredIterationCount;
-      const appendHitSpot = (axis, item, cx, cy) => {
-        const ratio = Math.max(0, Math.min(1, item.count / Math.max(1, axisDenominator)));
-        const cumulativeRatio = Math.max(0, Math.min(
-          1,
-          item.count / Math.max(1, axisPattern.configuredIterationCount)
-        ));
-        const sizeWeight = Math.sqrt(ratio);
-        const colorWeight = Math.sqrt(cumulativeRatio);
-        const spot = svgEl('circle', {
-          cx,
-          cy,
-          r: 4 + (sizeWeight * 5.5),
-          class: `direct-axis-hit-spot direct-axis-hit-${axis}`,
-          'data-hit-count': item.count,
-          'data-axis-coordinate': item.coordinate,
-          'data-hit-ratio': ratio.toFixed(4),
-          'data-cumulative-ratio': cumulativeRatio.toFixed(4),
-          'fill-opacity': 0.24 + (colorWeight * 0.76),
-          'stroke-width': 1.2 + (colorWeight * 3.2)
-        });
-        const axisLabel = axis === 'west' ? 'WEST' : 'SOUTH';
-        spot.appendChild(svgEl('title', {}, isEnglish()
-          ? `${axisLabel} · coordinate ${item.coordinate} · ${item.count} projection hit${item.count === 1 ? '' : 's'}`
-          : `${axisLabel} · coördinaat ${item.coordinate} · ${item.count} projectie-hit${item.count === 1 ? '' : 's'}`));
-        patternGroup.appendChild(spot);
-      };
+      const westX = gridBox.x - 6;
+      const southY = gridBox.y + gridBox.h + 6;
+      const axisDenominator = axisPattern.axisImageMode === 'occupancy'
+        ? axisPattern.iterationCount
+        : axisPattern.maxCount;
       axisPattern.y.forEach(item => {
-        appendHitSpot('west', item, westX, item.coordinate * stepY);
+        const length = (item.count / axisDenominator) * stepX * 0.9;
+        patternGroup.appendChild(svgEl('line', {
+          x1: westX,
+          x2: westX - length,
+          y1: item.coordinate * stepY,
+          y2: item.coordinate * stepY,
+          class: 'direct-axis-pattern-west'
+        }));
       });
       axisPattern.x.forEach(item => {
-        appendHitSpot('south', item, item.coordinate * stepX, southY);
+        const length = (item.count / axisDenominator) * stepY * 0.9;
+        patternGroup.appendChild(svgEl('line', {
+          x1: item.coordinate * stepX,
+          x2: item.coordinate * stepX,
+          y1: southY,
+          y2: southY + length,
+          class: 'direct-axis-pattern-south'
+        }));
       });
       patternGroup.appendChild(svgEl('text', {
-        x: westX - 10,
-        y: gridBox.y - 8,
-        'text-anchor': 'end',
+        x: westX - stepX,
+        y: gridBox.y - 10,
         class: 'direct-axis-pattern-label direct-axis-pattern-label-west'
-      }, isEnglish()
-        ? `WEST · PROJECTION HITS · ${axisPattern.completedIterationCount}/${axisPattern.configuredIterationCount} ROUNDS`
-        : `WEST · PROJECTIE-HITS · ${axisPattern.completedIterationCount}/${axisPattern.configuredIterationCount} RONDES`));
+      }, `WEST · ${axisPattern.iterationCount} ${isEnglish() ? 'ITERATIONS' : 'ITERATIES'}`));
       patternGroup.appendChild(svgEl('text', {
         x: gridBox.x,
         y: southY + stepY + 14,
         class: 'direct-axis-pattern-label direct-axis-pattern-label-south'
-      }, isEnglish()
-        ? `SOUTH · PROJECTION HITS · ${axisPattern.completedIterationCount}/${axisPattern.configuredIterationCount} ROUNDS`
-        : `SOUTH · PROJECTIE-HITS · ${axisPattern.completedIterationCount}/${axisPattern.configuredIterationCount} RONDES`));
+      }, `SOUTH · ${axisPattern.iterationCount} ${isEnglish() ? 'ITERATIONS' : 'ITERATIES'}`));
       g.appendChild(patternGroup);
     }
 
@@ -8535,19 +9057,17 @@
     g.appendChild(nodes);
 
     const titleY = gridBox.y - Math.max(42, stepY * 0.8);
+    const methodConfig = activeDirectMethodConfig(mode.id);
     const strategyOption = mode.id === 'random'
       ? RANDOM_SPREAD_OPTIONS.find(option => option.id === methodConfig.spread)
       : GREEDY_STRATEGY_OPTIONS.find(option => option.id === methodConfig.strategy);
     const strategyLabel = isEnglish() ? strategyOption?.labelEn : strategyOption?.label;
-    const iteration = mode.id === 'random' ? randomIterationProgress() : null;
     g.appendChild(svgEl('text', { x: gridBox.x, y: titleY, class: 'axis-title direct-placement-title' },
-      mode.id === 'random'
-        ? `RANDOM · ${isEnglish() ? 'ITERATION' : 'ITERATIE'} ${iteration.number}/${iteration.total} · DIRECT OGN`
-        : 'GREEDY GROW · DIRECT OGN'));
+      `${mode.id === 'random' ? 'RANDOM' : 'GREEDY GROW'} · DIRECT OGN`));
     const repeatCaption = axisPattern
       ? (isEnglish()
-        ? ` · ${axisPattern.completedIterationCount}/${axisPattern.configuredIterationCount} completed rounds · ${axisPattern.observationsPerAxis} projection hits per axis`
-        : ` · ${axisPattern.completedIterationCount}/${axisPattern.configuredIterationCount} voltooide rondes · ${axisPattern.observationsPerAxis} projectie-hits per as`)
+        ? ` · ${axisPattern.iterationCount} iterations · ${axisPattern.observationsPerAxis} observations per axis`
+        : ` · ${axisPattern.iterationCount} iteraties · ${axisPattern.observationsPerAxis} waarnemingen per as`)
       : '';
     const caption = isEnglish()
       ? `${strategyLabel || ''} · ${direct.points.length} nodes${repeatCaption} · each new node immediately occupies one unused row and column`
@@ -8577,7 +9097,7 @@
   function renderLexAmbiguityPrompt() {
     const panel = els.lexAmbiguityPanel;
     if (!panel || !els.lexAmbiguityOptions) return;
-    if (directPlacementActive()) { panel.classList.add('hidden'); panel.setAttribute('aria-hidden', 'true'); return; }
+    if (!languageTreeActive()) { panel.classList.add('hidden'); panel.setAttribute('aria-hidden', 'true'); return; }
     const pending = pendingLexAnalysis();
     if (!pending) { panel.classList.add('hidden'); panel.setAttribute('aria-hidden', 'true'); return; }
     const { spec, analysis } = pending;
@@ -8611,6 +9131,7 @@
       syncMainTopbarLayout();
       syncControls();
       if (directPlacementActive()) drawDirectPlacement();
+      else if (multiOgnAnaphorActive()) drawMultiOgnAnaphor();
       else if (state.projection === 'source') drawSource();
       else if (state.projection === 'lex') drawLex();
       else if (state.projection === 'synt') drawSynt();
@@ -8658,22 +9179,55 @@
   }
 
   function renderStatus() {
+    if (multiOgnAnaphorActive()) {
+      const composition = multiOgnAnaphorComposition();
+      const relationLabels = multiOgnPrimaryRelationLabels(composition);
+      const playPlan = multiOgnAnaphorPlayPlan();
+      const lower = composition.units[1];
+      const visibleTitle = multiOgnAnaphorVisibleTitle(composition, playPlan);
+      els.titleLine.textContent = isEnglish()
+        ? `Language Tree · extension 1 · Anaphor · ${visibleTitle}`
+        : `Language Tree · extensie 1 · Anafoor · ${visibleTitle}`;
+      els.metaLine.textContent = playPlan.active
+        ? `${growthLabel()} · ${isEnglish() ? 'S1 before S2 · exact reverse with ←' : 'S1 vóór S2 · exact omgekeerd met ←'}`
+        : (isEnglish()
+          ? `S1 and S2 calculated independently · rigid S2 shift Δx=${lower.shift.dx}, Δy=${lower.shift.dy} · one shared LEX axis`
+          : `S1 en S2 afzonderlijk berekend · starre S2-verschuiving Δx=${lower.shift.dx}, Δy=${lower.shift.dy} · één gezamenlijke LEX-as`);
+      if (els.sentencePreview) els.sentencePreview.textContent = visibleTitle;
+      if (els.actionFeedback) {
+        els.actionFeedback.textContent = playPlan.active
+          ? (isEnglish()
+            ? `Current Play phase: ${growthLabel()}. ${relationLabels.anaphorSource} remains the S2 source until the final LEX-anaphor step.`
+            : `Huidige Play-fase: ${growthLabel()}. ${relationLabels.anaphorSource} blijft de S2-bron tot de laatste LEX-anafoorstap.`)
+          : (isEnglish()
+            ? `S2 contains ${relationLabels.anaphorSource} as its calculated source. Relation 1 realizes it on LEX as ${relationLabels.surface}.`
+            : `S2 bevat ${relationLabels.anaphorSource} als berekende bron. Relatie 1 realiseert dit op LEX als ${relationLabels.surface}.`);
+        els.actionFeedback.className = 'action-feedback neutral';
+      }
+      if (els.projectionHelp) els.projectionHelp.textContent = isEnglish()
+        ? `The no-shared-row/column invariant is validated per OGN. The current renderer aligns relation 1 (${relationLabels.referent}–${relationLabels.anaphorSource}); all configured relations remain in Config and OPN.`
+        : `De regel zonder gedeelde rij/kolom wordt per OGN gevalideerd. De huidige renderer lijnt relatie 1 (${relationLabels.referent}–${relationLabels.anaphorSource}) uit; alle geconfigureerde relaties blijven in Config en OPN bewaard.`;
+      if (els.explainHeading) els.explainHeading.textContent = isEnglish()
+        ? 'Explanation · Language Tree anaphor extension'
+        : 'Uitleg · Language Tree-extensie Anafoor';
+      if (els.explainText) els.explainText.textContent = isEnglish()
+        ? `Play completes S1 and its V2 movement first, then S2 and its V2 movement. Only after ${relationLabels.referent}–${relationLabels.anaphorSource} coreference does LEX realize the S2 source as ${relationLabels.surface}.`
+        : `Play voltooit eerst S1 met zijn V2-verplaatsing en daarna S2 met zijn V2-verplaatsing. Pas na de ${relationLabels.referent}–${relationLabels.anaphorSource}-coreferentie realiseert LEX de S2-bron als ${relationLabels.surface}.`;
+      return;
+    }
     if (directPlacementActive()) {
       const direct = ensureDirectPlacementState();
       const mode = placementModeDefinition();
       const general = normalizeDirectPlacementGeneral(state.directPlacementGeneral);
       const field = placementEngine().bounds(directRenderedPoints(direct, mode.id));
       const axisPattern = mode.id === 'random' ? randomAxisPattern() : null;
-      const iteration = mode.id === 'random' ? randomIterationProgress() : null;
       const repeatStatus = axisPattern
         ? (isEnglish()
-          ? ` · ${axisPattern.completedIterationCount}/${axisPattern.configuredIterationCount} completed rounds · ${axisPattern.observationsPerAxis} projection hits/axis · ${axisPattern.axisImageMode}`
-          : ` · ${axisPattern.completedIterationCount}/${axisPattern.configuredIterationCount} voltooide rondes · ${axisPattern.observationsPerAxis} projectie-hits/as · ${axisPattern.axisImageMode}`)
+          ? ` · ${axisPattern.iterationCount} iterations · ${axisPattern.observationsPerAxis} observations/axis · ${axisPattern.axisImageMode}`
+          : ` · ${axisPattern.iterationCount} iteraties · ${axisPattern.observationsPerAxis} waarnemingen/as · ${axisPattern.axisImageMode}`)
         : '';
       els.titleLine.textContent = mode.id === 'random'
-        ? (isEnglish()
-          ? `Random · ${directOptionLabel(RANDOM_DISTRIBUTION_OPTIONS, direct.distribution)} · iteration ${iteration.number}/${iteration.total} · seed ${direct.seed}`
-          : `Random · ${directOptionLabel(RANDOM_DISTRIBUTION_OPTIONS, direct.distribution)} · iteratie ${iteration.number}/${iteration.total} · seed ${direct.seed}`)
+        ? (isEnglish() ? `Random · direct OGN placement · seed ${direct.seed}` : `Random · directe OGN-plaatsing · seed ${direct.seed}`)
         : (isEnglish() ? 'Greedy Grow · direct OGN placement' : 'Greedy Grow · directe OGN-plaatsing');
       els.metaLine.textContent = general.showMetrics
         ? (isEnglish()
@@ -8686,13 +9240,9 @@
         ? 'OGN illustration; Language Tree remains the primary calculated application.'
         : 'OGN-illustratie; Language Tree blijft de primaire berekende toepassing.';
       if (els.actionFeedback) {
-        els.actionFeedback.textContent = mode.id === 'random'
-          ? (isEnglish()
-            ? 'Use ←, → or Play. After every completed round, projection hits are added to the WEST and SOUTH axis spots.'
-            : 'Gebruik ←, → of Play. Na iedere voltooide ronde worden de projectie-hits aan de WEST- en SOUTH-asspots toegevoegd.')
-          : (isEnglish()
-            ? 'Use ←, → or Play. Every step writes the selected free position immediately.'
-            : 'Gebruik ←, → of Play. Iedere stap schrijft de gekozen vrije plaats onmiddellijk.');
+        els.actionFeedback.textContent = isEnglish()
+          ? 'Use ←, → or Play. Every step writes the selected free position immediately.'
+          : 'Gebruik ←, → of Play. Iedere stap schrijft de gekozen vrije plaats onmiddellijk.';
         els.actionFeedback.className = 'action-feedback neutral';
       }
       return;
@@ -8706,20 +9256,20 @@
     const logStatus = `LOG=${logicalSequenceCode(logicalSequence)} · ${logicalDistanceSummary(logicalSequence)}${directLexCount ? ` · direct-LEX=${directLexCount}` : ''}`;
     const featureStatus = featureEnabled('adverbs') ? ` · ${activeAdverbStatusLabel()}` : '';
     els.metaLine.textContent = isEnglish()
-      ? `${state.example.phase} · ${movementSummaryLabel()}${featureStatus} · ${logStatus} → reserved LEX space · sentence validation=${activeSentenceText()}${noticeText}`
-      : `${state.example.phase} · ${movementSummaryLabel()}${featureStatus} · ${logStatus} → gereserveerde LEX-ruimte · zinsvalidatie=${activeSentenceText()}${noticeText}`;
+      ? `${state.example.phase} · ${movementSummaryLabel()}${featureStatus} · ${logStatus} → LEX planning · sentence validation=${activeSentenceText()}${noticeText}`
+      : `${state.example.phase} · ${movementSummaryLabel()}${featureStatus} · ${logStatus} → LEX-planning · zinsvalidatie=${activeSentenceText()}${noticeText}`;
     if (els.sentencePreview) els.sentencePreview.innerHTML = activeSentenceHtml();
     const baseFeedback = isEnglish()
       ? (state.projection === 'source'
         ? 'Source shows the selected OPN source from structure-config.html. At Source, LEX, SYNT and LOG axes can be combined independently. The View menu switches between the Syntax view and the Functional view (functional CLAUSE roles). Syntax and Functional views use bottom-up recursive box layout; left/right controls both layouts; branch order can be global, compact-auto or align-auto.'
         : (featureEnabled('adverbs')
-          ? 'Derivation: structure config → lexical usage profile → LOG minors and/or direct LEX insertions → reserved LEX rows → explicit topic/V2/post-V2 moves only. A source node without such a rule remains at source height.'
-          : 'Derivation: structure config → LOG majors → reserved LEX rows → explicit topic/V2/post-V2 moves only. A source node without such a rule remains at source height.'))
+          ? 'Derivation: structure config → lexical usage profile → LOG minors and/or direct LEX insertions → LEX planning → explicit topic/V1/V2 switches only. A source word without such a rule stays at source height.'
+          : 'Derivation: structure config → LOG-major planning → horizontal source-height projection → explicit topic/V1/V2 switches only. A source word without such a rule stays put.'))
       : (state.projection === 'source'
         ? 'Bron toont de gekozen OPN-bron uit structure-config.html; LEX-, SYNT- en LOG-as zijn daar onafhankelijk combineerbaar. Het View-menu wisselt tussen de Syntax-view en de Functional-view (functionele CLAUSE/rollen). Syntax en Functional gebruiken bottom-up recursieve box-layout; left/right stuurt beide layouts; takvolgorde kan globaal, compact-auto of align-auto zijn.'
         : (featureEnabled('adverbs')
-          ? 'Afleiding: structure-config → lexicaal gebruiksprofiel → LOG-minors en/of directe LEX-inserties → gereserveerde LEX-rijen → uitsluitend expliciete topic-/V2-/post-V2-Wissels. Een bronknoop zonder zo’n regel blijft op bronhoogte.'
-          : 'Afleiding: structure-config → LOG-majors → gereserveerde LEX-rijen → uitsluitend expliciete topic-/V2-/post-V2-Wissels. Een bronknoop zonder zo’n regel blijft op bronhoogte.'));
+          ? 'Afleiding: structure-config → lexicaal gebruiksprofiel → LOG-minors en/of directe LEX-inserties → LEX-planning → uitsluitend expliciete topic-/V1-/V2-Wissels. Een bronwoord zonder zo’n regel blijft op bronhoogte.'
+          : 'Afleiding: structure-config → LOG-majorplanning → horizontale projectie op bronhoogte → uitsluitend expliciete topic-/V1-/V2-Wissels. Een bronwoord zonder zo’n regel blijft staan.'));
     const validationMsg = state.exampleValidationMessages?.length ? ` · ${state.exampleValidationMessages[0]}` : '';
     const noticeMsg = state.example.notice ? ` · ${state.example.notice}` : '';
     const osvMsg = SOUTH_LOGICAL_MOVEMENT_REQUIRED_MODES.has(state.southLogicalMode || 'SOV')
@@ -8730,11 +9280,11 @@
     els.explainHeading.textContent = `${isEnglish() ? 'Explanation' : 'Uitleg'} · ${activeSentenceText()}`;
     els.explainText.textContent = featureEnabled('adverbs')
       ? (isEnglish()
-        ? `LOG supplies semantic placement for LOG profiles. Current LOG sequence: ${logicalSequenceCode(logicalSequence)} (${logicalDistanceSummary(logicalSequence)}). Every LOG minor increases the reserved distance between its bounding majors by one slot. Reservation alone never moves a source node; only an explicit topic/V2/post-V2 rule draws one move and one source trace.`
-        : `LOG levert de semantische plaatsing voor LOG-profielen. Huidige LOG-sequentie: ${logicalSequenceCode(logicalSequence)} (${logicalDistanceSummary(logicalSequence)}). Iedere LOG-minor vergroot de gereserveerde afstand tussen zijn begrenzende majors met één slot. Reservering alleen verplaatst nooit een bronknoop; uitsluitend een expliciete topic-/V2-/post-V2-regel tekent één Wissel en één brontrace.`)
+        ? `LOG supplies placement planning for LOG profiles. Current LOG sequence: ${logicalSequenceCode(logicalSequence)} (${logicalDistanceSummary(logicalSequence)}). Every LOG minor increases the planned distance between its bounding majors by one slot. Planning alone never moves a source word; only an explicit topic/V1/V2 rule draws one switch and one source trace.`
+        : `LOG levert plaatsingsplanning voor LOG-profielen. Huidige LOG-sequentie: ${logicalSequenceCode(logicalSequence)} (${logicalDistanceSummary(logicalSequence)}). Iedere LOG-minor vergroot de geplande afstand tussen zijn begrenzende majors met één slot. Planning alleen verplaatst geen bronwoord; uitsluitend een expliciete topic-/V1-/V2-regel tekent één Wissel en één brontrace.`)
       : (isEnglish()
-        ? `Current LOG sequence: ${logicalSequenceCode(logicalSequence)} (${logicalDistanceSummary(logicalSequence)}). The S/O/V majors reserve LEX rows. Reservation alone never moves a source node; only an explicit topic/V2/post-V2 rule does.`
-        : `Huidige LOG-sequentie: ${logicalSequenceCode(logicalSequence)} (${logicalDistanceSummary(logicalSequence)}). De majors S/O/V reserveren LEX-rijen. Reservering alleen verplaatst nooit een bronknoop; uitsluitend een expliciete topic-/V2-/post-V2-regel doet dat.`);
+        ? `Current LOG sequence: ${logicalSequenceCode(logicalSequence)} (${logicalDistanceSummary(logicalSequence)}). The S/O/V majors plan possible LEX positions without moving source words; only an explicit topic/V1/V2 rule does.`
+        : `Huidige LOG-sequentie: ${logicalSequenceCode(logicalSequence)} (${logicalDistanceSummary(logicalSequence)}). De majors S/O/V plannen mogelijke LEX-plaatsen zonder bronwoorden te verplaatsen; uitsluitend een expliciete topic-/V1-/V2-regel doet dat.`);
   }
 
   function projectionLabel() {
@@ -8751,27 +9301,59 @@
     if (isEnglish()) {
       if (state.projection === 'source') return `Source: the Syntax and Functional structures are read from structure-config.html. Selected axes at Source: ${sourceAxesShortLabel()}. LEX, SYNT and LOG can be combined without moving or rescaling the central view.`;
       if (state.projection === 'lex') return featureEnabled('adverbs')
-        ? 'LEX: west named projection. Every source projects horizontally at source height. LOG profiles reserve rows; only explicit topic/V2/post-V2 rules move source nodes.'
-        : 'LEX: west named projection. Every lexical source projects horizontally at source height; only an explicit topic/V2/post-V2 rule may move it.';
+        ? 'LEX: west named projection. Every source projects horizontally at source height. LOG plans positions; only explicit topic/V1/V2 switches move a source word.'
+        : 'LEX: west named projection. Every lexical source projects horizontally at source height. Only explicit topic/V1/V2 switches move a source word.';
       if (state.projection === 'synt') return 'SYNT: isolated syntax-rule set. Rules are placed at their source height; the central tree is only used as a hidden height anchor.';
       if (state.projection === 'log') return featureEnabled('adverbs')
         ? 'LOG: south named projection. S, O and V are majors. Only insertions with a LOG or LOG+LEX profile appear as minors; direct LEX profiles remain absent from this axis.'
-        : 'LOG: south named projection. S, O and V are majors on fixed slots and plan LEX positions without moving source nodes.';
+        : 'LOG: south named projection. S, O and V are majors on fixed slots and plan possible LEX positions without moving source words.';
       return 'All: central view selected by the View menu. LEX, SYNT and LOG use named projections with their own projection markers and selection rules.';
     }
     if (state.projection === 'source') return `Bron: de Syntax- en Functional-structuren worden gelezen uit structure-config.html. Gekozen assen bij Bron: ${sourceAxesShortLabel()}. LEX, SYNT en LOG kunnen gecombineerd worden zonder de centrale view te verplaatsen of te herschalen.`;
     if (state.projection === 'lex') return featureEnabled('adverbs')
-      ? 'LEX: westelijke named projection. Iedere bron projecteert horizontaal op bronhoogte. LOG-profielen reserveren rijen; alleen expliciete topic-/V2-/post-V2-regels verplaatsen bronknopen.'
-      : 'LEX: westelijke named projection. Iedere lexicale bron projecteert horizontaal op bronhoogte; alleen een expliciete topic-/V2-/post-V2-regel mag haar verplaatsen.';
+      ? 'LEX: westelijke named projection. Iedere bron projecteert horizontaal op bronhoogte. LOG plant plaatsen; alleen expliciete topic-/V1-/V2-Wissels verplaatsen een bronwoord.'
+      : 'LEX: westelijke named projection. Iedere lexicale bron projecteert horizontaal op bronhoogte. Alleen expliciete topic-/V1-/V2-Wissels verplaatsen een bronwoord.';
     if (state.projection === 'synt') return 'SYNT: geïsoleerde syntax-regelset. Regels staan op bronhoogte; de centrale boom dient alleen als verborgen hoogteanker.';
     if (state.projection === 'log') return featureEnabled('adverbs')
       ? 'LOG: named projection op de zuidas. S, O en V zijn majors. Alleen inserties met een LOG- of LOG+LEX-profiel verschijnen als minor; directe LEX-profielen ontbreken op deze as.'
-      : 'LOG: named projection op de zuidas. S, O en V zijn majors op vaste slots en plannen LEX-plaatsen zonder bronknopen te verplaatsen.';
+      : 'LOG: named projection op de zuidas. S, O en V zijn majors op vaste slots en plannen mogelijke LEX-plaatsen zonder bronwoorden te verplaatsen.';
     return 'Alle: centrale view via View-menu. LEX, SYNT en LOG gebruiken named projections met eigen projectiemerkers en selectieregels.';
   }
 
   function renderSideLists() {
     els.lexOrderList.replaceChildren();
+    if (multiOgnAnaphorActive()) {
+      const composition = multiOgnAnaphorComposition();
+      const relationLabels = multiOgnPrimaryRelationLabels(composition);
+      const playPlan = multiOgnAnaphorPlayPlan();
+      composition.lexItems.forEach((item, index) => {
+        if (!multiOgnUnitPlayState(playPlan, item.unitId)?.lexBaseVisible) return;
+        const label = item.lexicalization && !playPlan.lexicalizationVisible ? item.sourceLabel : item.label;
+        const row = document.createElement('div');
+        row.className = 'lex-order-item';
+        row.textContent = `${index + 1}. ${label} · ${item.unitId}`;
+        els.lexOrderList.appendChild(row);
+      });
+      if (els.edgeList) {
+        els.edgeList.replaceChildren();
+        const s1Nodes = multiOgnUnitPlayState(playPlan, composition.demo.relation.referent.unitId)?.visibleNodeIds || [];
+        const s2Nodes = multiOgnUnitPlayState(playPlan, composition.demo.relation.anaphor.unitId)?.visibleNodeIds || [];
+        const rows = [isEnglish() ? 'Cross-OGN relation' : 'Relatie tussen OGN’s'];
+        if (s1Nodes.includes(composition.demo.relation.referent.nodeId)) rows.push(`S1 ${relationLabels.referent} · ${isEnglish() ? 'referent' : 'referent'}`);
+        if (s2Nodes.includes(composition.demo.relation.anaphor.nodeId)) rows.push(`S2 ${relationLabels.anaphorSource} · ${isEnglish() ? 'anaphor source' : 'anafoorbron'}`);
+        if (playPlan.coreferenceVisible) rows.push(isEnglish() ? 'relation 1 · coreference · undirected line' : 'relatie 1 · coreferentie · ongerichte lijn');
+        if (playPlan.lexicalizationVisible) rows.push(isEnglish()
+          ? `${relationLabels.anaphorSource} → ${relationLabels.surface} · LEX anaphor`
+          : `${relationLabels.anaphorSource} → ${relationLabels.surface} · LEX-anafoor`);
+        rows.forEach((text, index) => {
+          const row = document.createElement('div');
+          row.className = index === 0 ? 'edge-item relation-heading' : 'edge-item';
+          row.textContent = text;
+          els.edgeList.appendChild(row);
+        });
+      }
+      return;
+    }
     activeLexItems().forEach((item, i) => {
       const row = document.createElement('div');
       row.className = `lex-order-item ${item.source ? '' : 'local'}`;
@@ -8897,29 +9479,49 @@
   function syncPlacementModeUi() {
     const mode = placementModeDefinition();
     const direct = mode.kind === 'direct';
+    const languageTree = mode.id === 'language-tree';
+    const multiOgn = mode.id === 'multi-ogn-anaphor';
     document.body?.classList.toggle('placement-direct-active', direct);
-    document.body?.classList.toggle('placement-language-tree-active', !direct);
+    document.body?.classList.toggle('placement-language-tree-active', languageTree);
+    document.body?.classList.toggle('placement-multi-ogn-active', multiOgn);
     document.querySelectorAll('[data-placement-mode]').forEach(button => {
       const active = button.dataset.placementMode === mode.id;
       button.classList.toggle('active', active);
       button.setAttribute('aria-pressed', String(active));
     });
-    if (els.languageTreeViewPicker) els.languageTreeViewPicker.hidden = direct;
+    if (els.languageTreeViewPicker) els.languageTreeViewPicker.hidden = !languageTree;
     if (els.mainViewSummary) {
-      els.mainViewSummary.textContent = mode.id === 'language-tree' ? 'Language Tree' : mode.label;
+      els.mainViewSummary.textContent = isEnglish() ? (mode.labelEn || mode.label) : mode.label;
       els.mainViewSummary.title = isEnglish()
-        ? 'Language Tree is calculated; Greedy Grow and Random place nodes directly.'
-        : 'Language Tree is berekend; Greedy Grow en Random plaatsen knopen direct.';
+        ? 'Language Tree and its Anaphor extension are calculated; Greedy Grow and Random place nodes directly.'
+        : 'Language Tree en extensie 1 · Anafoor zijn berekend; Greedy Grow en Random plaatsen knopen direct.';
     }
     if (els.mainSentenceMenu) els.mainSentenceMenu.hidden = direct;
-    if (els.mainAdverbMenu) els.mainAdverbMenu.hidden = direct || !featureEnabled('adverbs');
-    if (els.sourceAxisMenu) els.sourceAxisMenu.hidden = direct;
-    if (els.mainExtraMenu) els.mainExtraMenu.hidden = direct;
+    if (els.mainAdverbMenu) els.mainAdverbMenu.hidden = !languageTree || !featureEnabled('adverbs');
+    if (els.sourceAxisMenu) els.sourceAxisMenu.hidden = !languageTree;
+    if (els.mainExtraMenu) els.mainExtraMenu.hidden = !languageTree;
     const subtitle = document.querySelector('.header-subtitle');
-    if (subtitle && direct) {
-      subtitle.textContent = isEnglish()
-        ? `${mode.label}: direct OGN illustration. Language Tree remains the primary calculated application.`
-        : `${mode.label}: directe OGN-illustratie. Language Tree blijft de primaire berekende toepassing.`;
+    if (subtitle) {
+      if (multiOgn) {
+        const lexicalization = activeAnaphorLexicalization();
+        const playPlan = multiOgnAnaphorPlayPlan();
+        subtitle.textContent = playPlan.active && !playPlan.lexicalizationVisible
+          ? (isEnglish()
+            ? 'Language Tree Anaphor Play: S2 retains its source expression until the final LEX-anaphor step.'
+            : 'Language Tree-Anafoor-Play: S2 behoudt zijn bronuitdrukking tot de laatste LEX-anafoorstap.')
+          : (isEnglish()
+            ? `Language Tree extension 1: S1 and S2 remain separate calculated trees; LEX realizes the configured S2 anaphor as ${lexicalization.surface}.`
+            : `Language Tree-extensie 1: S1 en S2 blijven afzonderlijk berekende bomen; LEX realiseert de geconfigureerde S2-anafoor als ${lexicalization.surface}.`);
+      } else if (direct) {
+        const label = isEnglish() ? (mode.labelEn || mode.label) : mode.label;
+        subtitle.textContent = isEnglish()
+          ? `${label}: direct OGN illustration. Language Tree remains the primary calculated application.`
+          : `${label}: directe OGN-illustratie. Language Tree blijft de primaire berekende toepassing.`;
+      } else {
+        subtitle.textContent = isEnglish()
+          ? 'Top menu with Sentence, Syntax / Functional, Interface, Projections, LOG order, Language, README and Config.'
+          : 'Topmenu met Zin, Syntax / Functional, Interface, Projecties, LOG-volgorde, Taal, LEESMIJ en Config.';
+      }
     }
     if (document.body?.classList.contains('config-screen-active')) {
       syncConfigMethodScope();
@@ -8958,14 +9560,11 @@
     if (els.mainSouthHeading) els.mainSouthHeading.textContent = isEnglish() ? 'LOG order' : 'LOG-volgorde';
     if (els.mainSouthExplanation) {
       els.mainSouthExplanation.textContent = isEnglish()
-        ? 'Changes the LOG order and reserved LEX rows. It never moves a source node by itself; only an explicit Language Tree rule may do that.'
-        : 'Wijzigt de LOG-volgorde en de gereserveerde LEX-rijen. Dit verplaatst nooit vanzelf een bronknoop; alleen een expliciete Language-Tree-regel mag dat doen.';
+        ? 'Changes the LOG order. LOG slots plan LEX positions but do not move source words; only explicit switches do.'
+        : 'Wijzigt de LOG-volgorde. LOG-slots plannen LEX-plaatsen maar verplaatsen geen bronwoorden; alleen expliciete Wissels doen dat.';
     }
-    fillCompactChoiceMenu(els.mainSentenceOptions, EXAMPLES, state.example.id, els.mainExampleSelect, id => {
-      state.example = EXAMPLES.find(e => e.id === id) || EXAMPLES[0];
-      resetForNewExample();
-      closeMainChoiceMenus();
-      render();
+    fillCompactChoiceMenu(els.mainSentenceOptions, sentenceChoiceOptions(), activeSentenceChoiceId(), els.mainExampleSelect, id => {
+      selectSentenceChoice(id);
     });
     if (featureEnabled('adverbs')) {
       fillCompactChoiceMenu(els.mainAdverbOptions, ADVERB_OPTIONS, state.selectedAdverbId, els.mainAdverbSelect, id => {
@@ -9011,8 +9610,8 @@
           ? `Legacy branch extension: ${[...selected].map(lexInsertionTargetLabel).join(' + ')}. Under LOG authority this is metadata only; adverb distance comes from LOG minors.`
           : `Oude takverlenging: ${[...selected].map(lexInsertionTargetLabel).join(' + ')}. Onder LOG-autoriteit is dit alleen metadata; bijwoordafstand komt uit LOG-minors.`)
         : (isEnglish()
-          ? 'No branch extension. LOG minors determine planned adverb distance; they do not move source nodes.'
-          : 'Geen takverlenging. LOG-minors bepalen de geplande bijwoordafstand; zij verplaatsen geen bronknopen.'))
+          ? 'No branch extension. LOG minors determine the planned adverb distance without moving source words.'
+          : 'Geen takverlenging. LOG-minors bepalen de geplande bijwoordafstand zonder bronwoorden te verplaatsen.'))
       : (selected.size
         ? (isEnglish() ? `Branch extension: ${[...selected].map(lexInsertionTargetLabel).join(' + ')}.` : `Takverlenging: ${[...selected].map(lexInsertionTargetLabel).join(' + ')}.`)
         : (isEnglish() ? 'No branch extension.' : 'Geen takverlenging.'));
@@ -9022,11 +9621,124 @@
     });
   }
 
+  function syncAnaphorLexicalizationControl() {
+    const select = document.getElementById('anaphorLexicalizationSelect');
+    const status = document.getElementById('anaphorLexicalizationStatus');
+    if (!select) return;
+    const demo = activeMultiOgnAnaphorDemo();
+    const resolution = anaphorLexicalizationResolution(configuredAnaphorLexicalizationId());
+    state.anaphorLexicalization = resolution.selected.id;
+    state.anaphorLexicalizations[demo.id] = resolution.selected.id;
+    select.replaceChildren();
+    resolution.options.forEach(profile => {
+      const option = document.createElement('option');
+      option.value = profile.id;
+      option.disabled = !profile.applicable;
+      option.textContent = profile.applicable
+        ? profile.label
+        : `${profile.label} · ${isEnglish() ? `not applicable to ${demo.antecedentLexeme.toUpperCase()}` : `niet van toepassing op ${demo.antecedentLexeme.toUpperCase()}`}`;
+      select.appendChild(option);
+    });
+    select.value = resolution.selected.id;
+    if (status) {
+      status.textContent = isEnglish()
+        ? `Source ${demo.relation.anaphor.unitId} remains ${demo.relation.anaphor.sourceLabel}. Relation ${demo.relation.id} projects it onto LEX as ${resolution.selected.surface}.`
+        : `Bron-${demo.relation.anaphor.unitId} blijft ${demo.relation.anaphor.sourceLabel}. Relatie ${demo.relation.id} projecteert dit op LEX als ${resolution.selected.surface}.`;
+    }
+  }
+
+  function setAnaphorCombinationEditorStatus(nl, en = nl, error = false) {
+    const status = document.getElementById('anaphorCombinationsEditorStatus');
+    if (!status) return;
+    status.textContent = isEnglish() ? en : nl;
+    status.classList.toggle('is-error', !!error);
+  }
+
+  function syncAnaphorCombinationControls() {
+    const combinations = compiledAnaphorCombinations();
+    const active = activeMultiOgnAnaphorDemo();
+    const select = document.getElementById('anaphorCombinationSelect');
+    const status = document.getElementById('anaphorCombinationStatus');
+    const editor = document.getElementById('anaphorCombinationsJsonInput');
+    fillSelect(select, combinations.map(combination => ({
+      id: combination.id,
+      label: combination.label,
+      labelEn: combination.labelEn
+    })), active.id);
+    if (status) {
+      const relationCount = active.relations.length;
+      status.textContent = isEnglish()
+        ? `${combinations.length} combination(s) configured · ${relationCount} central Text coreference relation(s); every aligned relation is rendered.`
+        : `${combinations.length} combinatie(s) geconfigureerd · ${relationCount} centrale Text-coreferentielink(s); iedere uitgelijnde relatie wordt getekend.`;
+    }
+    if (editor && document.activeElement !== editor) {
+      editor.value = JSON.stringify(normalizeAnaphorCombinationConfigs(state.anaphorCombinations), null, 2);
+    }
+    if (document.getElementById('anaphorCombinationsEditorStatus')?.textContent) return;
+    setAnaphorCombinationEditorStatus(
+      'De ingebouwde lijst bevat vier combinaties. Anafoor verbindt uitsluitend centrale Text-bronknopen; Context blijft p.m. LEX-inserties hebben een eigen insertionId.',
+      'The bundled list contains four combinations. Anaphor links central Text source nodes only; Context remains p.m. LEX insertions have their own insertionId.'
+    );
+  }
+
+  function applyAnaphorCombinationEditor() {
+    const editor = document.getElementById('anaphorCombinationsJsonInput');
+    if (!editor) return;
+    try {
+      const parsed = JSON.parse(editor.value || '[]');
+      const next = normalizeAnaphorCombinationConfigs(parsed);
+      const previousId = state.anaphorCombinationId;
+      state.anaphorCombinations = next;
+      const ids = new Set(compiledAnaphorCombinations().map(combination => combination.id));
+      state.anaphorCombinationId = ids.has(previousId) ? previousId : compiledAnaphorCombinations()[0].id;
+      state.anaphorLexicalizations = Object.fromEntries(
+        Object.entries(state.anaphorLexicalizations || {}).filter(([combinationId]) => ids.has(combinationId))
+      );
+      const selected = anaphorLexicalizationResolution(configuredAnaphorLexicalizationId()).selected.id;
+      state.anaphorLexicalization = selected;
+      state.anaphorLexicalizations[state.anaphorCombinationId] = selected;
+      state.placementMode = 'multi-ogn-anaphor';
+      appendConfigLog('apply-anaphor-combinations', {
+        count: next.length,
+        active: state.anaphorCombinationId,
+        relations: compiledAnaphorCombinations().map(combination => ({ id: combination.id, count: combination.relations.length }))
+      });
+      markConfigDirty('Anafoorcombinaties');
+      setAnaphorCombinationEditorStatus(
+        `${next.length} anafoorcombinatie(s) toegepast.`,
+        `Applied ${next.length} anaphor combination(s).`
+      );
+      resetForNewExample();
+      render();
+    } catch (error) {
+      setAnaphorCombinationEditorStatus(
+        `Niet toegepast: ${error?.message || error}`,
+        `Not applied: ${error?.message || error}`,
+        true
+      );
+    }
+  }
+
+  function resetAnaphorCombinationEditor() {
+    state.anaphorCombinations = normalizeAnaphorCombinationConfigs(DEFAULT_ANAPHOR_COMBINATION_CONFIGS);
+    state.anaphorCombinationId = DEFAULT_ANAPHOR_COMBINATION_ID;
+    state.anaphorLexicalizations = { [DEFAULT_ANAPHOR_COMBINATION_ID]: 'hij' };
+    state.anaphorLexicalization = 'hij';
+    state.placementMode = 'multi-ogn-anaphor';
+    appendConfigLog('reset-anaphor-combinations', { active: DEFAULT_ANAPHOR_COMBINATION_ID });
+    markConfigDirty('Anafoorcombinaties hersteld');
+    setAnaphorCombinationEditorStatus('Ingebouwde anafoorcombinaties hersteld.', 'Bundled anaphor combinations restored.');
+    resetForNewExample();
+    render();
+  }
+
   function syncControls() {
-    fillSelect(els.exampleSelect, EXAMPLES, state.example.id);
-    fillSelect(els.desktopExampleSelect, EXAMPLES, state.example.id);
-    fillSelect(els.mobileExampleSelect, EXAMPLES, state.example.id);
-    fillSelect(els.mainExampleSelect, EXAMPLES, state.example.id);
+    const sentenceChoices = sentenceChoiceOptions();
+    const selectedSentenceChoice = activeSentenceChoiceId();
+    fillSelect(els.exampleSelect, sentenceChoices, selectedSentenceChoice);
+    fillSelect(els.desktopExampleSelect, sentenceChoices, selectedSentenceChoice);
+    fillSelect(els.mobileExampleSelect, sentenceChoices, selectedSentenceChoice);
+    fillSelect(els.mainExampleSelect, sentenceChoices, selectedSentenceChoice);
     if (featureEnabled('adverbs')) {
       fillSelect(els.mainAdverbSelect, ADVERB_OPTIONS, state.selectedAdverbId);
       fillSelect(els.mobileAdverbSelect, ADVERB_OPTIONS, state.selectedAdverbId);
@@ -9091,6 +9803,8 @@
     [els.lexFreeSlotPlacementSelect, els.mobileLexFreeSlotPlacementSelect].forEach(select => { if (select) select.title = lexSlotPlacementTip(); });
     [els.lexInsertionContentSelect, els.mobileLexInsertionContentSelect].forEach(select => { if (select) select.title = lexInsertionContentTip(); });
     renderLexInsertionTargetControls();
+    syncAnaphorCombinationControls();
+    syncAnaphorLexicalizationControl();
     renderTopMenuChoiceControls();
     syncPortraitMenuSpace();
     syncTopMenuPlacement();
@@ -9109,14 +9823,6 @@
     const activeGrowthEnabled = directState ? true : state.growthEnabled;
     const activeGrowthTimer = directState ? state.directPlacementTimer : state.growthTimer;
     const activeGrowthLabel = directState ? directPlacementLabel() : growthLabel();
-    const randomProgress = directState && placementModeDefinition().id === 'random'
-      ? randomIterationProgress()
-      : null;
-    const directCanPrevious = !!directState && (activeGrowthStep > 0 || (randomProgress?.index || 0) > 0);
-    const directCanNext = !!directState && (
-      activeGrowthStep < growthMax
-      || (!!randomProgress && randomProgress.number < randomProgress.total)
-    );
     if (!directState && growthSupported) {
       state.growthStep = clampGrowthStep(state.growthStep);
       if (state.growthStep > 0) state.lastSupportedGrowthStep = state.growthStep;
@@ -9132,12 +9838,12 @@
       els.growthStepInput.disabled = !!directState || !activeGrowthEnabled || !growthSupported;
     }
     if (els.growthStepLabel) els.growthStepLabel.textContent = activeGrowthLabel;
-    if (els.growthPrevButton) els.growthPrevButton.disabled = !activeGrowthEnabled || !growthSupported || (directState ? !directCanPrevious : activeGrowthStep <= 0);
-    if (els.growthNextButton) els.growthNextButton.disabled = !activeGrowthEnabled || !growthSupported || (directState ? !directCanNext : activeGrowthStep >= growthMax);
+    if (els.growthPrevButton) els.growthPrevButton.disabled = !activeGrowthEnabled || !growthSupported || activeGrowthStep <= 0;
+    if (els.growthNextButton) els.growthNextButton.disabled = !activeGrowthEnabled || !growthSupported || activeGrowthStep >= growthMax;
     if (els.growthResetButton) els.growthResetButton.disabled = !activeGrowthEnabled || !growthSupported;
     const growthPlayText = activeGrowthTimer ? (isEnglish() ? 'Pause' : 'Pauze') : 'Play';
-    const growthPrevDisabled = !activeGrowthEnabled || !growthSupported || (directState ? !directCanPrevious : activeGrowthStep <= 0);
-    const growthNextDisabled = !activeGrowthEnabled || !growthSupported || (directState ? !directCanNext : activeGrowthStep >= growthMax);
+    const growthPrevDisabled = !activeGrowthEnabled || !growthSupported || activeGrowthStep <= 0;
+    const growthNextDisabled = !activeGrowthEnabled || !growthSupported || activeGrowthStep >= growthMax;
     const growthResetDisabled = !activeGrowthEnabled || !growthSupported;
     if (els.growthPlayButton) {
       els.growthPlayButton.disabled = !growthSupported;
@@ -9164,8 +9870,9 @@
     if (els.mainSouthNextButton) els.mainSouthNextButton.title = isEnglish() ? 'Next LOG order' : 'Volgende LOG-volgorde';
     const mainSouthControl = document.querySelector('[data-south-logical-control]');
     if (mainSouthControl) {
-      mainSouthControl.classList.toggle('is-hidden', !!directState);
-      mainSouthControl.setAttribute('aria-hidden', directState ? 'true' : 'false');
+      const hidden = !!directState || multiOgnAnaphorActive();
+      mainSouthControl.classList.toggle('is-hidden', hidden);
+      mainSouthControl.setAttribute('aria-hidden', hidden ? 'true' : 'false');
     }
     document.querySelectorAll('[data-main-projection]').forEach(button => {
       const active = button.dataset.mainProjection === state.projection;
@@ -9194,9 +9901,9 @@
       button.setAttribute('aria-pressed', String(active));
     });
     if (els.mobileMenuButton) els.mobileMenuButton.setAttribute('aria-expanded', String(state.mobileSheetOpen));
-    const exampleIndex = Math.max(0, EXAMPLES.findIndex(example => example.id === state.example?.id));
-    const noPreviousExample = !EXAMPLES.length || exampleIndex <= 0;
-    const noNextExample = !EXAMPLES.length || exampleIndex >= EXAMPLES.length - 1;
+    const exampleIndex = Math.max(0, sentenceChoices.findIndex(option => option.id === activeSentenceChoiceId()));
+    const noPreviousExample = !sentenceChoices.length || exampleIndex <= 0;
+    const noNextExample = !sentenceChoices.length || exampleIndex >= sentenceChoices.length - 1;
     if (els.mobilePrevButton) els.mobilePrevButton.disabled = noPreviousExample;
     if (els.mobileNextButton) els.mobileNextButton.disabled = noNextExample;
   }
@@ -9208,6 +9915,11 @@
   }
 
   function renderSelection() {
+    if (!languageTreeActive()) {
+      els.selectionEmpty?.classList.remove('hidden');
+      els.nodeEditor?.classList.add('hidden');
+      return;
+    }
     const layout = state.centerMode === 'ft' ? getFunctionalLayout() : getSyntaxLayout();
     const node = layout.nodes.find(n => n.id === state.selectedNodeId);
     if (!node) {
@@ -9243,7 +9955,8 @@
   let graphExportBusy = false;
 
   function graphExportFileStem(kind) {
-    const exampleId = String(state.example?.id || 'opengraph')
+    const sourceId = multiOgnAnaphorActive() ? activeMultiOgnAnaphorDemo().id : (state.example?.id || 'opengraph');
+    const exampleId = String(sourceId)
       .trim()
       .toLowerCase()
       .replace(/[^a-z0-9_-]+/g, '-')
@@ -9749,12 +10462,15 @@
 
   function defaultDocumentMetadata() {
     const now = new Date().toISOString();
+    const multiOgn = multiOgnAnaphorActive();
     return {
       document_id: globalThis.crypto?.randomUUID?.() || `opn-${Date.now()}-${Math.random().toString(16).slice(2)}`,
-      title: state.example?.title || state.example?.sentence || 'OpenGraph-document',
+      title: multiOgn ? multiOgnSurfaceTitle() : (state.example?.title || state.example?.sentence || 'OpenGraph-document'),
       language: state.language || 'nl',
       created_at: now,
-      source: { kind: 'viewer-example', example_id: state.example?.id || null }
+      source: multiOgn
+        ? { kind: 'viewer-multi-ogn-example', example_id: activeMultiOgnAnaphorDemo().id }
+        : { kind: 'viewer-example', example_id: state.example?.id || null }
     };
   }
 
@@ -9803,14 +10519,198 @@
       ...(featureEnabled('adverbs') ? {
         lex_insertions: Array.isArray(ex.lexInsertions) ? ex.lexInsertions.map(spec => {
           const analysis = resolvedInsertionAnalysis(spec);
-          return { ...jsonClone(spec, {}), usageProfile: analysis.id, origin: analysis.origin, originComponents: analysis.components, scope: analysis.scope || spec.scope || '', analysisStatus: analysis.unresolved ? 'ask' : 'resolved' };
+          return { ...jsonClone(spec, {}), layer: 'Context', usageProfile: analysis.id, origin: analysis.origin, originComponents: analysis.components, scope: analysis.scope || spec.scope || '', analysisStatus: analysis.unresolved ? 'ask' : 'resolved' };
         }) : []
       } : {}),
       lex_items: activeLexItems()
     };
   }
 
+  function buildMultiOgnOpnDocument(includeParadata = true) {
+    const composition = multiOgnAnaphorComposition();
+    const playTimeline = multiOgnAnaphorPlayTimeline();
+    const baseMetadata = ensureDocumentMetadata();
+    const now = new Date().toISOString();
+    const units = composition.units.map(unit => {
+      const sentence = composition.demo.sentences.find(item => item.id === unit.id);
+      return {
+        id: unit.id,
+        order: unit.order,
+        sentence: sentence?.text || unit.id,
+        clause_type: sentence?.clauseType || 'main',
+        finite_verb_placement: sentence?.finiteVerbPlacement || 'v2',
+        calculated_independently: true,
+        rigid_shift: { dx: unit.shift.dx, dy: unit.shift.dy },
+        graph: serializeLayoutGraph(unit.layout, unit.id, []),
+        lex_insertions: jsonClone(sentence?.lexInsertions || [], [])
+      };
+    });
+    const configuredRelations = composition.configuredRelations.map((relation, index) => {
+      const common = {
+        schema: relation.schema,
+        id: relation.id,
+        type: relation.type,
+        status: relation.status,
+        dependency_direction: relation.dependencyDirection,
+        alignment: jsonClone(relation.alignment, null),
+        alignment_status: jsonClone(composition.relationAlignments?.find(result => result.id === relation.id), null),
+        line: jsonClone(relation.line, null),
+        rendered_in_this_version: relation.type === 'coreference'
+          && composition.relationAlignments?.find(result => result.id === relation.id)?.satisfied === true
+      };
+      return {
+        ...common,
+        referent: {
+          unit_id: relation.referent.unitId,
+          node_id: relation.referent.nodeId,
+          lexeme: relation.referent.lexeme || null
+        },
+        anaphor: {
+          unit_id: relation.anaphor.unitId,
+          node_id: relation.anaphor.nodeId,
+          source_label: relation.anaphor.sourceLabel || null
+        },
+        lexicalization: {
+          axis: relation.lexicalization.axis,
+          profile_id: index === 0 ? composition.relation.lexicalization.profileId : relation.lexicalization.profile
+        }
+      };
+    });
+    return {
+      opn: 'Open Graph Notation',
+      document_type: OPN_DOCUMENT_TYPE,
+      opn_version: OPN_FORMAT_VERSION,
+      metadata: {
+        ...jsonClone(baseMetadata, {}),
+        title: composition.surfaceTitle,
+        language: state.language || baseMetadata.language || 'nl',
+        modified_at: now,
+        schema: 'data-metadata-paradata',
+        profile: 'multi-ogn',
+        extras: ['multi-ogn-anaphor'],
+        generator: { name: 'OpenGraph Lite Viewer', version: VERSION }
+      },
+      data: {
+        example: {
+          id: activeMultiOgnAnaphorDemo().id,
+          title: composition.surfaceTitle,
+          sentences: composition.demo.sentences.map(sentence => ({ id: sentence.id, order: sentence.order, text: sentence.text })),
+          source_sentences: composition.demo.sentences.map(sentence => ({ id: sentence.id, order: sentence.order, text: sentence.text })),
+          surface_sentences: composition.demo.sentences.map((sentence, index) => ({
+            id: sentence.id,
+            order: sentence.order,
+            text: composition.surfaceSentences[index]
+          }))
+        },
+        composition: {
+          schema: composition.schema,
+          extension: {
+            id: 'language-tree-anaphor',
+            order: 1,
+            extends: 'language-tree',
+            combination_schema: composition.demo.schema,
+            combination_id: composition.demo.id,
+            interpretation_id: composition.demo.interpretationId || null,
+            surface_template: composition.demo.surfaceTemplate || null,
+            provenance: jsonClone(composition.demo.provenance, null)
+          },
+          order: composition.units.map(unit => unit.id),
+          calculation: 'independent-before-composition',
+          rigid_shift_only: true,
+          grid_invariant_scope: 'per-ogn',
+          cross_ogn_column_semantics: 'column-sharing-alone-does-not-declare-coreference',
+          relation_authority: 'relations-array',
+          gap_rows: composition.gapRows,
+          units,
+          relations: configuredRelations,
+          ...(composition.demo.context ? { context: jsonClone(composition.demo.context, {}) } : {}),
+          layout_resolution: jsonClone(composition.layoutResolution, {}),
+          play: {
+            schema: playTimeline.schema,
+            order: [
+              ...playTimeline.units.flatMap(unit => [
+                `${unit.id}-tree`, `${unit.id}-lex-source`,
+                ...(unit.lexInsertionIds.length ? [`${unit.id}-lex-insertions`] : []),
+                ...(unit.finiteVerbMoveStep !== null ? [`${unit.id}-v2`] : [])
+              ]),
+              'S1-S2-coreferences', 'S2-anaphor-lexicalizations'
+            ],
+            units: playTimeline.units.map(unit => ({
+              id: unit.id,
+              node_order: [...unit.nodeIds],
+              node_steps: { ...unit.nodeSteps },
+              lex_base_step: unit.lexBaseStep,
+              lex_insertion_ids: [...unit.lexInsertionIds],
+              lex_insertion_step: unit.lexInsertionStep,
+              clause_type: unit.clauseType,
+              finite_verb_placement: unit.finiteVerbPlacement,
+              finite_verb_move_step: unit.finiteVerbMoveStep
+            })),
+            coreference_step: playTimeline.coreferenceStep,
+            lexicalization_step: playTimeline.lexicalizationStep,
+            max_step: playTimeline.max,
+            reverse: 'exact'
+          },
+          relation: {
+            type: 'coreference',
+            direction: 'none',
+            line: 'straight-vertical-no-arrow',
+            antecedent: jsonClone(composition.relation.antecedent, null),
+            referent: jsonClone(composition.relation.referent, null),
+            lexicalization: {
+              type: composition.relation.lexicalization.type,
+              source_node_id: composition.relation.lexicalization.sourceNodeId,
+              antecedent_lexeme: composition.relation.lexicalization.antecedentLexeme,
+              profile_id: composition.relation.lexicalization.profileId,
+              surface: composition.relation.lexicalization.surface,
+              category: composition.relation.lexicalization.category,
+              kind: composition.relation.lexicalization.kind
+            }
+          },
+          shared_lex_axis: {
+            axis: 'west',
+            order: 'S1-before-S2',
+            items: composition.lexItems.map(item => ({
+              ...(item.insertionId ? { insertion_id: item.insertionId } : { node_id: item.nodeId }),
+              source_kind: item.sourceKind,
+              source_layer: item.layer,
+              source_label: item.sourceLabel,
+              label: item.label,
+              unit_id: item.unitId,
+              sentence_order: item.sentenceOrder,
+              word_order: item.wordOrder,
+              lexicalization_profile: item.lexicalization?.id || null
+            }))
+          }
+        }
+      },
+      paradata: includeParadata ? {
+        included: true,
+        privacy: 'local-export-only',
+        session: { id: state.paradataSessionId, started_at: state.paradataStartedAt, exported_at: now },
+        workspace: {
+          placement_mode: 'multi-ogn-anaphor',
+          anaphor_combination_id: composition.demo.id,
+          interpretation_id: composition.demo.interpretationId || null,
+          configured_relation_ids: composition.configuredRelations.map(relation => relation.id),
+          anaphor_lexicalization: composition.relation.lexicalization.profileId,
+          growth: { enabled: !!state.growthEnabled, step: state.growthStep },
+          manual_viewbox: state.manualViewBox ? jsonClone(state.manualViewBox, null) : null,
+          display: {
+            grid: !!state.showGrid,
+            relations: !!state.showRelations,
+            labels: !!state.showLabels,
+            layout_density: state.layoutDensity,
+            view_fit: state.viewFitMode
+          }
+        },
+        events: jsonClone(state.paradataEvents, [])
+      } : { included: false }
+    };
+  }
+
   function buildOpnDocument(includeParadata = true) {
+    if (multiOgnAnaphorActive()) return buildMultiOgnOpnDocument(includeParadata);
     const baseMetadata = ensureDocumentMetadata();
     const now = new Date().toISOString();
     const adverbsEnabled = featureEnabled('adverbs');
@@ -9911,6 +10811,7 @@
           exported_at: now
         },
         workspace: {
+          placement_mode: 'language-tree',
           central_view: state.centerMode,
           projection_mode: state.projection,
           visible_projections: normalizedSourceAxes(),
@@ -9936,6 +10837,22 @@
   }
 
   function legacyJsonPayload() {
+    if (multiOgnAnaphorActive()) {
+      const composition = multiOgnAnaphorComposition();
+      return {
+        version: VERSION,
+        profile: 'multi-ogn',
+        extras: ['multi-ogn-anaphor'],
+        placement_mode: 'multi-ogn-anaphor',
+        example: activeMultiOgnAnaphorDemo().id,
+        composition: {
+          schema: composition.schema,
+          units: composition.units.map(unit => ({ id: unit.id, order: unit.order, shift: unit.shift, layout: unit.layout })),
+          relation: composition.relation,
+          lex_items: composition.lexItems
+        }
+      };
+    }
     const payload = {
       version: VERSION,
       profile: featureEnabled('adverbs') ? 'custom' : 'base',
@@ -9976,8 +10893,9 @@
   }
 
   function downloadJson() {
-    recordParadata('export-legacy-json', { example: state.example.id });
-    download(`${state.example.id}.${VERSION}.legacy.json`, JSON.stringify(legacyJsonPayload(), null, 2));
+    const exampleId = multiOgnAnaphorActive() ? activeMultiOgnAnaphorDemo().id : state.example.id;
+    recordParadata('export-legacy-json', { example: exampleId });
+    download(`${exampleId}.${VERSION}.legacy.json`, JSON.stringify(legacyJsonPayload(), null, 2));
   }
 
   function includeParadataForExport() {
@@ -9994,9 +10912,10 @@
 
   function downloadOpn() {
     const includeParadata = includeParadataForExport();
-    recordParadata('export-opn', { example: state.example.id, paradata_included: includeParadata });
+    const exampleId = multiOgnAnaphorActive() ? activeMultiOgnAnaphorDemo().id : state.example.id;
+    recordParadata('export-opn', { example: exampleId, paradata_included: includeParadata });
     const payload = buildOpnDocument(includeParadata);
-    download(`${state.example.id}.${VERSION}.opn`, JSON.stringify(payload, null, 2), 'application/vnd.opengraph.opn+json');
+    download(`${exampleId}.${VERSION}.opn`, JSON.stringify(payload, null, 2), 'application/vnd.opengraph.opn+json');
   }
 
   function importedExampleFromData(exampleData) {
@@ -10047,7 +10966,137 @@
       : `Dit ${documentKind}-document vereist insertie op ${labels}. Schakel die eerst in via Config · Voorconfig.`;
   }
 
+  function validateImportedMultiOgnComposition(composition) {
+    const engine = globalThis.OGNMultiComposition;
+    if (!engine?.validateUnit || !engine?.sharedCoordinates) throw new Error('Multi-OGN-compositie-engine ontbreekt.');
+    const schemas = Array.isArray(engine.SUPPORTED_SCHEMAS) ? engine.SUPPORTED_SCHEMAS : [engine.SCHEMA];
+    if (!composition || !schemas.includes(composition.schema)) throw new Error('Onbekend multi-OGN-compositieschema.');
+    const legacy = composition.schema === (engine.LEGACY_SCHEMA || 'ogn-multi-composition-v1');
+    const units = Array.isArray(composition.units) ? composition.units : [];
+    if (units.length !== 2 || units[0]?.id !== 'S1' || units[1]?.id !== 'S2') {
+      throw new Error('De eerste multi-OGN-versie vereist exact S1 gevolgd door S2.');
+    }
+    const layoutOf = unit => unit.graph || unit.layout || {};
+    if (!units.every(unit => engine.validateUnit(layoutOf(unit)))) {
+      throw new Error('Een geïmporteerde OGN-eenheid schendt de unieke rij/kolomregel.');
+    }
+    units.forEach(unit => {
+      const graphNodeIds = new Set((layoutOf(unit).nodes || []).map(node => String(node.id || '')));
+      (Array.isArray(unit.lex_insertions) ? unit.lex_insertions : []).forEach(insertion => {
+        if (!insertion.id || graphNodeIds.has(String(insertion.id)) || insertion.nodeId || insertion.node_id
+            || insertion.layer !== 'Context') {
+          throw new Error(`${unit.id}: een LEX-insertie mag geen centrale boomknoop zijn.`);
+        }
+        const lexItem = (composition.shared_lex_axis?.items || []).find(item =>
+          String(item.insertion_id || item.insertionId || '') === String(insertion.id));
+        if (!lexItem || lexItem.node_id || lexItem.nodeId) {
+          throw new Error(`${unit.id}: een LEX-insertie vereist een zelfstandig insertion_id op de gedeelde LEX-as.`);
+        }
+      });
+    });
+    if ((composition.relations || []).some(relation => relation.type !== 'coreference')) {
+      throw new Error('Anafoor relations[] bevat uitsluitend coreferentie tussen centrale Text-bronknopen van S1/S2; Context blijft p.m.');
+    }
+    if (composition.context) {
+      const context = composition.context;
+      const allowed = ['notation', 'representation', 'status'];
+      if (typeof context !== 'object' || Array.isArray(context)
+          || Object.keys(context).some(key => !allowed.includes(key))
+          || context.status !== 'p.m.'
+          || (context.notation && context.notation !== 'Open Graph Notation')
+          || (context.representation && context.representation !== 'minimized-tree')) {
+        throw new Error('Context is uitsluitend gereserveerd als nog te ontwikkelen geminimaliseerde Open Graph Notation-boom.');
+      }
+    }
+    const relation = composition.relation || {};
+    const antecedentId = relation.antecedent?.nodeId || relation.antecedent?.node_id;
+    const lowerEndpoint = legacy ? relation.anaphor : relation.referent;
+    const lowerEndpointId = lowerEndpoint?.nodeId || lowerEndpoint?.node_id;
+    if (relation.type !== 'coreference' || relation.direction !== 'none' || !antecedentId || !lowerEndpointId) {
+      throw new Error('Het multi-OGN-schema vereist een ongerichte primaire broncoreferentie met twee benoemde endpoints.');
+    }
+    const upper = layoutOf(units[0]);
+    const lower = layoutOf(units[1]);
+    const antecedent = upper.nodes.find(node => node.id === antecedentId);
+    const lowerNode = lower.nodes.find(node => node.id === lowerEndpointId);
+    if (!antecedent || !lowerNode || Number(antecedent.x) !== Number(lowerNode.x) || !(Number(lowerNode.y) > Number(antecedent.y))) {
+      throw new Error('De primaire broncoreferentie moet exact verticaal lopen met S2 onder S1.');
+    }
+    if (engine.sharedCoordinates(upper, lower, 'y').length) {
+      throw new Error('S1 en S2 mogen geen horizontale gridlijn delen.');
+    }
+    const sharedColumns = engine.sharedCoordinates(upper, lower, 'x');
+    if (!sharedColumns.some(column => column.first === antecedentId && column.second === lowerEndpointId)) {
+      throw new Error('Het gedeclareerde primaire bronpaar moet een kolom delen; andere toevallig gedeelde kolommen hebben geen semantische betekenis.');
+    }
+    if (legacy) return { legacy: true, profileId: 'hij', combinationId: DEFAULT_ANAPHOR_COMBINATION_ID };
+    const lexicalization = relation.lexicalization || {};
+    const sourceNodeId = lexicalization.source_node_id || lexicalization.sourceNodeId;
+    const profileId = lexicalization.profile_id || lexicalization.profileId;
+    const surface = String(lexicalization.surface || '').trim().toUpperCase();
+    const antecedentLexeme = String(
+      lexicalization.antecedent_lexeme
+      || lexicalization.antecedentLexeme
+      || antecedent.lexeme
+      || antecedent.label
+      || ''
+    ).trim().toLowerCase();
+    const lexiconEngine = globalThis.OGNAnaphorLexicon;
+    const resolution = lexiconEngine?.resolve
+      ? lexiconEngine.resolve(ANAPHOR_LEXICALIZATION_PROFILES, profileId, antecedentLexeme)
+      : null;
+    if (sourceNodeId !== lowerEndpointId || !profileId || !resolution
+        || resolution.selected.id !== profileId || resolution.selected.surface !== surface) {
+      throw new Error('De LEX-anafoor moet een toepasselijk lexiconprofiel van de gedeclareerde S2-bronknoop zijn.');
+    }
+    const lexItem = composition.shared_lex_axis?.items?.find(item => (item.node_id || item.nodeId) === lowerEndpointId);
+    if (lexItem && String(lexItem.label || '').toUpperCase() !== surface) {
+      throw new Error('De gedeelde LEX-as moet de gedeclareerde S2-bronknoop met het gekozen anafoorprofiel realiseren.');
+    }
+    const combinationId = String(composition.extension?.combination_id || '').trim();
+    if (combinationId && !compiledAnaphorCombinations().some(combination => combination.id === combinationId)) {
+      throw new Error(`De geïmporteerde anafoorcombinatie is niet in Config beschikbaar: ${combinationId}.`);
+    }
+    return { legacy: false, profileId, combinationId: combinationId || DEFAULT_ANAPHOR_COMBINATION_ID };
+  }
+
+  function applyImportedMultiOgn(payload, filename = '') {
+    const composition = payload?.data?.composition || payload?.composition;
+    const validation = validateImportedMultiOgnComposition(composition);
+    stopGrowthPlayback();
+    stopDirectPlacementPlayback();
+    state.placementMode = 'multi-ogn-anaphor';
+    state.anaphorCombinationId = validation.combinationId;
+    state.anaphorLexicalization = validation.profileId;
+    state.anaphorLexicalizations[validation.combinationId] = validation.profileId;
+    state.growthEnabled = false;
+    state.growthStep = 0;
+    state.projectionBlockUnlocked = false;
+    state.directPlacementState = null;
+    state.selectedNodeId = null;
+    state.manualViewBox = null;
+    const paradata = payload.paradata || {};
+    const display = paradata.workspace?.display || {};
+    if (typeof display.grid === 'boolean') state.showGrid = display.grid;
+    if (typeof display.relations === 'boolean') state.showRelations = display.relations;
+    if (typeof display.labels === 'boolean') state.showLabels = display.labels;
+    if (LAYOUT_DENSITIES.some(option => option.id === display.layout_density)) state.layoutDensity = display.layout_density;
+    if (VIEW_FIT_MODES.some(option => option.id === display.view_fit)) state.viewFitMode = display.view_fit;
+    state.documentMetadata = jsonClone(payload.metadata, null) || defaultDocumentMetadata();
+    state.paradataEvents = Array.isArray(paradata.events) ? jsonClone(paradata.events, []).slice(-PARADATA_EVENT_LIMIT) : [];
+    state.paradataSessionId = globalThis.crypto?.randomUUID?.() || `session-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+    state.paradataStartedAt = new Date().toISOString();
+    recordParadata(payload?.data ? 'open-opn-multi-ogn' : 'import-legacy-multi-ogn', {
+      filename,
+      opn_version: payload.opn_version || null
+    });
+  }
+
   function applyLegacyPayload(payload) {
+    if (payload?.placement_mode === 'multi-ogn-anaphor' || /^ogn-multi-composition-v[12]$/.test(payload?.composition?.schema || '')) {
+      applyImportedMultiOgn(payload);
+      return;
+    }
     const legacyRequiresAdverbs = Number(payload?.lex_free_slot_count) > 0
       || !!payload?.lex_insertion_content && payload.lex_insertion_content !== 'empty'
       || (Array.isArray(payload?.log_sequence) && payload.log_sequence.some(item => item?.kind === 'minor'));
@@ -10137,6 +11186,11 @@
         ? 'This OPN document requires the disabled Adverbs application. Enable it in Config · Applications first.'
         : 'Dit OPN-document vereist de uitgeschakelde toepassing Bijwoorden. Schakel die eerst in via Config · Toepassingen.');
     }
+    if (/^ogn-multi-composition-v[12]$/.test(payload?.data?.composition?.schema || '')) {
+      applyImportedMultiOgn(payload, filename);
+      return;
+    }
+    state.placementMode = 'language-tree';
     state.logInsertionInterval = 'auto';
     const data = payload.data || {};
     const notation = data.notation || {};
@@ -10278,16 +11332,15 @@
   }
 
   function cycleExample(delta) {
-    if (!EXAMPLES.length) return;
-    const currentIndex = Math.max(0, EXAMPLES.findIndex(example => example.id === state.example?.id));
-    const nextIndex = Math.max(0, Math.min(EXAMPLES.length - 1, currentIndex + delta));
+    const choices = sentenceChoiceOptions();
+    if (!choices.length) return;
+    const currentIndex = Math.max(0, choices.findIndex(option => option.id === activeSentenceChoiceId()));
+    const nextIndex = Math.max(0, Math.min(choices.length - 1, currentIndex + delta));
     if (nextIndex === currentIndex) {
       render();
       return;
     }
-    state.example = EXAMPLES[nextIndex];
-    resetForNewExample();
-    render();
+    selectSentenceChoice(choices[nextIndex].id);
   }
 
   function setMobileProjection(projection) {
@@ -10510,6 +11563,8 @@
     state.lastSupportedGrowthStep = 0;
     state.roleSwap = false;
     state.selectedNodeId = null;
+    state.maximumContentFit = null;
+    state.multiOgnPlayFitBox = null;
     applyExampleAdverbDefaults();
     resetManualViewBox();
   }
@@ -10564,40 +11619,22 @@
   }
 
   const CONFIG_TAB_DEFINITIONS = [
-    { id: 'general-ui', nl: 'Interface & weergave', en: 'Interface & display' },
     { id: 'preconfig', nl: 'Voorconfig', en: 'Pre-config' },
-    { id: 'features', nl: 'Uitbreidingen', en: 'Extensions' },
-    { id: 'direct', nl: 'Direct · gedeeld', en: 'Direct · shared' },
+    { id: 'features', nl: 'Toepassingen', en: 'Applications' },
+    { id: 'multi-ogn', nl: 'Extensie 1 · Anafoor', en: 'Extension 1 · Anaphor' },
+    { id: 'direct', nl: 'Direct', en: 'Direct placement' },
     { id: 'readme-carousels', nl: 'LEESMIJ-items', en: 'README topics' },
     { id: 'overview', nl: 'Overzicht', en: 'Overview' },
     { id: 'jan', nl: 'JaN · TODO', en: 'JaN · TODO' },
     { id: 'files', nl: 'Bestanden & export', en: 'Files & export' },
-    { id: 'view', nl: 'Boom & projecties', en: 'Tree & projections' },
+    { id: 'view', nl: 'Beeld', en: 'View' },
     { id: 'log-lex', nl: 'LOG & LEX', en: 'LOG & LEX' },
-    { id: 'examples', nl: 'Voorbeelden', en: 'Examples' },
-    { id: 'advanced', nl: 'Compatibiliteit', en: 'Compatibility' }
+    { id: 'advanced', nl: 'Geavanceerd', en: 'Advanced' }
   ];
-  const CONFIG_SCOPE_DEFINITIONS = Object.freeze([
-    Object.freeze({ id: 'general', groupNl: 'Algemeen', groupEn: 'General', nl: 'Algemeen', en: 'General' }),
-    Object.freeze({ id: 'language-tree', groupNl: 'Calculated', groupEn: 'Calculated', nl: 'Language Tree', en: 'Language Tree' }),
-    Object.freeze({ id: 'direct-shared', groupNl: 'Direct', groupEn: 'Direct', nl: 'Gedeeld', en: 'Shared' }),
-    Object.freeze({ id: 'greedy-grow', groupNl: 'Direct', groupEn: 'Direct', nl: 'Greedy Grow', en: 'Greedy Grow' }),
-    Object.freeze({ id: 'random', groupNl: 'Direct', groupEn: 'Direct', nl: 'Random', en: 'Random' })
-  ]);
-  const CONFIG_SCOPE_TABS = Object.freeze({
-    general: Object.freeze(['general-ui', 'readme-carousels', 'overview', 'files']),
-    'language-tree': Object.freeze(['preconfig', 'features', 'view', 'log-lex', 'examples', 'jan', 'advanced']),
-    'direct-shared': Object.freeze(['direct']),
-    'greedy-grow': Object.freeze(['direct']),
-    random: Object.freeze(['direct'])
-  });
-  let activeConfigTab = 'general-ui';
-  let activeConfigScope = 'general';
-  let configScopeManual = false;
+  let activeConfigTab = 'preconfig';
   let activeDirectConfigMenu = 'general';
   let configMethodScope = '';
-  let lastFullConfigTab = 'general-ui';
-  let lastFullConfigScope = 'general';
+  let lastFullConfigTab = 'preconfig';
   let readmeCarouselEditorTopicId = 'readme';
   let readmeCarouselEditorSlideIndex = 0;
   let readmeCarouselDefaultsCaptured = false;
@@ -10617,21 +11654,10 @@
   }
 
   function syncConfigMethodScope() {
-    if (configScopeManual && document.body?.classList.contains('config-screen-active')) {
-      syncConfigScopeUi();
-      return;
-    }
     const nextScope = directMethodConfigScope();
-    if (nextScope && !configMethodScope) {
-      lastFullConfigTab = activeConfigTab;
-      lastFullConfigScope = activeConfigScope;
-    }
-    if (!nextScope && configMethodScope) {
-      activeConfigTab = lastFullConfigTab;
-      activeConfigScope = lastFullConfigScope;
-    }
+    if (nextScope && !configMethodScope) lastFullConfigTab = activeConfigTab;
+    if (!nextScope && configMethodScope) activeConfigTab = lastFullConfigTab;
     configMethodScope = nextScope;
-    if (nextScope) activeConfigScope = nextScope;
     document.body?.classList.toggle('config-direct-method-only', !!nextScope);
     if (nextScope) {
       activeConfigTab = 'direct';
@@ -10641,7 +11667,6 @@
     }
     const tabList = document.querySelector('.config-tab-list');
     if (tabList) tabList.hidden = !!nextScope;
-    syncConfigScopeUi();
     const topbar = document.querySelector('.config-topbar');
     if (topbar) {
       const method = placementModeDefinition(nextScope || 'language-tree');
@@ -10649,61 +11674,6 @@
         ? `${method.label} Config`
         : (isEnglish() ? 'Configuration controls' : 'Configuratiescherm bediening'));
     }
-  }
-
-  function configTabsForScope(scopeId = activeConfigScope) {
-    return CONFIG_SCOPE_TABS[scopeId] || CONFIG_SCOPE_TABS.general;
-  }
-
-  function syncConfigScopeUi() {
-    const definition = CONFIG_SCOPE_DEFINITIONS.find(scope => scope.id === activeConfigScope) || CONFIG_SCOPE_DEFINITIONS[0];
-    if (document.body) document.body.dataset.configScope = activeConfigScope;
-    const scopeNav = document.querySelector('.config-scope-nav');
-    if (scopeNav) {
-      scopeNav.hidden = !!configMethodScope;
-      scopeNav.setAttribute('aria-hidden', String(!!configMethodScope));
-    }
-    document.querySelectorAll('[data-config-scope-button]').forEach(button => {
-      const active = button.dataset.configScopeButton === activeConfigScope;
-      button.classList.toggle('active', active);
-      button.setAttribute('aria-pressed', String(active));
-    });
-    const allowedTabs = new Set(configTabsForScope());
-    document.querySelectorAll('[data-config-tab-button]').forEach(button => {
-      button.hidden = !allowedTabs.has(button.dataset.configTabButton) || !!configMethodScope;
-    });
-    const tabList = document.querySelector('.config-tab-list');
-    if (tabList) tabList.hidden = !!configMethodScope;
-    const topbar = document.querySelector('.config-topbar');
-    if (topbar) {
-      const scopeLabel = isEnglish() ? definition.en : definition.nl;
-      const groupLabel = isEnglish() ? definition.groupEn : definition.groupNl;
-      topbar.setAttribute('aria-label', `${groupLabel} · ${scopeLabel} Config`);
-    }
-  }
-
-  function activateConfigScope(scopeId = 'general', focusScope = false, manual = true) {
-    const validScope = CONFIG_SCOPE_DEFINITIONS.some(scope => scope.id === scopeId) ? scopeId : 'general';
-    configScopeManual = !!manual;
-    if (!['greedy-grow', 'random'].includes(validScope)) {
-      lastFullConfigScope = validScope;
-      configMethodScope = '';
-      document.body?.classList.remove('config-direct-method-only');
-    } else {
-      if (!configMethodScope) {
-        lastFullConfigTab = activeConfigTab;
-        lastFullConfigScope = activeConfigScope;
-      }
-      configMethodScope = validScope;
-      document.body?.classList.add('config-direct-method-only');
-    }
-    activeConfigScope = validScope;
-    activeDirectConfigMenu = validScope === 'greedy-grow' || validScope === 'random' ? validScope : 'general';
-    syncConfigScopeUi();
-    const allowed = configTabsForScope(validScope);
-    const requested = allowed.includes(activeConfigTab) ? activeConfigTab : allowed[0];
-    activateConfigTab(requested);
-    if (focusScope) document.querySelector(`[data-config-scope-button="${validScope}"]`)?.focus?.();
   }
 
   function activateDirectConfigMenu(methodId = 'general') {
@@ -10734,44 +11704,42 @@
     fillSelect(document.getElementById('greedyStrategySelect'), GREEDY_STRATEGY_OPTIONS, greedy.strategy);
     fillSelect(document.getElementById('greedyOrientationSelect'), GREEDY_ORIENTATION_OPTIONS, greedy.orientation);
     fillSelect(document.getElementById('randomSeedPolicySelect'), RANDOM_SEED_POLICY_OPTIONS, random.seedPolicy);
-    fillSelect(document.getElementById('randomDistributionSelect'), RANDOM_DISTRIBUTION_OPTIONS, random.distribution);
     fillSelect(document.getElementById('randomSpreadSelect'), RANDOM_SPREAD_OPTIONS, random.spread);
-    fillSelect(document.getElementById('randomMaxDimensionsSelect'), RANDOM_MAX_DIMENSION_OPTIONS, random.maxDimensions);
-    fillSelect(document.getElementById('randomSpeedSelect'), DIRECT_INTERVAL_OPTIONS, String(general.intervalMs));
     fillSelect(document.getElementById('randomIterationCountSelect'), RANDOM_ITERATION_COUNT_OPTIONS, String(random.iterationCount));
     fillSelect(document.getElementById('randomAxisImageModeSelect'), RANDOM_AXIS_IMAGE_MODE_OPTIONS, random.axisImageMode);
     const seedInput = document.getElementById('randomSeedInput');
     if (seedInput && document.activeElement !== seedInput) seedInput.value = String(random.seed);
-    const fixedColumnsInput = document.getElementById('randomFixedColumnsInput');
-    const fixedRowsInput = document.getElementById('randomFixedRowsInput');
-    if (fixedColumnsInput && document.activeElement !== fixedColumnsInput) {
-      fixedColumnsInput.value = String(random.fixedColumns);
-      fixedColumnsInput.min = String(general.targetCount);
+    const impact = document.getElementById('randomIterationImpactStatus');
+    if (impact) {
+      const observations = random.iterationCount * Math.max(0, general.targetCount - 1);
+      const formulaNl = random.axisImageMode === 'off'
+        ? 'De iteraties veranderen het asbeeld niet.'
+        : random.axisImageMode === 'occupancy'
+          ? `Balklengte = telling ÷ ${random.iterationCount} iteraties.`
+          : 'Balklengte = telling ÷ de hoogste telling.';
+      const formulaEn = random.axisImageMode === 'off'
+        ? 'Iterations do not change the axis image.'
+        : random.axisImageMode === 'occupancy'
+          ? `Bar length = count ÷ ${random.iterationCount} iterations.`
+          : 'Bar length = count ÷ the highest count.';
+      impact.textContent = isEnglish()
+        ? `${random.iterationCount} complete iterations × ${Math.max(0, general.targetCount - 1)} non-central nodes = ${observations} observations per axis. ${formulaEn}`
+        : `${random.iterationCount} complete iteraties × ${Math.max(0, general.targetCount - 1)} niet-centrale knopen = ${observations} waarnemingen per as. ${formulaNl}`;
     }
-    if (fixedRowsInput && document.activeElement !== fixedRowsInput) {
-      fixedRowsInput.value = String(random.fixedRows);
-      fixedRowsInput.min = String(general.targetCount);
-    }
-    const fixedGridFields = document.getElementById('randomFixedGridFields');
-    if (fixedGridFields) fixedGridFields.hidden = random.maxDimensions !== 'fixed';
   }
 
   function resetDirectStateForConfig(methodId) {
     if (validPlacementMode(state.placementMode) !== methodId) return;
     stopDirectPlacementPlayback();
-    if (methodId === 'random') resetRandomIterationSeries();
     state.directPlacementState = null;
     ensureDirectPlacementState(true);
     resetManualViewBox();
     render();
   }
 
-  function activateConfigTab(tabId = 'general-ui', focusTab = false) {
+  function activateConfigTab(tabId = 'preconfig', focusTab = false) {
     const requestedId = configMethodScope ? 'direct' : tabId;
-    const allowedTabs = configTabsForScope();
-    const validId = CONFIG_TAB_DEFINITIONS.some(tab => tab.id === requestedId) && allowedTabs.includes(requestedId)
-      ? requestedId
-      : allowedTabs[0];
+    const validId = CONFIG_TAB_DEFINITIONS.some(tab => tab.id === requestedId) ? requestedId : 'preconfig';
     activeConfigTab = validId;
     document.querySelectorAll('[data-config-tab-button]').forEach(button => {
       const active = button.dataset.configTabButton === validId;
@@ -10787,7 +11755,6 @@
     });
     if (validId === 'readme-carousels') syncReadmeCarouselEditorTopics();
     if (validId === 'direct') activateDirectConfigMenu(configMethodScope || 'general');
-    syncConfigScopeUi();
   }
 
   function setupConfigTabs() {
@@ -10813,39 +11780,6 @@
     tabList.className = 'config-tab-list';
     tabList.setAttribute('role', 'tablist');
     tabList.setAttribute('aria-label', 'Config-onderdelen');
-
-    const scopeNav = document.createElement('nav');
-    scopeNav.className = 'config-scope-nav';
-    scopeNav.setAttribute('aria-label', 'Config: algemeen of per toepassing');
-    const scopeGroups = [
-      { id: 'general', nl: 'Algemeen', en: 'General', scopes: ['general'] },
-      { id: 'calculated', nl: 'Calculated', en: 'Calculated', scopes: ['language-tree'] },
-      { id: 'direct', nl: 'Direct', en: 'Direct', scopes: ['direct-shared', 'greedy-grow', 'random'] }
-    ];
-    scopeGroups.forEach(group => {
-      const wrapper = document.createElement('div');
-      wrapper.className = 'config-scope-group';
-      wrapper.dataset.configScopeGroup = group.id;
-      const label = document.createElement('strong');
-      label.className = 'config-scope-group-label';
-      label.dataset.labelNl = group.nl;
-      label.dataset.labelEn = group.en;
-      label.textContent = group.nl;
-      wrapper.appendChild(label);
-      group.scopes.forEach(scopeId => {
-        const definition = CONFIG_SCOPE_DEFINITIONS.find(scope => scope.id === scopeId);
-        const button = document.createElement('button');
-        button.type = 'button';
-        button.className = 'config-scope-button';
-        button.dataset.configScopeButton = scopeId;
-        button.dataset.labelNl = definition.nl;
-        button.dataset.labelEn = definition.en;
-        button.textContent = definition.nl;
-        button.addEventListener('click', () => activateConfigScope(scopeId));
-        wrapper.appendChild(button);
-      });
-      scopeNav.appendChild(wrapper);
-    });
 
     const panels = new Map();
     CONFIG_TAB_DEFINITIONS.forEach(tab => {
@@ -10885,43 +11819,17 @@
     maxCallout.className = 'config-max-callout';
     maxCallout.innerHTML = '<strong class="config-max-badge">MAX</strong><span data-config-max-text></span>';
 
-    const generalUiCard = document.createElement('section');
-    generalUiCard.className = 'panel-card config-general-ui-card';
-    generalUiCard.dataset.configCard = 'general-ui';
-    generalUiCard.innerHTML = `
-      <div class="help-lang-nl">
-        <h2>Algemeen · interface en weergave</h2>
-        <p class="inline-help">Alleen instellingen die buiten één toepassing staan. Hier staat niets van Language Tree, Greedy Grow of Random.</p>
-      </div>
-      <div class="help-lang-en">
-        <h2>General · interface and display</h2>
-        <p class="inline-help">Only settings that are independent of a single application. Nothing from Language Tree, Greedy Grow or Random is shown here.</p>
-      </div>`;
-    const generalViewGrid = document.createElement('div');
-    generalViewGrid.className = 'config-primary-view-grid config-general-view-grid';
-    generalViewGrid.setAttribute('aria-label', 'Algemene interface-instellingen');
-
     const primaryViewGrid = document.createElement('div');
     primaryViewGrid.className = 'config-primary-view-grid';
-    primaryViewGrid.setAttribute('aria-label', 'Language Tree-beeldinstellingen');
+    primaryViewGrid.setAttribute('aria-label', 'Primaire beeldinstellingen');
     const helpLayoutLabel = document.createElement('label');
     helpLayoutLabel.className = 'select-field';
     helpLayoutLabel.innerHTML = `<span><span class="help-lang-nl">LEESMIJ-indeling</span><span class="help-lang-en">README layout</span></span><select id="helpLayoutModeSelect"><option value="auto">Automatic</option><option value="stacked">List above text</option><option value="side">List left, text right</option></select><small class="config-item-help"><span class="help-lang-nl">Automatisch gebruikt links-rechts alleen op mobiel liggend; elders staat de lijst boven de tekst.</span><span class="help-lang-en">Automatic uses side-by-side only on mobile landscape; elsewhere the list is above the text.</span></small>`;
-    [els.layoutDensitySelect, els.freeSlotCountSelect].forEach(select => {
+    [els.layoutDensitySelect, els.viewFitSelect, els.freeSlotCountSelect].forEach(select => {
       const label = select?.closest?.('label');
       if (label) primaryViewGrid.appendChild(label);
     });
-    const viewFitLabel = els.viewFitSelect?.closest?.('label');
-    if (viewFitLabel) generalViewGrid.appendChild(viewFitLabel);
-    generalViewGrid.appendChild(helpLayoutLabel);
-    generalUiCard.appendChild(generalViewGrid);
-    const lineStyleField = treeCard.querySelector('.line-style-field');
-    if (lineStyleField) generalUiCard.appendChild(lineStyleField);
-    const generalDisplayChecks = document.createElement('div');
-    generalDisplayChecks.className = 'check-grid config-general-display-checks';
-    const showGridLabel = treeCard.querySelector('#showGridInput')?.closest?.('label');
-    if (showGridLabel) generalDisplayChecks.appendChild(showGridLabel);
-    if (generalDisplayChecks.children.length) generalUiCard.appendChild(generalDisplayChecks);
+    primaryViewGrid.appendChild(helpLayoutLabel);
     const helpLayoutSelect = helpLayoutLabel.querySelector('select');
     helpLayoutSelect.value = state.helpLayoutMode;
     helpLayoutSelect.addEventListener('change', event => {
@@ -10949,7 +11857,7 @@
     advancedCard.dataset.configCard = 'advanced';
     const advancedHeading = document.createElement('h2');
     advancedCard.appendChild(advancedHeading);
-    ['.lex-extension-field'].forEach(selector => {
+    ['.lex-extension-field', '.top-menu-choice-field:not(.lex-extension-field)'].forEach(selector => {
       const field = treeCard.querySelector(selector);
       if (field) advancedCard.appendChild(field);
     });
@@ -10970,16 +11878,22 @@
     overviewCard.className = 'panel-card config-overview-dashboard';
     overviewCard.id = 'config-overview';
     overviewCard.innerHTML = `<h2><span class="help-lang-nl">Config-overzicht</span><span class="help-lang-en">Configuration overview</span></h2>
-      <p class="inline-help"><span class="help-lang-nl">Dit overzicht bevat uitsluitend algemene onderdelen. Kies Language Tree of Direct in de balk erboven voor een toepassing.</span><span class="help-lang-en">This overview contains only general sections. Choose Language Tree or Direct in the bar above for an application.</span></p>
+      <p class="inline-help"><span class="help-lang-nl">Open één onderdeel. De bestaande save-werkwijze blijft ongewijzigd.</span><span class="help-lang-en">Open one section. The existing save workflow remains unchanged.</span></p>
       <div class="config-dashboard">
-        <button type="button" data-config-scope="general" data-config-jump="general-ui"><strong>Algemeen · Interface & weergave</strong><span>Toepassingsonafhankelijke interface, raster en presentatie.</span></button>
-        <button type="button" data-config-scope="general" data-config-jump="readme-carousels"><strong>Algemeen · LEESMIJ-items</strong><span>Tonen, tekst, beelden en onderschriften per item.</span></button>
-        <button type="button" data-config-scope="general" data-config-jump="files"><strong>Algemeen · Bestanden</strong><span>Projectconfig, OPN en algemene export.</span></button>
+        <button type="button" data-config-jump="preconfig"><strong>Voorconfig</strong><span>Algemene mogelijkheden vóór toepassingen.</span></button>
+        <button type="button" data-config-jump="features"><strong>Toepassingen</strong><span>Bijwoorden en volgende uitbreidingen.</span></button>
+        <button type="button" data-config-jump="multi-ogn"><strong>Extensie 1 · Anafoor</strong><span>S1–S2-combinaties, relations[] en gezamenlijke flipconstraints.</span></button>
+        <button type="button" data-config-jump="direct"><strong>Direct</strong><span>Algemeen, Greedy Grow en geïsoleerde Random-config.</span></button>
+        <button type="button" data-config-jump="readme-carousels"><strong>LEESMIJ-items</strong><span>Tonen, tekst, beelden en onderschriften per item.</span></button>
+        <button type="button" data-config-jump="view"><strong>Basisweergave</strong><span>View, interface, raster en vulling.</span></button>
+        <button type="button" data-config-jump="jan"><strong>JaN-notatie · TODO</strong><span>S:np-VP; binair eerst, meertakkig later.</span></button>
+        <button type="button" data-config-jump="view"><strong>Boom & layout</strong><span>Takvolgorde, ruimte en fit.</span></button>
+        <button type="button" data-config-jump="log-lex"><strong data-config-log-lex-title>LEX</strong><span>LEX-plaatsing en, indien ingeschakeld, extra insertieprofielen.</span></button>
+        <button type="button" data-config-jump="view"><strong>Projecties</strong><span>LEX, SYNT en LOG.</span></button>
+        <button type="button" data-config-jump="files"><strong>Voorbeelden & editors</strong><span>Bestanden, export en voorbeelden.</span></button>
+        <button type="button" data-config-jump="advanced"><strong>Geavanceerd</strong><span>Regels en technische opties.</span></button>
       </div>`;
-    overviewCard.querySelectorAll('[data-config-jump]').forEach(button => button.addEventListener('click', () => {
-      activateConfigScope(button.dataset.configScope || 'general');
-      activateConfigTab(button.dataset.configJump);
-    }));
+    overviewCard.querySelectorAll('[data-config-jump]').forEach(button => button.addEventListener('click', () => activateConfigTab(button.dataset.configJump)));
 
     const directConfigCard = document.createElement('section');
     directConfigCard.className = 'panel-card direct-config-card';
@@ -10987,40 +11901,34 @@
     directConfigCard.innerHTML = `
       <section id="direct-config-panel-general" class="direct-config-method-panel" role="group" aria-label="Algemene directe Config" data-direct-config-panel="general">
         <div class="direct-config-choice-grid">
-          <div class="direct-config-field"><label class="select-field"><span><span class="help-lang-nl">Knopen per run</span><span class="help-lang-en">Nodes per run</span></span><select id="directTargetCountSelect"></select></label><details class="config-control-explanation"><summary><span class="help-lang-nl">Uitleg</span><span class="help-lang-en">Explanation</span></summary><small><span class="help-lang-nl">Bepaalt hoeveel knopen één complete Greedy- of Random-run schrijft; het verandert niet het aantal iteraties.</span><span class="help-lang-en">Sets how many nodes one complete Greedy or Random run writes; it does not change the iteration count.</span></small></details></div>
-          <div class="direct-config-field"><label class="select-field"><span><span class="help-lang-nl">Play-snelheid</span><span class="help-lang-en">Play speed</span></span><select id="directIntervalSelect"></select></label><details class="config-control-explanation"><summary><span class="help-lang-nl">Uitleg</span><span class="help-lang-en">Explanation</span></summary><small><span class="help-lang-nl">Wachttijd tussen zichtbare stappen. Snelheid verandert nooit de gekozen knoopposities.</span><span class="help-lang-en">Delay between visible steps. Speed never changes the selected node positions.</span></small></details></div>
-          <div class="direct-config-field"><label class="select-field"><span><span class="help-lang-nl">Knoopgrootte</span><span class="help-lang-en">Node size</span></span><select id="directNodeSizeSelect"></select></label><details class="config-control-explanation"><summary><span class="help-lang-nl">Uitleg</span><span class="help-lang-en">Explanation</span></summary><small><span class="help-lang-nl">Alleen de zichtbare cirkelmaat; gridcoördinaten en plaatsingskeuze blijven gelijk.</span><span class="help-lang-en">Only the visible circle size; grid coordinates and placement choices remain unchanged.</span></small></details></div>
-          <div class="direct-config-field"><label class="select-field"><span><span class="help-lang-nl">Rastermarge</span><span class="help-lang-en">Grid margin</span></span><select id="directGridMarginSelect"></select></label><details class="config-control-explanation"><summary><span class="help-lang-nl">Uitleg</span><span class="help-lang-en">Explanation</span></summary><small><span class="help-lang-nl">Extra zichtbare rasterruimte rond het gebruikte veld; dit maakt geen nieuwe plaatsingsplekken.</span><span class="help-lang-en">Extra visible grid space around the used field; it does not create new placement positions.</span></small></details></div>
+          <label class="select-field"><span><span class="help-lang-nl">Knopen per run</span><span class="help-lang-en">Nodes per run</span></span><select id="directTargetCountSelect"></select></label>
+          <label class="select-field"><span><span class="help-lang-nl">Play-snelheid</span><span class="help-lang-en">Play speed</span></span><select id="directIntervalSelect"></select></label>
+          <label class="select-field"><span><span class="help-lang-nl">Knoopgrootte</span><span class="help-lang-en">Node size</span></span><select id="directNodeSizeSelect"></select></label>
+          <label class="select-field"><span><span class="help-lang-nl">Rastermarge</span><span class="help-lang-en">Grid margin</span></span><select id="directGridMarginSelect"></select></label>
         </div>
         <div class="direct-config-choice-grid direct-config-toggle-grid">
-          <div class="direct-config-toggle-field"><label><input id="directShowPathInput" type="checkbox"/> <span class="help-lang-nl">Groeipad tonen</span><span class="help-lang-en">Show growth path</span></label><details class="config-control-explanation"><summary><span class="help-lang-nl">Uitleg</span><span class="help-lang-en">Explanation</span></summary><small><span class="help-lang-nl">Verbindt alleen reeds geschreven knopen in schrijfvolgorde; er wordt geen toekomstig pad berekend.</span><span class="help-lang-en">Connects only nodes already written in write order; no future path is calculated.</span></small></details></div>
-          <div class="direct-config-toggle-field"><label><input id="directShowNumbersInput" type="checkbox"/> <span class="help-lang-nl">Knoopnummers tonen</span><span class="help-lang-en">Show node numbers</span></label><details class="config-control-explanation"><summary><span class="help-lang-nl">Uitleg</span><span class="help-lang-en">Explanation</span></summary><small><span class="help-lang-nl">Toont de schrijfindex in de knoop; plaatsing en volgorde veranderen niet.</span><span class="help-lang-en">Shows the write index inside the node; placement and order do not change.</span></small></details></div>
-          <div class="direct-config-toggle-field"><label><input id="directShowMetricsInput" type="checkbox"/> <span class="help-lang-nl">Veldmaten en omtrek tonen</span><span class="help-lang-en">Show field size and perimeter</span></label><details class="config-control-explanation"><summary><span class="help-lang-nl">Uitleg</span><span class="help-lang-en">Explanation</span></summary><small><span class="help-lang-nl">Toont diagnostische maten van het actuele veld; dit is geen bewijs van een wereldwijd optimale omtrek.</span><span class="help-lang-en">Shows diagnostic measurements of the current field; this is not proof of a globally optimal perimeter.</span></small></details></div>
+          <label><input id="directShowPathInput" type="checkbox"/> <span class="help-lang-nl">Groeipad tonen</span><span class="help-lang-en">Show growth path</span></label>
+          <label><input id="directShowNumbersInput" type="checkbox"/> <span class="help-lang-nl">Knoopnummers tonen</span><span class="help-lang-en">Show node numbers</span></label>
+          <label><input id="directShowMetricsInput" type="checkbox"/> <span class="help-lang-nl">Veldmaten en omtrek tonen</span><span class="help-lang-en">Show field size and perimeter</span></label>
         </div>
         <p class="config-item-help"><span class="help-lang-nl">Deze instellingen gelden gelijk voor Greedy Grow en Random. Eén Random-iteratie gebruikt het hier gekozen aantal knopen.</span><span class="help-lang-en">These settings apply equally to Greedy Grow and Random. One Random iteration uses the node count selected here.</span></p>
         <div class="direct-config-actions"><button id="resetDirectGeneralConfigButton" type="button"><span class="help-lang-nl">Herstel algemene standaard</span><span class="help-lang-en">Restore general defaults</span></button></div>
       </section>
       <section id="direct-config-panel-greedy" class="direct-config-method-panel" role="group" aria-label="Greedy Grow Config" data-direct-config-panel="greedy-grow" hidden>
         <div class="direct-config-choice-grid">
-          <div class="direct-config-field direct-config-wide"><label class="select-field"><span><span class="help-lang-nl">Zoekstrategie</span><span class="help-lang-en">Search strategy</span></span><select id="greedyStrategySelect"></select></label><details class="config-control-explanation"><summary><span class="help-lang-nl">Uitleg</span><span class="help-lang-en">Explanation</span></summary><small><span class="help-lang-nl">Bepaalt in welke volgorde vrije kandidaten worden onderzocht. De eerste geldige kandidaat wordt direct geschreven.</span><span class="help-lang-en">Sets the order in which free candidates are examined. The first valid candidate is written immediately.</span></small></details></div>
-          <div class="direct-config-field"><label class="select-field"><span><span class="help-lang-nl">Oriëntatie</span><span class="help-lang-en">Orientation</span></span><select id="greedyOrientationSelect"></select></label><details class="config-control-explanation"><summary><span class="help-lang-nl">Uitleg</span><span class="help-lang-en">Explanation</span></summary><small><span class="help-lang-nl">Draait het complete resultaat voor weergave; de groeivolgorde zelf blijft gelijk.</span><span class="help-lang-en">Rotates the complete result for display; the growth order itself stays unchanged.</span></small></details></div>
+          <label class="select-field direct-config-wide"><span><span class="help-lang-nl">Zoekstrategie</span><span class="help-lang-en">Search strategy</span></span><select id="greedyStrategySelect"></select></label>
+          <label class="select-field"><span><span class="help-lang-nl">Oriëntatie</span><span class="help-lang-en">Orientation</span></span><select id="greedyOrientationSelect"></select></label>
         </div>
       </section>
       <section id="direct-config-panel-random" class="direct-config-method-panel" role="group" aria-label="Random Config" data-direct-config-panel="random" hidden>
         <div class="direct-config-choice-grid">
-          <div class="direct-config-field"><label class="select-field"><span>Seed</span><input id="randomSeedInput" type="number" min="1" max="4294967295" step="1" inputmode="numeric"/></label><details class="config-control-explanation"><summary><span class="help-lang-nl">Uitleg</span><span class="help-lang-en">Explanation</span></summary><small><span class="help-lang-nl">Startcode voor reproduceerbare Random. <code>20260802</code> is alleen de herkenbare datum 2 augustus 2026; een groter getal geeft niet meer toeval en maakt Play niet sneller. Dezelfde seed, versie, instellingen en gridgrootte geven dezelfde reeks.</span><span class="help-lang-en">Starting code for reproducible Random. <code>20260802</code> is merely the memorable date 2 August 2026; a larger number is not more random and does not make Play faster. The same seed, version, settings and grid size produce the same sequence.</span></small></details></div>
-          <div class="direct-config-field"><label class="select-field"><span><span class="help-lang-nl">Resetbeleid</span><span class="help-lang-en">Reset policy</span></span><select id="randomSeedPolicySelect"></select></label><details class="config-control-explanation"><summary><span class="help-lang-nl">Uitleg</span><span class="help-lang-en">Explanation</span></summary><small><span class="help-lang-nl"><em>Vaste seed</em> herhaalt dezelfde iteratieset. <em>Nieuwe seed</em> schuift bij Reset reproduceerbaar naar een andere startcode.</span><span class="help-lang-en"><em>Fixed seed</em> repeats the same iteration set. <em>New seed</em> advances reproducibly to another starting code on Reset.</span></small></details></div>
-          <div class="direct-config-field direct-config-wide"><label class="select-field"><span><span class="help-lang-nl">Random-model</span><span class="help-lang-en">Random model</span></span><select id="randomDistributionSelect"></select></label><details class="config-control-explanation"><summary><span class="help-lang-nl">Uitleg</span><span class="help-lang-en">Explanation</span></summary><small><span class="help-lang-nl"><em>Uniform v1.0</em> geeft iedere vrije coördinaat dezelfde kans. <em>Onzuiver uniform v0.1</em> mengt 20% voorkeur voor asplekken die in voltooide eerdere rondes vaker zijn geraakt; ronde 1 is nog uniform.</span><span class="help-lang-en"><em>Uniform v1.0</em> gives every free coordinate the same chance. <em>Impure uniform v0.1</em> mixes in a 20% preference for axis positions hit more often in completed earlier rounds; round 1 is still uniform.</span></small></details></div>
-          <div class="direct-config-field"><label class="select-field"><span><span class="help-lang-nl">Plaatsing</span><span class="help-lang-en">Placement</span></span><select id="randomSpreadSelect"></select></label><details class="config-control-explanation"><summary><span class="help-lang-nl">Uitleg</span><span class="help-lang-en">Explanation</span></summary><small><span class="help-lang-nl"><em>Ergens</em> gebruikt de hele beschikbare rechthoek. Compact, Gebalanceerd en Ruim beperken of vergroten de actuele zoekzone.</span><span class="help-lang-en"><em>Anywhere</em> uses the full available rectangle. Compact, Balanced and Wide restrict or enlarge the current search zone.</span></small></details></div>
-          <div class="direct-config-field"><label class="select-field"><span><span class="help-lang-nl">Gridgrootte</span><span class="help-lang-en">Grid size</span></span><select id="randomMaxDimensionsSelect"></select></label><details class="config-control-explanation"><summary><span class="help-lang-nl">Uitleg</span><span class="help-lang-en">Explanation</span></summary><small><span class="help-lang-nl"><em>Interface</em> volgt de beschikbare beeldverhouding, <em>Vast grid</em> gebruikt opgegeven kolommen en rijen, en <em>Inhoud</em> laat het veld meegroeien. Dit verandert de speelruimte, niet het aantal knopen.</span><span class="help-lang-en"><em>Interface</em> follows the available aspect ratio, <em>Fixed grid</em> uses configured columns and rows, and <em>Content</em> lets the field grow. This changes the available area, not the node count.</span></small></details></div>
-          <div id="randomFixedGridFields" class="random-fixed-grid-fields" hidden>
-            <div class="direct-config-field"><label class="select-field"><span><span class="help-lang-nl">Vaste kolommen</span><span class="help-lang-en">Fixed columns</span></span><input id="randomFixedColumnsInput" type="number" min="1" max="10000" step="1" inputmode="numeric"/></label><details class="config-control-explanation"><summary><span class="help-lang-nl">Uitleg</span><span class="help-lang-en">Explanation</span></summary><small><span class="help-lang-nl">Aantal verticale gridlijnen. Minder dan het aantal knopen wordt automatisch verhoogd tot dat minimum.</span><span class="help-lang-en">Number of vertical grid lines. A value below the node count is automatically raised to that minimum.</span></small></details></div>
-            <div class="direct-config-field"><label class="select-field"><span><span class="help-lang-nl">Vaste rijen</span><span class="help-lang-en">Fixed rows</span></span><input id="randomFixedRowsInput" type="number" min="1" max="10000" step="1" inputmode="numeric"/></label><details class="config-control-explanation"><summary><span class="help-lang-nl">Uitleg</span><span class="help-lang-en">Explanation</span></summary><small><span class="help-lang-nl">Aantal horizontale gridlijnen. Minder dan het aantal knopen wordt automatisch verhoogd tot dat minimum.</span><span class="help-lang-en">Number of horizontal grid lines. A value below the node count is automatically raised to that minimum.</span></small></details></div>
-          </div>
-          <div class="direct-config-field"><label class="select-field"><span><span class="help-lang-nl">Snelheid</span><span class="help-lang-en">Speed</span></span><select id="randomSpeedSelect"></select></label><details class="config-control-explanation"><summary><span class="help-lang-nl">Uitleg</span><span class="help-lang-en">Explanation</span></summary><small><span class="help-lang-nl">Milliseconden tussen twee zichtbare knoopplaatsingen. Alleen de animatie verandert; seed en posities blijven gelijk.</span><span class="help-lang-en">Milliseconds between two visible node placements. Only the animation changes; seed and positions remain unchanged.</span></small></details></div>
-          <div class="direct-config-field"><label class="select-field"><span><span class="help-lang-nl">Hoe vaak · volledige iteraties</span><span class="help-lang-en">How often · complete iterations</span></span><select id="randomIterationCountSelect"></select></label><details class="config-control-explanation"><summary><span class="help-lang-nl">Uitleg</span><span class="help-lang-en">Explanation</span></summary><small><span class="help-lang-nl">Aantal complete rondes voor Play, Next/Previous en het opgebouwde asbeeld. Het aantal knopen per ronde staat bij Algemeen.</span><span class="help-lang-en">Number of complete rounds used by Play, Next/Previous and the accumulated axis image. Nodes per round are configured under General.</span></small></details></div>
-          <div class="direct-config-field direct-config-wide"><label class="select-field"><span><span class="help-lang-nl">Impact op west- en zuidas</span><span class="help-lang-en">Impact on west and south axes</span></span><select id="randomAxisImageModeSelect"></select></label><details class="config-control-explanation"><summary><span class="help-lang-nl">Uitleg</span><span class="help-lang-en">Explanation</span></summary><small><span class="help-lang-nl">Alleen de weergave van voltooide projectie-hits: uit, bezettingskans of relatief patroon. Deze keuze verandert de Random-plaatsing niet.</span><span class="help-lang-en">Only controls the display of completed projection hits: off, occupancy chance or relative pattern. This choice does not change Random placement.</span></small></details></div>
+          <label class="select-field"><span>Seed</span><input id="randomSeedInput" type="number" min="1" max="4294967295" step="1" inputmode="numeric"/></label>
+          <label class="select-field"><span><span class="help-lang-nl">Resetbeleid</span><span class="help-lang-en">Reset policy</span></span><select id="randomSeedPolicySelect"></select></label>
+          <label class="select-field"><span><span class="help-lang-nl">Spreiding</span><span class="help-lang-en">Spread</span></span><select id="randomSpreadSelect"></select></label>
+          <label class="select-field"><span><span class="help-lang-nl">Hoe vaak · volledige iteraties</span><span class="help-lang-en">How often · complete iterations</span></span><select id="randomIterationCountSelect"></select></label>
+          <label class="select-field direct-config-wide"><span><span class="help-lang-nl">Impact op west- en zuidas</span><span class="help-lang-en">Impact on west and south axes</span></span><select id="randomAxisImageModeSelect"></select></label>
         </div>
+        <div id="randomIterationImpactStatus" class="random-iteration-impact" role="status"></div>
       </section>`;
 
     const updateGeneral = (key, value, label) => {
@@ -11054,18 +11962,13 @@
       if (key === 'seed') state.directPlacementSeed = state.randomPlacementConfig.seed;
       appendConfigLog('change-random-placement-config', { key, value: state.randomPlacementConfig[key] });
       markConfigDirty(label);
-      if (['seed', 'distribution', 'spread', 'maxDimensions', 'fixedColumns', 'fixedRows', 'iterationCount'].includes(key)) resetDirectStateForConfig('random');
+      if (['seed', 'spread'].includes(key)) resetDirectStateForConfig('random');
       else if (validPlacementMode(state.placementMode) === 'random') render();
       syncDirectConfigControls();
     };
     directConfigCard.querySelector('#randomSeedInput')?.addEventListener('change', event => updateRandom('seed', Number(event.target.value), 'Random · seed'));
     directConfigCard.querySelector('#randomSeedPolicySelect')?.addEventListener('change', event => updateRandom('seedPolicy', event.target.value, 'Random · resetbeleid'));
-    directConfigCard.querySelector('#randomDistributionSelect')?.addEventListener('change', event => updateRandom('distribution', event.target.value, 'Random · model'));
-    directConfigCard.querySelector('#randomSpreadSelect')?.addEventListener('change', event => updateRandom('spread', event.target.value, 'Random · plaatsing'));
-    directConfigCard.querySelector('#randomMaxDimensionsSelect')?.addEventListener('change', event => updateRandom('maxDimensions', event.target.value, 'Random · gridgrootte'));
-    directConfigCard.querySelector('#randomFixedColumnsInput')?.addEventListener('change', event => updateRandom('fixedColumns', Number(event.target.value), 'Random · vaste kolommen'));
-    directConfigCard.querySelector('#randomFixedRowsInput')?.addEventListener('change', event => updateRandom('fixedRows', Number(event.target.value), 'Random · vaste rijen'));
-    directConfigCard.querySelector('#randomSpeedSelect')?.addEventListener('change', event => updateGeneral('intervalMs', Number(event.target.value), 'Random · snelheid'));
+    directConfigCard.querySelector('#randomSpreadSelect')?.addEventListener('change', event => updateRandom('spread', event.target.value, 'Random · spreiding'));
     directConfigCard.querySelector('#randomIterationCountSelect')?.addEventListener('change', event => updateRandom('iterationCount', Number(event.target.value), 'Random · aantal iteraties'));
     directConfigCard.querySelector('#randomAxisImageModeSelect')?.addEventListener('change', event => updateRandom('axisImageMode', event.target.value, 'Random · impact op asbeeld'));
     directConfigCard.querySelector('#resetDirectGeneralConfigButton')?.addEventListener('click', () => {
@@ -11082,12 +11985,12 @@
     preconfigCard.id = 'config-preconfig';
     preconfigCard.innerHTML = `
       <div class="help-lang-nl">
-        <h2>Language Tree · voorconfig</h2>
-        <p class="inline-help">Deze voorconfig schakelt infrastructuur van Language Tree in, maar voegt zelf nog geen taalinhoud toe. Uitbreidingen van Language Tree gebruiken daarna alleen wat hier gereedstaat.</p>
+        <h2>Voorconfig · infrastructuur</h2>
+        <p class="inline-help">Een voorconfig schakelt een algemene mogelijkheid in, maar voegt zelf nog geen taalinhoud toe. Toepassingen gebruiken daarna alleen de mogelijkheden die hier gereedstaan.</p>
       </div>
       <div class="help-lang-en">
-        <h2>Language Tree · pre-config</h2>
-        <p class="inline-help">This pre-config enables Language Tree infrastructure without adding linguistic content. Language Tree extensions then use only what is enabled here.</p>
+        <h2>Pre-config · infrastructure</h2>
+        <p class="inline-help">A pre-config enables a general capability without adding linguistic content. Applications then use only capabilities enabled here.</p>
       </div>
       <fieldset class="preconfig-capability-list">
         <legend><span class="help-lang-nl">Insertie per as</span><span class="help-lang-en">Insertion per axis</span></legend>
@@ -11140,12 +12043,12 @@
     featuresCard.id = 'config-features';
     featuresCard.innerHTML = `
       <div class="help-lang-nl">
-        <h2>Language Tree · basisprofiel en uitbreidingen</h2>
-        <p class="inline-help">Het Language-Tree-basisprofiel bevat de gewone taalboom, LEX/SYNT/LOG met S/O/V-majors en voorbeeldzinnen zonder extra inserties. Dit is niet de algemene OGN-kern. Een uitgewerkte uitbreiding wordt pas beschikbaar wanneer haar voorconfig gereed is; een gereserveerde uitbreiding heeft nog geen werking.</p>
+        <h2>OGN Basis & toepassingen</h2>
+        <p class="inline-help">OGN Basis bevat de gewone boom, het raster, LEX/SYNT/LOG met S/O/V-majors en voorbeeldzinnen zonder extra inserties. Een uitgewerkte toepassing wordt pas beschikbaar wanneer haar voorconfig gereed is; een gereserveerde toepassing heeft nog geen werking.</p>
       </div>
       <div class="help-lang-en">
-        <h2>Language Tree · base profile and extensions</h2>
-        <p class="inline-help">The Language Tree base profile contains the ordinary language tree, LEX/SYNT/LOG with S/O/V majors, and samples without extra insertions. It is not the general OGN core. An implemented extension becomes available only after its pre-config is ready; a reserved extension has no behaviour yet.</p>
+        <h2>OGN Base & applications</h2>
+        <p class="inline-help">OGN Base contains the ordinary tree, grid, LEX/SYNT/LOG with S/O/V majors, and samples without extra insertions. An implemented application becomes available only after its pre-config is ready; a reserved application has no behaviour yet.</p>
       </div>
       <div class="feature-profile-status" id="featureProfileStatus" role="status"></div>
       <fieldset class="feature-extra-list">
@@ -11396,17 +12299,142 @@
     janCard.id = 'config-jan';
     janCard.innerHTML = `<div class="help-lang-nl"><h2>JaN · Just another Notation</h2><p><code>S:np-VP</code>, nadrukkelijk niet <code>S:NP-VP</code>.</p><p>Onderzoeksnotatie: <code>S+ np-VP</code>. Eerst voor binaire bomen; later voor niet-binaire, meertakkige bomen.</p><p>TODO: <code>heeft gebeten</code> ↔ <code>gebeten heeft</code>.</p></div><div class="help-lang-en"><h2>JaN · Just another Notation</h2><p><code>S:np-VP</code>, explicitly not <code>S:NP-VP</code>.</p><p>Research notation: <code>S+ np-VP</code>. Binary trees first; non-binary multi-branching trees later.</p><p>TODO: <code>heeft gebeten</code> ↔ <code>gebeten heeft</code>.</p></div>`;
 
-    panels.get('general-ui').appendChild(generalUiCard);
+    const multiOgnCard = document.createElement('section');
+    multiOgnCard.className = 'panel-card config-multi-ogn-card';
+    multiOgnCard.id = 'config-multi-ogn-anaphor';
+    multiOgnCard.innerHTML = `
+      <div class="help-lang-nl">
+        <h2>Language Tree · extensie 1 · Anafoor</h2>
+        <p class="inline-help"><strong>Text</strong> is uitsluitend de centrale uiting: Syntax toont bijvoorbeeld S–O–V; Functional toont bijvoorbeeld Agens–Predicaat–Patiens. <strong>Context</strong> is alles daaromheen en wordt later een zelfstandige, geminimaliseerde Open Graph Notation-boom; iedere insertie behoort tot Context. Nadere Context-uitwerking blijft p.m.</p>
+        <p class="config-item-help"><strong>Anafoor:</strong> de eerste Language Tree-extensie verbindt uitsluitend corresponderende centrale Text-bronknopen van S1 en S2. De S2-bronknoop blijft staan; alleen LEX realiseert bijvoorbeeld BOER → HIJ of EZEL → HEM.</p>
+        <ol>
+          <li>S1 en S2 worden ieder afzonderlijk als geldige OGN berekend.</li>
+          <li>De vaste compositieruimte reserveert vanaf Play-stap 0 plaats voor beide bomen.</li>
+          <li>Play voltooit eerst S1 en daarna S2; een omdat-bijzin behoudt de persoonsvorm achteraan en krijgt geen V2.</li>
+          <li><code>relations[]</code> bevat uitsluitend Text-coreferentie; GISTEREN, VANDAAG en OMDAT zijn Context-inserties met een eigen <code>insertionId</code>.</li>
+          <li>De geconfigureerde bronknoop van de anafoor blijft staan; pas de LEX-projectie realiseert bijvoorbeeld HIJ.</li>
+        </ol>
+        <p class="config-item-help"><strong>Meerdere relaties:</strong> iedere geldige, uitgelijnde Text-coreferentie wordt getekend en zelfstandig op LEX gerealiseerd. De voorbereide solver kiest later branch-flips en de starre S2-shift <em>gezamenlijk</em>; bij conflict worden geen losse knopen geforceerd.</p>
+        <p class="config-item-help"><strong>Text en Context:</strong> tijd, plaats, toestand, causaliteit en alle inserties vallen buiten Text. GISTEREN, VANDAAG, ER, NIET MEER en OMDAT staan daarom nooit in de centrale Text-boom. De geminimaliseerde Context-boom blijft p.m.</p>
+        <p class="config-item-help"><strong>Literatuurgrens:</strong> twee gewone links passen in <code>relations[]</code>. Eén groepsanafoor met meerdere antecedenten vereist later één hyperrelatie en mag niet als losse identiteitslijnen worden ingevoerd. <code>interpretationId</code> kiest bij ambiguïteit eerst een volledige semantische lezing; flip lost daarna alleen de geometrie op.</p>
+      </div>
+      <div class="help-lang-en">
+        <h2>Language Tree · extension 1 · Anaphor</h2>
+        <p class="inline-help"><strong>Text</strong> is the central utterance only: Syntax shows, for example, S–O–V; Functional shows, for example, Agent–Predicate–Patient. <strong>Context</strong> is everything around it and is also a separate, minimized Open Graph Notation tree to be developed; every insertion belongs to Context. Further Context modeling remains p.m.</p>
+        <p class="config-item-help"><strong>Anaphor:</strong> the first Language Tree extension links corresponding central Text source nodes in S1 and S2 only. The S2 source node remains unchanged; LEX alone realizes, for example, BOER → HIJ or EZEL → HEM.</p>
+        <ol>
+          <li>S1 and S2 are each calculated independently as a valid OGN.</li>
+          <li>The fixed composition frame reserves room for both trees from Play step 0.</li>
+          <li>Play completes S1 before S2; a subordinate because-clause keeps its finite verb final and has no V2.</li>
+          <li><code>relations[]</code> contains Text coreference only; GISTEREN, VANDAAG and OMDAT are Context insertions with their own <code>insertionId</code>.</li>
+          <li>The configured anaphor source node remains in place; only its LEX projection realizes, for example, HIJ.</li>
+        </ol>
+        <p class="config-item-help"><strong>Multiple relations:</strong> every valid, aligned Text coreference is rendered and independently lexicalized on LEX. The future solver will select branch flips and rigid S2 displacement <em>jointly</em>; conflicts never force individual nodes.</p>
+        <p class="config-item-help"><strong>Text and Context:</strong> time, place, state, causality and all insertions lie outside Text. GISTEREN, VANDAAG, ER, NIET MEER and OMDAT never occur in either central Text tree. The minimized Context tree remains p.m.</p>
+        <p class="config-item-help"><strong>Literature boundary:</strong> two ordinary links fit in <code>relations[]</code>. One group anaphor with several antecedents requires a future hyperrelation and must not be encoded as separate identity lines. For ambiguity, <code>interpretationId</code> first selects one complete semantic reading; flip then solves geometry only.</p>
+      </div>
+      <label class="select-field">
+        <span><span class="help-lang-nl">Actieve anafoorcombinatie</span><span class="help-lang-en">Active anaphor combination</span></span>
+        <select id="anaphorCombinationSelect" aria-describedby="anaphorCombinationStatus"></select>
+        <small class="config-item-help" id="anaphorCombinationStatus"></small>
+      </label>
+      <label class="select-field">
+        <span><span class="help-lang-nl">LEX-anafoor</span><span class="help-lang-en">LEX anaphor</span></span>
+        <select id="anaphorLexicalizationSelect" aria-describedby="anaphorLexicalizationStatus"></select>
+        <small class="config-item-help" id="anaphorLexicalizationStatus"></small>
+      </label>
+      <p class="config-item-help"><span class="help-lang-nl">De opties komen uit <code>lexicon-config.html</code>. Niet-passende vormen blijven zichtbaar maar zijn uitgeschakeld.</span><span class="help-lang-en">Options come from <code>lexicon-config.html</code>. Inapplicable forms remain visible but disabled.</span></p>
+      <label class="anaphor-combinations-editor-field" for="anaphorCombinationsJsonInput">
+        <span><span class="help-lang-nl">Combinaties · JSON-lijst</span><span class="help-lang-en">Combinations · JSON list</span></span>
+        <textarea id="anaphorCombinationsJsonInput" rows="18" spellcheck="false"></textarea>
+      </label>
+      <div class="button-row anaphor-combinations-editor-actions">
+        <button class="primary" id="applyAnaphorCombinationsButton" type="button"><span class="help-lang-nl">Pas combinaties toe</span><span class="help-lang-en">Apply combinations</span></button>
+        <button id="resetAnaphorCombinationsButton" type="button"><span class="help-lang-nl">Herstel ingebouwde combinaties</span><span class="help-lang-en">Reset bundled combinations</span></button>
+      </div>
+      <p class="config-item-help anaphor-combinations-editor-status" id="anaphorCombinationsEditorStatus" role="status"></p>
+      <details class="anaphor-relation-notation" open>
+        <summary><span class="help-lang-nl">Voorgestelde notatie · referent–anafoor + gezamenlijke flipsolver</span><span class="help-lang-en">Proposed notation · referent–anaphor + joint flip solver</span></summary>
+<pre><code>{
+  "surfaceTemplate":"Vandaag was {ANAPHOR} er niet meer.",
+  "interpretationId":"man-hij",
+  "relations": [
+    {
+      "schema":"ogn-referent-anaphor-v1",
+      "id":"man-hij", "type":"coreference", "status":"intended-reading",
+      "referent":{"unitId":"S1","nodeId":"tm-s1-man"},
+      "anaphor":{"unitId":"S2","nodeId":"tm-s2-man"},
+      "lexicalization":{"axis":"LEX","profile":"hij"},
+      "alignment":{"type":"shared-column","required":true}
+    }
+  ],
+  "sentences":[
+    {"id":"S1","lexInsertions":[{"id":"lex-s1-gisteren","layer":"Context","axis":"LEX"}]},
+    {"id":"S2","lexInsertions":[
+      {"id":"lex-s2-vandaag","layer":"Context","axis":"LEX"},
+      {"id":"lex-s2-er","layer":"Context","axis":"LEX"},
+      {"id":"lex-s2-niet-meer","layer":"Context","axis":"LEX"}
+    ]}
+  ],
+  "context":{"notation":"Open Graph Notation","representation":"minimized-tree","status":"p.m."},
+  "layoutResolution": {
+    "schema":"ogn-joint-flip-constraints-v1",
+    "mode":"joint",
+    "variables":[
+      {"type":"branch-flip","units":["S1","S2"],
+       "candidates":"declared-flippable-branches"},
+      {"type":"rigid-shift","unitId":"S2","axes":["x","y"]}
+    ],
+    "constraints":[
+      {"type":"relation-alignment","source":"relations[*].alignment"},
+      {"type":"unique-row-and-column","scope":"per-unit"}
+    ],
+    "objective":["satisfy-required-relations","minimize-flip-count","minimize-rigid-shift"],
+    "firstFixture":{"nodeId":"vp-perfectum",
+      "alternatives":["aux-vdw","vdw-aux"]},
+    "currentSupport":{"status":"multiple-relation-rendering-context-pro-memorie",
+      "active":["existing-layout","rigid-shift-s2","check-all-relation-alignments","render-satisfied-coreferences"],
+      "deferred":["joint-branch-flip-search"]},
+    "onConflict":"report-no-forced-node-move"
+  }
+}</code></pre>
+      </details>`;
+
+    multiOgnCard.querySelector('#anaphorCombinationSelect')?.addEventListener('change', event => {
+      selectSentenceChoice(anaphorSentenceChoiceId(event.target.value), { closeMenus: false });
+    });
+    multiOgnCard.querySelector('#applyAnaphorCombinationsButton')?.addEventListener('click', applyAnaphorCombinationEditor);
+    multiOgnCard.querySelector('#resetAnaphorCombinationsButton')?.addEventListener('click', resetAnaphorCombinationEditor);
+
+    multiOgnCard.querySelector('#anaphorLexicalizationSelect')?.addEventListener('change', event => {
+      const resolution = anaphorLexicalizationResolution(event.target.value);
+      const demo = activeMultiOgnAnaphorDemo();
+      state.anaphorLexicalization = resolution.selected.id;
+      state.anaphorLexicalizations[demo.id] = resolution.selected.id;
+      recordParadata('set-anaphor-lexicalization', {
+        profile: resolution.selected.id,
+        surface: resolution.selected.surface,
+        antecedent: activeMultiOgnAnaphorDemo().antecedentLexeme
+      });
+      appendConfigLog('change-anaphor-lexicalization', {
+        profile: resolution.selected.id,
+        surface: resolution.selected.surface
+      });
+      markConfigDirty('LEX-anafoor');
+      resetManualViewBox();
+      render();
+    });
+
     panels.get('preconfig').appendChild(preconfigCard);
     panels.get('features').appendChild(featuresCard);
+    panels.get('multi-ogn').appendChild(multiOgnCard);
     panels.get('direct').appendChild(directConfigCard);
     panels.get('readme-carousels').appendChild(readmeCarouselCard);
     panels.get('overview').appendChild(overviewCard);
     panels.get('jan').appendChild(janCard);
-    panels.get('files').append(projectConfigCard, readmeSlideFileCard, graphExportCard, opnCard);
+    panels.get('files').append(projectConfigCard, readmeSlideFileCard, graphExportCard, opnCard, examplesCard);
     panels.get('view').appendChild(treeCard);
     panels.get('log-lex').append(logSettingsCard, lexCard, relationCard);
-    panels.get('examples').appendChild(examplesCard);
     panels.get('advanced').appendChild(advancedCard);
     const CONFIG_ITEM_HELP = {
       centralModeSelect: ['Kiest de centrale Syntax- of Functional-view.', 'Chooses the central Syntax or Functional view.'],
@@ -11437,9 +12465,9 @@
       small.innerHTML = `<span class="help-lang-nl">${texts[0]}</span><span class="help-lang-en">${texts[1]}</span>`;
       label.appendChild(small);
     });
-    sidePanel.replaceChildren(scopeNav, tabList, saveSlot, ...panels.values());
+    sidePanel.replaceChildren(tabList, saveSlot, ...panels.values());
     sidePanel.dataset.configTabsReady = '1';
-    activateConfigScope(activeConfigScope, false, false);
+    activateConfigTab(activeConfigTab);
     applyFeatureVisibility();
     syncProjectConfigStatus();
   }
@@ -11490,21 +12518,11 @@
     setText('.main-view-field span', 'View');
     setText('.main-projection-field span', en ? 'Proj.' : 'Proj.');
     setText('.mobile-adverb-field span', en ? 'Adverbs' : 'Bijwoorden');
-    setText('.config-topbar h2', en ? 'Configuration by context' : 'Config per context');
-    setText('.config-topbar p', en ? 'General and each application are separate. Only the settings of the selected context are shown.' : 'Algemeen en iedere toepassing zijn gescheiden. Alleen de instellingen van de gekozen context worden getoond.');
+    setText('.config-topbar h2', en ? 'All settings' : 'Alle instellingen');
+    setText('.config-topbar p', en ? 'Pre-config opens first. Enable infrastructure per axis before selecting an application.' : 'Voorconfig opent als eerste. Schakel infrastructuur per as in voordat je een toepassing kiest.');
     document.querySelectorAll('[data-config-tab-button]').forEach(button => {
       button.textContent = en ? button.dataset.labelEn : button.dataset.labelNl;
     });
-    document.querySelectorAll('.config-scope-group-label').forEach(label => {
-      label.textContent = en ? label.dataset.labelEn : label.dataset.labelNl;
-    });
-    document.querySelectorAll('[data-config-scope-button]').forEach(button => {
-      button.textContent = en ? button.dataset.labelEn : button.dataset.labelNl;
-    });
-    document.querySelector('.config-scope-nav')?.setAttribute(
-      'aria-label',
-      en ? 'Configuration: general or by application' : 'Config: algemeen of per toepassing'
-    );
     const readmeShapeSelect = document.getElementById('readmeCarouselShapeSelect');
     if (readmeShapeSelect) {
       const wide = readmeShapeSelect.querySelector('option[value="wide"]');
@@ -11522,10 +12540,10 @@
     setText('[data-config-card="relations"] > h2', en ? 'Relations / rules' : 'Relaties / regels');
     setText('.config-save-menu-kicker', en ? 'SAVE OR SHARE NOW' : 'DIRECT OPSLAAN OF DELEN');
     setText('[data-config-card="graph-export"] > h2', en ? 'Save, export and share' : 'Opslaan, exporteren en delen');
-    setText('[data-config-card="advanced"] > h2', en ? 'Language Tree compatibility' : 'Language Tree-compatibiliteit');
+    setText('[data-config-card="advanced"] > h2', en ? 'Advanced settings' : 'Geavanceerde instellingen');
     setText('[data-config-max-text]', en
-      ? 'Language Tree default: Tree spacing MAX and six free tree rows — large type with a deliberately low tree.'
-      : 'Language Tree-standaard: Boomruimte MAX en zes vrije boomrijen — groot letterbeeld met een bewust lage boom.');
+      ? 'Default: Tree spacing MAX and Window fit MAX — large type, a lower tree and full use of the app window.'
+      : 'Standaard: Boomruimte MAX en Venstervulling MAX — groot letterbeeld, een lage boom en volledig gebruik van het appvenster.');
     setText('.right-menu-width-callout .inline-help', en ? 'Set the width of the right menu directly. The grid uses only the space needed for the active view; the remaining space goes to this column.' : 'Kies hier direct de breedte van het rechter menu. Het grid gebruikt alleen de benodigde ruimte voor de actieve view; de rest gaat naar deze kolom.');
     setText('[data-config-card="tree"] > .sticky-note', en ? 'View selects Syntax or Functional. Window fit describes how the tree uses the available app window.' : 'View kiest Syntax of Functional. Venstervulling beschrijft hoe de boom het beschikbare appvenster gebruikt.');
 
@@ -11541,7 +12559,7 @@
     setLabelSpan('branchOtherSelect', en ? 'Other' : 'Overig');
     setLabelSpan('layoutDensitySelect', en ? 'Tree spacing' : 'Boomruimte');
     setLabelSpan('mainLayoutDensitySelectTop', en ? 'Tree spacing' : 'Boomruimte');
-    setLabelSpan('viewFitSelect', en ? 'Window fit' : 'Venstervulling', en ? 'How the active graph uses the available app window. MAX fills it.' : 'Hoe de actieve graph het beschikbare appvenster gebruikt. MAX vult het volledig.');
+    setLabelSpan('viewFitSelect', en ? 'Window fit' : 'Venstervulling', en ? 'How the tree uses the available app window. MAX fills it.' : 'Hoe de boom het beschikbare appvenster gebruikt. MAX vult het volledig.');
     setLabelSpan('mainViewFitSelectTop', en ? 'Window fit' : 'Venstervulling');
     setLabelSpan('freeSlotCountSelect', en ? 'Free tree rows' : 'Boom vrije rijen');
     setLabelSpan('lexProjectionColorSelect', en ? 'LEX color' : 'LEX-kleur');
@@ -11588,8 +12606,8 @@
     document.querySelectorAll('.lex-adverb-insert-field legend').forEach(node => { node.textContent = en ? 'LOG minors for adverbs' : 'LOG-minors voor bijwoorden'; });
     document.querySelectorAll('.lex-adverb-insert-field > .top-menu-choice-help').forEach(node => {
       node.textContent = en
-        ? 'Place each adverb first as a minor in a LOG interval. Every minor adds one fixed planned distance unit between its surrounding majors. This planning does not move a source node.'
-        : 'Plaats ieder bijwoord eerst als minor in een LOG-interval. Elke minor voegt één vaste geplande afstandseenheid toe tussen de omringende majors. Deze planning verplaatst geen bronknoop.';
+        ? 'Place each adverb first as a minor in a LOG interval. Every minor adds one fixed planned distance unit between its surrounding majors. LOG planning alone does not move a source word.'
+        : 'Plaats ieder bijwoord eerst als minor in een LOG-interval. Elke minor voegt één vaste geplande afstandseenheid toe tussen de omringende majors. LOG-planning alleen verplaatst geen bronwoord.';
     });
     setLabelSpan('lexRuleSelect', en ? 'Utterance-type rule' : 'Uitingtype-regel');
 
@@ -11703,8 +12721,8 @@
     setText('#closeConfigButton, #closeHelpButton', en ? '← Back to: Main' : '← Terug naar: Main');
     setText('#openConfigButton, #openConfigFromHelpButton', 'Config');
     setText('#openHelpButton, #openHelpFromConfigButton', en ? 'README' : 'LEESMIJ');
-    setText('.config-topbar h2', en ? 'Configuration by context' : 'Config per context');
-    setText('.config-topbar p', en ? 'General and each application are separate. Only the settings of the selected context are shown.' : 'Algemeen en iedere toepassing zijn gescheiden. Alleen de instellingen van de gekozen context worden getoond.');
+    setText('.config-topbar h2', en ? 'Configuration overview' : 'Config-overzicht');
+    setText('.config-topbar p', en ? 'First set the pre-config, then choose an application. Save still uses Yes · save config / No · restore last saved config.' : 'Stel eerst de Voorconfig in en kies daarna een toepassing. Opslaan blijft Ja · bewaar config / Nee · herstel laatst bewaarde config.');
     setText('.help-topbar .intro-kicker', en ? 'README' : 'LEESMIJ');
     setText('.help-topbar h2', en ? 'Project information' : 'Projectinformatie');
     setText('.help-topbar p', en ? 'README topics and the selected text are both visible immediately. Drag the divider to enlarge or reduce the text panel.' : 'LEESMIJ-onderwerpen en de geselecteerde tekst zijn direct zichtbaar. Sleep de scheidingslijn om het tekstscherm groter of kleiner te maken.');
@@ -12644,7 +13662,7 @@
     }
     // Deze collecties zijn volledige gebruikerskeuzes. Als de user-config de
     // sleutel bevat, vervangt die de standaardcollectie ook wanneer zij leeg is.
-    for (const key of ['readmeTopicEdits', 'readmeCarousels', 'sourceAxes', 'topMenusAbove', 'topMenuChoices']) {
+    for (const key of ['readmeTopicEdits', 'readmeCarousels', 'sourceAxes', 'topMenusAbove', 'topMenuChoices', 'anaphorCombinations', 'anaphorLexicalizations']) {
       if (Object.prototype.hasOwnProperty.call(override, key)) merged[key] = override[key];
     }
     return merged;
@@ -12777,6 +13795,10 @@
       showRelations: !!state.showRelations,
       showLabels: !!state.showLabels,
       placementMode: validPlacementMode(state.placementMode),
+      anaphorCombinationId: activeMultiOgnAnaphorDemo().id,
+      anaphorCombinations: normalizeAnaphorCombinationConfigs(state.anaphorCombinations),
+      anaphorLexicalizations: { ...state.anaphorLexicalizations },
+      anaphorLexicalization: activeAnaphorLexicalization().id,
       directPlacementGeneral: normalizeDirectPlacementGeneral(state.directPlacementGeneral),
       greedyGrowConfig: normalizeGreedyGrowConfig(state.greedyGrowConfig),
       randomPlacementConfig: normalizeRandomPlacementConfig(state.randomPlacementConfig),
@@ -12883,6 +13905,29 @@
       state.viewFitMode = 'max';
     }
     if (typeof snapshot.placementMode === 'string') state.placementMode = validPlacementMode(snapshot.placementMode);
+    try {
+      state.anaphorCombinations = Array.isArray(snapshot.anaphorCombinations)
+        ? normalizeAnaphorCombinationConfigs(snapshot.anaphorCombinations)
+        : normalizeAnaphorCombinationConfigs(DEFAULT_ANAPHOR_COMBINATION_CONFIGS);
+    } catch (_err) {
+      state.anaphorCombinations = normalizeAnaphorCombinationConfigs(DEFAULT_ANAPHOR_COMBINATION_CONFIGS);
+    }
+    const configuredCombinationIds = new Set(compiledAnaphorCombinations().map(combination => combination.id));
+    state.anaphorCombinationId = configuredCombinationIds.has(String(snapshot.anaphorCombinationId || ''))
+      ? String(snapshot.anaphorCombinationId)
+      : compiledAnaphorCombinations()[0].id;
+    state.anaphorLexicalizations = {};
+    if (snapshot.anaphorLexicalizations && typeof snapshot.anaphorLexicalizations === 'object' && !Array.isArray(snapshot.anaphorLexicalizations)) {
+      Object.entries(snapshot.anaphorLexicalizations).forEach(([combinationId, profileId]) => {
+        if (configuredCombinationIds.has(combinationId) && typeof profileId === 'string') {
+          state.anaphorLexicalizations[combinationId] = profileId;
+        }
+      });
+    }
+    const requestedAnaphorProfile = state.anaphorLexicalizations[state.anaphorCombinationId]
+      || (typeof snapshot.anaphorLexicalization === 'string' ? snapshot.anaphorLexicalization : configuredAnaphorLexicalizationId());
+    state.anaphorLexicalization = anaphorLexicalizationResolution(requestedAnaphorProfile).selected.id;
+    state.anaphorLexicalizations[state.anaphorCombinationId] = state.anaphorLexicalization;
     const legacyDirectMethod = snapshot.placementMode === 'random'
       ? snapshot.randomPlacementConfig
       : snapshot.greedyGrowConfig;
@@ -12911,9 +13956,7 @@
         ? snapshot.randomPlacementConfig
         : state.randomPlacementConfig
     );
-    state.directPlacementIterationBaseSeed = state.randomPlacementConfig.seed;
-    state.directPlacementIterationIndex = 0;
-    state.directPlacementSeed = randomSeedForIteration(state.directPlacementIterationBaseSeed, 0);
+    state.directPlacementSeed = state.randomPlacementConfig.seed;
     stopDirectPlacementPlayback();
     state.directPlacementState = null;
     if (typeof snapshot.lexProjectionColor === 'string') state.lexProjectionColor = snapshot.lexProjectionColor;
@@ -13017,6 +14060,7 @@
       const raw = localStorage.getItem(CONFIG_STORAGE_KEY);
       if (raw) ok = applyConfigSnapshot(JSON.parse(raw));
     } catch (_err) {}
+    await loadAnaphorLexicalizationProfiles();
     if (featureEnabled('adverbs')) {
       await loadLexiconUsageProfiles();
       await loadAdverbOptionsFromHtml();
@@ -13044,12 +14088,11 @@
     download(`opengraph-local-config-log-${VERSION}.txt`, lines.join('\n'), 'text/plain');
   }
 
-  function setAppScreen(screen = 'main', preferredConfigScope = '') {
+  function setAppScreen(screen = 'main') {
     const next = ['main', 'config', 'help'].includes(screen) ? screen : 'main';
     const isMain = next === 'main';
     const isConfig = next === 'config';
     const isHelp = next === 'help';
-    if (!isConfig) configScopeManual = false;
     if (!isMain) stopDirectPlacementPlayback();
     document.body.classList.toggle('main-screen-active', isMain);
     document.body.classList.toggle('config-screen-active', isConfig);
@@ -13059,16 +14102,7 @@
     els.openHelpButton?.setAttribute('aria-expanded', isHelp ? 'true' : 'false');
     els.closeHelpButton?.setAttribute('aria-expanded', isHelp ? 'true' : 'false');
     if (isConfig) {
-      configScopeManual = false;
       syncConfigMethodScope();
-      if (!configMethodScope && ['general', 'language-tree', 'direct-shared'].includes(preferredConfigScope)) {
-        activeConfigScope = preferredConfigScope;
-        const allowedTabs = configTabsForScope(preferredConfigScope);
-        if (!allowedTabs.includes(activeConfigTab)) activeConfigTab = allowedTabs[0];
-        lastFullConfigScope = activeConfigScope;
-        lastFullConfigTab = activeConfigTab;
-        syncConfigScopeUi();
-      }
       activateConfigTab(configMethodScope ? 'direct' : activeConfigTab);
     }
     window.setTimeout(() => {
@@ -13081,8 +14115,8 @@
     }, 0);
   }
 
-  function setConfigScreen(open, preferredConfigScope = '') {
-    setAppScreen(open ? 'config' : 'main', preferredConfigScope);
+  function setConfigScreen(open) {
+    setAppScreen(open ? 'config' : 'main');
   }
 
   function setHelpScreen(open) {
@@ -13291,32 +14325,16 @@
       });
     });
     els.exampleSelect?.addEventListener('change', event => {
-      state.example = EXAMPLES.find(e => e.id === event.target.value) || EXAMPLES[0];
-      state.documentMetadata = null;
-      recordParadata('select-example', { example: state.example.id });
-      resetForNewExample();
-      render();
+      selectSentenceChoice(event.target.value, { closeMenus: false });
     });
     els.desktopExampleSelect?.addEventListener('change', event => {
-      state.example = EXAMPLES.find(e => e.id === event.target.value) || EXAMPLES[0];
-      state.documentMetadata = null;
-      recordParadata('select-example', { example: state.example.id });
-      resetForNewExample();
-      render();
+      selectSentenceChoice(event.target.value, { closeMenus: false });
     });
     els.mobileExampleSelect?.addEventListener('change', event => {
-      state.example = EXAMPLES.find(e => e.id === event.target.value) || EXAMPLES[0];
-      state.documentMetadata = null;
-      recordParadata('select-example', { example: state.example.id });
-      resetForNewExample();
-      render();
+      selectSentenceChoice(event.target.value, { closeMenus: false });
     });
     els.mainExampleSelect?.addEventListener('change', event => {
-      state.example = EXAMPLES.find(e => e.id === event.target.value) || EXAMPLES[0];
-      state.documentMetadata = null;
-      recordParadata('select-example', { example: state.example.id });
-      resetForNewExample();
-      render();
+      selectSentenceChoice(event.target.value, { closeMenus: false });
     });
     const updateMainAdverb = event => {
       if (!featureEnabled('adverbs')) return;
@@ -13348,13 +14366,9 @@
       resetManualViewBox();
       render();
     });
-    els.openConfigButton?.addEventListener('click', () => {
-      if (els.mainExtraMenu) els.mainExtraMenu.open = false;
-      if (els.mainActionsMenu) els.mainActionsMenu.open = false;
-      setConfigScreen(true, validPlacementMode(state.placementMode));
-    });
+    els.openConfigButton?.addEventListener('click', () => { if (els.mainExtraMenu) els.mainExtraMenu.open = false; if (els.mainActionsMenu) els.mainActionsMenu.open = false; setConfigScreen(true); });
     els.closeConfigButton?.addEventListener('click', () => setConfigScreen(false));
-    els.openConfigFromHelpButton?.addEventListener('click', () => setConfigScreen(true, 'general'));
+    els.openConfigFromHelpButton?.addEventListener('click', () => setConfigScreen(true));
     els.openHelpButton?.addEventListener('click', () => { if (els.mainExtraMenu) els.mainExtraMenu.open = false; if (els.mainActionsMenu) els.mainActionsMenu.open = false; setHelpScreen(true); });
     els.openHelpFromConfigButton?.addEventListener('click', () => setHelpScreen(true));
     els.closeHelpButton?.addEventListener('click', () => setHelpScreen(false));
@@ -13681,6 +14695,7 @@
     await loadProjectConfigLayers();
     projectConfigStatus.browserLoaded = loadSavedConfigSnapshot();
     syncProjectConfigStatus();
+    await loadAnaphorLexicalizationProfiles();
     if (featureEnabled('adverbs')) await loadLexiconUsageProfiles();
     await loadExamplesFromHtml();
     refreshExamplesForFeatures();

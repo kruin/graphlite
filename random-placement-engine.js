@@ -16,54 +16,18 @@
 
   function normalizeSeed(value, fallback = 20260802) {
     const number = Number(value);
-    return Number.isFinite(number)
-      ? Math.max(1, Math.min(0xffffffff, Math.floor(number)))
-      : fallback;
+    return Number.isFinite(number) ? (Math.floor(number) >>> 0) || fallback : fallback;
   }
 
   const SPREADS = Object.freeze({
-    available: Object.freeze({ labelNl: 'Ergens in beschikbare ruimte', labelEn: 'Anywhere in available space', fullArea: true, factor: 0 }),
     compact: Object.freeze({ labelNl: 'Compact', labelEn: 'Compact', factor: 0 }),
     balanced: Object.freeze({ labelNl: 'Gebalanceerd', labelEn: 'Balanced', factor: 0.75 }),
     wide: Object.freeze({ labelNl: 'Ruim', labelEn: 'Wide', factor: 1.5 })
   });
 
-  const DISTRIBUTIONS = Object.freeze({
-    'uniform-v1.0': Object.freeze({
-      labelNl: 'Uniform v1.0',
-      labelEn: 'Uniform v1.0',
-      repeatMixture: 0
-    }),
-    'impure-repeat-v0.1': Object.freeze({
-      labelNl: 'Onzuiver uniform v0.1 · hit-herhaling',
-      labelEn: 'Impure uniform v0.1 · hit repetition',
-      repeatMixture: 0.2
-    })
-  });
-
   function normalizeSpread(value) {
-    const spread = String(value || 'available');
-    return Object.prototype.hasOwnProperty.call(SPREADS, spread) ? spread : 'available';
-  }
-
-  function normalizeDistribution(value) {
-    const distribution = String(value || 'uniform-v1.0');
-    return Object.prototype.hasOwnProperty.call(DISTRIBUTIONS, distribution)
-      ? distribution
-      : 'uniform-v1.0';
-  }
-
-  function normalizeHitCounts(value) {
-    const entries = value instanceof Map
-      ? [...value.entries()]
-      : Object.entries(value && typeof value === 'object' ? value : {});
-    const counts = new Map();
-    entries.forEach(([coordinate, count]) => {
-      const key = Number(coordinate);
-      const amount = Math.max(0, Math.floor(Number(count) || 0));
-      if (Number.isFinite(key) && amount) counts.set(key, amount);
-    });
-    return counts;
+    const spread = String(value || 'compact');
+    return Object.prototype.hasOwnProperty.call(SPREADS, spread) ? spread : 'compact';
   }
 
   function nextRandom(state) {
@@ -75,40 +39,12 @@
     return !state.usedX.has(candidate.x) && !state.usedY.has(candidate.y);
   }
 
-  function freeCoordinates(used, minimum, maximum) {
+  function freeCoordinates(used, radius) {
     const values = [];
-    for (let value = minimum; value <= maximum; value += 1) {
+    for (let value = -radius; value <= radius; value += 1) {
       if (!used.has(value)) values.push(value);
     }
     return values;
-  }
-
-  function weightedCoordinateChoice(state, coordinates, priorHits, repeatMixture) {
-    if (!coordinates.length) return null;
-    const mixture = Math.max(0, Math.min(1, Number(repeatMixture) || 0));
-    if (!mixture) {
-      return coordinates[Math.min(coordinates.length - 1, Math.floor(nextRandom(state) * coordinates.length))];
-    }
-    const reinforcedTotal = coordinates.reduce(
-      (total, coordinate) => total + 1 + (priorHits.get(coordinate) || 0),
-      0
-    );
-    const probabilities = coordinates.map(coordinate => (
-      ((1 - mixture) / coordinates.length)
-      + (mixture * (1 + (priorHits.get(coordinate) || 0)) / reinforcedTotal)
-    ));
-    let cursor = nextRandom(state);
-    for (let index = 0; index < coordinates.length; index += 1) {
-      cursor -= probabilities[index];
-      if (cursor <= 0 || index === coordinates.length - 1) return coordinates[index];
-    }
-    return coordinates[coordinates.length - 1];
-  }
-
-  function centeredLimits(size) {
-    const count = Math.max(1, Math.floor(Number(size) || 1));
-    const negative = Math.floor((count - 1) / 2);
-    return { minimum: -negative, maximum: count - negative - 1 };
   }
 
   function createState(options = {}) {
@@ -116,19 +52,6 @@
     const intervalMs = integerInRange(options.intervalMs, 650, 80, 10000);
     const seed = normalizeSeed(options.seed);
     const spread = normalizeSpread(options.spread);
-    const distribution = normalizeDistribution(options.distribution);
-    const distributionProfile = DISTRIBUTIONS[distribution];
-    const hasMaxColumns = options.maxColumns !== null && options.maxColumns !== undefined && Number.isFinite(Number(options.maxColumns));
-    const hasMaxRows = options.maxRows !== null && options.maxRows !== undefined && Number.isFinite(Number(options.maxRows));
-    const hasBoundedArea = hasMaxColumns || hasMaxRows;
-    const maxColumns = hasBoundedArea
-      ? integerInRange(options.maxColumns, targetCount, targetCount, 10000)
-      : null;
-    const maxRows = hasBoundedArea
-      ? integerInRange(options.maxRows, targetCount, targetCount, 10000)
-      : null;
-    const xLimits = maxColumns ? centeredLimits(maxColumns) : null;
-    const yLimits = maxRows ? centeredLimits(maxRows) : null;
     return {
       schema: 'ogn-random-placement-direct-state-v1',
       strategy: 'random',
@@ -136,20 +59,6 @@
       intervalMs,
       seed,
       spread,
-      distribution,
-      repeatMixture: distributionProfile.repeatMixture,
-      priorHitsX: normalizeHitCounts(options.priorHitsX),
-      priorHitsY: normalizeHitCounts(options.priorHitsY),
-      maxColumns,
-      maxRows,
-      placementArea: xLimits && yLimits ? {
-        minX: xLimits.minimum,
-        maxX: xLimits.maximum,
-        minY: yLimits.minimum,
-        maxY: yLimits.maximum,
-        columns: maxColumns,
-        rows: maxRows
-      } : null,
       randomState: seed,
       points: [{ index: 0, x: 0, y: 0, attempts: 1 }],
       events: [{ step: 0, type: 'write', x: 0, y: 0, attempts: 1 }],
@@ -162,9 +71,6 @@
 
   function findRandomCandidate(state) {
     const spread = SPREADS[normalizeSpread(state.spread)];
-    if (spread.fullArea && !state.placementArea) {
-      state.searchRadius = Math.max(state.searchRadius, Math.ceil((state.targetCount - 1) / 2));
-    }
     if (spread.factor > 0) {
       state.searchRadius = Math.max(
         state.searchRadius,
@@ -172,31 +78,10 @@
       );
     }
     while (state.searchRadius <= 10000) {
-      const area = state.placementArea;
-      const minX = area
-        ? (spread.fullArea ? area.minX : Math.max(area.minX, -state.searchRadius))
-        : -state.searchRadius;
-      const maxX = area
-        ? (spread.fullArea ? area.maxX : Math.min(area.maxX, state.searchRadius))
-        : state.searchRadius;
-      const minY = area
-        ? (spread.fullArea ? area.minY : Math.max(area.minY, -state.searchRadius))
-        : -state.searchRadius;
-      const maxY = area
-        ? (spread.fullArea ? area.maxY : Math.min(area.maxY, state.searchRadius))
-        : state.searchRadius;
-      const freeX = freeCoordinates(state.usedX, minX, maxX);
-      const freeY = freeCoordinates(state.usedY, minY, maxY);
+      const freeX = freeCoordinates(state.usedX, state.searchRadius);
+      const freeY = freeCoordinates(state.usedY, state.searchRadius);
       const candidateCount = freeX.length * freeY.length;
       if (candidateCount) {
-        if (state.repeatMixture > 0) {
-          const candidate = {
-            x: weightedCoordinateChoice(state, freeX, state.priorHitsX, state.repeatMixture),
-            y: weightedCoordinateChoice(state, freeY, state.priorHitsY, state.repeatMixture)
-          };
-          if (!positionIsFree(state, candidate)) throw new Error('Interne onzuiver-uniforme kandidaat is niet vrij.');
-          return { candidate, attempts: candidateCount };
-        }
         // candidatePool used x-major/y-minor order. Selecting from the Cartesian
         // product preserves that exact seeded sequence without allocating r²
         // candidate objects; repeated-run analysis therefore stays inexpensive.
@@ -208,12 +93,9 @@
         if (!positionIsFree(state, candidate)) throw new Error('Interne Random-kandidaat is niet vrij.');
         return { candidate, attempts: candidateCount };
       }
-      if (area && minX === area.minX && maxX === area.maxX && minY === area.minY && maxY === area.maxY) {
-        break;
-      }
       state.searchRadius *= 2;
     }
-    throw new Error('De begrensde random zoekruimte leverde geen vrije positie op.');
+    throw new Error('De random zoekruimte leverde geen vrije positie op.');
   }
 
   function placeNext(state) {
@@ -288,13 +170,6 @@
       interval_ms: state.intervalMs,
       seed: state.seed,
       spread: state.spread,
-      distribution: state.distribution,
-      repeat_mixture: state.repeatMixture,
-      prior_hit_total_x: [...state.priorHitsX.values()].reduce((total, count) => total + count, 0),
-      prior_hit_total_y: [...state.priorHitsY.values()].reduce((total, count) => total + count, 0),
-      max_columns: state.maxColumns,
-      max_rows: state.maxRows,
-      placement_area: state.placementArea ? { ...state.placementArea } : null,
       random_state: state.randomState,
       future_plan_stored: false,
       points: state.points.map(candidate => ({ ...candidate })),
@@ -305,11 +180,9 @@
   }
 
   return Object.freeze({
-    DISTRIBUTIONS,
     SPREADS,
     bounds,
     createState,
-    normalizeDistribution,
     normalizeSpread,
     placeNext,
     snapshot,

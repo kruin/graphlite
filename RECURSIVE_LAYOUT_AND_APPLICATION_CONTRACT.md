@@ -213,7 +213,8 @@ bijvoorbeeld `S-O`. De resolver:
 3. voegt de minor alleen in dat interval in;
 4. berekent de nieuwe slotvolgorde;
 5. vergroot alleen de relevante afstand;
-6. projecteert die LOG-volgorde naar neutrale LEX-rijen.
+6. gebruikt die LOG-volgorde voor LEX-planning, zonder bronwoorden te
+   verplaatsen.
 
 Een minor verlaagt geen host-subtree en verandert geen Syntax- of
 Functional-relatie. Markering of vooropplaatsing volgt pas daarna als

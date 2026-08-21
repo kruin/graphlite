@@ -36,6 +36,1191 @@
     "showRelations": true,
     "showLabels": true,
     "placementMode": "language-tree",
+    "anaphorCombinationId": "ik-zie-man-hij-draagt-hoed",
+    "anaphorCombinations": [
+      {
+        "schema": "ogn-anaphor-combination-v1",
+        "id": "ik-zie-man-hij-draagt-hoed",
+        "label": "Anafoor · Ik zie een man → hij draagt een hoed",
+        "labelEn": "Anaphor · Ik zie een man → hij draagt een hoed",
+        "title": "Ik zie een man. Man draagt een hoed.",
+        "surfacePredicateObject": "draagt een hoed.",
+        "surfaceTemplate": "{ANAPHOR} draagt een hoed.",
+        "interpretationId": "man-hij",
+        "gapRows": 3,
+        "sentences": [
+          {
+            "id": "S1",
+            "order": 1,
+            "text": "Ik zie een man.",
+            "tree": {
+              "id": "s1-s",
+              "label": "S",
+              "cat": "S",
+              "kind": "cat",
+              "children": [
+                {
+                  "id": "s1-ik",
+                  "label": "IK",
+                  "cat": "PRON",
+                  "role": "subject",
+                  "source": "s1-ik",
+                  "kind": "leaf",
+                  "children": []
+                },
+                {
+                  "id": "s1-vp",
+                  "label": "VP",
+                  "cat": "VP",
+                  "kind": "cat",
+                  "children": [
+                    {
+                      "id": "s1-man",
+                      "label": "MAN",
+                      "cat": "N",
+                      "role": "object",
+                      "source": "s1-man",
+                      "lexeme": "man",
+                      "kind": "leaf",
+                      "children": []
+                    },
+                    {
+                      "id": "s1-zie",
+                      "label": "ZIE",
+                      "cat": "V",
+                      "role": "predicate",
+                      "source": "s1-zie",
+                      "kind": "leaf",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            "lex": [
+              {
+                "nodeId": "s1-ik",
+                "label": "IK"
+              },
+              {
+                "nodeId": "s1-zie",
+                "label": "ZIE"
+              },
+              {
+                "nodeId": "s1-man",
+                "label": "MAN"
+              }
+            ],
+            "clauseType": "main",
+            "finiteVerbPlacement": "v2",
+            "lexInsertions": []
+          },
+          {
+            "id": "S2",
+            "order": 2,
+            "text": "Man draagt een hoed.",
+            "tree": {
+              "id": "s2-s",
+              "label": "S",
+              "cat": "S",
+              "kind": "cat",
+              "children": [
+                {
+                  "id": "s2-man",
+                  "label": "MAN",
+                  "cat": "N",
+                  "role": "subject",
+                  "source": "s2-man",
+                  "lexeme": "man",
+                  "kind": "leaf",
+                  "children": []
+                },
+                {
+                  "id": "s2-vp",
+                  "label": "VP",
+                  "cat": "VP",
+                  "kind": "cat",
+                  "children": [
+                    {
+                      "id": "s2-hoed",
+                      "label": "HOED",
+                      "cat": "N",
+                      "role": "object",
+                      "source": "s2-hoed",
+                      "kind": "leaf",
+                      "children": []
+                    },
+                    {
+                      "id": "s2-draagt",
+                      "label": "DRAAGT",
+                      "cat": "V",
+                      "role": "predicate",
+                      "source": "s2-draagt",
+                      "kind": "leaf",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            "lex": [
+              {
+                "nodeId": "s2-man",
+                "label": "MAN",
+                "projection": "anaphor-lexicalization"
+              },
+              {
+                "nodeId": "s2-draagt",
+                "label": "DRAAGT"
+              },
+              {
+                "nodeId": "s2-hoed",
+                "label": "HOED"
+              }
+            ],
+            "clauseType": "main",
+            "finiteVerbPlacement": "v2",
+            "lexInsertions": []
+          }
+        ],
+        "relations": [
+          {
+            "schema": "ogn-referent-anaphor-v1",
+            "id": "man-hij",
+            "type": "coreference",
+            "status": "intended-reading",
+            "dependencyDirection": "referent-to-anaphor",
+            "referent": {
+              "unitId": "S1",
+              "nodeId": "s1-man",
+              "lexeme": "man",
+              "sourceLabel": "MAN"
+            },
+            "anaphor": {
+              "unitId": "S2",
+              "nodeId": "s2-man",
+              "sourceLabel": "MAN"
+            },
+            "lexicalization": {
+              "axis": "LEX",
+              "profile": "hij"
+            },
+            "alignment": {
+              "type": "shared-column",
+              "required": true
+            },
+            "line": {
+              "shape": "straight",
+              "direction": "none"
+            }
+          }
+        ],
+        "layoutResolution": {
+          "schema": "ogn-joint-flip-constraints-v1",
+          "mode": "joint",
+          "variables": [
+            {
+              "id": "branch-flips",
+              "type": "branch-flip",
+              "units": [
+                "S1",
+                "S2"
+              ],
+              "candidates": "declared-flippable-branches",
+              "operation": "reverse-child-subtrees"
+            },
+            {
+              "id": "s2-shift",
+              "type": "rigid-shift",
+              "unitId": "S2",
+              "axes": [
+                "x",
+                "y"
+              ]
+            }
+          ],
+          "constraints": [
+            {
+              "id": "required-alignments",
+              "type": "relation-alignment",
+              "source": "relations[*].alignment",
+              "requiredOnly": true
+            },
+            {
+              "id": "unit-grid-invariant",
+              "type": "unique-row-and-column",
+              "scope": "per-unit"
+            },
+            {
+              "id": "preserve-units",
+              "type": "rigid-after-layout",
+              "units": [
+                "S1",
+                "S2"
+              ]
+            }
+          ],
+          "objective": [
+            "satisfy-required-relations",
+            "minimize-flip-count",
+            "minimize-rigid-shift"
+          ],
+          "currentSupport": {
+            "status": "multiple-relation-rendering-context-pro-memorie",
+            "active": [
+              "existing-layout",
+              "rigid-shift-s2",
+              "check-all-relation-alignments",
+              "render-satisfied-coreferences"
+            ],
+            "deferred": [
+              "joint-branch-flip-search"
+            ]
+          },
+          "firstFixture": {
+            "id": "perfectum-vcluster-order",
+            "nodeId": "vp-perfectum",
+            "alternatives": [
+              "aux-vdw",
+              "vdw-aux"
+            ]
+          },
+          "onConflict": "report-no-forced-node-move"
+        }
+      },
+      {
+        "schema": "ogn-anaphor-combination-v1",
+        "id": "ik-zag-man-gisteren-vandaag-was-hij-er-niet-meer",
+        "label": "Anafoor · Ik zag de man gisteren → vandaag was hij er niet meer",
+        "labelEn": "Anaphor · Ik zag de man gisteren → vandaag was hij er niet meer",
+        "title": "Ik zag de man gisteren. Vandaag was man er niet meer.",
+        "surfacePredicateObject": "was er niet meer.",
+        "surfaceTemplate": "Vandaag was {ANAPHOR} er niet meer.",
+        "interpretationId": "man-hij",
+        "provenance": {
+          "kind": "user-supplied",
+          "catalogId": "user-man-temporal"
+        },
+        "gapRows": 3,
+        "sentences": [
+          {
+            "id": "S1",
+            "order": 1,
+            "text": "Ik zag de man gisteren.",
+            "tree": {
+              "id": "tm-s1-s",
+              "label": "S",
+              "cat": "S",
+              "kind": "cat",
+              "children": [
+                {
+                  "id": "tm-s1-ik",
+                  "label": "IK",
+                  "cat": "PRON",
+                  "role": "subject",
+                  "source": "tm-s1-ik",
+                  "kind": "leaf",
+                  "children": []
+                },
+                {
+                  "id": "tm-s1-vp",
+                  "label": "VP",
+                  "cat": "VP",
+                  "kind": "cat",
+                  "children": [
+                    {
+                      "id": "tm-s1-man",
+                      "label": "MAN",
+                      "cat": "N",
+                      "role": "object",
+                      "source": "tm-s1-man",
+                      "lexeme": "man",
+                      "kind": "leaf",
+                      "children": []
+                    },
+                    {
+                      "id": "tm-s1-zag",
+                      "label": "ZAG",
+                      "cat": "V",
+                      "role": "predicate",
+                      "source": "tm-s1-zag",
+                      "kind": "leaf",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            "lexInsertions": [
+              {
+                "schema": "ogn-lexical-insertion-v1",
+                "id": "lex-s1-gisteren",
+                "label": "GISTEREN",
+                "axis": "LEX",
+                "origin": "LEX",
+                "category": "ADV",
+                "role": "time",
+                "placement": {
+                  "position": "after",
+                  "anchorNodeId": "tm-s1-man"
+                },
+                "layer": "Context"
+              }
+            ],
+            "lex": [
+              {
+                "nodeId": "tm-s1-ik",
+                "label": "IK"
+              },
+              {
+                "nodeId": "tm-s1-zag",
+                "label": "ZAG"
+              },
+              {
+                "nodeId": "tm-s1-man",
+                "label": "MAN"
+              },
+              {
+                "insertionId": "lex-s1-gisteren",
+                "label": "GISTEREN",
+                "projection": "lexical-insertion"
+              }
+            ],
+            "clauseType": "main",
+            "finiteVerbPlacement": "v2"
+          },
+          {
+            "id": "S2",
+            "order": 2,
+            "text": "Vandaag was man er niet meer.",
+            "tree": {
+              "id": "tm-s2-s",
+              "label": "S",
+              "cat": "S",
+              "kind": "cat",
+              "children": [
+                {
+                  "id": "tm-s2-man",
+                  "label": "MAN",
+                  "cat": "N",
+                  "role": "subject",
+                  "source": "tm-s2-man",
+                  "lexeme": "man",
+                  "kind": "leaf",
+                  "children": []
+                },
+                {
+                  "id": "tm-s2-vp",
+                  "label": "VP",
+                  "cat": "VP",
+                  "kind": "cat",
+                  "children": [
+                    {
+                      "id": "tm-s2-was",
+                      "label": "WAS",
+                      "cat": "V",
+                      "role": "predicate",
+                      "source": "tm-s2-was",
+                      "kind": "leaf",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            "lexInsertions": [
+              {
+                "schema": "ogn-lexical-insertion-v1",
+                "id": "lex-s2-vandaag",
+                "label": "VANDAAG",
+                "axis": "LEX",
+                "origin": "LEX",
+                "category": "ADV",
+                "role": "time",
+                "placement": {
+                  "position": "before",
+                  "anchorNodeId": "tm-s2-man",
+                  "fronted": true
+                },
+                "layer": "Context"
+              },
+              {
+                "schema": "ogn-lexical-insertion-v1",
+                "id": "lex-s2-er",
+                "label": "ER",
+                "axis": "LEX",
+                "origin": "LEX",
+                "category": "ADV",
+                "role": "place",
+                "placement": {
+                  "position": "after",
+                  "anchorNodeId": "tm-s2-man"
+                },
+                "layer": "Context"
+              },
+              {
+                "schema": "ogn-lexical-insertion-v1",
+                "id": "lex-s2-niet-meer",
+                "label": "NIET MEER",
+                "axis": "LEX",
+                "origin": "LEX",
+                "category": "ADV",
+                "role": "state",
+                "placement": {
+                  "position": "after",
+                  "anchorNodeId": "tm-s2-man"
+                },
+                "layer": "Context"
+              }
+            ],
+            "lex": [
+              {
+                "insertionId": "lex-s2-vandaag",
+                "label": "VANDAAG",
+                "projection": "lexical-insertion"
+              },
+              {
+                "nodeId": "tm-s2-was",
+                "label": "WAS"
+              },
+              {
+                "nodeId": "tm-s2-man",
+                "label": "MAN",
+                "projection": "anaphor-lexicalization"
+              },
+              {
+                "insertionId": "lex-s2-er",
+                "label": "ER",
+                "projection": "lexical-insertion"
+              },
+              {
+                "insertionId": "lex-s2-niet-meer",
+                "label": "NIET MEER",
+                "projection": "lexical-insertion"
+              }
+            ],
+            "clauseType": "main",
+            "finiteVerbPlacement": "v2"
+          }
+        ],
+        "relations": [
+          {
+            "schema": "ogn-referent-anaphor-v1",
+            "id": "man-hij",
+            "type": "coreference",
+            "status": "intended-reading",
+            "dependencyDirection": "referent-to-anaphor",
+            "referent": {
+              "unitId": "S1",
+              "nodeId": "tm-s1-man",
+              "lexeme": "man",
+              "sourceLabel": "MAN"
+            },
+            "anaphor": {
+              "unitId": "S2",
+              "nodeId": "tm-s2-man",
+              "sourceLabel": "MAN"
+            },
+            "lexicalization": {
+              "axis": "LEX",
+              "profile": "hij"
+            },
+            "alignment": {
+              "type": "shared-column",
+              "required": true
+            },
+            "line": {
+              "shape": "straight",
+              "direction": "none"
+            }
+          }
+        ],
+        "context": {
+          "notation": "Open Graph Notation",
+          "representation": "minimized-tree",
+          "status": "p.m."
+        },
+        "layoutResolution": {
+          "schema": "ogn-joint-flip-constraints-v1",
+          "mode": "joint",
+          "variables": [
+            {
+              "id": "branch-flips",
+              "type": "branch-flip",
+              "units": [
+                "S1",
+                "S2"
+              ],
+              "candidates": "declared-flippable-branches",
+              "operation": "reverse-child-subtrees"
+            },
+            {
+              "id": "s2-shift",
+              "type": "rigid-shift",
+              "unitId": "S2",
+              "axes": [
+                "x",
+                "y"
+              ]
+            }
+          ],
+          "constraints": [
+            {
+              "id": "required-alignments",
+              "type": "relation-alignment",
+              "source": "relations[*].alignment",
+              "requiredOnly": true
+            },
+            {
+              "id": "unit-grid-invariant",
+              "type": "unique-row-and-column",
+              "scope": "per-unit"
+            },
+            {
+              "id": "preserve-units",
+              "type": "rigid-after-layout",
+              "units": [
+                "S1",
+                "S2"
+              ]
+            }
+          ],
+          "objective": [
+            "satisfy-required-relations",
+            "minimize-flip-count",
+            "minimize-rigid-shift"
+          ],
+          "currentSupport": {
+            "status": "multiple-relation-rendering-context-pro-memorie",
+            "active": [
+              "existing-layout",
+              "rigid-shift-s2",
+              "check-all-relation-alignments",
+              "render-satisfied-coreferences"
+            ],
+            "deferred": [
+              "joint-branch-flip-search"
+            ]
+          },
+          "firstFixture": {
+            "id": "perfectum-vcluster-order",
+            "nodeId": "vp-perfectum",
+            "alternatives": [
+              "aux-vdw",
+              "vdw-aux"
+            ]
+          },
+          "onConflict": "report-no-forced-node-move"
+        }
+      },
+      {
+        "schema": "ogn-anaphor-combination-v1",
+        "id": "boer-bezit-ezel-hij-slaat-hem",
+        "label": "Anafoor · Een boer bezit een ezel → hij slaat hem",
+        "labelEn": "Anaphor · Een boer bezit een ezel → hij slaat hem",
+        "title": "Een boer bezit een ezel. Boer slaat ezel.",
+        "surfacePredicateObject": "slaat hem.",
+        "surfaceTemplate": "{ANAPHOR} slaat {ANAPHOR:ezel-hem}.",
+        "interpretationId": "farmer-donkey-resolved",
+        "provenance": {
+          "kind": "literature-normalization",
+          "catalogId": "drt-farmer-donkey",
+          "url": "https://www.coli.uni-saarland.de/courses/semantics-22/lectures/ST08-DRT.pdf"
+        },
+        "gapRows": 3,
+        "sentences": [
+          {
+            "id": "S1",
+            "order": 1,
+            "text": "Een boer bezit een ezel.",
+            "tree": {
+              "id": "fd-s1-s",
+              "label": "S",
+              "cat": "S",
+              "kind": "cat",
+              "children": [
+                {
+                  "id": "fd-s1-boer",
+                  "label": "BOER",
+                  "cat": "N",
+                  "role": "subject",
+                  "source": "fd-s1-boer",
+                  "lexeme": "boer",
+                  "kind": "leaf",
+                  "children": []
+                },
+                {
+                  "id": "fd-s1-vp",
+                  "label": "VP",
+                  "cat": "VP",
+                  "kind": "cat",
+                  "children": [
+                    {
+                      "id": "fd-s1-ezel",
+                      "label": "EZEL",
+                      "cat": "N",
+                      "role": "object",
+                      "source": "fd-s1-ezel",
+                      "lexeme": "ezel",
+                      "kind": "leaf",
+                      "children": []
+                    },
+                    {
+                      "id": "fd-s1-bezit",
+                      "label": "BEZIT",
+                      "cat": "V",
+                      "role": "predicate",
+                      "source": "fd-s1-bezit",
+                      "kind": "leaf",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            "lex": [
+              {
+                "nodeId": "fd-s1-boer",
+                "label": "BOER"
+              },
+              {
+                "nodeId": "fd-s1-bezit",
+                "label": "BEZIT"
+              },
+              {
+                "nodeId": "fd-s1-ezel",
+                "label": "EZEL"
+              }
+            ],
+            "clauseType": "main",
+            "finiteVerbPlacement": "v2",
+            "lexInsertions": []
+          },
+          {
+            "id": "S2",
+            "order": 2,
+            "text": "Boer slaat ezel.",
+            "tree": {
+              "id": "fd-s2-s",
+              "label": "S",
+              "cat": "S",
+              "kind": "cat",
+              "children": [
+                {
+                  "id": "fd-s2-boer",
+                  "label": "BOER",
+                  "cat": "N",
+                  "role": "subject",
+                  "source": "fd-s2-boer",
+                  "lexeme": "boer",
+                  "kind": "leaf",
+                  "children": []
+                },
+                {
+                  "id": "fd-s2-vp",
+                  "label": "VP",
+                  "cat": "VP",
+                  "kind": "cat",
+                  "children": [
+                    {
+                      "id": "fd-s2-ezel",
+                      "label": "EZEL",
+                      "cat": "N",
+                      "role": "object",
+                      "source": "fd-s2-ezel",
+                      "lexeme": "ezel",
+                      "kind": "leaf",
+                      "children": []
+                    },
+                    {
+                      "id": "fd-s2-slaat",
+                      "label": "SLAAT",
+                      "cat": "V",
+                      "role": "predicate",
+                      "source": "fd-s2-slaat",
+                      "kind": "leaf",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            "lex": [
+              {
+                "nodeId": "fd-s2-boer",
+                "label": "BOER",
+                "projection": "anaphor-lexicalization"
+              },
+              {
+                "nodeId": "fd-s2-slaat",
+                "label": "SLAAT"
+              },
+              {
+                "nodeId": "fd-s2-ezel",
+                "label": "EZEL",
+                "projection": "anaphor-lexicalization"
+              }
+            ],
+            "clauseType": "main",
+            "finiteVerbPlacement": "v2",
+            "lexInsertions": []
+          }
+        ],
+        "relations": [
+          {
+            "schema": "ogn-referent-anaphor-v1",
+            "id": "boer-hij",
+            "type": "coreference",
+            "status": "intended-reading",
+            "dependencyDirection": "referent-to-anaphor",
+            "referent": {
+              "unitId": "S1",
+              "nodeId": "fd-s1-boer",
+              "lexeme": "boer",
+              "sourceLabel": "BOER"
+            },
+            "anaphor": {
+              "unitId": "S2",
+              "nodeId": "fd-s2-boer",
+              "sourceLabel": "BOER"
+            },
+            "lexicalization": {
+              "axis": "LEX",
+              "profile": "hij"
+            },
+            "alignment": {
+              "type": "shared-column",
+              "required": true
+            },
+            "line": {
+              "shape": "straight",
+              "direction": "none"
+            }
+          },
+          {
+            "schema": "ogn-referent-anaphor-v1",
+            "id": "ezel-hem",
+            "type": "coreference",
+            "status": "intended-reading",
+            "dependencyDirection": "referent-to-anaphor",
+            "referent": {
+              "unitId": "S1",
+              "nodeId": "fd-s1-ezel",
+              "lexeme": "ezel",
+              "sourceLabel": "EZEL"
+            },
+            "anaphor": {
+              "unitId": "S2",
+              "nodeId": "fd-s2-ezel",
+              "sourceLabel": "EZEL"
+            },
+            "lexicalization": {
+              "axis": "LEX",
+              "profile": "hem"
+            },
+            "alignment": {
+              "type": "shared-column",
+              "required": true
+            },
+            "line": {
+              "shape": "straight",
+              "direction": "none"
+            }
+          }
+        ],
+        "layoutResolution": {
+          "schema": "ogn-joint-flip-constraints-v1",
+          "mode": "joint",
+          "variables": [
+            {
+              "id": "branch-flips",
+              "type": "branch-flip",
+              "units": [
+                "S1",
+                "S2"
+              ],
+              "candidates": "declared-flippable-branches",
+              "operation": "reverse-child-subtrees"
+            },
+            {
+              "id": "s2-shift",
+              "type": "rigid-shift",
+              "unitId": "S2",
+              "axes": [
+                "x",
+                "y"
+              ]
+            }
+          ],
+          "constraints": [
+            {
+              "id": "required-alignments",
+              "type": "relation-alignment",
+              "source": "relations[*].alignment",
+              "requiredOnly": true
+            },
+            {
+              "id": "unit-grid-invariant",
+              "type": "unique-row-and-column",
+              "scope": "per-unit"
+            },
+            {
+              "id": "preserve-units",
+              "type": "rigid-after-layout",
+              "units": [
+                "S1",
+                "S2"
+              ]
+            }
+          ],
+          "objective": [
+            "satisfy-required-relations",
+            "minimize-flip-count",
+            "minimize-rigid-shift"
+          ],
+          "currentSupport": {
+            "status": "multiple-relation-rendering-context-pro-memorie",
+            "active": [
+              "existing-layout",
+              "rigid-shift-s2",
+              "check-all-relation-alignments",
+              "render-satisfied-coreferences"
+            ],
+            "deferred": [
+              "joint-branch-flip-search"
+            ]
+          },
+          "firstFixture": {
+            "id": "perfectum-vcluster-order",
+            "nodeId": "vp-perfectum",
+            "alternatives": [
+              "aux-vdw",
+              "vdw-aux"
+            ]
+          },
+          "onConflict": "report-no-forced-node-move"
+        }
+      },
+      {
+        "schema": "ogn-anaphor-combination-v1",
+        "id": "boer-slaat-ezel-omdat-hij-hem-bezit",
+        "label": "Anafoor · De boer slaat de ezel omdat hij hem bezit",
+        "labelEn": "Anaphor · De boer slaat de ezel omdat hij hem bezit",
+        "title": "De boer slaat de ezel omdat hij hem bezit.",
+        "surfacePredicateObject": "hem bezit.",
+        "surfaceTemplate": "omdat {ANAPHOR} {ANAPHOR:ezel-hem} bezit.",
+        "interpretationId": "farmer-donkey-causal",
+        "provenance": {
+          "kind": "user-supplied",
+          "catalogId": "user-farmer-donkey-because"
+        },
+        "gapRows": 3,
+        "sentences": [
+          {
+            "id": "S1",
+            "order": 1,
+            "text": "De boer slaat de ezel",
+            "clauseType": "main",
+            "finiteVerbPlacement": "v2",
+            "tree": {
+              "id": "bc-s1-s",
+              "label": "S",
+              "cat": "S",
+              "kind": "cat",
+              "children": [
+                {
+                  "id": "bc-s1-boer",
+                  "label": "BOER",
+                  "cat": "N",
+                  "role": "subject",
+                  "source": "bc-s1-boer",
+                  "lexeme": "boer",
+                  "kind": "leaf",
+                  "children": []
+                },
+                {
+                  "id": "bc-s1-vp",
+                  "label": "VP",
+                  "cat": "VP",
+                  "kind": "cat",
+                  "children": [
+                    {
+                      "id": "bc-s1-ezel",
+                      "label": "EZEL",
+                      "cat": "N",
+                      "role": "object",
+                      "source": "bc-s1-ezel",
+                      "lexeme": "ezel",
+                      "kind": "leaf",
+                      "children": []
+                    },
+                    {
+                      "id": "bc-s1-slaat",
+                      "label": "SLAAT",
+                      "cat": "V",
+                      "role": "predicate",
+                      "source": "bc-s1-slaat",
+                      "kind": "leaf",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            "lex": [
+              {
+                "nodeId": "bc-s1-boer",
+                "label": "BOER"
+              },
+              {
+                "nodeId": "bc-s1-slaat",
+                "label": "SLAAT"
+              },
+              {
+                "nodeId": "bc-s1-ezel",
+                "label": "EZEL"
+              }
+            ],
+            "lexInsertions": []
+          },
+          {
+            "id": "S2",
+            "order": 2,
+            "text": "omdat boer ezel bezit.",
+            "clauseType": "subordinate",
+            "finiteVerbPlacement": "final",
+            "tree": {
+              "id": "bc-s2-s",
+              "label": "S",
+              "cat": "S",
+              "kind": "cat",
+              "children": [
+                {
+                  "id": "bc-s2-boer",
+                  "label": "BOER",
+                  "cat": "N",
+                  "role": "subject",
+                  "source": "bc-s2-boer",
+                  "lexeme": "boer",
+                  "kind": "leaf",
+                  "children": []
+                },
+                {
+                  "id": "bc-s2-vp",
+                  "label": "VP",
+                  "cat": "VP",
+                  "kind": "cat",
+                  "children": [
+                    {
+                      "id": "bc-s2-ezel",
+                      "label": "EZEL",
+                      "cat": "N",
+                      "role": "object",
+                      "source": "bc-s2-ezel",
+                      "lexeme": "ezel",
+                      "kind": "leaf",
+                      "children": []
+                    },
+                    {
+                      "id": "bc-s2-bezit",
+                      "label": "BEZIT",
+                      "cat": "V",
+                      "role": "predicate",
+                      "source": "bc-s2-bezit",
+                      "kind": "leaf",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            "lexInsertions": [
+              {
+                "schema": "ogn-lexical-insertion-v1",
+                "id": "lex-s2-omdat",
+                "label": "OMDAT",
+                "axis": "LEX",
+                "origin": "LEX",
+                "category": "COMP",
+                "role": "complementizer",
+                "placement": {
+                  "position": "before",
+                  "anchorNodeId": "bc-s2-boer",
+                  "slot": 0
+                },
+                "layer": "Context"
+              }
+            ],
+            "lex": [
+              {
+                "insertionId": "lex-s2-omdat",
+                "label": "OMDAT",
+                "projection": "lexical-insertion"
+              },
+              {
+                "nodeId": "bc-s2-boer",
+                "label": "BOER",
+                "projection": "anaphor-lexicalization"
+              },
+              {
+                "nodeId": "bc-s2-ezel",
+                "label": "EZEL",
+                "projection": "anaphor-lexicalization"
+              },
+              {
+                "nodeId": "bc-s2-bezit",
+                "label": "BEZIT"
+              }
+            ]
+          }
+        ],
+        "relations": [
+          {
+            "schema": "ogn-referent-anaphor-v1",
+            "id": "boer-hij",
+            "type": "coreference",
+            "status": "intended-reading",
+            "dependencyDirection": "referent-to-anaphor",
+            "referent": {
+              "unitId": "S1",
+              "nodeId": "bc-s1-boer",
+              "lexeme": "boer",
+              "sourceLabel": "BOER"
+            },
+            "anaphor": {
+              "unitId": "S2",
+              "nodeId": "bc-s2-boer",
+              "sourceLabel": "BOER"
+            },
+            "lexicalization": {
+              "axis": "LEX",
+              "profile": "hij"
+            },
+            "alignment": {
+              "type": "shared-column",
+              "required": true
+            },
+            "line": {
+              "shape": "straight",
+              "direction": "none"
+            }
+          },
+          {
+            "schema": "ogn-referent-anaphor-v1",
+            "id": "ezel-hem",
+            "type": "coreference",
+            "status": "intended-reading",
+            "dependencyDirection": "referent-to-anaphor",
+            "referent": {
+              "unitId": "S1",
+              "nodeId": "bc-s1-ezel",
+              "lexeme": "ezel",
+              "sourceLabel": "EZEL"
+            },
+            "anaphor": {
+              "unitId": "S2",
+              "nodeId": "bc-s2-ezel",
+              "sourceLabel": "EZEL"
+            },
+            "lexicalization": {
+              "axis": "LEX",
+              "profile": "hem"
+            },
+            "alignment": {
+              "type": "shared-column",
+              "required": true
+            },
+            "line": {
+              "shape": "straight",
+              "direction": "none"
+            }
+          }
+        ],
+        "context": {
+          "notation": "Open Graph Notation",
+          "representation": "minimized-tree",
+          "status": "p.m."
+        },
+        "layoutResolution": {
+          "schema": "ogn-joint-flip-constraints-v1",
+          "mode": "joint",
+          "variables": [
+            {
+              "id": "branch-flips",
+              "type": "branch-flip",
+              "units": [
+                "S1",
+                "S2"
+              ],
+              "candidates": "declared-flippable-branches",
+              "operation": "reverse-child-subtrees"
+            },
+            {
+              "id": "s2-shift",
+              "type": "rigid-shift",
+              "unitId": "S2",
+              "axes": [
+                "x",
+                "y"
+              ]
+            }
+          ],
+          "constraints": [
+            {
+              "id": "required-alignments",
+              "type": "relation-alignment",
+              "source": "relations[*].alignment",
+              "requiredOnly": true
+            },
+            {
+              "id": "unit-grid-invariant",
+              "type": "unique-row-and-column",
+              "scope": "per-unit"
+            },
+            {
+              "id": "preserve-units",
+              "type": "rigid-after-layout",
+              "units": [
+                "S1",
+                "S2"
+              ]
+            }
+          ],
+          "objective": [
+            "satisfy-required-relations",
+            "minimize-flip-count",
+            "minimize-rigid-shift"
+          ],
+          "currentSupport": {
+            "status": "multiple-relation-rendering-context-pro-memorie",
+            "active": [
+              "existing-layout",
+              "rigid-shift-s2",
+              "check-all-relation-alignments",
+              "render-satisfied-coreferences"
+            ],
+            "deferred": [
+              "joint-branch-flip-search"
+            ]
+          },
+          "firstFixture": {
+            "id": "perfectum-vcluster-order",
+            "nodeId": "vp-perfectum",
+            "alternatives": [
+              "aux-vdw",
+              "vdw-aux"
+            ]
+          },
+          "onConflict": "report-no-forced-node-move"
+        }
+      }
+    ],
+    "anaphorLexicalizations": {
+      "ik-zie-man-hij-draagt-hoed": "hij",
+      "ik-zag-man-gisteren-vandaag-was-hij-er-niet-meer": "hij",
+      "boer-bezit-ezel-hij-slaat-hem": "hij"
+    },
+    "anaphorLexicalization": "hij",
     "directPlacementGeneral": {
       "targetCount": 31,
       "intervalMs": 650,
@@ -52,11 +1237,7 @@
     "randomPlacementConfig": {
       "seed": 20260802,
       "seedPolicy": "advance",
-      "distribution": "uniform-v1.0",
-      "spread": "available",
-      "maxDimensions": "interface",
-      "fixedColumns": 48,
-      "fixedRows": 48,
+      "spread": "compact",
       "iterationCount": 10,
       "axisImageMode": "occupancy"
     },

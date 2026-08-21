@@ -3,11 +3,19 @@
 .gitignore
 .nojekyll
 ADVERB_ORIGIN_MECHANISMS.md
+ANAPHOR_AND_S1_S2_RELATION_DEFINITIONS.md
+ANAPHOR_LANGUAGE_TREE_EXTENSION.md
+ANAPHOR_S1_S2_LITERATURE_CATALOG.md
+CONTEXT_TAXONOMY.md
+TEXT_AND_CONTEXT.md
+anaphor-lexicalization-engine.js
+anaphor-combinations-engine.js
 COMPACT_TOPBAR_TEST.md
 CONFIG_UI_EXPLANATION_STANDARD.md
 DEFAULT_ALL_AXES_TEST.md
 DEPLOY_GITHUB_PAGES.md
 DOCUMENTATION_RULES.md
+FLIP_CONSTRAINT_SOLVER.md
 GREEDY_GROW_RECONSTRUCTION.md
 HANDOVER_FOR_COLLABORATORS.md
 LAYOUT_RULES.md
@@ -18,6 +26,7 @@ LEXICON_USAGE_PROFILES_AND_DISAMBIGUATION.md
 LEXICON_USAGE_PROFILE_TEST.md
 LEX_MOVEMENT_RULES.md
 LINGUISTIC_ACTIONS.md
+MULTI_OGN_ANAPHOR.md
 OGN_CORE_PLACEMENT_ARCHITECTURE.md
 ONE_MENU_THIN_LINES_TEST.md
 OPN_STORAGE_FORMAT.md
@@ -79,6 +88,7 @@ SOURCE_CHANGES_V2.0.0-rc.42.md
 SOURCE_CHANGES_V2.0.0-rc.43.md
 SOURCE_CHANGES_V2.0.0-rc.44.md
 SOURCE_CHANGES_V2.0.0-rc.45.md
+S1_S2_RELATION_TEST_FIXTURES.md
 SOURCE_BUILD.txt
 SOURCE_CHANGES_V2.0.0-rc.6.md
 SOURCE_CHANGES_V2.0.0-rc.9.md
@@ -94,7 +104,6 @@ docs/.nojekyll
 docs/ADVERB_ORIGIN_MECHANISMS.md
 docs/APP_CONTEXT.md
 docs/BOOM_FIRST_AND_RECURSION.md
-docs/CONFIG_UI_EXPLANATION_STANDARD.md
 docs/CURRENT_STATE.md
 docs/DEPLOY_GITHUB_PAGES.md
 docs/DESIGN_DECISIONS.md
@@ -107,6 +116,7 @@ docs/KNOWN_ISSUES.md
 docs/LAYOUT_RULES.md
 docs/LINE_STYLE_AND_PLACEMENT_MODES.md
 docs/DIRECT_PLACEMENT_CONFIG.md
+docs/FLIP_CONSTRAINT_SOLVER.md
 docs/LAYOUT_SPEC.md
 docs/LEESMIJ.md
 docs/LEXICON_AND_EXAMPLES_SPEC.md
@@ -119,6 +129,13 @@ docs/LEX_ADVERB_PLACEMENT_RULES_CHECKED.md
 docs/LEX_ADVERB_PLACEMENT_RULES_V4552.md
 docs/LEX_MOVEMENT_RULES.md
 docs/LINGUISTIC_ACTIONS.md
+docs/ANAPHOR_AND_S1_S2_RELATION_DEFINITIONS.md
+docs/ANAPHOR_LANGUAGE_TREE_EXTENSION.md
+docs/ANAPHOR_S1_S2_LITERATURE_CATALOG.md
+docs/CONTEXT_TAXONOMY.md
+docs/CONFIG_UI_EXPLANATION_STANDARD.md
+docs/TEXT_AND_CONTEXT.md
+docs/MULTI_OGN_ANAPHOR.md
 docs/NEXT_STEPS.md
 docs/OGN_BASE_PROFILE.md
 docs/OGN_CORE_PLACEMENT_ARCHITECTURE.md
@@ -132,6 +149,7 @@ docs/OpenGraph_Lite_Viewer_EN_v4511.pdf
 docs/OpenGraph_Lite_Viewer_EN_v4512.pdf
 docs/OpenGraph_Lite_Viewer_EN_v4513.pdf
 docs/PRECONFIG_ARCHITECTURE.md
+docs/S1_S2_RELATION_TEST_FIXTURES.md
 docs/PROJECT_FILES_TO_ADD_UPDATE.md
 docs/PROJECT_STATE_CURRENT.md
 docs/README.md
@@ -179,6 +197,8 @@ local-mobile-test.js
 maak-publicatie-carrousel.bat
 maak-volledige-zip.bat
 manifest.webmanifest
+multi-ogn-composition-engine.js
+multi-ogn-anaphor-play-engine.js
 package-lock.json
 package.json
 portrait-test.html
@@ -201,6 +221,13 @@ references/JGraphEd_Carleton_2004.pdf
 references/JGraphEd_IJARCS_2013.pdf
 references/README_REFERENCES.md
 references/Van_Trijp_2016_Lange_afstandsafhankelijkheden.pdf
+references/anafoor/Ik zie een man - Hij draagt een hoed.graph
+references/anafoor/README.md
+references/anafoor/ik zie een man - hij draagt een hoed 2024.graph
+references/anafoor/man-hoed-anafoor-reference.jpg
+references/anafoor/simplified-multi-ogn.png
+references/context-taxonomy-source.png
+references/context-taxonomy.svg
 references/visuals/ice_screenshot_20190810-213721.png
 references/visuals/ice_screenshot_20191015-205431.png
 references/visuals/kleinsteVeld.png
@@ -213,6 +240,10 @@ samples/adverb_placement_rules_v4552.json
 samples/adverb_word_rules_v4551.json
 samples/adverb_word_rules_v4552.json
 samples/hond-bijt-man.v1.opn
+samples/anaphor-s1-s2-literature-catalog.json
+samples/ik-zie-man-hij-draagt-hoed.multi-ogn.v1.opn
+samples/ik-zie-man-hij-draagt-hoed.multi-ogn.v2.opn
+samples/s1-s2-relation-fixtures.json
 samples/no_limit_96_demo.json
 samples/short_demo.json
 samples/space3_gridH20W20_grow_demo.json
@@ -232,6 +263,7 @@ tools/check_greedy_grow_reconstruction.js
 tools/check_random_placement.js
 tools/check_landscape_composition_runtime.js
 tools/check_lex_horizontal_projection.py
+tools/check_lex_open_slots.js
 tools/check_lexicon_usage_profiles.py
 tools/check_linkedin_video_export.py
 tools/check_linkedin_video_runtime.js
@@ -241,6 +273,12 @@ tools/check_line_style_and_direct_modes.py
 tools/check_direct_placement_config.py
 tools/check_mobile_layout_rc38.py
 tools/check_mobile_layout_runtime.js
+tools/check_multi_ogn_anaphor.js
+tools/check_multi_ogn_anaphor_play.js
+tools/check_anaphor_language_tree_extension.js
+tools/sync_anaphor_default_config.js
+tools/check_multi_ogn_anaphor_runtime.js
+tools/check_multi_ogn_anaphor_runtime_dependencies.js
 tools/check_node_grid_invariant.py
 tools/check_opn_storage.py
 tools/check_play_reverse.py
@@ -259,6 +297,7 @@ tools/check_release.py
 tools/normalize_text_files.py
 tools/check_text_normalization.py
 tools/check_release_zip_batch.py
+tools/check_git_publish_staging.py
 tools/check_social_and_linguistic_export.py
 tools/check_viewport_switch_runtime.js
 tools/build_publication_carousel_zip.py

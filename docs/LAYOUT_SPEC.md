@@ -44,11 +44,10 @@ ook de smallere Syntaxboom de beschikbare landschapbreedte.
 
 LOG gebruikt vaste major/minor-slots. Een extra minor maakt de LOG-as één
 vaste stap langer en vergroot uitsluitend de relevante majorafstand. De
-volledige LOG-volgorde levert neutrale LEX-doelrijen, maar de projectielijn
-ernaartoe mag nooit orthogonaal worden: iedere bron projecteert eerst exact
-horizontaal naar LEX. LOG-basis en een eventuele topic/V2-regel worden vóór
-render tot één einddoel samengevoegd; per bronwoord volgt hoogstens één
-zichtbare LEX-Wissel. Een minor verlaagt geen host-subboom.
+volledige LOG-volgorde plant mogelijke LEX-plaatsen, maar geeft bronwoorden
+geen verplaatsingsopdracht: iedere bron projecteert exact horizontaal naar
+LEX. Alleen een expliciete topic-/V1-/V2-regel maakt vervolgens één zichtbare
+LEX-Wissel. Een minor verlaagt geen host-subboom.
 
 Mobiele MAX gebruikt de stabiele Syntax/Functional-unie van het asgebied als
 focus, ook bij een geforceerde Desktop-interface op een telefoon. Het zichtbare

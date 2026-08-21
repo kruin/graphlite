@@ -2,6 +2,32 @@
 
 Normatieve projectiespecificatie voor OpenGraph Lite Viewer `v2.0.0-rc.45`.
 
+## 0. Text, Context en Language Tree · extensie 1
+
+**Text** is de centrale uiting: in Syntax bijvoorbeeld `S–O–V`, in Functional
+bijvoorbeeld `Agens–Predicaat–Patiens`. **Context** is alles rondom deze
+centrale uiting en is zelf eveneens een **Open Graph Notation**-structuur.
+Text-OGN en Context-OGN behouden ieder hun eigen knopen en eigen
+gridinvariant. Context wordt behandeld als een nog te ontwikkelen
+**geminimaliseerde boom**: uitsluitend relevante takken worden later gebouwd.
+Iedere insertie behoort tot Context, ook wanneer zij op LEX verschijnt.
+Nadere plaatsing en koppeling van Context blijven **p.m.**; de aangeleverde
+Context-OGN staat in `CONTEXT_TAXONOMY.md`.
+
+**Anafoor** is de eerste extensie van Language Tree. S1 en S2 worden eerst
+afzonderlijk als centrale Text-OGN berekend. Daarna ordent één gezamenlijke
+LEX-as de Text-projecties en Context-inserties van S1 vóór die van S2. De
+compositor verschuift uitsluitend de complete S2 star. `relations[]` bevat
+alleen expliciete coreferentie tussen centrale Text-bronknopen. Hun rechte
+verticale lijnen zijn ongericht. De bron blijft bijvoorbeeld `BOER` of
+`EZEL`; uitsluitend LEX realiseert `HIJ` of `HEM`.
+
+`GISTEREN`, `VANDAAG`, `ER`, `NIET MEER` en `OMDAT` zijn Context-inserties:
+zij hebben een eigen `insertionId` en geen Text-boom-`nodeId`. In een
+omdat-bijzin blijft de persoonsvorm achteraan; er is geen S2-V2-Wissel.
+Normatief: `TEXT_AND_CONTEXT.md`,
+`ANAPHOR_LANGUAGE_TREE_EXTENSION.md` en `MULTI_OGN_ANAPHOR.md`.
+
 ## 1. Autoriteit en afleidingsrichting
 
 De afleiding loopt in deze volgorde:
@@ -10,14 +36,14 @@ De afleiding loopt in deze volgorde:
 structure-config
 → LOG-majors en LOG-minors
 → LOG plant mogelijke LEX-plaatsen
-→ horizontale LEX-bronprojectie op bronhoogte
-→ alleen expliciete regels mogen een bronknoop verplaatsen
+→ horizontale LEX-bronprojectie
+→ alleen expliciete regels mogen een bronwoord verplaatsen
 → voorbeeldzin als validatie
 ```
 
 `LOG` is de autoriteit voor de lineaire plaatsingsplanning, niet voor een
-zichtbare verplaatsing van een bronknoop. De projectieoorsprong én de blijvende
-positie van een bronknoop zonder expliciete regel zijn altijd de
+zichtbare verplaatsing van een bronwoord. De projectieoorsprong én de
+blijvende positie van een bronwoord zonder expliciete regel zijn altijd de
 bronknoophoogte. De voorbeeldzin levert geen coördinaten.
 
 ## 2. Majors, minors en logische afstand
@@ -25,6 +51,10 @@ bronknoophoogte. De voorbeeldzin levert geen coördinaten.
 De basisposities `S`, `O` en `V` zijn **majors**. Een insertie met
 `origin=LOG` of `origin=LOG+LEX` is een **minor**. Een insertie met
 `origin=LEX` krijgt wel een LEX-doel, maar geen LOG-minor.
+
+Alle drie de insertie-oorsprongen behoren architectonisch tot **Context**.
+`origin` beschrijft uitsluitend hoe de Context-insertie een plaats krijgt;
+een LOG-minor wordt daardoor geen centrale Text-knoop.
 
 Iedere major en minor bezet een LOG-slot met een vaste breedte. De logische
 afstand tussen twee majors is:
@@ -93,8 +123,10 @@ Pas daarna worden expliciete LEX-regels logisch toegepast:
 Alleen wanneer zo'n expliciete regel geldt, verplaatst het woord rechtstreeks
 van zijn bronanker naar het bijbehorende doel. Er verschijnt dan één pijl en
 één trace. De SYNT- en Functional-bronstructuren worden niet gemuteerd. In
-`HOND BIJT MAN` blijven `HOND` en `MAN` op hun eigen bronhoogte; uitsluitend
-`BIJT` wisselt naar V2.
+`HOND BIJT MAN` blijven `HOND` en `MAN` exact op hun eigen bronhoogte;
+uitsluitend `BIJT` wisselt naar de vrije LEX-gridrij halverwege die twee
+behouden bronrijen. De V2-doelhoogte is dus afgeleid uit de boom en niet uit
+een vaste pixelafstand onder `S`.
 
 ## 5. Configuratiecontract
 
@@ -185,15 +217,13 @@ LOG → SPACE → LEX
 ```
 
 1. `LOG` tekent eerst de zuidas en plaatst majors/minors.
-2. `SPACE` plant lege plaatsen op LEX volgens de LOG-slotvolgorde. De
-   doorschijnende verdikking met dwarskapjes is alleen een tijdelijke
-   LEX-ruimte-indicator van de viewer, geen OGN-element.
+2. `SPACE` reserveert lege rijen op LEX volgens de LOG-slotvolgorde.
 3. `LEX` toont de lexicale bronnen eerst op hun horizontale bronankers en
-   voert uitsluitend de expliciete topic-/V2-/post-V2-Wissels uit.
+   voert daarna uitsluitend de expliciet geldige Wissels uit.
 
-LOG plant ruimte maar verplaatst niets. Pas in de eindstap volgen de overige
-projectiepanelen. `SPACE` verandert het aantal geplande slots, maar rekt de
-vaste gridstap niet uit.
+LOG reserveert mogelijke plaatsen; reservering alleen verplaatst geen woord.
+Pas in de eindstap volgen de overige projectiepanelen. `SPACE` verandert het
+aantal geplande slots, maar rekt de vaste gridstap niet uit.
 
 ## 7. Opslag en validatie
 
@@ -208,7 +238,7 @@ Een `.opn`-document bewaart:
 - `log.lex_projection_origin`;
 - `log.lex_placement_mode`;
 - `log.example_controls_layout`;
-- dezelfde LOG-sequentie als bron van de LEX-doelrijen.
+- dezelfde LOG-sequentie als bron van de LEX-planning.
 
 De releasetest `tools/check_log_slot_distance.py` verifieert onder meer dat
 nul, één en twee minors de majorafstand respectievelijk met nul, één en twee
@@ -216,9 +246,11 @@ slots vergroten.
 
 De releasetest `tools/check_lex_horizontal_projection.py` verifieert met
 `BIJT` dat eerst de lage bronhoogte wordt gebruikt en daarna in één zichtbare
-stap rechtstreeks het V2-einddoel. Zij bewaakt ook dat de bronprojectielijn
-geen verticale sectie bevat, dat `HOND BIJT MAN` uitsluitend `BIJT` verplaatst
-en dat `MAN` exact op de bronhoogte van de centrale MAN-knoop blijft.
+stap rechtstreeks de vrije LEX-gridrij tussen HOND en MAN wordt gevuld. Zij
+bewaakt ook dat de bronprojectielijn geen verticale sectie bevat, dat `HOND`
+en `MAN` exact op hun bronhoogte blijven, dat het V2-doel het midden van die
+twee bronrijen is en dat `HOND BIJT MAN` precies één zichtbare verplaatsing
+heeft.
 
 `tools/check_projection_cleanup.py` bewaakt daarnaast de directe verticale
 LOG-projectie, het opruimen van gevulde lege slots, de ingebouwde

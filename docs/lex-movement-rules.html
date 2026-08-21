@@ -75,11 +75,13 @@ HOND  MAN  BIJT
 </code></pre>
 <p>Plaatsingsregels:</p>
 <pre><code>
-HOND  → slot 1  eerste zinsdeel
+HOND  blijft op de recursief berekende bronplek
 
 BIJT  → slot 2  V2 / persoonsvorm
 
 MAN   blijft op de basisplek
+
+slot 1 blijft vrij; HOND krijgt geen Wissel of trace
 
 </code></pre>
 <p>Resultaat:</p>
@@ -89,9 +91,7 @@ HOND BIJT MAN
 </code></pre>
 <p>Traces:</p>
 <pre><code>
-t[subject] blijft op de oude HOND-basisplek
-
-t[V]       blijft op de oude BIJT/V-basisplek
+t[V] blijft op de oude BIJT/V-basisplek
 
 </code></pre>
 <hr/>
@@ -174,13 +174,15 @@ HOND HEEFT MAN GEBETEN
 </code></pre>
 <p>Plaatsingsregels:</p>
 <pre><code>
-HOND  → slot 1  eerste zinsdeel
+HOND  blijft op de recursief berekende bronplek
 
 HEEFT → slot 2  V2 / persoonsvorm
 
 MAN   blijft op basisplek
 
 GEBETEN blijft op basisplek
+
+slot 1 blijft vrij; HOND krijgt geen Wissel of trace
 
 </code></pre>
 <p>Resultaat:</p>
@@ -190,9 +192,7 @@ HOND HEEFT MAN GEBETEN
 </code></pre>
 <p>Traces:</p>
 <pre><code>
-t[subject] blijft op de oude HOND-basisplek
-
-t[pv]      blijft op de oude HEEFT/PV-basisplek
+t[pv] blijft op de oude HEEFT/PV-basisplek
 
 </code></pre>
 <hr/>

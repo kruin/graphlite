@@ -83,12 +83,18 @@ Vóór de releasecheck normaliseert de BAT alle bekende tekstbestanden:
 python tools\normalize_text_files.py --write
 ```
 
-Daarna past Git de actuele `.gitattributes` ook op bestaande indexinhoud toe en
-staged de BAT alle wijzigingen:
+Hierbij verdwijnen ook spaties en tabs aan het einde van iedere tekstregel;
+Git weigert zulke trailing whitespace anders pas na het invullen van de
+commitboodschap. Inspringing en interne lege regels blijven behouden.
+
+Daarna staged de BAT eerst alle wijzigingen, inclusief verdwenen gevolgde
+paden. Pas daarna past Git de actuele `.gitattributes` op de bestaande
+indexinhoud toe. Daardoor kan een ontbrekend document de renormalisatie niet
+laten mislukken:
 
 ```bat
-git add --renormalize -- .
 git add -A -- .
+git add --renormalize -- .
 git diff --cached --check
 ```
 

@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="300" viewBox="0 0 600 300" role="img" aria-labelledby="context-title context-description" data-ogn-unit="CONTEXT" data-ogn-layer="Context">
+  <title id="context-title">Context als Open Graph Notation: statisch en dynamisch</title>
+  <desc id="context-description">Een zelfstandige Open Graph Notation met vijftien knopen op verschillende rasterrijen en rasterkolommen. Context vertakt naar statisch met tijd en plaats, en dynamisch met richting en actie. Richting bevat doel en bron; actie bevat hoe en motief; hoe bevat instrument en manier; motief bevat reden en oorzaak.</desc>
+  <defs>
+    <pattern id="context-grid" width="20" height="20" patternUnits="userSpaceOnUse" patternTransform="translate(10 10)">
+      <path d="M 20 0 H 0 V 20" fill="none" stroke="#737373" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="600" height="300" fill="#fff"/>
+  <rect width="600" height="300" fill="url(#context-grid)"/>
+  <g fill="none" stroke="#242dde" stroke-linecap="round" stroke-width="4">
+    <path d="M 190 10 L 150 30 L 130 50"/>
+    <path d="M 150 30 L 170 70"/>
+    <path d="M 190 10 L 270 90 L 230 110 L 210 150"/>
+    <path d="M 230 110 L 250 130"/>
+    <path d="M 270 90 L 350 170 L 310 190 L 290 210"/>
+    <path d="M 310 190 L 330 230"/>
+    <path d="M 350 170 L 410 250 L 370 290"/>
+    <path d="M 410 250 L 430 270"/>
+  </g>
+  <g fill="#1221a8" stroke="#101877" stroke-width="1">
+    <circle cx="190" cy="10" r="5"/>
+    <circle cx="150" cy="30" r="5"/>
+    <circle cx="130" cy="50" r="5"/>
+    <circle cx="170" cy="70" r="5"/>
+    <circle cx="270" cy="90" r="5"/>
+    <circle cx="230" cy="110" r="5"/>
+    <circle cx="210" cy="150" r="5"/>
+    <circle cx="250" cy="130" r="5"/>
+    <circle cx="350" cy="170" r="5"/>
+    <circle cx="310" cy="190" r="5"/>
+    <circle cx="290" cy="210" r="5"/>
+    <circle cx="330" cy="230" r="5"/>
+    <circle cx="410" cy="250" r="5"/>
+    <circle cx="370" cy="290" r="5"/>
+    <circle cx="430" cy="270" r="5"/>
+  </g>
+  <g fill="#161616" font-family="Arial, Helvetica, sans-serif" font-size="11">
+    <text x="196" y="14" font-weight="700">CONTEXT</text>
+    <text x="156" y="35" font-weight="700">STATISCH</text>
+    <text x="136" y="55">tijd</text>
+    <text x="176" y="75">plaats</text>
+    <text x="276" y="95" font-weight="700">DYNAMISCH</text>
+    <text x="236" y="115" font-weight="700">RICHTING</text>
+    <text x="216" y="155">doel</text>
+    <text x="256" y="135">bron</text>
+    <text x="356" y="175" font-weight="700">ACTIE</text>
+    <text x="316" y="195" font-weight="700">HOE</text>
+    <text x="296" y="215">instrument</text>
+    <text x="336" y="235">manier</text>
+    <text x="416" y="255" font-weight="700">MOTIEF</text>
+    <text x="376" y="295">reden</text>
+    <text x="436" y="275">oorzaak</text>
+  </g>
+</svg>

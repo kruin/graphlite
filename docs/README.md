@@ -1,5 +1,24 @@
 # OpenGraph Lite Viewer v2.0.0-rc.45
 
+## Language Tree extension 1: Anaphor
+
+**Text** contains only the central utterance; **Context** comprises everything
+around it. Both Text and Context are distinct Open Graph Notation structures;
+Context is a minimized tree to be developed. Every insertion belongs to
+Context, regardless of its origin.
+Anaphor connects only central Text source nodes across independently
+calculated S1 and S2 trees; `HIJ` and `HEM` realize those nodes on LEX.
+`GISTEREN`, `VANDAAG`, `ER`, `NIET MEER` and `OMDAT` are independent Context
+insertions, never central tree nodes. **De boer slaat de ezel omdat hij hem
+bezit.** contains
+both `BOER→HIJ` and `EZEL→HEM`; `BEZIT` remains clause-final. Further
+Further Context modeling remains p.m. See
+[`CONTEXT_TAXONOMY.md`](CONTEXT_TAXONOMY.md),
+[`TEXT_AND_CONTEXT.md`](TEXT_AND_CONTEXT.md),
+[`MULTI_OGN_ANAPHOR.md`](MULTI_OGN_ANAPHOR.md),
+[`ANAPHOR_AND_S1_S2_RELATION_DEFINITIONS.md`](ANAPHOR_AND_S1_S2_RELATION_DEFINITIONS.md)
+and [`S1_S2_RELATION_TEST_FIXTURES.md`](S1_S2_RELATION_TEST_FIXTURES.md).
+
 OpenGraph Lite Viewer is a viewer and test environment for general Open Graph
 Notation. This release is built exclusively on the uploaded
 `v2.0.0-rc.26` source through rc.27; rc.28 restores the documented OGN/UI
@@ -56,20 +75,6 @@ The **Language Tree** menu keeps Language Tree prominent as the primary
 calculated application and places **Greedy Grow** and seeded **Random** below
 it as direct OGN illustrations. Direct steps write one node immediately on an
 unused row and column; switching modes does not change Language Tree data.
-
-Config is strictly separated into **General**, **Calculated → Language Tree**
-and **Direct → Shared / Greedy Grow / Random**. General contains no pre-config,
-tree, examples, LEX, SYNT, or LOG; those exist only under Language Tree.
-Irrelevant settings are no-show. Every
-visible field has a compact explanation under
-[`CONFIG_UI_EXPLANATION_STANDARD.md`](CONFIG_UI_EXPLANATION_STANDARD.md).
-Uniform v1.0 remains the Random default; Impure uniform v0.1 mixes in a 20%
-repetition preference from completed earlier axis hits. Seed and speed are
-independent.
-
-From an active Greedy Grow or Random mode, the application bar itself is also
-no-show. Only Back to Main, that method's own fields with Explanation, and
-Config save remain visible; switching starts in Main.
 
 `Config → View → Line appearance` independently controls grid color, grid
 weight, projection-line weight and box-line weight. LEX, SYNT and LOG each
@@ -131,7 +136,9 @@ Slide 4 shows nodes projecting to WEST, SOUTH and EAST. Slide 5 is the
 **Calculated — Language Tree** example, with `HOND · BIJT · MAN` on the west
 LEX axis. Both example slides refer to `github.com/kruin/graphlite`.
 
-The carousel is always derived: do not edit a PNG or carousel ZIP. Run
+The carousel is always derived: do not edit a PNG or carousel ZIP.
+`publish_checked.bat` does not require Playwright; its optional Anafoor browser
+check reports missing browser tools and continues. Run
 `installeer-carrousel-tools.bat` once in an extracted work folder before the
 first rebuild; Node.js 18 or newer is required. After an HTML change, run
 `maak-publicatie-carrousel.bat`. It regenerates all seven slides, records their
@@ -213,15 +220,17 @@ See `LEXICON_USAGE_PROFILES_AND_DISAMBIGUATION.md`.
 ## Projection contract
 
 ```text
-source node → horizontal LEX projection at source height → only an explicit switch may move it
+source node → horizontal LEX projection → one direct move to the resolved LEX target
 ```
 
 `S`, `O` and `V` are majors. An adverbial insertion may be a LOG minor, a direct LEX insertion, or a group combining both origins. Every minor adds one fixed slot to the distance between its bounding
-majors. LOG plans possible LEX positions but does not thereby move a source
-node: every lexical source projects horizontally at source height and remains
-there unless an explicit topic/V2/post-V2 rule applies. In `HOND BIJT MAN`,
-`MAN` therefore stays exactly at MAN source height; only `BIJT` switches under
-V2. See `projectie-master-spec.md`.
+majors. LOG plans possible LEX positions but does not move a source word:
+every lexical source first projects horizontally at its source height. Only
+an explicit topic, V1 or V2 rule creates a move. The viewer therefore shows at
+most one LEX-axis move and one source trace per moved source word, without an
+intermediate LOG trace. In `HOND BIJT MAN`, HOND and MAN stay put and only
+BIJT moves to V2. The example sentence does not determine layout. See
+`projectie-master-spec.md`.
 
 ## Start
 
@@ -363,13 +372,14 @@ three explicit phases:
 
 ```text
 1. draw the LOG axis and place majors/minors
-2. reserve the LOG-derived space on the LEX axis
-3. project lexical sources horizontally onto LEX and move each source once to
-   its resolved target
+2. reserve LOG-planned space on the LEX axis
+3. project lexical sources horizontally at source height and execute only
+   explicit topic/V1/V2 moves
 ```
 
-The target is the LOG-derived row unless an explicit topic/V2 rule replaces
-it. SYNT and the remaining projection panels appear in the final step.
+LOG planning alone never moves a source word. In `HOND BIJT MAN`, HOND and MAN
+stay at source height and only BIJT moves to the free V2 position. SYNT and the
+remaining projection panels appear in the final step.
 The previous-step button now reverses the same sequence exactly: the final
 projection layer disappears first, followed by LEX moves, LEX space, LOG and
 then the central tree.
@@ -399,9 +409,9 @@ graph, viewport or scale.
 
 Adverbial insertions do not mutate Syntax or Functional. The selected usage profile
 determines origin: LOG and LOG+LEX produce a south-axis minor, while a direct
-LEX insertion does not. Source nodes project horizontally to LEX and every
-origin receives a precomputed neutral LEX target. An explicit topic/V2 rule can
-replace that target before one direct visible move is drawn.
+LEX insertion does not. Source nodes project horizontally to LEX. LOG plans
+available positions, while only an explicit topic/V1/V2 rule creates one
+direct visible move.
 
 The active sentence is printed above the graph, with clear space below it for
 a possible future north axis.

@@ -1,5 +1,15 @@
 # Gebruikershandleiding — concept v4430
 
+## Anafoor · multi-OGN bekijken
+
+Open in het hoofdmenu **Language Tree** en kies **Anafoor · multi-OGN**. De
+viewer toont S1 boven S2. In de bronbomen is S2-subject MAN; de rechte rode
+MAN–MAN-lijn zonder pijlpunt betekent dat beide bronknopen dezelfde referent
+hebben. Lees de gezamenlijke LEX-as van boven naar beneden: eerst
+`IK · ZIE · MAN`, daarna standaard `HIJ · DRAAGT · HOED`. Config laat voor de
+LEX-anafoor ook `DIE` en `DIE MAN` kiezen. `DIE VROUW` blijft bij antecedent
+MAN zichtbaar maar is niet toepasselijk en daarom uitgeschakeld.
+
 ## Horizontale LEX-projectie lezen
 
 In `Assen` loopt elke projectielijn van een bronknoop horizontaal naar de LEX-as. Daarna toont de LEX-as eventuele Wissels. Bij `HOND BIJT MAN` blijft `HOND` op zijn bronhoogte; `BIJT` wisselt lokaal naar het V2-slot en laat op de oude V-positie een trace achter.

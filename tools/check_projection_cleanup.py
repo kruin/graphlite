@@ -23,8 +23,7 @@ if "...ADVERB_FALLBACK_ROWS.map(" not in JS:
 
 required_js = [
     "stage: 'combined'",
-    "Language-Tree-regel mag een bronwoord werkelijk verplaatsen",
-    "reservation-only-no-movement",
+    "Per bronwoord volgt hoogstens één zichtbare LEX-verplaatsing",
     "const topicOccupied = topicIndex >= 0",
     "const v2Occupied = v2Index >= 0",
     "class: 'lex-wissel-movement'",

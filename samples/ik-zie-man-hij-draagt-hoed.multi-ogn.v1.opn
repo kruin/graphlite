@@ -1,0 +1,114 @@
+{
+  "opn": "Open Graph Notation",
+  "document_type": "opengraph-document",
+  "opn_version": "1.0",
+  "metadata": {
+    "document_id": "sample-ik-zie-man-hij-draagt-hoed-multi-ogn-v1",
+    "title": "Ik zie een man. Hij draagt een hoed.",
+    "language": "nl",
+    "created_at": "2026-08-13T00:00:00+02:00",
+    "modified_at": "2026-08-13T00:00:00+02:00",
+    "schema": "data-metadata-paradata",
+    "profile": "multi-ogn",
+    "extras": ["multi-ogn-anaphor"],
+    "generator": {
+      "name": "OpenGraph Lite Viewer",
+      "version": "v2.0.0-rc.45"
+    },
+    "source": {
+      "kind": "sample",
+      "example_id": "ik-zie-man-hij-draagt-hoed"
+    }
+  },
+  "data": {
+    "example": {
+      "id": "ik-zie-man-hij-draagt-hoed",
+      "title": "Ik zie een man. Hij draagt een hoed.",
+      "sentences": [
+        {"id": "S1", "order": 1, "text": "Ik zie een man."},
+        {"id": "S2", "order": 2, "text": "Hij draagt een hoed."}
+      ]
+    },
+    "composition": {
+      "schema": "ogn-multi-composition-v1",
+      "order": ["S1", "S2"],
+      "calculation": "independent-before-composition",
+      "rigid_shift_only": true,
+      "grid_invariant_scope": "per-ogn",
+      "cross_ogn_exception": "declared-coreference-column-only",
+      "gap_rows": 3,
+      "units": [
+        {
+          "id": "S1",
+          "order": 1,
+          "sentence": "Ik zie een man.",
+          "calculated_independently": true,
+          "rigid_shift": {"dx": 0, "dy": 0},
+          "graph": {
+            "view": "S1",
+            "root_id": "s1-s",
+            "nodes": [
+              {"id": "s1-s", "label": "S", "category": "S", "role": null, "kind": "cat", "x": -1, "y": 0},
+              {"id": "s1-ik", "label": "IK", "category": "PRON", "role": "subject", "kind": "leaf", "x": -2, "y": 1},
+              {"id": "s1-vp", "label": "VP", "category": "VP", "role": null, "kind": "cat", "x": 1, "y": 2},
+              {"id": "s1-zie", "label": "ZIE", "category": "V", "role": "predicate", "kind": "leaf", "x": 0, "y": 3},
+              {"id": "s1-man", "label": "MAN", "category": "N", "role": "object", "kind": "leaf", "x": 2, "y": 4}
+            ],
+            "edges": [
+              {"from": "s1-s", "to": "s1-ik", "type": "tree"},
+              {"from": "s1-s", "to": "s1-vp", "type": "tree"},
+              {"from": "s1-vp", "to": "s1-zie", "type": "tree"},
+              {"from": "s1-vp", "to": "s1-man", "type": "tree"}
+            ],
+            "rules": []
+          }
+        },
+        {
+          "id": "S2",
+          "order": 2,
+          "sentence": "Hij draagt een hoed.",
+          "calculated_independently": true,
+          "rigid_shift": {"dx": 4, "dy": 7},
+          "graph": {
+            "view": "S2",
+            "root_id": "s2-s",
+            "nodes": [
+              {"id": "s2-s", "label": "S", "category": "S", "role": null, "kind": "cat", "x": 3, "y": 7},
+              {"id": "s2-hij", "label": "HIJ", "category": "PRON", "role": "subject", "kind": "leaf", "x": 2, "y": 8},
+              {"id": "s2-vp", "label": "VP", "category": "VP", "role": null, "kind": "cat", "x": 5, "y": 9},
+              {"id": "s2-draagt", "label": "DRAAGT", "category": "V", "role": "predicate", "kind": "leaf", "x": 4, "y": 10},
+              {"id": "s2-hoed", "label": "HOED", "category": "N", "role": "object", "kind": "leaf", "x": 6, "y": 11}
+            ],
+            "edges": [
+              {"from": "s2-s", "to": "s2-hij", "type": "tree"},
+              {"from": "s2-s", "to": "s2-vp", "type": "tree"},
+              {"from": "s2-vp", "to": "s2-draagt", "type": "tree"},
+              {"from": "s2-vp", "to": "s2-hoed", "type": "tree"}
+            ],
+            "rules": []
+          }
+        }
+      ],
+      "relation": {
+        "type": "coreference",
+        "direction": "none",
+        "line": "straight-vertical-no-arrow",
+        "antecedent": {"unitId": "S1", "nodeId": "s1-man", "x": 2, "y": 4},
+        "anaphor": {"unitId": "S2", "nodeId": "s2-hij", "x": 2, "y": 8}
+      },
+      "shared_lex_axis": {
+        "axis": "west",
+        "order": "S1-before-S2",
+        "items": [
+          {"node_id": "s1-ik", "label": "IK", "unit_id": "S1", "sentence_order": 1, "word_order": 1},
+          {"node_id": "s1-zie", "label": "ZIE", "unit_id": "S1", "sentence_order": 1, "word_order": 2},
+          {"node_id": "s1-man", "label": "MAN", "unit_id": "S1", "sentence_order": 1, "word_order": 3},
+          {"node_id": "s2-hij", "label": "HIJ", "unit_id": "S2", "sentence_order": 2, "word_order": 1},
+          {"node_id": "s2-draagt", "label": "DRAAGT", "unit_id": "S2", "sentence_order": 2, "word_order": 2},
+          {"node_id": "s2-hoed", "label": "HOED", "unit_id": "S2", "sentence_order": 2, "word_order": 3}
+        ]
+      }
+    }
+  },
+  "paradata": {"included": false}
+}

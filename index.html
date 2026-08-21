@@ -52,7 +52,7 @@
 <link href="icons/icon-192.svg" rel="icon" type="image/svg+xml"/>
 <!-- v4552: manifest disabled in local/dev build to avoid PWA/service-worker confusion. -->
 <!-- <link rel="manifest" href="manifest.webmanifest"> -->
-<link href="styles.css?v2.0.0-rc.45" rel="stylesheet"/>
+<link href="styles.css?v2.0.0-rc.45&amp;cb=10" rel="stylesheet"/>
 </head>
 <body class="main-screen-active">
 <header class="app-header">
@@ -83,7 +83,11 @@
 <div aria-label="View kiezen" class="compact-choice-popover top-menu-popover top-menu-view-popover">
 <section class="placement-mode-picker" aria-label="Plaatsingsmethode">
 <h3><span class="help-lang-nl">Plaatsingsmethode</span><span class="help-lang-en">Placement method</span></h3>
+<div class="placement-mode-calculated-options">
 <button class="placement-mode-option is-primary" data-placement-mode="language-tree" type="button"><strong>Language Tree</strong><small><span class="help-lang-nl">berekend · hoofdtoepassing</span><span class="help-lang-en">calculated · primary application</span></small></button>
+<p class="placement-mode-group-label"><span class="help-lang-nl">Language Tree-extensies</span><span class="help-lang-en">Language Tree extensions</span></p>
+<button class="placement-mode-option" data-placement-mode="multi-ogn-anaphor" type="button"><strong><span class="help-lang-nl">Extensie 1 · Anafoor</span><span class="help-lang-en">Extension 1 · Anaphor</span></strong><small><span class="help-lang-nl">S1 + S2 · referent–anafoor · LEX</span><span class="help-lang-en">S1 + S2 · referent–anaphor · LEX</span></small></button>
+</div>
 <div class="placement-mode-direct-options">
 <button class="placement-mode-option" data-placement-mode="greedy-grow" type="button"><strong>Greedy Grow</strong><small><span class="help-lang-nl">direct · OGN-illustratie</span><span class="help-lang-en">direct · OGN illustration</span></small></button>
 <button class="placement-mode-option" data-placement-mode="random" type="button"><strong>Random</strong><small><span class="help-lang-nl">direct · OGN-illustratie</span><span class="help-lang-en">direct · OGN illustration</span></small></button>
@@ -124,7 +128,7 @@
 <button id="mainSouthModeButton" title="Volgende LOG-volgorde: SOV, SVO, OVS, OSV-!, VSO-!, VOS-!" type="button">SOV</button>
 <button id="mainSouthNextButton" title="Volgende LOG-volgorde" type="button">›</button>
 </div>
-<p class="main-menu-help" id="mainSouthExplanation">Wijzigt de LOG-volgorde en geplande LEX-plaatsen. LOG alleen verplaatst geen bronknoop; uitsluitend een expliciete Language-Tree-regel mag dat doen.</p>
+<p class="main-menu-help" id="mainSouthExplanation">Wijzigt de LOG-volgorde en de beschikbare LEX-planning. Alleen een expliciete topic-/V1-/V2-regel verplaatst een bronwoord.</p>
 </div>
 </details>
 <details class="compact-choice-menu language-menu top-menu-item top-menu-action" id="mainLanguageMenu">
@@ -196,9 +200,9 @@
 <ul>
 <li><button class="help-topic-button" data-help-topic-button="grid-rule" type="button"><span class="help-lang-nl">1 · Vrije plaatsing</span><span class="help-lang-en">1 · Free Placement</span></button></li>
 <li><button class="help-topic-button" data-help-topic-button="sequential-drawing" type="button"><span class="help-lang-nl">Plaatsingsstrategieën</span><span class="help-lang-en">Placement Strategies</span></button></li>
-<li><button class="help-topic-button" data-help-topic-button="direct-random" type="button"><span class="help-lang-nl">Random · Config en iteraties</span><span class="help-lang-en">Random · Config and iterations</span></button></li>
 <li><button class="help-topic-button" data-help-topic-button="projection-mechanism" type="button"><span class="help-lang-nl">2 · Projectie</span><span class="help-lang-en">2 · Projection</span></button></li>
 <li><button class="help-topic-button" data-help-topic-button="recursive-layout" type="button"><span class="help-lang-nl">3 · Berekende plaatsing</span><span class="help-lang-en">3 · Calculated Placement</span></button></li>
+<li><button class="help-topic-button" data-help-topic-button="multi-ogn-anaphor" type="button"><span class="help-lang-nl">Extensie 1 · Anafoor</span><span class="help-lang-en">Extension 1 · Anaphor</span></button></li>
 <li><button class="help-topic-button" data-help-topic-button="west-axis" type="button"><span class="help-lang-nl">West-as</span><span class="help-lang-en">West axis</span></button></li>
 <li><button class="help-topic-button" data-help-topic-button="south-axis" type="button"><span class="help-lang-nl">Zuid-as</span><span class="help-lang-en">South axis</span></button></li>
 </ul>
@@ -210,6 +214,7 @@
 </button>
 <ul>
 <li><button class="help-topic-button" data-help-topic-button="lex-axis" type="button"><span>LEX</span></button></li>
+<li><button class="help-topic-button" data-help-topic-button="lex-free-positions" type="button"><span class="help-lang-nl">Actief LEX-profiel</span><span class="help-lang-en">Active LEX profile</span></button></li>
 <li><button class="help-topic-button" data-help-topic-button="synt-axis" type="button"><span>SYNT</span></button></li>
 <li><button class="help-topic-button" data-help-topic-button="log-axis" type="button"><span>LOG</span></button></li>
 </ul>
@@ -359,38 +364,6 @@
 <p><a href="greedy-grow.html">Open the interactive Greedy Grow reconstruction</a>. Publication slide 5 is derived directly from the same engine. Accepted on 2 August 2026.</p>
 </div>
 </article>
-<article class="help-topic-panel" data-help-topic="direct-random">
-<div class="help-lang-nl">
-<h3>Random · Config en iteraties</h3>
-<p>Config is strikt gescheiden in <strong>Algemeen</strong>, <strong>Calculated → Language Tree</strong> en <strong>Direct → Gedeeld / Greedy Grow / Random</strong>. Algemeen bevat uitsluitend toepassingsonafhankelijke interface-, LEESMIJ- en bestandsinstellingen; Voorconfig, boom, voorbeelden, LEX, SYNT en LOG staan alleen bij Language Tree. Per context zijn niet-relevante instellingen no-show. Open je Config vanuit actieve Greedy Grow of Random, dan is ook de toepassingsbalk no-show: alleen Terug naar Main, de eigen velden met <em>Uitleg</em> en Config opslaan blijven zichtbaar. Kies een andere toepassing eerst in Main.</p>
-<p><strong>Seed</strong> is de reproduceerbare startcode van de toevalsreeks, van 1 t/m 4.294.967.295. <code>20260802</code> is alleen de herkenbare datum 2 augustus 2026. Een groot getal geeft niet meer toeval en maakt Play niet sneller. Dezelfde seed, programmaversie, Random-model, plaatsing, gridgrootte en runlengte leveren dezelfde reeks. <strong>Resetbeleid</strong> bepaalt of Reset opnieuw bij de ingestelde seed begint of met een volgende vaste startseed.</p>
-<p><strong>Random-model</strong> staat standaard op <em>Uniform v1.0</em>. <em>Onzuiver uniform v0.1 · hit-herhaling</em> mengt 80% uniforme kans met 20% voorkeur voor asplekken die in voltooide eerdere rondes vaker zijn geraakt. Ronde 1 is uniform. De harde unieke rij- en kolomregel blijft gelden.</p>
-<p><strong>Plaatsing</strong> staat standaard op <em>Ergens in beschikbare ruimte</em>: iedere stap kiest direct een vrije rij en kolom ergens binnen de hele beschikbare rechthoek. Compact, Gebalanceerd en Ruim blijven alternatieven.</p>
-<p><strong>Gridgrootte</strong> staat standaard op <em>Interface</em>. De viewer maakt bij het begin van een iteratieset een vaste rechthoek met de beeldverhouding van de beschikbare interface en genoeg unieke rijen en kolommen voor alle knopen. Na een vensterdraai of resize neemt Reset de nieuwe interfacemaat over. <em>Vast grid</em> gebruikt expliciete kolommen en rijen; te kleine waarden worden verhoogd tot het aantal knopen. <em>Inhoud · groeiend veld</em> behoudt het oudere meegroeigedrag.</p>
-<p><strong>Snelheid</strong> is uitsluitend de wachttijd tussen zichtbare knoopplaatsingen. Zij gebruikt dezelfde Play-klok als Algemeen en verandert seed, toevalsreeks en posities niet.</p>
-<p><strong>Hoe vaak</strong> bepaalt het aantal complete runs in één iteratieset. <strong>Impact op west- en zuidas</strong> staat uit, toont bezettingskans (<code>telling ÷ iteraties</code>) of toont een relatief patroon (<code>telling ÷ hoogste telling</code>).</p>
-<p><strong>Projectie-hits verschijnen pas na een voltooide ronde.</strong> Iedere gebruikte rij geeft één hitspot op WEST en iedere gebruikte kolom één hitspot op SOUTH. Raakt een latere ronde dezelfde coördinaat opnieuw, dan wordt die spot donkerder en zwaarder. Reset wist de opgebouwde hits; Previous neemt een ronde weer uit het asbeeld zodra die ronde niet meer compleet is. Er worden dus geen toekomstige rondes vooraf getekend.</p>
-<p><strong>Voorspelling:</strong> uniforme Random heeft geen voorkeur voor centrum of rand. Over veel rondes wordt het hitbeeld daarom vrijwel egaal. Onzuiver v0.1 kan toevallige vroege verschillen licht versterken en levert bij één vaste seedreeks doorgaans meer ascontrast. Over veel onafhankelijke seeds blijft de verwachting symmetrisch. Heeft een as precies genoeg lijnen voor alle knopen, dan raakt iedere niet-centrale asplek in iedere ronde en kan ook v0.1 daar geen patroon maken.</p>
-<p><strong>Volgende versies:</strong> v0.2 reserveert instelbare herhaalsterkte; v0.3 een instelbaar geheugenvenster. Zij blijven no-show totdat engine, opslag, Help en controles werkelijk functioneel zijn.</p>
-<p>Play loopt automatisch door alle ingestelde iteraties. Next schrijft één volgende knoop en gaat na de laatste knoop van een run door naar de volgende iteratie. Previous gaat binnen de run één knoop terug; vanaf de centrale startknoop keert het terug naar het complete beeld van de vorige iteratie. Reset begint opnieuw bij iteratie 1 volgens het gekozen resetbeleid.</p>
-<p>De voortgang staat in Main als <code>iteratie n/totaal · knoop n/totaal</code>. De centrale startknoop telt niet mee in het asbeeld.</p>
-</div>
-<div class="help-lang-en">
-<h3>Random · Config and iterations</h3>
-<p>Config is strictly separated into <strong>General</strong>, <strong>Calculated → Language Tree</strong>, and <strong>Direct → Shared / Greedy Grow / Random</strong>. General contains only application-independent interface, README, and file settings; pre-config, tree, examples, LEX, SYNT, and LOG exist only under Language Tree. Irrelevant settings are no-show within each context. When Config is opened from active Greedy Grow or Random, the application bar itself is no-show: only Back to Main, the method's own fields with <em>Explanation</em>, and Config save remain visible.</p>
-<p><strong>Seed</strong> is the reproducible starting code of the random sequence, from 1 through 4,294,967,295. <code>20260802</code> is merely the memorable date 2 August 2026. A large number is not more random and does not make Play faster. The same seed, program version, Random model, placement, grid size and run length produce the same sequence. <strong>Reset policy</strong> determines whether Reset starts again from the configured seed or from a next fixed starting seed.</p>
-<p><strong>Random model</strong> defaults to <em>Uniform v1.0</em>. <em>Impure uniform v0.1 · hit repetition</em> mixes an 80% uniform chance with a 20% preference for axis positions hit more often in completed earlier rounds. Round 1 is uniform. The hard unique-row-and-column rule remains in force.</p>
-<p><strong>Placement</strong> defaults to <em>Anywhere in available space</em>: every step directly chooses an unused row and column anywhere within the full available rectangle. Compact, Balanced and Wide remain alternatives.</p>
-<p><strong>Grid size</strong> defaults to <em>Interface</em>. At the start of an iteration set, the viewer creates a fixed rectangle with the aspect ratio of the available interface and enough unique rows and columns for all nodes. After rotating or resizing the window, Reset adopts the new interface size. <em>Fixed grid</em> uses explicit columns and rows; values that are too small are raised to the node count. <em>Content · growing field</em> retains the previous growing behaviour.</p>
-<p><strong>Speed</strong> is only the delay between visible node placements. It uses the same Play clock as General and does not change the seed, random sequence or positions.</p>
-<p><strong>How often</strong> determines the number of complete runs in one iteration set. <strong>Impact on west and south axes</strong> is off, shows occupancy chance (<code>count ÷ iterations</code>), or shows a relative pattern (<code>count ÷ highest count</code>).</p>
-<p><strong>Projection hits appear only after a completed round.</strong> Every used row adds one hit spot on WEST and every used column adds one hit spot on SOUTH. When a later round hits the same coordinate again, that spot becomes darker and heavier. Reset clears accumulated hits; Previous removes a round from the axis image as soon as that round is no longer complete. Future rounds are never drawn in advance.</p>
-<p><strong>Prediction:</strong> uniform Random has no preference for the centre or edge. Across many rounds, the hit image should therefore approach an even distribution. Impure v0.1 can mildly reinforce early chance differences and usually creates more axis contrast for one fixed seed series. Across many independent seeds, the expectation remains symmetric. If an axis has exactly enough lines for all nodes, every non-central axis position is hit in every round and even v0.1 cannot create a pattern there.</p>
-<p><strong>Next versions:</strong> v0.2 reserves configurable repetition strength; v0.3 a configurable memory window. They remain no-show until engine, storage, Help and checks are genuinely functional.</p>
-<p>Play automatically continues through all configured iterations. Next writes one next node and crosses to the next iteration after the final node of a run. Previous removes one node within a run; from the central start node it returns to the completed picture of the previous iteration. Reset starts again at iteration 1 according to the selected reset policy.</p>
-<p>Main shows progress as <code>iteration n/total · node n/total</code>. The central starting node does not count towards the axis image.</p>
-</div>
-</article>
 <article class="help-topic-panel" data-help-topic="recursive-layout">
 <div class="help-lang-nl">
 <h3>3 · OGN Berekende Plaatsing</h3>
@@ -409,6 +382,30 @@
 <p><strong>Important boundary:</strong> in rc.42 the measured pixel size does not move nodes to other grid cells. This is recursive box measurement, not yet a general collision or repacking solver.</p>
 <p><strong>Axes:</strong> LEX uses the measured root edge on the left and only active slots and movement lanes on the right. SYNT uses one shared structural Syntax/Functional grid envelope; complete rule boxes are then included in the viewport.</p>
 <p><strong>Portrait:</strong> the complete horizontal composition uses the available width, but can remain small and leave vertical whitespace. Pan/zoom remains available; a stacked portrait variant is a separate future layout decision.</p>
+</div>
+</article>
+<article class="help-topic-panel" data-help-topic="multi-ogn-anaphor">
+<div class="help-lang-nl">
+<h3>Language Tree · extensie 1 · Anafoor</h3>
+<p>Dit is geen los getekende plaatsingsmethode. S1 en S2 worden ieder recursief als een gewone Language Tree berekend; de extensie voegt de compositie, de referent–anafoorrelaties en de uiteindelijke LEX-realisatie toe.</p>
+<p><strong>Definitie:</strong> een discourse-anafoor is een uitdrukking waarvan de interpretatie een toegankelijke discourse-referent of andere discourse-eenheid uit eerdere taal of context vereist. Zij is niet hetzelfde als haar antecedent, de discourse-referent of de coreferentierelatie.</p>
+<p>De berekende bron is <strong>S1: Ik zie een man.</strong> en <strong>S2: Man draagt een hoed.</strong> Het tweede MAN is dus het subject van S2; <strong>HIJ staat niet in de bronboom</strong>.</p>
+<p>Graphlite berekent beide bomen eerst afzonderlijk als geldige OGN’s. Daarna blijven ze star: S1 komt boven S2 en de complete S2 verschuift totdat beide MAN-bronknopen exact één gridkolom delen.</p>
+<p>De ongerichte coreferentierelatie projecteert S2-MAN vervolgens op de gezamenlijke LEX-as als <strong>HIJ</strong>, <strong>DIE</strong> of, waar passend, <strong>DIE MAN</strong>/<strong>DIE VROUW</strong>. De standaarduitkomst is: <em>Ik zie een man. Hij draagt een hoed.</em></p>
+<p>De combinatie staat zelf in het menu <strong>Zin</strong>. Play reserveert vanaf stap 0 het volledige zichtvenster voor S1 én S2; S1 wordt daardoor nooit alleen schermvullend ingezoomd. Eerst wordt S1 voltooid, daarna S2, vervolgens alle bronrelaties en pas als laatste hun anaforische LEX-realisaties.</p>
+<p>Config bewaart meerdere combinaties en per combinatie een lijst <code>relations[]</code>. De renderer toont alle gedeclareerde Text-anaforen, bijvoorbeeld <strong>BOER → HIJ</strong> en <strong>EZEL → HEM</strong>. De gezamenlijke flipsolver is voorbereid als contract, maar nog niet actief: later kiest hij alle toegestane branch-flips en de starre S2-shift tegelijk, met zo weinig mogelijk flips.</p>
+<p>De regel dat verschillende knopen geen rij of kolom delen, geldt <strong>per afzonderlijke OGN</strong>. Alleen <code>relations[]</code> verklaart centrale Text-coreferentie; toevallig samenvallende S1/S2-kolommen doen dat niet. Alle inserties behoren tot <strong>Context</strong>: een afzonderlijke, geminimaliseerde Open Graph Notation-boom die nog wordt ontwikkeld.</p>
+</div>
+<div class="help-lang-en">
+<h3>Language Tree · extension 1 · Anaphor</h3>
+<p>This is not a separately drawn placement method. S1 and S2 are each recursively calculated as an ordinary Language Tree; the extension adds composition, referent–anaphor relations and final LEX realization.</p>
+<p><strong>Definition:</strong> a discourse anaphor is an expression whose interpretation requires an accessible discourse referent or other discourse unit supplied by earlier language or context. It is not identical to its antecedent, the discourse referent or the coreference relation.</p>
+<p>The calculated source is <strong>S1: Ik zie een man.</strong> and <strong>S2: Man draagt een hoed.</strong> The second MAN is the subject of S2; <strong>HIJ is not a source-tree node</strong>.</p>
+<p>Graphlite first calculates both trees independently as valid OGNs. They then remain rigid: S1 is placed above S2 and the complete S2 shifts until both MAN source nodes share exactly one grid column.</p>
+<p>The undirected coreference relation then projects S2 MAN onto the shared LEX axis as <strong>HIJ</strong>, <strong>DIE</strong> or, where applicable, <strong>DIE MAN</strong>/<strong>DIE VROUW</strong>. The default surface result is: <em>Ik zie een man. Hij draagt een hoed.</em></p>
+<p>The combination itself appears in the <strong>Sentence</strong> menu. Play reserves the full S1-and-S2 viewport from step 0, so S1 is never zoomed to fill the screen on its own. S1 completes first, then S2, then all source relations, and finally their anaphoric LEX realizations.</p>
+<p>Config stores multiple combinations and a <code>relations[]</code> list per combination. The renderer draws every declared Text anaphor, including <strong>BOER → HIJ</strong> and <strong>EZEL → HEM</strong>. The joint flip solver is specified but not active yet: it will choose every allowed branch flip and the rigid S2 shift at once, minimizing flip count.</p>
+<p>The rule that distinct nodes do not share a row or column applies <strong>per individual OGN</strong>. Only <code>relations[]</code> declares central Text coreference; coincident S1/S2 columns alone do not. Every insertion belongs to <strong>Context</strong>: a separate, minimized Open Graph Notation tree that remains to be developed.</p>
 </div>
 </article>
 <article class="help-topic-panel" data-help-topic="west-axis">
@@ -439,25 +436,29 @@
 <div class="help-lang-nl">
 <h3>Named projections</h3>
 <p>Een named projection geeft een projectie een naam en eigen selectieregels.</p>
-<ul><li><strong>LEX</strong>: toont horizontale bronprojecties en één eindverplaatsing per bronwoord; de projectie en projectiemerkers zijn blauw.</li><li><strong>SYNT</strong>: selecteert syntactische categorieën en regels.</li><li><strong>LOG</strong>: ordent S/O/V-majors op vaste slots<span data-feature="adverbs" hidden="">, samen met ingeschakelde minors</span>.</li></ul>
+<ul><li><strong>LEX</strong>: toont horizontale bronprojecties en alleen expliciete Wissels; de projectie en projectiemerkers zijn blauw.</li><li><strong>SYNT</strong>: selecteert syntactische categorieën en regels.</li><li><strong>LOG</strong>: ordent S/O/V-majors op vaste slots<span data-feature="adverbs" hidden="">, samen met ingeschakelde minors</span> en plant LEX-ruimte zonder bronwoorden te verplaatsen.</li></ul>
 </div>
 <div class="help-lang-en">
 <h3>Named projections</h3>
 <p>A named projection gives a projection a name and its own selection rules.</p>
-<ul><li><strong>LEX</strong>: shows LOG-derived neutral rows and later exchanges; its projection and projection markers are blue.</li><li><strong>SYNT</strong>: selects syntactic categories and rules.</li><li><strong>LOG</strong>: orders S/O/V majors on fixed slots<span data-feature="adverbs" hidden="">, together with enabled minors</span>.</li></ul>
+<ul><li><strong>LEX</strong>: shows horizontal source projections and explicit switches only; its projection and projection markers are blue.</li><li><strong>SYNT</strong>: selects syntactic categories and rules.</li><li><strong>LOG</strong>: orders S/O/V majors on fixed slots<span data-feature="adverbs" hidden="">, together with enabled minors</span>, planning LEX space without moving source words.</li></ul>
 </div>
 </article>
 <article class="help-topic-panel" data-help-topic="lex-axis">
-<div class="help-lang-nl"><h3>LEX</h3><p>LEX is de westelijke named projection van Language Tree.</p><p>Ieder bronwoord projecteert horizontaal op bronhoogte. LOG plant mogelijke plaatsen, maar alleen een expliciete topic-/V2-/post-V2-regel verplaatst een bronknoop. In HOND BIJT MAN blijft MAN op MAN-hoogte.</p></div>
-<div class="help-lang-en"><h3>LEX</h3><p>LEX is the west named projection of Language Tree.</p><p>Every source word projects horizontally at source height. LOG plans possible positions, but only an explicit topic/V2/post-V2 rule moves a source node. In HOND BIJT MAN, MAN remains at MAN source height.</p></div>
+<div class="help-lang-nl"><h3>LEX</h3><p>LEX is de named projection voor lexicale plaatsing.</p><p>Ieder bronwoord projecteert horizontaal op bronhoogte. LOG plant mogelijke plaatsen, maar alleen een expliciete topic-, V1- of V2-regel verplaatst een bronwoord. In <code>HOND BIJT MAN</code> blijven HOND en MAN staan; alleen BIJT wisselt naar V2.</p></div>
+<div class="help-lang-en"><h3>LEX</h3><p>LEX is the named projection for lexical placement.</p><p>Each source word projects horizontally at source height. LOG plans possible positions, but only an explicit topic, V1 or V2 rule moves a source word. In <code>HOND BIJT MAN</code>, HOND and MAN stay put; only BIJT switches to V2.</p></div>
+</article>
+<article class="help-topic-panel" data-help-topic="lex-free-positions">
+<div class="help-lang-nl"><h3>Actief LEX-profiel</h3><p>Actief zijn uitsluitend expliciete Wissels omhoog, toepassingsgebonden Context-inserties en rechtstreeks geschreven Comp. Generieke vrije plekken vóór, na of tussen en Wissels omlaag blijven no-show. Oude Config- of OPN-velden daarvoor worden compatibel genegeerd.</p><p>In <code>HOND BIJT MAN</code> behouden HOND en MAN hun bronhoogte; alleen BIJT wisselt naar de vrije V2-plaats.</p></div>
+<div class="help-lang-en"><h3>Active LEX profile</h3><p>Only explicit upward switches, application-specific Context insertions, and directly written Comp are active. Generic free positions before, after, or between, and downward switches remain no-show. Old Config or OPN fields for them are ignored compatibly.</p><p>In <code>HOND BIJT MAN</code>, HOND and MAN retain their source height; only BIJT switches to the available V2 position.</p></div>
 </article>
 <article class="help-topic-panel" data-help-topic="synt-axis">
 <div class="help-lang-nl"><h3>SYNT</h3><p>SYNT is de named projection voor syntactische regels. Regels worden op bronhoogte getoond, bijvoorbeeld <code>S → NP VP</code> en <code>VP → V NP</code>.</p></div>
 <div class="help-lang-en"><h3>SYNT</h3><p>SYNT is the named projection for syntactic rules. Rules are shown at source height, for example <code>S → NP VP</code> and <code>VP → V NP</code>.</p></div>
 </article>
 <article class="help-topic-panel" data-help-topic="log-axis">
-<div class="help-lang-nl"><h3>LOG</h3><p data-feature-absent="adverbs">LOG is de named projection op de zuidas. S, O en V zijn majors op vaste slots. Hun LOG-volgorde plant mogelijke LEX-plaatsen maar verplaatst geen bronknoop.</p><p data-feature="adverbs" hidden="">LOG is de named projection op de zuidas. S, O en V zijn majors; ingeschakelde inserties kunnen minors toevoegen. Iedere minor vergroot de geplande afstand tussen zijn begrenzende majors met één vast slot. Alleen een expliciete Language-Tree-regel mag een bronknoop verplaatsen.</p></div>
-<div class="help-lang-en"><h3>LOG</h3><p data-feature-absent="adverbs">LOG is the named projection on the south axis. S, O and V are majors on fixed slots. Their LOG order plans possible LEX positions but does not move a source node.</p><p data-feature="adverbs" hidden="">LOG is the named projection on the south axis. S, O and V are majors; enabled insertions may add minors. Each minor increases the planned distance between its bounding majors by one fixed slot. Only an explicit Language Tree rule may move a source node.</p></div>
+<div class="help-lang-nl"><h3>LOG</h3><p data-feature-absent="adverbs">LOG is de named projection op de zuidas. S, O en V zijn majors op vaste slots. Hun LOG-volgorde plant mogelijke LEX-plaatsen, maar verplaatst geen bronwoorden.</p><p data-feature="adverbs" hidden="">LOG is de named projection op de zuidas. S, O en V zijn majors; ingeschakelde inserties kunnen minors toevoegen. Iedere minor vergroot de geplande afstand tussen zijn begrenzende majors met één vast slot. LOG-planning alleen verplaatst geen bronwoord.</p></div>
+<div class="help-lang-en"><h3>LOG</h3><p data-feature-absent="adverbs">LOG is the named projection on the south axis. S, O and V are majors on fixed slots. Their LOG order plans possible LEX positions but does not move source words.</p><p data-feature="adverbs" hidden="">LOG is the named projection on the south axis. S, O and V are majors; enabled insertions may add minors. Each minor increases the planned distance between its bounding majors by one fixed slot. LOG planning alone never moves a source word.</p></div>
 </article>
 <article class="help-topic-panel" data-help-topic="tree-notation">
 <div class="help-lang-nl">
@@ -514,8 +515,8 @@
 <div class="help-lang-en"><h3>Language actions</h3><p>Language actions change a projection or placement layer. They do not automatically mutate the central syntax tree.</p></div>
 </article>
 <article class="help-topic-panel" data-help-topic="lex-movement">
-<div class="help-lang-nl"><h3>LEX-wissels</h3><p>Een LEX-wissel is een expliciete Language-Tree-regel op de LEX-projectie. De centrale graph transformeert niet.</p><p>LOG plant mogelijke plaatsen maar activeert geen beweging. Comp, vooropplaatsing/topic en V2/PV kunnen een zichtbare Wissel activeren: één pijl en één trace op de bronrij.</p></div>
-<div class="help-lang-en"><h3>LEX exchanges</h3><p>A LEX exchange is an explicit Language Tree rule on the LEX projection. The central graph does not transform.</p><p>LOG plans possible positions but activates no movement. Comp, fronting/topic, and V2/finite verb can activate one visible exchange: one arrow and one trace on the source row.</p></div>
+<div class="help-lang-nl"><h3>LEX-wissels</h3><p>Een LEX-wissel verandert het bepaalde einddoel op de LEX-projectie. De centrale graph transformeert niet.</p><p>LOG bepaalt eerst de neutrale basis; Comp, vooropplaatsing/topic en V2/PV kunnen daarna logisch een ander doel kiezen. De tekening combineert dit tot één pijl en één trace op de bronrij.</p></div>
+<div class="help-lang-en"><h3>LEX exchanges</h3><p>A LEX exchange changes the resolved final target on the LEX projection. The central graph does not transform.</p><p>LOG determines the neutral basis first; Comp, fronting/topic and V2/finite verb may then logically select another target. The drawing combines this into one arrow and one trace on the source row.</p></div>
 </article>
 <article class="help-topic-panel" data-feature="adverbs" data-help-topic="adverbs" hidden="">
 <div class="help-lang-nl"><h3>Bijwoorden</h3><p>Een bijwoordelijke realisatie eindigt op LEX, maar heeft niet altijd dezelfde bron. Een semantische operator kan als <strong>LOG→LEX</strong>-realisatie worden geplaatst; een partikel of lokaal focus-/graadelement kan als <strong>directe LEX-insertie</strong> worden geplaatst. Een gemengde groep, zoals <code>misschien wel</code>, kan één zichtbaar slot gebruiken met componenten uit beide bronnen.</p><p>De bron, scope en lineaire LEX-plaats zijn afzonderlijke eigenschappen. Alleen LOG-profielen verschijnen als minor op de zuidas; directe LEX-profielen reserveren uitsluitend een LEX-plaats.</p></div>
@@ -786,13 +787,14 @@
 <section class="panel-card lex-card">
 <h2>LEX-as · uitingtype</h2>
 <label class="field"><span>Uitingtype-regel</span><select id="lexRuleSelect"></select></label>
+<p class="inline-help"><span class="help-lang-nl"><strong>Actief:</strong> Wissels omhoog, Context-inserties en Comp. Generieke vrije plekken vóór, na of tussen blijven no-show; oude Config- en OPN-velden worden genegeerd.</span><span class="help-lang-en"><strong>Active:</strong> upward switches, Context insertions, and Comp. Generic free positions before, after, or between remain no-show; old Config and OPN fields are ignored.</span></p>
 <div aria-label="LEX volgorde" class="lex-order-list" id="lexOrderList"></div>
 <div class="button-row">
 <button id="lexLeftButton" type="button">←</button>
 <button id="lexRightButton" type="button">→</button>
 <button id="applyLexRuleButton" type="button">Pas regel toe</button>
 </div>
-<p class="inline-help">Bronknopen projecteren horizontaal naar LEX en blijven zonder expliciete regel op bronhoogte. Alleen een echte Wisselregel verplaatst: V2/PV naar slot 2, topicalisatie naar slot 1. Een verplaatst woord laat één brontrace; de centrale boom blijft ongewijzigd.</p>
+<p class="inline-help">Bronknopen projecteren horizontaal naar LEX. LOG en eventuele Wisselregels bepalen daarna samen één einddoel: V2/PV naar slot 2, topicalisatie naar slot 1. Per bronwoord blijft één brontrace; de centrale boom blijft ongewijzigd.</p>
 </section>
 <section class="panel-card relation-card">
 <h2>Relaties / regels</h2>
@@ -865,7 +867,7 @@
 <label title="Functionele variant: verlengt de grens tussen predicaat en argumentstructuur."><input data-lex-extension-target="clause-boundary" type="checkbox"/> CLAUSE-grens</label>
 <p class="top-menu-choice-help" data-lex-extension-help="">Takverlenging wordt geladen.</p>
 </fieldset>
-<p class="top-menu-choice-help">Bijwoordelijke inserties gebruiken een profiel met bron LOG, LEX of LOG+LEX. Alleen LOG-profielen verschijnen op de zuidas. De LOG-planning bepaalt beschikbare plaatsen maar verplaatst geen bronknoop; vooropplaatsing en V2 zijn afzonderlijke expliciete Wisselregels.</p>
+<p class="top-menu-choice-help">Bijwoordelijke inserties gebruiken een profiel met bron LOG, LEX of LOG+LEX. Alleen LOG-profielen verschijnen op de zuidas; alle profielen krijgen vóór het tekenen een LEX-doel. Vooropplaatsing en V2 kunnen dit einddoel daarna vervangen.</p>
 </div>
 <div aria-label="OPN-document opslaan en openen" class="mobile-sheet-section">
 <h3>OPN-document</h3>
@@ -917,6 +919,10 @@
   </script>
 <script defer="" src="greedy-grow-engine.js?v2.0.0-rc.45"></script>
 <script defer="" src="random-placement-engine.js?v2.0.0-rc.45"></script>
-<script defer="" src="viewer.js?v2.0.0-rc.45&amp;cb=5"></script>
+<script defer="" src="multi-ogn-composition-engine.js?v2.0.0-rc.45&amp;cb=10"></script>
+<script defer="" src="anaphor-lexicalization-engine.js?v2.0.0-rc.45&amp;cb=10"></script>
+<script defer="" src="anaphor-combinations-engine.js?v2.0.0-rc.45&amp;cb=10"></script>
+<script defer="" src="multi-ogn-anaphor-play-engine.js?v2.0.0-rc.45&amp;cb=10"></script>
+<script defer="" src="viewer.js?v2.0.0-rc.45&amp;cb=10"></script>
 </body>
 </html>

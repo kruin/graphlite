@@ -13,48 +13,34 @@ def require(source: str, marker: str, label: str) -> None:
         errors.append(f"{label} ontbreekt: {marker!r}")
 
 
-# Config contexts are hard-separated: General, Language Tree and Direct.
+# Compact Config overview and the focused sections restored in rc.28.
 for marker, label in [
     ("const CONFIG_TAB_DEFINITIONS = [", "tabdefinities"),
-    ("{ id: 'general-ui', nl: 'Interface & weergave', en: 'Interface & display' }", "algemene interfacetab"),
     ("{ id: 'preconfig', nl: 'Voorconfig', en: 'Pre-config' }", "tab Voorconfig"),
-    ("{ id: 'features', nl: 'Uitbreidingen', en: 'Extensions' }", "Language-Tree-uitbreidingen"),
+    ("{ id: 'features', nl: 'Toepassingen', en: 'Applications' }", "tab Toepassingen"),
     ("{ id: 'overview', nl: 'Overzicht', en: 'Overview' }", "tab Overzicht"),
     ("{ id: 'jan', nl: 'JaN · TODO', en: 'JaN · TODO' }", "tab JaN"),
     ("{ id: 'files', nl: 'Bestanden & export', en: 'Files & export' }", "tab Bestanden & export"),
-    ("{ id: 'view', nl: 'Boom & projecties', en: 'Tree & projections' }", "Language-Tree-beeldtab"),
+    ("{ id: 'view', nl: 'Beeld', en: 'View' }", "tab Beeld"),
     ("{ id: 'log-lex', nl: 'LOG & LEX', en: 'LOG & LEX' }", "tab LOG & LEX"),
-    ("{ id: 'examples', nl: 'Voorbeelden', en: 'Examples' }", "Language-Tree-voorbeelden"),
-    ("{ id: 'advanced', nl: 'Compatibiliteit', en: 'Compatibility' }", "Language-Tree-compatibiliteit"),
-    ("const CONFIG_SCOPE_DEFINITIONS = Object.freeze([", "Configcontexten"),
-    ("{ id: 'direct-shared', groupNl: 'Direct', groupEn: 'Direct', nl: 'Gedeeld', en: 'Shared' }", "Direct Gedeeld-context"),
-    ("general: Object.freeze(['general-ui', 'readme-carousels', 'overview', 'files'])", "uitsluitend algemene tabs"),
-    ("'language-tree': Object.freeze(['preconfig', 'features', 'view', 'log-lex', 'examples', 'jan', 'advanced'])", "uitsluitend Language-Tree-tabs"),
-    ("'direct-shared': Object.freeze(['direct'])", "gedeelde Direct-tab"),
-    ("let activeConfigTab = 'general-ui';", "Algemeen standaard actief"),
-    ("function activateConfigTab(tabId = 'general-ui'", "Algemeen als tabfallback"),
+    ("{ id: 'advanced', nl: 'Geavanceerd', en: 'Advanced' }", "tab Geavanceerd"),
+    ("let activeConfigTab = 'preconfig';", "Voorconfig standaard actief"),
+    ("function activateConfigTab(tabId = 'preconfig'", "Voorconfig als tabfallback"),
     ("function setupConfigTabs()", "Config-opbouw"),
     ("return isMobileViewport() && !isPortraitGridFirstViewport() ? 'side' : 'stacked';", "werkende automatische README-indeling"),
     ("config-dashboard", "compact Config-dashboard"),
-    ("panels.get('general-ui').appendChild(generalUiCard);", "algemeen interfacepaneel"),
+    ("data-config-jump=\"jan\"", "JaN-overzichtskaart"),
     ("panels.get('preconfig').appendChild(preconfigCard);", "voorconfigpaneel"),
-    ("panels.get('features').appendChild(featuresCard);", "uitbreidingenpaneel"),
+    ("panels.get('features').appendChild(featuresCard);", "toepassingenpaneel"),
     ("panels.get('overview').appendChild(overviewCard);", "overzichtspaneel"),
     ("panels.get('jan').appendChild(janCard);", "JaN-paneel"),
-    ("panels.get('files').append(projectConfigCard, readmeSlideFileCard, graphExportCard, opnCard);", "algemene bestandssectie zonder voorbeelden"),
-    ("panels.get('examples').appendChild(examplesCard);", "afzonderlijke Language-Tree-voorbeelden"),
-    ("setConfigScreen(true, validPlacementMode(state.placementMode));", "Config opent in actieve toepassingscontext"),
-    ("sidePanel.replaceChildren(scopeNav, tabList, saveSlot, ...panels.values());", "globale Config-save boven alle tabpanelen"),
+    ("panels.get('files').append(projectConfigCard, readmeSlideFileCard, graphExportCard, opnCard, examplesCard);", "bestandssectie"),
+    ("sidePanel.replaceChildren(tabList, saveSlot, ...panels.values());", "globale Config-save boven alle tabpanelen"),
     ("const CONFIG_ITEM_HELP = {", "instellingsuitleg"),
     ("Kiest de centrale Syntax- of Functional-view.", "uitleg centrale view"),
     ("een expliciete zinsplaats heeft voorrang", "uitleg lineaire plaatsingsprioriteit"),
 ]:
     require(JS, marker, label)
-
-if "generalTopMenuField" in JS:
-    errors.append("Language-Tree-menu-indeling wordt nog naar Algemeen verplaatst")
-if "general: Object.freeze(['preconfig'" in JS or "general: Object.freeze(['direct'" in JS:
-    errors.append("Algemeen bevat nog een toepassingsconfigtab")
 
 for marker, label in [
     ("body.config-screen-active .config-tab-list", "tabbalk"),
@@ -116,4 +102,4 @@ if errors:
         print("-", error)
     raise SystemExit(1)
 
-print("CONFIG/MENU CHECK: OK (Algemeen, Language Tree en Direct strikt gescheiden; interface en talen intact)")
+print("CONFIG/MENU CHECK: OK (Voorconfig, toepassingen, overzicht, JaN, Functional, interface en talen)")

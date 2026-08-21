@@ -64,6 +64,24 @@ else:
     if origins != {'LOG', 'LEX', 'LOG+LEX'}:
         errors.append(f'constructieorigins fout: {sorted(origins)}')
 
+anaphor = collector.constructions.get('anaphor-subject')
+if not anaphor:
+    errors.append('constructie anaphor-subject ontbreekt')
+else:
+    profiles = {profile.get('data-id'): profile for profile in anaphor['profiles']}
+    if set(profiles) != {'hij', 'die', 'die-man', 'die-vrouw'}:
+        errors.append(f'anafoorprofielen fout: {sorted(profiles)}')
+    expected_components = {
+        'hij': ('surface=HIJ', 'antecedents=man'),
+        'die': ('surface=DIE', 'antecedents=man,vrouw'),
+        'die-man': ('surface=DIE_MAN', 'antecedents=man'),
+        'die-vrouw': ('surface=DIE_VROUW', 'antecedents=vrouw'),
+    }
+    for profile_id, markers in expected_components.items():
+        components = profiles.get(profile_id, {}).get('data-components', '')
+        if not all(marker in components for marker in markers):
+            errors.append(f'{profile_id}: onjuiste anafoorcomponenten')
+
 for example_id in [
     'de-hond-heeft-de-man-misschien-wel-vaak-gebeten',
     'omdat-de-hond-de-man-misschien-wel-vaak-gebeten-heeft',

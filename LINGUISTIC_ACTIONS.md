@@ -6,7 +6,7 @@ Taalkundige acties in OpenGraph Lite Viewer `v2.0.0-rc.45`.
 
 ```text
 LOG-majors/minors
-→ neutrale LEX-rijen
+→ LEX-planning
 → Wissels
 → surface-validatie
 ```
@@ -17,7 +17,8 @@ Een bijwoord wordt ingevoegd in een LOG-interval. De actie:
 
 - voegt geen centrale SYNT- of Functional-knoop toe;
 - vergroot de majorafstand met de vaste minorbreedte;
-- bepaalt meteen de corresponderende neutrale LEX-rij;
+- reserveert de corresponderende geplande LEX-plaats zonder een bronwoord te
+  verplaatsen;
 - bewaart klasse, scopehost en markering als metadata.
 
 ### LOG-volgorde wijzigen
@@ -28,23 +29,24 @@ Beschikbare majorvolgorden:
 SOV · SVO · OVS · OSV-! · VSO-! · VOS-!
 ```
 
-De majorvolgorde verandert de LOG-sequentie en daardoor de neutrale
-LEX-basis. De centrale Syntax- en Functional-graphs blijven ongemoeid. `!` betekent
-dat een aanvullende, expliciete LEX-verplaatsingsregel nodig kan zijn.
+De majorvolgorde verandert de LOG-sequentie en daardoor de LEX-planning. De
+centrale Syntax- en Functional-graphs en de bronposities blijven ongemoeid.
+`!` betekent dat een aanvullende, expliciete LEX-verplaatsingsregel nodig kan
+zijn.
 
 ### Wissel
 
 Een Wissel:
 
-- werkt pas na LOG → LEX;
+- werkt pas na de LOG-planning;
 - vult een gereserveerde LEX-positie, zoals topic of V2;
-- laat een trace op de LOG-afgeleide basispositie;
+- laat een trace op de verlaten bronpositie;
 - muteert Syntax, Functional en LOG niet.
 
 ## Voorbeeldzin
 
 De voorbeeldzin is een verwachte surface-realisatie. Zij valideert de
-afleiding, maar bepaalt geen LOG-slot, LEX-basisrij of projectiecoördinaat.
+afleiding, maar bepaalt geen LOG-slot, bronpositie of projectiecoördinaat.
 
 ## Oude hostnotatie
 

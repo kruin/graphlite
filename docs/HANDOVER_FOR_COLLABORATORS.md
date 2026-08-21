@@ -6,37 +6,60 @@ Releasebesluit: rc.45 is op 2 augustus 2026 handmatig goedgekeurd, inclusief
 de Greedy Grow-reconstructie en de rechtstreeks afgeleide publicatieslide.
 
 Actuele source build:
-`v2.0.0-rc.45-config-scope-man-source-height-20260813.1`. Behoud Language Tree
+`v2.0.0-rc.45-sources-language-tree-anafoor-extensie-20260821.16`. Behoud Language Tree
 als prominente berekende toepassing en Greedy Grow/Random als kleinere
 directe OGN-illustraties. Wijzig `greedy-grow-engine.js` niet voor Random: die
 engine is onderdeel van het afleidingsbewijs van publicatieslide 5. Random
 hoort in `random-placement-engine.js`. Bewaak het lijnbeeld en het structurele
 EOF/EOL-beleid volgens `LINE_STYLE_AND_PLACEMENT_MODES.md`.
 
-Organiseer Config als **Algemeen**, **Calculated → Language Tree** en **Direct
-→ Gedeeld / Greedy Grow / Random**. Algemeen bevat uitsluitend
-toepassingsonafhankelijke interface-, LEESMIJ- en bestandsinstellingen;
-Voorconfig, boom, voorbeelden, LEX, SYNT en LOG staan alleen onder Language
-Tree. Per context zijn niet-relevante instellingen
-no-show. Vanuit een actieve Greedy-Grow- of Random-modus is ook de
-toepassingsbalk no-show: alleen Terug naar Main, de eigen velden met uitleg en
-Config opslaan blijven zichtbaar. Wisselen van context begint in Main. Volg
-`CONFIG_UI_EXPLANATION_STANDARD.md`: ieder zichtbaar veld krijgt
-compacte, mobiele uitleg. Gedeelde keuzes blijven uitsluitend in
-`directPlacementGeneral`; Random-snelheid hergebruikt de gedeelde Play-klok.
-Random bevat daarnaast seed, resetbeleid, model, plaatsing, gridgrootte, vaste
-kolommen/rijen, iteratieaantal en asbeeldmodus. Uniform v1.0 blijft standaard;
-Onzuiver uniform v0.1 mengt 20% herhaalgewicht uit voltooide eerdere as-hits.
-v0.2 en v0.3 blijven no-show. Zie `DIRECT_PLACEMENT_CONFIG.md`.
+Behoud de projectbrede verwijdering van trailing whitespace bij iedere
+publicatienormalisatie. Gebruik in Markdown geen hard break met twee
+afsluitende spaties; schrijf afzonderlijke alinea's of een expliciete break.
 
-LOG-planning is nooit zelfstandig een bronknoopverplaatsing. Zonder expliciete
-topic-/V2-/post-V2-regel blijft ieder woord op bronhoogte. In `HOND BIJT MAN`
-blijft `MAN` op MAN-hoogte en wisselt alleen `BIJT`; de verdikking in Play 2/3
-is slechts een tijdelijke LEX-ruimte-indicator.
+Neem alle oorspronkelijke bronbestanden mee, in het bijzonder
+`CONFIG_UI_EXPLANATION_STANDARD.md` en de identieke kopie in `docs/`.
+Publiceren staged altijd eerst met `git add -A -- .` en renormaliseert pas
+daarna. Die volgorde verwerkt ontbrekende gevolgde paden zonder Git-fout.
+Behoud ook het actieve LEX-profiel: alleen upward, Context-insertie en Comp;
+generieke plaatsen vóór, na en tussen blijven no-show.
 
-Random projecteert uitsluitend voltooide rondes naar cumulatieve WEST- en
-SOUTH-hitspots. Herhaalde hits maken dezelfde spot zwaarder; toekomstige
-rondes worden niet vooraf in het asbeeld opgenomen.
+Behoud publiceren zonder verplichte Playwright-installatie. De optionele
+Anafoor-browsertest mag ontbreken van Playwright of Chromium duidelijk melden
+en overslaan; geïnstalleerde browsertests en echte modulefouten blijven
+verplicht slagen. `installeer-carrousel-tools.bat` activeert de volledige
+browsercontrole wanneer die gewenst is.
+
+Behoud **Anafoor · multi-OGN** als eerste Language Tree-extensie volgens
+`TEXT_AND_CONTEXT.md`, `ANAPHOR_LANGUAGE_TREE_EXTENSION.md` en
+`MULTI_OGN_ANAPHOR.md`. **Text** is uitsluitend de centrale uiting; **Context**
+is alles daaromheen en is eveneens een afzonderlijke, nog te ontwikkelen
+geminimaliseerde Open Graph Notation-boom. Iedere insertie is Context.
+Bereken S1 en S2 afzonderlijk,
+plaats S1 boven S2, verschuif S2 uitsluitend star en teken iedere uitgelijnde
+Text-coreferentie verticaal en zonder pijl. Alleen LEX realiseert Text-bronnen
+als `HIJ` of `HEM`; `GISTEREN`, `VANDAAG`, `ER`, `NIET MEER` en `OMDAT`
+zijn zelfstandige Context-inserties zonder centrale Text-boomknoop. Nadere
+Context-uitwerking blijft p.m. Dit mag het Language-Tree-contract niet
+wijzigen:
+**HOND en MAN blijven exact op hun bronhoogte; alleen BIJT wisselt naar de
+vrije LEX-gridrij halverwege beide bronrijen**; de eindvolgorde is
+**HOND BIJT MAN**.
+
+Behoud ook de Anafoor-Play-tijdlijn: eerst S1, dan S2, daarna alle
+uitgelijnde Text-coreferenties en pas ten slotte de anaforische LEX-vormen.
+Een hoofdzin kan een V2-Wissel bevatten; in `omdat hij hem bezit` blijft
+`BEZIT` finaal. Terug doorloopt dezelfde lagen exact omgekeerd.
+
+Laat Config altijd de actieve plaatsingsmodus volgen. Language Tree toont onder
+**Direct** alleen Algemeen. Greedy Grow en Random openen een afgeschermd
+methodescherm zonder hoofdtabbladen, methodekeuze, taal/README-uitleg of
+niet-eigen bediening. Alleen Terug, de eigen velden en Config-save blijven.
+Bewaar gedeelde run- en weergavekeuzes uitsluitend in
+`directPlacementGeneral`; `greedyGrowConfig` bevat alleen strategie en
+oriëntatie; `randomPlacementConfig` bevat alleen seed, resetbeleid, spreiding,
+iteratieaantal en asbeeldmodus. Random-iteraties mogen de actieve run niet
+vooruitplannen. Zie `DIRECT_PLACEMENT_CONFIG.md`.
 
 De reserveringen Vraagzin, Nadruk en Onaffe zin zijn uitsluitend
 Config-voorraad. Voeg ze niet toe aan `FEATURE_DEFINITIONS`, state, opslag,
@@ -93,22 +116,26 @@ wijzigt de viewerlogica niet. Houd deze onderdelen samen:
 
 ```text
 publicatie-carrousel/index.html          bewerkbare, zelfstandige bron
+publicatie-carrousel/derived-manifest.json automatisch afleidingsbewijs
 publicatie-carrousel/slides/01-*.png     begin van de uploadvolgorde
 publicatie-carrousel/slides/07-*.png     einde van de uploadvolgorde
 tools/export_publication_carousel.js     herhaalbare PNG-export
-tools/check_publication_carousel.py      statische bron- en PNG-controle
+tools/check_publication_carousel.py      bron-/exporter-/PNG-driftcontrole
+maak-publicatie-carrousel.bat            volledige afleiding plus carrouselzip
 PUBLICATIE_README.md                     posttekst, volgorde en alt-teksten
 RC45_OGN_CORE_EXPLANATION_TEST.md        handmatige inhoudelijke en visuele akkoordlijst
 ```
 
 Er moeten exact zeven genummerde slides van 1080 × 1080 pixels zijn. Bewerk
-eerst `publicatie-carrousel/index.html`, exporteer daarna alle slides opnieuw
-en voer de carrouselcontrole uit. De actuele inhoudsvolgorde is: projectie
-naar WEST / SOUTH / EAST, **Direct — Greedy Grow** op slide 5 en
+uitsluitend `publicatie-carrousel/index.html` en draai daarna
+`maak-publicatie-carrousel.bat`. Bewerk nooit een losse PNG of carrouselzip.
+De actuele inhoudsvolgorde is: knopen en vrije posities, projectie naar WEST /
+SOUTH / EAST, **Direct — Greedy Grow** op slide 5 en
 **Calculated — Language Tree** op slide 6. Die laatste slide toont het laatste
 stadium van `HOND BIJT MAN`, met de woorden op de westelijke LEX-as. Beide
 voorbeeldslides moeten zichtbaar naar `github.com/kruin/graphlite` verwijzen.
-Handmatig controleren blijft nodig voor
+Het afleidingsmanifest maakt de releasecontrole hard fout bij een verouderde
+bron, exporter of PNG. Handmatig controleren blijft nodig voor
 leesbaarheid, afsnijding, kleuronderscheid en inhoudelijke juistheid.
 
 ## Projectconfig en projectzip
@@ -217,13 +244,15 @@ Bronassen: LEX, SYNT en LOG zijn bij Bron onafhankelijk combineerbaar. De bedien
 Lees vóór plaatsingswijzigingen `projectie-master-spec.md`.
 
 ```text
-LOG-majors/minors → neutrale LEX-basis → expliciete Wissels → zinsvalidatie
+LOG-majors/minors → LEX-planning → expliciete Wissels → zinsvalidatie
 ```
 
 - S/O/V zijn majors. Alleen inserties met `origin=LOG` of `origin=LOG+LEX`
   zijn minors; `origin=LEX` is een directe LEX-insertie.
 - Iedere minor vergroot de begrensde majorafstand met één vast slot.
-- LOG is autoriteit voor de neutrale LEX-rij.
+- LOG plant beschikbare LEX-plaatsen, maar maakt zelf geen woordverplaatsing.
+- Alleen expliciete topic-/V1-/V2-regels maken een Wissel; zonder zo'n regel
+  blijft een bronwoord op zijn eigen bronhoogte.
 - De surface-string bepaalt geen layoutcoördinaat. Expliciete
   zinsinstantiemetadata kan wel een vooraf berekende landingsplaats vastleggen.
 - Oude hostvelden zijn alleen scope-/compatibiliteitsmetadata.
@@ -241,14 +270,25 @@ Intern schrijft de viewer `central_opn: "ft"`. Invoer met de oude waarde `functi
    `tools/check_feature_profiles.py`, `tools/check_log_slot_distance.py`,
    `tools/check_readme_item_editor.py` en
    `tools/check_project_config_layers.py` uit. Voer voor rc.45 ook
-   `tools/check_publication_carousel.py` uit.
+   `maak-publicatie-carrousel.bat` uit wanneer de carrouselbron gewijzigd is;
+   voer altijd `tools/check_publication_carousel.py` uit.
 5. Voer `check_release.bat` uit.
 6. Hernoem de projectmap naar de bedoelde release en voer
    `maak-volledige-zip.bat` uit. De ZIP neemt automatisch de actuele mapnaam
    over.
 7. Controleer in de uitgepakte zip of `config/default-config.json`,
    `config/user-config.json`, `PUBLICATIE_README.md`,
-   `publicatie-carrousel/index.html` en alle zeven slides aanwezig zijn.
+   `publicatie-carrousel/index.html`, `publicatie-carrousel/derived-manifest.json`
+   en alle zeven slides aanwezig zijn.
+
+## Vaste oplevering in Sources
+
+Na iedere afgeronde Graphlite-wijziging is de volgorde: carrousel afleiden,
+alle controles groen, volledige projectzip bouwen en daarna de bestaande
+actuele projectzip in Sources vervangen. Voeg geen tussenstanden of `(1)`-
+kopieën toe. Gebruik pas een nieuwe vaste zipnaam wanneer `VERSION.txt` een
+nieuw rc-nummer krijgt. Bij een mislukte controle wordt de zip in Sources niet
+vervangen.
 
 ## Publiceren
 

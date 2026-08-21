@@ -96,14 +96,16 @@ if not defined COMMITMSG (
 
 echo.
 echo Staging sitebestanden...
-git add --renormalize -- .
-if errorlevel 1 (
-  echo FOUT: Git-renormalisatie mislukt.
-  goto :fail
-)
+rem Leg ook verwijderde paden eerst vast; renormalisatie kan alleen bestaande
+rem gevolgde bestanden lezen en faalt anders op eerder verdwenen documentatie.
 git add -A -- .
 if errorlevel 1 (
   echo FOUT: git add mislukt.
+  goto :fail
+)
+git add --renormalize -- .
+if errorlevel 1 (
+  echo FOUT: Git-renormalisatie mislukt.
   goto :fail
 )
 

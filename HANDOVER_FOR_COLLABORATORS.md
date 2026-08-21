@@ -6,55 +6,60 @@ Releasebesluit: rc.45 is op 2 augustus 2026 handmatig goedgekeurd, inclusief
 de Greedy Grow-reconstructie en de rechtstreeks afgeleide publicatieslide.
 
 Actuele source build:
-`v2.0.0-rc.45-config-scope-man-source-height-20260813.1`. Behoud Language Tree
+`v2.0.0-rc.45-sources-language-tree-anafoor-extensie-20260821.16`. Behoud Language Tree
 als prominente berekende toepassing en Greedy Grow/Random als kleinere
 directe OGN-illustraties. Wijzig `greedy-grow-engine.js` niet voor Random: die
 engine is onderdeel van het afleidingsbewijs van publicatieslide 5. Random
 hoort in `random-placement-engine.js`. Bewaak het lijnbeeld en het structurele
 EOF/EOL-beleid volgens `LINE_STYLE_AND_PLACEMENT_MODES.md`.
 
-Organiseer Config altijd als **Algemeen**, **Calculated → Language Tree** en
-**Direct → Gedeeld / Greedy Grow / Random**. Algemeen bevat uitsluitend
-toepassingsonafhankelijke interface-, LEESMIJ- en bestandsinstellingen;
-Voorconfig, boom, voorbeelden, LEX, SYNT en LOG staan alleen onder Language
-Tree. Toon per context uitsluitend de eigen
-functionele velden; alle niet-relevante bediening is no-show. Bij openen vanuit
-een actieve Greedy-Grow- of Random-modus is ook de toepassingsbalk no-show.
-Alleen Terug naar Main, de eigen velden met uitleg en Config opslaan blijven
-zichtbaar; wisselen van context begint in Main. Volg voor ieder zichtbaar veld
-`CONFIG_UI_EXPLANATION_STANDARD.md`: compacte mobiele uitleg van effect,
-bereik, niet-effect en reproduceerbaarheid.
-Behandel LOG-planning nooit als zelfstandige bronknoopverplaatsing: zonder
-expliciete topic-/V2-/post-V2-regel blijft ieder woord op bronhoogte. Bewaak
-voor `HOND BIJT MAN` expliciet dat `MAN` op MAN-hoogte blijft en alleen `BIJT`
-wisselt. De verdikking in Play 2/3 is slechts een tijdelijke
-LEX-ruimte-indicator.
+Behoud de projectbrede verwijdering van trailing whitespace bij iedere
+publicatienormalisatie. Gebruik in Markdown geen hard break met twee
+afsluitende spaties; schrijf afzonderlijke alinea's of een expliciete break.
+
+Neem alle oorspronkelijke bronbestanden mee, in het bijzonder
+`CONFIG_UI_EXPLANATION_STANDARD.md` en de identieke kopie in `docs/`.
+Publiceren staged altijd eerst met `git add -A -- .` en renormaliseert pas
+daarna. Die volgorde verwerkt ontbrekende gevolgde paden zonder Git-fout.
+Behoud ook het actieve LEX-profiel: alleen upward, Context-insertie en Comp;
+generieke plaatsen vóór, na en tussen blijven no-show.
+
+Behoud publiceren zonder verplichte Playwright-installatie. De optionele
+Anafoor-browsertest mag ontbreken van Playwright of Chromium duidelijk melden
+en overslaan; geïnstalleerde browsertests en echte modulefouten blijven
+verplicht slagen. `installeer-carrousel-tools.bat` activeert de volledige
+browsercontrole wanneer die gewenst is.
+
+Behoud **Anafoor · multi-OGN** als eerste Language Tree-extensie volgens
+`TEXT_AND_CONTEXT.md`, `ANAPHOR_LANGUAGE_TREE_EXTENSION.md` en
+`MULTI_OGN_ANAPHOR.md`. **Text** is uitsluitend de centrale uiting; **Context**
+is alles daaromheen en is eveneens een afzonderlijke, nog te ontwikkelen
+geminimaliseerde Open Graph Notation-boom. Iedere insertie is Context.
+Bereken S1 en S2 afzonderlijk,
+plaats S1 boven S2, verschuif S2 uitsluitend star en teken iedere uitgelijnde
+Text-coreferentie verticaal en zonder pijl. Alleen LEX realiseert Text-bronnen
+als `HIJ` of `HEM`; `GISTEREN`, `VANDAAG`, `ER`, `NIET MEER` en `OMDAT`
+zijn zelfstandige Context-inserties zonder centrale Text-boomknoop. Nadere
+Context-uitwerking blijft p.m. Dit mag het Language-Tree-contract niet
+wijzigen:
+**HOND en MAN blijven exact op hun bronhoogte; alleen BIJT wisselt naar de
+vrije LEX-gridrij halverwege beide bronrijen**; de eindvolgorde is
+**HOND BIJT MAN**.
+
+Behoud ook de Anafoor-Play-tijdlijn: eerst S1, dan S2, daarna alle
+uitgelijnde Text-coreferenties en pas ten slotte de anaforische LEX-vormen.
+Een hoofdzin kan een V2-Wissel bevatten; in `omdat hij hem bezit` blijft
+`BEZIT` finaal. Terug doorloopt dezelfde lagen exact omgekeerd.
+
+Laat Config altijd de actieve plaatsingsmodus volgen. Language Tree toont onder
+**Direct** alleen Algemeen. Greedy Grow en Random openen een afgeschermd
+methodescherm zonder hoofdtabbladen, methodekeuze, taal/README-uitleg of
+niet-eigen bediening. Alleen Terug, de eigen velden en Config-save blijven.
 Bewaar gedeelde run- en weergavekeuzes uitsluitend in
 `directPlacementGeneral`; `greedyGrowConfig` bevat alleen strategie en
-oriëntatie; `randomPlacementConfig` bevat seed, resetbeleid, Random-model,
-plaatsing, gridgrootte, vaste kolommen/rijen, iteratieaantal en asbeeldmodus.
-Random-snelheid gebruikt dezelfde `directPlacementGeneral.intervalMs` en wordt
-niet dubbel opgeslagen. De nieuwe standaard is
-**Ergens in beschikbare ruimte** met **Interface** als maximale afmetingen.
-Compact, Gebalanceerd, Ruim en het groeiende inhoudsveld blijven beschikbaar;
-bestaande opgeslagen keuzes worden niet geforceerd gemigreerd.
-Random-iteraties mogen de actieve run niet
-vooruitplannen. Play/Next moeten alle ingestelde iteraties doorlopen; Previous
-moet reproduceerbaar over een rungrens terug kunnen. Zie
-`DIRECT_PLACEMENT_CONFIG.md`.
-
-Het Random-asbeeld is strikt retrospectief. Een ronde telt pas na haar laatste
-knoop: rijen geven spots op WEST, kolommen spots op SOUTH en een herhaalde hit
-maakt dezelfde spot zwaarder. Reset wist de telling; Previous verwijdert de
-actuele ronde zodra die niet meer compleet is. Genereer geen toekomstige
-rondes om het asbeeld vooraf te vullen.
-
-Behoud **Uniform v1.0** exact en als standaard. **Onzuiver uniform v0.1** is
-functioneel: 80% uniform plus 20% herhaalgewicht uit voltooide eerdere
-as-hits. Ronde 1 is uniform. v0.2 (herhaalsterkte) en v0.3 (geheugenvenster)
-blijven no-show totdat zij volledig werken en getest zijn. Seed is een
-startcode van 1 t/m 4.294.967.295; een groter getal geeft niet meer toeval of
-snelheid. `20260802` is de herkenbare datumseed 2 augustus 2026.
+oriëntatie; `randomPlacementConfig` bevat alleen seed, resetbeleid, spreiding,
+iteratieaantal en asbeeldmodus. Random-iteraties mogen de actieve run niet
+vooruitplannen. Zie `DIRECT_PLACEMENT_CONFIG.md`.
 
 De reserveringen Vraagzin, Nadruk en Onaffe zin zijn uitsluitend
 Config-voorraad. Voeg ze niet toe aan `FEATURE_DEFINITIONS`, state, opslag,
@@ -239,13 +244,15 @@ Bronassen: LEX, SYNT en LOG zijn bij Bron onafhankelijk combineerbaar. De bedien
 Lees vóór plaatsingswijzigingen `projectie-master-spec.md`.
 
 ```text
-LOG-majors/minors → neutrale LEX-basis → expliciete Wissels → zinsvalidatie
+LOG-majors/minors → LEX-planning → expliciete Wissels → zinsvalidatie
 ```
 
 - S/O/V zijn majors. Alleen inserties met `origin=LOG` of `origin=LOG+LEX`
   zijn minors; `origin=LEX` is een directe LEX-insertie.
 - Iedere minor vergroot de begrensde majorafstand met één vast slot.
-- LOG is autoriteit voor de neutrale LEX-rij.
+- LOG plant beschikbare LEX-plaatsen, maar maakt zelf geen woordverplaatsing.
+- Alleen expliciete topic-/V1-/V2-regels maken een Wissel; zonder zo'n regel
+  blijft een bronwoord op zijn eigen bronhoogte.
 - De surface-string bepaalt geen layoutcoördinaat. Expliciete
   zinsinstantiemetadata kan wel een vooraf berekende landingsplaats vastleggen.
 - Oude hostvelden zijn alleen scope-/compatibiliteitsmetadata.

@@ -5,6 +5,86 @@ from pathlib import Path
 REQUIRED_TOP={"opn","document_type","opn_version","metadata","data","paradata"}
 CURRENT_VERSION=(Path(__file__).resolve().parents[1]/"VERSION.txt").read_text(encoding="utf-8").strip()
 
+def validate_multi_ogn(doc: dict) -> list[str]:
+    errors=[]
+    metadata=doc.get("metadata",{})
+    data=doc.get("data",{})
+    composition=data.get("composition",{})
+    schema=composition.get("schema")
+    legacy=schema=="ogn-multi-composition-v1"
+    if metadata.get("profile")!="multi-ogn": errors.append("metadata.profile moet multi-ogn zijn")
+    if metadata.get("extras")!=["multi-ogn-anaphor"]: errors.append("metadata.extras moet alleen multi-ogn-anaphor bevatten")
+    if schema not in {"ogn-multi-composition-v1","ogn-multi-composition-v2"}: errors.append("data.composition.schema is ongeldig")
+    if composition.get("order")!=["S1","S2"]: errors.append("data.composition.order moet S1, S2 zijn")
+    if composition.get("calculation")!="independent-before-composition": errors.append("S1 en S2 moeten vóór compositie afzonderlijk worden berekend")
+    if composition.get("rigid_shift_only") is not True: errors.append("data.composition.rigid_shift_only moet true zijn")
+    if composition.get("grid_invariant_scope")!="per-ogn": errors.append("gridinvariant moet per-ogn gelden")
+    if composition.get("cross_ogn_exception")!="declared-coreference-column-only": errors.append("kruis-OGN-uitzondering is ongeldig")
+    units=composition.get("units")
+    if not isinstance(units,list) or len(units)!=2:
+        errors.append("data.composition.units moet exact twee eenheden bevatten")
+        units=[]
+    if units and [unit.get("id") for unit in units] != ["S1","S2"]:
+        errors.append("multi-OGN-eenheden moeten S1 en S2 zijn")
+    layouts=[]
+    for unit in units:
+        graph=unit.get("graph",{})
+        nodes=graph.get("nodes")
+        if not isinstance(nodes,list) or not nodes:
+            errors.append(f"{unit.get('id','OGN')}.graph.nodes is leeg")
+            continue
+        if not isinstance(graph.get("edges"),list): errors.append(f"{unit.get('id','OGN')}.graph.edges ontbreekt")
+        ids=[str(node.get("id", "")) for node in nodes]
+        xs=[node.get("x") for node in nodes]
+        ys=[node.get("y") for node in nodes]
+        if not all(ids) or len(set(ids))!=len(ids): errors.append(f"{unit.get('id','OGN')} heeft ongeldige knoop-id's")
+        if not all(isinstance(value,(int,float)) and not isinstance(value,bool) for value in xs+ys):
+            errors.append(f"{unit.get('id','OGN')} heeft ongeldige gridcoördinaten")
+        elif len(set(xs))!=len(xs) or len(set(ys))!=len(ys):
+            errors.append(f"{unit.get('id','OGN')} schendt de unieke rij-/kolomregel")
+        layouts.append(nodes)
+    relation=composition.get("relation",{})
+    antecedent=relation.get("antecedent",{})
+    lower_endpoint=relation.get("anaphor",{}) if legacy else relation.get("referent",{})
+    expected_lower_id="s2-hij" if legacy else "s2-man"
+    if relation.get("type")!="coreference" or relation.get("direction")!="none": errors.append("relatie moet ongerichte coreference zijn")
+    if relation.get("line")!="straight-vertical-no-arrow": errors.append("coreferentielijn moet recht, verticaal en zonder pijl zijn")
+    if antecedent.get("nodeId")!="s1-man" or lower_endpoint.get("nodeId")!=expected_lower_id:
+        errors.append(f"relatie moet s1-man en {expected_lower_id} verbinden")
+    if len(layouts)==2:
+        upper={node.get("id"):node for node in layouts[0]}
+        lower={node.get("id"):node for node in layouts[1]}
+        man=upper.get("s1-man")
+        lower_node=lower.get(expected_lower_id)
+        if not man or not lower_node or man.get("x")!=lower_node.get("x") or not lower_node.get("y",0)>man.get("y",0):
+            errors.append(f"MAN–{'HIJ' if legacy else 'MAN'} moet verticaal zijn met S2 onder S1")
+        if not legacy and (not lower_node or str(lower_node.get("label","")).upper()!="MAN"):
+            errors.append("de bronknoop voor het S2-subject moet MAN blijven")
+        shared_rows=[(a.get("id"),b.get("id")) for a in layouts[0] for b in layouts[1] if a.get("y")==b.get("y")]
+        shared_cols=[(a.get("id"),b.get("id")) for a in layouts[0] for b in layouts[1] if a.get("x")==b.get("x")]
+        if shared_rows: errors.append("S1 en S2 mogen geen rij delen")
+        if shared_cols != [("s1-man",expected_lower_id)]: errors.append(f"alleen de MAN–{'HIJ' if legacy else 'MAN'}-kolom mag worden gedeeld")
+    if not legacy:
+        lexicalization=relation.get("lexicalization",{})
+        if lexicalization.get("type")!="anaphor-lex-projection": errors.append("relation.lexicalization.type is ongeldig")
+        if lexicalization.get("source_node_id")!="s2-man": errors.append("LEX-anafoor moet uit s2-man worden geprojecteerd")
+        if lexicalization.get("antecedent_lexeme")!="man": errors.append("LEX-anafoor moet antecedentlexeem man gebruiken")
+        profiles={"hij":"HIJ","die":"DIE","die-man":"DIE MAN"}
+        profile_id=lexicalization.get("profile_id")
+        if profile_id not in profiles or lexicalization.get("surface")!=profiles.get(profile_id):
+            errors.append("LEX-profiel en oppervlaktevorm zijn niet toepasselijk voor MAN")
+    lex=composition.get("shared_lex_axis",{})
+    if lex.get("order")!="S1-before-S2": errors.append("gezamenlijke LEX-as moet S1 vóór S2 ordenen")
+    items=lex.get("items")
+    expected_items=["s1-ik","s1-zie","s1-man",expected_lower_id,"s2-draagt","s2-hoed"]
+    if not isinstance(items,list) or [item.get("node_id") for item in items] != expected_items:
+        errors.append("gezamenlijke LEX-volgorde is ongeldig")
+    elif not legacy:
+        projected=items[3]
+        if projected.get("source_label")!="MAN" or projected.get("label")!=relation.get("lexicalization",{}).get("surface"):
+            errors.append("S2 MAN moet op LEX als het gekozen anaforische profiel verschijnen")
+    return errors
+
 def validate(path: Path) -> list[str]:
     errors=[]
     try:
@@ -16,6 +96,11 @@ def validate(path: Path) -> list[str]:
     if doc.get("document_type")!="opengraph-document": errors.append("document_type moet opengraph-document zijn")
     if doc.get("metadata",{}).get("schema")!="data-metadata-paradata": errors.append("metadata.schema ontbreekt of is fout")
     data=doc.get("data",{})
+    if data.get("composition",{}).get("schema") in {"ogn-multi-composition-v1","ogn-multi-composition-v2"}:
+        errors.extend(validate_multi_ogn(doc))
+        para=doc.get("paradata",{})
+        if para.get("included") is True and not isinstance(para.get("events"),list): errors.append("paradata.events moet een lijst zijn wanneer included=true")
+        return errors
     for key in ["example","graphs","projections","notation"]:
         if key not in data: errors.append(f"data.{key} ontbreekt")
     for view in ["syntax","ft"]:

@@ -4,6 +4,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 JS = (ROOT / "viewer.js").read_text(encoding="utf-8")
+ANAPHOR_PLAY = (ROOT / "multi-ogn-anaphor-play-engine.js").read_text(encoding="utf-8")
 
 errors: list[str] = []
 
@@ -39,10 +40,21 @@ order = [
 if any(index < 0 for index in order) or order != sorted(order):
     errors.append("renderfasen staan niet in vooruit-/reverse-compatibele volgorde")
 
+for marker in [
+    "const coreferenceStep = ++cursor;",
+    "const lexicalizationStep = ++cursor;",
+    "lexicalizationVisible: step >= Number(timeline?.lexicalizationStep)",
+    "coreferenceVisible: step >= Number(timeline?.coreferenceStep)",
+]:
+    if marker not in ANAPHOR_PLAY:
+        errors.append(f"Anafoor-reverse mist {marker!r}")
+if ANAPHOR_PLAY.find("const coreferenceStep = ++cursor;") > ANAPHOR_PLAY.find("const lexicalizationStep = ++cursor;"):
+    errors.append("Anafoor-Play moet coreferentie vóór MAN→HIJ toevoegen")
+
 if errors:
     print("PLAY-REVERSECHECK: FOUT")
     for error in errors:
         print("-", error)
     raise SystemExit(1)
 
-print("PLAY-REVERSECHECK: OK (eindlaag → LEX → ruimte → LOG → boom)")
+print("PLAY-REVERSECHECK: OK (Language Tree reverse + Anafoor MAN→HIJ → MAN↔MAN → S2 → S1)")

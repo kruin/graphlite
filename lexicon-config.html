@@ -63,8 +63,26 @@
 <li class="usage-profile" data-default="true" data-effects="scope log-projection" data-function="frequentie" data-id="frequency-event" data-interval="O-V" data-origin="LOG" data-scope="gebeurtenis">gebeurtenisfrequentie · LOG→LEX</li>
 </ol>
 </div>
-<h2>Meerwoordconstructies</h2>
-<div class="lexicon-construction" data-default-profile="mixed-modal-particle" data-id="misschien-wel" data-members="misschien wel" data-visible-slots="1">
+<h2>Anaforische LEX-realisaties</h2>
+<div class="lexicon-construction" data-default-profile="hij" data-id="anaphor-subject" data-members="man vrouw" data-visible-slots="1">
+<div class="entry-line">S2 MAN/VROUW → anaforische LEX-realisatie</div>
+<div class="meta">de bronknoop blijft een zelfstandig naamwoord; de zinsinstantie kiest een toepasselijk LEX-profiel</div>
+<ol aria-label="LEX-profielen voor een anaforisch subject" class="construction-profiles">
+<li class="construction-profile" data-components="surface=HIJ antecedents=man,boer category=PRON kind=personal-pronoun" data-effects="coreference lex-projection agreement" data-function="anaforisch-subject" data-id="hij" data-interval="S2-subject" data-origin="LEX" data-recommended="true" data-scope="coreferent">hij · persoonlijk voornaamwoord · antecedent man/boer</li>
+<li class="construction-profile" data-components="surface=DIE antecedents=man,vrouw,boer category=PRON kind=demonstrative-pronoun" data-effects="coreference lex-projection agreement" data-function="anaforisch-subject" data-id="die" data-interval="S2-subject" data-origin="LEX" data-recommended="false" data-scope="coreferent">die · aanwijzend voornaamwoord · antecedent man/vrouw/boer</li>
+<li class="construction-profile" data-components="surface=DIE_MAN antecedents=man category=NP kind=demonstrative-np" data-effects="coreference lex-projection agreement" data-function="anaforisch-subject" data-id="die-man" data-interval="S2-subject" data-origin="LEX" data-recommended="false" data-scope="coreferent">die man · aanwijzende NP · antecedent man</li>
+<li class="construction-profile" data-components="surface=DIE_VROUW antecedents=vrouw category=NP kind=demonstrative-np" data-effects="coreference lex-projection agreement" data-function="anaforisch-subject" data-id="die-vrouw" data-interval="S2-subject" data-origin="LEX" data-recommended="false" data-scope="coreferent">die vrouw · aanwijzende NP · antecedent vrouw</li>
+</ol>
+</div>
+<div class="lexicon-construction" data-default-profile="hem" data-id="anaphor-object" data-members="ezel man boer" data-visible-slots="1">
+<div class="entry-line">S2 EZEL/MAN/BOER → anaforische objectrealisatie op LEX</div>
+<div class="meta">de centrale objectbronknoop blijft EZEL/MAN/BOER; uitsluitend LEX realiseert HEM</div>
+<ol aria-label="LEX-profielen voor een anaforisch object" class="construction-profiles">
+<li class="construction-profile" data-components="surface=HEM antecedents=ezel,man,boer roles=object category=PRON kind=personal-pronoun" data-effects="coreference lex-projection agreement" data-function="anaforisch-object" data-id="hem" data-interval="S2-object" data-origin="LEX" data-recommended="true" data-scope="coreferent">hem · persoonlijk voornaamwoord · antecedent ezel/man/boer</li>
+</ol>
+</div>
+<h2 data-feature="adverbs">Meerwoordconstructies</h2>
+<div class="lexicon-construction" data-default-profile="mixed-modal-particle" data-feature="adverbs" data-id="misschien-wel" data-members="misschien wel" data-visible-slots="1">
 <div class="entry-line">misschien + wel → één zichtbare LEX-groep</div>
 <div class="meta">de zinsinstantie kiest één groepsprofiel; de lemma's blijven afzonderlijk beschikbaar</div>
 <ol aria-label="Groepsprofielen voor misschien wel" class="construction-profiles">
@@ -82,9 +100,9 @@
   (() => {
     const base = new URLSearchParams(location.search).get('profile') === 'base';
     if (!base) return;
-    document.querySelectorAll('.lexicon-entry[data-kind="adv"], .lexicon-construction').forEach(node => { node.hidden = true; });
+    document.querySelectorAll('.lexicon-entry[data-kind="adv"], [data-feature="adverbs"]').forEach(node => { node.hidden = true; });
     document.querySelectorAll('h2').forEach(heading => {
-      if (/^(ADV \/ PARTIKEL|Meerwoordconstructies)$/i.test(heading.textContent.trim())) heading.hidden = true;
+      if (/^ADV \/ PARTIKEL$/i.test(heading.textContent.trim())) heading.hidden = true;
     });
     document.querySelectorAll('a[href]').forEach(link => {
       const path = (link.getAttribute('href') || '').split('?')[0];

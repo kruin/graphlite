@@ -1,17 +1,36 @@
 # Actuele contractlaag · v2.0.0-rc.15
 
+> **Source build 20260821.16:** **Text** is uitsluitend de centrale uiting;
+> **Context** is alles daaromheen. Beide zijn afzonderlijke Open Graph
+> Notation-structuren; Context wordt later een geminimaliseerde boom. Iedere
+> insertie behoort tot Context.
+> Anafoor · multi-OGN berekent S1 en S2 afzonderlijk en componeert ze daarna
+> star; één gezamenlijke LEX-as ordent S1 vóór S2. `relations[]` bevat alleen
+> centrale Text-coreferentie. `HIJ` en `HEM` realiseren bestaande
+> S2-Text-bronknopen op LEX; `GISTEREN`, `VANDAAG`, `ER`, `NIET MEER` en
+> `OMDAT` zijn zelfstandige Context-inserties zonder Text-boomknoop.
+> Play toont eerst S1 en daarna S2, met alleen toegestane V2-Wissels, gevolgd
+> door alle uitgelijnde Text-coreferenties en hun LEX-realisaties. **De boer
+> slaat de ezel omdat hij hem bezit.** toont `BOER→HIJ` én `EZEL→HEM`;
+> `BEZIT` blijft in de bijzin finaal. Context blijft p.m. Definities en
+> acht regressieparen staan in
+> `ANAPHOR_AND_S1_S2_RELATION_DEFINITIONS.md` en
+> `S1_S2_RELATION_TEST_FIXTURES.md`. Zie ook `MULTI_OGN_ANAPHOR.md`.
+
 De leidende afleiding is:
 
 ```text
-bronknoop → horizontale LEX-projectie → LOG-doel via LEX-Wissel → expliciete Wissels
+LOG-planning → horizontale LEX-projectie op bronhoogte → uitsluitend expliciete Wissels
 ```
 
 Iedere bijwoord-minor vergroot de LOG-afstand tussen zijn begrenzende majors
-met één vast slot. LOG bepaalt daarna neutrale LEX-doelrijen. De
-projectieoorsprong blijft altijd de bronknoophoogte; bron → LEX is exact
-horizontaal en verplaatsingen gebeuren pas langs de LEX-as. De voorbeeldzin
-bepaalt de layout niet. `Syntax → Functional` zijn de centrale views; `LEX / SYNT /
-LOG` zijn named projections en LOG blijft de zuidas. Zie
+met één vast slot. LOG plant mogelijke LEX-plaatsen, maar verplaatst zelf geen
+bronwoord. De projectieoorsprong en de blijvende plaats zonder expliciete
+regel zijn altijd de bronknoophoogte; bron → LEX is exact horizontaal. In
+`HOND BIJT MAN` blijven HOND en MAN exact op hun bronhoogte en wisselt alleen
+BIJT naar de vrije LEX-gridrij halverwege beide bronrijen. De
+voorbeeldzin bepaalt de layout niet. `Syntax → Functional` zijn de centrale
+views; `LEX / SYNT / LOG` zijn named projections en LOG blijft de zuidas. Zie
 `../projectie-master-spec.md`.
 
 Alle onderstaande v4540/v4430-tekst is historische ontwikkelnotitie en is
