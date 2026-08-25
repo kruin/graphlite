@@ -1,5 +1,45 @@
 # OpenGraph Lite Viewer v2.0.0-rc.45
 
+> Publishing: when local Playwright or Chromium is missing,
+> `publish_checked.bat` offers to install the pinned tools before running the
+> checks. Answer `J`; local tooling stays outside Git and the release ZIP.
+
+## Utterances and kernel clauses
+
+An utterance consists of one or more linked kernel clauses. This build adds
+**Jan wast zichzelf**, **Jan slaat Jek omdat die hem beet**, and **Ken uzelf**
+as selectable utterances. Their referents, coreference, causal relation, role
+flip, and implicit addressee are recorded in
+[`UITING_EN_KERNZINNEN.md`](UITING_EN_KERNZINNEN.md) and
+[`samples/uitingen-kernzinnen.v1.json`](samples/uitingen-kernzinnen.v1.json).
+Each utterance now opens as two independently calculated kernel-clause trees,
+`K1` above `K2`, with declared vertical anaphor connections and one shared LEX
+axis for the realized utterance. The causal example aligns both `JEK ↔ DIE`
+and `JAN ↔ HEM`; the imperative keeps its implicit subject off LEX. The
+original `S1/S2` anaphor demonstration remains available separately.
+The causal K2 subject node is directly clickable and cycles through
+**hij / die / die hond / de hond / Jek**. All five refer to Jek; both
+`DIE HOND` and `DE HOND` remain one subject NP while LEX displays their two
+words separately. Horizontal and vertical actual grid-cell sizes can be
+configured independently between 60% and 200%. K2 must flip locally when JAN and JEK exchange
+subject/object roles and both coreference links must remain vertical.
+The visible Play bar builds either composition in four reversible phases:
+first kernel clause, second kernel clause, vertical anaphors, and realized
+LEX utterance. Previous, Next, and Reset remain available.
+The active test utterance remains visible above the graph. Kernel syntax
+consistently uses `S → NP, VP` and `VP → NP, V`; LEX independently realizes
+surface word order. Every binary node visibly branches left and right.
+Config independently controls compact horizontal and vertical branch spacing,
+tree color, branch weight, and an explicit **Flip**. Flip mirrors both trees
+without changing syntax, realized LEX word order, or vertical anaphors:
+structure, visible orientation, and word order are separate properties.
+The optional global Flip mirrors both trees; unlike the necessary local K2
+flip, it is a display choice rather than a role-alignment requirement.
+Every branch connects two free OpenGraph nodes with distinct horizontal and
+vertical coordinates. Even short branches remain slanted; compact node shapes
+and labels are sized to keep their connections visible.
+Tree branches are compact, clearly visible, strong blue lines by default.
+
 OpenGraph Lite Viewer is a viewer and test environment for general Open Graph
 Notation. This release is built exclusively on the uploaded
 `v2.0.0-rc.26` source through rc.27; rc.28 restores the documented OGN/UI
@@ -13,36 +53,15 @@ Dutch documentation: [`LEESMIJ.md`](LEESMIJ.md).
 > mobile and publication carousel. Automated checks continue to verify the
 > geometry and feature invariants.
 
-## Language Tree extension 1: Anaphor
+## New calculated application: Anaphor · multi-OGN
 
-The fixed example calculates the source trees **S1: Ik zie een man. S2: Man
-draagt een hoed.** independently. Both coreferential source nodes remain MAN
-and the declared primary pair shares a column. Only the LEX projection realizes
-the second MAN as HIJ (or the applicable alternatives DIE and DIE MAN), so the
-default surface is **Ik zie een man. Hij draagt een hoed.** The MAN–MAN
-connection is a straight vertical line without an arrow or direction. See
-[`MULTI_OGN_ANAPHOR.md`](MULTI_OGN_ANAPHOR.md). Config also includes the
-user-supplied pair **Ik zag de man gisteren. Vandaag was hij er niet meer.**:
-**Text** and **Context** are separate Open Graph Notation structures; Context
-is a minimized tree to be developed. `MAN→HIJ` is central **Text**
-coreference; `GISTEREN`, `VANDAAG`, `ER` and `NIET MEER` are **Context**
-insertions on LEX and never central tree nodes. The additional
-example **De boer slaat de ezel omdat hij hem bezit.** has two Text links,
-`BOER→HIJ` and `EZEL→HEM`; `OMDAT` is a Context insertion and its subordinate
-clause keeps `BEZIT` final without V2. Further Context modeling remains p.m.
-The active flip fixture **De man slaat de hond omdat die hem heeft gebeten.**
-links `HOND→DIE` and `MAN→HEM`. Each declared binary branch has four
-placement variants: normal, left–right, short–long and both. The joint solver
-selects all branch variants and the rigid S2 shift in one constraint problem;
-only a branch marked `linearization: "child-order"` also reverses its LEX
-children, as in `HEEFT GEBETEN` ↔ `GEBETEN HEEFT`. See
-[`FLIP_CONSTRAINT_SOLVER.md`](FLIP_CONSTRAINT_SOLVER.md).
-The supplied Context tree is documented in
-[`CONTEXT_TAXONOMY.md`](CONTEXT_TAXONOMY.md). See
-[`TEXT_AND_CONTEXT.md`](TEXT_AND_CONTEXT.md). Definitions are in
-[`ANAPHOR_AND_S1_S2_RELATION_DEFINITIONS.md`](ANAPHOR_AND_S1_S2_RELATION_DEFINITIONS.md);
-nine positive, negative and ambiguous pairs are documented in
-[`S1_S2_RELATION_TEST_FIXTURES.md`](S1_S2_RELATION_TEST_FIXTURES.md).
+The fixed first example connects two independently calculated OGN trees:
+**S1: Ik zie een man. S2: Hij draagt een hoed.** MAN is the antecedent and
+HIJ the anaphor; both are coreferential. After both trees pass the OGN grid
+invariant separately, S1 is placed above S2 and the complete S2 is translated
+rigidly until MAN and HIJ share one declared column. A shared LEX axis orders
+S1 before S2. The MAN–HIJ connection is a straight vertical line without an
+arrow or direction. See [`MULTI_OGN_ANAPHOR.md`](MULTI_OGN_ANAPHOR.md).
 
 ## OGN Core: free placement first
 
@@ -107,18 +126,40 @@ currently unused row and column; language-only menus are hidden and the
 Language Tree data is left unchanged. Random uses a separate seeded engine,
 so it cannot alter the accepted Greedy Grow reconstruction.
 
-Config now follows the active placement mode. With Language Tree active,
-`Config → Direct placement` shows only **General**: shared run length, Play
-speed, path, node numbers, diagnostics, node size and grid margin. With Greedy
-Grow active, Config opens directly with only strategy and display orientation.
-With Random active, it opens directly with only seed/reset policy, spread, the
-number of complete iterations, the resulting west/south axis image and its
-calculated impact. All other Config tabs and controls are hidden in these two
-method views. For example,
-10 iterations with 31 nodes produce 10 × 30 = 300 observations per axis; the
-centre node is excluded. Occupancy mode divides each coordinate count by the
-iteration count, while Relative mode scales against the highest count in the
-current sample. An unchanged Greedy strategy is deterministic and is therefore
+Config now has strictly separated contexts: **General**, **Calculated →
+Language Tree / Anaphor · multi-OGN**, and **Direct → Shared / Greedy Grow /
+Random**. General holds
+only application-independent interface, README, and file settings; pre-config,
+tree, examples, LEX, SYNT, and LOG exist only under Language Tree. All
+irrelevant settings are no-show within a context. Greedy shows only strategy and orientation; Random
+only its own seed, reset policy, model, placement, grid size, conditional fixed
+dimensions, speed, iterations and axis image. Every visible field has a compact
+expandable explanation inside Config. A larger seed is not more random and
+does not change speed; `20260802` is merely the memorable date 2 August 2026.
+See [`CONFIG_UI_EXPLANATION_STANDARD.md`](CONFIG_UI_EXPLANATION_STANDARD.md).
+
+When Config is opened from an active Greedy Grow or Random mode, the
+application bar itself is also no-show. Only Back to Main, that method's own
+fields with Explanation, and Config save remain visible. Select another
+application in Main first.
+
+A new default Config uses **Uniform v1.0**, **Anywhere in available space** and
+**Interface · available space**. **Impure uniform v0.1** is a functional
+alternative that mixes in a 20% preference for axis positions hit more often
+in completed earlier rounds. Fixed grid, Compact, Balanced, Wide and the
+growing content field remain available. v0.2 and v0.3 remain no-show until they
+genuinely work. Play and Next cross run boundaries until all configured
+iterations are complete; Previous can cross back. For example,
+10 completed iterations with 31 nodes produce 10 × 30 = 300 projection hits
+per axis; the centre node is excluded. A round adds its rows as WEST hit spots
+and its columns as SOUTH hit spots only after its final node is written. A
+repeated hit makes the existing spot darker and heavier. Occupancy mode scales
+against the configured round total, while Relative mode scales against the
+highest count among completed rounds. No future round is generated for this
+axis image. Uniform Random predicts an increasingly even distribution, while
+v0.1 can mildly reinforce early differences; an
+axis with exactly `N` lines for `N` nodes is hit at every non-central position
+in every round. An unchanged Greedy strategy is deterministic and is therefore
 not repeated. See
 [`DIRECT_PLACEMENT_CONFIG.md`](DIRECT_PLACEMENT_CONFIG.md).
 
@@ -213,9 +254,7 @@ LEX axis. Both example slides refer to `github.com/kruin/graphlite`.
 
 The carousel is **always derived**. Never edit a PNG or carousel ZIP directly.
 If you only want to publish the supplied PNGs, no installation or batch file is
-needed. `publish_checked.bat` also works without Playwright: its optional
-Anafoor browser check reports missing Playwright or Chromium and continues.
-To edit the source on Windows, work in the extracted full project ZIP,
+needed. To edit the source on Windows, work in the extracted full project ZIP,
 run `installeer-carrousel-tools.bat` once, edit only
 `publicatie-carrousel/index.html`, and then run
 `maak-publicatie-carrousel.bat`. The installer pins Playwright and its matching
@@ -299,17 +338,28 @@ See `LEXICON_USAGE_PROFILES_AND_DISAMBIGUATION.md`.
 ## Projection contract
 
 ```text
-source node → horizontal LEX projection → one direct move to the resolved LEX target
+source node → horizontal LEX projection at source height → only an explicit switch may move it
 ```
 
 `S`, `O` and `V` are majors. An adverbial insertion may be a LOG minor, a direct LEX insertion, or a group combining both origins. Every minor adds one fixed slot to the distance between its bounding
-majors. LOG plans possible LEX positions but does not move a source word:
-every lexical source first projects horizontally at its source height. Only
-an explicit topic, V1 or V2 rule creates a move. The viewer therefore shows at
-most one LEX-axis move and one source trace per moved source word, without an
-intermediate LOG trace. In `HOND BIJT MAN`, HOND and MAN stay put and only
-BIJT moves to V2. The example sentence does not determine layout. See
-`projectie-master-spec.md`.
+majors. LOG plans possible LEX positions but does not thereby move a source
+node: every lexical source projects horizontally at source height. Only an
+explicit target that is actually higher than that visible source may perform
+a switch. In `HOND BIJT MAN`, `MAN` therefore stays exactly at MAN source
+height; only `BIJT` can switch upward to V2. LOG reservations never replace
+this source reference. See `projectie-master-spec.md`.
+
+### Active LEX profile and sentence type
+
+LEX currently contains upward switches, application-specific insertions, and
+directly written Comp only. Generic empty positions before, after, or between
+active rows and every downward/post-V2 switch are no-show: no Config control,
+rendering, or new storage. Their possible use will be evaluated separately.
+
+Sentence type is a separate Language Tree choice: **declarative main clause**,
+**yes/no question**, **dat-clause**, or **omdat-clause**. A question uses V1;
+DAT and OMDAT are written directly in Comp. Perfect is a verb form, not a
+sentence type. See `LEX_MOVEMENT_RULES.md`.
 
 ## Start
 
@@ -459,21 +509,20 @@ that window returns the user to the still-open app.
 ## Play sequence
 
 After the central tree has been built, Play presents the projection process in
-three explicit phases:
+two explicit phases:
 
 ```text
 1. draw the LOG axis and place majors/minors
-2. reserve LOG-planned space on the LEX axis
-3. project lexical sources horizontally at source height and execute only
-   explicit topic/V1/V2 moves
+2. project lexical sources horizontally at source height and perform only
+   explicit upward switches to topic, V1, or V2
 ```
 
-LOG planning alone never moves a source word. In `HOND BIJT MAN`, HOND and MAN
-stay at source height and only BIJT moves to the free V2 position. SYNT and the
-remaining projection panels appear in the final step.
+LOG may plan candidate positions but does not itself move a source. SYNT and
+the remaining projection panels appear in the final step. There is no separate
+empty space phase.
 The previous-step button now reverses the same sequence exactly: the final
-projection layer disappears first, followed by LEX moves, LEX space, LOG and
-then the central tree.
+projection layer disappears first, followed by LEX, LOG and then the central
+tree.
 
 ## Central views
 
@@ -500,9 +549,9 @@ graph, viewport or scale.
 
 Adverbial insertions do not mutate Syntax or Functional. The selected usage profile
 determines origin: LOG and LOG+LEX produce a south-axis minor, while a direct
-LEX insertion does not. Source nodes project horizontally to LEX. LOG plans
-available positions, while only an explicit topic/V1/V2 rule creates one
-direct visible move.
+LEX insertion does not. Source nodes project horizontally to LEX and every
+origin receives a precomputed neutral LEX target. An explicit topic/V2 rule can
+replace that target before one direct visible move is drawn.
 
 The active sentence is printed above the graph, with clear space below it for
 a possible future north axis.

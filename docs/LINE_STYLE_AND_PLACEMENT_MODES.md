@@ -1,7 +1,7 @@
 # Lijnbeeld en plaatsingsmodi
 
 Status: technisch contract voor source build
-`v2.0.0-rc.45-sources-language-tree-anafoor-extensie-20260821.13`.
+`v2.0.0-rc.45-multi-ogn-anafoor-20260813.5`.
 
 ## Plaatsingshiërarchie in de interface
 
@@ -44,11 +44,16 @@ Random-herhalingsanalyse staan in `DIRECT_PLACEMENT_CONFIG.md`.
 
 ## Instelbaar lijnbeeld
 
-Onder **Config → Beeld → Lijnbeeld** staan:
+Onder **Config → Algemeen → Interface & weergave → Lijnbeeld** staan
+Rasterkleur, Rasterlijnen, Projectielijnen en Boxlijnen. De drie
+toepassingsspecifieke kleuren staan onder **Calculated → Language Tree → Boom
+& projecties → Projectiekleuren**:
 
 | Instelling | Effect |
 |---|---|
 | Rasterkleur | Neutrale kleur van het grid tussen de buitenste actieve assen. |
+| Rastermaat horizontaal | Werkelijke celbreedte, onafhankelijk instelbaar van 60% tot 200%. |
+| Rastermaat verticaal | Werkelijke celhoogte, onafhankelijk instelbaar van 60% tot 200%. |
 | Rasterlijnen | Gewicht en zichtbaarheid van gewone en hoofdrasterlijnen. |
 | Projectielijnen | Gewicht van projectieverbindingen én de named projection-assen. |
 | Boxlijnen | Gewicht van structurele, LEX-, SYNT- en LOG-boxcontouren. |
@@ -93,33 +98,29 @@ altijd om een finale EOL. De release-normalizer blijft de doorslaggevende
 controle, ook wanneer een editor dit bestand niet ondersteunt.
 
 `tools/normalize_text_files.py` bewaakt daarnaast **exact één afsluitende
-regelafbreking** en verwijdert spaties of tabs aan het einde van iedere
-tekstregel. Inspringing en bewuste lege regels midden in een document blijven
-staan. Gebruik in Markdown geen afsluitende dubbele spaties als hard break;
-kies afzonderlijke alinea's of een expliciete break.
+regelafbreking**. Het verwijdert alleen lege of witruimteregels aan het einde;
+bewuste lege regels midden in een document blijven staan.
 
 De publicatiestroom doet dit in vaste volgorde:
 
 ```text
 normaliseer werkbestanden
 → voer releasecheck uit
-→ stage alle wijzigingen en verdwenen paden met git add -A
 → git add --renormalize
+→ stage alle wijzigingen
 → git diff --cached --check
 → commit en push
 ```
 
 Hierdoor zijn `LF will be replaced by CRLF`-waarschuwingen geen terugkerend
-handwerk meer; extra lege EOF-regels en trailing whitespace kunnen publicatie
-niet pas na het invoeren van de commitboodschap blokkeren.
+handwerk meer en kan een extra lege EOF-regel de publicatie niet pas na het
+invoeren van de commitboodschap blokkeren.
 
 ## Automatische controles
 
-- `python tools\normalize_text_files.py` — EOL, geen trailing whitespace en
-  exact één terminale EOL;
+- `python tools\normalize_text_files.py` — EOL en exact één terminale EOL;
 - `python tools\check_text_normalization.py` — regressieproeven met dubbele
-  LF/CRLF aan EOF, BOM, trailing whitespace, interne lege regels en
-  Windows-scripts;
+  LF/CRLF aan EOF, BOM, interne lege regels en Windows-scripts;
 - `node tools\check_greedy_grow_reconstruction.js` — historische directe
   Greedy-reconstructie;
 - `node tools\check_random_placement.js` — seed, undo en unieke rijen/kolommen;

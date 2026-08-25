@@ -1,276 +1,34 @@
-<!DOCTYPE html>
-
+<!doctype html>
 <html lang="nl">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<meta charset="utf-8">
+<meta content="width=device-width,initial-scale=1" name="viewport">
 <title>LEX-plaatsingsregels</title>
-<link href="../styles.css?v4506" rel="stylesheet"/>
+<link href="../styles.css?v2.0.0-rc.45" rel="stylesheet">
 <style>
-    body { margin: 0; background: #f8fafc; color: #0f172a; }
-    main { max-width: 920px; margin: 0 auto; padding: 28px 22px 56px; line-height: 1.55; }
-    h1, h2 { line-height: 1.15; }
-    pre { background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 12px; padding: 12px 14px; overflow-x: auto; }
-    code { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; }
-    .topbar { position: sticky; top: 0; z-index: 2; display: flex; gap: 10px; align-items: center; padding: 10px 16px; background: rgba(255,255,255,.92); border-bottom: 1px solid #cbd5e1; backdrop-filter: blur(8px); }
-    .topbar a { text-decoration: none; border: 1px solid #cbd5e1; border-radius: 10px; padding: 7px 10px; font-weight: 700; background: #fff; color: #0f172a; }
-    .note { padding: 12px 14px; border: 1px solid #cbd5e1; border-radius: 12px; background: #fff; }
-  </style>
+body{margin:0;background:#f8fafc;color:#0f172a}main{max-width:920px;margin:0 auto;padding:28px 22px 56px;line-height:1.55}h1,h2{line-height:1.15}.topbar{position:sticky;top:0;z-index:2;display:flex;gap:10px;flex-wrap:wrap;padding:10px 16px;background:rgba(255,255,255,.94);border-bottom:1px solid #cbd5e1}.topbar a{padding:7px 10px;border:1px solid #cbd5e1;border-radius:10px;background:#fff;color:#0f172a;font-weight:700;text-decoration:none}.note{padding:12px 14px;border:1px solid #cbd5e1;border-radius:12px;background:#fff}table{width:100%;border-collapse:collapse}th,td{padding:9px;border:1px solid #cbd5e1;text-align:left;vertical-align:top}code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}
+</style>
 </head>
-<body><nav class="opengraph-return-nav" style="display:flex;gap:.5rem;flex-wrap:wrap;padding:.55rem .7rem;border-bottom:1px solid #cbd5e1;background:#f8fafc;position:sticky;top:0;z-index:50"><a href="../index.html?screen=config" style="font-weight:800">← Terug naar: Config</a><a href="../index.html" style="font-weight:800">← Terug naar: Main</a></nav>
-<section><h2>v4536 bijwoordhost</h2><p>Bijwoorden worden niet tussen boxen geplaatst. Zij staan boven een geldige syntactische categoriebox: S, NP, VP, V, PP of AP.</p></section>
-<nav class="topbar">
-<a href="../index.html?v4506">Viewer</a>
-<a href="docs-home.html?v4506">Docs</a>
-<a href="LEX_MOVEMENT_RULES.md?v4506">Markdown</a>
-</nav>
+<body>
+<nav class="topbar"><a href="../index.html?screen=config">← Config</a><a href="../index.html">← Main</a><a href="LEX_MOVEMENT_RULES.md?v2.0.0-rc.45">Markdown</a></nav>
 <main>
-<h1>LEX-plaatsingsregels — simpel overzicht</h1>
-<p>Deze viewer gebruikt de LEX-as om de woordvolgorde van de voorbeeldzin te maken.</p>
-<p>De boom zelf blijft de basisstructuur. Verplaatsingen worden niet vanuit de boom getekend. Ze staan alleen lokaal op de LEX-as.</p>
-<h2>Hoofdregel</h2>
-<pre><code>
-1. Bouw eerst de syntaxboom.
-
-2. Projecteer de lexicale knopen horizontaal naar de LEX-as.
-
-3. Pas daarna lokale plaatsingsregels toe op de LEX-as.
-
-4. Verplaats alleen naar een vrij slot.
-
-5. Een verplaatste knoop laat op de oude basisplek een trace achter.
-
-6. Lees de voorbeeldzin door de gevulde woorden te lezen; traces lees je niet mee.
-
-</code></pre>
-<h2>Vrije slots</h2>
-<p>Voorlopig zijn er drie vrije slots:</p>
-<pre><code>
-slot 0 = Comp / voegwoord, bijvoorbeeld OMDAT
-
-slot 1 = eerste zinsdeel / topic
-
-slot 2 = V2 / persoonsvorm
-
-</code></pre>
-<p>Een gewone NP of V mag dus niet zomaar ergens heen. Er is alleen een Wissel als een van deze slots gevuld moet worden.</p>
-<hr/>
-<h2>1. Hoofdzin</h2>
-<p>Voorbeeld:</p>
-<pre><code>
-HOND BIJT MAN
-
-</code></pre>
-<p>Basisboom:</p>
-<pre><code>
-S → NP VP
-
-VP → NP V
-
-</code></pre>
-<p>Basisvolgorde op de LEX-as:</p>
-<pre><code>
-HOND  MAN  BIJT
-
-</code></pre>
-<p>Plaatsingsregels:</p>
-<pre><code>
-HOND  blijft op de recursief berekende bronplek
-
-BIJT  → slot 2  V2 / persoonsvorm
-
-MAN   blijft op de basisplek
-
-slot 1 blijft vrij; HOND krijgt geen Wissel of trace
-
-</code></pre>
-<p>Resultaat:</p>
-<pre><code>
-HOND BIJT MAN
-
-</code></pre>
-<p>Traces:</p>
-<pre><code>
-t[V] blijft op de oude BIJT/V-basisplek
-
-</code></pre>
-<hr/>
-<h2>2. Bijzin met OMDAT</h2>
-<p>Voorbeeld:</p>
-<pre><code>
-OMDAT HOND MAN BIJT
-
-</code></pre>
-<p>Basisboom:</p>
-<pre><code>
-S → NP VP
-
-VP → NP V
-
-</code></pre>
-<p>Plaatsingsregels:</p>
-<pre><code>
-OMDAT → slot 0  Comp
-
-HOND  blijft op basisplek
-
-MAN   blijft op basisplek
-
-BIJT  blijft op basisplek
-
-</code></pre>
-<p>Resultaat:</p>
-<pre><code>
-OMDAT HOND MAN BIJT
-
-</code></pre>
-<p>Geen V2-Wissel. Geen extra traces.</p>
-<hr/>
-<h2>3. Topicalisatie</h2>
-<p>Voorbeeld:</p>
-<pre><code>
-TRUI BREIT VROUW
-
-</code></pre>
-<p>De thematische rollen blijven hetzelfde:</p>
-<pre><code>
-VROUW = agens / subject
-
-TRUI  = patiens / object
-
-</code></pre>
-<p>Basisvolgorde:</p>
-<pre><code>
-VROUW  TRUI  BREIT
-
-</code></pre>
-<p>Plaatsingsregels:</p>
-<pre><code>
-TRUI  → slot 1  eerste zinsdeel / topic
-
-BREIT → slot 2  V2 / persoonsvorm
-
-VROUW blijft op basisplek
-
-</code></pre>
-<p>Resultaat:</p>
-<pre><code>
-TRUI BREIT VROUW
-
-</code></pre>
-<p>Traces:</p>
-<pre><code>
-t[object] blijft op de oude TRUI/object-basisplek
-
-t[V]      blijft op de oude BREIT/V-basisplek
-
-</code></pre>
-<hr/>
-<h2>4. Perfectum</h2>
-<p>Voorbeeld:</p>
-<pre><code>
-HOND HEEFT MAN GEBETEN
-
-</code></pre>
-<p>Plaatsingsregels:</p>
-<pre><code>
-HOND  blijft op de recursief berekende bronplek
-
-HEEFT → slot 2  V2 / persoonsvorm
-
-MAN   blijft op basisplek
-
-GEBETEN blijft op basisplek
-
-slot 1 blijft vrij; HOND krijgt geen Wissel of trace
-
-</code></pre>
-<p>Resultaat:</p>
-<pre><code>
-HOND HEEFT MAN GEBETEN
-
-</code></pre>
-<p>Traces:</p>
-<pre><code>
-t[pv] blijft op de oude HEEFT/PV-basisplek
-
-</code></pre>
-<hr/>
-<h2>5. Vraagzin</h2>
-<p>Nog niet volledig uitgewerkt in de voorbeelden.</p>
-<p>Eenvoudige voorlopige regel voor een ja/nee-vraag:</p>
-<pre><code>
-persoonsvorm → eerste verbale vrije positie
-
-subject en object blijven op basisplekken, tenzij een aparte topicregel geldt
-
-</code></pre>
-<p>Voorbeeld later:</p>
-<pre><code>
-BIJT HOND MAN?
-
-</code></pre>
-<p>Daarvoor moet de viewer nog een apart vraagzin-type krijgen. Tot die tijd wordt vraagzin niet als volwaardig zinstype gevalideerd.</p>
-<hr/>
-<h2>Wat niet mag</h2>
-<pre><code>
-Niet: woorden automatisch naar gewone woordrijen schuiven.
-
-Niet: MAN verplaatsen alleen omdat MAN visueel hoger/lager staat.
-
-Niet: Wissellijnen vanuit de boom tekenen.
-
-Niet: LEX-as comprimeren zodat basisplekken hun horizontale hoogte verliezen.
-
-</code></pre>
-<h2>Korte formule</h2>
-<pre><code>
-basisprojectie blijft staan
-
-vrije slots worden gevuld
-
-oude plek wordt trace
-
-resultaat = voorbeeldzin
-
-</code></pre>
-<section>
-<h2>v4506 · Configureerbare vrije LEX-slots</h2>
-<p><strong>Boom vrije rijen</strong> reserveren lege ruimte in de centrale boom. <strong>LEX vrije slots</strong> zijn bijwoordboxen boven syntactische categorieboxen. Ze zijn bedoeld voor latere insertie van materiaal uit andere LEX-assen/andere bomen, zoals bijwoordelijke onthoofde zinnen, en voor anaforische elementen uit andere zinnen of uitingen. De NOORD-as blijft mogelijk, maar is nog niet actief.</p>
-</section>
-<section>
-<h2>v4506 - OSV-! en LEX-rendering</h2>
-<p><strong>OSV-!</strong> is geen basis-alternatief. De box-aanpak kan nooit OSV opleveren: VP blijft object en werkwoord als subtree groeperen.</p>
-<p>Voor een correcte LEX-as moet dus altijd een expliciete verplaatsingsregel werken. OSV-! is een waarschuwing/testlabel, geen taalkundige basisboom.</p>
-</section>
-<section>
-<h2>v4506 - LEX-bijwoordslots</h2>
-<p>Bijwoord-inserts krijgen niet één algemene plaats. De LEX-as reserveert vrije slots tussen boxen; bij verticale overlap komt het slot op de overlap. Daarna bepaalt de scope het domein.</p>
-<ul>
-<li><strong>Tijd/frequentie:</strong> GISTEREN, MORGEN, VAAK, SOMS, ALTIJD - hostbox VP/S.</li>
-<li><strong>Negatie:</strong> NIET - apart NEG/V-nabij slot.</li>
-<li><strong>Wijze:</strong> SNEL, HARD, ZACHTJES - V-nabij of VP-rechts.</li>
-<li><strong>Zinsbijwoord:</strong> MISSCHIEN, WAARSCHIJNLIJK, HELAAS - hoog S/VP-HOST of S-links.</li>
-<li><strong>Focus:</strong> ALLEEN, OOK, ZELFS - bij de gefocuste phrase.</li>
-<li><strong>Graad:</strong> HEEL, ERG, ZEER - AP/AdvP-intern.</li>
-</ul>
-<p>De centrale boom blijft bronstructuur. Bijwoorden horen in deze fase in de LEX-renderlaag of in phrase-interne slots.</p>
-</section>
-<section>
-<h2>v4535 - OVT / onvoltooid verleden tijd</h2>
-<p><strong>BEET</strong> is de OVT van <strong>BIJT/BIJTEN</strong>. <strong>BREIDE</strong> is de OVT van <strong>BREIT/BREIEN</strong>.</p>
-<p>Deze vormen vullen dezelfde predicate/PV-bron op de LEX-as als de tegenwoordige vormen. Het zijn dus geen nieuwe structurele boomtypes.</p>
-<pre><code>HOND BEET MAN
-OMDAT HOND MAN BEET
-VROUW BREIDE TRUI
-OMDAT VROUW TRUI BREIDE</code></pre>
-<p>VDW blijft apart: <strong>GEBETEN</strong> en <strong>GEBREID</strong> horen bij het perfectumtype met <strong>HEEFT</strong>.</p>
-</section>
-<section class="card">
-<h2>v4535 - OSV-!, VSO-! en VOS-!</h2>
-<p><strong>VSO-!</strong> en <strong>VOS-!</strong> zijn nu net als <strong>OSV-!</strong> gemarkeerd. De box-aanpak kan deze volgordes niet als basisalternatief opleveren.</p>
-<p>Voor correcte rendering op de LEX-as is een expliciete verplaatsingsregel nodig. Bestaande bomen en bestaande flips blijven ongemoeid.</p>
-</section>
+<h1>LEX-plaatsingsregels</h1>
+<p class="note"><strong>Actief profiel:</strong> uitsluitend upward-Wissels, toepassingsgebonden inserties en rechtstreeks geschreven Comp. Generieke plaatsen vóór, na of tussen en iedere downward/post-V2-Wissel zijn no-show en inactief.</p>
+<h2>Harde bronregel</h2>
+<p>Een woord projecteert eerst horizontaal vanaf zijn centrale bronknoop. Een expliciet doel wordt alleen uitgevoerd wanneer het op het scherm werkelijk hoger ligt dan die zichtbare bronhoogte. Een LOG-reservering verandert deze grens nooit.</p>
+<table><thead><tr><th>Vergelijking</th><th>Renderer</th></tr></thead><tbody><tr><td><code>ydoel &lt; ybron</code></td><td>teken één upward-Wissel en één trace</td></tr><tr><td><code>ydoel ≥ ybron</code></td><td>geen Wissel; blijf exact op bronhoogte</td></tr></tbody></table>
+<h2>Zinsoorten</h2>
+<table><thead><tr><th>Zinsoort</th><th>Voorbeeld</th><th>LEX-regel</th></tr></thead><tbody>
+<tr><td>Hoofdzin · mededelend</td><td><code>HOND BIJT MAN</code></td><td><code>BIJT</code> kan omhoog naar V2; HOND en MAN blijven op bronhoogte.</td></tr>
+<tr><td>Vraagzin · ja/nee</td><td><code>BIJT HOND MAN?</code></td><td><code>BIJT</code> kan omhoog naar V1.</td></tr>
+<tr><td>Dat-zin</td><td><code>DAT HOND MAN BIJT</code></td><td>DAT wordt direct in Comp/slot 0 geschreven; geen V2.</td></tr>
+<tr><td>Omdat-zin</td><td><code>OMDAT HOND MAN BIJT</code></td><td>OMDAT wordt direct in Comp/slot 0 geschreven; geen V2.</td></tr>
+</tbody></table>
+<p>Perfectum is een werkwoordsvorm en geen zinsoort. Vraagzin is een zinsoort, geen gereserveerde toepassing.</p>
+<h2>Insertie en Comp</h2>
+<p>Een toepassingsinsertie en een Comp-item hebben geen centrale bronknoop. Ze worden rechtstreeks geschreven en zijn daarom geen Wissel. Een toepassing mag haar insertie alleen leveren als de vereiste voorconfig actief is.</p>
+<h2>Voor later</h2>
+<p>De mogelijke betekenis van generieke plaatsen vóór, na en tussen wordt later afzonderlijk geëvalueerd. Tot dat besluit hebben deze keuzes geen UI, rendering of nieuwe opslag. Downward, Heavy NP Shift, extrapositie en Lowering zijn evenmin actief.</p>
 </main>
 </body>
 </html>

@@ -46,12 +46,66 @@ def extract_function(name: str) -> str:
 array_start = SOURCE.index("let EXAMPLES = ") + len("let EXAMPLES = ")
 examples_array = extract_balanced(array_start, "[", "]")
 import_function = extract_function("importedExampleFromData")
+movement_functions = "\n".join(
+    extract_function(name)
+    for name in (
+        "isMainV2Rule",
+        "isQuestionV1Rule",
+        "isFiniteVerbForV2",
+        "topicMovementForItem",
+        "movementForItem",
+    )
+)
 
 node_test = f"""
 const EXAMPLES = {examples_array};
+const state = {{ example: EXAMPLES[0] }};
 function escapeHtml(value) {{ return String(value); }}
+function activeAdverbIsFronted() {{ return false; }}
 {import_function}
-if (EXAMPLES.length !== 14) throw new Error(`fallback count ${{EXAMPLES.length}}`);
+{movement_functions}
+if (EXAMPLES.length !== 19) throw new Error(`fallback count ${{EXAMPLES.length}}`);
+for (const id of ['jan-wast-zichzelf', 'jan-slaat-jek-omdat-die-hem-beet', 'ken-uzelf']) {{
+  const utterance = EXAMPLES.find(item => item.id === id);
+  if (!utterance || utterance.utteranceKernels?.length !== 2) {{
+    throw new Error(`uitingfallback ontbreekt: ${{id}}`);
+  }}
+}}
+const question = EXAMPLES.find(item => item.id === 'bijt-hond-man-vraag');
+if (!question || question.sentenceType !== 'polar-question' || question.lexRule !== 'vraagzin-v1') {{
+  throw new Error('actieve ja/nee-vraagzin ontbreekt');
+}}
+const datClause = EXAMPLES.find(item => item.id === 'dat-hond-man-bijt');
+if (!datClause || datClause.sentenceType !== 'subordinate-dat' || datClause.lexItems[0]?.slot !== 'comp') {{
+  throw new Error('actieve dat-zin met Comp ontbreekt');
+}}
+state.example = question;
+if (movementForItem(question.lexItems[0], 0, question.lexItems)?.slot !== 'v1') {{
+  throw new Error('vraagzin verplaatst het predicaat niet naar V1');
+}}
+if (movementForItem(question.lexItems[1], 1, question.lexItems) !== null) {{
+  throw new Error('vraagzin verplaatst het subject ten onrechte');
+}}
+state.example = datClause;
+if (datClause.lexItems.some((item, index) => movementForItem(item, index, datClause.lexItems))) {{
+  throw new Error('dat-zin voert ten onrechte een Wissel uit');
+}}
+const mainClause = EXAMPLES.find(item => item.id === 'hond-bijt-man');
+state.example = mainClause;
+if (movementForItem(mainClause.lexItems[0], 0, mainClause.lexItems) !== null) {{
+  throw new Error('gewone subject-initiële HOND krijgt ten onrechte TOPIC');
+}}
+if (movementForItem(mainClause.lexItems[1], 1, mainClause.lexItems)?.slot !== 'v2') {{
+  throw new Error('hoofdzin verplaatst het predicaat niet naar V2');
+}}
+if (movementForItem(mainClause.lexItems[2], 2, mainClause.lexItems) !== null) {{
+  throw new Error('MAN krijgt ten onrechte een Wissel');
+}}
+const topicClause = EXAMPLES.find(item => item.id === 'trui-breit-vrouw-topic');
+state.example = topicClause;
+if (movementForItem(topicClause.lexItems[0], 0, topicClause.lexItems)?.slot !== 'topic') {{
+  throw new Error('expliciet vooropgeplaatste TRUI krijgt geen TOPIC-doel');
+}}
 const wanted = [
   'de-hond-heeft-de-man-misschien-wel-vaak-gebeten',
   'omdat-de-hond-de-man-misschien-wel-vaak-gebeten-heeft'
@@ -71,6 +125,7 @@ for (const id of wanted) {{
     subject_default: example.subjectDefault,
     object_default: example.objectDefault,
     predicate: example.predicate,
+    sentence_type: example.sentenceType,
     lex_rule: example.lexRule,
     lex_insertions: JSON.parse(JSON.stringify(example.lexInsertions)),
     lex_items: JSON.parse(JSON.stringify(example.lexItems))
@@ -87,7 +142,7 @@ for (const id of wanted) {{
     throw new Error(`oude voorbeeldpositie bestuurt LOG nog: ${{id}}`);
   }}
 }}
-console.log('EXAMPLES ROUNDTRIP: OK (14 voorbeelden; zinsgebonden lineaire multi-inserties)');
+console.log('EXAMPLES ROUNDTRIP: OK (19 uitingen; 4 zinsoorten; 3 kernzinanalyses; V1/V2/TOPIC-contract; lineaire multi-inserties)');
 """
 
 with tempfile.NamedTemporaryFile("w", suffix=".js", encoding="utf-8", delete=False) as handle:

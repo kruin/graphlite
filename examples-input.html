@@ -29,10 +29,40 @@
 </head>
 <body><nav class="opengraph-return-nav" style="display:flex;gap:.5rem;flex-wrap:wrap;padding:.55rem .7rem;border-bottom:1px solid #cbd5e1;background:#f8fafc;position:sticky;top:0;z-index:50"><a href="index.html?screen=config" style="font-weight:800">← Terug naar: Config</a><a href="index.html" style="font-weight:800">← Terug naar: Main</a></nav>
 <main>
-<h1>OpenGraph voorbeeldzinnen · HTML-input</h1>
-<p class="note">Deze file is de leesbare inputbron voor voorbeeldzinnen. <strong>Vet</strong> markeert subject/agens; <em>cursief</em> markeert object/patiens. Oudere korte voorbeelden zijn meestal lidwoordloos; nieuwere voorbeelden kunnen <code>DE HOND</code> en <code>DE MAN</code> tonen terwijl ze intern aan <code>lexeme=hond</code> en <code>lexeme=man</code> gekoppeld blijven. De lexicale vulling en thematische rollen komen uit <a class="button-link" href="lexicon-config.html?v4540">lexicon-config.html</a>. Voeg voorbeeldzinnen toe via <a class="button-link" href="examples-editor.html?v4540">examples-editor.html</a>; beheer lexemen via <a class="button-link" href="lexicon-editor.html?v4540">lexicon-editor.html</a>.</p>
-<section aria-label="Voorbeeldzinnen" id="opengraph-example-input">
-<article class="example-input" data-id="hond-bijt-man" data-lex-rule="hoofdzininvariant" data-phase="Fase 1+2" data-predicate="BIJT">
+<h1>OpenGraph uitingen · HTML-input</h1>
+<p class="note">Deze file is de leesbare inputbron voor uitingen en voorbeeldzinnen. Een uiting bestaat uit één of meer verknoopte kernzinnen. <strong>Vet</strong> markeert subject/agens; <em>cursief</em> markeert object/patiens. Oudere korte voorbeelden zijn meestal lidwoordloos; nieuwere voorbeelden kunnen <code>DE HOND</code> en <code>DE MAN</code> tonen terwijl ze intern aan <code>lexeme=hond</code> en <code>lexeme=man</code> gekoppeld blijven. De lexicale vulling en thematische rollen komen uit <a class="button-link" href="lexicon-config.html?v4540">lexicon-config.html</a>. Voeg voorbeeldzinnen toe via <a class="button-link" href="examples-editor.html?v4540">examples-editor.html</a>; beheer lexemen via <a class="button-link" href="lexicon-editor.html?v4540">lexicon-editor.html</a>.</p>
+<section aria-label="Uitingen en voorbeeldzinnen" id="opengraph-example-input">
+<article class="example-input" data-id="jan-wast-zichzelf" data-sentence-type="main-declarative" data-lex-rule="hoofdzininvariant" data-phase="Uiting · reflexive" data-predicate="WAST" data-utterance-type="reflexive" data-utterance-kernels="[{&quot;id&quot;:&quot;k1&quot;,&quot;text&quot;:&quot;Jan wast Jan.&quot;,&quot;predicate&quot;:&quot;wassen&quot;,&quot;agens&quot;:&quot;jan&quot;,&quot;patiens&quot;:&quot;jan&quot;},{&quot;id&quot;:&quot;k2&quot;,&quot;text&quot;:&quot;Jan wast zelf.&quot;,&quot;predicate&quot;:&quot;wassen&quot;,&quot;agens&quot;:&quot;jan&quot;,&quot;patiens&quot;:&quot;zelf&quot;}]" data-utterance-relations="[{&quot;type&quot;:&quot;coreference&quot;,&quot;members&quot;:[&quot;k1.agens&quot;,&quot;k1.patiens&quot;,&quot;k2.agens&quot;]},{&quot;type&quot;:&quot;reflexive-realization&quot;,&quot;components&quot;:[&quot;zich&quot;,&quot;zelf&quot;],&quot;surface&quot;:&quot;zichzelf&quot;}]">
+<p class="sentence" title="Uiting: één of meer verknoopte kernzinnen"><strong data-role="subject" data-thematic-role="agens">JAN</strong> WAST <em data-role="object" data-thematic-role="patiens">ZICHZELF</em></p>
+<p class="meta">uiting · wederkerend · k₁: Jan wast Jan · k₂: Jan wast zelf · agens = patiens · zich + zelf → zichzelf</p>
+<ol aria-label="LEX-volgorde van de uiting" class="lex-sequence">
+<li class="lex-token" data-id="subject-jan-wast" data-lexeme="jan" data-role="subject" data-source="subject" data-thematic-role="agens"><strong data-role="subject" data-thematic-role="agens">JAN</strong></li>
+<li class="lex-token" data-id="pred-wast" data-lexeme="wast" data-role="predicate" data-source="predicate">WAST</li>
+<li class="lex-token" data-id="object-zichzelf" data-lexeme="zichzelf" data-role="object" data-source="object" data-thematic-role="patiens"><em data-role="object" data-thematic-role="patiens">ZICHZELF</em></li>
+</ol>
+</article>
+<article class="example-input" data-id="jan-slaat-jek-omdat-die-hem-beet" data-sentence-type="main-declarative" data-lex-rule="hoofdzininvariant" data-phase="Uiting · causal-role-flip" data-predicate="SLAAT" data-utterance-type="causal-role-flip" data-utterance-kernels="[{&quot;id&quot;:&quot;k1&quot;,&quot;text&quot;:&quot;Jek beet Jan.&quot;,&quot;predicate&quot;:&quot;bijten&quot;,&quot;agens&quot;:&quot;jek&quot;,&quot;patiens&quot;:&quot;jan&quot;},{&quot;id&quot;:&quot;k2&quot;,&quot;text&quot;:&quot;Jan slaat Jek.&quot;,&quot;predicate&quot;:&quot;slaan&quot;,&quot;agens&quot;:&quot;jan&quot;,&quot;patiens&quot;:&quot;jek&quot;}]" data-utterance-relations="[{&quot;type&quot;:&quot;cause&quot;,&quot;from&quot;:&quot;k1&quot;,&quot;to&quot;:&quot;k2&quot;,&quot;surface&quot;:&quot;omdat&quot;},{&quot;type&quot;:&quot;coreference&quot;,&quot;members&quot;:[&quot;k1.agens&quot;,&quot;k2.patiens&quot;],&quot;surface&quot;:[&quot;Jek&quot;,&quot;die&quot;]},{&quot;type&quot;:&quot;coreference&quot;,&quot;members&quot;:[&quot;k1.patiens&quot;,&quot;k2.agens&quot;],&quot;surface&quot;:[&quot;Jan&quot;,&quot;hem&quot;]},{&quot;type&quot;:&quot;role-flip&quot;,&quot;participants&quot;:[&quot;jan&quot;,&quot;jek&quot;]}]">
+<p class="sentence" title="Uiting: één of meer verknoopte kernzinnen"><strong data-role="subject" data-thematic-role="agens">JAN</strong> SLAAT <em data-role="object" data-thematic-role="patiens">JEK</em> OMDAT DIE HEM BEET</p>
+<p class="meta">uiting · causaal · k₁: Jek beet Jan · k₂: Jan slaat Jek · hij/die/die hond = Jek · hem = Jan · rol-flip · anafoorvorm selecteerbaar</p>
+<ol aria-label="LEX-volgorde van de uiting" class="lex-sequence">
+<li class="lex-token" data-id="subject-jan-slaat" data-lexeme="jan" data-role="subject" data-source="subject" data-thematic-role="agens"><strong data-role="subject" data-thematic-role="agens">JAN</strong></li>
+<li class="lex-token" data-id="pred-slaat" data-lexeme="slaat" data-role="predicate" data-source="predicate">SLAAT</li>
+<li class="lex-token" data-id="object-jek" data-lexeme="jek" data-role="object" data-source="object" data-thematic-role="patiens"><em data-role="object" data-thematic-role="patiens">JEK</em></li>
+<li class="lex-token local" data-id="causal-omdat" data-lexeme="omdat">OMDAT</li>
+<li class="lex-token local" data-id="anaphor-die" data-lexeme="die">DIE</li>
+<li class="lex-token local" data-id="anaphor-hem" data-lexeme="hem">HEM</li>
+<li class="lex-token local" data-id="subordinate-beet" data-lexeme="bijt">BEET</li>
+</ol>
+</article>
+<article class="example-input" data-id="ken-uzelf" data-sentence-type="main-declarative" data-lex-rule="hoofdzininvariant" data-phase="Uiting · imperative-reflexive" data-predicate="KEN" data-utterance-type="imperative-reflexive" data-utterance-kernels="[{&quot;id&quot;:&quot;k1&quot;,&quot;text&quot;:&quot;Ken zelf.&quot;,&quot;predicate&quot;:&quot;kennen&quot;,&quot;agens&quot;:&quot;u&quot;,&quot;patiens&quot;:&quot;zelf&quot;},{&quot;id&quot;:&quot;k2&quot;,&quot;text&quot;:&quot;Ken u.&quot;,&quot;predicate&quot;:&quot;kennen&quot;,&quot;agens&quot;:&quot;u&quot;,&quot;patiens&quot;:&quot;u&quot;}]" data-utterance-relations="[{&quot;type&quot;:&quot;implicit-addressee&quot;,&quot;referent&quot;:&quot;u&quot;,&quot;role&quot;:&quot;agens&quot;},{&quot;type&quot;:&quot;coreference&quot;,&quot;members&quot;:[&quot;k2.agens&quot;,&quot;k2.patiens&quot;]},{&quot;type&quot;:&quot;reflexive-realization&quot;,&quot;components&quot;:[&quot;u&quot;,&quot;zelf&quot;],&quot;surface&quot;:&quot;uzelf&quot;},{&quot;type&quot;:&quot;mood&quot;,&quot;value&quot;:&quot;imperative&quot;}]" data-implicit-subject="U">
+<p class="sentence" title="Uiting: één of meer verknoopte kernzinnen">KEN <em data-role="object" data-thematic-role="patiens">UZELF</em></p>
+<p class="meta">uiting · imperatief · k₁: Ken zelf · k₂: Ken u · impliciete agens = u · u + zelf → uzelf</p>
+<ol aria-label="LEX-volgorde van de uiting" class="lex-sequence">
+<li class="lex-token" data-id="pred-ken" data-lexeme="ken" data-role="predicate" data-source="predicate">KEN</li>
+<li class="lex-token" data-id="object-uzelf" data-lexeme="uzelf" data-role="object" data-source="object" data-thematic-role="patiens"><em data-role="object" data-thematic-role="patiens">UZELF</em></li>
+</ol>
+</article>
+<article class="example-input" data-id="hond-bijt-man" data-sentence-type="main-declarative" data-lex-rule="hoofdzininvariant" data-phase="Fase 1+2" data-predicate="BIJT">
 <p class="sentence" title="Vet = subject/agens; cursief = object/patiens"><strong data-role="subject" data-thematic-role="agens">HOND</strong> BIJT <em data-role="object" data-thematic-role="patiens">MAN</em></p>
 <p class="meta">hoofdzin V2 · subject=agens · object=patiens · Wissel predicaat→slot 2; oude plek=t[V] · zonder lidwoorden</p>
 <ol aria-label="LEX-volgorde" class="lex-sequence">
@@ -41,7 +71,26 @@
 <li class="lex-token" data-id="object-man" data-lexeme="man" data-role="object" data-source="object" data-thematic-role="patiens"><em data-role="object" data-thematic-role="patiens">MAN</em></li>
 </ol>
 </article>
-<article class="example-input" data-id="omdat-hond-man-bijt" data-lex-rule="bijzin-omdat" data-phase="Fase 3" data-predicate="BIJT">
+<article class="example-input" data-id="bijt-hond-man-vraag" data-sentence-type="polar-question" data-lex-rule="vraagzin-v1" data-phase="Vraagzin · ja/nee" data-predicate="BIJT">
+<p class="sentence" title="Ja/nee-vraag: persoonsvorm naar V1/slot 1">BIJT <strong data-role="subject" data-thematic-role="agens">HOND</strong> <em data-role="object" data-thematic-role="patiens">MAN</em>?</p>
+<p class="meta">vraagzin · ja/nee · Wissel predicaat omhoog naar V1/slot 1 · oude plek=t[V]</p>
+<ol aria-label="LEX-volgorde" class="lex-sequence">
+<li class="lex-token" data-id="pred-bijt-vraag" data-lexeme="bijt" data-role="predicate" data-source="predicate">BIJT</li>
+<li class="lex-token" data-id="subject-hond-vraag" data-lexeme="hond" data-role="subject" data-source="subject" data-thematic-role="agens"><strong data-role="subject" data-thematic-role="agens">HOND</strong></li>
+<li class="lex-token" data-id="object-man-vraag" data-lexeme="man" data-role="object" data-source="object" data-thematic-role="patiens"><em data-role="object" data-thematic-role="patiens">MAN</em></li>
+</ol>
+</article>
+<article class="example-input" data-id="dat-hond-man-bijt" data-sentence-type="subordinate-dat" data-lex-rule="bijzin-dat" data-phase="Dat-zin · Comp" data-predicate="BIJT">
+<p class="sentence" title="DAT wordt rechtstreeks in Comp/slot 0 geschreven">DAT <strong data-role="subject" data-thematic-role="agens">HOND</strong> <em data-role="object" data-thematic-role="patiens">MAN</em> BIJT</p>
+<p class="meta">dat-zin · DAT in Comp/slot 0 · geen V2 en geen bronpijl voor Comp</p>
+<ol aria-label="LEX-volgorde" class="lex-sequence">
+<li class="lex-token local" data-id="dat" data-lexeme="dat" data-slot="comp">DAT</li>
+<li class="lex-token" data-id="subject-hond-dat" data-lexeme="hond" data-role="subject" data-source="subject" data-thematic-role="agens"><strong data-role="subject" data-thematic-role="agens">HOND</strong></li>
+<li class="lex-token" data-id="object-man-dat" data-lexeme="man" data-role="object" data-source="object" data-thematic-role="patiens"><em data-role="object" data-thematic-role="patiens">MAN</em></li>
+<li class="lex-token" data-id="pred-bijt-dat" data-lexeme="bijt" data-role="predicate" data-source="predicate">BIJT</li>
+</ol>
+</article>
+<article class="example-input" data-id="omdat-hond-man-bijt" data-sentence-type="subordinate-omdat" data-lex-rule="bijzin-omdat" data-phase="Fase 3" data-predicate="BIJT">
 <p class="sentence" title="Vet = subject/agens; cursief = object/patiens">OMDAT <strong data-role="subject" data-thematic-role="agens">HOND</strong> <em data-role="object" data-thematic-role="patiens">MAN</em> BIJT</p>
 <p class="meta">bijzin · subject=agens · object=patiens · Comp/(om)dat in LEX-slot 0 · zonder lidwoorden</p>
 <ol aria-label="LEX-volgorde" class="lex-sequence">

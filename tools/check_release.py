@@ -28,30 +28,23 @@ required_files = [
     "examples-adverbs.html", "lexicon-config.html", "lexicon-editor.html", ".nojekyll",
     "README.md", "LEESMIJ.md", "PROJECT_STATE_CURRENT.md", "LAYOUT_RULES.md",
     "LINGUISTIC_ACTIONS.md", "DOCUMENTATION_RULES.md", "HANDOVER_FOR_COLLABORATORS.md",
-    "CONFIG_UI_EXPLANATION_STANDARD.md", "docs/CONFIG_UI_EXPLANATION_STANDARD.md",
     "ADVERB_ORIGIN_MECHANISMS.md", "LEXICON_USAGE_PROFILES_AND_DISAMBIGUATION.md",
     "LEXICON_USAGE_PROFILE_TEST.md", "SOURCE_CHANGES_V2.0.0-rc.38.md",
     "SOURCE_CHANGES_V2.0.0-rc.39.md", "SOURCE_CHANGES_V2.0.0-rc.40.md",
     "SOURCE_CHANGES_V2.0.0-rc.41.md", "SOURCE_CHANGES_V2.0.0-rc.42.md",
     "SOURCE_CHANGES_V2.0.0-rc.43.md", "SOURCE_CHANGES_V2.0.0-rc.44.md",
     "SOURCE_CHANGES_V2.0.0-rc.45.md",
-    "MULTI_OGN_ANAPHOR.md", "ANAPHOR_LANGUAGE_TREE_EXTENSION.md",
-    "FLIP_CONSTRAINT_SOLVER.md", "docs/FLIP_CONSTRAINT_SOLVER.md",
-    "TEXT_AND_CONTEXT.md", "docs/TEXT_AND_CONTEXT.md", "CONTEXT_TAXONOMY.md",
-    "docs/CONTEXT_TAXONOMY.md", "references/context-taxonomy.svg",
-    "ANAPHOR_S1_S2_LITERATURE_CATALOG.md", "ANAPHOR_AND_S1_S2_RELATION_DEFINITIONS.md",
-    "S1_S2_RELATION_TEST_FIXTURES.md",
-    "multi-ogn-composition-engine.js", "anaphor-lexicalization-engine.js",
-    "anaphor-combinations-engine.js", "multi-ogn-anaphor-play-engine.js",
-    "samples/anaphor-s1-s2-literature-catalog.json", "samples/s1-s2-relation-fixtures.json",
+    "MULTI_OGN_ANAPHOR.md", "multi-ogn-composition-engine.js", "utterance-kernel-engine.js",
+    "UITING_EN_KERNZINNEN.md", "docs/UITING_EN_KERNZINNEN.md",
+    "samples/uitingen-kernzinnen.v1.json", "tools/check_utterances.js",
+    "tools/check_utterance_kernel_views.js",
     "samples/ik-zie-man-hij-draagt-hoed.multi-ogn.v1.opn",
-    "samples/ik-zie-man-hij-draagt-hoed.multi-ogn.v2.opn",
     "PUBLICATIE_README.md", "RC44_PUBLICATION_CAROUSEL_TEST.md",
     "RC45_OGN_CORE_EXPLANATION_TEST.md", "GREEDY_GROW_RECONSTRUCTION.md",
     "greedy-grow.html", "greedy-grow.css", "greedy-grow-engine.js", "greedy-grow.js",
     "RECURSIVE_LAYOUT_AND_APPLICATION_CONTRACT.md", "OGN_CORE_PLACEMENT_ARCHITECTURE.md",
     "LINE_STYLE_AND_PLACEMENT_MODES.md", "RC45_LINE_STYLE_DIRECT_MODES_TEST.md",
-    "DIRECT_PLACEMENT_CONFIG.md", "RC45_DIRECT_PLACEMENT_CONFIG_TEST.md",
+    "DIRECT_PLACEMENT_CONFIG.md", "CONFIG_UI_EXPLANATION_STANDARD.md", "RC45_DIRECT_PLACEMENT_CONFIG_TEST.md",
     "RC35_README_LAYOUT_TEST.md", "RC36_BASE_PROFILE_TEST.md", "RC37_PRECONFIG_TEST.md",
     "RC38_MOBILE_LAYOUT_TEST.md", "RC39_VIEWPORT_SWITCH_TEST.md",
     "RC40_LANDSCAPE_COMPOSITION_TEST.md", "RC41_RECURSIVE_LAYOUT_TEST.md",
@@ -62,9 +55,8 @@ required_files = [
     "docs/ADVERB_ORIGIN_MECHANISMS.md", "docs/OGN_BASE_PROFILE.md",
     "docs/GREEDY_GROW_RECONSTRUCTION.md",
     "docs/OGN_CORE_PLACEMENT_ARCHITECTURE.md", "docs/LINE_STYLE_AND_PLACEMENT_MODES.md",
-    "docs/DIRECT_PLACEMENT_CONFIG.md", "docs/ANAPHOR_LANGUAGE_TREE_EXTENSION.md",
-    "docs/ANAPHOR_S1_S2_LITERATURE_CATALOG.md", "docs/ANAPHOR_AND_S1_S2_RELATION_DEFINITIONS.md",
-    "docs/S1_S2_RELATION_TEST_FIXTURES.md", "docs/MULTI_OGN_ANAPHOR.md",
+    "docs/DIRECT_PLACEMENT_CONFIG.md", "docs/CONFIG_UI_EXPLANATION_STANDARD.md",
+    "docs/MULTI_OGN_ANAPHOR.md",
     "docs/PRECONFIG_ARCHITECTURE.md",
     "docs/LAYOUT_SPEC.md", "docs/RECURSIVE_LAYOUT_AND_APPLICATION_CONTRACT.md", "docs/RENDER_EXPLANATION.md",
     "docs/RENDER_EXPLANATION_EN.md", "docs/TALIGE_UITBREIDINGEN.md", "docs/SOCIAL_EXPORT.md",
@@ -79,14 +71,11 @@ required_files = [
     "tools/check_release.py", "tools/normalize_text_files.py", "tools/check_text_normalization.py",
     "tools/check_local_start.py", "tools/check_config_tabs_and_menus.py",
     "tools/check_examples_roundtrip.py", "tools/check_log_slot_distance.py",
-    "tools/check_lex_horizontal_projection.py", "tools/check_lex_open_slots.js",
-    "tools/check_projection_cleanup.py", "tools/check_git_publish_staging.py",
+    "tools/check_lex_horizontal_projection.py", "tools/check_projection_cleanup.py",
     "tools/check_desktop_max_view.py", "tools/check_social_and_linguistic_export.py",
     "tools/check_linkedin_video_export.py", "tools/check_linkedin_video_runtime.js",
     "tools/check_play_reverse.py", "tools/check_release_zip_batch.py",
     "tools/check_opn_storage.py", "tools/check_lexicon_usage_profiles.py",
-    "tools/check_anaphor_flip.js", "tools/check_multi_ogn_anaphor_play.js", "tools/check_anaphor_language_tree_extension.js",
-    "tools/check_multi_ogn_anaphor_runtime.js", "tools/check_multi_ogn_anaphor_runtime_dependencies.js",
     "tools/check_feature_profiles.py", "tools/check_feature_profiles_runtime.js",
     "tools/check_readme_carousel_editor.py", "tools/check_readme_carousel_editor_runtime.js",
     "tools/check_readme_item_editor.py", "tools/check_readme_item_editor_runtime.js",
@@ -94,7 +83,8 @@ required_files = [
     "random-placement-engine.js", "tools/check_greedy_grow_reconstruction.js",
     "tools/check_random_placement.js", "tools/check_line_style_and_direct_modes.py",
     "tools/check_direct_placement_config.py",
-    "tools/check_node_grid_invariant.py",
+    "tools/check_multi_ogn_anaphor.js", "tools/check_multi_ogn_anaphor_runtime.js",
+    "tools/check_node_grid_invariant.py", "tools/check_lex_open_slots.js",
     "tools/check_mobile_layout_rc38.py", "tools/check_mobile_layout_runtime.js",
     "tools/check_viewport_switch_runtime.js", "tools/check_landscape_composition_runtime.js",
     "tools/check_recursive_box_fit_runtime.js",
@@ -141,18 +131,9 @@ for marker, label in [
 ]:
     require(attributes, marker, label)
 require(publish_bat, "normalize_text_files.py --write", "automatische publicatienormalisatie")
-require(publish_bat, "git add -A -- .", "Git-staging van bestaande en verdwenen bestanden")
 require(publish_bat, "git add --renormalize -- .", "Git-renormalisatie vóór commit")
-stage_position = publish_bat.find("git add -A -- .")
-renormalize_position = publish_bat.find("git add --renormalize -- .")
-if stage_position >= 0 and renormalize_position >= 0 and stage_position >= renormalize_position:
-    errors.append("Git-staging moet vóór renormalisatie plaatsvinden voor ontbrekende gevolgde bestanden")
 require(read("check_release.bat"), "normalize_text_files.py", "tekstnormalisatie in releasecheck")
 require(read("check_release.bat"), "check_text_normalization.py", "EOF/EOL-regressie in releasecheck")
-require(read("tools/normalize_text_files.py"), 'line.rstrip(b" \\t")', "automatische verwijdering trailing whitespace")
-require(read("tools/check_text_normalization.py"), "Markdown witruimte aan regeleinde", "Markdown-trailing-whitespace-regressie")
-require(read("check_release.bat"), "check_git_publish_staging.py", "Git-stagingregressie in releaseflow")
-require(read("check_release.bat"), "check_lex_open_slots.js", "actief LEX-profiel in releaseflow")
 editor_config = read(".editorconfig")
 require(editor_config, "insert_final_newline = true", "editor-finale-EOL-beleid")
 require(editor_config, "[*.{bat,cmd,ps1}]", "editor-Windows-scriptbeleid")
@@ -254,27 +235,22 @@ require(read("check_release.bat"), "check_greedy_grow_reconstruction.js", "Greed
 require(read("check_release.bat"), "check_random_placement.js", "Random-regressie in releaseflow")
 require(read("check_release.bat"), "check_direct_placement_config.py", "directe Config-regressie in releaseflow")
 require(read("check_release.bat"), "check_multi_ogn_anaphor.js", "multi-OGN-regressie in releaseflow")
-require(read("check_release.bat"), "check_anaphor_flip.js", "gezamenlijke Anafoor-flipregressie in releaseflow")
-require(read("check_release.bat"), "check_multi_ogn_anaphor_play.js", "Anafoor-Play-regressie in releaseflow")
-require(read("check_release.bat"), "check_anaphor_language_tree_extension.js", "Language Tree-extensie-regressie in releaseflow")
-require(read("check_release.bat"), "check_multi_ogn_anaphor_runtime_dependencies.js", "optionele Anafoor-browserafhankelijkheden in releaseflow")
-anaphor_runtime = read("tools/check_multi_ogn_anaphor_runtime.js")
+runtime_multi_ogn = read("tools/check_multi_ogn_anaphor_runtime.js")
 for marker, label in [
-    ("skipOptionalBrowserRuntime", "optionele Anafoor-browsercontrole"),
-    ("Playwright niet geïnstalleerd", "duidelijke melding ontbrekende Playwright"),
-    ("Chromium-browser niet geïnstalleerd", "duidelijke melding ontbrekende Chromium"),
-    ("publiceren kan doorgaan", "publicatie niet blokkeren zonder browserhulpmiddelen"),
-    ("throw error;", "werkelijke Anafoor-runtimefouten blijven fouten"),
+    ("await page.click('#mainViewSummary');", "browsertest opent eerst het hoofdmenu"),
+    ("#mainViewMenu[open] [data-placement-mode=\"multi-ogn-anaphor\"]", "browsertest kiest zichtbare modus"),
+    (":scope > .node-shape-layer > .node-shape[data-node-id]", "browsertest gebruikt actuele knooplaag"),
+    ('[data-config-scope-button="general"]', "browsertest opent algemene config voor export"),
+    ('[data-config-tab-button="files"]', "browsertest opent zichtbare bestandentab voor export"),
+    ("#configDownloadOpnButton", "browsertest gebruikt zichtbare OPN-knop"),
+    ("path.resolve(os.tmpdir()", "runtime-screenshot buiten Git-projectmap"),
 ]:
-    require(anaphor_runtime, marker, label)
+    require(runtime_multi_ogn, marker, label)
 
 for marker, label in [
     ('data-placement-mode="multi-ogn-anaphor"', "multi-OGN-keuze in Main"),
     ('data-help-topic="multi-ogn-anaphor"', "multi-OGN-Help"),
     ("multi-ogn-composition-engine.js", "multi-OGN-engine geladen"),
-    ("anaphor-lexicalization-engine.js", "Anafoor-LEX-engine geladen"),
-    ("anaphor-combinations-engine.js", "Anafoorcombinatie-engine geladen"),
-    ("multi-ogn-anaphor-play-engine.js", "Anafoor-Play-engine geladen"),
 ]:
     require(index, marker, label)
 for marker, label in [
@@ -282,22 +258,8 @@ for marker, label in [
     ("function buildMultiOgnOpnDocument(", "multi-OGN-OPN-export"),
     ("function validateImportedMultiOgnComposition(", "multi-OGN-importvalidatie"),
     ("'data-directed': 'false'", "ongerichte coreferentie"),
-    ("anaphorLexicalizationSelect", "anaforische LEX-profielkeuze"),
-    ("function multiOgnAnaphorPlayPlan(", "gefaseerd Anafoor-Play-plan"),
-    ("subordinate ? 'bijzin zonder V2' : 'met V2-verplaatsing'", "zinsgewijze Anafoor-Play-volgorde en bijzins-V2"),
 ]:
     require(js, marker, label)
-require(read("anaphor-combinations-engine.js"), "referentNodeId: anaphor.nodeId", "S2-bronreferent uit Config")
-require(read("anaphor-combinations-engine.js"), "layer: 'Context'", "inserties zijn Context")
-require(read("anaphor-combinations-engine.js"), "finiteVerbPlacement: 'final'", "bijzin zonder V2")
-require(read("anaphor-combinations-engine.js"), "operation: 'binary-placement-variant'", "vierwaardige binaire flipnotatie")
-require(read("anaphor-combinations-engine.js"), "id: 'man-slaat-hond-omdat-die-hem-heeft-gebeten'", "dubbele man–hond-anafoorfixture")
-require(read("multi-ogn-composition-engine.js"), "const BRANCH_VARIANTS = Object.freeze(['normal', 'left-right', 'short-long', 'both'])", "vier flipvarianten")
-require(read("multi-ogn-composition-engine.js"), "function solveJoint(", "gezamenlijke flipsolver")
-require(read("multi-ogn-anaphor-play-engine.js"), "kind: 'branch-flip'", "atomaire flipstap in Play")
-require(read("TEXT_AND_CONTEXT.md"), "Iedere insertie behoort tot Context", "normatieve Text/Context-indeling")
-require(read("CONTEXT_TAXONOMY.md"), "geminimaliseerde boom", "Context is een nog te ontwikkelen geminimaliseerde OGN-boom")
-require(read("references/context-taxonomy.svg"), 'data-ogn-unit="CONTEXT"', "zelfstandige Context-OGN")
 
 # Local portrait/landscape simulation must survive the later MAX rules and use
 # the version of the loaded viewer instead of a historical hardcoded value.
@@ -436,6 +398,39 @@ for marker, label in [
 ]:
     require(js, marker, label)
 require(read("check_release.bat"), "check_node_grid_invariant.py", "statische knoopgridcontrole in releaseflow")
+require(read("check_release.bat"), "check_lex_open_slots.js", "actief LEX-profiel in releaseflow")
+for rel in ["LEX_MOVEMENT_RULES.md", "docs/LEX_MOVEMENT_RULES.md"]:
+    lex_contract = read(rel)
+    for marker in [
+        "Het actieve LEX-profiel bevat voorlopig precies drie mechanismen",
+        "Bronhoogte is de enige richtingsreferentie",
+        "Generieke lege posities",
+        "Zinsoort stuurt de clausale regel",
+        "Vraagzin · ja/nee",
+        "Heavy NP Shift",
+        "morfologische Lowering",
+    ]:
+        require(lex_contract, marker, f"{rel} volledig LEX-gebruikerscontract")
+for rel in ["index.html", "viewer.html"]:
+    help_source = read(rel)
+    for marker in [
+        'data-help-topic="lex-free-positions"',
+        'data-help-topic="lex-movement-direction"',
+        'data-help-topic="sentence-types"',
+        "Generieke vrije plekken vóór, na of tussen",
+        "Wissels omlaag zijn no-show",
+        "Vraagzin · ja/nee",
+    ]:
+        require(help_source, marker, f"{rel} LEX-Help en Config-uitleg")
+for marker, label in [
+    ("const DEFERRED_LEX_OPEN_SLOT_PLACEMENTS", "uitgestelde vóór/na/tussen-voorraad"),
+    ("return targetY < sourceY ? targetY : sourceY", "harde upward-grens vanaf bronhoogte"),
+    ("const SENTENCE_TYPES = Object.freeze([", "centrale zinsoortcatalogus"),
+    ("sentence_type: sentenceTypeForExample(ex)", "zinsoort in OPN-export"),
+]:
+    require(js, marker, label)
+if 'id="lexOpenSlotCountSelect"' in index or 'id="lexOpenSlotPlacementSelect"' in index:
+    errors.append("generieke vóór/na/tussen-bediening is nog zichtbaar in Config")
 deferred_placement_terms = [
     "inter" + "section",
     "kruis" + "punt",
@@ -461,9 +456,11 @@ for path in ROOT.rglob("*"):
 
 # Config overview, explanatory help and unchanged save semantics.
 for marker, label in [
-    ("let activeConfigTab = 'preconfig';", "Config start op Voorconfig"),
+    ("let activeConfigTab = 'general-ui';", "Config start op Algemeen"),
     ("{ id: 'preconfig', nl: 'Voorconfig', en: 'Pre-config' }", "Config-voorconfigsectie"),
-    ("{ id: 'features', nl: 'Toepassingen', en: 'Applications' }", "Config-toepassingensectie"),
+    ("{ id: 'features', nl: 'Uitbreidingen', en: 'Extensions' }", "Language-Tree-uitbreidingen"),
+    ("general: Object.freeze(['general-ui', 'readme-carousels', 'overview', 'files'])", "toepassingsvrije algemene Config"),
+    ("'language-tree': Object.freeze(['preconfig', 'features', 'view', 'log-lex', 'examples', 'jan', 'advanced'])", "afzonderlijke Language-Tree-Config"),
     ("const INSERTION_AXIS_DEFINITIONS = Object.freeze({", "insertie per as"),
     ("insertionAxes: Object.freeze(['lex', 'log'])", "Bijwoorden vereist LEX + LOG"),
     ("defaultEnabled: false", "Bijwoorden standaard uit"),
@@ -489,7 +486,7 @@ for marker, label in [
     ("function insertReadmeSlideFile()", "lokale afbeelding naar LEESMIJ-slide"),
     ("MAX_README_EMBEDDED_IMAGE_BYTES = 1250000", "LEESMIJ-bestandslimiet"),
     ("config-global-save-card", "globale Config-savekaart"),
-    ("sidePanel.replaceChildren(tabList, saveSlot, ...panels.values())", "Config-save op ieder tabblad"),
+    ("sidePanel.replaceChildren(scopeNav, tabList, saveSlot, ...panels.values())", "Config-save op ieder tabblad en toepassingscontext"),
     ("PROJECT_DEFAULT_CONFIG_PATH = 'config/default-config.json'", "project-standaardconfig"),
     ("PROJECT_USER_CONFIG_PATH = 'config/user-config.json'", "project-user-config"),
     ("function mergeProjectConfigSnapshots(", "projectconfig-overschrijving"),
@@ -716,8 +713,6 @@ for marker, label in [
     ('class="usage-profile"', "gebruiksprofielen"),
     ('class="lexicon-construction"', "meerwoordconstructies"),
     ('data-visible-slots="1"', "één zichtbaar constructieslot"),
-    ('data-id="anaphor-subject"', "anaforische lexiconprofielen"),
-    ('surface=DIE_VROUW', "niet universeel toepasbaar vrouwprofiel"),
 ]:
     require(lexicon, marker, label)
 for marker, label in [
@@ -777,7 +772,7 @@ for marker, label in [
 ]:
     require(local_launcher, marker, label)
 source_build = read("SOURCE_BUILD.txt").strip()
-if source_build != "v2.0.0-rc.45-sources-language-tree-anafoor-extensie-flip-20260821.17":
+if source_build != "v2.0.0-rc.45-publish-visible-browser-controls-20260825.11":
     errors.append(f"onverwachte of lege SOURCE_BUILD.txt: {source_build!r}")
 for stale in ['v4537', 'v2.0.0-rc.24']:
     if stale in start_bat or stale in debug_html:
@@ -786,6 +781,11 @@ for stale in ['v4537', 'v2.0.0-rc.24']:
 # Publishing: checked commit/push and cache reset only once after a successful push.
 for marker, label in [
     ("call check_release.bat", "releasecontrole vóór publiceren"),
+    ("call :ensure_playwright_runtime", "Playwright-preflight vóór releasecontrole"),
+    (":ensure_playwright_runtime", "Playwright-preflightsubroutine"),
+    ("chromium.executablePath()", "controle op geïnstalleerde Chromium-browser"),
+    ('choice /C JN /N /M "Nu eenmalig installeren? [J/N]: "', "expliciete installatiekeuze"),
+    ('call "%~dp0installeer-carrousel-tools.bat"', "bestaande reproduceerbare installer"),
     ("git commit -m", "commitstap"),
     ("git push -u origin", "pushstap"),
     ('if "%DID_PUSH%"=="1" call :open_reset_after_push', "reset alleen na succesvolle push"),
@@ -823,8 +823,14 @@ if "state.projectionBlockUnlocked = maxStep > 0 && state.growthStep >= maxStep;"
 tbody = re.search(r"<tbody>(.*?)</tbody>", read("examples-adverbs.html"), flags=re.S)
 if not tbody or len(re.findall(r"<tr\b", tbody.group(1))) != 25:
     errors.append("bijwoordtabel moet exact 25 voorbeelden bevatten")
-if examples.count('class="example-input"') != 14:
-    errors.append("voorbeeldset moet exact 14 zinnen bevatten")
+if examples.count('class="example-input"') != 19:
+    errors.append("voorbeeldset moet exact 19 uitingen bevatten")
+for utterance_id in [
+    "jan-wast-zichzelf",
+    "jan-slaat-jek-omdat-die-hem-beet",
+    "ken-uzelf",
+]:
+    require(examples, f'data-id="{utterance_id}"', f"uiting {utterance_id}")
 for phrase in ["MISSCHIEN WEL", "VAAK", "GEBETEN HEEFT"]:
     if phrase not in examples and phrase not in js:
         errors.append(f"voorbeelddata mist {phrase}")

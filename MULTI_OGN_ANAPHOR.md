@@ -1,202 +1,124 @@
-# Language Tree · extensie 1 · Anafoor — bronstructuur en LEX-realisatie
+# Multi-OGN-anafoor — S1/S2-coreferentie
 
-Dit document bewaart het oorspronkelijke multi-OGN-detailcontract. Het
-leidende extensiecontract staat in `ANAPHOR_LANGUAGE_TREE_EXTENSION.md`; het
-generieke flipcontract staat in `FLIP_CONSTRAINT_SOLVER.md`. De normatieve
-indeling is `TEXT_AND_CONTEXT.md`: centrale Syntax/Functional-uiting =
-**Text**; alles daarbuiten en iedere insertie = **Context**; Context p.m.
+Normatief contract voor de berekende Graphlite-toepassing **Anafoor ·
+multi-OGN** in source build `20260813.5`.
 
-Anafoor is de eerste extensie van Language Tree: S1 en S2 worden ieder als een
-gewone Language Tree berekend; compositie, referent–anafoorrelaties en
-LEX-realisatie worden daarna toegevoegd.
+## Vast eerste voorbeeld
 
-## Twee lagen in het vaste voorbeeld
+- S1: **Ik zie een man.**
+- S2: **Hij draagt een hoed.**
+- MAN in S1 is het **antecedent** (ook: antecedent-uitdrukking).
+- HIJ in S2 is de **anafoor**.
+- MAN en HIJ zijn **coreferentieel**: beide uitdrukkingen hebben in dit
+  voorbeeld dezelfde referent.
 
-De structurele invoer en de zichtbare uiting zijn bewust niet hetzelfde:
+De natuurlijke zinnen houden de lidwoorden *een*. De vereenvoudigde bomen en
+de gezamenlijke LEX-as volgen het aangeleverde JPG-voorbeeld en tonen als
+lexicale knopen alleen `IK · ZIE · MAN · HIJ · DRAAGT · HOED`.
 
-| Laag | S1 | S2 |
-|---|---|---|
-| bron / afzonderlijke boom | Ik zie een man. | Man draagt een hoed. |
-| LEX-oppervlakte | Ik zie een man. | Hij draagt een hoed. |
-
-De MAN-knoop in S1 is het **antecedent**. Het subject van S2 is onderliggend
-eveneens **MAN**. Deze twee bronknopen zijn coreferentieel. De
-anafoorrelatie projecteert pas op LEX een toepasselijke anaforische
-uitdrukking voor het tweede MAN. `HIJ` is dus geen bronknoop in de S2-boom.
-
-De natuurlijke zinnen houden de lidwoorden *een*. De vereenvoudigde bomen
-tonen de lexicale bronvolgorden `IK · MAN · ZIE` en
-  `MAN · HOED · DRAAGT`. Binnen beide bronbomen staat het object vóór het
-eindwerkwoord. De zichtbare
-hoofdzinsvolgorde ontstaat op LEX doordat `ZIE` respectievelijk `DRAAGT` naar
-de vrije V2-gridrij tussen subject en object wisselt.
-
-## Play: eerst S1, daarna S2, daarna de anafoor
-
-Play mengt de twee berekeningen niet. De vaste tijdlijn is:
-
-1. laat de complete S1-boom knoop voor knoop groeien;
-2. projecteer `IK`, `MAN` en `ZIE` horizontaal op hun bronhoogte;
-3. wissel uitsluitend `ZIE` naar de vrije V2-rij: `IK ZIE MAN`;
-4. laat daarna pas de complete S2-boom knoop voor knoop groeien;
-5. projecteer `MAN`, `HOED` en `DRAAGT` horizontaal op hun bronhoogte;
-6. wissel uitsluitend `DRAAGT` naar de vrije V2-rij: `MAN DRAAGT HOED`;
-7. toon de ongerichte broncoreferentie `S1 MAN ↔ S2 MAN`;
-8. realiseer als laatste LEX-stap `S2 MAN → HIJ` (of het gekozen toepasselijke
-   profiel).
-
-De tweede zin toont dus vóór de laatste stap bewust nog `MAN`. `HIJ` verschijnt
-niet tijdens de boomberekening en niet tijdens V2, maar uitsluitend door de
-anafoorrelatie op LEX. De pijl-terugknop verwijdert de lagen in exact omgekeerde
-volgorde: eerst `HIJ → MAN`, dan de coreferentielijn, daarna S2 en ten slotte
-S1. Dezelfde Play-bediening is beschikbaar op desktop en mobiel.
+Deze eerste versie implementeert alleen de terugverwijzende S1→S2-constructie.
+Dat is een versiegrens en geen algemene uitspraak dat natuurlijke taal nooit
+vooruitverwijzing (catafoor) kent.
 
 ## Berekening en compositie
 
-De bomen zijn **niet ad hoc getekend**. De demo bewaart alleen boomtopologie
-en labels en bevat geen `x`- of `y`-coördinaten.
-`multiOgnSentenceLayout(...)` stuurt S1 en S2 ieder afzonderlijk door dezelfde
-recursieve `layoutTree(...)`-berekening. Pas daarna begint de compositie:
+De volgorde is verplicht:
 
-1. bereken S1 als complete, afzonderlijke OGN;
-2. bereken S2 met MAN als subject als complete, afzonderlijke OGN;
-3. valideer per afzonderlijke OGN de unieke rijen en kolommen;
+1. bereken de boom van S1 als een afzonderlijke, complete OGN;
+2. bereken de boom van S2 als een afzonderlijke, complete OGN;
+3. valideer in iedere afzonderlijke OGN de unieke rijen en kolommen;
 4. plaats S1 boven S2;
-5. **star verschuiven**: geef iedere S2-knoop exact dezelfde `dx,dy`, totdat
-   S2 MAN de kolom van S1 MAN deelt;
-6. valideer de compositie;
-7. projecteer beide bomen naar één gezamenlijke LEX-as;
-8. realiseer S2 MAN op LEX volgens het gekozen anaforische lexiconprofiel.
+5. verschuif de complete S2 **star** (één gelijke `dx,dy` voor iedere
+   S2-knoop) totdat HIJ exact de gridkolom van MAN deelt;
+6. valideer de samengestelde multi-OGN-toestand;
+7. teken één gezamenlijke verticale LEX-as met alle S1-items vóór alle
+   S2-items;
+8. teken MAN–HIJ als één rechte verticale lijn zonder pijl, richting of
+   verwijzingslabel.
 
-Een compositor mag geen afzonderlijke S2-subtree herschikken. De interne
-afstanden en topologie van beide berekende bomen blijven ongewijzigd.
+Een compositor mag dus geen subtree van S2 afzonderlijk herschikken. De
+interne afstanden en topologie van beide eerder berekende bomen blijven
+ongewijzigd. **star verschuiven** betekent dat iedere S2-knoop exact dezelfde
+delta krijgt.
 
 ## Gridinvariant: per afzonderlijke OGN
 
-Binnen iedere eenheid geldt:
+Binnen iedere eenheid geldt onverkort:
 
 ```text
 A ≠ B  ⇒  x(A) ≠ x(B)  en  y(A) ≠ y(B)
 ```
 
-De compositie is geen nieuwe, samengevoegde OGN. De unieke-rij/kolomregel
-geldt daarom **per eenheid**. S1 en S2 kunnen na een starre verschuiving
-toevallig meer kolommen delen; zo'n numerieke gelijkheid declareert geen
-semantische relatie. Alleen `relations[]` is semantisch gezag. Een relatie met
-`alignment.type = "shared-column"` eist uitlijning van haar benoemde
-Text-paar. Context-inserties leveren geen Anafoorconstraint. Er mag geen rij
-tussen S1 en S2 worden gedeeld.
+Voor de multi-OGN-compositie bestaat geen nieuwe samengevoegde OGN waarin alle
+knopen onder één globale invariant vallen. Het bereik is **per afzonderlijke
+OGN**.
 
-De rechte verticale MAN–MAN-lijn is ongericht, heeft geen pijlpunt en drukt
-gelijkheid van referent uit. Zij beeldt geen verplaatsing en geen
-MAN–HIJ-bronrelatie af.
+Tussen S1 en S2 geldt in deze eerste versie een nauw begrensde uitzondering:
 
-## Anaforische lexiconprofielen
+- exact één gedeelde kolom is toegestaan;
+- die kolom moet het gedeclareerde paar `S1:MAN ↔ S2:HIJ` bevatten;
+- geen ander paar uit verschillende OGN’s mag een kolom delen;
+- knopen uit verschillende OGN’s mogen geen rij delen.
 
-De profielen staan in `lexicon-config.html` onder constructie
-`anaphor-subject`. Config kiest het profiel voor deze zinsinstantie; de keuze
-muteert het globale lexicon niet.
+De uitzondering is dus relationeel gedeclareerd, niet door de renderer
+toevallig gevonden.
 
-| Profiel | LEX-vorm | Toepasselijk antecedent | In dit voorbeeld |
-|---|---|---|---|
-| `hij` | HIJ | man, boer | standaard |
-| `die` | DIE | man, vrouw, boer | beschikbaar |
-| `die-man` | DIE MAN | man | beschikbaar |
-| `die-vrouw` | DIE VROUW | vrouw | zichtbaar, uitgeschakeld |
-| `hem` | HEM | ezel, man, boer | alleen anaforisch object |
+## Relatiebeeld
 
-Bij een vrouwelijke bronreferent is `DIE VROUW` dus wel toepasselijk. De
-metadata `surface`, `antecedents`, `category` en `kind` is via de
-lexiconeditor bewerkbaar. Een niet-toepasselijk profiel wordt niet stilzwijgend
-op de bronstructuur toegepast.
+De verticale MAN–HIJ-lijn drukt gelijkheid van referent uit. Zij is geen
+bewegingspijl en geen grafische pijl voor “verwijst naar”.
 
-Met het standaardprofiel luidt de gezamenlijke LEX-as:
+Vast beeldcontract:
+
+- `type = coreference`;
+- `direction = none`;
+- rechte verticale lijn;
+- geen `marker-start`, `marker-mid` of `marker-end`;
+- geen pijlpunt;
+- geen zichtbaar label op de lijn;
+- MAN blijft zichtbaar als antecedent en HIJ als anafoor.
+
+## Gezamenlijke LEX-as
+
+De as ordent de twee OGN’s in discoursevolgorde:
 
 ```text
 S1: IK → ZIE → MAN
 S2: HIJ → DRAAGT → HOED
 ```
 
-Bij `die-man` verandert alleen het eerste LEX-item van S2 in `DIE MAN`; de
-S2-boom en de coreferentiekolom blijven MAN–MAN.
+Alle S1-items staan vóór/boven alle S2-items. Daarmee is zichtbaar dat S2 later
+komt dan S1. De LEX-as verbindt de OGN-eenheden op compositieniveau; zij maakt
+van de twee bomen geen enkele interne OGN-gridtoestand.
 
-## Config, meerdere combinaties, opslag en compatibiliteit
+## Eerste-versiegrenzen
 
-De complete S1–S2-combinatie staat als keuze in het menu **Zin**. Config
-bewaart `anaphorCombinations[]`, kiest met `anaphorCombinationId` de actieve
-combinatie en bewaart per combinatie het LEX-profiel in
-`anaphorLexicalizations`.
+- vast voorbeeld; nog geen vrij invoerveld voor meer zinnen;
+- precies twee OGN-eenheden;
+- precies één antecedent–anafoorpaar;
+- alleen starre verschuiving;
+- S1 vóór/boven S2;
+- geen catafoor of keten van meerdere anaforen;
+- geen instelbare lijnrichting of pijlvorm.
 
-De meegeleverde lijst bevat nu het oorspronkelijke man–hoed-geval, de
-opdrachtgeversfixture **Ik zag de man gisteren. Vandaag was hij er niet meer.**
-en de literatuur-normalisatie **Een boer bezit een ezel. Hij slaat hem.**.
-De vierde keuze is **De boer slaat de ezel omdat hij hem bezit.** De vijfde is
-**De man slaat de hond omdat die hem heeft gebeten.** Het
-tijdsvoorbeeld declareert uitsluitend Text-coreferentie `MAN→HIJ`;
-`GISTEREN`, `VANDAAG`, `ER` en `NIET MEER` zijn Context-inserties. Beide
-boer–ezelgevallen
-declareren `BOER→HIJ` en `EZEL→HEM`. `OMDAT` is een Context-insertie;
-`BEZIT` blijft finaal in de bijzin. De volledige researchselectie en de
-grens tussen gewone links en hyperrelaties staat in
-`ANAPHOR_S1_S2_LITERATURE_CATALOG.md`.
+Deze begrenzing is ook zichtbaar in Config. Er worden geen niet-functionele
+knoppen aangeboden.
 
-De vijfde keuze declareert `HOND→DIE` en `MAN→HEM`. De S2-bronboom bevat
-daarom HOND als subject en MAN als object; DIE en HEM bestaan uitsluitend op
-LEX. Het werkwoordcluster bevat de Text-bronnen HEEFT en GEBETEN.
+## Engine, opslag en controles
 
-Iedere combinatie gebruikt een lijst `relations[]` met uitsluitend centrale
-Text-coreferentie. De renderer tekent alle reeds uitgelijnde links en
-realiseert iedere gekoppelde S2-bron zelfstandig op LEX. Config toont de
-selector voor de
-LEX-realisatie van de primaire anafoorbron. De opties worden uit het lexicon
-geladen en krijgen daar hun toepasbaarheid.
+`multi-ogn-composition-engine.js` valideert de eenheden vóór en na de starre
+compositie en weigert extra gedeelde rijen of kolommen.
 
-Nieuwe OPN-export gebruikt
-`data.composition.schema = "ogn-multi-composition-v2"` en bewaart afzonderlijk:
+OPN gebruikt `data.composition.schema = "ogn-multi-composition-v1"` en bewaart:
 
-- de bronzinnen en de LEX-oppervlaktezinnen;
-- de twee zelfstandig berekende graphs, met S2 `s2-man`/`MAN`;
-- Context-inserties afzonderlijk buiten `graph.nodes[]`, met `layer: Context`;
+- de twee afzonderlijke graphs;
+- hun volgorde;
 - de starre verschuiving per eenheid;
-- de ongerichte broncoreferentie `s1-man ↔ s2-man`;
-- alle geconfigureerde `relations[]`, met een vlag welke relatie in deze
-  versie wordt gerenderd;
-- het gekozen LEX-profiel, zijn oppervlaktevorm en bronknoop;
-- de gezamenlijke LEX-volgorde met `source_label` en zichtbaar `label`;
-- de gezamenlijke flipconstraints, gevraagde Configvarianten en gekozen
-  oplossing.
+- het invariantbereik `per-ogn`;
+- de beperkte kruis-OGN-uitzondering;
+- de ongerichte coreferentierelatie;
+- de gezamenlijke LEX-volgorde.
 
-OPN-v1 met de oudere directe bronknoop `s2-hij` blijft alleen voor import
-ondersteund. Nieuwe export schrijft die representatie niet meer.
-
-## Flipcontract
-
-Flip wordt niet als vaste reeks `S2 → S1` uitgevoerd. Alle gedeclareerde
-branchvarianten en de starre S2-shift worden actief in één gezamenlijke
-zoekruimte opgelost. Iedere binaire branch kent vier toestanden: `normal`,
-`left-right`, `short-long` en `both`. Links–rechts bepaalt de zijde;
-kort–lang bepaalt de plaatsingsafstand en verandert alleen bij
-`linearization: "child-order"` tevens de LEX-childvolgorde.
-
-De fixture **De man slaat de hond omdat die hem heeft gebeten** gebruikt drie
-gedeclareerde branches en twee harde uitlijningen. De solver onderzoekt 64
-kandidaten en kiest deterministisch één geldige variantset. Daardoor zijn
-`HEEFT GEBETEN ↔ GEBETEN HEEFT` varianten van dezelfde generieke bewerking,
-niet van een aparte perfectummodule. Config kan per branch `auto` of een
-expliciete variant kiezen; Play toont de gekozen flips per zin als één
-atomaire stap. Zie `FLIP_CONSTRAINT_SOLVER.md`.
-
-## Grenzen en controles
-
-Deze versie heeft precies twee OGN-eenheden en S1 vóór S2. Config en OPN mogen
-meerdere coreferentieparen bevatten; de geometrische weergave lost alle harde
-paren gezamenlijk op zonder losse Text-knopen te verplaatsen. Vrije
-zinsinvoer, catafoor en
-ketens met meer dan twee zinnen vallen buiten deze toepassing.
-
-`tools/check_multi_ogn_anaphor.js` bewaakt de recursieve berekening, MAN–MAN,
-de lexiconprofielen en het ontbreken van ad-hoc-coördinaten.
-`tools/check_anaphor_flip.js` bewaakt de vier varianten, alle 64 kandidaten,
-beide coreferenties en de twee werkwoordclustervolgorden. De browsertest
-controleert daarnaast de getekende bronknopen, LEX-realisatie, Config-keuze en
-OPN-v2-roundtrip.
+De statische contracttest staat in `tools/check_multi_ogn_anaphor.js`. De
+browsertest controleert daarnaast de werkelijk getekende nodecoördinaten, de
+verticale lijn zonder pijlpunt en de LEX-volgorde.

@@ -37,6 +37,7 @@
       "subject_default": "HOND",
       "object_default": "MAN",
       "predicate": "BIJT",
+      "sentence_type": "main-declarative",
       "lex_rule": "hoofdzininvariant",
       "lex_items": [
         {
@@ -280,7 +281,9 @@
         "lex_position_source": "LOG",
         "lex_projection_origin": "SOURCE-Y",
         "lex_placement_mode": "horizontal-then-move",
-        "example_controls_layout": false
+        "example_controls_layout": false,
+        "play_phases": ["LOG", "LEX"],
+        "play_space_mode": "none"
       }
     },
     "notation": {

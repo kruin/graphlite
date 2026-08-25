@@ -5,7 +5,7 @@ const { chromium } = require('playwright');
 
 const baseUrl = process.argv[2] || 'http://127.0.0.1:8088/';
 const appUrl = new URL('index.html?runtime-profile-check=1', baseUrl).toString();
-const reservedApplicationIds = ['question-sentence', 'emphasis', 'incomplete-sentence'];
+const reservedApplicationIds = ['emphasis', 'incomplete-sentence'];
 
 async function readDownloadJson(page, selector) {
   const pending = page.waitForEvent('download');
@@ -65,15 +65,14 @@ async function waitForViewer(page) {
     assert.equal(baseState.applicationDisabled, true);
     assert.deepEqual(baseState.insertion, { lex: false, synt: false, log: false });
     assert.equal(baseState.menuHidden, true);
-    assert.equal(baseState.sentenceCount, 12);
+    assert.equal(baseState.sentenceCount, 17);
     assert.equal(baseState.adverbOptionCount, 0);
     assert.equal(baseState.visibleFeatureNodes, 0);
     assert.deepEqual(baseState.reservedApplications.map(item => item.id), reservedApplicationIds);
     assert.ok(baseState.reservedApplications.every(item => item.disabled && !item.checked));
-    assert.match(baseState.reservedApplications[0].text, /Vraagzin/);
-    assert.match(baseState.reservedApplications[1].text, /Nadruk/);
-    assert.match(baseState.reservedApplications[1].text, /juist díe trui/);
-    assert.match(baseState.reservedApplications[2].text, /Onaffe zin/);
+    assert.match(baseState.reservedApplications[0].text, /Nadruk/);
+    assert.match(baseState.reservedApplications[0].text, /juist díe trui/);
+    assert.match(baseState.reservedApplications[1].text, /Onaffe zin/);
     assert.doesNotMatch(baseState.mainText, /\b(?:adverbs?|bijwoorden?|minors?)\b/i);
 
     const baseOpn = await readDownloadJson(page, '#downloadOpnButton');
@@ -91,8 +90,8 @@ async function waitForViewer(page) {
     }
 
     await page.click('#openConfigButton');
-    assert.equal(await page.locator('[data-reserved-application]').count(), 3);
-    assert.equal(await page.locator('[data-reserved-application]:disabled').count(), 3);
+    assert.equal(await page.locator('[data-reserved-application]').count(), 2);
+    assert.equal(await page.locator('[data-reserved-application]:disabled').count(), 2);
     await page.click('#insertionAxisLEXInput');
     assert.equal(await page.locator('#featureAdverbsInput').isDisabled(), true);
     await page.click('#insertionAxisSYNTInput');
@@ -101,7 +100,7 @@ async function waitForViewer(page) {
     await page.click('#insertionAxisSYNTInput');
     await page.click('#insertionAxisLOGInput');
     assert.equal(await page.locator('#featureAdverbsInput').isDisabled(), false);
-    assert.equal(await page.locator('[data-reserved-application]:disabled').count(), 3);
+    assert.equal(await page.locator('[data-reserved-application]:disabled').count(), 2);
     await page.click('[data-config-tab-button="features"]');
     await page.click('#featureAdverbsInput');
     await page.waitForSelector('body.feature-adverbs-on');
@@ -115,9 +114,9 @@ async function waitForViewer(page) {
     }));
     assert.equal(enabledState.checked, true);
     assert.equal(enabledState.menuHidden, false);
-    assert.equal(enabledState.sentenceCount, 14);
+    assert.equal(enabledState.sentenceCount, 19);
     assert.ok(enabledState.adverbOptionCount >= 20);
-    assert.equal(await page.locator('[data-reserved-application]:disabled').count(), 3);
+    assert.equal(await page.locator('[data-reserved-application]:disabled').count(), 2);
     assert.equal(await page.locator('[data-reserved-application]:checked').count(), 0);
 
     const extrasOpn = await readDownloadJson(page, '#configDownloadOpnButton');
@@ -145,7 +144,7 @@ async function waitForViewer(page) {
       docsHref: document.querySelector('a[href*="docs/docs-home.html"]')?.href
     }));
     assert.equal(resetState.menuHidden, true);
-    assert.equal(resetState.sentenceCount, 12);
+    assert.equal(resetState.sentenceCount, 17);
     assert.equal(resetState.adverbOptionCount, 0);
     assert.doesNotMatch(resetState.text, /\b(?:adverbs?|bijwoorden?|minors?)\b/i);
     assert.match(resetState.docsHref, /[?&]profile=base(?:&|$)/);
@@ -154,8 +153,7 @@ async function waitForViewer(page) {
     assert.equal(await page.locator('.example-input:visible').count(), 12);
     await page.goto(new URL('lexicon-config.html?profile=base', baseUrl).toString(), { waitUntil: 'networkidle' });
     assert.equal(await page.locator('.lexicon-entry[data-kind="adv"]:visible').count(), 0);
-    assert.equal(await page.locator('.lexicon-construction[data-feature="adverbs"]:visible').count(), 0);
-    assert.equal(await page.locator('.lexicon-construction[data-id="anaphor-subject"]:visible').count(), 1);
+    assert.equal(await page.locator('.lexicon-construction:visible').count(), 0);
     await page.goto(new URL('structure-config.html?profile=base', baseUrl).toString(), { waitUntil: 'networkidle' });
     assert.equal(await page.locator('.log-class-config:visible').count(), 0);
     await page.goto(new URL('docs/docs-home.html?profile=base', baseUrl).toString(), { waitUntil: 'networkidle' });

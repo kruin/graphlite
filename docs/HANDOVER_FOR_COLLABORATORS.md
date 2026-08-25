@@ -5,74 +5,117 @@ Overdracht voor OpenGraph Lite Viewer v2.0.0-rc.45.
 Releasebesluit: rc.45 is op 2 augustus 2026 handmatig goedgekeurd, inclusief
 de Greedy Grow-reconstructie en de rechtstreeks afgeleide publicatieslide.
 
+Behoud de Playwright-preflight in `publish_checked.bat`: controleer vóór de
+releasechecks zowel de module als `chromium.executablePath()`. Ontbreekt een
+onderdeel, vraag expliciet `J/N` en roep uitsluitend bij `J` de vastgezette
+`installeer-carrousel-tools.bat` aan. Geen staging, commit of push vóór deze
+preflight slaagt.
+
+De echte Playwright-test mag uitsluitend zichtbare bediening gebruiken:
+open eerst `#mainViewSummary`, kies daarna de modus binnen `#mainViewMenu[open]`
+en download OPN via `#configDownloadOpnButton` in het geopende Config-scherm.
+Boomknopen staan onder `.node-shape-layer`. Bewaar runtime-screenshots buiten
+de repository in de tijdelijke systeemmap.
+
 Actuele source build:
-`v2.0.0-rc.45-sources-language-tree-anafoor-extensie-flip-20260821.17`. Behoud Language Tree
+`v2.0.0-rc.45-publish-visible-browser-controls-20260825.11`. Behoud Language Tree
 als prominente berekende toepassing en Greedy Grow/Random als kleinere
 directe OGN-illustraties. Wijzig `greedy-grow-engine.js` niet voor Random: die
 engine is onderdeel van het afleidingsbewijs van publicatieslide 5. Random
 hoort in `random-placement-engine.js`. Bewaak het lijnbeeld en het structurele
 EOF/EOL-beleid volgens `LINE_STYLE_AND_PLACEMENT_MODES.md`.
 
-Behoud de projectbrede verwijdering van trailing whitespace bij iedere
-publicatienormalisatie. Gebruik in Markdown geen hard break met twee
-afsluitende spaties; schrijf afzonderlijke alinea's of een expliciete break.
+Behoud Anafoor · multi-OGN als tweede berekende toepassing volgens
+`MULTI_OGN_ANAPHOR.md`: twee afzonderlijk berekende OGN’s, starre compositie,
+S1 boven S2, één gezamenlijke LEX-as en een ongerichte verticale
+MAN–HIJ-coreferentielijn.
 
-Neem alle oorspronkelijke bronbestanden mee, in het bijzonder
-`CONFIG_UI_EXPLANATION_STANDARD.md` en de identieke kopie in `docs/`.
-Publiceren staged altijd eerst met `git add -A -- .` en renormaliseert pas
-daarna. Die volgorde verwerkt ontbrekende gevolgde paden zonder Git-fout.
-Behoud ook het actieve LEX-profiel: alleen upward, Context-insertie en Comp;
-generieke plaatsen vóór, na en tussen blijven no-show.
+Behoud daarnaast de drie selecteerbare uitingen als samengestelde `K1/K2`-
+weergaven: twee afzonderlijk geldige bomen onder elkaar, uitsluitend expliciet
+gedeclareerde verticale anafoorkolommen en één LEX-as voor de gerealiseerde
+uiting. De causale uiting moet `JEK ↔ DIE` én `JAN ↔ HEM` tonen; het
+impliciete subject van `Ken uzelf` mag geen zelfstandig LEX-woord worden.
+Behoud voor dezelfde causale uiting de keuzen `hij`, `die`, `die hond`,
+`de hond` en `Jek`; de subjectknoop in K2 moet rechtstreeks klikbaar blijven.
+Canvas-pan mag pointerdown op deze knoop niet capturen; knooptekst moet
+pointer-events ontvangen en Enter moet dezelfde variantwisseling geven.
+Bewaar onafhankelijk instelbare werkelijke horizontale en verticale rastermaten.
+`DIE HOND` is één subject-NP en twee gerealiseerde LEX-woorden; alle varianten
+houden de referent Jek, beide verticale anaforen en OPN-metadata vast.
+Houd de Play-balk zichtbaar in multi-OGN en bewaak de omkeerbare fasevolgorde
+`K1 → K2 → verticale anaforen → gerealiseerde LEX-uiting`.
+Toon de actieve testuiting steeds boven Play en werkvlak. Iedere kernzin heeft
+`S → NP, VP` en `VP → NP, V`; verwar die syntactische volgorde niet met de
+afzonderlijke LEX-realisatie. Iedere ouder moet daadwerkelijk links/rechts
+vertakken. Iedere zichtbare tak moet twee vrije knopen op verschillende rijen
+én kolommen verbinden en ook in compacte stand schuin blijven; kort de tak af
+langs zijn eigen richting, nooit met vaste verticale offsets. Gebruik compacte
+knoopsymbolen zonder overlap. Bewaar boomkleur, boomlijnzwaarte, onafhankelijke compacte
+horizontale/verticale afmetingen en expliciete Flip als configureerbare
+layout. Flip spiegelt beide bomen maar verandert geen ouder-kindrelaties,
+gerealiseerde woordvolgorde of verticale anaforen. Spiegel bij causale
+rolwisseling alleen K2 in de automatische stand zodat beide referentlijnen
+verticaal blijven. Historische dunne-lijn-CSS mag lijnkeuzes niet
+overschrijven.
+Leg steeds expliciet uit waar, wanneer en waarom lokale K2-Flip nodig is en
+onderscheid deze van de optionele globale interface-Flip.
 
-Behoud publiceren zonder verplichte Playwright-installatie. De optionele
-Anafoor-browsertest mag ontbreken van Playwright of Chromium duidelijk melden
-en overslaan; geïnstalleerde browsertests en echte modulefouten blijven
-verplicht slagen. `installeer-carrousel-tools.bat` activeert de volledige
-browsercontrole wanneer die gewenst is.
+Organiseer Config altijd als **Algemeen**, **Calculated → Language Tree** en
+**Direct → Gedeeld / Greedy Grow / Random**. Algemeen bevat uitsluitend
+toepassingsonafhankelijke interface-, LEESMIJ- en bestandsinstellingen;
+Voorconfig, boom, voorbeelden, LEX, SYNT en LOG staan alleen onder Language
+Tree. Toon per context uitsluitend de eigen
+functionele velden; alle niet-relevante bediening is no-show. Bij openen vanuit
+een actieve Greedy-Grow- of Random-modus is ook de toepassingsbalk no-show.
+Alleen Terug naar Main, de eigen velden met uitleg en Config opslaan blijven
+zichtbaar; wisselen van context begint in Main. Volg voor ieder zichtbaar veld
+`CONFIG_UI_EXPLANATION_STANDARD.md`: compacte mobiele uitleg van effect,
+bereik, niet-effect en reproduceerbaarheid.
+Behandel LOG-planning nooit als bronknoopverplaatsing. Het actieve profiel
+staat uitsluitend upward-Wissels toe, gemeten vanaf de zichtbare horizontale
+bronprojectie. Een LOG-reservering mag een lager doel niet legitimeren. Bewaak
+voor `HOND BIJT MAN` dat `MAN` op MAN-hoogte blijft en alleen `BIJT` omhoog
+naar V2 kan wisselen. Houd Play tweefasig (`LOG → LEX`); voeg geen lege
+SPACE-fase of ruimte-indicator terug toe. Alleen toepassingsinserties en direct
+Comp komen naast upward voor. Generieke plaatsen vóór, na of tussen en iedere
+downward/post-V2-Wissel blijven no-show, zonder Config, rendering of nieuwe
+opslag, totdat hun gebruik afzonderlijk is geëvalueerd.
 
-Behoud **Anafoor · multi-OGN** als eerste Language Tree-extensie volgens
-`TEXT_AND_CONTEXT.md`, `ANAPHOR_LANGUAGE_TREE_EXTENSION.md` en
-`MULTI_OGN_ANAPHOR.md`. **Text** is uitsluitend de centrale uiting; **Context**
-is alles daaromheen en is eveneens een afzonderlijke, nog te ontwikkelen
-geminimaliseerde Open Graph Notation-boom. Iedere insertie is Context.
-Bereken S1 en S2 afzonderlijk,
-plaats S1 boven S2, verschuif S2 uitsluitend star en teken iedere uitgelijnde
-Text-coreferentie verticaal en zonder pijl. Alleen LEX realiseert Text-bronnen
-als `HIJ` of `HEM`; `GISTEREN`, `VANDAAG`, `ER`, `NIET MEER` en `OMDAT`
-zijn zelfstandige Context-inserties zonder centrale Text-boomknoop. Nadere
-Context-uitwerking blijft p.m. Dit mag het Language-Tree-contract niet
-wijzigen:
-**HOND en MAN blijven exact op hun bronhoogte; alleen BIJT wisselt naar de
-vrije LEX-gridrij halverwege beide bronrijen**; de eindvolgorde is
-**HOND BIJT MAN**.
-
-Behoud ook de gezamenlijke flipsolver. Iedere gedeclareerde binaire branch
-heeft precies de vier varianten `normal`, `left-right`, `short-long` en
-`both`. Kort–lang betekent plaatsingsafstand; alleen een branch met
-`linearization: "child-order"` verandert daarmee ook de LEX-childvolgorde.
-Los alle harde Text-coreferenties en de starre S2-shift in één kandidaat op;
-verplaats nooit een losse knoop bij conflict. De regressiefixture is **De man
-slaat de hond omdat die hem heeft gebeten**, met `HOND→DIE` en `MAN→HEM`.
-
-Behoud ook de Anafoor-Play-tijdlijn: eerst S1, dan S2, daarna alle
-uitgelijnde Text-coreferenties en pas ten slotte de anaforische LEX-vormen.
-Een hoofdzin kan een V2-Wissel bevatten; in `omdat hij hem bezit` blijft
-`BEZIT` finaal. Terug doorloopt dezelfde lagen exact omgekeerd.
-
-Laat Config altijd de actieve plaatsingsmodus volgen. Language Tree toont onder
-**Direct** alleen Algemeen. Greedy Grow en Random openen een afgeschermd
-methodescherm zonder hoofdtabbladen, methodekeuze, taal/README-uitleg of
-niet-eigen bediening. Alleen Terug, de eigen velden en Config-save blijven.
+Behandel zinsoort als een afzonderlijke Language-Tree-laag: mededelende
+hoofdzin, ja/nee-vraagzin, dat-zin en omdat-zin. V1 hoort bij de vraagzin; DAT
+en OMDAT worden direct in Comp geschreven. Perfectum is een werkwoordsvorm.
+Zie `LEX_MOVEMENT_RULES.md` voor het volledige contract.
 Bewaar gedeelde run- en weergavekeuzes uitsluitend in
 `directPlacementGeneral`; `greedyGrowConfig` bevat alleen strategie en
-oriëntatie; `randomPlacementConfig` bevat alleen seed, resetbeleid, spreiding,
-iteratieaantal en asbeeldmodus. Random-iteraties mogen de actieve run niet
-vooruitplannen. Zie `DIRECT_PLACEMENT_CONFIG.md`.
+oriëntatie; `randomPlacementConfig` bevat seed, resetbeleid, Random-model,
+plaatsing, gridgrootte, vaste kolommen/rijen, iteratieaantal en asbeeldmodus.
+Random-snelheid gebruikt dezelfde `directPlacementGeneral.intervalMs` en wordt
+niet dubbel opgeslagen. De nieuwe standaard is
+**Ergens in beschikbare ruimte** met **Interface** als maximale afmetingen.
+Compact, Gebalanceerd, Ruim en het groeiende inhoudsveld blijven beschikbaar;
+bestaande opgeslagen keuzes worden niet geforceerd gemigreerd.
+Random-iteraties mogen de actieve run niet
+vooruitplannen. Play/Next moeten alle ingestelde iteraties doorlopen; Previous
+moet reproduceerbaar over een rungrens terug kunnen. Zie
+`DIRECT_PLACEMENT_CONFIG.md`.
 
-De reserveringen Vraagzin, Nadruk en Onaffe zin zijn uitsluitend
-Config-voorraad. Voeg ze niet toe aan `FEATURE_DEFINITIONS`, state, opslag,
-export of rendering voordat hun eigen voorconfig, contract en tests zijn
-vastgelegd.
+Het Random-asbeeld is strikt retrospectief. Een ronde telt pas na haar laatste
+knoop: rijen geven spots op WEST, kolommen spots op SOUTH en een herhaalde hit
+maakt dezelfde spot zwaarder. Reset wist de telling; Previous verwijdert de
+actuele ronde zodra die niet meer compleet is. Genereer geen toekomstige
+rondes om het asbeeld vooraf te vullen.
+
+Behoud **Uniform v1.0** exact en als standaard. **Onzuiver uniform v0.1** is
+functioneel: 80% uniform plus 20% herhaalgewicht uit voltooide eerdere
+as-hits. Ronde 1 is uniform. v0.2 (herhaalsterkte) en v0.3 (geheugenvenster)
+blijven no-show totdat zij volledig werken en getest zijn. Seed is een
+startcode van 1 t/m 4.294.967.295; een groter getal geeft niet meer toeval of
+snelheid. `20260802` is de herkenbare datumseed 2 augustus 2026.
+
+De reserveringen Nadruk en Onaffe zin zijn uitsluitend Config-voorraad. Voeg
+ze niet toe aan `FEATURE_DEFINITIONS`, state, opslag, export of rendering
+voordat hun eigen voorconfig, contract en tests zijn vastgelegd. Vraagzin is
+nu een zinsoort en hoort niet meer in deze reserveringscatalogus.
 
 LEESMIJ-aanpassingen gebruiken `state.readmeTopicEdits` en
 `state.readmeCarousels` uitsluitend als Config-overschrijving. Houd de
@@ -252,15 +295,13 @@ Bronassen: LEX, SYNT en LOG zijn bij Bron onafhankelijk combineerbaar. De bedien
 Lees vóór plaatsingswijzigingen `projectie-master-spec.md`.
 
 ```text
-LOG-majors/minors → LEX-planning → expliciete Wissels → zinsvalidatie
+LOG-majors/minors → neutrale LEX-basis → expliciete Wissels → zinsvalidatie
 ```
 
 - S/O/V zijn majors. Alleen inserties met `origin=LOG` of `origin=LOG+LEX`
   zijn minors; `origin=LEX` is een directe LEX-insertie.
 - Iedere minor vergroot de begrensde majorafstand met één vast slot.
-- LOG plant beschikbare LEX-plaatsen, maar maakt zelf geen woordverplaatsing.
-- Alleen expliciete topic-/V1-/V2-regels maken een Wissel; zonder zo'n regel
-  blijft een bronwoord op zijn eigen bronhoogte.
+- LOG is autoriteit voor de neutrale LEX-rij.
 - De surface-string bepaalt geen layoutcoördinaat. Expliciete
   zinsinstantiemetadata kan wel een vooraf berekende landingsplaats vastleggen.
 - Oude hostvelden zijn alleen scope-/compatibiliteitsmetadata.

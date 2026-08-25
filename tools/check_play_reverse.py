@@ -4,7 +4,6 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 JS = (ROOT / "viewer.js").read_text(encoding="utf-8")
-ANAPHOR_PLAY = (ROOT / "multi-ogn-anaphor-play-engine.js").read_text(encoding="utf-8")
 
 errors: list[str] = []
 
@@ -13,11 +12,9 @@ required = [
     "setGrowthStep(state.growthStep - 1)",
     "const showProjectionPanels = !growthPlan?.active || visibleAt(growthPlan, growthPlan.projectionStep);",
     "const showLexBaseStep = !growthPlan?.active || visibleAt(growthPlan, growthPlan.lexBaseStep);",
-    "const showSpaceStep = !growthPlan?.active || visibleAt(growthPlan, growthPlan.spaceStep);",
     "const showLogStep = !growthPlan?.active || visibleAt(growthPlan, growthPlan.logStep);",
     "if (showProjectionPanels)",
     "} else if (showLexBaseStep) {",
-    "} else if (showSpaceStep) {",
     "} else if (showLogStep) {",
 ]
 for marker in required:
@@ -27,6 +24,9 @@ for marker in required:
 for stale in [
     "if (state.growthStep >= maxStep && maxStep > 0) state.projectionBlockUnlocked = true;",
     "if (state.growthStep <= 0) state.projectionBlockUnlocked = false;",
+    "showSpaceStep",
+    "spaceOnly",
+    "spaceStep",
 ]:
     if stale in JS:
         errors.append(f"oude blijvende eindlaag staat nog in viewer.js: {stale}")
@@ -34,22 +34,10 @@ for stale in [
 order = [
     JS.find("if (showProjectionPanels)"),
     JS.find("} else if (showLexBaseStep) {"),
-    JS.find("} else if (showSpaceStep) {"),
     JS.find("} else if (showLogStep) {"),
 ]
 if any(index < 0 for index in order) or order != sorted(order):
     errors.append("renderfasen staan niet in vooruit-/reverse-compatibele volgorde")
-
-for marker in [
-    "const coreferenceStep = ++cursor;",
-    "const lexicalizationStep = ++cursor;",
-    "lexicalizationVisible: step >= Number(timeline?.lexicalizationStep)",
-    "coreferenceVisible: step >= Number(timeline?.coreferenceStep)",
-]:
-    if marker not in ANAPHOR_PLAY:
-        errors.append(f"Anafoor-reverse mist {marker!r}")
-if ANAPHOR_PLAY.find("const coreferenceStep = ++cursor;") > ANAPHOR_PLAY.find("const lexicalizationStep = ++cursor;"):
-    errors.append("Anafoor-Play moet coreferentie vóór MAN→HIJ toevoegen")
 
 if errors:
     print("PLAY-REVERSECHECK: FOUT")
@@ -57,4 +45,4 @@ if errors:
         print("-", error)
     raise SystemExit(1)
 
-print("PLAY-REVERSECHECK: OK (Language Tree reverse + Anafoor MAN→HIJ → MAN↔MAN → S2 → S1)")
+print("PLAY-REVERSECHECK: OK (eindlaag → LEX → LOG → boom; geen lege SPACE-fase)")

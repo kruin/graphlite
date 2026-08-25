@@ -32,14 +32,6 @@ als zowel haar kolom als haar rij nog door geen enkele knoop wordt gebruikt.
 Deze regel geldt voor de OGN-kern en voor iedere toepassing die echte knopen
 toevoegt of verplaatst.
 
-Zowel **Text** als **Context** kan als eigen Open Graph Notation-structuur
-worden weergegeven. De centrale Language Tree is de Text-OGN; de aangeleverde
-Context-boom is een afzonderlijke, nog te ontwikkelen geminimaliseerde
-Context-OGN. Iedere graph bewaakt zijn eigen knopen en de invariant binnen
-zijn eigen gridtoestand. Context-knopen worden niet automatisch Text-knopen,
-en iedere insertie behoort tot Context. Zie `TEXT_AND_CONTEXT.md` en
-`CONTEXT_TAXONOMY.md`.
-
 De naam voor een overtreding is **gridlijnhergebruik** (kort: **hergebruik**):
 horizontaal hergebruik deelt een rij; verticaal hergebruik deelt een kolom.
 Beide zijn altijd ongeldig.
@@ -161,30 +153,23 @@ onderscheid tussen directe en berekende plaatsing zijn uitgelegd.
 De tweede pass maakt de zichtbare boxen inhoudsgestuurd. In de huidige viewer
 verplaatst die pixelmeting de knopen niet opnieuw naar andere gridcellen en is
 zij dus nog geen algemene collision- of repacking-solver.
-
-### Language Tree · extensie 1 · Anafoor
++
+### Anafoor · multi-OGN
 
 Deze berekende toepassing bestaat uit twee afzonderlijke OGN-eenheden. Eerst
 worden S1 en S2 ieder zelfstandig gepland en tegen de harde knoopinvariant
 gevalideerd. Daarna verschuift de compositor uitsluitend de complete S2 star:
-S1 blijft boven S2 en de twee gedeclareerde, coreferentiële MAN-bronknopen
-worden op dezelfde kolom uitgelijnd.
+S1 blijft boven S2 en de gedeclareerde antecedent–anafoorknopen worden op
+dezelfde kolom uitgelijnd.
 
 De invariant heeft hier expliciet bereik **per afzonderlijke OGN**. De
-compositie is geen nieuwe samengevoegde OGN. Toevallig samenvallende kolommen
-tussen S1 en S2 verklaren geen relatie: alleen `relations[]` is semantisch
-gezag. Het primaire `MAN–MAN`-paar declareert `shared-column`. Alle
-gedeclareerde relaties verbinden uitsluitend centrale Text-bronknopen;
-`GISTEREN` en `VANDAAG` zijn Context-inserties en vormen geen
-anafoorrelatie. Context wordt gereserveerd als afzonderlijke,
-geminimaliseerde OGN-boom; verdere berekening en koppeling blijven p.m.
-Een gedeelde rij blijft in deze compositiestap ongeldig.
+compositie is geen nieuwe samengevoegde OGN. Tussen de eenheden mag exact één
+kolom worden gedeeld, uitsluitend door het gedeclareerde coreferentiepaar
+`MAN–HIJ`; een gedeelde rij of een tweede gedeelde kolom is ongeldig.
 
-De gezamenlijke LEX-as ordent S1 vóór S2. De rechte verticale MAN–MAN-lijn is
-ongericht, heeft geen pijlpunt en drukt broncoreferentie uit. Het tweede MAN
-wordt pas op LEX als `HIJ`, `DIE` of `DIE MAN` gerealiseerd. Zie
-`ANAPHOR_LANGUAGE_TREE_EXTENSION.md` en `MULTI_OGN_ANAPHOR.md` voor het
-volledige contract.
+De gezamenlijke LEX-as ordent S1 vóór S2. De rechte verticale MAN–HIJ-lijn is
+ongericht, heeft geen pijlpunt en drukt coreferentie uit. Zie
+`MULTI_OGN_ANAPHOR.md` voor het volledige contract.
 
 
 ## Terminologie

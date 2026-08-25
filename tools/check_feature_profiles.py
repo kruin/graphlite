@@ -36,14 +36,14 @@ for marker, label in [
     ("insertionAxes: Object.freeze(['lex', 'log'])", "Bijwoorden vereist LEX+LOG"),
     ("defaultEnabled: false", "Bijwoorden standaard uit"),
     ("const RESERVED_APPLICATION_DEFINITIONS = Object.freeze([", "aparte reserveringscatalogus"),
-    ("id: 'question-sentence'", "reservering Vraagzin"),
     ("id: 'emphasis'", "reservering Nadruk"),
     ("id: 'incomplete-sentence'", "reservering Onaffe zin"),
     ("example: 'juist díe trui'", "voorbeeld Nadruk"),
     ("features: { ...DEFAULT_FEATURES }", "featurestaat"),
-    ("let activeConfigTab = 'preconfig';", "Voorconfig als starttab"),
+    ("let activeConfigTab = 'general-ui';", "Algemeen als starttab"),
     ("{ id: 'preconfig', nl: 'Voorconfig', en: 'Pre-config' }", "Config-voorconfigtab"),
-    ("{ id: 'features', nl: 'Toepassingen', en: 'Applications' }", "Config-toepassingentab"),
+    ("{ id: 'features', nl: 'Uitbreidingen', en: 'Extensions' }", "Language-Tree-uitbreidingentab"),
+    ("'language-tree': Object.freeze(['preconfig', 'features', 'view', 'log-lex', 'examples', 'jan', 'advanced'])", "Voorconfig en uitbreidingen uitsluitend onder Language Tree"),
     ('id="insertionAxis${axis.label}Input"', "dynamische insertiecheckboxes"),
     ("id=\"insertionLexLogPresetButton\"", "LEX+LOG-preset"),
     ("id=\"featureAdverbsInput\"", "Bijwoorden-checkbox"),
@@ -57,14 +57,14 @@ for marker, label in [
     require(JS, marker, label)
 
 feature_catalog = re.search(
-    r"const FEATURE_DEFINITIONS = Object\.freeze\(\{(.*?)\n  \}\);\n  // Gereserveerde toepassingen",
+    r"const FEATURE_DEFINITIONS = Object\.freeze\(\{(.*?)\n  \}\);\n.*?const RESERVED_APPLICATION_DEFINITIONS",
     JS,
     flags=re.S,
 )
 if not feature_catalog:
     errors.append("actieve featurecatalogus kon niet afzonderlijk worden gelezen")
 else:
-    for reserved_id in ["question-sentence", "emphasis", "incomplete-sentence"]:
+    for reserved_id in ["emphasis", "incomplete-sentence"]:
         if reserved_id in feature_catalog.group(1):
             errors.append(f"gereserveerde toepassing staat actief in FEATURE_DEFINITIONS: {reserved_id}")
 
@@ -76,8 +76,10 @@ reserved_catalog = re.search(
 if not reserved_catalog:
     errors.append("reserveringscatalogus kon niet afzonderlijk worden gelezen")
 else:
-    if reserved_catalog.group(1).count("id: '") != 3:
-        errors.append("reserveringscatalogus bevat niet exact drie toepassingen")
+    if reserved_catalog.group(1).count("id: '") != 2:
+        errors.append("reserveringscatalogus bevat niet exact twee toepassingen")
+    if "question-sentence" in reserved_catalog.group(1):
+        errors.append("Vraagzin staat nog ten onrechte als toepassing gereserveerd")
     for forbidden in ["defaultEnabled", "insertionAxes", "layoutDemand"]:
         if forbidden in reserved_catalog.group(1):
             errors.append(f"reserveringscatalogus activeert al featuregedrag: {forbidden}")
@@ -132,11 +134,11 @@ for source, markers, label in [
     for marker in markers:
         require(source, marker, f"{label}: profielmarker")
 
-# The source contains 14 examples; the two insertion examples are excluded in base.
+# The source contains 19 utterances; the two insertion examples are excluded in base.
 example_count = EXAMPLES.count('class="example-input"')
 insertion_cards = len(re.findall(r'<article class="example-input"(?:(?!</article>).)*class="lex-insertion"', EXAMPLES, flags=re.S))
-if example_count != 14:
-    errors.append(f"verwacht 14 bronvoorbeelden, gevonden {example_count}")
+if example_count != 19:
+    errors.append(f"verwacht 19 bronuitingen, gevonden {example_count}")
 if insertion_cards != 2:
     errors.append(f"verwacht 2 featurevoorbeelden, gevonden {insertion_cards}")
 
@@ -157,4 +159,4 @@ if errors:
         print("-", error)
     raise SystemExit(1)
 
-print("FEATURE PROFILE CHECK: OK (Bijwoorden actief contract; 3 toepassingen uitsluitend gereserveerd)")
+print("FEATURE PROFILE CHECK: OK (Bijwoorden actief contract; 2 toepassingen uitsluitend gereserveerd; Vraagzin is zinsoort)")

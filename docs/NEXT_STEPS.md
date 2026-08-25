@@ -2,14 +2,15 @@
 
 Vervolgpunten na `v2.0.0-rc.45`:
 
-1. De gereserveerde toepassing `Vraagzin` taalkundig afbakenen en haar
-   benodigde voorconfig bepalen.
+1. De actieve zinsoort `Vraagzin · ja/nee` uitbreiden met wh-vragen en
+   expliciete validatie, zonder haar opnieuw als toepassing te modelleren.
 2. De gereserveerde toepassing `Nadruk` uitwerken vanuit focus, accent en het
    voorbeeld `juist díe trui`.
 3. De gereserveerde toepassing `Onaffe zin` definiëren zonder ontbrekende
    structuur stilzwijgend aan te vullen.
 4. `Verplaatsing per as` uitwerken als tweede functionele Voorconfig.
-5. `Lege posities en sporen per as` losmaken van concrete toepassingen.
+5. Het mogelijke gebruik van generieke plaatsen vóór, na en tussen per as
+   evalueren; tot die beslissing blijven ze no-show.
 6. Toegestane bron-naar-doel-koppelingen, zoals `LOG → LEX`, configureerbaar
    maken.
 7. Algemene host- en scoperegels als afzonderlijke Voorconfig uitwerken.

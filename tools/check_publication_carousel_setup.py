@@ -27,6 +27,7 @@ package_source = read("package.json")
 lock_source = read("package-lock.json")
 installer = read("installeer-carrousel-tools.bat")
 maker = read("maak-publicatie-carrousel.bat")
+publish = read("publish_checked.bat")
 tooling_check = read("tools/check_publication_carousel_tooling.js")
 builder_source = read("tools/build_publication_carousel_zip.py")
 
@@ -64,6 +65,13 @@ for marker, label in [
     ("installeer-carrousel-tools.bat", "leesbare installatie-instructie"),
 ]:
     require(maker, marker, label)
+for marker, label in [
+    ("call :ensure_playwright_runtime", "publish-preflight voor Playwright"),
+    ("chromium.executablePath()", "publish-controle op Chromium"),
+    ('choice /C JN /N /M "Nu eenmalig installeren? [J/N]: "', "installatiekeuze in publish"),
+    ('call "%~dp0installeer-carrousel-tools.bat"', "installer vanuit publish"),
+]:
+    require(publish, marker, label)
 for marker, label in [
     ("expectedPlaywright", "versiecontrole Playwright"),
     ("chromium.executablePath()", "Chromium-padcontrole"),

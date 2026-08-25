@@ -5,9 +5,7 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function multiOgnCompositionFactory() {
   'use strict';
 
-  const SCHEMA = 'ogn-multi-composition-v2';
-  const LEGACY_SCHEMA = 'ogn-multi-composition-v1';
-  const BRANCH_VARIANTS = Object.freeze(['normal', 'left-right', 'short-long', 'both']);
+  const SCHEMA = 'ogn-multi-composition-v1';
 
   function finiteNumber(value, label) {
     const number = Number(value);
@@ -114,149 +112,10 @@
     return first;
   }
 
-  function normalizeBranchCandidate(value, index = 0) {
-    const candidate = value && typeof value === 'object' ? value : {};
-    const id = String(candidate.id || `branch-${index + 1}`).trim();
-    const unitId = String(candidate.unitId || candidate.unit_id || '').trim();
-    const nodeId = String(candidate.nodeId || candidate.node_id || '').trim();
-    if (!id || !unitId || !nodeId) {
-      throw new Error(`Flipkandidaat ${index + 1} vereist id, unitId en nodeId.`);
-    }
-    const requested = Array.isArray(candidate.variants) && candidate.variants.length
-      ? candidate.variants.map(item => String(item || '').trim().toLowerCase())
-      : [...BRANCH_VARIANTS];
-    const variants = [...new Set(requested)];
-    if (!variants.length || variants.some(variant => !BRANCH_VARIANTS.includes(variant))) {
-      throw new Error(`Flipkandidaat ${id} bevat een onbekende variant.`);
-    }
-    if (!variants.includes('normal')) variants.unshift('normal');
-    return Object.freeze({
-      id,
-      unitId,
-      nodeId,
-      variants: Object.freeze(variants),
-      defaultVariant: 'normal',
-      operation: 'binary-placement-variant',
-      linearization: String(candidate.linearization || 'none').trim().toLowerCase() === 'child-order'
-        ? 'child-order'
-        : 'none'
-    });
-  }
-
-  function normalizeBranchCandidates(values = []) {
-    const ids = new Set();
-    const endpoints = new Set();
-    return Object.freeze((Array.isArray(values) ? values : []).map((value, index) => {
-      const candidate = normalizeBranchCandidate(value, index);
-      const endpoint = `${candidate.unitId}:${candidate.nodeId}`;
-      if (ids.has(candidate.id)) throw new Error(`Dubbele flipkandidaat-id: ${candidate.id}.`);
-      if (endpoints.has(endpoint)) throw new Error(`Vertakking ${endpoint} is meer dan eenmaal als flipkandidaat gedeclareerd.`);
-      ids.add(candidate.id);
-      endpoints.add(endpoint);
-      return candidate;
-    }));
-  }
-
-  function enumerateBranchAssignments(branches = [], selectedVariants = {}) {
-    const candidates = normalizeBranchCandidates(branches);
-    const forced = selectedVariants && typeof selectedVariants === 'object' ? selectedVariants : {};
-    const assignments = [];
-    function visit(index, assignment) {
-      if (index >= candidates.length) {
-        assignments.push(Object.freeze({ ...assignment }));
-        return;
-      }
-      const branch = candidates[index];
-      const requested = String(forced[branch.id] || 'auto').trim().toLowerCase();
-      const variants = requested === 'auto' || !requested
-        ? branch.variants
-        : branch.variants.includes(requested) ? [requested] : [];
-      if (!variants.length) throw new Error(`Flipvariant ${requested} is niet toegestaan voor ${branch.id}.`);
-      variants.forEach(variant => visit(index + 1, { ...assignment, [branch.id]: variant }));
-    }
-    visit(0, {});
-    return Object.freeze(assignments);
-  }
-
-  function variantDimensions(variant) {
-    const value = String(variant || 'normal');
-    if (value === 'left-right') return 1;
-    if (value === 'short-long') return 1;
-    if (value === 'both') return 2;
-    return 0;
-  }
-
-  function scoreJointCandidate(candidate, branches) {
-    const composition = candidate?.composition;
-    if (!composition) return null;
-    const required = (composition.relationAlignments || []).filter(alignment => alignment.required !== false);
-    if (required.some(alignment => alignment.satisfied !== true)) return null;
-    const assignment = candidate.assignment || {};
-    const changedBranches = branches.filter(branch => String(assignment[branch.id] || 'normal') !== 'normal').length;
-    const changedDimensions = branches.reduce((total, branch) => total + variantDimensions(assignment[branch.id]), 0);
-    const lowerShift = composition.units?.find(unit => Number(unit.order) === 2)?.shift || { dx: 0, dy: 0 };
-    const rigidShift = Math.abs(Number(lowerShift.dx) || 0) + Math.abs(Number(lowerShift.dy) || 0);
-    const signature = branches.map(branch => `${branch.unitId}:${branch.nodeId}:${assignment[branch.id] || 'normal'}`).join('|');
-    return Object.freeze([changedBranches, changedDimensions, rigidShift, signature]);
-  }
-
-  function compareJointScores(first, second) {
-    for (let index = 0; index < 3; index += 1) {
-      if (first[index] !== second[index]) return first[index] - second[index];
-    }
-    return String(first[3]).localeCompare(String(second[3]), 'en');
-  }
-
-  function solveJoint(input = {}) {
-    if (typeof input.buildCandidate !== 'function') {
-      throw new Error('De gezamenlijke flipsolver vereist buildCandidate(assignment).');
-    }
-    const branches = normalizeBranchCandidates(input.branches || []);
-    const assignments = enumerateBranchAssignments(branches, input.selectedVariants || {});
-    const valid = [];
-    const rejected = [];
-    assignments.forEach(assignment => {
-      try {
-        const composition = input.buildCandidate(assignment);
-        const candidate = { assignment, composition };
-        const score = scoreJointCandidate(candidate, branches);
-        if (score) valid.push({ ...candidate, score });
-        else rejected.push({ assignment, reason: 'required-alignments-unsatisfied' });
-      } catch (error) {
-        rejected.push({ assignment, reason: String(error?.message || error) });
-      }
-    });
-    valid.sort((first, second) => compareJointScores(first.score, second.score));
-    const selected = valid[0];
-    if (!selected) {
-      throw new Error('FLIP CONFLICT: geen gezamenlijke variant kan alle vereiste S1–S2-uitlijningen oplossen.');
-    }
-    return Object.freeze({
-      ...selected.composition,
-      layoutResolution: Object.freeze({
-        schema: 'ogn-joint-flip-resolution-v1',
-        status: 'solved',
-        exploredCandidates: assignments.length,
-        validCandidates: valid.length,
-        selectedVariants: Object.freeze({ ...selected.assignment }),
-        selectedBranches: Object.freeze(branches.map(branch => Object.freeze({
-          ...branch,
-          variant: selected.assignment[branch.id] || 'normal',
-          changedDimensions: variantDimensions(selected.assignment[branch.id])
-        }))),
-        score: Object.freeze([...selected.score]),
-        rejectedCandidates: rejected.length
-      })
-    });
-  }
-
   function composePair(input = {}) {
     const upperInput = input.upper || {};
     const lowerInput = input.lower || {};
-    const relationInputs = Array.isArray(input.relations) && input.relations.length
-      ? input.relations
-      : [input.relation || {}];
-    const relationInput = input.relation || relationInputs[0] || {};
+    const relationInput = input.relation || {};
     const upperId = String(upperInput.id || 'S1');
     const lowerId = String(lowerInput.id || 'S2');
     const upperOriginal = clone(upperInput.layout || {});
@@ -265,17 +124,17 @@
     assertUnit(lowerOriginal, lowerId);
 
     const antecedentId = String(relationInput.antecedentNodeId || '');
-    const referentId = String(relationInput.referentNodeId || relationInput.anaphorNodeId || '');
+    const anaphorId = String(relationInput.anaphorNodeId || '');
     const antecedentBefore = nodeById(upperOriginal, antecedentId);
-    const referentBefore = nodeById(lowerOriginal, referentId);
+    const anaphorBefore = nodeById(lowerOriginal, anaphorId);
     if (!antecedentBefore) throw new Error(`Antecedent ${antecedentId || '(leeg)'} ontbreekt in ${upperId}.`);
-    if (!referentBefore) throw new Error(`Coreferente S2-knoop ${referentId || '(leeg)'} ontbreekt in ${lowerId}.`);
+    if (!anaphorBefore) throw new Error(`Anafoor ${anaphorId || '(leeg)'} ontbreekt in ${lowerId}.`);
 
     const upper = shiftLayout(upperOriginal, 0, 0);
     const upperBox = layoutBox(upper);
     const lowerBox = layoutBox(lowerOriginal);
     const gapRows = Math.max(1, Math.ceil(finiteNumber(input.gapRows ?? 3, 'gapRows')));
-    const dx = Number(antecedentBefore.x) - Number(referentBefore.x);
+    const dx = Number(antecedentBefore.x) - Number(anaphorBefore.x);
     const dy = upperBox.maxY + gapRows - lowerBox.minY;
     const lower = shiftLayout(lowerOriginal, dx, dy);
 
@@ -285,94 +144,22 @@
     rigidDeltaBeforeAfter(lowerOriginal, lower);
 
     const antecedent = nodeById(upper, antecedentId);
-    const referent = nodeById(lower, referentId);
-    if (coordinateKey(antecedent.x) !== coordinateKey(referent.x)) {
-      throw new Error('De coreferentielijn is na compositie niet verticaal.');
+    const anaphor = nodeById(lower, anaphorId);
+    if (coordinateKey(antecedent.x) !== coordinateKey(anaphor.x)) {
+      throw new Error('De antecedent–anafoorlijn is na compositie niet verticaal.');
     }
-    if (!(Number(referent.y) > Number(antecedent.y))) {
+    if (!(Number(anaphor.y) > Number(antecedent.y))) {
       throw new Error('S2 moet later/lager staan dan S1.');
     }
 
     const sharedColumns = sharedCoordinates(upper, lower, 'x');
     const sharedRows = sharedCoordinates(upper, lower, 'y');
     if (sharedRows.length) throw new Error('Afzonderlijke OGN-eenheden mogen in deze stap geen horizontale gridlijn delen.');
-    if (!sharedColumns.some(column => column.first === antecedentId && column.second === referentId)) {
-      throw new Error('Het primaire gedeclareerde coreferentiepaar deelt na compositie geen kolom.');
+    if (sharedColumns.length !== 1
+        || sharedColumns[0].first !== antecedentId
+        || sharedColumns[0].second !== anaphorId) {
+      throw new Error('Alleen de gedeclareerde antecedent–anafoorkolom mag tussen S1 en S2 worden gedeeld.');
     }
-
-    const relationAlignments = relationInputs.map((relation, index) => {
-      const upperEndpoint = relation?.referent || relation?.reference || {};
-      const lowerEndpoint = relation?.anaphor || relation?.relativeTime || {};
-      const upperNodeId = String(
-        upperEndpoint.nodeId
-        || relation?.antecedentNodeId
-        || relation?.referenceNodeId
-        || ''
-      );
-      const lowerNodeId = String(
-        lowerEndpoint.nodeId
-        || relation?.referentNodeId
-        || relation?.anaphorNodeId
-        || relation?.relativeTimeNodeId
-        || ''
-      );
-      const upperInsertionId = String(upperEndpoint.insertionId || relation?.referenceInsertionId || '');
-      const lowerInsertionId = String(lowerEndpoint.insertionId || relation?.relativeTimeInsertionId || '');
-      const alignmentType = String(relation?.alignment?.type || 'shared-column');
-      if (alignmentType !== 'shared-column') {
-        if (upperInsertionId) {
-          if (!(upperInput.lexInsertions || []).some(insertion => String(insertion.id) === upperInsertionId)) {
-            throw new Error(`Relatie ${relation?.id || index + 1}: S1-LEX-insertie ${upperInsertionId} ontbreekt.`);
-          }
-          if (nodeById(upper, upperInsertionId)) {
-            throw new Error(`Relatie ${relation?.id || index + 1}: LEX-insertie ${upperInsertionId} mag geen boomknoop zijn.`);
-          }
-        }
-        if (lowerInsertionId) {
-          if (!(lowerInput.lexInsertions || []).some(insertion => String(insertion.id) === lowerInsertionId)) {
-            throw new Error(`Relatie ${relation?.id || index + 1}: S2-LEX-insertie ${lowerInsertionId} ontbreekt.`);
-          }
-          if (nodeById(lower, lowerInsertionId)) {
-            throw new Error(`Relatie ${relation?.id || index + 1}: LEX-insertie ${lowerInsertionId} mag geen boomknoop zijn.`);
-          }
-        }
-        if (!upperInsertionId && upperNodeId && !nodeById(upper, upperNodeId)) {
-          throw new Error(`Relatie ${relation?.id || index + 1}: S1-endpoint ${upperNodeId} ontbreekt.`);
-        }
-        if (!lowerInsertionId && lowerNodeId && !nodeById(lower, lowerNodeId)) {
-          throw new Error(`Relatie ${relation?.id || index + 1}: S2-endpoint ${lowerNodeId} ontbreekt.`);
-        }
-        return Object.freeze({
-          id: String(relation?.id || `relation-${index + 1}`),
-          required: false,
-          type: alignmentType,
-          ...(upperInsertionId ? { referentInsertionId: upperInsertionId } : { referentNodeId: upperNodeId }),
-          ...(lowerInsertionId ? { anaphorInsertionId: lowerInsertionId } : { anaphorNodeId: lowerNodeId }),
-          dx: null,
-          satisfied: null,
-          status: 'not-a-geometric-constraint'
-        });
-      }
-      if (upperInsertionId || lowerInsertionId) {
-        throw new Error(`Relatie ${relation?.id || index + 1}: shared-column vereist boomknopen, geen LEX-inserties.`);
-      }
-      const upperNode = nodeById(upper, upperNodeId);
-      const lowerNode = nodeById(lower, lowerNodeId);
-      if (!upperNode || !lowerNode) {
-        throw new Error(`Relatie ${relation?.id || index + 1} verwijst niet naar bestaande S1/S2-knopen.`);
-      }
-      const satisfied = coordinateKey(upperNode.x) === coordinateKey(lowerNode.x);
-      return Object.freeze({
-        id: String(relation?.id || `relation-${index + 1}`),
-        required: relation?.alignment?.required !== false,
-        type: alignmentType,
-        referentNodeId: upperNodeId,
-        anaphorNodeId: lowerNodeId,
-        dx: Number(upperNode.x) - Number(lowerNode.x),
-        satisfied,
-        status: satisfied ? 'satisfied' : 'unsatisfied'
-      });
-    });
 
     const box = {
       minX: Math.min(upper.box.minX, lower.box.minX),
@@ -390,28 +177,106 @@
         type: 'coreference',
         direction: 'none',
         antecedent: Object.freeze({ unitId: upperId, nodeId: antecedentId, x: antecedent.x, y: antecedent.y }),
-        referent: Object.freeze({ unitId: lowerId, nodeId: referentId, x: referent.x, y: referent.y })
+        anaphor: Object.freeze({ unitId: lowerId, nodeId: anaphorId, x: anaphor.x, y: anaphor.y })
       }),
       sharedColumns: Object.freeze(sharedColumns.map(item => Object.freeze({ ...item }))),
       sharedRows: Object.freeze([]),
-      relationAlignments: Object.freeze(relationAlignments),
       box: Object.freeze(box),
+      gapRows
+    });
+  }
+
+  function composeDeclaredPair(input = {}) {
+    const upperInput = input.upper || {};
+    const lowerInput = input.lower || {};
+    const upperId = String(upperInput.id || 'K1');
+    const lowerId = String(lowerInput.id || 'K2');
+    const upperOriginal = clone(upperInput.layout || {});
+    const lowerOriginal = clone(lowerInput.layout || {});
+    const declarations = Array.isArray(input.relations) ? input.relations : [];
+    if (!declarations.length) throw new Error('Een uiting vereist minstens één gedeclareerde verticale anafoorrelatie.');
+    assertUnit(upperOriginal, upperId);
+    assertUnit(lowerOriginal, lowerId);
+
+    const resolved = declarations.map((declaration, index) => {
+      const antecedentNodeId = String(declaration.antecedentNodeId || '');
+      const anaphorNodeId = String(declaration.anaphorNodeId || '');
+      const antecedent = nodeById(upperOriginal, antecedentNodeId);
+      const anaphor = nodeById(lowerOriginal, anaphorNodeId);
+      if (!antecedent || !anaphor) {
+        throw new Error(`Gedeclareerde anafoorrelatie ${index + 1} mist een bron- of doelknoop.`);
+      }
+      return { declaration, antecedent, anaphor, antecedentNodeId, anaphorNodeId };
+    });
+
+    const dx = Number(resolved[0].antecedent.x) - Number(resolved[0].anaphor.x);
+    if (resolved.some(item => coordinateKey(Number(item.antecedent.x) - Number(item.anaphor.x)) !== coordinateKey(dx))) {
+      throw new Error('De gedeclareerde anaforen kunnen niet gezamenlijk met één starre verschuiving verticaal worden uitgelijnd.');
+    }
+
+    const upper = shiftLayout(upperOriginal, 0, 0);
+    const upperBox = layoutBox(upper);
+    const lowerBox = layoutBox(lowerOriginal);
+    const gapRows = Math.max(1, Math.ceil(finiteNumber(input.gapRows ?? 3, 'gapRows')));
+    const dy = upperBox.maxY + gapRows - lowerBox.minY;
+    const lower = shiftLayout(lowerOriginal, dx, dy);
+    assertUnit(upper, upperId);
+    assertUnit(lower, lowerId);
+    rigidDeltaBeforeAfter(upperOriginal, upper);
+    rigidDeltaBeforeAfter(lowerOriginal, lower);
+
+    const relations = resolved.map(item => {
+      const antecedent = nodeById(upper, item.antecedentNodeId);
+      const anaphor = nodeById(lower, item.anaphorNodeId);
+      if (coordinateKey(antecedent.x) !== coordinateKey(anaphor.x) || !(Number(anaphor.y) > Number(antecedent.y))) {
+        throw new Error('Iedere gedeclareerde anafoorlijn moet verticaal van de bovenste naar de onderste kernzin lopen.');
+      }
+      return Object.freeze({
+        type: String(item.declaration.type || 'coreference'),
+        direction: 'none',
+        referent: String(item.declaration.referent || ''),
+        antecedentLabel: String(item.declaration.antecedentLabel || antecedent.label || ''),
+        anaphorLabel: String(item.declaration.anaphorLabel || anaphor.label || ''),
+        antecedent: Object.freeze({ unitId: upperId, nodeId: item.antecedentNodeId, x: antecedent.x, y: antecedent.y }),
+        anaphor: Object.freeze({ unitId: lowerId, nodeId: item.anaphorNodeId, x: anaphor.x, y: anaphor.y })
+      });
+    });
+
+    const declaredPairs = new Set(relations.map(relation => `${relation.antecedent.nodeId}\u0000${relation.anaphor.nodeId}`));
+    if (declaredPairs.size !== relations.length) throw new Error('Iedere verticale anafoorrelatie moet een uniek knooppaar hebben.');
+    const sharedColumns = sharedCoordinates(upper, lower, 'x');
+    const sharedRows = sharedCoordinates(upper, lower, 'y');
+    if (sharedRows.length) throw new Error('De twee kernzinnen mogen geen horizontale gridlijn delen.');
+    if (sharedColumns.length !== relations.length
+        || sharedColumns.some(item => !declaredPairs.has(`${item.first}\u0000${item.second}`))) {
+      throw new Error('Alleen expliciet gedeclareerde antecedent–anafoorkolommen mogen tussen kernzinnen worden gedeeld.');
+    }
+
+    return Object.freeze({
+      schema: SCHEMA,
+      kind: 'utterance-kernel-pair',
+      units: Object.freeze([
+        Object.freeze({ id: upperId, order: 1, layout: upper, shift: rigidDeltaBeforeAfter(upperOriginal, upper) }),
+        Object.freeze({ id: lowerId, order: 2, layout: lower, shift: rigidDeltaBeforeAfter(lowerOriginal, lower) })
+      ]),
+      relation: relations[0],
+      relations: Object.freeze(relations),
+      sharedColumns: Object.freeze(sharedColumns.map(item => Object.freeze({ ...item }))),
+      sharedRows: Object.freeze([]),
+      box: Object.freeze({
+        minX: Math.min(upper.box.minX, lower.box.minX),
+        maxX: Math.max(upper.box.maxX, lower.box.maxX),
+        minY: Math.min(upper.box.minY, lower.box.minY),
+        maxY: Math.max(upper.box.maxY, lower.box.maxY)
+      }),
       gapRows
     });
   }
 
   return Object.freeze({
     SCHEMA,
-    LEGACY_SCHEMA,
-    BRANCH_VARIANTS,
-    SUPPORTED_SCHEMAS: Object.freeze([SCHEMA, LEGACY_SCHEMA]),
     composePair,
-    normalizeBranchCandidate,
-    normalizeBranchCandidates,
-    enumerateBranchAssignments,
-    variantDimensions,
-    scoreJointCandidate,
-    solveJoint,
+    composeDeclaredPair,
     rigidDeltaBeforeAfter,
     sharedCoordinates,
     validateUnit

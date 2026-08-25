@@ -46,16 +46,8 @@ browser-Config reist niet vanzelf mee; daarvoor moet hij eerst naar
 
 Dezelfde lagen bewaren ook:
 
-- `placementMode`: `language-tree`, `multi-ogn-anaphor`, `greedy-grow` of
-  `random`; standaard blijft `language-tree`;
-- `anaphorCombinationId` en `anaphorCombinations`: de actieve en beschikbare
-  S1–S2-combinaties;
-- `anaphorLexicalizations`: het lexiconprofiel per combinatie voor de primaire
-  coreferentiële S2-Text-bron; andere relaties bewaren hun eigen profiel;
-- `anaphorFlipVariants`: per combinatie een map van branch-id naar `auto`,
-  `normal`, `left-right`, `short-long` of `both`. `auto` laat de gezamenlijke
-  solver alle vereiste Text-coreferenties en één starre S2-shift tegelijk
-  oplossen;
+- `placementMode`: `language-tree`, `greedy-grow` of `random`; standaard blijft
+  `language-tree`;
 - `gridColor` en `gridLineWeight`;
 - `projectionLineWeight` en `boxLineWeight`;
 - `lexProjectionColor`, `syntProjectionColor` en `logProjectionColor`.
@@ -66,8 +58,10 @@ toegevoegd:
 - `directPlacementGeneral`: aantal knopen per run, Play-snelheid, groeipad,
   knoopnummers, diagnostiek, knoopgrootte en rastermarge;
 - `greedyGrowConfig`: uitsluitend strategie en oriëntatie;
-- `randomPlacementConfig`: uitsluitend seed, resetbeleid, spreiding, aantal
-  complete iteraties en asbeeldmodus (`off`, `occupancy` of `relative`).
+- `randomPlacementConfig`: seed, resetbeleid, Random-model, plaatsing,
+  gridgrootte, vaste kolommen/rijen, aantal complete iteraties en asbeeldmodus
+  (`off`, `occupancy` of `relative`). Random-snelheid gebruikt de gedeelde
+  `directPlacementGeneral.intervalMs` en wordt niet dubbel opgeslagen.
 
 Deze drie blokken worden tussen standaard- en user-config per sleutel
 samengevoegd. Een gedeeltelijke user-config kan daardoor één instelling
@@ -75,12 +69,33 @@ overschrijven zonder de overige standaardwaarden in hetzelfde blok te wissen.
 De browser-Config bewaart steeds het volledige genormaliseerde blok.
 
 Eén Random-iteratie is één complete run met het algemene aantal knopen. De
-centrale knoop telt niet mee: 10 iteraties met 31 knopen leveren dus
-10 × 30 = 300 waarnemingen per as. `occupancy` deelt de telling per coördinaat
-door het aantal iteraties; `relative` deelt door de hoogste telling in de
-actuele steekproef. Deze diagnostische afgeleide gebruikt een vaste seedreeks
-en bewaart of kiest geen toekomstige plaats voor de actieve directe run. Zie
+centrale knoop telt niet mee: 10 voltooide iteraties met 31 knopen leveren dus
+10 × 30 = 300 projectie-hits per as. Een ronde wordt pas na haar laatste knoop
+aan de WEST- en SOUTH-spots toegevoegd. `occupancy` deelt de hittelling per
+coördinaat door het ingestelde iteratietotaal; `relative` deelt door de hoogste
+telling onder de voltooide rondes. Deze diagnostische afgeleide gebruikt een
+vaste seedreeks en genereert, bewaart of kiest geen toekomstige plaats voor de
+actieve directe run. Zie
 `../DIRECT_PLACEMENT_CONFIG.md`.
+
+Random Config toont alleen zijn eigen bewerkbare waarden. Vaste kolommen en
+rijen zijn no-show tenzij `maxDimensions: "fixed"` actief is. Ieder zichtbaar
+veld heeft een compacte uitleg volgens `../CONFIG_UI_EXPLANATION_STANDARD.md`;
+formules en tellingen staan in Help en de genoemde documentatie. `Play` en
+`Next` lopen door naar de volgende run totdat `iterationCount` is bereikt;
+`Previous` kan reproduceerbaar over een rungrens terug.
+
+Bij een nieuwe standaardconfig is `spread: "available"`: iedere stap kiest
+ergens in de hele nog beschikbare rechthoek. `maxDimensions: "interface"`
+leidt die vaste rechthoek bij Reset af uit de interface. De bestaande waarden
+`compact`, `balanced`, `wide` en `content` blijven geldig; opgeslagen keuzes
+worden niet automatisch vervangen en latere waarden kunnen worden toegevoegd.
+
+`distribution: "uniform-v1.0"` blijft de standaard. De functionele waarde
+`"impure-repeat-v0.1"` mengt 20% herhaalgewicht uit voltooide eerdere as-hits.
+`fixedColumns` en `fixedRows` zijn standaard 48 en worden in de engine minimaal
+gelijk aan het aantal knopen per run. Seed is begrensd op 1 t/m 4.294.967.295;
+`20260802` is een datumseed en geen hoeveelheid toeval of snelheid.
 
 Oudere rc.45-configs met `directPlacementPresentation`, methodegebonden
 `targetCount`/`intervalMs`, `repeatCount` of `showAxisPattern` worden bij het
@@ -89,6 +104,18 @@ laden gemigreerd. Een nieuwe save schrijft alleen de drie actuele blokken.
 De drie lijngewichten gebruiken `light`, `normal` of `strong`. Deze waarden
 sturen uitsluitend kleur, lijnbreedte en dekking; zij wijzigen geen
 gridcoördinaten of OGN-plaatsingsregels.
+
+## Actief LEX-profiel
+
+Projectconfig bewaart geen generieke lege LEX-kandidaten. `lexOpenSlotCount`
+en `lexOpenSlotPlacement` zijn vervallen compatibiliteitsvelden en worden bij
+het laden genegeerd. Vóór, na en tussen blijven no-show totdat hun gebruik
+afzonderlijk is geëvalueerd.
+
+Actief zijn uitsluitend upward-Wissels vanaf de zichtbare bronhoogte,
+toepassingsgebonden inserties en direct Comp. Zinsoort wordt in OPN bij het
+voorbeeld opgeslagen, niet als algemene projectconfig: hoofdzin, ja/nee-vraag,
+dat-zin of omdat-zin. Zie `../LEX_MOVEMENT_RULES.md`.
 
 ## Releasegrens
 

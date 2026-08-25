@@ -70,9 +70,9 @@
 <div class="lexical-config" data-cat="AUX" data-from="syntax-perfectum" data-label="{pv}" data-role="aux" data-source="pv">pv:{pv} [role=aux cat=AUX from=syntax-perfectum]</div>
 <div class="lexical-config" data-cat="V" data-from="syntax-perfectum" data-label="{vdw}" data-role="participle" data-source="vdw">vdw:{vdw} [role=participle cat=V from=syntax-perfectum]</div>
 </section>
-<section aria-label="LOG-slotconfig" data-authority="LOG" data-axis-slot-pixels="176" data-example-controls-layout="false" data-expands-major-gap="true" data-lex-placement-mode="horizontal-then-move" data-lex-position-source="LOG" data-lex-projection-origin="SOURCE-Y" data-lex-slot-pixels="64" data-major-gap="1" data-minor-width="1" data-play-phases="LOG SPACE LEX" data-play-space-mode="reserve-empty-lex-rows" data-position-unit="slot" id="opengraph-log-config">
+<section aria-label="LOG-slotconfig" data-authority="LOG" data-axis-slot-pixels="176" data-example-controls-layout="false" data-expands-major-gap="true" data-lex-placement-mode="horizontal-then-move" data-lex-position-source="LOG" data-lex-projection-origin="SOURCE-Y" data-lex-slot-pixels="64" data-major-gap="1" data-minor-width="1" data-play-phases="LOG LEX" data-play-space-mode="none" data-position-unit="slot" id="opengraph-log-config">
 <h2>LOG-slotconfig</h2>
-<p class="note" id="logConfigDescription">LOG plant mogelijke LEX-plaatsen, maar bepaalt niet de bronhoogte en verplaatst zelf geen bronwoord. Iedere lexicale bron wordt exact horizontaal naar LEX geprojecteerd (SOURCE-Y); alleen een expliciete topic-, V1- of V2-regel mag daarna een zichtbare Wissel uitvoeren. S, O en V zijn major-posities. Een bijwoord krijgt een minor-slot in een LOG-interval; ieder minor-slot vergroot de geplande afstand tussen de begrenzende majors met één vaste stap. De voorbeeldzin valideert alleen en bestuurt de layout niet. Play toont na de boom eerst LOG, reserveert de geplande LEX-ruimte, toont daarna de horizontale projecties en voert uitsluitend expliciete LEX-Wissels uit.</p>
+<p class="note" id="logConfigDescription">LOG plant neutrale plaatsen, maar bepaalt niet de bronhoogte van de projectie en verplaatst zelf geen bronknoop. Iedere lexicale bron wordt exact horizontaal naar LEX geprojecteerd (SOURCE-Y); alleen een expliciet topic-, V1- of V2-doel dat werkelijk hoger ligt dan die bron mag daarna een upward-Wissel uitvoeren. S, O en V zijn major-posities. Een bijwoord krijgt een minor-slot in een LOG-interval; ieder minor-slot vergroot de geplande afstand tussen de begrenzende majors met één vaste stap. DAT en OMDAT worden direct in Comp geschreven. De voorbeeldzin valideert alleen en bestuurt de layout niet. Play toont na de boom rechtstreeks LOG en daarna LEX.</p>
 <div class="log-major-config" data-id="S" data-label="Subject" data-role="subject" data-source="subject">S [major source=subject]</div>
 <div class="log-major-config" data-id="O" data-label="Object" data-role="object" data-source="object">O [major source=object]</div>
 <div class="log-major-config" data-id="V" data-label="Verb" data-role="predicate" data-sources="predicate pv vdw">V [major sources=predicate+pv+vdw]</div>
@@ -112,7 +112,7 @@
     document.querySelectorAll('[data-feature="adverbs"]').forEach(node => { node.hidden = true; });
     const description = document.getElementById('logConfigDescription');
     if (description) {
-      description.textContent = 'LOG plant mogelijke LEX-plaatsen voor de majors S, O en V, maar verplaatst zelf geen bronwoord. Iedere lexicale bron wordt horizontaal op bronhoogte naar LEX geprojecteerd; alleen een expliciete topic-, V1- of V2-regel mag daarna een zichtbare Wissel uitvoeren. De voorbeeldzin valideert alleen en bestuurt de layout niet.';
+      description.textContent = 'LOG bepaalt de neutrale doelrijen voor de majors S, O en V. Iedere lexicale bron wordt eerst horizontaal naar LEX geprojecteerd en daarna langs de LEX-as naar de LOG-afgeleide doelrij verplaatst. De voorbeeldzin valideert alleen en bestuurt de layout niet.';
     }
     document.querySelectorAll('a[href]').forEach(link => {
       const url = new URL(link.getAttribute('href'), location.href);

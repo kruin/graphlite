@@ -61,5 +61,5 @@ node tools\check_publication_carousel_tooling.js
 if errorlevel 1 exit /b 1
 
 echo.
-echo GEREED. Draai nu maak-publicatie-carrousel.bat.
+echo GEREED. Draai nu publish_checked.bat of maak-publicatie-carrousel.bat.
 exit /b 0

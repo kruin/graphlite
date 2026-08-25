@@ -85,6 +85,22 @@ Een release candidate geldt pas als handmatig akkoord wanneer de bijbehorende
 controlelijst is ingevuld. Een geslaagde automatische controle vervangt dat
 visuele akkoord niet.
 
+## Config-uitleg en toepassingsisolatie
+
+Volg voor ieder Configscherm `CONFIG_UI_EXPLANATION_STANDARD.md`:
+
+- organiseer eerst **Algemeen**, daarna per toepassing en, waar relevant, per
+  plaatsingssoort **Calculated** of **Direct**;
+- toon binnen een gekozen toepassing uitsluitend de eigen functionele,
+  bewerkbare velden; niet-relevante velden zijn **no-show**;
+- verberg vanuit een actieve directe methode ook de context-/toepassingsbalk:
+  alleen Terug naar Main, de eigen velden met uitleg en Config opslaan blijven;
+- geef ieder zichtbaar veld een compacte, op mobiel bedienbare uitleg van
+  effect, bereik, standaard, niet-effect en afhankelijkheden;
+- houd berekende status en toekomstige niet-functionele opties buiten Config;
+- scheid seed altijd van snelheid: een seed is een reproduceerbare startcode,
+  geen hoeveelheid toeval en geen tempo-instelling.
+
 ## Verplichte projectzip-uitleg
 
 Iedere actuele releasebeschrijving maakt onderscheid tussen:
@@ -152,6 +168,23 @@ Noem `.opn` niet een map, database of losse centrale graph.
 ## Terminologie lexicale analyse
 
 Gebruik consequent: **lemma**, **gebruiksprofiel**, **meerwoordconstructie**, **zinsinstantie**, **LOG→LEX-realisatie**, **directe LEX-insertie** en **gemengde bron LOG+LEX**. Schrijf niet dat ieder bijwoord automatisch een LOG-minor is.
+
+## Verplichte uitleg van het actieve LEX-profiel
+
+Iedere gebruikersuitleg benoemt dezelfde harde grens:
+
+- upward wordt gemeten vanaf de zichtbare horizontale bronprojectie;
+- een doel op of onder die bronhoogte voert geen Wissel uit;
+- LOG-reservering is planning en nooit een alternatieve bronhoogte;
+- toepassingsinserties en direct Comp hebben geen centrale bronpijl;
+- generieke plaatsen vóór, na of tussen en downward/post-V2 zijn no-show en
+  worden niet nieuw opgeslagen;
+- het mogelijke gebruik van vóór, na en tussen wordt later geëvalueerd.
+
+Geef voorbeelden van V1, V2, ongewijzigde bronhoogte en direct Comp. Leg
+zinsoort apart uit: hoofdzin, ja/nee-vraagzin, dat-zin en omdat-zin;
+perfectum is een werkwoordsvorm. Plaats Heavy NP Shift, extrapositie en
+morfologische Lowering buiten de actuele rc.45-regelset.
 
 ## Verplichte kernformuleringen
 

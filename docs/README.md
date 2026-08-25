@@ -1,28 +1,44 @@
 # OpenGraph Lite Viewer v2.0.0-rc.45
 
-## Language Tree extension 1: Anaphor
+> Publishing: when local Playwright or Chromium is missing,
+> `publish_checked.bat` offers to install the pinned tools before running the
+> checks. Answer `J`; local tooling stays outside Git and the release ZIP.
 
-**Text** contains only the central utterance; **Context** comprises everything
-around it. Both Text and Context are distinct Open Graph Notation structures;
-Context is a minimized tree to be developed. Every insertion belongs to
-Context, regardless of its origin.
-Anaphor connects only central Text source nodes across independently
-calculated S1 and S2 trees; `HIJ` and `HEM` realize those nodes on LEX.
-`GISTEREN`, `VANDAAG`, `ER`, `NIET MEER` and `OMDAT` are independent Context
-insertions, never central tree nodes. **De boer slaat de ezel omdat hij hem
-bezit.** contains both `BOER→HIJ` and `EZEL→HEM`; `BEZIT` remains
-clause-final. Further
-Context modeling remains p.m. The active flip fixture **De man slaat de hond
-omdat die hem heeft gebeten.** links `HOND→DIE` and `MAN→HEM`. Its declared
-binary branches each select normal, left–right, short–long or both in one joint
-constraint solution. Only `linearization: "child-order"` also reverses LEX
-children: `HEEFT GEBETEN` ↔ `GEBETEN HEEFT`. See
-[`FLIP_CONSTRAINT_SOLVER.md`](FLIP_CONSTRAINT_SOLVER.md),
-[`CONTEXT_TAXONOMY.md`](CONTEXT_TAXONOMY.md),
-[`TEXT_AND_CONTEXT.md`](TEXT_AND_CONTEXT.md),
-[`MULTI_OGN_ANAPHOR.md`](MULTI_OGN_ANAPHOR.md),
-[`ANAPHOR_AND_S1_S2_RELATION_DEFINITIONS.md`](ANAPHOR_AND_S1_S2_RELATION_DEFINITIONS.md)
-and [`S1_S2_RELATION_TEST_FIXTURES.md`](S1_S2_RELATION_TEST_FIXTURES.md).
+## Utterances and kernel clauses
+
+An utterance consists of one or more linked kernel clauses. This build adds
+**Jan wast zichzelf**, **Jan slaat Jek omdat die hem beet**, and **Ken uzelf**
+as selectable utterances. Their referents, coreference, causal relation, role
+flip, and implicit addressee are recorded in
+[`UITING_EN_KERNZINNEN.md`](UITING_EN_KERNZINNEN.md) and
+[`samples/uitingen-kernzinnen.v1.json`](samples/uitingen-kernzinnen.v1.json).
+Each utterance now opens as two independently calculated kernel-clause trees,
+`K1` above `K2`, with declared vertical anaphor connections and one shared LEX
+axis for the realized utterance. The causal example aligns both `JEK ↔ DIE`
+and `JAN ↔ HEM`; the imperative keeps its implicit subject off LEX. The
+original `S1/S2` anaphor demonstration remains available separately.
+The causal K2 subject node is directly clickable and cycles through
+**hij / die / die hond / de hond / Jek**. All five refer to Jek; both
+`DIE HOND` and `DE HOND` remain one subject NP while LEX displays their two
+words separately. Horizontal and vertical actual grid-cell sizes can be
+configured independently between 60% and 200%. K2 must flip locally when JAN and JEK exchange
+subject/object roles and both coreference links must remain vertical.
+The visible Play bar builds either composition in four reversible phases:
+first kernel clause, second kernel clause, vertical anaphors, and realized
+LEX utterance. Previous, Next, and Reset remain available.
+The active test utterance remains visible above the graph. Kernel syntax
+consistently uses `S → NP, VP` and `VP → NP, V`; LEX independently realizes
+surface word order. Every binary node visibly branches left and right.
+Config independently controls compact horizontal and vertical branch spacing,
+tree color, branch weight, and an explicit **Flip**. Flip mirrors both trees
+without changing syntax, realized LEX word order, or vertical anaphors:
+structure, visible orientation, and word order are separate properties.
+The optional global Flip mirrors both trees; unlike the necessary local K2
+flip, it is a display choice rather than a role-alignment requirement.
+Every branch connects two free OpenGraph nodes with distinct horizontal and
+vertical coordinates. Even short branches remain slanted; compact node shapes
+and labels are sized to keep their connections visible.
+Tree branches are compact, clearly visible, strong blue lines by default.
 
 OpenGraph Lite Viewer is a viewer and test environment for general Open Graph
 Notation. This release is built exclusively on the uploaded
@@ -33,9 +49,19 @@ line.
 Dutch documentation: [`LEESMIJ.md`](LEESMIJ.md).
 
 > **Validation status:** rc.45 was manually approved on 2 August 2026,
-> including the accepted Greedy Grow reconstruction and the derived
-> publication slide. Automated checks continue to verify the geometry and
-> feature invariants.
+> including the Greedy Grow reconstruction, its evidence boundary, desktop,
+> mobile and publication carousel. Automated checks continue to verify the
+> geometry and feature invariants.
+
+## New calculated application: Anaphor · multi-OGN
+
+The fixed first example connects two independently calculated OGN trees:
+**S1: Ik zie een man. S2: Hij draagt een hoed.** MAN is the antecedent and
+HIJ the anaphor; both are coreferential. After both trees pass the OGN grid
+invariant separately, S1 is placed above S2 and the complete S2 is translated
+rigidly until MAN and HIJ share one declared column. A shared LEX axis orders
+S1 before S2. The MAN–HIJ connection is a straight vertical line without an
+arrow or direction. See [`MULTI_OGN_ANAPHOR.md`](MULTI_OGN_ANAPHOR.md).
 
 ## OGN Core: free placement first
 
@@ -56,42 +82,103 @@ row and column, no fallback node is rendered.
 A violation is called **grid-line reuse**: horizontal reuse shares a row;
 vertical reuse shares a column. Both are always invalid.
 
-A rule set
-determines which candidates are valid; a **Search Strategy** determines their
-test order. Direct placement writes the first valid position found
-immediately, so another search order may produce another picture.
+```text
+current occupancy
+→ free positions
+→ rule set
+→ search strategy tests candidates
+→ write the first valid position immediately
+```
 
-**Greedy Grow has an accepted reconstruction.** It writes one dot
-per step from the central grid point and stores no future layout. The
-historical four-arm order exactly reproduces the preserved 12-, 31- and
-96-node demos. Recovered experimental search orders can be compared in
-[`greedy-grow.html`](../greedy-grow.html); the evidence boundary is documented
-in the [`technical reconstruction`](GREEDY_GROW_RECONSTRUCTION.md).
-Publication slide 5 is derived directly from the same engine.
+A rule set determines which free candidates are valid. A **Search Strategy**
+determines the order in which candidates are tested. Direct placement writes
+the first valid position found immediately; another search order may therefore
+produce another picture.
 
-The fixed order is **OGN Free Placement → OGN Projection → OGN Calculated
-Placement**. The Two-Pass Language Tree appears only in the third layer as one
-application. See
-[`OGN_CORE_PLACEMENT_ARCHITECTURE.md`](OGN_CORE_PLACEMENT_ARCHITECTURE.md).
+**Greedy Grow has an accepted reconstruction.** It starts at the
+central grid point and writes one dot per step without storing a future
+layout. The historical four-arm order reproduces the preserved 12-, 31- and
+96-node demos exactly; four recovered experimental search orders make their
+different growth pictures inspectable. Field size and perimeter are shown as
+diagnostics, not as a proven global optimum. Open
+[`greedy-grow.html`](greedy-grow.html) and see the
+[`technical reconstruction`](GREEDY_GROW_RECONSTRUCTION.md). Publication
+slide 5 is derived directly from the same accepted engine.
 
-## Placement methods and line appearance
+The explanatory order is fixed:
 
-The **Language Tree** menu keeps Language Tree prominent as the primary
-calculated application and places **Greedy Grow** and seeded **Random** below
-it as direct OGN illustrations. Direct steps write one node immediately on an
-unused row and column; switching modes does not change Language Tree data.
+1. **OGN Free Placement** — write nodes one by one into free grid positions;
+2. **OGN Projection** — derive markers or orderings from already placed source
+   nodes;
+3. **OGN Calculated Placement** — let an application calculate a placement
+   plan first.
 
-`Config → View → Line appearance` independently controls grid color, grid
-weight, projection-line weight and box-line weight. LEX, SYNT and LOG each
-have a separate color for their axes, projection lines and boxes. See
-[`LINE_STYLE_AND_PLACEMENT_MODES.md`](LINE_STYLE_AND_PLACEMENT_MODES.md).
+See [`OGN_CORE_PLACEMENT_ARCHITECTURE.md`](OGN_CORE_PLACEMENT_ARCHITECTURE.md).
+
+## Placement methods and configurable lines
+
+The **Language Tree** menu now contains the placement hierarchy itself.
+Language Tree remains the prominent, primary calculated application;
+**Anaphor · multi-OGN** is the second calculated application. **Greedy
+Grow** and **Random** appear below it as smaller direct OGN illustrations. In
+a direct mode, every arrow/Play step immediately writes one node on a
+currently unused row and column; language-only menus are hidden and the
+Language Tree data is left unchanged. Random uses a separate seeded engine,
+so it cannot alter the accepted Greedy Grow reconstruction.
+
+Config now has strictly separated contexts: **General**, **Calculated →
+Language Tree / Anaphor · multi-OGN**, and **Direct → Shared / Greedy Grow /
+Random**. General holds
+only application-independent interface, README, and file settings; pre-config,
+tree, examples, LEX, SYNT, and LOG exist only under Language Tree. All
+irrelevant settings are no-show within a context. Greedy shows only strategy and orientation; Random
+only its own seed, reset policy, model, placement, grid size, conditional fixed
+dimensions, speed, iterations and axis image. Every visible field has a compact
+expandable explanation inside Config. A larger seed is not more random and
+does not change speed; `20260802` is merely the memorable date 2 August 2026.
+See [`CONFIG_UI_EXPLANATION_STANDARD.md`](CONFIG_UI_EXPLANATION_STANDARD.md).
+
+When Config is opened from an active Greedy Grow or Random mode, the
+application bar itself is also no-show. Only Back to Main, that method's own
+fields with Explanation, and Config save remain visible. Select another
+application in Main first.
+
+A new default Config uses **Uniform v1.0**, **Anywhere in available space** and
+**Interface · available space**. **Impure uniform v0.1** is a functional
+alternative that mixes in a 20% preference for axis positions hit more often
+in completed earlier rounds. Fixed grid, Compact, Balanced, Wide and the
+growing content field remain available. v0.2 and v0.3 remain no-show until they
+genuinely work. Play and Next cross run boundaries until all configured
+iterations are complete; Previous can cross back. For example,
+10 completed iterations with 31 nodes produce 10 × 30 = 300 projection hits
+per axis; the centre node is excluded. A round adds its rows as WEST hit spots
+and its columns as SOUTH hit spots only after its final node is written. A
+repeated hit makes the existing spot darker and heavier. Occupancy mode scales
+against the configured round total, while Relative mode scales against the
+highest count among completed rounds. No future round is generated for this
+axis image. Uniform Random predicts an increasingly even distribution, while
+v0.1 can mildly reinforce early differences; an
+axis with exactly `N` lines for `N` nodes is hit at every non-central position
+in every round. An unchanged Greedy strategy is deterministic and is therefore
+not repeated. See
+[`DIRECT_PLACEMENT_CONFIG.md`](DIRECT_PLACEMENT_CONFIG.md).
+
+Under `Config → View → Line appearance`, grid color and the weights of grid,
+projection and box lines can be set independently. LEX, SYNT and LOG also have
+independent colors—blue, green and purple by default—and matching axes,
+projection lines and boxes follow their own color. These are presentation
+settings only; they never change coordinates or placement validity. See
+[`LINE_STYLE_AND_PLACEMENT_MODES.md`](LINE_STYLE_AND_PLACEMENT_MODES.md) for
+the complete mapping and the structural EOF/EOL policy used by publication.
 
 ## Current calculated application: Two-Pass Language Tree
 
-The current viewer's `OGN Base` profile is the base of its language
-application. It contains the Syntax/Functional tree, grid, named LEX/SYNT/LOG
-projections with S/O/V majors, and examples without optional insertions. It is
-not the definition of OGN Core. Insertion defaults to off on LEX, SYNT and LOG.
+The current viewer implements a **Two-Pass Language Tree** as one calculated
+OGN application. Its `OGN Base` profile contains the ordinary
+Syntax/Functional tree, grid, the named LEX/SYNT/LOG projections with S/O/V
+majors, and examples without optional insertions. The profile name means “base
+of this language application”; it is not the definition of OGN Core.
+Insertion defaults to off on LEX, SYNT and LOG.
 
 `Config → Pre-config` enables insertion independently per axis without adding
 linguistic content. `Config → Applications` then provides **Adverbs** as the
@@ -109,59 +196,85 @@ storage, export fields, or rendering behaviour.
 
 ## Editable README topics and carousels
 
-`Config → README topics` edits Show yes/no, NL/EN navigation titles, limited
-safe HTML content, and the topic carousel. No hides a topic without deleting
-it. Scripts, forms, styles, frames, event attributes, and unsafe link schemes
-are removed before custom content is rendered.
+`Config → README topics` edits the complete README item, not just its images.
+Every topic has a **Show: yes/no** switch, NL/EN navigation titles, and NL/EN
+content in limited safe HTML. No hides the topic without deleting it, so it
+remains available in Config. Scripts, forms, styles, frames, event attributes,
+and unsafe link schemes are removed before custom content is rendered.
 
-Slides retain path/https, shape, NL/EN alt text and captions. Under
-`Config → Files & export`, a local PNG, JPEG, WebP, or GIF can be embedded
-directly as a slide, with a 1.25 MB per-image limit and a bounded combined
-payload. Manually typed `data:` URLs remain blocked. The shared Config Save bar
-is visible on every Config section.
+The same editor manages the topic carousel: add/remove active slide,
+previous/next, wide/narrow shape, NL/EN alt text and captions, live preview,
+and full topic reset. A normal path or https URL remains supported.
+`Config → Files & export` can additionally insert a local PNG, JPEG, WebP, or
+GIF directly as an embedded slide. The limit is 1.25 MB per image and the
+combined embedded payload is bounded to protect browser storage. A manually
+typed `data:` URL remains blocked; only images created by the trusted file
+insertion route are accepted.
 
-## Project Config and publication carousel
+The shared Config Save bar now appears above every Config section. It stores
+topic text, visibility, and carousel overrides together. Graph shortcuts stay
+inactive while Config or README is open and while a form control has focus.
 
-Every project zip contains `config/default-config.json` and
-`config/user-config.json`. The enabled user file overlays the default without
-replacing it. Running through `start_local_viewer.bat` enables
-`Write current Config to project`; the allow-listed endpoint writes the
-current snapshot to `config/user-config.json`. A regular web version offers a
-download fallback.
+## Default, project-user, and browser Config
 
-Precedence is code defaults → default config → project user config →
-browser-local saved Config. The zip also includes seven numbered 1080 × 1080
-PNG slides under
-[`publicatie-carrousel/slides/`](../publicatie-carrousel/slides/) and an
-single editable [`HTML source`](../publicatie-carrousel/index.html). Upload `01`
-through `07` as one gallery.
+Every full project zip contains both
+`config/default-config.json` and `config/user-config.json`. The viewer applies
+the bundled default first and then the enabled user file as an override. The
+default is never physically replaced.
+
+When running through `start_local_viewer.bat`, choose
+`Config → Files & export → Write current Config to project`. The local,
+allow-listed save endpoint writes the current snapshot to
+`config/user-config.json`; this file is then included in the next full-source
+zip. On a regular web server, use `Download user config` and put that file in
+`config/` manually.
+
+Precedence is:
+
+```text
+code defaults → config/default-config.json → config/user-config.json
+→ browser-local saved Config
+```
+
+The final browser-local snapshot remains device-specific until it is written
+to the project user file.
+
+## Ready-to-upload publication carousel
+
+Every project zip includes seven numbered 1080 × 1080 PNG slides under
+[`publicatie-carrousel/slides/`](publicatie-carrousel/slides/) and their
+single editable, self-contained
+[`publicatie-carrousel/index.html`](publicatie-carrousel/index.html) source.
+Upload files `01` through `07` in order as one image gallery.
 
 Slide 4 shows nodes projecting to WEST, SOUTH and EAST. Slide 5 is the
 **Direct — Greedy Grow** example; slide 6 is the
 **Calculated — Language Tree** example, with `HOND · BIJT · MAN` on the west
 LEX axis. Both example slides refer to `github.com/kruin/graphlite`.
 
-The carousel is always derived: do not edit a PNG or carousel ZIP.
-`publish_checked.bat` does not require Playwright; its optional Anafoor browser
-check reports missing browser tools and continues. Run
-`installeer-carrousel-tools.bat` once in an extracted work folder before the
-first rebuild; Node.js 18 or newer is required. After an HTML change, run
-`maak-publicatie-carrousel.bat`. It regenerates all seven slides, records their
-relation to source, exporter and version in
-`publicatie-carrousel/derived-manifest.json`, validates that proof, and rebuilds
-the sibling carousel ZIP. Run `maak-volledige-zip.bat` from the full project
-folder afterwards. The standalone carousel package can rebuild itself but does
-not modify another full project folder. Local `node_modules` and browser files
-are excluded from both ZIPs. Visual review remains a separate required step.
+The carousel is **always derived**. Never edit a PNG or carousel ZIP directly.
+If you only want to publish the supplied PNGs, no installation or batch file is
+needed. To edit the source on Windows, work in the extracted full project ZIP,
+run `installeer-carrousel-tools.bat` once, edit only
+`publicatie-carrousel/index.html`, and then run
+`maak-publicatie-carrousel.bat`. The installer pins Playwright and its matching
+Chromium browser; Node.js 18 or newer is required. The build exports all seven
+slides, writes `publicatie-carrousel/derived-manifest.json`, verifies the
+source/exporter/PNG hashes, and replaces the sibling carousel ZIP. Run
+`maak-volledige-zip.bat` afterwards to put the result into a new full project
+ZIP. Local `node_modules` and browser files are never packaged. The standalone
+carousel ZIP is also rebuildable, but rebuilding it does not modify a separate
+full project folder. The full-source ZIP build stops when the derivation proof
+is missing or stale. A final visual check remains required.
 
-[`PUBLICATIE_README.md`](../PUBLICATIE_README.md) contains the exact order,
-alt text, Reddit instructions, and publication copy for LinkedIn, Facebook,
-YouTube, Bluesky, Mastodon, X, and GitHub. Use
-[`RC45_OGN_CORE_EXPLANATION_TEST.md`](../RC45_OGN_CORE_EXPLANATION_TEST.md)
-records the manual approval of the core explanation, Greedy Grow and the
-publication carousel. The inherited Config and
-project-zip checks remain in
-[`RC43_CONFIG_README_PROJECT_TEST.md`](../RC43_CONFIG_README_PROJECT_TEST.md).
+[`PUBLICATIE_README.md`](PUBLICATIE_README.md) supplies the exact order,
+per-slide alt text, Reddit instructions, and ready-to-copy Dutch and English
+text for other platforms. Replace the marked live/source/video URLs before
+posting. rc.45 remains a release candidate by version name and was manually
+approved on 2 August 2026. Use
+[`RC45_OGN_CORE_EXPLANATION_TEST.md`](RC45_OGN_CORE_EXPLANATION_TEST.md) for
+the core explanation and carousel check; the inherited rc.43 Config checks remain in
+[`RC43_CONFIG_README_PROJECT_TEST.md`](RC43_CONFIG_README_PROJECT_TEST.md).
 
 ## Recursive content-sized layout
 
@@ -200,7 +313,7 @@ remain smaller and vertical whitespace can remain. Pan/zoom is available. A
 stacked portrait composition would be a separate future layout decision.
 
 For manual approval, use
-[`../RC41_RECURSIVE_LAYOUT_TEST.md`](../RC41_RECURSIVE_LAYOUT_TEST.md).
+[`RC41_RECURSIVE_LAYOUT_TEST.md`](RC41_RECURSIVE_LAYOUT_TEST.md).
 
 ## Lexical usage profiles and user disambiguation
 
@@ -225,17 +338,28 @@ See `LEXICON_USAGE_PROFILES_AND_DISAMBIGUATION.md`.
 ## Projection contract
 
 ```text
-source node → horizontal LEX projection → one direct move to the resolved LEX target
+source node → horizontal LEX projection at source height → only an explicit switch may move it
 ```
 
 `S`, `O` and `V` are majors. An adverbial insertion may be a LOG minor, a direct LEX insertion, or a group combining both origins. Every minor adds one fixed slot to the distance between its bounding
-majors. LOG plans possible LEX positions but does not move a source word:
-every lexical source first projects horizontally at its source height. Only
-an explicit topic, V1 or V2 rule creates a move. The viewer therefore shows at
-most one LEX-axis move and one source trace per moved source word, without an
-intermediate LOG trace. In `HOND BIJT MAN`, HOND and MAN stay put and only
-BIJT moves to V2. The example sentence does not determine layout. See
-`projectie-master-spec.md`.
+majors. LOG plans possible LEX positions but does not thereby move a source
+node: every lexical source projects horizontally at source height. Only an
+explicit target that is actually higher than that visible source may perform
+a switch. In `HOND BIJT MAN`, `MAN` therefore stays exactly at MAN source
+height; only `BIJT` can switch upward to V2. LOG reservations never replace
+this source reference. See `projectie-master-spec.md`.
+
+### Active LEX profile and sentence type
+
+LEX currently contains upward switches, application-specific insertions, and
+directly written Comp only. Generic empty positions before, after, or between
+active rows and every downward/post-V2 switch are no-show: no Config control,
+rendering, or new storage. Their possible use will be evaluated separately.
+
+Sentence type is a separate Language Tree choice: **declarative main clause**,
+**yes/no question**, **dat-clause**, or **omdat-clause**. A question uses V1;
+DAT and OMDAT are written directly in Comp. Perfect is a verb form, not a
+sentence type. See `LEX_MOVEMENT_RULES.md`.
 
 ## Start
 
@@ -363,9 +487,21 @@ then upload it through LinkedIn's Video action. See
 
 ## Read me / README
 
-The `README` / `LEESMIJ` button opens immediately on **Start · OGN Core**. The
-first carousel explains free grid positions, sequential node writing, search
-order, and the fixed layer order. It introduces no specialized extension.
+The `README` / `LEESMIJ` button opens immediately on
+**Start · OGN Core**. The topic list and active text remain independently
+scrollable in every interface mode.
+
+The first carousel explains the application-neutral core in four steps:
+free grid positions, sequential node writing, search order, and the fixed
+layer order. It introduces no specialized extension.
+
+![OGN core: free grid positions](images/readme/ogn-free-grid.svg)
+
+![OGN core: write one node at a time](images/readme/ogn-sequential-write.svg)
+
+![OGN core: different search orders produce different direct placements](images/readme/ogn-placement-strategies.svg)
+
+![OGN layers: free placement, projection, calculated placement](images/readme/ogn-three-layers.svg)
 
 The external example-search link opens in a separate browser window. Closing
 that window returns the user to the still-open app.
@@ -373,21 +509,20 @@ that window returns the user to the still-open app.
 ## Play sequence
 
 After the central tree has been built, Play presents the projection process in
-three explicit phases:
+two explicit phases:
 
 ```text
 1. draw the LOG axis and place majors/minors
-2. reserve LOG-planned space on the LEX axis
-3. project lexical sources horizontally at source height and execute only
-   explicit topic/V1/V2 moves
+2. project lexical sources horizontally at source height and perform only
+   explicit upward switches to topic, V1, or V2
 ```
 
-LOG planning alone never moves a source word. In `HOND BIJT MAN`, HOND and MAN
-stay at source height and only BIJT moves to the free V2 position. SYNT and the
-remaining projection panels appear in the final step.
+LOG may plan candidate positions but does not itself move a source. SYNT and
+the remaining projection panels appear in the final step. There is no separate
+empty space phase.
 The previous-step button now reverses the same sequence exactly: the final
-projection layer disappears first, followed by LEX moves, LEX space, LOG and
-then the central tree.
+projection layer disappears first, followed by LEX, LOG and then the central
+tree.
 
 ## Central views
 
@@ -414,9 +549,9 @@ graph, viewport or scale.
 
 Adverbial insertions do not mutate Syntax or Functional. The selected usage profile
 determines origin: LOG and LOG+LEX produce a south-axis minor, while a direct
-LEX insertion does not. Source nodes project horizontally to LEX. LOG plans
-available positions, while only an explicit topic/V1/V2 rule creates one
-direct visible move.
+LEX insertion does not. Source nodes project horizontally to LEX and every
+origin receives a precomputed neutral LEX target. An explicit topic/V2 rule can
+replace that target before one direct visible move is drawn.
 
 The active sentence is printed above the graph, with clear space below it for
 a possible future north axis.
@@ -517,3 +652,7 @@ reveals the precomputed layout step by step.
 - Research notation: `S+ np-VP`.
 - Binary trees first; non-binary multi-branching trees later.
 - Verbal-cluster flip: `heeft gebeten` ↔ `gebeten heeft`.
+
+## Resizable README panel
+
+In the built-in README, drag the separator between the topic list and the selected text to enlarge or reduce the text panel. The separator works horizontally on desktop/landscape and vertically on portrait screens.

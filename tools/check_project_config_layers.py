@@ -41,6 +41,9 @@ default_document = json.loads((ROOT / "config/default-config.json").read_text(en
 user_document = json.loads((ROOT / "config/user-config.json").read_text(encoding="utf-8"))
 if default_document.get("enabled") is not True:
     errors.append("standaardconfig moet enabled=true zijn")
+default_config = default_document.get("config", {})
+if "lexOpenSlotCount" in default_config or "lexOpenSlotPlacement" in default_config:
+    errors.append("standaardconfig mag uitgestelde vrije-positievelden niet opslaan")
 if not isinstance(user_document.get("enabled"), bool):
     errors.append("user-config enabled moet true of false zijn")
 elif user_document.get("enabled") is False and user_document.get("config") != {}:
@@ -56,10 +59,14 @@ for marker, label in [
     ("function currentProjectUserConfigDocument()", "projectconfig-export"),
     ("async function writeProjectUserConfig()", "directe projectschrijver"),
     ("filename: PROJECT_USER_CONFIG_PATH", "exact projectdoel"),
+    ("Oude Config-snapshots mogen vrije-positievelden bevatten", "compatibel negeren van oude vrije-positieconfig"),
     ('id="writeProjectUserConfigButton"', "schrijfknop in Bestanden"),
     ('id="downloadProjectUserConfigButton"', "downloadfallback"),
 ]:
     require(JS, marker, label)
+
+if "lexOpenSlotCount: lexOpenSlotCount()" in JS or "lexOpenSlotPlacement: validLexOpenSlotPlacement()" in JS:
+    errors.append("nieuwe projectsnapshot schrijft uitgestelde vrije-positievelden")
 
 for marker, label in [
     ("'config/user-config.json': ROOT / 'config' / 'user-config.json'", "toegestaan serverdoel"),

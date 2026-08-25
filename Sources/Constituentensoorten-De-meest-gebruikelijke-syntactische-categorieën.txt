@@ -1,0 +1,12 @@
+CP (complementizer phrase) [soms ook S voor sentence, zin]	Er loopt een kat op straat; Hans koopt een boek; Het regent
+VP (verb phrase)	slaapt; koopt een boek, is heel oud
+DP (determiner phrase)	de oude man; een kind; oude mannen; hij; Maria
+AP (adjective phrase)	oud; heel bijzondere; trots op de moeder
+NP (noun phrase)	oude man; kind; herdenking van de ramp
+PP (prepositional phrase)	met het mes; achter de deur
+N (nomen)	auto; kind
+V (verbum)	kopen; eten; slapen
+A (adjectief of adverbium)	oud; dik; erg
+P (prepositie)	onder; achter; op
+Det (determiner)	de; het; een; vijf
+Comp (complementizer)	dat; of

@@ -57,6 +57,9 @@ if errorlevel 1 (
   goto :fail
 )
 
+call :ensure_playwright_runtime
+if errorlevel 1 goto :fail
+
 echo Tekstbestanden normaliseren ^(Git + EOF/EOL^)...
 python tools\normalize_text_files.py --write
 if errorlevel 1 (
@@ -96,16 +99,14 @@ if not defined COMMITMSG (
 
 echo.
 echo Staging sitebestanden...
-rem Leg ook verwijderde paden eerst vast; renormalisatie kan alleen bestaande
-rem gevolgde bestanden lezen en faalt anders op eerder verdwenen documentatie.
-git add -A -- .
-if errorlevel 1 (
-  echo FOUT: git add mislukt.
-  goto :fail
-)
 git add --renormalize -- .
 if errorlevel 1 (
   echo FOUT: Git-renormalisatie mislukt.
+  goto :fail
+)
+git add -A -- .
+if errorlevel 1 (
+  echo FOUT: git add mislukt.
   goto :fail
 )
 
@@ -181,4 +182,37 @@ if errorlevel 1 (
 )
 > "%RESET_MARKER%" echo %DATE% %TIME%
 if errorlevel 1 echo WAARSCHUWING: resetmarkering kon niet worden geschreven.
+exit /b 0
+
+:ensure_playwright_runtime
+where node >nul 2>nul
+if errorlevel 1 (
+  echo FOUT: Node.js ontbreekt; de browsertests kunnen niet worden uitgevoerd.
+  echo Installeer Node.js 18 of hoger en probeer opnieuw.
+  exit /b 1
+)
+where npm >nul 2>nul
+if errorlevel 1 (
+  echo FOUT: npm ontbreekt; een volledige Node.js-installatie is vereist.
+  exit /b 1
+)
+node -e "const fs=require('fs'); const {chromium}=require('playwright'); process.exit(fs.existsSync(chromium.executablePath())?0:1)" >nul 2>nul
+if not errorlevel 1 exit /b 0
+echo.
+echo Playwright 1.61.1 of de bijbehorende Chromium-browser ontbreekt lokaal.
+echo Deze hulpmiddelen blijven buiten Git en buiten de release-ZIP.
+choice /C JN /N /M "Nu eenmalig installeren? [J/N]: "
+if errorlevel 2 (
+  echo Installatie overgeslagen.
+  echo Voer later uit: installeer-carrousel-tools.bat
+  exit /b 1
+)
+call "%~dp0installeer-carrousel-tools.bat"
+if errorlevel 1 exit /b 1
+node -e "const fs=require('fs'); const {chromium}=require('playwright'); process.exit(fs.existsSync(chromium.executablePath())?0:1)" >nul 2>nul
+if errorlevel 1 (
+  echo FOUT: Playwright of Chromium ontbreekt nog na de installatie.
+  exit /b 1
+)
+echo Playwright-runtime: OK
 exit /b 0

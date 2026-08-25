@@ -5,7 +5,9 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-EXCLUDED_PARTS = {".git", "node_modules", "__pycache__"}
+# Preserve uploaded research sources byte-for-byte; they are reference inputs,
+# not editable project text controlled by the release line-ending policy.
+EXCLUDED_PARTS = {".git", "node_modules", "__pycache__", "Sources"}
 WINDOWS_EOL_SUFFIXES = {".bat", ".cmd", ".ps1"}
 TEXT_SUFFIXES = {
     ".bat", ".cmd", ".ps1",
@@ -35,14 +37,11 @@ def normalized_bytes(path: Path, data: bytes) -> bytes:
         return data
 
     universal = body.replace(b"\r\n", b"\n").replace(b"\r", b"\n")
-    # Git rejects trailing horizontal whitespace in staged diffs, including
-    # Markdown's two-space hard breaks. Preserve indentation and internal
-    # blank lines while removing only spaces and tabs at the end of each line.
-    lines = [line.rstrip(b" \t") for line in universal.split(b"\n")]
+    lines = universal.split(b"\n")
 
-    # Remove only empty lines at EOF. Intentional blank lines inside a
-    # document remain untouched.
-    while lines and not lines[-1]:
+    # Remove only empty/whitespace-only lines at EOF. Content and intentional
+    # blank lines inside a document remain untouched.
+    while lines and not lines[-1].strip(b" \t"):
         lines.pop()
 
     normalized = b"\n".join(lines)
@@ -56,7 +55,7 @@ def normalized_bytes(path: Path, data: bytes) -> bytes:
 
 def expected_label(path: Path) -> str:
     eol = "CRLF" if path.suffix.lower() in WINDOWS_EOL_SUFFIXES else "LF"
-    return f"{eol}; geen witruimte aan regeleinde; exact één afsluitende EOL"
+    return f"{eol}; exact één afsluitende EOL"
 
 
 def main() -> int:

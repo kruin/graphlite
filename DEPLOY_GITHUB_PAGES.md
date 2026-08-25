@@ -10,6 +10,14 @@ Gebruik één gecontroleerde publicatie-BAT:
 publish_checked.bat
 ```
 
+`publish_checked.bat` controleert vóór de releasechecks of de vastgezette
+Playwright-versie en de bijbehorende Chromium-browser lokaal aanwezig zijn.
+Ontbreekt één van beide, dan vraagt het script of
+`installeer-carrousel-tools.bat` nu eenmalig mag worden uitgevoerd. Antwoord
+`J`; daarna loopt dezelfde publicatie-opdracht automatisch verder. De lokale
+map `node_modules` en de browsercache worden niet gecommit en komen niet in de
+release-ZIP.
+
 Publicatiepad:
 
 ```text
@@ -83,18 +91,12 @@ Vóór de releasecheck normaliseert de BAT alle bekende tekstbestanden:
 python tools\normalize_text_files.py --write
 ```
 
-Hierbij verdwijnen ook spaties en tabs aan het einde van iedere tekstregel;
-Git weigert zulke trailing whitespace anders pas na het invullen van de
-commitboodschap. Inspringing en interne lege regels blijven behouden.
-
-Daarna staged de BAT eerst alle wijzigingen, inclusief verdwenen gevolgde
-paden. Pas daarna past Git de actuele `.gitattributes` op de bestaande
-indexinhoud toe. Daardoor kan een ontbrekend document de renormalisatie niet
-laten mislukken:
+Daarna past Git de actuele `.gitattributes` ook op bestaande indexinhoud toe en
+staged de BAT alle wijzigingen:
 
 ```bat
-git add -A -- .
 git add --renormalize -- .
+git add -A -- .
 git diff --cached --check
 ```
 

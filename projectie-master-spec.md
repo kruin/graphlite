@@ -2,31 +2,62 @@
 
 Normatieve projectiespecificatie voor OpenGraph Lite Viewer `v2.0.0-rc.45`.
 
-## 0. Text, Context en Language Tree · extensie 1
+## 0a. Uiting en kernzinnen
 
-**Text** is de centrale uiting: in Syntax bijvoorbeeld `S–O–V`, in Functional
-bijvoorbeeld `Agens–Predicaat–Patiens`. **Context** is alles rondom deze
-centrale uiting en is zelf eveneens een **Open Graph Notation**-structuur.
-Text-OGN en Context-OGN behouden ieder hun eigen knopen en eigen
-gridinvariant. Context wordt behandeld als een nog te ontwikkelen
-**geminimaliseerde boom**: uitsluitend relevante takken worden later gebouwd.
-Iedere insertie behoort tot Context, ook wanneer zij op LEX verschijnt.
-Nadere plaatsing en koppeling van Context blijven **p.m.**; de aangeleverde
-Context-OGN staat in `CONTEXT_TAXONOMY.md`.
+Een uiting bestaat uit één of meer verknoopte kernzinnen (`S` of `CLAUSE`).
+LEX toont de zichtbare realisatie; SYN de syntactische constructie; LOG de
+deelnemers, functies en relaties. Referentidentiteit, causale inbedding,
+rol-flip en impliciete subjecten worden als uitingmetadata opgeslagen en bij
+OPN-export/import bewaard. De drie uitingen worden in **Anafoor · multi-OGN**
+daadwerkelijk getekend als twee afzonderlijke kernzinbomen: `K1` boven `K2`.
+Iedere kernzin volgt `S → NP, VP` en `VP → NP, V`. De onafhankelijke
+LEX-realisatie mag hiervan afwijken, bijvoorbeeld `JAN SLAAT JEK` bij een
+onderliggende VP-volgorde `JEK, SLAAT`; bron- en doelhoogte worden expliciet
+in de projectielijn bewaard.
+Iedere ouder splitst visueel naar een linker- en rechterkind.
+Iedere boomtak volgt de schuine richting tussen twee vrije OpenGraph-knopen:
+bron en doel hebben verschillende `x` én `y`. Inkorting gebeurt langs de
+lijnrichting, nooit uitsluitend boven/onder; compacte knoopsymbolen mogen de
+takken niet afvlakken. Alleen gedeclareerde anaforen mogen verticaal zijn.
+De horizontale en verticale rastermaat zijn afzonderlijk instelbaar; raster,
+knopen en projecties delen steeds dezelfde actuele celmaten.
+Config-Flip spiegelt beide bomen zonder ouder-kindrelaties, LEX-woordvolgorde of
+referentidentiteit te wijzigen: structuur, ruimtelijke richting en
+woordvolgorde zijn afzonderlijke eigenschappen. Bij de causale rol-flip staat
+K2 in de standaardweergave gespiegeld zodat zowel `JEK ↔ DIE` als `JAN ↔ HEM`
+verticaal blijven; een gezamenlijke Flip bewaart beide verticale verbindingen.
+De causale subjectknoop is rechtstreeks klikbaar en selecteerbaar als `HIJ`,
+`DIE`, `DIE HOND`, `DE HOND` of `JEK`. Alle vijf verwijzen naar Jek; `DIE HOND`
+en `DE HOND` zijn ieder één subject-NP en projecteert twee
+gerealiseerde LEX-woorden. Lokale K2-Flip is noodzakelijk bij de dubbele
+subject/object-rolwisseling; globale interface-Flip is optioneel en spiegelt
+beide bomen zonder structuur, woordvolgorde of verticale referentie te wijzigen.
+Iedere boom behoudt zijn eigen unieke rijen en kolommen; tussen beide bomen
+mogen uitsluitend expliciet gedeclareerde verticale anafoorkolommen samenvallen.
+De gedeelde LEX-as volgt de gerealiseerde uiting; `OMDAT` is een verbindend
+LEX-element en een impliciet subject krijgt geen afzonderlijk LEX-woord.
+Compositie van willekeurig veel kernzinnen blijft vervolgwerk.
+Play gebruikt de omkeerbare volgorde `K1 → K2 → verticale anaforen → LEX`;
+Reset keert terug naar uitsluitend raster en titel.
+De actieve testuiting blijft boven Play en werkvlak zichtbaar. Boomkleur,
+boomlijnzwaarte, boomruimte, onafhankelijke horizontale/verticale
+vertakkingsruimte en Flip zijn configureerbaar; standaard zijn boomtakken
+blauw, zwaar en in beide richtingen compact.
+Normatief: `UITING_EN_KERNZINNEN.md`; corpus:
+`samples/uitingen-kernzinnen.v1.json`.
 
-**Anafoor** is de eerste extensie van Language Tree. S1 en S2 worden eerst
-afzonderlijk als centrale Text-OGN berekend. Daarna ordent één gezamenlijke
-LEX-as de Text-projecties en Context-inserties van S1 vóór die van S2. De
-compositor verschuift uitsluitend de complete S2 star. `relations[]` bevat
-alleen expliciete coreferentie tussen centrale Text-bronknopen. Hun rechte
-verticale lijnen zijn ongericht. De bron blijft bijvoorbeeld `BOER` of
-`EZEL`; uitsluitend LEX realiseert `HIJ` of `HEM`.
+## 0. Multi-OGN-discoursecompositie
 
-`GISTEREN`, `VANDAAG`, `ER`, `NIET MEER` en `OMDAT` zijn Context-inserties:
-zij hebben een eigen `insertionId` en geen Text-boom-`nodeId`. In een
-omdat-bijzin blijft de persoonsvorm achteraan; er is geen S2-V2-Wissel.
-Normatief: `TEXT_AND_CONTEXT.md`,
-`ANAPHOR_LANGUAGE_TREE_EXTENSION.md` en `MULTI_OGN_ANAPHOR.md`.
+De berekende toepassing **Anafoor · multi-OGN** staat naast Language Tree en
+gebruikt een eigen compositielaag. S1 en S2 worden eerst afzonderlijk als OGN
+berekend. Daarna ordent één gezamenlijke LEX-as alle S1-items vóór alle
+S2-items. De compositor verschuift de complete S2 star totdat antecedent MAN
+en anafoor HIJ exact dezelfde kolom bezetten. Hun rechte verticale lijn is
+ongericht en heeft geen pijlpunt. De normale Language-Tree-keten hieronder
+wordt hierdoor niet gewijzigd. De drie nieuwe uitingen gebruiken dezelfde
+architectuur met `K1/K2` en meerdere gedeclareerde anafoorverbindingen,
+waaronder gelijktijdig `JEK ↔ DIE` en `JAN ↔ HEM`.
+Normatief: `MULTI_OGN_ANAPHOR.md` en `UITING_EN_KERNZINNEN.md`.
 
 ## 1. Autoriteit en afleidingsrichting
 
@@ -36,14 +67,14 @@ De afleiding loopt in deze volgorde:
 structure-config
 → LOG-majors en LOG-minors
 → LOG plant mogelijke LEX-plaatsen
-→ horizontale LEX-bronprojectie
-→ alleen expliciete regels mogen een bronwoord verplaatsen
+→ horizontale LEX-bronprojectie op bronhoogte
+→ alleen expliciete regels mogen een bronknoop verplaatsen
 → voorbeeldzin als validatie
 ```
 
 `LOG` is de autoriteit voor de lineaire plaatsingsplanning, niet voor een
-zichtbare verplaatsing van een bronwoord. De projectieoorsprong én de
-blijvende positie van een bronwoord zonder expliciete regel zijn altijd de
+zichtbare verplaatsing van een bronknoop. De projectieoorsprong én de blijvende
+positie van een bronknoop zonder expliciete regel zijn altijd de
 bronknoophoogte. De voorbeeldzin levert geen coördinaten.
 
 ## 2. Majors, minors en logische afstand
@@ -51,10 +82,6 @@ bronknoophoogte. De voorbeeldzin levert geen coördinaten.
 De basisposities `S`, `O` en `V` zijn **majors**. Een insertie met
 `origin=LOG` of `origin=LOG+LEX` is een **minor**. Een insertie met
 `origin=LEX` krijgt wel een LEX-doel, maar geen LOG-minor.
-
-Alle drie de insertie-oorsprongen behoren architectonisch tot **Context**.
-`origin` beschrijft uitsluitend hoe de Context-insertie een plaats krijgt;
-een LOG-minor wordt daardoor geen centrale Text-knoop.
 
 Iedere major en minor bezet een LOG-slot met een vaste breedte. De logische
 afstand tussen twee majors is:
@@ -123,10 +150,8 @@ Pas daarna worden expliciete LEX-regels logisch toegepast:
 Alleen wanneer zo'n expliciete regel geldt, verplaatst het woord rechtstreeks
 van zijn bronanker naar het bijbehorende doel. Er verschijnt dan één pijl en
 één trace. De SYNT- en Functional-bronstructuren worden niet gemuteerd. In
-`HOND BIJT MAN` blijven `HOND` en `MAN` exact op hun eigen bronhoogte;
-uitsluitend `BIJT` wisselt naar de vrije LEX-gridrij halverwege die twee
-behouden bronrijen. De V2-doelhoogte is dus afgeleid uit de boom en niet uit
-een vaste pixelafstand onder `S`.
+`HOND BIJT MAN` blijven `HOND` en `MAN` op hun eigen bronhoogte; uitsluitend
+`BIJT` wisselt naar V2.
 
 ## 5. Configuratiecontract
 
@@ -159,8 +184,8 @@ De normatieve HTML-config staat in `structure-config.html`:
   data-lex-projection-origin="SOURCE-Y"
   data-lex-placement-mode="horizontal-then-move"
   data-example-controls-layout="false"
-  data-play-phases="LOG SPACE LEX"
-  data-play-space-mode="reserve-empty-lex-rows">
+  data-play-phases="LOG LEX"
+  data-play-space-mode="none">
 </section>
 ```
 
@@ -209,21 +234,46 @@ Config-UI heeft altijd voorrang.
 - Het vaste projectieframe omvat de maximale actuele LOG-spanne, zodat
   projectiekeuzes de centrale graph niet laten verspringen.
 
-De Play-presentatie gebruikt na de centrale boomopbouw drie afzonderlijke
+De Play-presentatie gebruikt na de centrale boomopbouw twee afzonderlijke
 configuratiefasen:
 
 ```text
-LOG → SPACE → LEX
+LOG → LEX
 ```
 
 1. `LOG` tekent eerst de zuidas en plaatst majors/minors.
-2. `SPACE` reserveert lege rijen op LEX volgens de LOG-slotvolgorde.
-3. `LEX` toont de lexicale bronnen eerst op hun horizontale bronankers en
-   voert daarna uitsluitend de expliciet geldige Wissels uit.
+2. `LEX` toont de lexicale bronnen eerst op hun horizontale bronankers en
+   voert uitsluitend expliciete upward-Wissels naar topic, V1 of V2 uit.
 
-LOG reserveert mogelijke plaatsen; reservering alleen verplaatst geen woord.
-Pas in de eindstap volgen de overige projectiepanelen. `SPACE` verandert het
-aantal geplande slots, maar rekt de vaste gridstap niet uit.
+LOG plant ruimte maar verplaatst niets. Pas in de eindstap volgen de overige
+projectiepanelen. Er bestaat geen afzonderlijke lege ruimtefase.
+
+LEX activeert voorlopig drie plaatsingsmechanismen: upward-Wissels vanaf een
+zichtbare bron, toepassingsgebonden insertieplaatsen en rechtstreeks
+geschreven Comp. Generieke lege kandidaten vóór, na of tussen actieve rijen
+en iedere downward/post-V2-Wissel zijn no-show. Ze hebben geen Config-optie,
+rendering of nieuwe opslagwerking. Oude velden mogen uitsluitend compatibel
+worden genegeerd; het gebruik van vóór, na en tussen wordt later geëvalueerd.
+
+### 6.1 Richting van een Wissel
+
+Voor een echte Wissel is de zichtbare bronprojectie de harde referentie:
+
+```text
+toY < fromY  → data-display-direction="up" → voer de Wissel uit
+toY ≥ fromY  → geen traject              → blijf op de bronhoogte
+```
+
+`Up` beschrijft SVG-geometrie en geen syntactische upward-movementclaim.
+`TRUI BREIT VROUW` illustreert topic/V2, `BIJT HOND MAN?` V1,
+`HOND BIJT MAN` laat HOND en MAN op bronhoogte, en `DAT`/`OMDAT` worden zonder
+bronpijl rechtstreeks in Comp geschreven. Een LOG-reservering mag de
+bronreferentie niet vervangen en kan dus geen lager doel legitimeren.
+
+Heavy NP Shift, extrapositie en morfologische Lowering vallen buiten rc.45.
+Een toekomstige regelspecificatie moet bron, lineair doel, structurele status,
+fase en trace-/kopiegedrag expliciet toevoegen. Geen daarvan mag uit
+schermrichting of uit de aanwezigheid van een lege kandidaat worden afgeleid.
 
 ## 7. Opslag en validatie
 
@@ -238,7 +288,12 @@ Een `.opn`-document bewaart:
 - `log.lex_projection_origin`;
 - `log.lex_placement_mode`;
 - `log.example_controls_layout`;
-- dezelfde LOG-sequentie als bron van de LEX-planning.
+- `example.sentence_type`;
+- dezelfde LOG-sequentie als bron van de LEX-doelrijen.
+
+Nieuwe documenten bewaren geen generieke `additional_open_slot_*`-velden.
+Geldige zinsoorten zijn `main-declarative`, `polar-question`,
+`subordinate-dat` en `subordinate-omdat`.
 
 De releasetest `tools/check_log_slot_distance.py` verifieert onder meer dat
 nul, één en twee minors de majorafstand respectievelijk met nul, één en twee
@@ -246,11 +301,11 @@ slots vergroten.
 
 De releasetest `tools/check_lex_horizontal_projection.py` verifieert met
 `BIJT` dat eerst de lage bronhoogte wordt gebruikt en daarna in één zichtbare
-stap rechtstreeks de vrije LEX-gridrij tussen HOND en MAN wordt gevuld. Zij
-bewaakt ook dat de bronprojectielijn geen verticale sectie bevat, dat `HOND`
-en `MAN` exact op hun bronhoogte blijven, dat het V2-doel het midden van die
-twee bronrijen is en dat `HOND BIJT MAN` precies één zichtbare verplaatsing
-heeft.
+stap rechtstreeks het V2-einddoel. Zij bewaakt ook dat de bronprojectielijn
+geen verticale sectie bevat, dat `HOND BIJT MAN` uitsluitend `BIJT` verplaatst
+en dat `MAN` exact op de bronhoogte van de centrale MAN-knoop blijft.
+Dezelfde test bewaakt dat een doel onder een hoge bron wordt geweigerd, ook
+wanneer een LOG-reservering dat doel intern als eerdere rij zou behandelen.
 
 `tools/check_projection_cleanup.py` bewaakt daarnaast de directe verticale
 LOG-projectie, het opruimen van gevulde lege slots, de ingebouwde

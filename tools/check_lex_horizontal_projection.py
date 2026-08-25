@@ -39,10 +39,12 @@ def extract_function(name: str) -> str:
 required_source = [
     "d: `M ${startX} ${p.py} H ${endX}`",
     "'horizontale bronprojectie'",
-    "'Plaats LOG → LEX'",
     "stage: 'combined'",
     "alleen een expliciete Wissel mag verplaatsen",
-    "zowel HOND als MAN exact staan",
+    "function lexConfiguredOpenSlots",
+    "'data-display-direction': displayDirection",
+    "if (!(toY < fromY - 1)) return;",
+    "Actief profiel: uitsluitend zichtbare Wissels omhoog.",
 ]
 for marker in required_source:
     if marker not in SOURCE:
@@ -63,51 +65,11 @@ functions = "\n".join(
         "appliedLogicalPlacementForItem",
         "baseLexY",
         "projectionAnchorY",
-        "projectedFreeV2GapY",
-        "projectedV2SlotY",
-        "projectedStationarySourceY",
         "projectedLexItemY",
     )
 )
 
-placement_functions = "\n".join(
-    extract_function(name)
-    for name in (
-        "isMainV2Rule",
-        "isFiniteVerbForV2",
-        "topicMovementForItem",
-        "lexMovementRank",
-        "movementForItem",
-    )
-)
-
 node_test = f"""
-const placementContract = (() => {{
-  const state = {{ example: {{ lexRule: 'hoofdzininvariant' }} }};
-  function activeAdverbIsFronted() {{ return false; }}
-  function activeLexItems() {{ return items; }}
-  function frontedPostV2Index() {{ return 0; }}
-
-  {placement_functions}
-
-  const items = [
-    {{ id: 'hond', label: 'HOND', source: 'subject', role: 'subject' }},
-    {{ id: 'bijt', label: 'BIJT', source: 'predicate', role: 'predicate' }},
-    {{ id: 'man', label: 'MAN', source: 'object', role: 'object' }}
-  ];
-  const movements = items.map((item, index) => movementForItem(item, index, items));
-  if (movements[0] !== null) {{
-    throw new Error(`HOND moet op de recursief berekende bronplaats blijven, kreeg ${{movements[0]?.slot}}`);
-  }}
-  if (movements[1]?.slot !== 'v2') {{
-    throw new Error(`alleen BIJT moet naar de vrije LEX-gridrij, kreeg ${{movements[1]?.slot || 'geen'}}`);
-  }}
-  if (movements[2] !== null) {{
-    throw new Error(`MAN moet op de recursief berekende bronplaats blijven, kreeg ${{movements[2]?.slot}}`);
-  }}
-  return 'HOND vast; BIJT → V2; MAN vast';
-}})();
-
 const state = {{ example: {{ lexItems: [] }} }};
 const config = {{
   authority: 'LOG',
@@ -127,21 +89,18 @@ function basisSourceIndex(_item, index) {{ return index; }}
 function projectedCompSlotY(y0) {{ return y0; }}
 function compSlotY(y0) {{ return y0; }}
 function lexWordOrderY(index, y0) {{ return y0 + index * 64; }}
-function activeAdverbIsFronted() {{ return false; }}
-function isMainV2Rule() {{ return true; }}
-function showTopicSlot(items) {{
-  return items.some((entry, index) => movementForItem(entry, index, items)?.slot === 'topic');
-}}
-function projectedLexRootY() {{ return 100; }}
-function v2SlotY() {{ return 164; }}
 function movementForItem(item) {{
+  if (item.source === 'late') {{
+    return {{ kind: 'v2', slot: 'v2', caption: 'Wissel V2', trace: 't[late]' }};
+  }}
   return item.source === 'predicate'
     ? {{ kind: 'v2', slot: 'v2', caption: 'Wissel V2', trace: 't[V]' }}
     : null;
 }}
 function lexSlotIndex() {{ return '2'; }}
 function projectedTopicSlotY() {{ return 160; }}
-function projectedPostV2SlotY() {{ return 200; }}
+function projectedV1SlotY() {{ return 160; }}
+function projectedV2SlotY() {{ return 180; }}
 
 {functions}
 
@@ -150,13 +109,14 @@ const items = [item];
 state.example.lexItems = items;
 const sourceMap = new Map([
   ['subject', {{ px: 620, py: 320 }}],
-  ['predicate', {{ px: 700, py: 680 }}],
-  ['object', {{ px: 780, py: 520 }}]
+  ['predicate', {{ px: 700, py: 420 }}],
+  ['object', {{ px: 780, py: 520 }}],
+  ['late', {{ px: 820, py: 120 }}]
 ]);
 const y0 = 100;
 
 const projectionY = projectionAnchorY(item, 0, y0, sourceMap, items);
-if (projectionY !== 680) throw new Error(`BIJT moet horizontaal op bronhoogte 680 starten, kreeg ${{projectionY}}`);
+if (projectionY !== 420) throw new Error(`BIJT moet horizontaal op bronhoogte 420 starten, kreeg ${{projectionY}}`);
 const logicalY = baseLexY(item, 0, y0, sourceMap, items);
 if (logicalY !== 268) throw new Error(`LOG-doelrij moet 268 zijn, kreeg ${{logicalY}}`);
 
@@ -174,34 +134,36 @@ if (trioMoves.length !== 1 || trioMoves[0].item !== item || trioMoves[0].stage !
   throw new Error(`HOND BIJT MAN mag alleen BIJT verplaatsen, kreeg ${{trioMoves.map(move => move.item.label).join('|')}}`);
 }}
 
-const freeV2Y = projectedFreeV2GapY(sourceMap, trio);
-if (freeV2Y !== 420 || projectedV2SlotY(y0, sourceMap, trio) !== 420) {{
-  throw new Error(`vrije V2-rij moet exact tussen HOND 320 en MAN 520 liggen, kreeg ${{freeV2Y}}`);
-}}
-const horizontal = projectedLexItemY(item, 1, y0, sourceMap, trio, {{ executedMovementCount: 0 }});
-const afterMove = projectedLexItemY(item, 1, y0, sourceMap, trio, {{ executedMovementCount: 1 }});
-const finalY = projectedLexItemY(item, 1, y0, sourceMap, trio);
-if (horizontal !== 680) throw new Error(`fase LEX moet BIJT eerst op bronhoogte 680 tonen, kreeg ${{horizontal}}`);
-if (afterMove !== 420 || finalY !== 420) throw new Error(`BIJT moet in één stap naar de vrije V2-rij 420 gaan, kreeg ${{afterMove}}/${{finalY}}`);
+const horizontal = projectedLexItemY(item, 0, y0, sourceMap, items, {{ executedMovementCount: 0 }});
+const afterMove = projectedLexItemY(item, 0, y0, sourceMap, items, {{ executedMovementCount: 1 }});
+const finalY = projectedLexItemY(item, 0, y0, sourceMap, items);
+if (horizontal !== 420) throw new Error(`fase LEX moet BIJT laag op 420 tonen, kreeg ${{horizontal}}`);
+if (afterMove !== 180 || finalY !== 180) throw new Error(`BIJT moet in één stap rechtstreeks naar V2 180 gaan, kreeg ${{afterMove}}/${{finalY}}`);
 
-const hond = trio[0];
 const man = trio[2];
-const hondProjectionY = projectionAnchorY(hond, 0, y0, sourceMap, trio);
-const hondFinalY = projectedLexItemY(hond, 0, y0, sourceMap, trio);
 const manProjectionY = projectionAnchorY(man, 2, y0, sourceMap, trio);
+const manReservedY = baseLexY(man, 2, y0, sourceMap, trio);
 const manFinalY = projectedLexItemY(man, 2, y0, sourceMap, trio);
-if (hondProjectionY !== 320 || hondFinalY !== 320) {{
-  throw new Error(`HOND moet exact op bronhoogte 320 blijven, kreeg ${{hondProjectionY}}/${{hondFinalY}}`);
-}}
 if (manProjectionY !== 520 || manFinalY !== 520) {{
   throw new Error(`MAN moet exact op bronhoogte 520 blijven, kreeg ${{manProjectionY}}/${{manFinalY}}`);
 }}
-if (logicalPlacementMovementForItem(hond, 0, trio) !== null
-    || logicalPlacementMovementForItem(man, 2, trio) !== null) {{
-  throw new Error('LOG-reservering mag HOND en MAN geen zichtbare verplaatsingsopdracht geven');
+if (manReservedY === manFinalY) {{
+  throw new Error('testopzet moet bewijzen dat LOG-reservering en zichtbare MAN-hoogte afzonderlijk zijn');
+}}
+if (logicalPlacementMovementForItem(man, 2, trio) !== null) {{
+  throw new Error('LOG-reservering mag voor MAN geen zichtbare verplaatsingsopdracht opleveren');
 }}
 
-console.log(`HORIZONTALE LEX CHECK: OK (${{placementContract}}` + ')');
+const lateItem = {{ id: 'late-item', label: 'LATER', source: 'late', role: 'object' }};
+const lateItems = [lateItem];
+state.example.lexItems = lateItems;
+const lateSourceY = projectedLexItemY(lateItem, 0, y0, sourceMap, lateItems, {{ executedMovementCount: 0 }});
+const lateTargetY = projectedLexItemY(lateItem, 0, y0, sourceMap, lateItems, {{ executedMovementCount: 1 }});
+if (lateSourceY !== 120 || lateTargetY !== 120) {{
+  throw new Error(`een lager doel moet in het actieve profiel op bronhoogte blijven: ${{lateSourceY}} → ${{lateTargetY}}`);
+}}
+
+console.log('HORIZONTALE LEX CHECK: OK (omhoog 420 → 180; lager doel geblokkeerd op 120; MAN blijft 520)');
 """
 
 with tempfile.NamedTemporaryFile("w", suffix=".js", encoding="utf-8", delete=False) as handle:

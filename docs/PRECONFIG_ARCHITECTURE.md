@@ -40,11 +40,13 @@ import/export, afhankelijkheden en regressietests samen zijn geïmplementeerd.
 
 ## Gereserveerde toepassingen in rc.42
 
-Config toont drie vervolgtoepassingen als vaste, uitgeschakelde reserveringen:
+Config toont twee vervolgtoepassingen als vaste, uitgeschakelde reserveringen:
 
-- **Vraagzin**;
 - **Nadruk**, met als richtinggevend voorbeeld `juist díe trui`;
 - **Onaffe zin**.
+
+Vraagzin is na rc.42 heringedeeld als actieve Language-Tree-zinsoort en staat
+daarom niet meer in de toepassingreserveringen.
 
 Deze namen staan in `RESERVED_APPLICATION_DEFINITIONS`, niet in de actieve
 `FEATURE_DEFINITIONS`. Daardoor krijgen ze geen checkboxwerking, runtime-state,

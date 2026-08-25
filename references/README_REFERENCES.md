@@ -35,15 +35,3 @@ Zie `references/visuals/`.
 Zie `references/anafoor/` voor het aangeleverde leidende JPG, de
 vereenvoudigde PNG en de twee historische `.graph`-bestanden. Het normatieve
 implementatiecontract staat in `MULTI_OGN_ANAPHOR.md`.
-
-## Context · aangeleverde referentieboom
-
-- `context-taxonomy-source.png`: origineel door de gebruiker aangeleverd
-  referentiebeeld.
-- `context-taxonomy.svg`: zelfstandige normatieve Open Graph Notation met
-  `CONTEXT` als wortel,
-  inclusief de takken `STATISCH`, `DYNAMISCH`, `RICHTING`, `ACTIE`, `HOE` en
-  `MOTIEF`.
-
-De indeling is uitsluitend gedocumenteerd in `CONTEXT_TAXONOMY.md`; een
-actieve Context-engine of Context-relatie is nog niet geïmplementeerd.

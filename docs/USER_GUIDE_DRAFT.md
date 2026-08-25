@@ -3,12 +3,11 @@
 ## Anafoor · multi-OGN bekijken
 
 Open in het hoofdmenu **Language Tree** en kies **Anafoor · multi-OGN**. De
-viewer toont S1 boven S2. In de bronbomen is S2-subject MAN; de rechte rode
-MAN–MAN-lijn zonder pijlpunt betekent dat beide bronknopen dezelfde referent
-hebben. Lees de gezamenlijke LEX-as van boven naar beneden: eerst
-`IK · ZIE · MAN`, daarna standaard `HIJ · DRAAGT · HOED`. Config laat voor de
-LEX-anafoor ook `DIE` en `DIE MAN` kiezen. `DIE VROUW` blijft bij antecedent
-MAN zichtbaar maar is niet toepasselijk en daarom uitgeschakeld.
+viewer toont S1 boven S2. Lees de gezamenlijke LEX-as van boven naar beneden:
+eerst `IK · ZIE · MAN`, daarna `HIJ · DRAAGT · HOED`. MAN is het antecedent;
+HIJ is de anafoor. De rechte rode verticale lijn zonder pijlpunt betekent dat
+beide uitdrukkingen dezelfde referent hebben. Config beschrijft het vaste
+eerste-versiecontract, maar biedt nog geen invoervelden voor andere zinnen.
 
 ## Horizontale LEX-projectie lezen
 
@@ -164,7 +163,7 @@ oude plek wordt trace
 resultaat = voorbeeldzin
 ```
 
-Beschreven zinstypen: hoofdzin, bijzin met OMDAT, topicalisatie, perfectum en voorlopige vraagzin.
+Actieve zinsoorten: mededelende hoofdzin, ja/nee-vraagzin, dat-zin en omdat-zin. Topicalisatie is een plaatsingsregel; perfectum is een werkwoordsvorm.
 
 
 ## v4535 update

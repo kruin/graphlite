@@ -39,6 +39,10 @@ for marker, label in [
     ('src="random-placement-engine.js', "afzonderlijke Random-engine vóór viewer"),
     ('id="gridColorSelect"', "rasterkleurkeuze"),
     ('id="gridLineWeightSelect"', "rasterzwaartekeuze"),
+    ('id="gridSizeHorizontalSelect"', "horizontale rastermaat"),
+    ('id="gridSizeVerticalSelect"', "verticale rastermaat"),
+    ('id="treeLineColorSelect"', "boomkleurkeuze"),
+    ('id="treeLineWeightSelect"', "boomlijnzwaartekeuze"),
     ('id="projectionLineWeightSelect"', "projectielijnzwaartekeuze"),
     ('id="boxLineWeightSelect"', "boxlijnzwaartekeuze"),
 ]:
@@ -55,6 +59,8 @@ for marker, label in [
     ("if (directPlacementActive()) drawDirectPlacement();", "directe renderroute"),
     ("Language Tree blijft de primaire berekende toepassing", "prominente Language Tree-status"),
     ("--og-grid-line-width", "runtime rasterzwaarte"),
+    ("--og-tree-line-width", "runtime boomlijnzwaarte"),
+    ("--og-tree-line-color", "runtime boomkleur"),
     ("--og-projection-line-width", "runtime projectielijnzwaarte"),
     ("--og-box-line-width", "runtime boxlijnzwaarte"),
     ("projectionColorCss(state.lexProjectionColor", "instelbare LEX-kleur"),
@@ -66,6 +72,7 @@ for marker, label in [
     ("stroke: var(--og-grid-color) !important", "instelbare rasterkleur"),
     ("stroke-width: var(--og-projection-line-width) !important", "projectielijngewicht"),
     ("stroke-width: var(--og-box-line-width) !important", "boxlijngewicht"),
+    ("stroke-width:var(--og-tree-line-width,3.55) !important", "boomlijngewicht overrulet historische dunne lijnen"),
     (".placement-mode-option.is-primary", "prominente Language Tree-knop"),
     (".direct-placement-node", "directe OGN-knoopstijl"),
 ]:
@@ -88,6 +95,10 @@ expected_defaults = {
     "logProjectionColor": "purple",
     "gridColor": "soft-slate",
     "gridLineWeight": "normal",
+    "gridSizeHorizontal": "100",
+    "gridSizeVertical": "100",
+    "treeLineColor": "blue",
+    "treeLineWeight": "strong",
     "projectionLineWeight": "normal",
     "boxLineWeight": "normal",
 }

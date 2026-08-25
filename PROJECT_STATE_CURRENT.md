@@ -5,65 +5,55 @@ Leidende status van OpenGraph Lite Viewer `v2.0.0-rc.45`.
 Controlestatus: rc.45 is op 2 augustus 2026 handmatig goedgekeurd, inclusief
 de Greedy Grow-reconstructie, bewijsgrens en afgeleide publicatieslide.
 
-## Actuele source build 20260821.17
+## Actuele source build 20260825.11
 
 - Exacte bronidentiteit:
-  `v2.0.0-rc.45-sources-language-tree-anafoor-extensie-flip-20260821.17`.
-- De publicatienormalizer verwijdert voortaan ook spaties en tabs aan ieder
-  regeleinde. Inspringing, interne lege regels, UTF-8 BOM en de juiste
-  LF/CRLF-keuze blijven behouden. `git diff --cached --check` blokkeert
-  daardoor niet meer op Markdown-trailing-whitespace.
-- Alle oorspronkelijke projectbestanden zijn behouden, inclusief
-  `CONFIG_UI_EXPLANATION_STANDARD.md`, de kopie in `docs/` en de bestaande
-  LEX-profielcontrole. Publiceren staged eerst nieuwe, gewijzigde en
-  verwijderde bestanden met `git add -A`; pas daarna volgt
-  `git add --renormalize`, zodat een ontbrekend gevolgd bestand de
-  publicatie niet meer blokkeert.
-- Publiceren vereist geen lokale Playwright-installatie. De aanvullende
-  Anafoor-browsertest wordt alleen uitgevoerd als Playwright én Chromium
-  aanwezig zijn; ontbrekende optionele hulpmiddelen worden duidelijk gemeld
-  zonder `publish_checked.bat` te blokkeren. Echte runtimefouten blijven
-  publicatie blokkeren.
-- De actuele Sources-projectzip is de leidende basis. Anafoor · multi-OGN is
-  daarop toegevoegd zonder het bestaande Language-Tree-plaatsingscontract te
-  vervangen.
-- **Text** is uitsluitend de centrale uiting: in Syntax bijvoorbeeld
-  `S–O–V`, in Functional `Agens–Predicaat–Patiens`. **Context** is alles
-  daaromheen en is zelf eveneens een afzonderlijke, nog te ontwikkelen
-  geminimaliseerde Open Graph Notation-boom. Iedere insertie is Context,
-  ongeacht `origin`; de verdere uitwerking van Context blijft p.m. Zie
-  `TEXT_AND_CONTEXT.md` en
-  `CONTEXT_TAXONOMY.md`.
-- Anafoor berekent S1 en S2 afzonderlijk, plaatst S1 boven S2 en verschuift
-  S2 star totdat gedeclareerde centrale Text-coreferenties één kolom delen.
-  Alleen LEX realiseert de S2-bronknopen als toepasselijk `HIJ`, `HEM`, `DIE`
-  of `DIE MAN`; `DIE VROUW` hoort alleen bij antecedent `VROUW`.
-- Anafoor-Play voltooit eerst S1 en daarna S2, met afzonderlijke
-  Context-inserties en alleen een V2-Wissel wanneer de zinsregel dat
-  voorschrijft. Daarna verschijnen alle uitgelijnde Text-coreferenties en hun
-  LEX-realisaties. Terug is exact dezelfde tijdlijn in omgekeerde richting.
-- Config bevat vijf echte S1–S2-keuzes. In het opdrachtgeversvoorbeeld
-  **Ik zag de man gisteren. Vandaag was hij er niet meer.** is alleen
-  `MAN→HIJ` een Text-relatie; `GISTEREN`, `VANDAAG`, `ER` en `NIET MEER`
-  zijn Context-inserties.
-  **De boer slaat de ezel omdat hij hem bezit.** bevat `BOER→HIJ` én
-  `EZEL→HEM`; `OMDAT` is Context en `BEZIT` blijft finaal.
-  **De man slaat de hond omdat die hem heeft gebeten.** bevat
-  `HOND→DIE` én `MAN→HEM`; `OMDAT` is Context.
-- Flip heeft per gedeclareerde binaire branch vier varianten: `normal`,
-  `left-right`, `short-long` en `both`. De actieve gezamenlijke solver kiest
-  de branchvarianten in S1 en S2 plus één starre S2-shift. Kort–lang betekent
-  plaatsingsafstand; alleen `linearization: "child-order"` keert ook de
-  LEX-childvolgorde om. Play toont de gekozen flips per zin atomair en terug
-  is exact omgekeerd.
-- `ANAPHOR_AND_S1_S2_RELATION_DEFINITIONS.md` definieert anafoor, antecedent,
-  discourse-referent, coreferentie, temporele/locatieve referentie,
-  toestandsverandering en discourse-relatie. Negen positieve, negatieve en
-  ambigue paren staan machineleesbaar in
-  `samples/s1-s2-relation-fixtures.json`.
-- Voor `HOND BIJT MAN` blijven HOND en MAN exact op hun recursief berekende
-  bronhoogte. Alleen BIJT wisselt naar de vrije LEX-gridrij halverwege die
-  bronhoogten; de uiteindelijke LEX-volgorde blijft `HOND BIJT MAN`.
+  `v2.0.0-rc.45-publish-visible-browser-controls-20260825.11`.
+- De Playwright-browsertest opent eerst het zichtbare hoofdmenu voordat hij
+  Anafoor · multi-OGN kiest, vindt boomknopen in de actuele vormlaag en
+  downloadt OPN via de zichtbare Config-knop. Runtime-screenshots staan in de
+  tijdelijke systeemmap, zodat publicatie geen ongewenste bestanden toevoegt.
+- `publish_checked.bat` controleert vóór de langdurige releasechecks of zowel
+  Playwright 1.61.1 als de bijpassende Chromium-browser lokaal beschikbaar
+  zijn. Zo niet, dan kan de gebruiker na een expliciete `J` de bestaande
+  reproduceerbare installer starten en daarna in dezelfde publicatieroute
+  doorgaan. Bij `N` stopt publicatie vóór staging, commit en push.
+- De canvas-sleepbediening laat configureerbare knopen expliciet vrij;
+  knoopvorm én zichtbare tekst ontvangen echte muisklikken en Enter.
+- De subjectknoop van K2 is rechtstreeks klikbaar en wisselt tussen `HIJ`,
+  `DIE`, `DIE HOND`, `DE HOND` en `JEK`, zonder referent, vrije boomstructuur
+  of verticale verbindingen te veranderen. Rasterbreedte en rasterhoogte zijn
+  onafhankelijk instelbaar van 60% tot 200%; raster en knopen schalen samen.
+- Uitingen `Jan wast zichzelf`, `Jan slaat Jek omdat die hem beet` en
+  `Ken uzelf` openen als twee afzonderlijke OGN-bomen, `K1` boven `K2`.
+  Gedeclareerde anaforen staan verticaal; de causale uiting toont tegelijk
+  `JEK ↔ DIE` en `JAN ↔ HEM`. Eén LEX-as toont uitsluitend de gerealiseerde
+  uiting. Kernzinnen, coreferentie, oorzaak, rol-flip en impliciete
+  geadresseerde blijven bij editor en samengestelde OPN behouden.
+- De causale uiting biedt `hij`, `die` en `die hond` als rechtstreeks
+  selecteerbare anafoorvormen voor dezelfde referent Jek. `DIE HOND` blijft
+  één subject-NP met twee gerealiseerde LEX-woorden. Interface en documentatie
+  onderscheiden noodzakelijke lokale K2-Flip bij dubbele rolwisseling van
+  optionele globale beeldspiegeling; beide verticale anaforen blijven intact.
+- De Play-balk blijft zichtbaar voor beide multi-OGN-varianten. Vier
+  omkeerbare fasen tonen `K1`, `K2`, verticale anaforen en de gezamenlijke
+  LEX-uiting; handmatig vorige/volgende en Reset werken eveneens.
+- De actieve testzin of uiting blijft boven Play en werkvlak zichtbaar.
+  Iedere kernzin volgt `S → NP, VP` en `VP → NP, V`; de gerealiseerde
+  LEX-volgorde wordt zelfstandig afgeleid. Alle binaire knopen vertakken
+  zichtbaar links/rechts. Config bevat boomkleur, boomlijnzwaarte,
+  onafhankelijke horizontale/verticale compactheid en Flip. Flip spiegelt
+  beide bomen zonder structuur, LEX-woordvolgorde of verticale anaforen te
+  veranderen. Standaard zijn boomtakken compact, blauw en zwaar.
+- Iedere korte en lange boomtak verbindt zichtbaar twee vrije knopen op
+  verschillende rijen én kolommen; inkorting volgt de eigen schuine richting.
+  Compacte knoopsymbolen voorkomen overlap. Alleen gedeclareerde anafoorlijnen
+  staan verticaal tussen de twee afzonderlijke kernzinbomen.
+- Anafoor · multi-OGN is een tweede berekende toepassing. S1 en S2 worden
+  afzonderlijk berekend; S1 staat boven S2 en de complete S2 verschuift star
+  totdat antecedent MAN en anafoor HIJ één gedeclareerde kolom delen. De
+  gezamenlijke LEX-as houdt S1 vóór S2 en de coreferentielijn is recht,
+  verticaal en ongericht. De unieke rij-/kolomregel blijft hard per OGN.
 - Het hoofdmenu toont Language Tree prominent als primaire berekende
   toepassing, met Greedy Grow en Random als kleinere directe
   OGN-illustraties. De directe modi schrijven één knoop per stap en verbergen
@@ -71,23 +61,76 @@ de Greedy Grow-reconstructie, bewijsgrens en afgeleide publicatieslide.
 - Random heeft een afzonderlijke seedbare engine. De geaccepteerde
   `greedy-grow-engine.js` blijft bytegelijk aan de carrouselbron en de
   afleidingscontrole blijft geldig.
-- `Config → Beeld → Lijnbeeld` regelt rasterkleur en raster-, projectie- en
-  boxlijnzwaarte. LEX, SYNT en LOG hebben elk een eigen kleur voor as,
+- `Config → Algemeen → Interface & weergave → Lijnbeeld` regelt rasterkleur,
+  boomkleur en raster-, boom-, projectie- en boxlijnzwaarte. LEX, SYNT en LOG
+  hebben elk een eigen kleur voor as,
   projectielijnen en overeenkomstige boxen.
 - `.gitattributes` en `tools/normalize_text_files.py` leggen LF/CRLF en exact
-  één afsluitende EOL structureel vast. `publish_checked.bat` normaliseert,
-  staged eerst met `git add -A` en voert daarna `git add --renormalize` uit
-  vóór de whitespacecontrole.
+  één afsluitende EOL structureel vast. `publish_checked.bat` normaliseert en
+  voert `git add --renormalize` uit vóór de whitespacecontrole.
 - Het volledige contract staat in `LINE_STYLE_AND_PLACEMENT_MODES.md`.
-- Config volgt de actieve plaatsingsmodus. Language Tree toont onder Direct
-  alleen Algemeen. Greedy Grow opent uitsluitend zijn twee eigen velden;
-  Random uitsluitend zijn vijf eigen velden plus de berekende as-impact. De
-  algemene Configschil en methodekeuze zijn in beide methodeschermen verborgen.
+- Config is strikt ingedeeld als Algemeen, Calculated → Language Tree en
+  Direct → Gedeeld / Greedy Grow / Random. Algemeen bevat geen Voorconfig,
+  boom, voorbeelden, LEX, SYNT of LOG; die staan uitsluitend onder Language
+  Tree. Per context zijn alle niet-relevante instellingen no-show. De toepassingsbalk blijft alleen in de volledige Config zichtbaar;
+  vanuit actieve Greedy-Grow- of Random-modus is ook die balk no-show.
+- Ieder zichtbaar Direct-, Greedy- en Random-veld heeft een mobiele,
+  inklapbare uitleg volgens `CONFIG_UI_EXPLANATION_STANDARD.md`.
+- LOG plant mogelijke LEX-plaatsen maar verplaatst zonder expliciete
+  Language-Tree-regel geen bronknoop. In `HOND BIJT MAN` blijft `MAN` exact op
+  MAN-bronhoogte en wisselt uitsluitend `BIJT` naar V2. De tijdelijke
+  ruimte-indicator en de lege SPACE-fase zijn verwijderd; Play gebruikt nu
+  rechtstreeks `LOG → LEX`.
+- Het actieve LEX-profiel bevat uitsluitend upward-Wissels,
+  toepassingsgebonden insertieplaatsen en rechtstreeks geschreven Comp.
+  Generieke lege plaatsen vóór, na of tussen en iedere downward/post-V2-Wissel
+  zijn no-show: geen Config-optie, rendering of nieuwe opslag. Hun gebruik
+  wordt later afzonderlijk geëvalueerd.
+- Upward wordt hard gemeten vanaf de zichtbare horizontale bronprojectie, niet
+  vanaf een door LOG gereserveerde rij. Een lager doel blijft daarom op
+  bronhoogte. Heavy NP Shift, extrapositie en morfologische Lowering blijven
+  buiten rc.45.
+- Zinsoort is een aparte Language-Tree-laag met mededelende hoofdzin,
+  ja/nee-vraagzin, dat-zin en omdat-zin. V1 bedient de vraagzin; DAT en OMDAT
+  worden direct in Comp geschreven. Perfectum blijft een werkwoordsvorm.
+- Greedy/Random Config verbergt daarnaast de viewerwerkbalk, runstatus,
+  voorbeeldweergave, feedback, canvas en save-uitleg. Alleen Terug naar Main,
+  de eigen velden met uitleg en compacte bewaren/herstellen-knoppen blijven
+  over; een andere context wordt eerst in Main gekozen.
 - Eén Random-iteratie is één complete run. De centrale knoop telt niet mee;
-  10 iteraties van 31 knopen leveren 300 waarnemingen per as. Bezettingskans
-  deelt tellingen door het iteratieaantal; Relatief schaalt op de hoogste
-  telling. Deze analyse plant de actieve directe run niet vooruit. Greedy
-  wordt niet zinloos herhaald.
+  10 voltooide iteraties van 31 knopen leveren 300 projectie-hits per as.
+  Bezettingskans deelt tellingen door het ingestelde iteratieaantal; Relatief
+  schaalt op de hoogste telling van de voltooide rondes. Deze analyse plant de
+  actieve directe run niet vooruit. Greedy wordt niet zinloos herhaald.
+- Random Play en Next lopen knoop voor knoop door alle ingestelde iteraties;
+  Previous kan over een rungrens terug en Reset begint bij iteratie 1 volgens
+  het seedbeleid.
+- Na de laatste knoop van iedere Random-ronde worden gebruikte rijen als
+  cumulatieve projectie-hitspots op WEST en gebruikte kolommen op SOUTH
+  toegevoegd. Een herhaalde hit maakt dezelfde spot donkerder en zwaarder.
+  Onvoltooide en toekomstige rondes tellen niet mee; Reset wist de hits en
+  Previous rolt een opnieuw onvoltooide ronde terug.
+- Voor uniforme Random voorspelt de combinatoriek een vrijwel egaal asbeeld.
+  Bij `R = N` wordt iedere niet-centrale WEST-plek iedere ronde geraakt; voor
+  een ruimere as is de verwachte hitkans `(N - 1) / (R - 1)` of, op SOUTH,
+  `(N - 1) / (C - 1)`.
+- Random gebruikt bij een nieuwe standaardconfig **Ergens in beschikbare
+  ruimte** en maximale afmetingen **Interface**. De vaste rechthoek volgt de
+  beschikbare interfaceverhouding en iedere stap kiest uit alle nog vrije
+  rij-kolomcombinaties in die rechthoek. Compact, Gebalanceerd, Ruim en het
+  groeiende inhoudsveld blijven alternatieven; bestaande opgeslagen keuzes
+  worden niet geforceerd gewijzigd.
+- Uniform v1.0 blijft de standaard. Onzuiver uniform v0.1 mengt per vrije
+  ascoördinaat 80% uniform met 20% herhaalgewicht uit uitsluitend voltooide
+  eerdere rondes. Ronde 1 is uniform; unieke rijen en kolommen blijven hard.
+- Random Config bevat model, plaatsing, gridgrootte, conditionele vaste
+  kolommen/rijen, snelheid, iteraties en asbeeld. Vaste maten zijn minimaal het
+  aantal knopen. Snelheid hergebruikt de gedeelde Play-klok en verandert de
+  plaatsingsreeks niet.
+- Seed is een startcode van 1 t/m 4.294.967.295. `20260802` is de datumseed 2
+  augustus 2026; een groter getal geeft niet meer toeval of snelheid.
+- v0.2 (herhaalsterkte) en v0.3 (geheugenvenster) zijn alleen voorspelde
+  contracten en blijven no-show.
 - Het volledige Config-contract staat in `DIRECT_PLACEMENT_CONFIG.md`.
 
 ## OGN-kern en vaste uitlegvolgorde rc.45
@@ -140,7 +183,7 @@ de Greedy Grow-reconstructie, bewijsgrens en afgeleide publicatieslide.
   het Language Tree-eindstadium en de twee GitHub-links. Het handmatige akkoord staat in
   `RC45_OGN_CORE_EXPLANATION_TEST.md`.
 - De oorspronkelijke geaccepteerde rc.45-carrousel blijft ongewijzigd. De
-  actuele source build 20260802.6 breidt de viewer wel uit met plaatsingsmodi,
+  actuele source build 20260802.11 breidt de viewer wel uit met plaatsingsmodi,
   geïsoleerde directe Config, lijnbeeld-Config en structurele
   tekstnormalisatie; graphdata en OPN-formaat blijven ongewijzigd.
 
@@ -169,12 +212,13 @@ de Greedy Grow-reconstructie, bewijsgrens en afgeleide publicatieslide.
   `tools/check_project_config_layers.py` en
   `tools/check_project_config_layers_runtime.js`.
 
-## Gereserveerde toepassingen rc.42
+## Gereserveerde toepassingen rc.42, later herzien
 
-- Config → Toepassingen toont **Vraagzin**, **Nadruk** (`juist díe trui`) en
-  **Onaffe zin** als uitgeschakelde reserveringen.
-- Deze drie staan niet in `FEATURE_DEFINITIONS`, krijgen geen runtime-state en
-  worden niet opgeslagen of geëxporteerd.
+- Config → Toepassingen toont **Nadruk** (`juist díe trui`) en **Onaffe zin**
+  als uitgeschakelde reserveringen. Vraagzin is inmiddels een actieve
+  Language-Tree-zinsoort en geen toepassing.
+- De twee reserveringen staan niet in `FEATURE_DEFINITIONS`, krijgen geen
+  runtime-state en worden niet opgeslagen of geëxporteerd.
 - Een reservering activeert geen voorbeelden, inserties, documentatie,
   resources, layout-demand of renderfunctionaliteit.
 - Vereiste voorconfig en taalkundig contract worden pas bepaald wanneer een
@@ -307,8 +351,10 @@ de Greedy Grow-reconstructie, bewijsgrens en afgeleide publicatieslide.
 
 ## Desktop-MAX
 
-- `Config → Beeld → Boomruimte` staat standaard op `MAX`.
-- `Config → Beeld → Venstervulling` staat standaard op `MAX`.
+- `Config → Calculated → Language Tree → Boom & projecties → Boomruimte`
+  staat standaard op `MAX`.
+- `Config → Algemeen → Interface & weergave → Venstervulling` staat
+  standaard op `MAX`.
 - MAX gebruikt het volledige resterende browservenster en een
   SVG-fontschaal van `1.70`.
 - Raster, hulplabel en het historische ruime stabiliteitskader tellen niet
@@ -324,9 +370,10 @@ de Greedy Grow-reconstructie, bewijsgrens en afgeleide publicatieslide.
 ```text
 structure-config
 → LOG-majors/minors
-→ LOG plant mogelijke LEX-plaatsen
 → horizontale LEX-bronprojectie
-→ alleen expliciete topic-/V1-/V2-regels mogen verplaatsen
+→ LOG-afgeleide neutrale doelrij
+→ eventueel vervangen door expliciet topic-/V2-doel
+→ één rechtstreekse zichtbare LEX-verplaatsing per bronwoord
 → voorbeeldzin als validatie
 ```
 
@@ -337,9 +384,10 @@ structure-config
 - Iedere werkelijke LOG-minor bezet één vast slot en vergroot de afstand tussen
   zijn begrenzende majors met één.
 - De bronknoop bepaalt altijd de hoogte van het LEX-projectieanker.
-- LOG is autoriteit voor de plaatsingsplanning, niet voor zichtbare beweging.
-- Zonder expliciete Wisselregel blijft een woord op bronhoogte; een werkelijk
-  verplaatst woord krijgt één traject en één brontrace.
+- LOG is autoriteit voor de geplande LEX-plaatsen, niet voor zichtbare
+  bronknoopverplaatsing.
+- Bronanker → bepaald einddoel is één verplaatsing langs de LEX-as, met één
+  brontrace.
 - De losse surface-string levert geen layoutcoördinaten. Expliciete
   zinsinstantiemetadata, zoals `post-object-pre-vcluster`, is wel layoutinput
   en heeft in automatische modus voorrang op een brede klasse-default.
@@ -420,8 +468,8 @@ bestaande Ja/Nee-save-werkwijze blijft ongewijzigd.
 - `lex-projection-origin=SOURCE-Y`;
 - `lex-placement-mode=horizontal-then-move`;
 - `example-controls-layout=false`;
-- `play-phases="LOG SPACE LEX"`;
-- `play-space-mode="reserve-empty-lex-rows"`.
+- `play-phases="LOG LEX"`;
+- `play-space-mode="none"`.
 
 De Config-UI kan het interval automatisch uit de klasse kiezen of expliciet
 op `before-S`, `S-O`, `O-V` of `after-V` zetten. De vroegere hostkeuze is
@@ -432,17 +480,17 @@ alleen nog scope-/compatibiliteitsmetadata.
 Na de bestaande knoop-voor-knoopopbouw van de centrale boom:
 
 1. verschijnt de LOG-as met majors en minors;
-2. reserveert LEX ruimte volgens de LOG-slots, zichtbaar als één sobere band;
-3. verschijnen de lexicale bronnen horizontaal op hun bronhoogte en worden
-   uitsluitend de expliciete Wissels uitgevoerd.
+2. verschijnen de lexicale bronnen horizontaal op hun bronhoogte en verhuizen
+   zij elk eenmaal naar het bepaalde einddoel.
 
-LOG reserveert mogelijke plaatsen, maar verplaatst zelf geen bronwoord. SYNT
-en de overige projectiepanelen verschijnen in de eindstap.
+LOG bepaalt eerst de neutrale doelrij; een expliciete topic-/V2-regel kan dat
+doel vóór het tekenen vervangen. SYNT en de overige projectiepanelen
+verschijnen in de eindstap.
 
 De vorige-stapknoppen gebruiken dezelfde stapnummers achteruit. De eindlaag is
 alleen ontgrendeld op exact de laatste stap. Eén stap terug verwijdert daarom
 meteen de eindprojecties; daarna verdwijnen achtereenvolgens LEX-Wissels,
-LEX-inhoud, gereserveerde LEX-ruimte, LOG en de boomknopen.
+LEX-inhoud, LOG en de boomknopen.
 
 ## OPN-opslag
 

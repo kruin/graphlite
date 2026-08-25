@@ -40,7 +40,7 @@ for marker, label in [
     ("safeReadmeEmbeddedImageSource(", "controle ingesloten beeldbron"),
     ("embedded: true", "ingesloten slide"),
     ("config-global-save-card", "globale Config-savebalk"),
-    ("sidePanel.replaceChildren(tabList, saveSlot, ...panels.values())", "savebalk buiten de tabpanelen"),
+    ("sidePanel.replaceChildren(scopeNav, tabList, saveSlot, ...panels.values())", "savebalk buiten de tabpanelen"),
 ]:
     require(JS, marker, label)
 

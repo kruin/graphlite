@@ -1,28 +1,55 @@
 # OpenGraph Lite Viewer v2.0.0-rc.45
 
-## Language Tree · extensie 1 · Anafoor
+> Publiceren: als Playwright of Chromium lokaal ontbreekt, biedt
+> `publish_checked.bat` vóór de controles aan om beide eenmalig met de
+> vastgezette installer te installeren. Antwoord `J`; lokale hulpmiddelen
+> blijven buiten Git en buiten de release-ZIP.
 
-**Text** is uitsluitend de centrale uiting; **Context** is alles daaromheen.
-Beide zijn afzonderlijke Open Graph Notation-structuren; Context is een nog
-te ontwikkelen geminimaliseerde boom. Iedere insertie behoort tot Context,
-ongeacht haar oorsprong. Anafoor
-verbindt alleen centrale Text-bronknopen van afzonderlijk berekende S1- en
-S2-bomen. `HIJ` en `HEM` realiseren die bronknopen op LEX; `GISTEREN`,
-`VANDAAG`, `ER`, `NIET MEER` en `OMDAT` zijn zelfstandige Context-inserties
-zonder Text-boomknoop.
-**De boer slaat de ezel omdat hij hem bezit.** bevat zowel `BOER→HIJ` als
-`EZEL→HEM`; `BEZIT` blijft finaal. Nadere Context-uitwerking blijft p.m.
-De actieve flipfixture **De man slaat de hond omdat die hem heeft gebeten.**
-verbindt `HOND→DIE` en `MAN→HEM`. Iedere gedeclareerde binaire tak kiest in
-één gezamenlijke constraintoplossing normaal, links–rechts, kort–lang of
-beide. Alleen `linearization: "child-order"` keert ook LEX-children om:
-`HEEFT GEBETEN` ↔ `GEBETEN HEEFT`. Zie
-[`FLIP_CONSTRAINT_SOLVER.md`](FLIP_CONSTRAINT_SOLVER.md),
-[`CONTEXT_TAXONOMY.md`](CONTEXT_TAXONOMY.md),
-[`TEXT_AND_CONTEXT.md`](TEXT_AND_CONTEXT.md),
-[`MULTI_OGN_ANAPHOR.md`](MULTI_OGN_ANAPHOR.md),
-[`ANAPHOR_AND_S1_S2_RELATION_DEFINITIONS.md`](ANAPHOR_AND_S1_S2_RELATION_DEFINITIONS.md)
-en [`S1_S2_RELATION_TEST_FIXTURES.md`](S1_S2_RELATION_TEST_FIXTURES.md).
+## Uitingen en kernzinnen
+
+Een uiting bestaat uit één of meer verknoopte kernzinnen. Deze uitgave voegt
+**Jan wast zichzelf**, **Jan slaat Jek omdat die hem beet** en **Ken uzelf**
+toe als selecteerbare uitingen. Hun referenten, coreferentie, oorzaak,
+rol-flip en impliciete geadresseerde staan in
+[`UITING_EN_KERNZINNEN.md`](UITING_EN_KERNZINNEN.md) en
+[`samples/uitingen-kernzinnen.v1.json`](samples/uitingen-kernzinnen.v1.json).
+Iedere uiting opent als twee afzonderlijk berekende kernzinbomen: `K1` boven
+`K2`, met gedeclareerde verticale anafoorverbindingen en één gezamenlijke
+LEX-as voor de gerealiseerde uiting. De causale uiting toont zowel
+`JEK ↔ DIE` als `JAN ↔ HEM`; bij de imperatief ontbreekt het impliciete
+subject op LEX. Het bestaande `S1/S2`-anafoorvoorbeeld blijft beschikbaar.
+De subjectknoop in K2 is rechtstreeks klikbaar en wisselt tussen
+**hij / die / die hond / de hond / Jek**. Alle vormen verwijzen naar Jek;
+`DIE HOND` en `DE HOND` blijven ieder één subject-NP, terwijl LEX twee woorden
+toont. De werkelijke horizontale en verticale rastermaat is onafhankelijk
+instelbaar van 60% tot 200%. K2 moet lokaal flippen wanneer JAN en JEK van subject/
+object wisselen en beide verwijslijnen verticaal moeten blijven.
+De zichtbare Play-balk bouwt iedere compositie op in vier stappen: `K1`,
+`K2`, verticale anaforen en de gerealiseerde LEX-uiting. `←`, `→` en `Reset`
+ondersteunen handmatige opbouw en omgekeerd afspelen.
+De actieve testuiting blijft bovenaan zichtbaar. Iedere kernzin gebruikt
+`S → NP, VP` en `VP → NP, V`; LEX realiseert zelfstandig de uitgesproken
+woordvolgorde. Elke binaire knoop vertakt ook zichtbaar links en rechts.
+Config regelt boomkleur, taklijndikte, onafhankelijke horizontale/verticale
+compactheid en **Flip**. Flip spiegelt de boom, maar verandert geen structuur,
+LEX-woordvolgorde of verticale anaforen: structuur, tekenrichting en
+woordvolgorde zijn afzonderlijke eigenschappen. Standaard zijn de boomtakken
+compact, blauw en zwaar.
+De optionele globale Flip spiegelt beide bomen en verschilt daarmee van de
+noodzakelijke lokale K2-Flip bij een dubbele rolwisseling.
+Iedere boomtak verbindt twee vrije OpenGraph-knopen op verschillende rijen én
+kolommen. Ook korte takken blijven dus schuin; knoopsymbolen en labels passen
+zich aan de compacte weergave aan. Alleen anafoorlijnen staan verticaal.
+
+## Nieuwe berekende toepassing: Anafoor · multi-OGN
+
+Het vaste eerste voorbeeld verbindt twee afzonderlijk berekende OGN-bomen:
+**S1: Ik zie een man. S2: Hij draagt een hoed.** MAN is het antecedent en HIJ
+de anafoor; beide zijn coreferentieel. Na afzonderlijke OGN-validatie staat S1
+boven S2 en verschuift de complete S2 star totdat MAN en HIJ één gedeclareerde
+kolom delen. Eén gezamenlijke LEX-as ordent S1 vóór S2. De MAN–HIJ-verbinding
+is een rechte verticale lijn zonder pijl of richting. Zie
+[`MULTI_OGN_ANAPHOR.md`](MULTI_OGN_ANAPHOR.md).
 
 OpenGraph Lite Viewer is een viewer en testomgeving voor de algemene Open
 Graph Notation. Deze versie gebruikt de volledige v1.0.16-bronset als
@@ -31,8 +58,9 @@ functionele basis.
 Engelse documentatie: [`README.md`](README.md).
 
 > **Controlestatus:** rc.45 is op 2 augustus 2026 handmatig goedgekeurd,
-> inclusief de Greedy Grow-reconstructie en de afgeleide publicatieslide. De
-> automatische controles blijven geometrie en feature-invarianten bewaken.
+> inclusief de Greedy Grow-reconstructie, haar bewijsgrens, desktop, mobiel en
+> publicatiecarrousel. De automatische controles blijven geometrie en
+> feature-invarianten bewaken.
 
 ## OGN-kern: vrije plaatsing eerst
 
@@ -54,42 +82,102 @@ geen geldige rij én kolom, dan wordt geen fallbackknoop getekend.
 Een overtreding heet **gridlijnhergebruik**: horizontaal hergebruik deelt een
 rij; verticaal hergebruik deelt een kolom. Beide zijn altijd ongeldig.
 
-Een ruleset bepaalt welke kandidaten geldig zijn; een
-**zoekstrategie** bepaalt hun testvolgorde. Directe plaatsing schrijft de
-eerstgevonden geldige plek meteen, zodat een andere zoekvolgorde een ander
-beeld kan opleveren.
+```text
+bestaande bezetting
+→ vrije plaatsen
+→ ruleset
+→ zoekstrategie test kandidaten
+→ eerstgevonden geldige plek direct schrijven
+```
 
-**Greedy Grow heeft een geaccepteerde reconstructie.** Het schrijft
-vanaf het centrale gridpunt per stap één dot en bewaart geen toekomstig
-eindbeeld. De historische vierarmige volgorde reproduceert de bewaarde demo's
-van 12, 31 en 96 knopen exact. Vergelijk de teruggevonden experimentele
-zoekvolgorden in [`greedy-grow.html`](../greedy-grow.html); de bewijsgrens staat
-in de [`technische reconstructie`](GREEDY_GROW_RECONSTRUCTION.md).
-Publicatieslide 5 wordt rechtstreeks uit dezelfde engine afgeleid.
+Een ruleset bepaalt welke vrije kandidaten geldig zijn. Een
+**zoekstrategie** bepaalt in welke volgorde kandidaten worden getest. Directe
+plaatsing schrijft de eerstgevonden geldige plek meteen; een andere
+zoekvolgorde kan daardoor een ander beeld opleveren.
 
-De vaste volgorde is **OGN Free Placement → OGN Projection → OGN Berekende
-Plaatsing**. De Two-Pass Language Tree verschijnt pas in de derde laag als één
-toepassing. Zie
+**Greedy Grow heeft een geaccepteerde reconstructie.** De proef begint
+bij het centrale gridpunt en schrijft per stap één dot zonder een toekomstig
+eindbeeld op te slaan. De historische vierarmige volgorde reproduceert de
+bewaarde demo's van 12, 31 en 96 knopen exact; vier teruggevonden
+experimentele zoekvolgorden maken andere groeibeelden controleerbaar. Veldmaat
+en omtrek zijn diagnosewaarden en geen bewezen wereldwijd optimum. Open
+[`greedy-grow.html`](greedy-grow.html) en lees de
+[`technische reconstructie`](GREEDY_GROW_RECONSTRUCTION.md).
+Publicatieslide 5 wordt rechtstreeks uit dezelfde geaccepteerde engine
+afgeleid.
+
+De vaste uitlegvolgorde is:
+
+1. **OGN Free Placement** — knopen één voor één op vrije gridplaatsen;
+2. **OGN Projection** — markers of ordeningen afleiden van reeds geplaatste
+   bronknopen;
+3. **OGN Berekende Plaatsing** — een toepassing berekent eerst een
+   plaatsingsplan.
+
+Zie
 [`OGN_CORE_PLACEMENT_ARCHITECTURE.md`](OGN_CORE_PLACEMENT_ARCHITECTURE.md).
 
-## Plaatsingsmethoden en lijnbeeld
+## Plaatsingsmethoden en instelbaar lijnbeeld
 
-Het menu **Language Tree** houdt Language Tree prominent als primaire
-berekende toepassing en plaatst **Greedy Grow** en **Random** eronder als
-directe OGN-illustraties. Een directe stap schrijft onmiddellijk één knoop op
-een ongebruikte rij én kolom; wisselen verandert de Language-Tree-data niet.
+Het menu **Language Tree** bevat nu de plaatsingshiërarchie zelf. Language
+Tree blijft de prominente, primaire berekende toepassing. **Greedy Grow** en
+**Random** staan er kleiner onder als directe OGN-illustraties. In een directe
+modus schrijft iedere pijl-/Play-stap onmiddellijk één knoop op een nog vrije
+rij én kolom; taalgebonden menu's verdwijnen en de Language-Tree-data blijven
+ongewijzigd. Random gebruikt een afzonderlijke engine met seed en kan de
+geaccepteerde Greedy-Grow-reconstructie dus niet veranderen.
 
-`Config → Beeld → Lijnbeeld` regelt rasterkleur, rasterzwaarte,
-projectielijnzwaarte en boxlijnzwaarte afzonderlijk. LEX, SYNT en LOG hebben
-elk een eigen kleur voor hun assen, projectielijnen en boxen. Zie
-[`LINE_STYLE_AND_PLACEMENT_MODES.md`](LINE_STYLE_AND_PLACEMENT_MODES.md).
+Config heeft nu strikt gescheiden contexten: **Algemeen**, **Calculated →
+Language Tree** en **Direct → Gedeeld / Greedy Grow / Random**. Algemeen bevat
+alleen toepassingsonafhankelijke interface-, LEESMIJ- en bestandsinstellingen;
+Voorconfig, boom, voorbeelden, LEX, SYNT en LOG staan uitsluitend bij Language
+Tree. Per context zijn alle niet-relevante instellingen no-show. Greedy toont alleen strategie en
+oriëntatie; Random alleen zijn eigen seed, resetbeleid, model, plaatsing,
+gridgrootte, optionele vaste maten, snelheid, iteraties en asbeeld. Ieder
+zichtbaar veld heeft in Config een compacte inklapbare uitleg. Een grotere seed
+geeft niet meer toeval en verandert de snelheid niet; `20260802` is alleen de
+herkenbare datum 2 augustus 2026. Zie
+[`CONFIG_UI_EXPLANATION_STANDARD.md`](CONFIG_UI_EXPLANATION_STANDARD.md).
+
+Open je Config vanuit een actieve Greedy-Grow- of Random-modus, dan is ook de
+toepassingsbalk no-show. Je ziet alleen Terug naar Main, de eigen velden met
+Uitleg en Config opslaan. Kies een andere toepassing eerst in Main.
+
+Een nieuwe standaardconfig kiest **Uniform v1.0**, **Ergens in beschikbare
+ruimte** en **Interface · beschikbare ruimte**. **Onzuiver uniform v0.1** is
+een functioneel alternatief dat 20% voorkeur mengt voor asplekken die in
+voltooide eerdere rondes vaker zijn geraakt. Vast grid, Compact,
+Gebalanceerd, Ruim en het groeiende inhoudsveld blijven beschikbaar. v0.2 en
+v0.3 blijven no-show totdat zij werkelijk werken. Play en Next lopen over
+rungrenzen door totdat alle ingestelde iteraties klaar zijn; Previous kan over
+de grens terug. Tien iteraties met
+31 knopen leveren na voltooiing bijvoorbeeld
+10 × 30 = 300 projectie-hits per as; de centrale knoop telt niet mee. Een ronde
+voegt haar rijen pas na de laatste knoop als WEST-spots toe en haar kolommen
+als SOUTH-spots. Een herhaalde hit maakt dezelfde spot donkerder en zwaarder;
+toekomstige rondes worden niet vooraf getekend. Bij Bezettingskans wordt het
+spotgewicht tegen het ingestelde rondetotaal afgezet; Relatief schaalt op de
+hoogste telling van de voltooide rondes. Uniforme Random voorspelt op termijn
+een vrijwel egaal beeld; v0.1 kan vroege verschillen mild versterken. Een ongewijzigde
+Greedy-strategie is deterministisch en wordt daarom niet herhaald. Zie
+[`DIRECT_PLACEMENT_CONFIG.md`](DIRECT_PLACEMENT_CONFIG.md).
+
+Onder `Config → Algemeen → Interface & weergave → Lijnbeeld` zijn rasterkleur en de zwaarte van raster-,
+projectie- en boxlijnen onafhankelijk instelbaar. LEX, SYNT en LOG hebben
+daarnaast elk een eigen kleur—standaard blauw, groen en paars—die door hun as,
+projectielijnen en boxen wordt gevolgd. Dit verandert alleen de presentatie,
+nooit coördinaten of plaatsingsgeldigheid. Zie
+[`LINE_STYLE_AND_PLACEMENT_MODES.md`](LINE_STYLE_AND_PLACEMENT_MODES.md) voor
+de volledige koppeling en het structurele EOF/EOL-publicatiebeleid.
 
 ## Huidige berekende toepassing: Two-Pass Language Tree
 
-Het profiel `OGN Basis` is de basis van de huidige taaltoepassing. Het bevat
-de Syntax-/Functional-boom, het raster, de named projections LEX/SYNT/LOG met
-S/O/V-majors en voorbeelden zonder optionele inserties. Het definieert niet de
-algemene OGN-kern. Insertie staat standaard uit op LEX, SYNT en LOG.
+De huidige viewer implementeert de **Two-Pass Language Tree** als één
+berekende OGN-toepassing. Het profiel `OGN Basis` bevat de gewone
+Syntax-/Functional-boom, het raster, de named projections LEX/SYNT/LOG met
+S/O/V-majors en voorbeelden zonder optionele inserties. De profielnaam betekent
+“basis van deze taaltoepassing” en definieert niet de algemene OGN-kern.
+Insertie staat standaard uit op LEX, SYNT en LOG.
 
 `Config → Voorconfig` schakelt insertie per as onafhankelijk aan of uit. Deze
 voorconfig voegt zelf nog geen taalinhoud toe. Daarna bevat
@@ -99,40 +187,65 @@ dan ontbreken de bijbehorende voorbeelden, LOG-minors, directe LEX-inserties,
 bediening, runtimegegevens, documentatielinks en exportvelden. Een OPN-export
 vermeldt dan `profile: "base"`, `extras: []` en de drie asschakelaars.
 
-Config toont daarnaast drie uitgeschakelde reserveringen voor latere
-toepassingen: **Vraagzin**, **Nadruk** (bijvoorbeeld `juist díe trui`) en
-**Onaffe zin**. Ze staan bewust buiten de actieve featurecatalogus en voegen
-daarom geen state, voorbeelden, inserties, documentatie, opslag, exportvelden
-of rendergedrag toe.
+Config toont daarnaast twee uitgeschakelde reserveringen voor latere
+toepassingen: **Nadruk** (bijvoorbeeld `juist díe trui`) en **Onaffe zin**.
+**Vraagzin** is geen toepassing meer, maar een actieve zinsoort binnen
+Language Tree.
 
 ## Bewerkbare LEESMIJ-items en carousels
 
-`Config → LEESMIJ-items` bewerkt Tonen ja/nee, navigatietitels NL/EN,
-beperkte veilige HTML-inhoud en de eigen carousel. Nee verbergt een item
-zonder het te verwijderen. Scripts, formulieren, styles, frames,
-event-attributen en onveilige linkschema’s worden vóór weergave verwijderd.
+`Config → LEESMIJ-items` bewerkt het volledige item en niet alleen de beelden.
+Ieder onderwerp heeft **Tonen: ja/nee**, een navigatietitel NL/EN en inhoud
+NL/EN in beperkte veilige HTML. Nee verbergt het item zonder het te
+verwijderen; in Config blijft het dus terugvindbaar. Scripts, formulieren,
+styles, frames, event-attributen en onveilige linkschema’s worden vóór
+weergave verwijderd.
 
-Slides behouden beeldpad/https, vorm, alt-tekst en onderschrift NL/EN. Onder
-`Config → Bestanden & export` kan een lokale PNG, JPEG, WebP of GIF rechtstreeks
-worden ingesloten, met maximaal 1,25 MB per beeld en een begrensde gezamenlijke
-payload. Handmatig getypte `data:`-URL’s blijven geblokkeerd. De gezamenlijke
-Config-savebalk is op ieder Config-onderdeel zichtbaar.
+Dezelfde editor beheert de carousel: actieve slide toevoegen/verwijderen,
+vorige/volgende, breed/smal, alt-tekst en onderschrift NL/EN, live
+voorvertoning en volledig herstel van het item. Een gewoon beeldpad of
+https-URL blijft mogelijk. Onder `Config → Bestanden & export` kan daarnaast
+een lokale PNG, JPEG, WebP of GIF rechtstreeks als ingesloten slide worden
+ingevoegd. De grens is 1,25 MB per beeld en ook de totale ingesloten opslag is
+begrensd. Een handmatig getypte `data:`-URL blijft geblokkeerd; alleen de
+vertrouwde bestandsroute mag een ingesloten beeld maken.
 
-## Projectconfig en publicatiecarrousel
+De gezamenlijke Config-savebalk staat boven ieder Config-onderdeel. Titel,
+itemtekst, Tonen ja/nee en carousel worden samen bewaard. Graph-sneltoetsen
+blijven uit zolang Config of LEESMIJ openstaat en wanneer een invoerveld focus
+heeft.
 
-Iedere projectzip bevat `config/default-config.json` en
-`config/user-config.json`. De ingeschakelde user-config overschrijft de
-standaard zonder die te vervangen. Via `start_local_viewer.bat` kan
-`Schrijf huidige Config naar project` de actuele snapshot met de vaste lokale
-allowlist naar `config/user-config.json` schrijven. De gewone webversie biedt
-een downloadfallback.
+## Standaardconfig, project-user-config en browser-Config
 
-De voorrang is code-defaults → standaardconfig → project-user-config → lokaal
-bewaarde browser-Config. De zip bevat ook zeven genummerde PNG-slides van
-1080 × 1080 onder
-[`publicatie-carrousel/slides/`](../publicatie-carrousel/slides/) en een
-bewerkbare [`HTML-bron`](../publicatie-carrousel/index.html). Upload `01` tot
-en met `07` als één gallery.
+Iedere volledige projectzip bevat
+`config/default-config.json` én `config/user-config.json`. De viewer past eerst
+de standaard toe en daarna de ingeschakelde user-config als overschrijving.
+De standaard wordt dus niet fysiek vervangen.
+
+Start via `start_local_viewer.bat` en kies
+`Config → Bestanden & export → Schrijf huidige Config naar project`. De lokale
+server schrijft de actuele snapshot via een vaste allowlist naar
+`config/user-config.json`; dat bestand gaat daarna mee in de volgende
+volledige bronzip. Op een gewone webserver gebruik je
+`Download user-config` en plaats je het bestand handmatig in `config/`.
+
+De voorrang is:
+
+```text
+code-defaults → config/default-config.json → config/user-config.json
+→ lokaal bewaarde browser-Config
+```
+
+De laatste browsersnapshot blijft apparaatgebonden totdat hij naar het
+projectbestand wordt geschreven.
+
+## Kant-en-klare publicatiecarrousel
+
+Iedere projectzip bevat zeven genummerde PNG-slides van 1080 × 1080 onder
+[`publicatie-carrousel/slides/`](publicatie-carrousel/slides/) en de
+zelfstandige, bewerkbare bron
+[`publicatie-carrousel/index.html`](publicatie-carrousel/index.html). Upload
+`01` tot en met `07` in die volgorde als één beeldgallery.
 
 Slide 4 toont knopen die naar WEST, SOUTH en EAST projecteren. Slide 5 is het
 voorbeeld **Direct — Greedy Grow**; slide 6 is
@@ -140,26 +253,24 @@ voorbeeld **Direct — Greedy Grow**; slide 6 is
 LEX-as. Beide voorbeeldslides verwijzen naar `github.com/kruin/graphlite`.
 
 Wil je alleen publiceren, gebruik dan de meegeleverde PNG's; installeren is
-niet nodig. Ook `publish_checked.bat` vereist geen Playwright: de optionele
-Anafoor-browsertest meldt ontbrekende browserhulpmiddelen en publicatie gaat
-gewoon door. Wil je de carrousel wijzigen, werk dan bij voorkeur in de
+niet nodig. Wil je de carrousel wijzigen, werk dan bij voorkeur in de
 uitgepakte volledige projectzip. Draai daar éénmalig
 `installeer-carrousel-tools.bat`, bewerk uitsluitend de HTML-bron en draai
-daarna `maak-publicatie-carrousel.bat`. Node.js 18 of hoger is vereist; Node.js
-18.14 voldoet. Controleer de nieuwe PNG's en draai vervolgens
+daarna `maak-publicatie-carrousel.bat`. Node.js 18 of hoger is vereist; jouw
+Node.js 18.14 voldoet. Controleer de nieuwe PNG's en draai vervolgens
 `maak-volledige-zip.bat`, zodat de wijziging ook in de projectzip terechtkomt.
 De losse carrouselzip kan zichzelf eveneens opnieuw afleiden, maar wijzigt geen
 afzonderlijke projectmap. Lokale `node_modules` en browserbestanden gaan nooit
 mee in een zip.
 
-[`PUBLICATIE_README.md`](../PUBLICATIE_README.md) bevat volgorde, alt-teksten,
-Reddit-instructies en teksten voor LinkedIn, Facebook, YouTube, Bluesky,
-Mastodon, X en GitHub. Gebruik
-[`RC45_OGN_CORE_EXPLANATION_TEST.md`](../RC45_OGN_CORE_EXPLANATION_TEST.md)
-legt het handmatige akkoord voor kernuitleg, Greedy Grow en carrousel vast. De
-geërfde Config- en projectzipcontrole
-blijft in
-[`RC43_CONFIG_README_PROJECT_TEST.md`](../RC43_CONFIG_README_PROJECT_TEST.md).
+[`PUBLICATIE_README.md`](PUBLICATIE_README.md) bevat de exacte volgorde,
+alt-tekst per slide, Reddit-instructies en kopieerbare Nederlandse en Engelse
+teksten voor de overige platforms. De live- en GitHub-links zijn ingevuld;
+alleen een optionele videolink en afzender blijven te vervangen. rc.45 blijft door de versienaam een release
+candidate en is op 2 augustus 2026 handmatig goedgekeurd. Gebruik
+[`RC45_OGN_CORE_EXPLANATION_TEST.md`](RC45_OGN_CORE_EXPLANATION_TEST.md) voor
+de kernuitleg en carrouselcontrole; de geërfde rc.43-Configcontrole blijft staan in
+[`RC43_CONFIG_README_PROJECT_TEST.md`](RC43_CONFIG_README_PROJECT_TEST.md).
 
 ## Recursieve layout op inhoudsmaat
 
@@ -198,7 +309,7 @@ blijven en kan verticale witruimte overblijven. Pan/zoom blijft beschikbaar.
 Een gestapelde portretcompositie is een afzonderlijke toekomstige layoutkeuze.
 
 Gebruik voor de handmatige goedkeuring
-[`../RC41_RECURSIVE_LAYOUT_TEST.md`](../RC41_RECURSIVE_LAYOUT_TEST.md).
+[`RC41_RECURSIVE_LAYOUT_TEST.md`](RC41_RECURSIVE_LAYOUT_TEST.md).
 
 ## Lexicale gebruiksprofielen en gebruikerskeuze
 
@@ -234,16 +345,28 @@ Zie `LEXICON_USAGE_PROFILES_AND_DISAMBIGUATION.md`.
 ## Projectiecontract
 
 ```text
-bronknoop → horizontale LEX-projectie → één rechtstreekse verplaatsing naar het bepaalde LEX-doel
+bronknoop → horizontale LEX-projectie op bronhoogte → alleen een expliciete Wissel kan verplaatsen
 ```
 
 `S`, `O` en `V` zijn majors. Een bijwoordelijke insertie kan een LOG-minor zijn, een directe LEX-insertie zijn, of beide bronnen combineren. Iedere minor vergroot de afstand tussen de begrenzende majors met
-één vast slot. LOG bepaalt de neutrale doelrij, maar nooit de oorsprong van de
-projectie: iedere lexicale bron projecteert eerst horizontaal op zijn
-bronhoogte. Een expliciete topic- of V2-regel mag dat neutrale doel vóór het
-tekenen vervangen. Daardoor toont de viewer per bronwoord hoogstens één
-LEX-verplaatsing en één brontrace, zonder LOG-tussentrace. De voorbeeldzin
-bepaalt de layout niet. Zie `projectie-master-spec.md`.
+één vast slot. LOG plant mogelijke LEX-plaatsen, maar verplaatst daarmee geen
+bronknoop: iedere lexicale bron projecteert horizontaal op zijn bronhoogte.
+Alleen een expliciet doel dat werkelijk hoger ligt dan die zichtbare bron mag
+een Wissel uitvoeren. In `HOND BIJT MAN` blijft `MAN` exact op MAN-hoogte;
+alleen `BIJT` kan omhoog naar V2. LOG-reserveringen veranderen deze harde
+bronreferentie niet. Zie `projectie-master-spec.md`.
+
+### Actief LEX-profiel en zinsoort
+
+LEX bevat voorlopig uitsluitend upward-Wissels, toepassingsgebonden inserties
+en rechtstreeks geschreven Comp. Generieke lege plekken vóór, na of tussen
+en iedere downward/post-V2-Wissel zijn no-show: geen Config, rendering of
+nieuwe opslag. Hun mogelijke gebruik wordt later afzonderlijk geëvalueerd.
+
+Zinsoort is een eigen Language-Tree-keuze: **mededelende hoofdzin**,
+**ja/nee-vraagzin**, **dat-zin** of **omdat-zin**. De vraagzin gebruikt V1;
+DAT en OMDAT worden rechtstreeks in Comp geschreven. Perfectum is een
+werkwoordsvorm en geen zinsoort. Zie `LEX_MOVEMENT_RULES.md`.
 
 ## Start
 
@@ -310,7 +433,7 @@ https://kruin.github.io/graphlite/reset-cache.html?ogv=v2.0.0-rc.45
 ## Desktopweergave
 
 De leesbare weergave over het volledige venster is de standaard. Deze staat
-direct bovenaan onder `Config → Beeld`:
+direct bovenaan onder `Config → Calculated → Language Tree → Boom & projecties`:
 
 ```text
 Boomruimte   = MAX · groot letterbeeld / lage boom
@@ -376,31 +499,42 @@ download klaar is en upload de uitvoer via LinkedIns Video-actie. Zie
 
 ## Lees mij / README
 
-De knop `README` / `LEESMIJ` opent onmiddellijk op **Start · OGN-kern**. De
-eerste carousel verklaart vrije gridplaatsen, knopen sequentieel schrijven,
-zoekvolgorde en de vaste laagvolgorde. Er wordt nog geen gespecialiseerde
-uitbreiding geïntroduceerd.
+De knop `README` / `LEESMIJ` opent onmiddellijk op
+**Start · OGN-kern**. De onderwerpenlijst en geselecteerde tekst blijven in
+iedere interfacevorm onafhankelijk scrollbaar.
+
+De eerste carousel verklaart de toepassingsonafhankelijke kern in vier
+stappen: vrije gridplaatsen, knopen sequentieel schrijven, zoekvolgorde en de
+vaste laagvolgorde. Er wordt nog geen gespecialiseerde uitbreiding
+geïntroduceerd.
+
+![OGN-kern: vrije gridplaatsen](images/readme/ogn-free-grid.svg)
+
+![OGN-kern: schrijf één knoop per stap](images/readme/ogn-sequential-write.svg)
+
+![OGN-kern: verschillende zoekvolgorden leveren verschillende directe plaatsingen](images/readme/ogn-placement-strategies.svg)
+
+![OGN-lagen: vrije plaatsing, projectie, berekende plaatsing](images/readme/ogn-three-layers.svg)
 
 De externe voorbeeldzoekopdracht opent in een apart browservenster. Na het
 sluiten van dat venster staat de app nog open.
 
 ## Play-volgorde
 
-Na de opbouw van de centrale boom toont Play het projectieproces in drie
+Na de opbouw van de centrale boom toont Play het projectieproces in twee
 afzonderlijke fasen:
 
 ```text
 1. LOG-as tekenen en majors/minors plaatsen
-2. LOG-afgeleide ruimte op de LEX-as reserveren
-3. lexicale bronnen horizontaal naar LEX projecteren en iedere bron eenmaal
-   naar het bepaalde doel verplaatsen
+2. lexicale bronnen horizontaal op bronhoogte projecteren en uitsluitend
+   expliciete upward-Wissels naar topic, V1 of V2 uitvoeren
 ```
 
-Het doel is de LOG-afgeleide rij, tenzij een expliciete topic-/V2-regel die rij
-vervangt. SYNT en de overige projectiepanelen verschijnen in de laatste stap.
+Er is geen afzonderlijke lege ruimtefase. SYNT en de overige
+projectiepanelen verschijnen in de laatste stap.
 De knop voor de vorige stap keert exact dezelfde volgorde om: eerst verdwijnt
-de laatste projectielaag, daarna volgen de LEX-verplaatsingen, de LEX-ruimte,
-LOG en ten slotte de centrale boom.
+de laatste projectielaag, daarna volgen de LEX-verplaatsingen, LOG en ten
+slotte de centrale boom.
 
 ## Centrale views
 
@@ -539,3 +673,7 @@ Play/Groei onthult de vooraf berekende layout stap voor stap.
 - Onderzoeksnotatie: `S+ np-VP`.
 - Eerst binaire bomen; later niet-binaire, meertakkige bomen.
 - Flip van het verbale cluster: `heeft gebeten` ↔ `gebeten heeft`.
+
+## Verstelbaar LEESMIJ-tekstscherm
+
+Sleep in de ingebouwde LEESMIJ de scheidingslijn tussen de onderwerpenlijst en de geselecteerde tekst om het tekstscherm groter of kleiner te maken. Op desktop/landscape werkt dit horizontaal; op portrait verticaal.

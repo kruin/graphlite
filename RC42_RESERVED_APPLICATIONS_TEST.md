@@ -2,8 +2,9 @@
 
 ## Doel
 
-Controleren dat Vraagzin, Nadruk en Onaffe zin zichtbaar gereserveerd zijn in
-Config, zonder al als echte toepassingen te functioneren.
+Historisch controlepunt: Vraagzin, Nadruk en Onaffe zin waren in rc.42
+gereserveerd. In de actuele bron is Vraagzin terecht een Language-Tree-zinsoort;
+alleen Nadruk en Onaffe zin blijven toepassingreserveringen.
 
 ## Automatische controle
 
@@ -15,10 +16,10 @@ python tools/check_release.py
 
 De controles bewaken:
 
-1. exact drie reserveringen met stabiele IDs;
-2. de zichtbare namen Vraagzin, Nadruk en Onaffe zin;
+1. exact twee reserveringen met stabiele IDs;
+2. de zichtbare namen Nadruk en Onaffe zin;
 3. het voorbeeld `juist díe trui` bij Nadruk;
-4. drie uitgeschakelde en niet-aangevinkte inputs;
+4. twee uitgeschakelde en niet-aangevinkte inputs;
 5. afwezigheid uit `FEATURE_DEFINITIONS` en `state.features`;
 6. afwezigheid uit `metadata.extras` en andere OPN-velden;
 7. ongewijzigd gedrag wanneer LEX, SYNT of LOG wordt ingeschakeld;
@@ -29,12 +30,12 @@ De controles bewaken:
 - [ ] Open `Config → Toepassingen`.
 - [ ] Bijwoorden staat als bestaande toepassing bovenaan.
 - [ ] Daaronder staat het duidelijke blok `Gereserveerde toepassingen`.
-- [ ] Vraagzin, Nadruk en Onaffe zin zijn alle drie zichtbaar.
+- [ ] Nadruk en Onaffe zin zijn beide zichtbaar; Vraagzin staat bij Zinsoort.
 - [ ] Bij Nadruk staat exact het voorbeeld `juist díe trui`.
-- [ ] Geen van de drie reserveringen kan worden aangevinkt.
+- [ ] Geen van de twee reserveringen kan worden aangevinkt.
 - [ ] De uitleg zegt dat ze niets toevoegen aan voorbeelden, inserties,
   documentatie, opslag, export of rendering.
-- [ ] Schakel LEX, SYNT en LOG afzonderlijk en gezamenlijk in; de drie
+- [ ] Schakel LEX, SYNT en LOG afzonderlijk en gezamenlijk in; de twee
   reserveringen blijven uitgeschakeld.
 - [ ] Activeer Bijwoorden met LEX + LOG; alleen Bijwoorden wordt actief.
 - [ ] Exporteer OPN met en zonder Bijwoorden; de gereserveerde IDs ontbreken

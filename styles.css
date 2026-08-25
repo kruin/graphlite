@@ -602,17 +602,18 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
   stroke-dasharray: 8 5;
   fill: #fff7ed;
 }
-.lex-space-reservation {
-  fill: color-mix(in srgb, var(--lex), transparent 84%);
-  stroke: none;
-  pointer-events: none;
-}
-.lex-space-reservation-cap {
+.lex-open-slot {
+  fill: color-mix(in srgb, var(--lex), white 94%);
   stroke: var(--lex);
-  stroke-width: 1.4;
-  opacity: .58;
-  vector-effect: non-scaling-stroke;
-  pointer-events: none;
+  stroke-dasharray: 4 6;
+  opacity: .9;
+}
+.lex-open-slot-label {
+  fill: var(--lex);
+  letter-spacing: .08em;
+}
+.lex-open-slot-caption {
+  fill: color-mix(in srgb, var(--lex), #334155 45%);
 }
 .comp-slot {
   stroke: #f97316;
@@ -2822,6 +2823,7 @@ body.config-screen-active [data-config-tab-panel="direct"] > .direct-config-card
 /* In een actieve directe methode is Config geen algemeen projectscherm.
    Toon uitsluitend de eigen methodevelden en de eerder vereiste savebalk. */
 body.config-screen-active.config-direct-method-only .config-tab-list,
+body.config-screen-active.config-direct-method-only .config-scope-nav,
 body.config-screen-active.config-direct-method-only #configLanguageMenu,
 body.config-screen-active.config-direct-method-only #openHelpFromConfigButton,
 body.config-screen-active.config-direct-method-only .config-topbar > div {
@@ -4155,6 +4157,53 @@ body.config-screen-active .branch-config-grid {
   border: 1px solid color-mix(in srgb, var(--accent), var(--line) 65%);
   border-radius: .85rem;
   background: color-mix(in srgb, var(--panel), var(--accent) 7%);
+}
+.lex-open-slot-field {
+  display: grid;
+  gap: .5rem;
+  margin: .25rem 0 .75rem;
+  padding: .75rem;
+  border: 1px solid color-mix(in srgb, var(--lex), var(--line) 65%);
+  border-radius: .85rem;
+  background: color-mix(in srgb, var(--panel), var(--lex) 5%);
+}
+.lex-open-slot-field legend {
+  padding: 0 .35rem;
+  font-weight: 950;
+}
+.lex-open-slot-config-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: .5rem;
+}
+.lex-open-slot-config-grid .field {
+  grid-template-columns: 1fr !important;
+  align-items: start;
+}
+.lex-open-slot-config-grid select {
+  width: 100%;
+  min-width: 0;
+}
+.lex-open-slot-live-explanation {
+  margin: 0;
+  padding: .65rem .75rem;
+  border-left: 4px solid var(--lex);
+  border-radius: .55rem;
+  background: color-mix(in srgb, var(--panel), var(--lex) 10%);
+  color: var(--text);
+  font-size: .88rem;
+  font-weight: 750;
+  line-height: 1.45;
+}
+.lex-open-slot-field .config-control-explanation[open] {
+  border-color: color-mix(in srgb, var(--lex), var(--line) 45%);
+}
+.lex-open-slot-field .config-control-explanation p,
+.lex-open-slot-field .config-control-explanation li {
+  line-height: 1.48;
+}
+@media (max-width: 720px) {
+  .lex-open-slot-config-grid { grid-template-columns: 1fr; }
 }
 .lex-adverb-insert-field legend {
   padding: 0 .35rem;
@@ -6807,7 +6856,6 @@ body.main-screen-active .syntax-rule-box,
 body.main-screen-active .free-slot-box,
 body.main-screen-active .lex-local-slot,
 body.main-screen-active .lex-free-slot,
-body.main-screen-active .lex-space-reservation-cap,
 body.main-screen-active .logical-order-box,
 body.main-screen-active .projection-stability-frame {
   stroke-width: .52 !important;
@@ -7189,6 +7237,24 @@ body.help-screen-active .help-topic-stage {
 body.help-screen-active .help-topic-stage { scroll-padding-top:.6rem !important; }
 
 /* Compact Config overview added without changing save/restore semantics. */
+.config-scope-nav {
+  display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:.55rem; width:100%;
+  padding:.55rem; border:1px solid var(--line); border-radius:.82rem;
+  background:color-mix(in srgb,var(--panel),var(--bg) 7%);
+}
+.config-scope-group { display:flex; flex-wrap:wrap; align-items:center; gap:.38rem; min-width:0; }
+.config-scope-group-label {
+  flex:0 0 100%; color:var(--muted); font-size:.7rem; font-weight:900; letter-spacing:.045em; text-transform:uppercase;
+}
+.config-scope-button {
+  flex:1 1 7rem; min-height:2.35rem; padding:.42rem .58rem; border:1px solid var(--line);
+  border-radius:.62rem; background:var(--panel); color:var(--text); font-weight:850; cursor:pointer;
+}
+.config-scope-button.active {
+  border-color:var(--accent); background:color-mix(in srgb,var(--accent),var(--panel) 86%);
+  box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent),transparent 40%);
+}
+.config-scope-button:hover,.config-scope-button:focus-visible { border-color:var(--accent); }
 .config-dashboard {
   display:grid; grid-template-columns:repeat(auto-fit,minmax(13rem,1fr)); gap:.58rem; margin-top:.7rem;
 }
@@ -7202,50 +7268,6 @@ body.help-screen-active .help-topic-stage { scroll-padding-top:.6rem !important;
 }
 .config-dashboard > button strong { font-size:.95rem; }
 .config-dashboard > button span { color:var(--muted); font-size:.78rem; line-height:1.35; }
-
-.anaphor-combinations-editor-field {
-  display:grid;
-  gap:.45rem;
-  margin-top:.8rem;
-  color:var(--muted);
-  font-size:.86rem;
-  font-weight:800;
-}
-.anaphor-combinations-editor-field textarea {
-  width:100%;
-  min-height:20rem;
-  max-height:58vh;
-  resize:vertical;
-  border:1px solid var(--line);
-  border-radius:12px;
-  padding:.8rem;
-  background:#f8fafc;
-  color:var(--text);
-  font:500 .78rem/1.45 ui-monospace,SFMono-Regular,Consolas,monospace;
-  tab-size:2;
-}
-.anaphor-combinations-editor-actions { margin-top:.65rem; }
-.anaphor-combinations-editor-status.is-error { color:#b91c1c; font-weight:850; }
-.anaphor-relation-notation { margin-top:.8rem; }
-.anaphor-relation-notation summary { cursor:pointer; font-weight:850; }
-.anaphor-relation-notation pre {
-  max-height:34rem;
-  overflow:auto;
-  padding:.75rem;
-  border:1px solid var(--line);
-  border-radius:12px;
-  background:#0f172a;
-  color:#e2e8f0;
-  white-space:pre;
-}
-.placement-mode-group-label {
-  margin:.45rem 0 .2rem;
-  color:var(--muted);
-  font-size:.72rem;
-  font-weight:900;
-  letter-spacing:.06em;
-  text-transform:uppercase;
-}
 body.config-screen-active .config-item-help {
   display:block; margin-top:.28rem; color:var(--muted); font-size:.73rem; line-height:1.35;
 }
@@ -7261,12 +7283,32 @@ body.config-screen-active .config-item-help {
 .direct-config-choice-grid {
   display:grid; grid-template-columns:repeat(auto-fit,minmax(12rem,1fr)); gap:.58rem; align-items:start;
 }
+#direct-config-panel-random .direct-config-choice-grid {
+  grid-template-columns:repeat(2,minmax(0,1fr));
+}
+.direct-config-field { min-width:0; }
 .direct-config-choice-grid .select-field { min-width:0; }
 .direct-config-choice-grid .select-field select,
 .direct-config-choice-grid .select-field input[type="number"] { width:100%; box-sizing:border-box; }
+.config-control-explanation {
+  margin-top:.3rem; padding:.25rem .42rem; border:1px solid color-mix(in srgb,var(--line),transparent 28%);
+  border-radius:.55rem; background:color-mix(in srgb,var(--panel),var(--bg) 5%); color:var(--muted);
+}
+.config-control-explanation summary {
+  width:max-content; max-width:100%; color:var(--muted); font-size:.71rem; font-weight:850; cursor:pointer;
+}
+.config-control-explanation small {
+  display:block; padding:.35rem .08rem .08rem; font-size:.73rem; line-height:1.4;
+}
+.random-fixed-grid-fields {
+  grid-column:1 / -1; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.58rem;
+  padding:.58rem; border:1px dashed var(--line); border-radius:.68rem;
+}
+.random-fixed-grid-fields[hidden] { display:none !important; }
 .direct-config-wide { grid-column:span 2; }
 .direct-config-toggle-grid { margin-bottom:.65rem; }
 .direct-config-toggle-grid > label,
+.direct-config-toggle-field > label,
 .direct-config-check-field {
   display:flex; align-items:flex-start; gap:.45rem; min-height:2.7rem; padding:.55rem;
   border:1px solid var(--line); border-radius:.68rem; color:var(--text); font-weight:800;
@@ -7274,17 +7316,11 @@ body.config-screen-active .config-item-help {
 }
 .direct-config-toggle-grid input,
 .direct-config-check-field input { margin-top:.15rem; }
+.direct-config-toggle-field { min-width:0; }
 .direct-config-method-panel[hidden] { display:none !important; }
 .direct-config-method-panel.active { display:grid; gap:.65rem; }
 .direct-config-actions { display:flex; flex-wrap:wrap; gap:.45rem; }
 .direct-config-actions button { min-height:2.5rem; font-weight:850; }
-.random-iteration-impact {
-  padding:.68rem .75rem; border:1px solid color-mix(in srgb,#f97316,var(--line) 48%);
-  border-radius:.7rem; background:color-mix(in srgb,#f97316,var(--panel) 94%);
-  color:var(--text); font-size:.8rem; font-weight:800; line-height:1.45;
-}
-
-
 /* v2.0.0-rc.36: twee traditionele bomen in het eerste README-item.
    De smalle variant krijgt een staand kader zodat labels leesbaar blijven. */
 .readme-tree-carousel[data-active-shape="narrow"] .readme-carousel-viewport {
@@ -8081,22 +8117,112 @@ body.placement-direct-active .lex-ambiguity-panel {
   font-size: calc(13px * var(--og-font-scale));
   font-weight: 800;
 }
-#graphSvg .direct-axis-pattern line {
-  stroke-width:3; stroke-linecap:round; vector-effect:non-scaling-stroke; opacity:.68;
+#graphSvg .direct-axis-hit-axis {
+  fill:none; stroke-width:1.6; vector-effect:non-scaling-stroke; opacity:.72;
 }
-#graphSvg .direct-axis-pattern-west { stroke:#2563eb; }
-#graphSvg .direct-axis-pattern-south { stroke:#f97316; }
+#graphSvg .direct-axis-hit-axis-west { stroke:#2563eb; }
+#graphSvg .direct-axis-hit-axis-south { stroke:#f97316; }
+#graphSvg .direct-axis-hit-spot {
+  vector-effect:non-scaling-stroke;
+  transition:r .18s ease,fill-opacity .18s ease,stroke-width .18s ease;
+}
+#graphSvg .direct-axis-hit-west { fill:#2563eb; stroke:#1d4ed8; }
+#graphSvg .direct-axis-hit-south { fill:#f97316; stroke:#c2410c; }
 #graphSvg .direct-axis-pattern-label {
   fill:var(--muted); font-size:calc(10px * var(--og-font-scale)); font-weight:900; letter-spacing:.04em;
 }
 
 @media (max-width: 720px) {
+  .config-scope-nav { grid-template-columns:1fr; }
   .projection-color-field,
   .line-style-field { grid-template-columns: 1fr; }
   .placement-mode-direct-options { grid-template-columns: 1fr; }
   .direct-config-choice-grid { grid-template-columns:1fr; }
+  #direct-config-panel-random .direct-config-choice-grid { grid-template-columns:1fr; }
+  .random-fixed-grid-fields { grid-template-columns:1fr; }
   .direct-config-wide { grid-column:auto; }
 }
+
+/* Een actieve directe methode heeft een taakscherm, geen algemene viewer- of
+   Configpagina: Terug, eigen wijzigbare velden en compacte save-acties. */
+body.config-screen-active.config-direct-method-only .projection-sticky-bar,
+body.config-screen-active.config-direct-method-only .main-play-reset-bar,
+body.config-screen-active.config-direct-method-only .toolbar,
+body.config-screen-active.config-direct-method-only .status-panel,
+body.config-screen-active.config-direct-method-only .intro-panel,
+body.config-screen-active.config-direct-method-only .text-panel,
+body.config-screen-active.config-direct-method-only .mobile-growth-nav,
+body.config-screen-active.config-direct-method-only .mobile-bottom-nav,
+body.config-screen-active.config-direct-method-only .mobile-sheet,
+body.config-screen-active.config-direct-method-only .mobile-sheet-backdrop {
+  display:none !important;
+}
+body.config-screen-active.config-direct-method-only .app-shell {
+  width:100% !important;
+  max-width:48rem !important;
+  gap:.5rem !important;
+  padding:.55rem !important;
+}
+body.config-screen-active.config-direct-method-only .config-topbar {
+  position:static !important;
+  width:100% !important;
+  max-width:46rem !important;
+  margin-inline:auto !important;
+  padding:0 !important;
+  border:0 !important;
+  border-radius:0 !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+}
+body.config-screen-active.config-direct-method-only .workspace,
+body.config-screen-active.config-direct-method-only .side-panel {
+  width:100% !important;
+  max-width:46rem !important;
+  min-height:0 !important;
+  height:auto !important;
+  max-height:none !important;
+  margin:0 auto !important;
+  padding:0 !important;
+  gap:.5rem !important;
+  overflow:visible !important;
+  background:transparent !important;
+  border:0 !important;
+  border-radius:0 !important;
+}
+body.config-screen-active.config-direct-method-only [data-config-tab-panel="direct"],
+body.config-screen-active.config-direct-method-only .config-global-save-slot {
+  width:100% !important;
+  max-width:none !important;
+  margin:0 !important;
+}
+body.config-screen-active.config-direct-method-only .direct-config-card {
+  margin:0 !important;
+  padding:0 !important;
+  border:0 !important;
+  border-radius:0 !important;
+  background:transparent !important;
+  box-shadow:none !important;
+}
+body.config-screen-active.config-direct-method-only .config-global-save-card,
+body.config-screen-active.config-direct-method-only .config-global-save-card .config-save-field {
+  margin:0 !important;
+  padding:0 !important;
+  border:0 !important;
+  border-radius:0 !important;
+  background:transparent !important;
+  box-shadow:none !important;
+}
+body.config-screen-active.config-direct-method-only .config-save-field legend,
+body.config-screen-active.config-direct-method-only #configSaveStatus {
+  display:none !important;
+}
+body.config-screen-active.config-direct-method-only .config-save-row {
+  margin:0 !important;
+  justify-content:flex-start;
+}
+
 /* Calculated applications share the View menu, while each application keeps
    its own complete rendering contract. */
 .placement-mode-calculated-options {
@@ -8107,6 +8233,7 @@ body.placement-direct-active .lex-ambiguity-panel {
 
 body.placement-multi-ogn-active .main-grid-controls,
 body.placement-multi-ogn-active .main-south-control,
+body.placement-multi-ogn-active .mobile-growth-nav,
 body.placement-multi-ogn-active .lex-ambiguity-panel {
   display:none !important;
 }
@@ -8119,12 +8246,6 @@ body.placement-multi-ogn-active .lex-ambiguity-panel {
   stroke-dasharray:7 5;
   vector-effect:non-scaling-stroke;
 }
-#graphSvg .multi-ogn-unit-frame.is-reserved {
-  fill:color-mix(in srgb, var(--panel,#ffffff) 95%, #e2e8f0 5%);
-  fill-opacity:.34;
-  stroke:#cbd5e1;
-  stroke-dasharray:3 7;
-}
 #graphSvg .multi-ogn-unit-label {
   fill:#334155;
   font-size:calc(14px * var(--og-font-scale));
@@ -8135,11 +8256,6 @@ body.placement-multi-ogn-active .lex-ambiguity-panel {
   fill:#64748b;
   font-size:calc(13px * var(--og-font-scale));
   font-weight:750;
-}
-#graphSvg .multi-ogn-unit-label.is-reserved,
-#graphSvg .multi-ogn-sentence-label.is-reserved {
-  fill:#94a3b8;
-  font-style:italic;
 }
 #graphSvg .multi-ogn-lex-axis {
   stroke:var(--lex-projection-color,#14b8a6) !important;
@@ -8156,27 +8272,6 @@ body.placement-multi-ogn-active .lex-ambiguity-panel {
   stroke:var(--lex-projection-color,#14b8a6);
   stroke-width:1.4;
   vector-effect:non-scaling-stroke;
-}
-#graphSvg .anaphor-lexicalization-result {
-  fill:color-mix(in srgb, var(--panel,#ffffff) 72%, #fef3c7 28%);
-  stroke:#d97706;
-  stroke-width:2;
-}
-#graphSvg .multi-ogn-lex-insertion {
-  fill:color-mix(in srgb, var(--panel,#ffffff) 78%, #dbeafe 22%);
-  stroke:#2563eb;
-  stroke-dasharray:5 3;
-}
-#graphSvg .anaphor-lexicalization-projection {
-  stroke:#d97706 !important;
-  stroke-dasharray:3 3;
-  opacity:.9;
-}
-#graphSvg .multi-ogn-anaphor-projection-label {
-  fill:#92400e;
-  font-size:calc(11px * var(--og-font-scale));
-  font-weight:900;
-  letter-spacing:.02em;
 }
 #graphSvg .multi-ogn-lex-unit-label {
   fill:#475569;
@@ -8201,13 +8296,22 @@ body.placement-multi-ogn-active .lex-ambiguity-panel {
   vector-effect:non-scaling-stroke;
 }
 #graphSvg .coreference-antecedent circle,
-#graphSvg .coreference-referent circle,
+#graphSvg .coreference-anaphor circle,
 #graphSvg .coreference-antecedent rect,
-#graphSvg .coreference-referent rect {
+#graphSvg .coreference-anaphor rect {
   stroke:#dc2626 !important;
   stroke-width:2.25 !important;
   vector-effect:non-scaling-stroke;
 }
+#graphSvg .utterance-connector {
+  stroke-dasharray: 5 3;
+}
+#graphSvg .utterance-implicit-subject circle,
+#graphSvg .utterance-implicit-subject rect {
+  stroke-dasharray: 4 3;
+  fill-opacity: .72;
+}
+
 #graphSvg .multi-ogn-relation-note {
   fill:#991b1b;
   font-weight:850;
@@ -8215,4 +8319,104 @@ body.placement-multi-ogn-active .lex-ambiguity-panel {
 
 @media (max-width:720px) {
   .placement-mode-calculated-options { grid-template-columns:1fr; }
+}
+
+/* Keep the active test utterance above the graph in every main viewer mode. */
+.main-active-utterance {
+  display:flex;
+  align-items:baseline;
+  gap:.65rem;
+  min-width:0;
+  padding:.48rem .78rem;
+  border:1px solid color-mix(in srgb, var(--line,#cbd5e1), #2563eb 18%);
+  border-radius:.7rem;
+  background:color-mix(in srgb, var(--panel,#ffffff), #dbeafe 14%);
+}
+.main-active-utterance[hidden],
+body:not(.main-screen-active) .main-active-utterance {
+  display:none !important;
+}
+.main-active-utterance-label {
+  flex:0 0 auto;
+  color:#475569;
+  font-size:.74rem;
+  font-weight:850;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+}
+.main-active-utterance-text {
+  min-width:0;
+  color:#0f172a;
+  font-size:1.04rem;
+  font-weight:850;
+  overflow-wrap:anywhere;
+}
+.main-causal-anaphor-choice {
+  display:flex;
+  align-items:center;
+  gap:.35rem;
+  margin-left:auto;
+  color:#475569;
+  font-size:.76rem;
+  font-weight:750;
+  white-space:nowrap;
+}
+.main-causal-anaphor-choice[hidden] { display:none !important; }
+.main-causal-anaphor-choice select {
+  max-width:9rem;
+  padding:.2rem .36rem;
+  border:1px solid var(--line,#cbd5e1);
+  border-radius:.4rem;
+  background:var(--panel,#ffffff);
+  color:#0f172a;
+  font:inherit;
+}
+
+/* This final override deliberately wins against historical thin-line rules. */
+body.main-screen-active #graphSvg .tree-edge,
+body.main-screen-active #graphSvg .syntax-tree-edge {
+  stroke:var(--og-tree-line-color,#2563eb) !important;
+  stroke-width:var(--og-tree-line-width,3.55) !important;
+  opacity:var(--og-tree-line-opacity,1) !important;
+  stroke-linecap:round;
+  vector-effect:non-scaling-stroke;
+}
+#graphSvg .utterance-configurable-node {
+  cursor:pointer;
+  pointer-events:auto !important;
+}
+#graphSvg .utterance-configurable-node .node-circle,
+#graphSvg .utterance-configurable-node .node-main-label,
+#graphSvg .utterance-configurable-node .node-sub-label {
+  cursor:pointer;
+  pointer-events:auto !important;
+}
+#graphSvg .utterance-configurable-node:hover .node-circle,
+#graphSvg .utterance-configurable-node:focus .node-circle {
+  stroke:#f59e0b !important;
+  stroke-width:3px !important;
+}
+#graphSvg .utterance-kernel-view .node-main-label {
+  font-size:15px;
+}
+#graphSvg .utterance-kernel-view .node-sub-label {
+  font-size:10px;
+}
+#graphSvg .utterance-kernel-view .box-label {
+  font-size:15px;
+}
+.multi-ogn-tree-layout-field {
+  display:grid;
+  gap:.65rem;
+  margin-top:.9rem;
+  padding:.7rem;
+  border:1px solid var(--line,#cbd5e1);
+  border-radius:.65rem;
+}
+@media (max-width:720px) {
+  .main-active-utterance { gap:.4rem; padding:.36rem .52rem; }
+  .main-active-utterance-label { font-size:.66rem; }
+  .main-active-utterance-text { font-size:.9rem; }
+  .main-active-utterance { flex-wrap:wrap; }
+  .main-causal-anaphor-choice { font-size:.68rem; }
 }

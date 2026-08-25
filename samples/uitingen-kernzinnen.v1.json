@@ -1,0 +1,220 @@
+{
+  "schema": "ogn-utterance-corpus-v1",
+  "language": "nl",
+  "hypothesis": "Elke uiting bestaat uit één of meer kernzinnen en ontstaat door hun verknoping en talige realisatie.",
+  "utterances": [
+    {
+      "id": "jan-wast-zichzelf",
+      "text": "Jan wast zichzelf.",
+      "type": "reflexive",
+      "lex": [
+        "JAN",
+        "WAST",
+        "ZICHZELF"
+      ],
+      "kernels": [
+        {
+          "id": "k1",
+          "text": "Jan wast Jan.",
+          "predicate": "wassen",
+          "agens": "jan",
+          "patiens": "jan"
+        },
+        {
+          "id": "k2",
+          "text": "Jan wast zelf.",
+          "predicate": "wassen",
+          "agens": "jan",
+          "patiens": "zelf"
+        }
+      ],
+      "relations": [
+        {
+          "type": "coreference",
+          "members": [
+            "k1.agens",
+            "k1.patiens",
+            "k2.agens"
+          ]
+        },
+        {
+          "type": "reflexive-realization",
+          "components": [
+            "zich",
+            "zelf"
+          ],
+          "surface": "zichzelf"
+        }
+      ]
+    },
+    {
+      "id": "jan-slaat-jek-omdat-die-hem-beet",
+      "text": "Jan slaat Jek omdat die hem beet.",
+      "type": "causal-role-flip",
+      "lex": [
+        "JAN",
+        "SLAAT",
+        "JEK",
+        "OMDAT",
+        "DIE",
+        "HEM",
+        "BEET"
+      ],
+      "anaphor_variants": [
+        {
+          "id": "hij",
+          "surface": "hij",
+          "words": [
+            "HIJ"
+          ],
+          "referent": "jek",
+          "category": "NP"
+        },
+        {
+          "id": "die",
+          "surface": "die",
+          "words": [
+            "DIE"
+          ],
+          "referent": "jek",
+          "category": "NP",
+          "default": true
+        },
+        {
+          "id": "die-hond",
+          "surface": "die hond",
+          "words": [
+            "DIE",
+            "HOND"
+          ],
+          "referent": "jek",
+          "category": "NP"
+        },
+        {
+          "id": "de-hond",
+          "surface": "de hond",
+          "words": [
+            "DE",
+            "HOND"
+          ],
+          "referent": "jek",
+          "category": "NP"
+        },
+        {
+          "id": "jek",
+          "surface": "Jek",
+          "words": [
+            "JEK"
+          ],
+          "referent": "jek",
+          "category": "NP"
+        }
+      ],
+      "kernels": [
+        {
+          "id": "k1",
+          "text": "Jek beet Jan.",
+          "predicate": "bijten",
+          "agens": "jek",
+          "patiens": "jan"
+        },
+        {
+          "id": "k2",
+          "text": "Jan slaat Jek.",
+          "predicate": "slaan",
+          "agens": "jan",
+          "patiens": "jek"
+        }
+      ],
+      "relations": [
+        {
+          "type": "cause",
+          "from": "k1",
+          "to": "k2",
+          "surface": "omdat"
+        },
+        {
+          "type": "coreference",
+          "members": [
+            "k1.agens",
+            "k2.patiens"
+          ],
+          "surface": [
+            "Jek",
+            "die"
+          ]
+        },
+        {
+          "type": "coreference",
+          "members": [
+            "k1.patiens",
+            "k2.agens"
+          ],
+          "surface": [
+            "Jan",
+            "hem"
+          ]
+        },
+        {
+          "type": "role-flip",
+          "participants": [
+            "jan",
+            "jek"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ken-uzelf",
+      "text": "Ken uzelf.",
+      "type": "imperative-reflexive",
+      "implicit_subject": "U",
+      "lex": [
+        "KEN",
+        "UZELF"
+      ],
+      "kernels": [
+        {
+          "id": "k1",
+          "text": "Ken zelf.",
+          "predicate": "kennen",
+          "agens": "u",
+          "patiens": "zelf"
+        },
+        {
+          "id": "k2",
+          "text": "Ken u.",
+          "predicate": "kennen",
+          "agens": "u",
+          "patiens": "u"
+        }
+      ],
+      "relations": [
+        {
+          "type": "implicit-addressee",
+          "referent": "u",
+          "role": "agens"
+        },
+        {
+          "type": "coreference",
+          "members": [
+            "k2.agens",
+            "k2.patiens"
+          ]
+        },
+        {
+          "type": "reflexive-realization",
+          "components": [
+            "u",
+            "zelf"
+          ],
+          "surface": "uzelf"
+        },
+        {
+          "type": "mood",
+          "value": "imperative"
+        }
+      ]
+    }
+  ]
+}

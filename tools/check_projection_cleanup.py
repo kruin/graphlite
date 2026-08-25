@@ -23,7 +23,9 @@ if "...ADVERB_FALLBACK_ROWS.map(" not in JS:
 
 required_js = [
     "stage: 'combined'",
-    "Per bronwoord volgt hoogstens één zichtbare LEX-verplaatsing",
+    "Language-Tree-regel mag een bronwoord werkelijk verplaatsen",
+    "function lexConfiguredOpenSlots",
+    "class: 'lex-free-slot lex-open-slot'",
     "const topicOccupied = topicIndex >= 0",
     "const v2Occupied = v2Index >= 0",
     "class: 'lex-wissel-movement'",
@@ -63,6 +65,8 @@ for marker in required_css:
         errors.append(f"styles.css mist {marker!r}")
 if ".lex-trace-slot" in CSS or "class: 'lex-trace-slot'" in JS:
     errors.append("grote oude LEX-tracevakken zijn nog aanwezig")
+if "lex-space-reservation" in CSS or "lex-space-reservation" in JS:
+    errors.append("verwijderde tijdelijke LEX-ruimte-indicator is nog aanwezig")
 
 if errors:
     print("PROJECTIE-OPRUIMCHECK: FOUT")

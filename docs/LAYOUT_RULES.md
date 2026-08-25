@@ -74,17 +74,13 @@ alleen de actieve Wissellanes, met een vaste bovengrens van vier lanes.
 
 - Iedere projectielijn van een lexicale bron naar LEX is exact horizontaal:
   `y(LEX-bronanker) = y(bronknoop)`.
-- LOG-rijen zijn geplande plaatsen en nooit projectieankers of zelfstandige
-  verplaatsingsopdrachten.
+- LOG-rijen zijn doelrijen en nooit projectieankers.
 - `rowPx = data-lex-slot-pixels`.
-- Meerdere werkwoordelijke sources binnen major V krijgen opeenvolgende
-  geplande rijen.
-- Alleen een expliciete topic-/V1-/V2-regel mag een bronwoord van zijn
-  horizontale bronhoogte verplaatsen.
-- Een werkelijk verplaatst bronwoord krijgt hoogstens één zichtbare Wissel en
-  één trace. Zonder expliciete regel blijft het woord exact op bronhoogte.
-- In `HOND BIJT MAN` blijven HOND en MAN exact op hun bronhoogte; alleen BIJT
-  wisselt naar de vrije LEX-gridrij halverwege beide bronrijen.
+- Meerdere werkwoordelijke sources binnen major V krijgen opeenvolgende rijen.
+- LOG-basis en een eventuele expliciete topic/V2-regel worden vóór render tot
+  één einddoel samengevoegd.
+- Per bronwoord wordt daarom hoogstens één zichtbare Wissel en één trace op de
+  horizontale bronhoogte getekend.
 - Een minor verlaagt geen syntax- of Functional-subboom.
 
 ## Lijndikte

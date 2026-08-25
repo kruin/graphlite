@@ -190,10 +190,10 @@ Een latere syntactische toepassing mag pas SYNT-inserties leveren wanneer
 `insertie.SYNT` actief is. Zij mag niet via een bijwoord-specifieke uitzondering
 de boom binnendringen.
 
-Vraagzin, Nadruk (`juist díe trui`) en Onaffe zin zijn in rc.42 uitsluitend
-gereserveerde namen. Ze leveren nog geen descriptor, vereisen nog geen
-voorconfig en mogen dus geen state, bijdrage, layout-demand, opslagveld,
-documentatiesectie of cleanup activeren.
+Nadruk (`juist díe trui`) en Onaffe zin zijn uitsluitend gereserveerde namen.
+Ze leveren nog geen descriptor, vereisen nog geen voorconfig en mogen dus geen
+state, bijdrage, layout-demand, opslagveld, documentatiesectie of cleanup
+activeren. Vraagzin is inmiddels een zinsoort binnen Language Tree.
 
 ## LOG-majors en -minors
 
@@ -213,8 +213,7 @@ bijvoorbeeld `S-O`. De resolver:
 3. voegt de minor alleen in dat interval in;
 4. berekent de nieuwe slotvolgorde;
 5. vergroot alleen de relevante afstand;
-6. gebruikt die LOG-volgorde voor LEX-planning, zonder bronwoorden te
-   verplaatsen.
+6. projecteert die LOG-volgorde naar neutrale LEX-rijen.
 
 Een minor verlaagt geen host-subtree en verandert geen Syntax- of
 Functional-relatie. Markering of vooropplaatsing volgt pas daarna als

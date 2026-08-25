@@ -10,11 +10,9 @@ def validate_multi_ogn(doc: dict) -> list[str]:
     metadata=doc.get("metadata",{})
     data=doc.get("data",{})
     composition=data.get("composition",{})
-    schema=composition.get("schema")
-    legacy=schema=="ogn-multi-composition-v1"
     if metadata.get("profile")!="multi-ogn": errors.append("metadata.profile moet multi-ogn zijn")
     if metadata.get("extras")!=["multi-ogn-anaphor"]: errors.append("metadata.extras moet alleen multi-ogn-anaphor bevatten")
-    if schema not in {"ogn-multi-composition-v1","ogn-multi-composition-v2"}: errors.append("data.composition.schema is ongeldig")
+    if composition.get("schema")!="ogn-multi-composition-v1": errors.append("data.composition.schema is ongeldig")
     if composition.get("order")!=["S1","S2"]: errors.append("data.composition.order moet S1, S2 zijn")
     if composition.get("calculation")!="independent-before-composition": errors.append("S1 en S2 moeten vóór compositie afzonderlijk worden berekend")
     if composition.get("rigid_shift_only") is not True: errors.append("data.composition.rigid_shift_only moet true zijn")
@@ -45,44 +43,26 @@ def validate_multi_ogn(doc: dict) -> list[str]:
         layouts.append(nodes)
     relation=composition.get("relation",{})
     antecedent=relation.get("antecedent",{})
-    lower_endpoint=relation.get("anaphor",{}) if legacy else relation.get("referent",{})
-    expected_lower_id="s2-hij" if legacy else "s2-man"
+    anaphor=relation.get("anaphor",{})
     if relation.get("type")!="coreference" or relation.get("direction")!="none": errors.append("relatie moet ongerichte coreference zijn")
     if relation.get("line")!="straight-vertical-no-arrow": errors.append("coreferentielijn moet recht, verticaal en zonder pijl zijn")
-    if antecedent.get("nodeId")!="s1-man" or lower_endpoint.get("nodeId")!=expected_lower_id:
-        errors.append(f"relatie moet s1-man en {expected_lower_id} verbinden")
+    if antecedent.get("nodeId")!="s1-man" or anaphor.get("nodeId")!="s2-hij": errors.append("relatie moet s1-man en s2-hij verbinden")
     if len(layouts)==2:
         upper={node.get("id"):node for node in layouts[0]}
         lower={node.get("id"):node for node in layouts[1]}
         man=upper.get("s1-man")
-        lower_node=lower.get(expected_lower_id)
-        if not man or not lower_node or man.get("x")!=lower_node.get("x") or not lower_node.get("y",0)>man.get("y",0):
-            errors.append(f"MAN–{'HIJ' if legacy else 'MAN'} moet verticaal zijn met S2 onder S1")
-        if not legacy and (not lower_node or str(lower_node.get("label","")).upper()!="MAN"):
-            errors.append("de bronknoop voor het S2-subject moet MAN blijven")
+        hij=lower.get("s2-hij")
+        if not man or not hij or man.get("x")!=hij.get("x") or not hij.get("y",0)>man.get("y",0):
+            errors.append("MAN–HIJ moet verticaal zijn met S2 onder S1")
         shared_rows=[(a.get("id"),b.get("id")) for a in layouts[0] for b in layouts[1] if a.get("y")==b.get("y")]
         shared_cols=[(a.get("id"),b.get("id")) for a in layouts[0] for b in layouts[1] if a.get("x")==b.get("x")]
         if shared_rows: errors.append("S1 en S2 mogen geen rij delen")
-        if shared_cols != [("s1-man",expected_lower_id)]: errors.append(f"alleen de MAN–{'HIJ' if legacy else 'MAN'}-kolom mag worden gedeeld")
-    if not legacy:
-        lexicalization=relation.get("lexicalization",{})
-        if lexicalization.get("type")!="anaphor-lex-projection": errors.append("relation.lexicalization.type is ongeldig")
-        if lexicalization.get("source_node_id")!="s2-man": errors.append("LEX-anafoor moet uit s2-man worden geprojecteerd")
-        if lexicalization.get("antecedent_lexeme")!="man": errors.append("LEX-anafoor moet antecedentlexeem man gebruiken")
-        profiles={"hij":"HIJ","die":"DIE","die-man":"DIE MAN"}
-        profile_id=lexicalization.get("profile_id")
-        if profile_id not in profiles or lexicalization.get("surface")!=profiles.get(profile_id):
-            errors.append("LEX-profiel en oppervlaktevorm zijn niet toepasselijk voor MAN")
+        if shared_cols != [("s1-man","s2-hij")]: errors.append("alleen de MAN–HIJ-kolom mag worden gedeeld")
     lex=composition.get("shared_lex_axis",{})
     if lex.get("order")!="S1-before-S2": errors.append("gezamenlijke LEX-as moet S1 vóór S2 ordenen")
     items=lex.get("items")
-    expected_items=["s1-ik","s1-zie","s1-man",expected_lower_id,"s2-draagt","s2-hoed"]
-    if not isinstance(items,list) or [item.get("node_id") for item in items] != expected_items:
+    if not isinstance(items,list) or [item.get("node_id") for item in items] != ["s1-ik","s1-zie","s1-man","s2-hij","s2-draagt","s2-hoed"]:
         errors.append("gezamenlijke LEX-volgorde is ongeldig")
-    elif not legacy:
-        projected=items[3]
-        if projected.get("source_label")!="MAN" or projected.get("label")!=relation.get("lexicalization",{}).get("surface"):
-            errors.append("S2 MAN moet op LEX als het gekozen anaforische profiel verschijnen")
     return errors
 
 def validate(path: Path) -> list[str]:
@@ -96,7 +76,7 @@ def validate(path: Path) -> list[str]:
     if doc.get("document_type")!="opengraph-document": errors.append("document_type moet opengraph-document zijn")
     if doc.get("metadata",{}).get("schema")!="data-metadata-paradata": errors.append("metadata.schema ontbreekt of is fout")
     data=doc.get("data",{})
-    if data.get("composition",{}).get("schema") in {"ogn-multi-composition-v1","ogn-multi-composition-v2"}:
+    if data.get("composition",{}).get("schema")=="ogn-multi-composition-v1":
         errors.extend(validate_multi_ogn(doc))
         para=doc.get("paradata",{})
         if para.get("included") is True and not isinstance(para.get("events"),list): errors.append("paradata.events moet een lijst zijn wanneer included=true")
@@ -116,6 +96,7 @@ def validate(path: Path) -> list[str]:
         log=projections.get("log",{})
         lex=projections.get("lex",{})
         example=data.get("example",{})
+        sentence_type=example.get("sentence_type")
         profile=metadata.get("profile")
         extras=metadata.get("extras")
         preconfig=metadata.get("preconfig")
@@ -160,6 +141,13 @@ def validate(path: Path) -> list[str]:
         if lex.get("projection_origin")!="SOURCE-Y": errors.append("data.projections.lex.projection_origin moet SOURCE-Y zijn")
         if lex.get("placement_mode")!="horizontal-then-move": errors.append("data.projections.lex.placement_mode moet horizontal-then-move zijn")
         if not isinstance(lex.get("logical_sequence"),list): errors.append("data.projections.lex.logical_sequence ontbreekt")
+        if sentence_type not in {"main-declarative","polar-question","subordinate-dat","subordinate-omdat"}:
+            errors.append("data.example.sentence_type is ongeldig of ontbreekt")
+        for deferred_key in ["additional_open_slot_count","additional_open_slot_placement"]:
+            if deferred_key in lex:
+                errors.append(f"data.projections.lex.{deferred_key} is no-show en hoort niet in een nieuw document")
+        if log.get("play_phases") != ["LOG","LEX"]: errors.append("data.projections.log.play_phases moet LOG, LEX zijn")
+        if log.get("play_space_mode") != "none": errors.append("data.projections.log.play_space_mode moet none zijn")
     para=doc.get("paradata",{})
     if para.get("included") is True and not isinstance(para.get("events"),list): errors.append("paradata.events moet een lijst zijn wanneer included=true")
     return errors

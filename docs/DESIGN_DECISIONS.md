@@ -5,16 +5,14 @@
    mogen alleen star verschuiven; exact één gedeclareerde antecedent–anafoor-
    kolom mag tussen S1 en S2 samenvallen. De coreferentielijn is ongericht.
 
-1. LOG is autoriteit voor de plaatsingsplanning, niet voor automatische
-   verplaatsing van bronwoorden.
+1. LOG is autoriteit voor de neutrale plaatsing.
 2. S, O en V zijn majors; alleen bijwoordinserties met `origin=LOG` of
    `origin=LOG+LEX` zijn minors.
 3. Logische afstand is de absolute LOG-slotafstand.
 4. Iedere minor vergroot de begrensde majorafstand met zijn vaste breedte.
-5. LOG plant mogelijke LEX-plaatsen; zonder expliciete topic-/V1-/V2-regel
-   blijft een bronwoord op bronhoogte.
+5. LOG bepaalt de neutrale LEX-rijen.
 6. De voorbeeldzin valideert en levert geen layoutcoördinaten.
-7. Topic/V1/V2 zijn expliciete latere LEX-Wissels met traces.
+7. Topic/V2 zijn latere LEX-Wissels met traces.
 8. Oude hostvelden blijven alleen scope-/compatibiliteitsmetadata.
 9. Algemene infrastructuur wordt in Voorconfig ingesteld vóór een concrete
    toepassing.
@@ -128,7 +126,7 @@ oude plek wordt trace
 resultaat = voorbeeldzin
 ```
 
-Beschreven zinstypen: hoofdzin, bijzin met OMDAT, topicalisatie, perfectum en voorlopige vraagzin.
+Actieve zinsoorten: mededelende hoofdzin, ja/nee-vraagzin, dat-zin en omdat-zin. Topicalisatie is een plaatsingsregel; perfectum is een werkwoordsvorm.
 
 
 ## v4506 - Bijwoorden op de LEX-as

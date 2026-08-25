@@ -1,23 +1,30 @@
 # Actuele contractlaag · v2.0.0-rc.45
 
-Config scheidt nu `Voorconfig → Toepassingen`. Insertie is vooraf en
-onafhankelijk schakelbaar op LEX, SYNT en LOG. Bijwoorden vereist LEX + LOG;
-een asschakelaar voegt zonder toepassing geen taalinhoud toe.
+Config scheidt nu **Algemeen**, **Calculated → Language Tree / Anafoor ·
+multi-OGN** en **Direct →
+Gedeeld / Greedy Grow / Random**. Algemeen bevat uitsluitend
+toepassingsonafhankelijke interface-, LEESMIJ- en bestandsinstellingen.
+Voorconfig, uitbreidingen, boom, voorbeelden, LEX, SYNT en LOG staan alleen
+onder Language Tree. Insertie is daar vooraf en onafhankelijk schakelbaar op
+LEX, SYNT en LOG. Bijwoorden vereist LEX + LOG; een asschakelaar voegt zonder
+toepassing geen taalinhoud toe.
 
-De projectiekern is `bronknoop → horizontale LEX-projectie → LOG-doel via
-LEX-Wissel → expliciete Wissels → voorbeeldzin als validatie`. LOG gebruikt
-vaste slots; iedere bijwoord-minor vergroot de relevante majorafstand. LOG
-bepaalt doelrijen, nooit de bronhoogte van de projectie. De voorbeeldzin
-stuurt de layout niet. Bij automatische plaatsing bepaalt `.log-class-config`
-het interval; oude voorbeeldpositiehints worden genegeerd.
+De projectiekern is `bronknoop → horizontale LEX-projectie op bronhoogte →
+alleen een expliciete Language-Tree-regel kan verplaatsen`. LOG gebruikt vaste
+slots; iedere bijwoord-minor vergroot de relevante geplande afstand. De
+LOG-planning alleen verplaatst nooit een bronknoop. In `HOND BIJT MAN` blijft
+`MAN` exact op MAN-bronhoogte en wisselt alleen `BIJT` volgens V2. Play loopt
+rechtstreeks van LOG naar LEX; de lege ruimtefase en haar indicator zijn
+verwijderd. Extra lege LEX-plekken zijn afzonderlijk configureerbaar en staan
+los van vaste systeemslots en toepassingsgebonden insertieplekken.
 `Syntax → Functional` zijn centrale views en `LEX / SYNT / LOG` named
 projections. Onderstaande tekst is historisch waar zij hiermee botst.
 
-Anafoor · multi-OGN berekent de bronnen `Ik zie een man.` en `Man draagt een
-hoed.` afzonderlijk. Daarna verschuift S2 uitsluitend star zodat de twee
-coreferentiële MAN-knopen dezelfde kolom delen. Pas LEX realiseert het tweede
-MAN als een toepasselijke anafoor, standaard `HIJ`; de gezamenlijke LEX-as
-houdt S1 vóór S2. Normatief: `MULTI_OGN_ANAPHOR.md`.
+Anafoor · multi-OGN gebruikt het vaste discoursevoorbeeld `Ik zie een man.
+Hij draagt een hoed.` De twee bomen worden afzonderlijk berekend en per OGN
+gevalideerd. Daarna verschuift S2 uitsluitend star zodat MAN en HIJ dezelfde
+kolom delen. De coreferentielijn is verticaal en ongericht; de gezamenlijke
+LEX-as houdt S1 vóór S2. Normatief: `MULTI_OGN_ANAPHOR.md`.
 
 ---
 
@@ -115,7 +122,7 @@ oude plek wordt trace
 resultaat = voorbeeldzin
 ```
 
-Beschreven zinstypen: hoofdzin, bijzin met OMDAT, topicalisatie, perfectum en voorlopige vraagzin.
+Actieve zinsoorten: mededelende hoofdzin, ja/nee-vraagzin, dat-zin en omdat-zin. Topicalisatie is een plaatsingsregel; perfectum is een werkwoordsvorm.
 
 
 ## v4535 update

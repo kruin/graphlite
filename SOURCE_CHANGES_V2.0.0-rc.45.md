@@ -1,200 +1,224 @@
 # SOURCE_CHANGES v2.0.0-rc.45
 
-## Source build 20260821.17 — vier flipvarianten en gezamenlijke oplossing
+## Source build 20260813.5 — Anafoor · multi-OGN
 
-- Een binaire flip heeft twee onafhankelijke dimensies: links–rechts en
-  kort–lang. Zij leveren exact `normal`, `left-right`, `short-long` en `both`.
-  Kort–lang is plaatsingsafstand, niet subtree-omvang.
-- `multi-ogn-composition-engine.js` enumereert alle toegestane varianten over
-  S1 en S2 en kiest één kandidaat die alle vereiste Text-coreferenties met
-  één starre S2-shift uitlijnt. Een conflict forceert geen losse knoop.
-- De vijfde Configcombinatie is **De man slaat de hond omdat die hem heeft
-  gebeten.** De bronrelaties zijn `HOND(S1)↔HOND(S2)` en
-  `MAN(S1)↔MAN(S2)`; LEX realiseert `DIE` en `HEM`. `OMDAT` blijft Context.
-- Drie gedeclareerde branches leveren 64 kandidaten; 16 zijn geldig. De
-  deterministische standaardoplossing is `s1-root=left-right`,
-  `s1-vp=left-right`, `s2-vcluster=normal`.
-- Alleen een branch met `linearization: "child-order"` projecteert kort–lang
-  tevens als omgekeerde LEX-childvolgorde. Daardoor zijn `HEEFT GEBETEN` en
-  `GEBETEN HEEFT` twee varianten van dezelfde V-clusterbranch.
-- Config bewaart per combinatie `auto` of een expliciete variant per branch.
-  Play toont de gekozen flips per zin als één atomaire stap en speelt exact
-  terug. OPN bewaart branches, gekozen varianten en flipstappen.
-- `tools/check_anaphor_flip.js` bewaakt de vier varianten, de 64 kandidaten,
-  beide coreferenties, conflictgedrag en beide clustervolgorden. De
-  machineleesbare regressieset telt nu negen fixtures.
-
-## Source build 20260821.16 — trailing whitespace automatisch verwijderen
-
-- `TEXT_AND_CONTEXT.md` en de gespiegelde versie in `docs/` gebruiken geen
-  Markdown-hard-break met twee trailing spaties meer. S1 en S2 blijven
-  afzonderlijke alinea's zonder onzichtbare whitespacefout.
-- `tools/normalize_text_files.py --write` verwijdert voortaan in alle
-  projecttekst spaties en tabs aan het einde van iedere regel, naast de
-  bestaande LF/CRLF-, UTF-8-BOM- en EOF-normalisatie. Inspringing en bewuste
-  lege regels binnen een document blijven intact.
-- `tools/check_text_normalization.py` controleert expliciet Markdown-spaties,
-  tabs, bestaande inspringing, interne witruimteregels en Windows-CRLF.
-- `tools/check_git_publish_staging.py` reproduceert nu zowel een verdwenen
-  gevolgd bestand als `git diff --cached --check` met trailing whitespace en
-  verifieert dat normalisatie plus de juiste stagingvolgorde beide blokkades
-  oplossen.
-
-## Source build 20260821.15 — volledige bronbehoud en veilige Git-staging
-
-- De drie ontbrekende bestanden uit de oorspronkelijke bronzip zijn exact
-  teruggezet: `CONFIG_UI_EXPLANATION_STANDARD.md`,
-  `docs/CONFIG_UI_EXPLANATION_STANDARD.md` en
-  `tools/check_lex_open_slots.js`. Iedere oorspronkelijke bron is daardoor
-  opnieuw vertegenwoordigd in de volledige projectzip.
-- `publish_checked.bat` voert `git add -A -- .` voortaan vóór
-  `git add --renormalize -- .` uit. Verdwenen gevolgde bestanden zijn dan al
-  uit de index bijgewerkt voordat Git bestaande bestanden leest; de fout
-  `fatal: unable to stat ...` blokkeert publiceren niet meer.
-- `tools/check_git_publish_staging.py` reproduceert de gemelde Git-fout in een
-  afzonderlijke tijdelijke repository en verifieert de gecorrigeerde
-  stagingvolgorde met een verdwenen
-  `CONFIG_UI_EXPLANATION_STANDARD.md`.
-- De oorspronkelijke actieve LEX-profielcontrole draait opnieuw in de
-  releaseflow. Upward-Wissels, Context-inserties en Comp blijven actief;
-  generieke plaatsen vóór, na of tussen blijven no-show en zonder
-  opslagwerking. Help en Config leggen die grens zichtbaar uit.
-- `HOND` en `MAN` behouden hun bronhoogte; alleen `BIJT` wisselt. De
-  Text/Context-, Anafoor- en optionele Playwright-contracten blijven intact.
-
-## Source build 20260821.14 — publiceren zonder verplichte Playwright-installatie
-
-- `tools/check_multi_ogn_anaphor_runtime.js` voert de echte Anafoor-browsertest
-  alleen uit wanneer Playwright én Chromium aanwezig zijn. Ontbrekende
-  optionele hulpmiddelen worden expliciet gemeld zonder de release- of
-  publicatiecontrole te laten mislukken.
-- `tools/check_multi_ogn_anaphor_runtime_dependencies.js` simuleert zowel een
-  ontbrekende Playwright-module als een ontbrekende Chromium-browser en bewijst
-  daarnaast dat een echte defecte onderliggende afhankelijkheid nog steeds een
-  fout is.
-- `check_release.bat` voert deze regressiecontrole vóór de optionele
-  browsertest uit. `installeer-carrousel-tools.bat` blijft beschikbaar om
-  Playwright en Chromium te installeren voor de volledige browsercontrole of
-  het opnieuw afleiden van publicatieslides.
-- De Text/Context-, Anafoor-, Play- en plaatsingscontracten van source build
-  `.13` blijven ongewijzigd.
-
-## Source build 20260821.13 — centrale Text, Context-inserties en meervoudige anafoor
-
-- `TEXT_AND_CONTEXT.md` legt de normatieve architectuur vast: **Text** is de
-  centrale uiting (`S–O–V` / `Agens–Predicaat–Patiens`); **Context** is alles
-  daaromheen. Iedere insertie is Context, ook bij `origin=LOG`, `LOG+LEX` of
-  `LEX`. Zowel Text als Context is een eigen Open Graph Notation-structuur.
-  Nadere Context-semantiek en Text–Context-koppeling blijven p.m.; de
-  aangeleverde Context-OGN staat in `CONTEXT_TAXONOMY.md` met `CONTEXT` als
-  wortel.
-- Anafoor verbindt uitsluitend centrale Text-bronknopen tussen afzonderlijk
-  berekende S1- en S2-bomen. `relations[]` bevat daarom alleen coreferentie;
-  de historische `.12`-registratie van `GISTEREN→VANDAAG` als relatie is
-  verwijderd.
-- `GISTEREN`, `VANDAAG`, `ER`, `NIET MEER` en `OMDAT` worden direct op een
-  vrije LEX-positie
-  ingevoegd met `layer: "Context"` en zonder centrale boomknoop. `HIJ` en
-  `HEM` blijven LEX-realisaties van bestaande centrale Text-bronknopen.
-- Config bevat vier selecteerbare S1–S2-combinaties, waaronder **Ik zag de
-  man gisteren. Vandaag was hij er niet meer.** en **De boer slaat de ezel
-  omdat hij hem bezit.**. De laatste combinatie bevat beide coreferenties
-  `BOER→HIJ` en `EZEL→HEM` en toont beide uitgelijnde relaties.
-- Play bouwt S1 en S2 na elkaar, toont Context-inserties als afzonderlijke
-  LEX-stap en verplaatst alleen hoofdzinwerkwoorden naar V2. `BEZIT` blijft
-  in de `OMDAT`-bijzin finaal.
-- Het lexicon bevat nu een objectprofiel `HEM` naast subjectprofielen `HIJ`,
-  `DIE` en `DIE MAN`. Config, OPN, documentatie en acht machineleesbare
-  S1–S2-regressieparen bewaken dezelfde Text/Context-grens.
-- Een gezamenlijke flipzoeker voor nog niet gelijktijdig uitlijnbare
-  coreferenties is alleen voorbereid en gedocumenteerd; reeds uitgelijnde
-  relaties worden direct allemaal getekend.
-
-## Source build 20260821.12 — Language Tree-extensie 1, definities en heterogene S1–S2-relaties
-
-- Anafoor is normatief gedocumenteerd als de eerste Language Tree-extensie;
-  S1 en S2 blijven afzonderlijk recursief berekende bomen.
-- Config en het Zin-menu bevatten drie echte combinaties. De fixture **Ik zag
-  de man gisteren. Vandaag was hij er niet meer.** bewaart zowel
-  `MAN(S1)→HIJ(S2)` als `GISTEREN(S1)→VANDAAG(S2)` met `offset = +1 day`.
-- `ogn-temporal-reference-v1` is type-specifiek: `reference`, `relativeTime`
-  en `temporal.offset`; er wordt geen coreferentielexicalisatie gefabriceerd.
-- `semantic-only`-relaties zijn geen geometrische constraints. De compositor
-  rapporteert ze als `not-a-geometric-constraint`; OPN bewaart beide typen
-  zonder informatieverlies.
-- De gridinvariant geldt per OGN. Toevallig gedeelde S1/S2-kolommen hebben
-  geen semantische kracht; alleen `relations[]` declareert relaties.
-- `ANAPHOR_AND_S1_S2_RELATION_DEFINITIONS.md` scheidt anafoor, antecedent,
-  discourse-referent, coreferentie, tijd, plaats, toestandsverandering,
-  discourse-relatie, bridging, deixis, exofora en catafora.
-- `samples/s1-s2-relation-fixtures.json` bevat zeven positieve, negatieve en
-  ambigue regressieparen. Impliciete plaats en pragmatisch afgeleide toestand
-  blijven `unresolved`/`inferred` en worden niet getekend.
-- `tools/check_anaphor_language_tree_extension.js` bewaakt schema's, endpoints,
-  +1 dag, inferentiegrenzen, documentkopieën, Config en OPN-markers.
-
-## Source build 20260821.11 — Anafoor-Play per zin en pas daarna MAN → HIJ
-
-- Play toont eerst de volledige S1-boom, de horizontale LEX-projectie en
-  `ZIE → V2`; S2 is in deze fasen nog niet zichtbaar.
-- Daarna volgen de volledige S2-boom, haar horizontale LEX-projectie en
-  `DRAAGT → V2`. Het subject blijft daarbij op bron en LEX nog `MAN`.
-- Pas vervolgens verschijnt de ongerichte broncoreferentie MAN–MAN. De laatste
-  stap realiseert `S2 MAN → HIJ` of het gekozen toepasselijke LEX-profiel.
-- De desktop- en mobiele Play-knoppen zijn voor Anafoor actief. Pijl-terug
-  doorloopt alle lagen exact omgekeerd, zonder dat de view verspringt.
-- Beide bronbomen gebruiken de algemene object-vóór-eindwerkwoordbasis; alleen
-  het eindwerkwoord verplaatst naar de vrije V2-gridrij tussen subject en
-  object.
-- Nieuwe zelfstandige tijdlijnengine en regressie:
-  `multi-ogn-anaphor-play-engine.js` en
-  `tools/check_multi_ogn_anaphor_play.js`.
-
-## Source build 20260820.10 — anafoor pas op LEX; LEX-hoogten gecorrigeerd
-
-- De afzonderlijk berekende S2-bronboom bevat nu `MAN` als subject; `HIJ` is
-  geen bronknoop meer.
-- De kruis-OGN-coreferentie verbindt `S1 MAN ↔ S2 MAN`. Beide bomen blijven
-  recursief berekend en S2 wordt nog steeds uitsluitend star verschoven.
-- De relatie projecteert het tweede MAN pas op LEX. Config kiest een profiel
-  uit de bewerkbare lexiconconstructie `anaphor-subject`: `HIJ`, `DIE` of
-  `DIE MAN` is toepasselijk bij MAN; `DIE VROUW` is aanwezig maar alleen
-  toepasselijk bij VROUW.
-- Nieuwe OPN-export gebruikt compositieschema v2 en bewaart bronzinnen,
-  oppervlaktezinnen, MAN–MAN en het gekozen LEX-profiel afzonderlijk. Import
-  van het oudere v1-schema blijft ondersteund.
-- De `.8`-representatie hieronder is hiermee inhoudelijk vervangen voor
-  nieuwe uitvoer.
-
-## Source build 20260814.8 — historische tussenstand
-
-- De actuele projectzip uit Sources,
-  `OpenGraph_Lite_Viewer_v2.0.0-rc.45_full_source(5)(1).zip`, blijft de
-  leidende bron. Alleen de eerder ontwikkelde Anafoor-/multi-OGN-wijzigingen
-  zijn daarop overgezet.
-- De berekende modus **Anafoor · multi-OGN** toont het vaste voorbeeld
-  `Ik zie een man. Hij draagt een hoed.`. S1 en S2 worden afzonderlijk
-  berekend en gevalideerd.
+- Nieuwe berekende modus **Anafoor · multi-OGN** met het vaste voorbeeld
+  `Ik zie een man. Hij draagt een hoed.`
+- S1 en S2 worden aantoonbaar afzonderlijk berekend en per eenheid tegen de
+  unieke rij-/kolomregel gevalideerd.
 - De compositor houdt beide bomen star, plaatst S1 boven S2 en verschuift de
-  complete S2 totdat antecedent MAN en anafoor HIJ exact dezelfde
-  gedeclareerde gridkolom delen.
-- De MAN–HIJ-coreferentie is een rechte verticale lijn zonder pijl of
-  verwijzingsrichting. Eén gezamenlijke LEX-as ordent alle S1-items vóór alle
-  S2-items.
-- Source build 20260820.10 corrigeert de drie LEX-hoogten. In
-  `HOND BIJT MAN` blijven **HOND** en **MAN** exact op hun recursief berekende
-  bronhoogte; uitsluitend **BIJT** wisselt naar de vrije LEX-gridrij
-  halverwege die twee bronrijen. Het V2-doel is dus niet langer een vaste
-  offset onder `S`. LOG mag plaatsen reserveren, maar geeft zonder expliciete
-  Wisselregel geen verplaatsingsopdracht.
-- De zichtbare eindvolgorde blijft **HOND BIJT MAN**.
+  complete S2 totdat MAN en HIJ exact één gedeclareerde gridkolom delen.
+- MAN is het antecedent, HIJ de anafoor; de coreferentie is een rechte
+  verticale lijn zonder pijl of richting.
+- Eén gezamenlijke LEX-as ordent alle S1-items vóór alle S2-items.
 - Config, Help, OPN/Legacy-opslag, importvalidatie, referentiemateriaal en
-  afzonderlijke engine-/runtimecontroles volgen hetzelfde Anafoor-contract.
-- De Anafoor-regressie bewaakt nu tevens dat de twee boomdefinities geen vaste
-  `x/y`-coördinaten bevatten en dat S1 en S2 elk via de recursieve
-  `layoutTree(...)`-berekening lopen voordat de compositie begint.
+  afzonderlijke engine-/browsertests volgen hetzelfde contract.
 
 Normatief: `MULTI_OGN_ANAPHOR.md`.
+
+## Source build 20260813.4 — upward-profiel en zinsoorten
+
+- Het actieve LEX-contract is versmald tot upward-Wissels vanaf de zichtbare
+  bronhoogte, toepassingsgebonden inserties en rechtstreeks geschreven Comp.
+- Een LOG-reservering kan een lager doel niet meer legitimeren. Een doel op of
+  onder de bronhoogte blijft exact op de horizontale bronprojectie.
+- Generieke plaatsen vóór, na of tussen en alle downward/post-V2-Wissels zijn
+  no-show: geen Config, rendering of nieuwe Config-/OPN-opslag. Oude velden
+  worden compatibel genegeerd. Hun gebruik wordt later geëvalueerd.
+- Zinsoort is een aparte Language-Tree-laag met mededelende hoofdzin,
+  ja/nee-vraagzin, dat-zin en omdat-zin. De vraagzin gebruikt V1; DAT en OMDAT
+  worden direct in Comp geschreven. Perfectum is een werkwoordsvorm.
+- Vraagzin is uit de gereserveerde toepassingen gehaald. Alleen Nadruk en
+  Onaffe zin blijven daar no-show gereserveerd.
+- Voorbeeldeneditor, Help, OPN, documentatie en regressietests gebruiken
+  hetzelfde vierdelige zinsoortcontract.
+
+Deze source build vervangt het actieve gedrag uit de onderstaande historische
+20260813.3- en 20260813.2-notities; die blijven alleen als wijzigingshistorie
+staan.
+
+## Source build 20260813.3 — LEX-plaats- en richtingscontract
+
+- Config legt nu altijd zichtbaar uit dat 0–6 het exacte aantal extra lege
+  kandidaatrijen is. Bronprojecties, systeemslots en insertieplekken tellen
+  als bezet, worden niet meegeteld en worden nooit verschoven of hergebruikt.
+- De actuele combinatie van Aantal en Plaats krijgt een live NL/EN-uitleg.
+  De volledige toelichting staat standaard open en Help heeft afzonderlijke
+  onderwerpen **Vrije LEX-plekken** en **Richting van Wissels**.
+- `Tussen` gebruikt eerst echte gaten en plaatst een restant voortaan
+  vóór/boven de actieve woordvolgorde. Dit volgt de top-down LEX-volgorde en
+  Comp/slot 0 als bestaande voorpositie. Een bezette Comp-rij wordt
+  overgeslagen; de extra kandidaat wordt geen Comp-slot.
+- `Automatisch` blijft na de echte tussenruimten afwisselend vóór en na
+  plaatsen en behoudt zo zijn inhoudsneutrale karakter.
+- Iedere zichtbare Wissel draagt `data-display-direction="up"`, `"down"` of
+  `"same-row"`. Dit is uitsluitend schermgeometrie en geen syntactische
+  richtingsanalyse. De regressietest dekt zowel een eerdere/opwaartse
+  V2-Wissel als een latere/neerwaartse post-V2-Wissel.
+- Help en documentatie geven voorbeelden van omhoog, omlaag, geen Wissel en
+  direct geschreven Comp. Heavy NP Shift, extrapositie en morfologische
+  Lowering zijn expliciet buiten rc.45 geplaatst en mogen later alleen met een
+  eigen bron-, doel-, fase- en tracecontract worden toegevoegd.
+- De verouderde Engelse README-beschrijving van een afzonderlijke lege
+  SPACE-fase is gecorrigeerd naar het actuele tweefasencontract `LOG → LEX`.
+
+Normatief: `LEX_MOVEMENT_RULES.md`, `projectie-master-spec.md` en
+`OPN_STORAGE_FORMAT.md`.
+
+## Source build 20260813.2 — vrije LEX-plekken zonder SPACE-fase
+
+- De tijdelijke LEX-ruimte-indicator en de bijbehorende lege Play-fase zijn
+  verwijderd. De afleiding loopt nu rechtstreeks `LOG → LEX`; reverse Play
+  gebruikt exact `eindlaag → LEX → LOG → boom`.
+- LEX onderscheidt nu expliciet drie soorten plaatsen: vaste systeemslots,
+  toepassingsgebonden insertieplekken en extra vrije plekken zonder inhoud,
+  bron of plaatsingsregel.
+- `Config → Calculated → Language Tree → LOG & LEX` bevat voor de extra soort
+  een aantal van 0–6 en vijf plaatsingswijzen: automatisch, vóór, tussen, na
+  en rond de actieve LEX-rijen. `tussen` wijkt bij plaatsgebrek uit naar `na`.
+- De berekening blokkeert iedere rij die al door bronprojectie, systeemslot of
+  insertieplek wordt gebruikt. De extra plekken verplaatsen geen bronknoop.
+- Configsnapshot, standaardconfig, OPN en Legacy JSON bewaren aantal en
+  plaats. De releaseflow voert een geïsoleerde geometriecontrole over alle
+  vijf plaatsingswijzen uit.
+
+Normatief: `LEX_MOVEMENT_RULES.md` en `projectie-master-spec.md`.
+
+## Source build 20260813.1 — Configgrenzen en MAN op bronhoogte
+
+- **Algemeen** bevat nu uitsluitend toepassingsonafhankelijke interface-,
+  LEESMIJ- en bestandsinstellingen. Voorconfig, uitbreidingen, boom,
+  voorbeelden, LEX, SYNT en LOG staan uitsluitend onder **Calculated →
+  Language Tree**. Gedeelde directe instellingen hebben de eigen context
+  **Direct → Gedeeld**.
+- Openen van Config vanuit Language Tree kiest direct de Language-Tree-context;
+  vanuit Greedy Grow en Random blijft de bestaande harde methode-no-show
+  gelden.
+- De LOG-slotplanning reserveert mogelijke LEX-plaatsen, maar is niet langer
+  zelf een zichtbare verplaatsingsopdracht. Zonder expliciete topic-, V2- of
+  post-V2-regel blijft een bronknoop exact op bronhoogte.
+- In `HOND BIJT MAN` blijven daardoor `HOND` en `MAN` op hun eigen
+  bronknoophoogte; uitsluitend `BIJT` wisselt naar V2.
+- De doorschijnende verdikking met dwarskapjes in Play-fase 2/3 heet nu de
+  **tijdelijke LEX-ruimte-indicator**. Zij toont de spanne van geplande plaatsen,
+  is geen OGN-element en verplaatst niets.
+- De regressietest onderscheidt planning en zichtbare beweging en controleert
+  de exacte MAN-bronhoogte.
+
+Normatief: `DIRECT_PLACEMENT_CONFIG.md`, `LEX_MOVEMENT_RULES.md` en
+`projectie-master-spec.md`.
+
+## Source build 20260803.12 — harde no-show voor directe methode-Config
+
+- Bij Config vanuit een actieve Greedy-Grow- of Random-modus is nu ook de
+  toepassings-/contextbalk volledig no-show.
+- Zichtbaar blijven uitsluitend **Terug naar Main**, de eigen bewerkbare
+  methodevelden met hun inklapbare uitleg en de compacte Config-save-acties.
+- Algemeen, Language Tree en de andere directe methode worden in dit scherm
+  niet getoond. Een andere context wordt eerst in Main gekozen.
+- De no-show geldt functioneel via het `hidden`-attribuut, semantisch voor
+  hulptechnologie en als CSS-veiligheidsregel. De regressiecontrole bewaakt
+  beide lagen.
+- Dit corrigeert source build 20260802.11, waarin de velden al geïsoleerd waren
+  maar de nieuwe toepassingsbalk nog zichtbaar bleef.
+
+Normatief: `DIRECT_PLACEMENT_CONFIG.md`.
+
+## Source build 20260802.11 — toepassings-Config en Onzuiver uniform v0.1
+
+- Config heeft een vaste eerste laag: **Algemeen**, **Calculated → Language
+  Tree** en **Direct → Greedy Grow / Random**. Per context zijn niet-relevante
+  instellingen no-show; de toepassingsbalk blijft beschikbaar om te wisselen.
+- Ieder zichtbaar Direct-, Greedy- en Random-veld heeft een compacte,
+  inklapbare uitleg. `CONFIG_UI_EXPLANATION_STANDARD.md` maakt dit een vaste
+  projectoverstijgende bronregel.
+- **Uniform v1.0** blijft bytegedragsmatig ongewijzigd en is de standaard.
+  **Onzuiver uniform v0.1 · hit-herhaling** is functioneel toegevoegd: per
+  vrije ascoördinaat 80% uniform plus 20% herhaalgewicht uit uitsluitend
+  voltooide eerdere rondes. Ronde 1 is uniform.
+- Random Config bevat nu expliciet model, gridgrootte, vaste kolommen/rijen en
+  snelheid. Vaste maten zijn minimaal het aantal knopen; snelheid gebruikt de
+  bestaande gedeelde Play-klok en beïnvloedt de plaatsingsreeks niet.
+- Seed is begrensd op 1 t/m 4.294.967.295. `20260802` wordt in Config en Help
+  uitgelegd als datumseed; een groter getal geeft niet meer toeval of snelheid.
+- De voorspellingen voor v0.2 (instelbare herhaalsterkte) en v0.3 (instelbaar
+  geheugenvenster) zijn vastgelegd, maar blijven no-show totdat zij volledig
+  functioneel en getest zijn.
+- Engine-, statische en browsercontroles bewaken reproduceerbaarheid, de harde
+  unieke rij-/kolomregel, v0.1-ascontrast, contextisolatie en mobiele uitleg.
+
+Normatief: `DIRECT_PLACEMENT_CONFIG.md` en
+`CONFIG_UI_EXPLANATION_STANDARD.md`.
+
+## Source build 20260802.10 — cumulatieve projectie-hits per Random-ronde
+
+- WEST en SOUTH zijn nu echte hitassen: gebruikte rijen projecteren naar
+  WEST-spots en gebruikte kolommen naar SOUTH-spots.
+- Een ronde draagt pas bij nadat haar laatste knoop is geschreven. Een
+  herhaalde hit verhoogt de telling van dezelfde spot en maakt die donkerder,
+  groter en zwaarder omlijnd.
+- Reset wist de cumulatieve hits. Previous verwijdert een ronde uit het
+  asbeeld zodra die ronde door terugstappen niet meer volledig is.
+- De vorige voorafberekende asverdeling is verwijderd. Alleen reeds voltooide
+  rondes worden deterministisch gereconstrueerd; toekomstige rondes worden
+  niet gegenereerd of getekend.
+- De documentatie geeft de voorspelling voor uniforme Random: verwachte
+  hitkans `(N - 1) / (aslijnen - 1)` per niet-centrale asplek en dus op termijn
+  een vrijwel egaal beeld.
+
+Normatief: `DIRECT_PLACEMENT_CONFIG.md`.
+
+## Source build 20260802.9 — Random gebruikt standaard de beschikbare ruimte
+
+- Random Config heeft één extra eigen veld: **Maximale afmetingen**.
+- De toegevoegde standaardcombinatie is **Ergens in beschikbare ruimte** met
+  **Interface · beschikbare ruimte**. Bij Reset wordt een vaste rechthoek met
+  de actuele interfaceverhouding en voldoende unieke rijen en kolommen
+  afgeleid.
+- Iedere Random-stap kiest rechtstreeks uit alle nog vrije
+  rij-kolomcombinaties in die rechthoek; er is voor deze standaard geen
+  kunstmatig compacte groeizone.
+- Compact, Gebalanceerd, Ruim en **Inhoud · groeiend veld** blijven bestaande
+  alternatieven. Eerder opgeslagen keuzes worden niet geforceerd omgezet en
+  de optielijsten blijven uitbreidbaar.
+- Engine-, Config- en browsercontroles bewaken de vaste rechthoek, de zes
+  eigen velden, de standaardwaarden en de harde unieke rij-/kolomregel.
+
+Normatief: `DIRECT_PLACEMENT_CONFIG.md`.
+
+## Source build 20260802.8 — minimale methode-Config
+
+- Greedy Grow en Random openen nu als kale taakschermen.
+- De viewerwerkbalk, run-/voorbeeldstatus, feedbackblokken, het canvas,
+  algemene Configuitleg en de grote save-kaart zijn daar verborgen.
+- Zichtbaar blijven uitsluitend **Terug naar Main**, de eigen bewerkbare
+  methodevelden en twee compacte knoppen voor bewaren en herstellen.
+- De Configwaarden en opslagsemantiek blijven gelijk; alleen de niet-relevante
+  schil is verwijderd.
+- De browsercontrole bewaakt ook dat werkbalk, status, Play-balk, save-uitleg
+  en savekop werkelijk niet zichtbaar zijn.
+
+Normatief: `DIRECT_PLACEMENT_CONFIG.md`.
+
+## Source build 20260802.7 — Random-config en iteratiebediening
+
+- Random Config bevat uitsluitend de vijf eigen bewerkbare velden: Seed,
+  Resetbeleid, Spreiding, Hoe vaak en Impact op west- en zuidas.
+- De berekende impactregel is uit Config verwijderd. Formules, betekenis en
+  voorbeelden staan voortaan in Help en `DIRECT_PLACEMENT_CONFIG.md`.
+- **Hoe vaak** bestuurt nu ook de actieve uitvoering. Play loopt knoop voor
+  knoop door alle ingestelde iteraties; Next en Previous werken over de
+  rungrens heen en Reset begint opnieuw bij iteratie 1 volgens het seedbeleid.
+- Main toont `iteratie n/totaal · knoop n/totaal`. De actieve runs en het
+  afgeleide asbeeld gebruiken dezelfde reproduceerbare seedreeks.
+- De knopstatus houdt rekening met de iteratieset: Next blijft na een complete
+  tussenrun beschikbaar en Previous blijft bij de start van een latere run
+  beschikbaar.
+- De automatische Configcontrole bewaakt de exacte vijf velden en verbiedt
+  berekende uitvoer in het paneel. De volledige bediening is bovendien in een
+  echte browser over drie iteraties gecontroleerd.
+
+Normatief: `DIRECT_PLACEMENT_CONFIG.md`.
 
 ## Source build 20260802.6 — Configschil volgt de actieve methode
 
@@ -415,6 +439,6 @@ De normatieve beschrijving staat in
 ## Compatibiliteitsgrens
 
 De taalboom-graphdata en het OPN-formaat zijn niet gewijzigd. De oorspronkelijke
-rc.45-carrousel blijft byte- en hashgecontroleerd; source build 20260802.6
+rc.45-carrousel blijft byte- en hashgecontroleerd; source build 20260802.7
 wijzigt wel de viewerinterface, geïsoleerde directe Config en het
 lijnrendercontract zoals hierboven beschreven.

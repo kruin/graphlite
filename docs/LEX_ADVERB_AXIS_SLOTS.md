@@ -12,8 +12,7 @@ De minor:
 
 - bezet één vast LOG-slot;
 - vergroot de afstand tussen O en V met één;
-- reserveert de corresponderende geplande LEX-rij, zonder een bronwoord te
-  verplaatsen;
+- projecteert naar dezelfde neutrale LEX-rij;
 - is geen centrale Syntax- of Functional-knoop.
 
 ## Configuratie
@@ -44,6 +43,6 @@ De `order`-waarde bepaalt de stabiele volgorde van `m1` en `m2`.
 
 ## Vooropplaatsing
 
-Een vooropgeplaatst bijwoord heeft eerst een gewone geplande LOG-positie.
-Daarna verplaatst een expliciete LEX-Wissel het naar het topic-slot; alleen op
-de werkelijk verlaten positie blijft een trace staan.
+Een vooropgeplaatst bijwoord heeft eerst een gewone LOG-basispositie. Daarna
+verplaatst een expliciete LEX-Wissel het naar het topic-slot; op de
+LOG-afgeleide basisrij blijft een trace staan.

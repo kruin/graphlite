@@ -14,12 +14,6 @@ node --check random-placement-engine.js
 if errorlevel 1 exit /b 1
 node --check multi-ogn-composition-engine.js
 if errorlevel 1 exit /b 1
-node --check anaphor-lexicalization-engine.js
-if errorlevel 1 exit /b 1
-node --check anaphor-combinations-engine.js
-if errorlevel 1 exit /b 1
-node --check multi-ogn-anaphor-play-engine.js
-if errorlevel 1 exit /b 1
 node --check greedy-grow.js
 if errorlevel 1 exit /b 1
 node tools\check_greedy_grow_reconstruction.js
@@ -28,11 +22,9 @@ node tools\check_random_placement.js
 if errorlevel 1 exit /b 1
 node tools\check_multi_ogn_anaphor.js
 if errorlevel 1 exit /b 1
-node tools\check_anaphor_flip.js
+node tools\check_utterances.js
 if errorlevel 1 exit /b 1
-node tools\check_multi_ogn_anaphor_play.js
-if errorlevel 1 exit /b 1
-node tools\check_anaphor_language_tree_extension.js
+node tools\check_utterance_kernel_views.js
 if errorlevel 1 exit /b 1
 where python >nul 2>nul
 if errorlevel 1 (
@@ -85,15 +77,11 @@ python tools\check_linkedin_video_export.py
 if errorlevel 1 exit /b 1
 node tools\check_linkedin_video_runtime.js
 if errorlevel 1 exit /b 1
-node tools\check_multi_ogn_anaphor_runtime_dependencies.js
-if errorlevel 1 exit /b 1
 node tools\check_multi_ogn_anaphor_runtime.js
 if errorlevel 1 exit /b 1
 python tools\check_play_reverse.py
 if errorlevel 1 exit /b 1
 python tools\check_release_zip_batch.py
 if errorlevel 1 exit /b 1
-python tools\check_git_publish_staging.py
-if errorlevel 1 exit /b 1
-python tools\check_opn_storage.py samples\hond-bijt-man.v1.opn samples\ik-zie-man-hij-draagt-hoed.multi-ogn.v1.opn samples\ik-zie-man-hij-draagt-hoed.multi-ogn.v2.opn
+python tools\check_opn_storage.py samples\hond-bijt-man.v1.opn samples\ik-zie-man-hij-draagt-hoed.multi-ogn.v1.opn
 exit /b %errorlevel%

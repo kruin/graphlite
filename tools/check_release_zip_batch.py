@@ -54,6 +54,8 @@ for marker, label in [
     ('if "%DID_PUSH%"=="1" call :open_reset_after_push', "reset-subroutine na push"),
     (':open_reset_after_push', "veilige reset-subroutine"),
     ('start "" "%USER_RESET_URL%"', "browseropening met gevulde URL"),
+    ('call :ensure_playwright_runtime', "Playwright-preflight vóór releasechecks"),
+    ('call "%~dp0installeer-carrousel-tools.bat"', "reproduceerbare herstelroute voor testtools"),
 ]:
     require(PUBLISH, marker, label)
 

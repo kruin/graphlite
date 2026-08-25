@@ -1,0 +1,9 @@
+
+
+CP → (Comp) DP VP
+DP → (Det) NP
+NP → (AP) N (PP)
+VP → (DP) (PP) V
+VP → (CP) (PP) V
+PP → P DP
+AP → (AP) A (PP)
