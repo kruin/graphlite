@@ -5,6 +5,27 @@
 > vastgezette installer te installeren. Antwoord `J`; lokale hulpmiddelen
 > blijven buiten Git en buiten de release-ZIP.
 
+## Flip: structuur is geen woordvolgorde
+
+Flip is, naast **Free Node**, essentieel voor de Language Tree. Free Node geeft
+iedere knoop een vrije rasterplaats; Flip kiest de zichtbare links/rechts- en
+kort/lang-variant van een binaire vertakking. De structuur blijft intact en
+LEX blijft het ultieme resultaat: de volledige gerealiseerde uiting.
+
+![Minimale Language Tree](../images/readme/flip-minimale-language-tree.png)
+
+![Vrije vertakkingen: links/rechts en kort/lang](../images/readme/flip-vrije-vertakkingen.png)
+
+![Kleinste veld met projecties](../images/readme/flip-projecties-kleinste-veld.png)
+
+![Language Tree met LEX, SYN en LOG](../images/readme/flip-language-tree-lex-syn-log.png)
+
+In de causale testcase flipt alleen K2: `HOND BIJT MAN`. Daardoor kunnen
+`HOND ↔ HOND` en `JAN ↔ MAN` beide verticaal blijven. LEX realiseert daarna
+onafhankelijk `JAN SLAAT JEK OMDAT DIE HEM BEET`. Zie
+[`UITING_EN_KERNZINNEN.md`](UITING_EN_KERNZINNEN.md) en de technische
+[`FLIP_CONSTRAINT_SOLVER.md`](FLIP_CONSTRAINT_SOLVER.md).
+
 ## Uitingen en kernzinnen
 
 Een uiting bestaat uit één of meer verknoopte kernzinnen. Deze uitgave voegt
@@ -15,18 +36,21 @@ rol-flip en impliciete geadresseerde staan in
 [`samples/uitingen-kernzinnen.v1.json`](samples/uitingen-kernzinnen.v1.json).
 Iedere uiting opent als twee afzonderlijk berekende kernzinbomen: `K1` boven
 `K2`, met gedeclareerde verticale anafoorverbindingen en één gezamenlijke
-LEX-as voor de gerealiseerde uiting. De causale uiting toont zowel
-`JEK ↔ DIE` als `JAN ↔ HEM`; bij de imperatief ontbreekt het impliciete
+LEX-as voor de gerealiseerde uiting. De causale bronbomen tonen zowel
+`HOND ↔ HOND` als `JAN ↔ MAN`; op LEX worden deze onder andere als `die` en
+`hem` gerealiseerd. Bij de imperatief ontbreekt het impliciete
 subject op LEX. Het bestaande `S1/S2`-anafoorvoorbeeld blijft beschikbaar.
-De subjectknoop in K2 is rechtstreeks klikbaar en wisselt tussen
+De bronknoop HOND in K2 is rechtstreeks klikbaar en wisselt zijn LEX-vorm tussen
 **hij / die / die hond / de hond / Jek**. Alle vormen verwijzen naar Jek;
 `DIE HOND` en `DE HOND` blijven ieder één subject-NP, terwijl LEX twee woorden
 toont. De werkelijke horizontale en verticale rastermaat is onafhankelijk
 instelbaar van 60% tot 200%. K2 moet lokaal flippen wanneer JAN en JEK van subject/
 object wisselen en beide verwijslijnen verticaal moeten blijven.
-De zichtbare Play-balk bouwt iedere compositie op in vier stappen: `K1`,
-`K2`, verticale anaforen en de gerealiseerde LEX-uiting. `←`, `→` en `Reset`
-ondersteunen handmatige opbouw en omgekeerd afspelen.
+De zichtbare Play-balk bouwt iedere compositie op in vijf inhoudelijke stappen:
+`K1`, `K2 vóór Flip`, de zichtbare `FLIP K2`, verticale uitlijning en de
+gerealiseerde LEX-uiting. Tijdens de Flipstap staat de oude K2 rood-transparant
+achter de nieuwe K2 en tonen stippellijnen de verplaatste knopen. `←`, `→` en
+`Reset` ondersteunen handmatige opbouw en omgekeerd afspelen.
 De actieve testuiting blijft bovenaan zichtbaar. Iedere kernzin gebruikt
 `S → NP, VP` en `VP → NP, V`; LEX realiseert zelfstandig de uitgesproken
 woordvolgorde. Elke binaire knoop vertakt ook zichtbaar links en rechts.
@@ -508,13 +532,13 @@ stappen: vrije gridplaatsen, knopen sequentieel schrijven, zoekvolgorde en de
 vaste laagvolgorde. Er wordt nog geen gespecialiseerde uitbreiding
 geïntroduceerd.
 
-![OGN-kern: vrije gridplaatsen](images/readme/ogn-free-grid.svg)
+![OGN-kern: vrije gridplaatsen](../images/readme/ogn-free-grid.svg)
 
-![OGN-kern: schrijf één knoop per stap](images/readme/ogn-sequential-write.svg)
+![OGN-kern: schrijf één knoop per stap](../images/readme/ogn-sequential-write.svg)
 
-![OGN-kern: verschillende zoekvolgorden leveren verschillende directe plaatsingen](images/readme/ogn-placement-strategies.svg)
+![OGN-kern: verschillende zoekvolgorden leveren verschillende directe plaatsingen](../images/readme/ogn-placement-strategies.svg)
 
-![OGN-lagen: vrije plaatsing, projectie, berekende plaatsing](images/readme/ogn-three-layers.svg)
+![OGN-lagen: vrije plaatsing, projectie, berekende plaatsing](../images/readme/ogn-three-layers.svg)
 
 De externe voorbeeldzoekopdracht opent in een apart browservenster. Na het
 sluiten van dat venster staat de app nog open.

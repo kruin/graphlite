@@ -13,10 +13,12 @@ const lexicon = fs.readFileSync(path.join(root, 'lexicon-config.html'), 'utf8');
 const spec = fs.readFileSync(path.join(root, 'projectie-master-spec.md'), 'utf8');
 
 assert.equal(corpus.schema, 'ogn-utterance-corpus-v1');
-assert.equal(corpus.utterances.length, 3);
+assert.equal(corpus.utterances.length, 5);
 assert.deepEqual(corpus.utterances.map(item => item.id), [
   'jan-wast-zichzelf',
   'jan-slaat-jek-omdat-die-hem-beet',
+  'jan-slaat-de-hond-omdat-die-hem-gebeten-heeft',
+  'jan-beloonde-jek-omdat-die-het-bot-terugbracht',
   'ken-uzelf'
 ]);
 
@@ -28,8 +30,8 @@ for (const item of corpus.utterances) {
   for (const word of item.lex) assert.ok(input.includes(`>${word}<`), `${item.id}: woord ${word} ontbreekt`);
 }
 
-assert.equal(corpus.utterances[2].implicit_subject, 'U');
-assert.deepEqual(corpus.utterances[2].lex, ['KEN', 'UZELF']);
+assert.equal(corpus.utterances[4].implicit_subject, 'U');
+assert.deepEqual(corpus.utterances[4].lex, ['KEN', 'UZELF']);
 assert.ok(input.includes('data-implicit-subject="U"'));
 assert.ok(viewer.includes('card.dataset.implicitSubject'));
 assert.ok(viewer.includes('utterance_kernels'));
@@ -58,4 +60,12 @@ assert.deepEqual(flip.anaphor_variants.find(variant => variant.id === 'de-hond')
 assert.deepEqual(flip.anaphor_variants.find(variant => variant.id === 'jek').words, ['JEK']);
 assert.equal(flip.anaphor_variants.find(variant => variant.default).id, 'die');
 
-console.log('UITINGEN CHECK: OK (3 uitingen, 6 kernzinnen, HIJ/DIE/DIE HOND/DE HOND/JEK-varianten, referentie, rol-flip en impliciete agens)');
+const perfect = corpus.utterances[2];
+assert.deepEqual(perfect.predicate_variants, ['beet', 'heeft gebeten', 'gebeten heeft']);
+const reward = corpus.utterances[3];
+assert.equal(reward.predicate_variants.length, 6);
+assert.deepEqual(reward.object_variants.map(item => item.id), ['het-bot', 'zijn-bot']);
+assert.ok(reward.object_variants.find(item => item.id === 'zijn-bot').todo.includes('Jan of Jek'));
+assert.ok(reward.relations.some(relation => relation.type === 'ambiguity-todo'));
+
+console.log('UITINGEN CHECK: OK (5 uitingen, 10 kernzinnen, anafoor-, werkwoord- en botvarianten, ambiguïteit-TODO, rol-flip en impliciete agens)');

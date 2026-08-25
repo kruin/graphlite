@@ -4,6 +4,27 @@
 > `publish_checked.bat` offers to install the pinned tools before running the
 > checks. Answer `J`; local tooling stays outside Git and the release ZIP.
 
+## Flip: structure is not word order
+
+Alongside **Free Node**, Flip is essential to Language Tree notation. Free Node
+assigns every node a free grid position; Flip selects the visible left/right
+and short/long variant of a binary branch. Structure remains intact, while LEX
+remains the ultimate result: the fully realized utterance.
+
+![Minimal Language Tree](images/readme/flip-minimale-language-tree.png)
+
+![Free branches: left/right and short/long](images/readme/flip-vrije-vertakkingen.png)
+
+![Smallest field with projections](images/readme/flip-projecties-kleinste-veld.png)
+
+![Language Tree with LEX, SYN, and LOG](images/readme/flip-language-tree-lex-syn-log.png)
+
+In the causal fixture only K2, `HOND BIJT MAN`, flips. This permits both
+`HOND ↔ HOND` and `JAN ↔ MAN` to remain vertical. LEX then independently
+realizes `JAN SLAAT JEK OMDAT DIE HEM BEET`. See
+[`UITING_EN_KERNZINNEN.md`](UITING_EN_KERNZINNEN.md) and the technical
+[`FLIP_CONSTRAINT_SOLVER.md`](FLIP_CONSTRAINT_SOLVER.md).
+
 ## Utterances and kernel clauses
 
 An utterance consists of one or more linked kernel clauses. This build adds
@@ -14,18 +35,21 @@ flip, and implicit addressee are recorded in
 [`samples/uitingen-kernzinnen.v1.json`](samples/uitingen-kernzinnen.v1.json).
 Each utterance now opens as two independently calculated kernel-clause trees,
 `K1` above `K2`, with declared vertical anaphor connections and one shared LEX
-axis for the realized utterance. The causal example aligns both `JEK ↔ DIE`
-and `JAN ↔ HEM`; the imperative keeps its implicit subject off LEX. The
+axis for the realized utterance. The causal source trees align both
+`HOND ↔ HOND` and `JAN ↔ MAN`, realized on LEX as forms such as `die` and
+`hem`; the imperative keeps its implicit subject off LEX. The
 original `S1/S2` anaphor demonstration remains available separately.
-The causal K2 subject node is directly clickable and cycles through
+The causal K2 source node HOND is directly clickable and cycles its LEX form through
 **hij / die / die hond / de hond / Jek**. All five refer to Jek; both
 `DIE HOND` and `DE HOND` remain one subject NP while LEX displays their two
 words separately. Horizontal and vertical actual grid-cell sizes can be
 configured independently between 60% and 200%. K2 must flip locally when JAN and JEK exchange
 subject/object roles and both coreference links must remain vertical.
-The visible Play bar builds either composition in four reversible phases:
-first kernel clause, second kernel clause, vertical anaphors, and realized
-LEX utterance. Previous, Next, and Reset remain available.
+The visible Play bar builds each composition in five content phases: K1,
+K2 before Flip, the visible `FLIP K2`, vertical alignment, and the realized
+LEX utterance. During the Flip phase the old K2 remains as a faded red ghost
+behind the new K2, while dotted guides show the moved nodes. Previous, Next,
+and Reset remain available.
 The active test utterance remains visible above the graph. Kernel syntax
 consistently uses `S → NP, VP` and `VP → NP, V`; LEX independently realizes
 surface word order. Every binary node visibly branches left and right.

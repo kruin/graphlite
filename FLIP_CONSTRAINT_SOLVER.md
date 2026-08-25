@@ -1,6 +1,47 @@
-# Flip — generieke bewerking en gezamenlijke constraintsolver
+# Flip in Language Tree — generieke bewerking en gezamenlijke constraintsolver
 
 Normatief ontwerpcontract voor flip in Language Tree en zijn extensies.
+
+## Reikwijdte
+
+Flip is geen algemene OpenGraph- of Free-Node-bewerking. Zij bestaat alleen
+binnen **Language Tree** en **Anafoor · multiple Language Trees**. De vrije
+knopen blijven OpenGraph-knopen; de flipsolver is uitsluitend de technische
+plaatsingsmethode waarmee toegestane Language-Tree-vertakkingen een geometrie
+krijgen. Greedy, Random en Direct kennen dit flipcontract niet.
+
+De solver verandert nooit de uiteindelijke uiting. **LEX is het ultieme
+resultaat** en bewaart zijn gedeclareerde woordvolgorde, behalve wanneer een
+branch uitdrukkelijk `linearization: "child-order"` declareert.
+
+## Visuele basis
+
+![Minimale Language Tree: vrije knopen en schuine takken](images/readme/flip-minimale-language-tree.png)
+
+De minimale boom toont het object waarop Flip werkt: één gedeclareerde binaire
+vertakking. De solver wisselt de plaatsingsvariant van de twee volledige
+child-subtrees; hij verandert geen knoop-id, categorie of grammaticale relatie.
+
+![Vrije OpenGraph-vertakkingen: links/rechts en kort/lang](images/readme/flip-vrije-vertakkingen.png)
+
+De historische OpenGraph-afbeelding maakt beide plaatsingsdimensies zichtbaar:
+takken kunnen naar links of rechts lopen en kort of lang zijn. Zij blijven
+schuin omdat verschillende vrije knopen geen rij of kolom delen.
+
+![Projecties rond de centrale Language Tree](images/readme/flip-projecties-kleinste-veld.png)
+
+![LEX links, SYN rechts en LOG onder](images/readme/flip-language-tree-lex-syn-log.png)
+
+De laatste twee afbeeldingen tonen waarom Flip tot de Language Tree beperkt
+blijft. De centrale boom kan geometrisch spiegelen, terwijl LEX, SYN en LOG
+afzonderlijke projecties blijven. Vooral LEX mag niet stilzwijgend met de boom
+mee omkeren: LEX is de gerealiseerde uiting.
+
+In PLAY heeft de solver een eigen zichtbare stap tussen `K2 vóór Flip` en de
+starre uitlijning. Tijdens die stap blijft de oude K2 rood-transparant zichtbaar,
+staat de gekozen K2-layout vol in beeld en verbinden gestippelde lijnen iedere
+verplaatste knoop met zichzelf. Daarmee toont PLAY de gekozen solverbewerking;
+het toont niet alleen het eindresultaat.
 
 ## Besluit
 
@@ -86,6 +127,10 @@ De invoer is altijd één vooraf gekozen `interpretationId` met een complete
 set `relations[]`. Flip lost alleen geometrie op. Het mechanisme mag bij
 ambigue voornaamwoorden geen referenten omwisselen om de layout passend te
 maken.
+
+Voor `zijn bot` blijven daarom de lezingen `bezitter=Jan` en `bezitter=Jek`
+een expliciete TODO. De solver mag deze ambiguïteit niet oplossen op grond van
+de fraaiste of kortste tekening.
 
 Voor een kandidaatlayout en relatie `i` is de vereiste horizontale
 verschuiving:
@@ -251,6 +296,13 @@ Play behandelt de uiteindelijk gekozen niet-normale branches per zin in één
 atomaire flipstap. Terugspelen herstelt exact de voorafgaande varianttoestand.
 Context-inserties hebben geen Text-knoop en leveren geen flipconstraint;
 nadere Context-modellering blijft p.m.
+
+In de gedetailleerde Uiting-Play bewaart de renderer daarvoor twee expliciete
+K2-toestanden: `before` toont K2 na haar eigen Language-Tree-berekening en
+`applied` toont dezelfde K2 na de gekozen branchvarianten. Daarna volgt pas de
+starre `dx`/`dy`-translatie van de complete K2 en verschijnen de verticale
+relaties. LEX verschijnt als laatste en bewijst dat Flip geen impliciete
+omkering van de uiting heeft veroorzaakt.
 
 De literatuurcatalogus `ANAPHOR_S1_S2_LITERATURE_CATALOG.md` bevat de eerste
 meervoudige regressiefixtures. Met name `BOER→HIJ` plus `EZEL→HEM` maakt

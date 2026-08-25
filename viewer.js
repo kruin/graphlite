@@ -230,6 +230,10 @@
     mainCausalAnaphorChoice: document.getElementById('mainCausalAnaphorChoice'),
     mainCausalAnaphorLabel: document.getElementById('mainCausalAnaphorLabel'),
     mainCausalAnaphorSelect: document.getElementById('mainCausalAnaphorSelect'),
+    mainCausalVerbChoice: document.getElementById('mainCausalVerbChoice'),
+    mainCausalVerbSelect: document.getElementById('mainCausalVerbSelect'),
+    mainBotChoice: document.getElementById('mainBotChoice'),
+    mainBotSelect: document.getElementById('mainBotSelect'),
     metaLine: document.getElementById('metaLine'),
     sentencePreview: document.getElementById('sentencePreview'),
     actionFeedback: document.getElementById('actionFeedback'),
@@ -1247,24 +1251,24 @@
       "utteranceKernels": [
         {
           "id": "k1",
-          "text": "Jek beet Jan.",
-          "predicate": "bijten",
-          "agens": "jek",
-          "patiens": "jan"
-        },
-        {
-          "id": "k2",
-          "text": "Jan slaat Jek.",
+          "text": "Jan slaat hond.",
           "predicate": "slaan",
           "agens": "jan",
           "patiens": "jek"
+        },
+        {
+          "id": "k2",
+          "text": "Hond bijt man.",
+          "predicate": "bijten",
+          "agens": "jek",
+          "patiens": "jan"
         }
       ],
       "utteranceRelations": [
         {
           "type": "cause",
-          "from": "k1",
-          "to": "k2",
+          "from": "k2",
+          "to": "k1",
           "surface": "omdat"
         },
         {
@@ -2523,12 +2527,14 @@
     kernelBranchVertical: (function(){ try { return localStorage.getItem('opengraph_kernel_branch_vertical') || 'compact'; } catch (_err) { return 'compact'; } })(),
     kernelBranchFlip: (function(){ try { return localStorage.getItem('opengraph_kernel_branch_flip') || 'auto'; } catch (_err) { return 'auto'; } })(),
     causalAnaphorVariant: (function(){ try { return localStorage.getItem('opengraph_causal_anaphor_variant') || 'die'; } catch (_err) { return 'die'; } })(),
+    causalVerbVariant: (function(){ try { return localStorage.getItem('opengraph_causal_verb_variant') || ''; } catch (_err) { return ''; } })(),
+    botVariant: (function(){ try { return localStorage.getItem('opengraph_bot_variant') || 'het-bot'; } catch (_err) { return 'het-bot'; } })(),
     projectionLineWeight: (function(){ try { return localStorage.getItem('opengraph_projection_line_weight') || 'normal'; } catch (_err) { return 'normal'; } })(),
     boxLineWeight: (function(){ try { return localStorage.getItem('opengraph_box_line_weight') || 'normal'; } catch (_err) { return 'normal'; } })(),
     placementMode: 'language-tree',
     multiOgnExampleId: 'ik-zie-man-hij-draagt-hoed',
     multiOgnPlayEnabled: false,
-    multiOgnPlayStep: 4,
+    multiOgnPlayStep: 5,
     multiOgnPlayTimer: null,
     directPlacementGeneral: { ...DEFAULT_DIRECT_PLACEMENT_GENERAL },
     greedyGrowConfig: { ...DEFAULT_GREEDY_GROW_CONFIG },
@@ -4705,7 +4711,7 @@
   }
 
   function activeUtteranceDefinition() {
-    return globalThis.OGNUtteranceKernels?.definitionFor?.(state.multiOgnExampleId, state.causalAnaphorVariant) || null;
+    return globalThis.OGNUtteranceKernels?.definitionFor?.(state.multiOgnExampleId, state.causalAnaphorVariant, state.causalVerbVariant, state.botVariant) || null;
   }
 
   function activeMultiOgnDemo() {
@@ -4715,7 +4721,7 @@
   function multiOgnAnaphorComposition() {
     const engine = globalThis.OGNMultiComposition;
     const utterance = activeUtteranceDefinition();
-    if (utterance) return globalThis.OGNUtteranceKernels.composeUtterance(utterance.id, engine, state.causalAnaphorVariant);
+    if (utterance) return globalThis.OGNUtteranceKernels.composeUtterance(utterance.id, engine, state.causalAnaphorVariant, state.causalVerbVariant, state.botVariant);
     if (!engine?.composePair) throw new Error('Multi-OGN-compositie-engine ontbreekt.');
     const [s1, s2] = MULTI_OGN_ANAPHOR_DEMO.sentences;
     const composed = engine.composePair({
@@ -5900,17 +5906,18 @@
   }
 
   function multiOgnPlayLabel() {
-    const phase = Math.max(0, Math.min(4, Number(state.multiOgnPlayStep) || 0));
+    const phase = Math.max(0, Math.min(5, Number(state.multiOgnPlayStep) || 0));
+    const needsFlip = activeUtteranceDefinition()?.type === 'causal-role-flip';
     const labels = isEnglish()
-      ? ['grid / title', 'first kernel clause', 'second kernel clause', 'vertical anaphors', 'realized LEX utterance']
-      : ['raster / titel', 'eerste kernzin', 'tweede kernzin', 'verticale anaforen', 'gerealiseerde LEX-uiting'];
-    return `${isEnglish() ? 'step' : 'stap'} ${phase}/4: ${labels[phase]}`;
+      ? ['grid / title', 'calculate K1', 'calculate K2 before Flip', needsFlip ? 'Flip K2: mirror role branches' : 'no local Flip required', 'rigidly align vertical anaphors', 'LEX: complete realized utterance']
+      : ['raster / titel', 'K1 berekenen', 'K2 berekenen vóór Flip', needsFlip ? 'Flip K2: roltakken spiegelen' : 'geen lokale Flip nodig', 'K2 star verschuiven en anaforen verticaal uitlijnen', 'LEX: volledige gerealiseerde uiting'];
+    return `${isEnglish() ? 'step' : 'stap'} ${phase}/5: ${labels[phase]}`;
   }
 
   function setMultiOgnPlayStep(value, rerender = true) {
     state.multiOgnPlayEnabled = true;
-    state.multiOgnPlayStep = Math.max(0, Math.min(4, Number(value) || 0));
-    if (state.multiOgnPlayStep >= 4) stopMultiOgnPlayback();
+    state.multiOgnPlayStep = Math.max(0, Math.min(5, Number(value) || 0));
+    if (state.multiOgnPlayStep >= 5) stopMultiOgnPlayback();
     if (rerender) render();
   }
 
@@ -5921,7 +5928,7 @@
       return;
     }
     state.multiOgnPlayEnabled = true;
-    if (state.multiOgnPlayStep >= 4) state.multiOgnPlayStep = 0;
+    if (state.multiOgnPlayStep >= 5) state.multiOgnPlayStep = 0;
     render();
     state.multiOgnPlayTimer = window.setInterval(() => {
       if (!multiOgnAnaphorActive()) {
@@ -5929,7 +5936,7 @@
         return;
       }
       setMultiOgnPlayStep(state.multiOgnPlayStep + 1);
-    }, 700);
+    }, 1200);
     render();
   }
 
@@ -6277,7 +6284,7 @@
     state.growthEnabled = false;
     state.growthStep = 0;
     state.multiOgnPlayEnabled = false;
-    state.multiOgnPlayStep = 4;
+    state.multiOgnPlayStep = 5;
     state.projectionBlockUnlocked = false;
     state.selectedNodeId = null;
     state.documentMetadata = null;
@@ -9030,9 +9037,9 @@
 
   function applyMultiOgnPlaybackVisibility(group, composition) {
     const phase = state.multiOgnPlayEnabled
-      ? Math.max(0, Math.min(4, Number(state.multiOgnPlayStep) || 0)) : 4;
+      ? Math.max(0, Math.min(5, Number(state.multiOgnPlayStep) || 0)) : 5;
     group.setAttribute('data-play-step', String(phase));
-    group.setAttribute('data-play-max', '4');
+    group.setAttribute('data-play-max', '5');
     const unitOrder = new Map(composition.units.map((unit, index) => [unit.id, index + 1]));
     for (const layer of Array.from(group.children || [])) {
       if (layer.classList.contains('multi-ogn-unit-frame-layer')) {
@@ -9046,11 +9053,11 @@
             ? 'visible' : 'hidden');
         });
       } else if (layer.classList.contains('multi-ogn-coreference')) {
-        layer.setAttribute('visibility', phase >= 3 ? 'visible' : 'hidden');
-      } else if (layer.classList.contains('multi-ogn-shared-lex')) {
         layer.setAttribute('visibility', phase >= 4 ? 'visible' : 'hidden');
+      } else if (layer.classList.contains('multi-ogn-shared-lex')) {
+        layer.setAttribute('visibility', phase >= 5 ? 'visible' : 'hidden');
       } else if (layer.classList.contains('multi-ogn-relation-note')) {
-        layer.setAttribute('visibility', phase >= 3 ? 'visible' : 'hidden');
+        layer.setAttribute('visibility', phase >= 4 ? 'visible' : 'hidden');
       }
     }
   }
@@ -9216,6 +9223,9 @@
     const verticalSpacing = validKernelBranchSpacing(state.kernelBranchVertical);
     const flipMode = validKernelBranchFlip(state.kernelBranchFlip);
     const flipSign = flipMode === 'flip' ? -1 : 1;
+    const playPhase = state.multiOgnPlayEnabled ? Math.max(0, Math.min(5, Number(state.multiOgnPlayStep) || 0)) : 5;
+    const showK2BeforeLocalFlip = definition.type === 'causal-role-flip' && playPhase === 2;
+    const showK2FlipReveal = definition.type === 'causal-role-flip' && playPhase === 3;
     const horizontalScale = kernelBranchScale(horizontalSpacing);
     const verticalScale = kernelBranchScale(verticalSpacing);
     g.setAttribute('data-grid-size-horizontal', validGridSize(state.gridSizeHorizontal));
@@ -9226,20 +9236,27 @@
     g.setAttribute('data-branch-horizontal-scale', String(horizontalScale));
     g.setAttribute('data-branch-vertical-scale', String(verticalScale));
     const origin = { x: 760, y: 112 };
-    const scaledLayout = layout => ({
-      ...layout,
-      nodes: layout.nodes.map(node => ({ ...node, x: node.x * horizontalScale * flipSign, y: node.y * verticalScale })),
-      edges: layout.edges.map(edge => ({
-        ...edge, fromX: edge.fromX * horizontalScale * flipSign, fromY: edge.fromY * verticalScale,
-        toX: edge.toX * horizontalScale * flipSign, toY: edge.toY * verticalScale
-      })),
-      box: {
-        minX: (flipSign < 0 ? -layout.box.maxX : layout.box.minX) * horizontalScale,
-        maxX: (flipSign < 0 ? -layout.box.minX : layout.box.maxX) * horizontalScale,
-        minY: layout.box.minY * verticalScale, maxY: layout.box.maxY * verticalScale
-      }
-    });
-    const unitById = new Map(composition.units.map(unit => [unit.id, { ...unit, layout: scaledLayout(unit.layout) }]));
+    const scaledLayout = (layout, unitId, forceLocalMirror = null) => {
+      const localMirror = forceLocalMirror === null
+        ? showK2BeforeLocalFlip && unitId === 'K2'
+        : Boolean(forceLocalMirror) && unitId === 'K2';
+      const rootX = layout.nodes.find(node => node.label === 'S')?.x || 0;
+      const mapX = value => (localMirror ? 2 * rootX - value : value) * horizontalScale * flipSign;
+      const nodes = layout.nodes.map(node => ({ ...node, x: mapX(node.x), y: node.y * verticalScale }));
+      const edges = layout.edges.map(edge => ({
+        ...edge, fromX: mapX(edge.fromX), fromY: edge.fromY * verticalScale,
+        toX: mapX(edge.toX), toY: edge.toY * verticalScale
+      }));
+      return {
+        ...layout, nodes, edges, mirrored: localMirror ? !layout.mirrored : layout.mirrored,
+        box: { minX: Math.min(...nodes.map(node => node.x)), maxX: Math.max(...nodes.map(node => node.x)),
+          minY: Math.min(...nodes.map(node => node.y)), maxY: Math.max(...nodes.map(node => node.y)) }
+      };
+    };
+    const unitById = new Map(composition.units.map(unit => [unit.id, { ...unit, layout: scaledLayout(unit.layout, unit.id) }]));
+    const k2BeforeFlipLayout = showK2FlipReveal
+      ? scaledLayout(composition.units.find(unit => unit.id === 'K2').layout, 'K2', true)
+      : null;
     const displayBox = {
       minX: (flipSign < 0 ? -composition.box.maxX : composition.box.minX) * horizontalScale,
       maxX: (flipSign < 0 ? -composition.box.minX : composition.box.maxX) * horizontalScale,
@@ -9265,6 +9282,8 @@
     const leafRadius = kernelNodeMetrics.leafRadius;
     g.setAttribute('data-free-node-rendering', 'slanted');
     g.setAttribute('data-node-radius', String(leafRadius));
+    g.setAttribute('data-local-flip-target', definition.type === 'causal-role-flip' ? 'K2' : 'none');
+    g.setAttribute('data-local-flip-applied', definition.type === 'causal-role-flip' && playPhase >= 3 ? 'true' : 'false');
 
     drawAxisTitle(g, axisX - 72, titleY, isEnglish()
       ? `UTTERANCE · TWO KERNEL CLAUSES · ${definition.title}`
@@ -9274,14 +9293,15 @@
       : 'K1 boven K2 · gedeclareerde anaforen staan verticaal · LEX toont de gerealiseerde uiting.', 'rule-label');
     if (definition.type === 'causal-role-flip') {
       drawCanvasGuideText(g, axisX - 72, titleY + 50, isEnglish()
-        ? 'K2 flips because JAN and JEK exchange roles; both reference lines must remain vertical.'
-        : 'K2 flipt omdat JAN en JEK van rol wisselen; beide verwijslijnen moeten verticaal blijven.',
+        ? (playPhase === 2 ? 'BEFORE FLIP: K2 keeps its own branch orientation.' : playPhase >= 3 ? 'FLIP HITS K2: its S and VP role branches mirror; node identities and syntax stay unchanged.' : 'K2 will flip because JAN and JEK exchange roles; both reference lines must remain vertical.')
+        : (playPhase === 2 ? 'VÓÓR FLIP: K2 behoudt eerst zijn eigen takrichting.' : playPhase >= 3 ? 'FLIP SLAAT TOE OP K2: de roltakken onder S en VP spiegelen; knoopidentiteit en syntaxis blijven gelijk.' : 'K2 zal flippen omdat JAN en JEK van rol wisselen; beide verwijslijnen moeten verticaal blijven.'),
       'rule-label utterance-flip-explanation');
     }
 
     const frameLayer = svgEl('g', { class: 'multi-ogn-unit-frame-layer' });
     composition.units.forEach(unit => {
-      const box = unitById.get(unit.id).layout.box;
+      const displayLayout = unitById.get(unit.id).layout;
+      const box = displayLayout.box;
       const x = px(box.minX, origin) - framePadX;
       const y = py(box.minY, origin) - framePadY;
       const width = px(box.maxX, origin) - px(box.minX, origin) + framePadX * 2;
@@ -9290,7 +9310,8 @@
       frameLayer.appendChild(svgEl('rect', {
         x, y, width, height, rx: 22, class: 'multi-ogn-unit-frame utterance-kernel-frame',
         'data-ogn-unit': unit.id, 'data-grid-invariant-scope': 'per-ogn',
-        'data-branch-orientation': Boolean(unit.layout.mirrored) !== (flipSign < 0) ? 'mirrored' : 'normal'
+        'data-local-flip-state': unit.id === 'K2' && definition.type === 'causal-role-flip' ? (playPhase >= 3 ? 'applied' : 'before') : 'not-required',
+        'data-branch-orientation': Boolean(displayLayout.mirrored) !== (flipSign < 0) ? 'mirrored' : 'normal'
       }));
       frameLayer.appendChild(svgEl('text', { x: x + 18, y: y + 26, class: 'multi-ogn-unit-label' }, `${unit.id} · ${isEnglish() ? 'KERNEL CLAUSE' : 'KERNZIN'}`));
       frameLayer.appendChild(svgEl('text', { x: x + 18, y: y + 50, class: 'multi-ogn-sentence-label' }, sentence?.text || unit.id));
@@ -9338,6 +9359,53 @@
     });
     g.appendChild(lexLayer);
 
+    // PLAY step 3 deliberately shows both geometries at once. The faded K2 is
+    // the immediately preceding, unflipped state; the solid tree is the chosen
+    // flipped result. Motion guides make the left/right exchange observable
+    // even when the next frame is displayed without CSS animation.
+    if (k2BeforeFlipLayout) {
+      const flipRevealLayer = svgEl('g', {
+        class: 'utterance-flip-reveal-layer',
+        'data-play-operation': 'flip-k2-left-right',
+        'aria-label': isEnglish() ? 'Flip K2 shown: before and after' : 'Flip K2 zichtbaar: vóór en na'
+      });
+      const ghostEdges = svgEl('g', { class: 'utterance-flip-before-edges', 'data-flip-state': 'before' });
+      if (state.showRelations) {
+        for (const edge of k2BeforeFlipLayout.edges) {
+          ghostEdges.appendChild(svgEl('line', {
+            x1: px(edge.fromX, origin), y1: py(edge.fromY, origin),
+            x2: px(edge.toX, origin), y2: py(edge.toY, origin),
+            class: 'tree-edge utterance-flip-ghost-edge',
+            'data-from-node-id': edge.from, 'data-to-node-id': edge.to
+          }));
+        }
+      }
+      flipRevealLayer.appendChild(ghostEdges);
+      const ghostNodes = svgEl('g', { class: 'utterance-flip-before-nodes', 'data-flip-state': 'before' });
+      drawTreeNodes(ghostNodes, k2BeforeFlipLayout, origin, false, null, kernelNodeMetrics);
+      flipRevealLayer.appendChild(ghostNodes);
+
+      const afterLayout = unitById.get('K2').layout;
+      const beforeById = new Map(k2BeforeFlipLayout.nodes.map(node => [node.id, node]));
+      const motionLayer = svgEl('g', { class: 'utterance-flip-motion-layer' });
+      afterLayout.nodes.forEach(afterNode => {
+        const beforeNode = beforeById.get(afterNode.id);
+        if (!beforeNode || Math.abs(beforeNode.x - afterNode.x) < 0.01) return;
+        motionLayer.appendChild(svgEl('line', {
+          x1: px(beforeNode.x, origin), y1: py(beforeNode.y, origin),
+          x2: px(afterNode.x, origin), y2: py(afterNode.y, origin),
+          class: 'utterance-flip-motion', 'data-node-id': afterNode.id
+        }));
+      });
+      flipRevealLayer.appendChild(motionLayer);
+      const badgeX = px(afterLayout.box.minX, origin) - framePadX + 18;
+      const badgeY = py(afterLayout.box.minY, origin) - framePadY - 15;
+      flipRevealLayer.appendChild(svgEl('text', {
+        x: badgeX, y: badgeY, class: 'utterance-flip-badge'
+      }, isEnglish() ? 'FLIP K2 · LEFT/RIGHT · faded=before · solid=after' : 'FLIP K2 · LINKS/RECHTS · vaag=vóór · vol=na'));
+      g.appendChild(flipRevealLayer);
+    }
+
     const edgeLayer = svgEl('g', { class: 'multi-ogn-tree-edge-layer' });
     composition.units.forEach(unit => {
       const unitGroup = svgEl('g', { class: 'multi-ogn-unit multi-ogn-tree-edges', 'data-ogn-unit': unit.id, 'data-calculation-order': unit.order });
@@ -9368,7 +9436,7 @@
     });
     g.appendChild(edgeLayer);
 
-    if (state.showRelations) {
+    if (state.showRelations && !showK2BeforeLocalFlip) {
       composition.relations.forEach((relation, index) => {
         const antecedent = nodePoint(relation.antecedent.unitId, relation.antecedent.nodeId);
         const anaphor = nodePoint(relation.anaphor.unitId, relation.anaphor.nodeId);
@@ -9407,8 +9475,8 @@
           element.setAttribute('role', 'button');
           element.setAttribute('tabindex', '0');
           element.setAttribute('aria-label', isEnglish()
-            ? 'Change subject: HIJ, DIE, DIE HOND, DE HOND or JEK'
-            : 'Wijzig subject: HIJ, DIE, DIE HOND, DE HOND of JEK');
+            ? 'Change LEX realization of HOND: HIJ, DIE, DIE HOND, DE HOND or JEK'
+            : 'Wijzig LEX-realisatie van HOND: HIJ, DIE, DIE HOND, DE HOND of JEK');
           element.appendChild(svgEl('title', {}, isEnglish()
             ? 'Click or press Enter: change the referring subject'
             : 'Klik of druk op Enter: wijzig het verwijzende subject'));
@@ -9722,6 +9790,9 @@
       els.mainCausalAnaphorChoice.hidden = !multiOgnAnaphorActive()
         || activeUtteranceDefinition()?.type !== 'causal-role-flip';
     }
+    const activeDefinition = activeUtteranceDefinition();
+    if (els.mainCausalVerbChoice) els.mainCausalVerbChoice.hidden = !activeDefinition?.verbVariant;
+    if (els.mainBotChoice) els.mainBotChoice.hidden = !activeDefinition?.botVariant;
     if (els.mainActiveUtterance) els.mainActiveUtterance.hidden = directPlacementActive();
     if (multiOgnAnaphorActive()) {
       const composition = multiOgnAnaphorComposition();
@@ -10131,7 +10202,7 @@
       if (multiActive) {
         stopMultiOgnPlayback();
         state.multiOgnPlayEnabled = false;
-        state.multiOgnPlayStep = 4;
+        state.multiOgnPlayStep = 5;
         state.multiOgnExampleId = id;
         const matchingExample = EXAMPLES.find(example => example.id === id);
         if (matchingExample) state.example = matchingExample;
@@ -10266,6 +10337,14 @@
       .map(variant => ({ id: variant.id, label: variant.text, labelEn: variant.text }));
     fillSelect(els.mainCausalAnaphorSelect, causalVariants, state.causalAnaphorVariant);
     fillSelect(document.getElementById('multiCausalAnaphorSelect'), causalVariants, state.causalAnaphorVariant);
+    const activeDefinition = activeUtteranceDefinition();
+    const verbSource = activeDefinition?.id === 'jan-beloonde-jek-omdat-die-het-bot-terugbracht'
+      ? globalThis.OGNUtteranceKernels?.REWARD_VERB_VARIANTS
+      : globalThis.OGNUtteranceKernels?.CAUSAL_VERB_VARIANTS;
+    const verbVariants = (verbSource || []).map(item => ({ id: item.id, label: item.text, labelEn: item.text }));
+    fillSelect(els.mainCausalVerbSelect, verbVariants, activeDefinition?.verbVariant || state.causalVerbVariant);
+    const botVariants = (globalThis.OGNUtteranceKernels?.BOT_VARIANTS || []).map(item => ({ id: item.id, label: item.text, labelEn: item.text }));
+    fillSelect(els.mainBotSelect, botVariants, state.botVariant);
     fillSelect(els.projectionLineWeightSelect, LINE_WEIGHT_OPTIONS, validLineWeight(state.projectionLineWeight));
     fillSelect(els.boxLineWeightSelect, LINE_WEIGHT_OPTIONS, validLineWeight(state.boxLineWeight));
     syncDirectConfigControls();
@@ -11545,7 +11624,7 @@
     state.growthEnabled = false;
     state.growthStep = 0;
     state.multiOgnPlayEnabled = false;
-    state.multiOgnPlayStep = 4;
+    state.multiOgnPlayStep = 5;
     state.projectionBlockUnlocked = false;
     state.directPlacementState = null;
     state.selectedNodeId = null;
@@ -12946,8 +13025,8 @@
           <li>De gezamenlijke LEX-as ordent S1 vóór S2.</li>
           <li>MAN (antecedent) en HIJ (anafoor) krijgen één rechte ongerichte coreferentielijn zonder pijl.</li>
         </ol>
-        <p class="config-item-help"><strong>Invariant:</strong> unieke rijen en kolommen worden per afzonderlijke OGN gecontroleerd. Alleen gedeclareerde anafoorkolommen mogen tussen de twee OGN’s samenvallen: MAN–HIJ in de oorspronkelijke demo, of JEK–HIJ/DIE/DIE HOND én JAN–HEM in de causale uiting.</p>
-        <p class="config-item-help"><strong>Waar?</strong> De onderste kernzin K2. <strong>Wanneer?</strong> Zodra JAN en JEK tussen K1 en K2 van subject/object wisselen én beide verwijslijnen verticaal moeten blijven. <strong>Waarom?</strong> Zonder automatische spiegeling kruisen hun referentkolommen; met Flip blijven JEK–HIJ/DIE/DIE HOND en JAN–HEM recht. Boomstructuur en LEX-woordvolgorde veranderen niet.</p>
+        <p class="config-item-help"><strong>Invariant:</strong> unieke rijen en kolommen worden per afzonderlijke OGN gecontroleerd. Alleen gedeclareerde anafoorkolommen mogen tussen de twee OGN’s samenvallen: MAN–HIJ in de oorspronkelijke demo, of HOND–HOND én JAN–MAN in de causale kernzinbomen. DIE/HIJ en HEM verschijnen uitsluitend op LEX.</p>
+        <p class="config-item-help"><strong>Waar?</strong> De onderste kernzin K2: HOND BIJT MAN. <strong>Wanneer?</strong> Zodra HOND en JAN/MAN tussen K1 en K2 van subject/object wisselen én beide bronverbindingen verticaal moeten blijven. <strong>Waarom?</strong> Zonder automatische spiegeling kruisen hun referentkolommen; met Flip blijven HOND–HOND en JAN–MAN recht. Boomstructuur en LEX-woordvolgorde veranderen niet.</p>
       </div>
       <div class="help-lang-en">
         <h2>Anaphor · multi-OGN</h2>
@@ -12959,11 +13038,12 @@
           <li>The shared LEX axis orders S1 before S2.</li>
           <li>MAN (antecedent) and HIJ (anaphor) receive one straight undirected coreference line without an arrow.</li>
         </ol>
-        <p class="config-item-help"><strong>Invariant:</strong> unique rows and columns are validated per individual OGN. Only declared anaphor columns may coincide across both OGNs: MAN–HIJ in the original demonstration, or JEK–HIJ/DIE/DIE HOND and JAN–HEM in the causal utterance.</p>
-        <p class="config-item-help"><strong>Where?</strong> The lower kernel clause K2. <strong>When?</strong> When JAN and JEK exchange subject/object roles between K1 and K2 while both reference lines must remain vertical. <strong>Why?</strong> Without automatic mirroring their reference columns cross; Flip keeps JEK–HIJ/DIE/DIE HOND and JAN–HEM straight without changing tree structure or LEX word order.</p>
+        <p class="config-item-help"><strong>Invariant:</strong> unique rows and columns are validated per individual OGN. Only declared anaphor columns may coincide across both OGNs: MAN–HIJ in the original demonstration, or HOND–HOND and JAN–MAN in the causal kernel trees. DIE/HIJ and HEM appear only on LEX.</p>
+        <p class="config-item-help"><strong>Where?</strong> The lower kernel clause K2: HOND BIJT MAN. <strong>When?</strong> When HOND and JAN/MAN exchange subject/object roles between K1 and K2 while both source links must remain vertical. <strong>Why?</strong> Without automatic mirroring their reference columns cross; Flip keeps HOND–HOND and JAN–MAN straight without changing tree structure or LEX word order.</p>
       </div>
       <fieldset class="multi-ogn-tree-layout-field">
         <legend><span class="help-lang-nl">Boomstructuur en layout</span><span class="help-lang-en">Tree structure and layout</span></legend>
+        <p class="config-item-help"><span class="help-lang-nl"><strong>Play 0–5:</strong> raster → K1 → K2 vóór Flip → lokale Flip op K2 → starre K2-uitlijning met verticale anaforen → volledige LEX-uiting. Tijdens de Flip-stap spiegelen alleen de roltakken onder S en VP; structuur en woordvolgorde blijven gelijk.</span><span class="help-lang-en"><strong>Play 0–5:</strong> grid → K1 → K2 before Flip → local Flip on K2 → rigid K2 alignment with vertical anaphors → complete LEX utterance. During Flip only the role branches below S and VP mirror; structure and word order remain unchanged.</span></p>
         <label class="field mini-field"><span><span class="help-lang-nl">Causale anafoor</span><span class="help-lang-en">Causal anaphor</span></span><select id="multiCausalAnaphorSelect"></select></label>
         <label class="field mini-field"><span><span class="help-lang-nl">Rastermaat horizontaal</span><span class="help-lang-en">Horizontal grid size</span></span><select id="multiGridSizeHorizontalSelect"></select></label>
         <label class="field mini-field"><span><span class="help-lang-nl">Rastermaat verticaal</span><span class="help-lang-en">Vertical grid size</span></span><select id="multiGridSizeVerticalSelect"></select></label>
@@ -12973,8 +13053,10 @@
         <label class="field mini-field"><span><span class="help-lang-nl">Vertakking horizontaal</span><span class="help-lang-en">Horizontal branches</span></span><select id="multiTreeBranchHorizontalSelect"></select></label>
         <label class="field mini-field"><span><span class="help-lang-nl">Vertakking verticaal</span><span class="help-lang-en">Vertical branches</span></span><select id="multiTreeBranchVerticalSelect"></select></label>
         <label class="field mini-field"><span><span class="help-lang-nl">Flip · links/rechts</span><span class="help-lang-en">Flip · left/right</span></span><select id="multiTreeBranchFlipSelect"></select></label>
-        <p class="config-item-help"><span class="help-lang-nl"><strong>Klikbare knoop:</strong> klik in K2 op het subject om rechtstreeks te wisselen tussen HIJ, DIE, DIE HOND, DE HOND en JEK. De twee rastermaten veranderen de echte gridcel afzonderlijk in breedte en hoogte.</span><span class="help-lang-en"><strong>Clickable node:</strong> click the K2 subject to switch directly between HIJ, DIE, DIE HOND, DE HOND, and JEK. The two grid sizes independently change the actual cell width and height.</span></p>
+        <p class="config-item-help"><span class="help-lang-nl"><strong>Klikbare knoop:</strong> klik in K2 op bronknoop HOND om de LEX-realisatie rechtstreeks te wisselen tussen HIJ, DIE, DIE HOND, DE HOND en JEK. De bronknoop blijft HOND. De twee rastermaten veranderen de echte gridcel afzonderlijk in breedte en hoogte.</span><span class="help-lang-en"><strong>Clickable node:</strong> click source node HOND in K2 to switch its LEX realization between HIJ, DIE, DIE HOND, DE HOND, and JEK. The source node remains HOND. The two grid sizes independently change the actual cell width and height.</span></p>
         <p class="config-item-help"><span class="help-lang-nl"><strong>Flip</strong> spiegelt de zichtbare takken, maar verandert noch de structuur <code>S → NP, VP</code> / <code>VP → NP, V</code>, noch de LEX-woordvolgorde of verticale anaforen.</span><span class="help-lang-en"><strong>Flip</strong> mirrors the visible branches without changing <code>S → NP, VP</code> / <code>VP → NP, V</code> structure, LEX word order, or vertical anaphors.</span></p>
+        <p class="config-item-help"><span class="help-lang-nl"><strong>Reikwijdte:</strong> Flip bestaat alleen in Language Tree en Anafoor/multiple Language Trees. LEX is het ultieme resultaat: de gerealiseerde uiting. De flipsolver kiest alleen toegestane boomgeometrie.</span><span class="help-lang-en"><strong>Scope:</strong> Flip exists only in Language Tree and Anaphor/multiple Language Trees. LEX is the ultimate result: the realized utterance. The flip solver only chooses permitted tree geometry.</span></p>
+        <p class="config-item-help"><span class="help-lang-nl"><strong>TODO:</strong> <em>zijn bot</em> kan het bot van Jan of van Jek betekenen; de solver mag dit niet stilzwijgend beslissen. <em>Het bot</em> is de ondubbelzinnige standaard.</span><span class="help-lang-en"><strong>TODO:</strong> <em>zijn bot</em> may mean Jan's or Jek's bone; the solver must not silently decide. <em>Het bot</em> is the unambiguous default.</span></p>
       </fieldset>`;
 
     panels.get('general-ui').appendChild(generalUiCard);
@@ -14925,6 +15007,16 @@
     };
     els.mainCausalAnaphorSelect?.addEventListener('change', updateCausalAnaphorVariant);
     document.getElementById('multiCausalAnaphorSelect')?.addEventListener('change', updateCausalAnaphorVariant);
+    els.mainCausalVerbSelect?.addEventListener('change', event => {
+      state.causalVerbVariant = event.target.value;
+      try { localStorage.setItem('opengraph_causal_verb_variant', state.causalVerbVariant); } catch (_err) {}
+      state.documentMetadata = null; resetManualViewBox(); render();
+    });
+    els.mainBotSelect?.addEventListener('change', event => {
+      state.botVariant = event.target.value;
+      try { localStorage.setItem('opengraph_bot_variant', state.botVariant); } catch (_err) {}
+      state.documentMetadata = null; resetManualViewBox(); render();
+    });
     const activateConfigurableNode = event => {
       const target = event.target?.closest?.('[data-node-config="causal-subject"]');
       if (!target || !multiOgnAnaphorActive()) return;

@@ -113,31 +113,31 @@
       "kernels": [
         {
           "id": "k1",
-          "text": "Jek beet Jan.",
-          "predicate": "bijten",
-          "agens": "jek",
-          "patiens": "jan"
-        },
-        {
-          "id": "k2",
-          "text": "Jan slaat Jek.",
+          "text": "Jan slaat hond.",
           "predicate": "slaan",
           "agens": "jan",
           "patiens": "jek"
+        },
+        {
+          "id": "k2",
+          "text": "Hond bijt man.",
+          "predicate": "bijten",
+          "agens": "jek",
+          "patiens": "jan"
         }
       ],
       "relations": [
         {
           "type": "cause",
-          "from": "k1",
-          "to": "k2",
+          "from": "k2",
+          "to": "k1",
           "surface": "omdat"
         },
         {
           "type": "coreference",
           "members": [
-            "k1.agens",
-            "k2.patiens"
+            "k1.patiens",
+            "k2.agens"
           ],
           "surface": [
             "Jek",
@@ -147,8 +147,8 @@
         {
           "type": "coreference",
           "members": [
-            "k1.patiens",
-            "k2.agens"
+            "k1.agens",
+            "k2.patiens"
           ],
           "surface": [
             "Jan",
@@ -163,6 +163,23 @@
           ]
         }
       ]
+    },
+    {
+      "id":"jan-slaat-de-hond-omdat-die-hem-gebeten-heeft","text":"Jan slaat de hond omdat die hem gebeten heeft.","type":"causal-role-flip",
+      "lex":["JAN","SLAAT","DE","HOND","OMDAT","DIE","HEM","GEBETEN","HEEFT"],
+      "anaphor_variants":[{"id":"hij","surface":"hij","words":["HIJ"],"referent":"jek","category":"NP"},{"id":"die","surface":"die","words":["DIE"],"referent":"jek","category":"NP","default":true},{"id":"die-hond","surface":"die hond","words":["DIE","HOND"],"referent":"jek","category":"NP"},{"id":"de-hond","surface":"de hond","words":["DE","HOND"],"referent":"jek","category":"NP"},{"id":"jek","surface":"Jek","words":["JEK"],"referent":"jek","category":"NP"}],
+      "predicate_variants":["beet","heeft gebeten","gebeten heeft"],
+      "kernels":[{"id":"k1","text":"Jan slaat hond.","predicate":"slaan","agens":"jan","patiens":"jek"},{"id":"k2","text":"Hond bijt man.","predicate":"bijten","agens":"jek","patiens":"jan"}],
+      "relations":[{"type":"cause","from":"k2","to":"k1","surface":"omdat"},{"type":"coreference","members":["k1.patiens","k2.agens"]},{"type":"coreference","members":["k1.agens","k2.patiens"]},{"type":"role-flip","participants":["jan","jek"]}]
+    },
+    {
+      "id":"jan-beloonde-jek-omdat-die-het-bot-terugbracht","text":"Jan beloonde zijn hond Jek omdat die het bot naar hem terugbracht.","type":"causal-role-flip",
+      "lex":["JAN","BELOONDE","ZIJN","HOND","JEK","OMDAT","DIE","HET","BOT","NAAR","HEM","TERUGBRACHT"],
+      "anaphor_variants":[{"id":"hij","surface":"hij","words":["HIJ"],"referent":"jek","category":"NP"},{"id":"die","surface":"die","words":["DIE"],"referent":"jek","category":"NP","default":true},{"id":"die-hond","surface":"die hond","words":["DIE","HOND"],"referent":"jek","category":"NP"},{"id":"de-hond","surface":"de hond","words":["DE","HOND"],"referent":"jek","category":"NP"},{"id":"jek","surface":"Jek","words":["JEK"],"referent":"jek","category":"NP"}],
+      "predicate_variants":["terugbracht","heeft teruggebracht","teruggebracht heeft","apporteerde","heeft geapporteerd","geapporteerd heeft"],
+      "object_variants":[{"id":"het-bot","surface":"het bot","default":true,"ambiguous":false},{"id":"zijn-bot","surface":"zijn bot","ambiguous":true,"todo":"Bepaal of zijn naar Jan of Jek verwijst; kies niet stilzwijgend."}],
+      "kernels":[{"id":"k1","text":"Jan beloont hond.","predicate":"belonen","agens":"jan","patiens":"jek"},{"id":"k2","text":"Hond apporteert bot naar man.","predicate":"apporteren","agens":"jek","patiens":"bot","recipient":"jan"}],
+      "relations":[{"type":"cause","from":"k2","to":"k1","surface":"omdat"},{"type":"coreference","members":["k1.patiens","k2.agens"]},{"type":"coreference","members":["k1.agens","k2.recipient"]},{"type":"role-flip","participants":["jan","jek"]},{"type":"ambiguity-todo","surface":"zijn bot","readings":["bezitter=jan","bezitter=jek"]}]
     },
     {
       "id": "ken-uzelf",

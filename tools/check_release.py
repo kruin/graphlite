@@ -772,7 +772,7 @@ for marker, label in [
 ]:
     require(local_launcher, marker, label)
 source_build = read("SOURCE_BUILD.txt").strip()
-if source_build != "v2.0.0-rc.45-publish-visible-browser-controls-20260825.11":
+if source_build != "v2.0.0-rc.45-play-show-flip-before-after-20260825.16":
     errors.append(f"onverwachte of lege SOURCE_BUILD.txt: {source_build!r}")
 for stale in ['v4537', 'v2.0.0-rc.24']:
     if stale in start_bat or stale in debug_html:
@@ -823,8 +823,8 @@ if "state.projectionBlockUnlocked = maxStep > 0 && state.growthStep >= maxStep;"
 tbody = re.search(r"<tbody>(.*?)</tbody>", read("examples-adverbs.html"), flags=re.S)
 if not tbody or len(re.findall(r"<tr\b", tbody.group(1))) != 25:
     errors.append("bijwoordtabel moet exact 25 voorbeelden bevatten")
-if examples.count('class="example-input"') != 19:
-    errors.append("voorbeeldset moet exact 19 uitingen bevatten")
+if examples.count('class="example-input"') != 21:
+    errors.append("voorbeeldset moet exact 21 uitingen bevatten")
 for utterance_id in [
     "jan-wast-zichzelf",
     "jan-slaat-jek-omdat-die-hem-beet",

@@ -134,11 +134,11 @@ for source, markers, label in [
     for marker in markers:
         require(source, marker, f"{label}: profielmarker")
 
-# The source contains 19 utterances; the two insertion examples are excluded in base.
+# The source contains 21 utterances; the two insertion examples are excluded in base.
 example_count = EXAMPLES.count('class="example-input"')
 insertion_cards = len(re.findall(r'<article class="example-input"(?:(?!</article>).)*class="lex-insertion"', EXAMPLES, flags=re.S))
-if example_count != 19:
-    errors.append(f"verwacht 19 bronuitingen, gevonden {example_count}")
+if example_count != 21:
+    errors.append(f"verwacht 21 bronuitingen, gevonden {example_count}")
 if insertion_cards != 2:
     errors.append(f"verwacht 2 featurevoorbeelden, gevonden {insertion_cards}")
 

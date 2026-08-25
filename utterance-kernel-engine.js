@@ -26,8 +26,8 @@
       id: 'jan-slaat-jek-omdat-die-hem-beet',
       title: 'Jan slaat Jek omdat die hem beet.',
       type: 'causal-role-flip',
-      upper: Object.freeze({ text: 'Jan slaat Jek.', subject: 'JAN', predicate: 'SLAAT', object: 'JEK' }),
-      lower: Object.freeze({ text: 'Die hem beet.', subject: 'DIE', predicate: 'BEET', object: 'HEM', order: 'subject-object-predicate' }),
+      upper: Object.freeze({ text: 'Jan slaat hond.', subject: 'JAN', predicate: 'SLAAT', object: 'HOND' }),
+      lower: Object.freeze({ text: 'Hond bijt man.', subject: 'HOND', predicate: 'BIJT', object: 'MAN', order: 'subject-object-predicate' }),
       relations: Object.freeze([
         Object.freeze({ upperRole: 'object', lowerRole: 'subject', referent: 'jek' }),
         Object.freeze({ upperRole: 'subject', lowerRole: 'object', referent: 'jan' })
@@ -40,6 +40,46 @@
         Object.freeze({ label: 'DIE', unit: 'K2', role: 'subject' }),
         Object.freeze({ label: 'HEM', unit: 'K2', role: 'object' }),
         Object.freeze({ label: 'BEET', unit: 'K2', role: 'predicate' })
+      ])
+    }),
+    Object.freeze({
+      id: 'jan-slaat-de-hond-omdat-die-hem-gebeten-heeft',
+      title: 'Jan slaat de hond omdat die hem gebeten heeft.',
+      type: 'causal-role-flip',
+      upper: Object.freeze({ text: 'Jan slaat hond.', subject: 'JAN', predicate: 'SLAAT', object: 'HOND' }),
+      lower: Object.freeze({ text: 'Hond bijt man.', subject: 'HOND', predicate: 'BIJT', object: 'MAN', order: 'subject-object-predicate' }),
+      relations: Object.freeze([
+        Object.freeze({ upperRole: 'object', lowerRole: 'subject', referent: 'jek' }),
+        Object.freeze({ upperRole: 'subject', lowerRole: 'object', referent: 'jan' })
+      ]),
+      surface: Object.freeze([
+        Object.freeze({ label: 'JAN', unit: 'K1', role: 'subject' }),
+        Object.freeze({ label: 'SLAAT', unit: 'K1', role: 'predicate' }),
+        Object.freeze({ label: 'DE HOND', words: Object.freeze(['DE', 'HOND']), unit: 'K1', role: 'object' }),
+        Object.freeze({ label: 'OMDAT', unit: 'LINK', role: 'connector', connector: true }),
+        Object.freeze({ label: 'DIE', unit: 'K2', role: 'subject' }),
+        Object.freeze({ label: 'HEM', unit: 'K2', role: 'object' }),
+        Object.freeze({ label: 'GEBETEN HEEFT', words: Object.freeze(['GEBETEN', 'HEEFT']), unit: 'K2', role: 'predicate' })
+      ])
+    }),
+    Object.freeze({
+      id: 'jan-beloonde-jek-omdat-die-het-bot-terugbracht',
+      title: 'Jan beloonde zijn hond Jek omdat die het bot naar hem terugbracht.',
+      type: 'causal-role-flip',
+      upper: Object.freeze({ text: 'Jan beloont hond.', subject: 'JAN', predicate: 'BELOONT', object: 'HOND' }),
+      lower: Object.freeze({ text: 'Hond apporteert bot naar man.', subject: 'HOND', predicate: 'APPORTEERT', object: 'BOT NAAR MAN', order: 'subject-object-predicate' }),
+      relations: Object.freeze([
+        Object.freeze({ upperRole: 'object', lowerRole: 'subject', referent: 'jek' }),
+        Object.freeze({ upperRole: 'subject', lowerRole: 'object', referent: 'jan' })
+      ]),
+      surface: Object.freeze([
+        Object.freeze({ label: 'JAN', unit: 'K1', role: 'subject' }),
+        Object.freeze({ label: 'BELOONDE', unit: 'K1', role: 'predicate' }),
+        Object.freeze({ label: 'ZIJN HOND JEK', words: Object.freeze(['ZIJN', 'HOND', 'JEK']), unit: 'K1', role: 'object' }),
+        Object.freeze({ label: 'OMDAT', unit: 'LINK', role: 'connector', connector: true }),
+        Object.freeze({ label: 'DIE', unit: 'K2', role: 'subject' }),
+        Object.freeze({ label: 'HET BOT NAAR HEM', words: Object.freeze(['HET', 'BOT', 'NAAR', 'HEM']), unit: 'K2', role: 'object' }),
+        Object.freeze({ label: 'TERUGBRACHT', unit: 'K2', role: 'predicate' })
       ])
     }),
     Object.freeze({
@@ -68,26 +108,60 @@
     Object.freeze({ id: 'jek', label: 'JEK', words: Object.freeze(['JEK']), text: 'Jek', phrase: false })
   ]);
 
+  const CAUSAL_VERB_VARIANTS = Object.freeze([
+    Object.freeze({ id: 'beet', words: Object.freeze(['BEET']), text: 'beet' }),
+    Object.freeze({ id: 'heeft-gebeten', words: Object.freeze(['HEEFT', 'GEBETEN']), text: 'heeft gebeten' }),
+    Object.freeze({ id: 'gebeten-heeft', words: Object.freeze(['GEBETEN', 'HEEFT']), text: 'gebeten heeft' })
+  ]);
+  const REWARD_VERB_VARIANTS = Object.freeze([
+    Object.freeze({ id: 'terugbracht', words: Object.freeze(['TERUGBRACHT']), text: 'terugbracht' }),
+    Object.freeze({ id: 'heeft-teruggebracht', words: Object.freeze(['HEEFT', 'TERUGGEBRACHT']), text: 'heeft teruggebracht' }),
+    Object.freeze({ id: 'teruggebracht-heeft', words: Object.freeze(['TERUGGEBRACHT', 'HEEFT']), text: 'teruggebracht heeft' }),
+    Object.freeze({ id: 'apporteerde', words: Object.freeze(['APPORTEERDE']), text: 'apporteerde' }),
+    Object.freeze({ id: 'heeft-geapporteerd', words: Object.freeze(['HEEFT', 'GEAPPORTEERD']), text: 'heeft geapporteerd' }),
+    Object.freeze({ id: 'geapporteerd-heeft', words: Object.freeze(['GEAPPORTEERD', 'HEEFT']), text: 'geapporteerd heeft' })
+  ]);
+  const BOT_VARIANTS = Object.freeze([
+    Object.freeze({ id: 'het-bot', words: Object.freeze(['HET', 'BOT']), text: 'het bot', ambiguous: false }),
+    Object.freeze({ id: 'zijn-bot', words: Object.freeze(['ZIJN', 'BOT']), text: 'zijn bot', ambiguous: true })
+  ]);
+
   function validCausalAnaphorVariant(value) {
     return CAUSAL_ANAPHOR_VARIANTS.some(variant => variant.id === value) ? value : 'die';
   }
 
-  function definitionFor(id, variantId = 'die') {
+  function definitionFor(id, variantId = 'die', verbVariantId = '', botVariantId = 'het-bot') {
     const base = DEFINITIONS.find(definition => definition.id === String(id || '')) || null;
     if (!base || base.type !== 'causal-role-flip') return base;
     const variant = CAUSAL_ANAPHOR_VARIANTS.find(item => item.id === validCausalAnaphorVariant(variantId));
-    const lower = Object.freeze({
-      ...base.lower, text: `${variant.text.charAt(0).toUpperCase()}${variant.text.slice(1)} hem beet.`,
-      subject: variant.label, subjectPhrase: variant.phrase
-    });
-    const surface = Object.freeze(base.surface.flatMap(item => item.unit === 'K2' && item.role === 'subject'
-      ? variant.words.map((label, index) => Object.freeze({
+    const reward = base.id === 'jan-beloonde-jek-omdat-die-het-bot-terugbracht';
+    const perfect = base.id === 'jan-slaat-de-hond-omdat-die-hem-gebeten-heeft';
+    const verbs = reward ? REWARD_VERB_VARIANTS : CAUSAL_VERB_VARIANTS;
+    const defaultVerb = reward ? 'terugbracht' : perfect ? 'gebeten-heeft' : 'beet';
+    const verb = verbs.find(item => item.id === verbVariantId) || verbs.find(item => item.id === defaultVerb);
+    const bot = BOT_VARIANTS.find(item => item.id === botVariantId) || BOT_VARIANTS[0];
+    const objectText = reward ? `${bot.text} naar hem` : 'hem';
+    const objectLabel = reward ? `${bot.words.join(' ')} NAAR HEM` : 'HEM';
+    // Kernel trees retain their default lexical source nodes. Anaphora,
+    // inflection, articles and V-cluster choices are LEX realizations only.
+    const lower = base.lower;
+    const surface = Object.freeze(base.surface.flatMap(item => {
+      if (item.unit === 'K2' && item.role === 'subject') return variant.words.map((label, index) => Object.freeze({
         ...item, label, ...(variant.phrase ? { phrase: variant.label, phrasePart: index + 1 } : {})
-      }))
-      : [item]));
+      }));
+      if (item.unit === 'K2' && item.role === 'object') return [{ ...item, label: objectLabel, words: reward ? Object.freeze([...bot.words, 'NAAR', 'HEM']) : undefined }];
+      if (item.unit === 'K2' && item.role === 'predicate') return [{ ...item, label: verb.words.join(' '), words: verb.words }];
+      return [item];
+    }));
+    const subjectText = reward ? 'zijn hond Jek' : perfect ? 'de hond' : 'Jek';
     return Object.freeze({
-      ...base, title: `Jan slaat Jek omdat ${variant.text} hem beet.`,
-      anaphorVariant: variant.id, anaphorPhrase: variant.label, lower, surface
+      ...base,
+      title: reward
+        ? `Jan beloonde ${subjectText} omdat ${variant.text} ${objectText} ${verb.text}.`
+        : `Jan slaat ${subjectText} omdat ${variant.text} hem ${verb.text}.`,
+      anaphorVariant: variant.id, anaphorPhrase: variant.label,
+      verbVariant: verb.id, botVariant: reward ? bot.id : null, ambiguityTodo: reward && bot.ambiguous,
+      lower, surface
     });
   }
 
@@ -135,8 +209,8 @@
     };
   }
 
-  function composeUtterance(id, compositionEngine, variantId = 'die') {
-    const definition = definitionFor(id, variantId);
+  function composeUtterance(id, compositionEngine, variantId = 'die', verbVariantId = '', botVariantId = 'het-bot') {
+    const definition = definitionFor(id, variantId, verbVariantId, botVariantId);
     if (!definition) throw new Error(`Onbekende uiting: ${id || '(leeg)'}.`);
     if (!compositionEngine?.composeDeclaredPair) throw new Error('Multi-OGN-engine mist compositie van gedeclareerde anafoorkolommen.');
     const upper = buildLayout(definition, 'upper');
@@ -158,7 +232,10 @@
       { id: 'K1', order: 1, text: definition.upper.text },
       { id: 'K2', order: 2, text: definition.lower.text }
     ];
-    const lexItems = definition.surface.map((item, index) => {
+    const expandedSurface = definition.surface.flatMap(item => item.words?.length
+      ? item.words.map((label, part) => ({ ...item, label, phrase: item.label, phrasePart: part + 1 }))
+      : [item]);
+    const lexItems = expandedSurface.map((item, index) => {
       if (item.connector) return { ...item, nodeId: null, unitId: 'LINK', sentenceOrder: 0, wordOrder: index + 1 };
       const unit = composed.units.find(candidate => candidate.id === item.unit);
       const node = unit.layout.nodes.find(candidate => candidate.role === item.role);
@@ -169,9 +246,9 @@
       definition,
       demo: { id: definition.id, title: definition.title, sentences },
       lexItems,
-      surfaceText: definition.surface.map(item => item.label).join(' ')
+      surfaceText: expandedSurface.map(item => item.label).join(' ')
     };
   }
 
-  return Object.freeze({ DEFINITIONS, CAUSAL_ANAPHOR_VARIANTS, validCausalAnaphorVariant, definitionFor, buildLayout, composeUtterance });
+  return Object.freeze({ DEFINITIONS, CAUSAL_ANAPHOR_VARIANTS, CAUSAL_VERB_VARIANTS, REWARD_VERB_VARIANTS, BOT_VARIANTS, validCausalAnaphorVariant, definitionFor, buildLayout, composeUtterance });
 });

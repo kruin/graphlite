@@ -192,6 +192,10 @@ icons/icon-192.svg
 icons/icon-512.svg
 images/readme/log-minor-spacing.svg
 images/readme/ogn-free-grid.svg
+images/readme/flip-language-tree-lex-syn-log.png
+images/readme/flip-minimale-language-tree.png
+images/readme/flip-projecties-kleinste-veld.png
+images/readme/flip-vrije-vertakkingen.png
 images/readme/ogn-placement-strategies.svg
 images/readme/ogn-sequential-write.svg
 images/readme/ogn-three-layers.svg

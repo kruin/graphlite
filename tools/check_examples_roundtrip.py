@@ -142,7 +142,7 @@ for (const id of wanted) {{
     throw new Error(`oude voorbeeldpositie bestuurt LOG nog: ${{id}}`);
   }}
 }}
-console.log('EXAMPLES ROUNDTRIP: OK (19 uitingen; 4 zinsoorten; 3 kernzinanalyses; V1/V2/TOPIC-contract; lineaire multi-inserties)');
+console.log('EXAMPLES ROUNDTRIP: OK (19 fallbackuitingen + 5 kernzinanalyses; 4 zinsoorten; V1/V2/TOPIC-contract; lineaire multi-inserties)');
 """
 
 with tempfile.NamedTemporaryFile("w", suffix=".js", encoding="utf-8", delete=False) as handle:

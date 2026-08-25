@@ -11,11 +11,65 @@ Een uiting is niet de optelsom van haar kernzinnen. Zij ontstaat uit hun
 **verknoping**: referentidentiteit, functies, relaties en uiteindelijke
 lexicale realisatie.
 
+> **LEX is het ultieme resultaat:** LEX toont de volledige, uitgesproken of
+> geschreven uiting in haar uiteindelijke woordvolgorde. De Language Tree is
+> de structurele bron; LEX is niet nog een alternatieve boomweergave.
+
+## Flip in één oogopslag
+
+Flip is, naast **Free Node**, een kernbegrip van de Language Tree. Free Node
+bepaalt dat iedere knoop een werkelijk vrije rasterplaats krijgt. Flip bepaalt
+vervolgens hoe een binaire vertakking zichtbaar wordt geplaatst: links/rechts
+en kort/lang. De grammaticale structuur blijft gelijk en LEX blijft de
+uiteindelijk gerealiseerde uiting.
+
+![Minimale Language Tree met twee schuine vrije takken](../images/readme/flip-minimale-language-tree.png)
+
+*Minimale boom: één ouder, twee kinderen, beide op een eigen rij en kolom. De
+twee takken zijn schuin. Flip mag de kinderen visueel verwisselen zonder de
+ouder-kindrelaties te wijzigen.*
+
+![Vrije vertakkingen met verschillende richtingen en lengten](../images/readme/flip-vrije-vertakkingen.png)
+
+*Links/rechts en kort/lang zijn eigenschappen van de tekening. De langere
+vertakkingen tonen dat een Language Tree geen vaste leesrichting afdwingt.*
+
+![Kleinste veld met LEX-, SYN- en LOG-projecties](../images/readme/flip-projecties-kleinste-veld.png)
+
+*De projecties blijven aan hun eigen assen gekoppeld wanneer de centrale boom
+flipt. Flip verandert dus niet automatisch de projectievolgorde.*
+
+![Language Tree met LEX links, SYN rechts en LOG onder](../images/readme/flip-language-tree-lex-syn-log.png)
+
+*Volledige scheiding: de blauwe Language Tree levert de structuur; LEX links
+levert woordvorm en woordvolgorde; SYN rechts en LOG onder behouden hun eigen
+projecties.*
+
+Voor de causale uiting zijn de bronbomen `JAN SLAAT HOND` en `HOND BIJT MAN`.
+De lokale Flip slaat uitsluitend toe op de onderste Language Tree, zodat
+`HOND ↔ HOND` en `JAN ↔ MAN` beide verticaal kunnen worden uitgelijnd. Pas
+daarna realiseert LEX bijvoorbeeld `JAN SLAAT JEK OMDAT DIE HEM BEET`.
+
 | Uiting | Kernzin 1 | Kernzin 2 | Verknoping |
 | --- | --- | --- | --- |
 | Jan wast zichzelf. | Jan wast Jan. | Jan wast zelf. | Jan als agens = Jan als patiens; `zich + zelf → zichzelf`. |
-| Jan slaat Jek omdat die hem beet. | Jek beet Jan. | Jan slaat Jek. | Oorzaak `k₁ → k₂`; `die = Jek`; `hem = Jan`; rol-flip. |
+| Jan slaat Jek omdat die hem beet. | Jan slaat hond. | Hond bijt man. | Oorzaak `k₂ → k₁`; `hond = Jek`; `man = Jan`; rol-flip. |
+| Jan slaat de hond omdat die hem gebeten heeft. | Jan slaat hond. | Hond bijt man. | Dezelfde bronbomen; `de hond`, `die`, `hem` en `gebeten heeft` verschijnen uitsluitend op LEX. |
+| Jan beloonde zijn hond Jek omdat die het bot naar hem terugbracht. | Jan beloont hond. | Hond apporteert bot naar man. | `hond = Jek`; `man = Jan`; terugbrengen/apporteren zijn LEX-realisaties. |
 | Ken uzelf. | Ken zelf. | Ken u. | Impliciete geadresseerde = object; `u + zelf → uzelf`; imperatief. |
+
+### Nieuwe variantgroepen
+
+De sla-uiting ondersteunt `hij`, `die`, `die hond`, `de hond` en `Jek`, met
+`beet`, `heeft gebeten` en `gebeten heeft`. De beloon-uiting ondersteunt
+dezelfde subjectvormen, plus `terugbracht`, `heeft teruggebracht`,
+`teruggebracht heeft`, `apporteerde`, `heeft geapporteerd` en
+`geapporteerd heeft`. De bot-NP kan als `het bot` of `zijn bot` worden
+gerealiseerd. Iedere keuze verandert LEX, niet de kernzinrollen.
+
+**TODO — ambiguïteit:** in `zijn bot` kan `zijn` naar Jan of naar Jek
+verwijzen. De software en documentatie bewaren beide lezingen en mogen niet
+stilzwijgend één antecedent kiezen. `Het bot` is de ondubbelzinnige standaard.
 
 Voor uiting 2 mag de eerste kernzin ook worden genoteerd als
 `hond(Jek) bijt man(Jan)`: de referenten blijven gelijk, terwijl de uiteindelijke
@@ -31,17 +85,19 @@ rechtstreeks klikbaar op zowel de vorm als de zichtbare tekst; Enter werkt
 eveneens. De canvas-sleepbediening onderschept deze knoop niet. Iedere klik
 toont de volgende vorm:
 
-| Gekozen vorm | Gerealiseerde uiting | Verwijzing | LEX-woorden |
+| Gekozen vorm | Gerealiseerde uiting | Bronverbinding | LEX-woorden |
 | --- | --- | --- | --- |
-| `hij` | Jan slaat Jek omdat hij hem beet. | `JEK ↔ HIJ` | `HIJ` |
-| `die` | Jan slaat Jek omdat die hem beet. | `JEK ↔ DIE` | `DIE` |
-| `die hond` | Jan slaat Jek omdat die hond hem beet. | `JEK ↔ DIE HOND` | `DIE`, `HOND` |
-| `de hond` | Jan slaat Jek omdat de hond hem beet. | `JEK ↔ DE HOND` | `DE`, `HOND` |
-| `Jek` | Jan slaat Jek omdat Jek hem beet. | `JEK ↔ JEK` | `JEK` |
+| `hij` | Jan slaat Jek omdat hij hem beet. | `HOND ↔ HOND` | `HIJ` |
+| `die` | Jan slaat Jek omdat die hem beet. | `HOND ↔ HOND` | `DIE` |
+| `die hond` | Jan slaat Jek omdat die hond hem beet. | `HOND ↔ HOND` | `DIE`, `HOND` |
+| `de hond` | Jan slaat Jek omdat de hond hem beet. | `HOND ↔ HOND` | `DE`, `HOND` |
+| `Jek` | Jan slaat Jek omdat Jek hem beet. | `HOND ↔ HOND` | `JEK` |
 
-In alle varianten blijft `JAN ↔ HEM` de tweede verticale verbinding. `DIE HOND`
-en `DE HOND` zijn ieder één verwijzende subject-NP in de kernzinboom, maar twee afzonderlijke
-woorden op LEX. `JEK` herhaalt dezelfde eigennaam; de referentkolom blijft
+In alle varianten blijft `JAN ↔ MAN` de tweede verticale bronverbinding. De
+subjectknoop in K2 blijft altijd `HOND`; een klik verandert uitsluitend de
+LEX-realisatie. `DIE HOND` en `DE HOND` zijn ieder één verwijzende NP met twee
+afzonderlijke woorden op LEX, maar vervangen de bronknoop nooit. `JEK`
+herhaalt dezelfde eigennaam op LEX; de referentkolom blijft
 gedeeld, ook wanneer de vorm geen voornaamwoord is. De referenten, oorzaak,
 syntactische relaties en rolwisseling
 blijven gelijk. De standaardvorm is `die`; de keuze wordt opgeslagen in Config
@@ -49,7 +105,8 @@ en meegenomen in OPN-export.
 
 ## OGN-projecties
 
-- **LEX** toont uitsluitend de werkelijk gerealiseerde woordvormen.
+- **LEX** toont uitsluitend de werkelijk gerealiseerde woordvormen en vormt
+  daarmee het ultieme resultaat: de complete uiting.
 - **SYN** toont de syntactische constructie en, zodra ondersteund, inbedding.
 - **LOG** beschrijft deelnemers, functies, gebeurtenissen en hun relaties.
 - Identiteit tussen deelnemers mag niet worden verward met identiteit tussen
@@ -62,16 +119,16 @@ en meegenomen in OPN-export.
 
 In `Jan slaat Jek omdat die hem beet` wisselen de rollen tussen de kernzinnen:
 
-| Referent | k₁: bijten | k₂: slaan |
+| Referent | k₁: slaan | k₂: bijten |
 | --- | --- | --- |
-| Jek | agens | patiens |
-| Jan | patiens | agens |
+| Jek / HOND | patiens | agens |
+| Jan / MAN | agens | patiens |
 
 Deze **rol-flip** betreft functionele rollen. Zij is niet hetzelfde als de
 configureerbare **visuele Flip** van een boom en verandert evenmin zelfstandig
 de gerealiseerde woordvolgorde. In de causale uiting wordt de onderste boom
-wel gespiegeld geplaatst omdat uitsluitend zo zowel `JEK ↔ DIE` als
-`JAN ↔ HEM` recht verticaal kunnen blijven terwijl de referenten van rol
+wel gespiegeld geplaatst omdat uitsluitend zo zowel `HOND ↔ HOND` als
+`JAN ↔ MAN` recht verticaal kunnen blijven terwijl de referenten van rol
 wisselen. Dit is een geometrische oplossing, geen herschrijfregel.
 
 ## Opslag en beheer
@@ -127,10 +184,11 @@ anaforen gebruiken dezelfde actuele celmaten. De afzonderlijke instellingen
 voor vertakkingscompactheid blijven daarnaast beschikbaar. De standaard is
 100% in beide richtingen.
 
-### Flip: structuur los van woordvolgorde
+## Flip: structuur los van woordvolgorde
 
 **Waar is Flip nodig?** In de onderste kernzin `K2` van de causale uiting:
-`hij hem beet`, `die hem beet` of `die hond hem beet`.
+`HOND BIJT MAN`. De vormen `hij`, `die`, `die hond` en `hem` horen bij LEX,
+niet bij de kernzinboom.
 
 **Wanneer is Flip nodig?** Wanneer dezelfde twee deelnemers in de bovenste en
 onderste kernzin van functie wisselen: in `K1` is Jan subject en Jek object;
@@ -165,10 +223,16 @@ Flip maakt daarmee het onderscheid rechtstreeks controleerbaar:
 
 Een gespiegeld beeld betekent dus niet dat de woorden worden omgedraaid.
 
+Flip behoort uitsluitend tot **Language Tree** en tot **Anafoor · multiple
+Language Trees**. Free Node levert de vrije knoopposities; Flip kiest bij een
+gedeclareerde binaire Language-Tree-vertakking de zichtbare links/rechts- en
+kort/lang-plaatsing. Greedy, Random en algemene Direct-weergaven krijgen geen
+zelfstandige Flip-betekenis.
+
 | Uiting | Bovenste boom K1 | Onderste boom K2 | Verticale verknoping |
 | --- | --- | --- | --- |
 | Jan wast zichzelf. | Jan wast Jan. | Jan wast zelf. | `JAN ↔ JAN`; `JAN ↔ ZELF`. |
-| Jan slaat Jek omdat die hem beet. | Jan slaat Jek. | Die hem beet. | `JEK ↔ DIE`; `JAN ↔ HEM`. |
+| Jan slaat Jek omdat die hem beet. | Jan slaat hond. | Hond bijt man. | `HOND ↔ HOND`; `JAN ↔ MAN`. |
 | Ken uzelf. | Ken u. | Ken zelf. | Impliciet `U ↔ U`; `U ↔ ZELF`. |
 
 De gezamenlijke **LEX**-as toont uitsluitend de gerealiseerde uiting, dus
@@ -186,15 +250,35 @@ afgeleide causale geometrie is niet onderdeel van deze versie.
 
 De Play-balk blijft zichtbaar in **Anafoor · multi-OGN**. `Play` toont de
 opbouw automatisch; `←` en `→` lopen handmatig terug of vooruit en `Reset`
-begint opnieuw bij het raster. De vier zichtbare fasen zijn:
+begint opnieuw bij het raster. De vijf inhoudelijke stappen na het raster zijn:
 
-1. De bovenste kernzin `K1` verschijnt.
-2. De onderste kernzin `K2` verschijnt.
-3. De gedeclareerde verticale anafoorverbindingen verschijnen.
-4. De gezamenlijke LEX-as toont de gerealiseerde uiting.
+1. **K1 berekenen:** de bovenste Language Tree verschijnt in haar eigen geldige
+   free-node-layout.
+2. **K2 vóór Flip:** de onderste Language Tree verschijnt eerst met haar eigen
+   ongespiegelde takrichting. Anafoorlijnen en LEX zijn nog verborgen.
+3. **Flip slaat toe op K2:** uitsluitend bij een causale rolwisseling worden
+   de binaire roltakken onder `S` en `VP` van K2 links/rechts gespiegeld. De
+   knoop-id’s, categorieën, ouder-kindrelaties en LEX-volgorde veranderen niet.
+   PLAY toont deze ingreep nadrukkelijk als een vóór/na-beeld: de ongeflipte K2
+   blijft rood en transparant staan, de geflipte K2 staat er vol bovenop en
+   gestippelde verplaatsingslijnen verbinden dezelfde knopen. Het rode label
+   `FLIP K2 · LINKS/RECHTS` benoemt de bewerking. Deze stap blijft langer in
+   beeld dan voorheen en kan met `←` en `→` onbeperkt opnieuw worden bekeken.
+   Bij uitingen zonder zo’n rolwisseling meldt Play: `geen lokale Flip nodig`.
+4. **Compositie en uitlijning:** de complete, inmiddels geflipte K2 wordt als
+   één starre eenheid verschoven. Pas wanneer voor alle gedeclareerde relaties
+   dezelfde verschuiving geldt, verschijnen de rechte verticale anaforen.
+5. **LEX-resultaat:** de gezamenlijke LEX-as verschijnt met de volledige
+   gerealiseerde uiting in woordvolgorde.
 
-Terugspelen verwijdert dezelfde onderdelen in omgekeerde volgorde. Het
-oorspronkelijke `S1/S2`-voorbeeld gebruikt dezelfde afspeelstappen.
+Samen met stap 0 (`raster / titel`) toont Play dus `stap 0/5` tot en met
+`stap 5/5`. In stap 2 staat boven de afbeelding **VÓÓR FLIP**; vanaf stap 3
+staat **FLIP SLAAT TOE OP K2**. Het K2-kader bewaart bovendien de technische
+status `before` of `applied`, zodat de overgang ook automatisch testbaar is.
+
+Terugspelen toont dezelfde toestanden in omgekeerde volgorde. Daardoor wordt
+ook de overgang van geflipte K2 naar K2 vóór Flip zichtbaar. Het oorspronkelijke
+`S1/S2`-voorbeeld gebruikt dezelfde afspeelstappen.
 
 ### Uiting bovenin en boomconfiguratie
 

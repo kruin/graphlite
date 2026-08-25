@@ -5,10 +5,10 @@ Normatieve projectiespecificatie voor OpenGraph Lite Viewer `v2.0.0-rc.45`.
 ## 0a. Uiting en kernzinnen
 
 Een uiting bestaat uit één of meer verknoopte kernzinnen (`S` of `CLAUSE`).
-LEX toont de zichtbare realisatie; SYN de syntactische constructie; LOG de
+LEX is het ultieme resultaat en toont de complete zichtbare uiting; SYN de syntactische constructie; LOG de
 deelnemers, functies en relaties. Referentidentiteit, causale inbedding,
 rol-flip en impliciete subjecten worden als uitingmetadata opgeslagen en bij
-OPN-export/import bewaard. De drie uitingen worden in **Anafoor · multi-OGN**
+OPN-export/import bewaard. De vijf uitingen worden in **Anafoor · multi-OGN**
 daadwerkelijk getekend als twee afzonderlijke kernzinbomen: `K1` boven `K2`.
 Iedere kernzin volgt `S → NP, VP` en `VP → NP, V`. De onafhankelijke
 LEX-realisatie mag hiervan afwijken, bijvoorbeeld `JAN SLAAT JEK` bij een
@@ -21,15 +21,16 @@ lijnrichting, nooit uitsluitend boven/onder; compacte knoopsymbolen mogen de
 takken niet afvlakken. Alleen gedeclareerde anaforen mogen verticaal zijn.
 De horizontale en verticale rastermaat zijn afzonderlijk instelbaar; raster,
 knopen en projecties delen steeds dezelfde actuele celmaten.
-Config-Flip spiegelt beide bomen zonder ouder-kindrelaties, LEX-woordvolgorde of
+Config-Flip bestaat uitsluitend in Language Tree en Anafoor/multiple Language
+Trees. Zij spiegelt bomen zonder ouder-kindrelaties, LEX-woordvolgorde of
 referentidentiteit te wijzigen: structuur, ruimtelijke richting en
 woordvolgorde zijn afzonderlijke eigenschappen. Bij de causale rol-flip staat
-K2 in de standaardweergave gespiegeld zodat zowel `JEK ↔ DIE` als `JAN ↔ HEM`
+K2 in de standaardweergave gespiegeld zodat zowel `HOND ↔ HOND` als `JAN ↔ MAN`
 verticaal blijven; een gezamenlijke Flip bewaart beide verticale verbindingen.
-De causale subjectknoop is rechtstreeks klikbaar en selecteerbaar als `HIJ`,
-`DIE`, `DIE HOND`, `DE HOND` of `JEK`. Alle vijf verwijzen naar Jek; `DIE HOND`
-en `DE HOND` zijn ieder één subject-NP en projecteert twee
-gerealiseerde LEX-woorden. Lokale K2-Flip is noodzakelijk bij de dubbele
+De causale bronknoop `HOND` is rechtstreeks klikbaar; de klik selecteert op
+LEX `HIJ`, `DIE`, `DIE HOND`, `DE HOND` of `JEK`, maar wijzigt de bronknoop
+niet. Alle vijf verwijzen naar dezelfde hond; `DIE HOND` en `DE HOND`
+projecteren ieder twee gerealiseerde LEX-woorden. Lokale K2-Flip is noodzakelijk bij de dubbele
 subject/object-rolwisseling; globale interface-Flip is optioneel en spiegelt
 beide bomen zonder structuur, woordvolgorde of verticale referentie te wijzigen.
 Iedere boom behoudt zijn eigen unieke rijen en kolommen; tussen beide bomen
@@ -37,7 +38,7 @@ mogen uitsluitend expliciet gedeclareerde verticale anafoorkolommen samenvallen.
 De gedeelde LEX-as volgt de gerealiseerde uiting; `OMDAT` is een verbindend
 LEX-element en een impliciet subject krijgt geen afzonderlijk LEX-woord.
 Compositie van willekeurig veel kernzinnen blijft vervolgwerk.
-Play gebruikt de omkeerbare volgorde `K1 → K2 → verticale anaforen → LEX`;
+Play gebruikt de omkeerbare volgorde `K1 → K2 vóór Flip → lokale K2-Flip → starre K2-uitlijning en verticale anaforen → LEX`;
 Reset keert terug naar uitsluitend raster en titel.
 De actieve testuiting blijft boven Play en werkvlak zichtbaar. Boomkleur,
 boomlijnzwaarte, boomruimte, onafhankelijke horizontale/verticale

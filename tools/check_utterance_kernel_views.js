@@ -214,16 +214,22 @@ for (const definition of kernelEngine.DEFINITIONS) {
   }
 
   const slots = rendered.filter(node => node.getAttribute('data-surface-label') !== null);
+  const expectedSurface = definition.surface.flatMap(item => item.words || [item.label]);
   assert.deepEqual(slots.map(node => node.getAttribute('data-surface-label')),
-    definition.surface.map(item => item.label), `${definition.id}: gerealiseerde LEX-volgorde onjuist`);
+    expectedSurface, `${definition.id}: gerealiseerde LEX-volgorde onjuist`);
   assert.ok(slots.every((slot, index) => index === 0
     || Number(slot.getAttribute('y')) > Number(slots[index - 1].getAttribute('y'))),
   `${definition.id}: LEX-woorden staan niet van boven naar beneden in uitingvolgorde`);
   if (definition.type === 'causal-role-flip') {
     const connector = slots.find(node => node.getAttribute('data-surface-label') === 'OMDAT');
     assert.equal(connector.getAttribute('data-node-id'), '');
-    assert.deepEqual(currentComposition.relations.map(relation =>
-      `${relation.antecedentLabel}↔${relation.anaphorLabel}`), ['JEK↔DIE', 'JAN↔HEM']);
+    assert.equal(currentComposition.relations.length, 2);
+    assert.equal(currentComposition.relations[0].antecedentLabel, 'HOND');
+    assert.equal(currentComposition.relations[0].anaphorLabel, 'HOND');
+    assert.equal(currentComposition.relations[0].referent, 'jek');
+    assert.equal(currentComposition.relations[1].antecedentLabel, 'JAN');
+    assert.ok(currentComposition.relations[1].anaphorLabel.includes('MAN'));
+    assert.equal(currentComposition.relations[1].referent, 'jan');
     assert.deepEqual(frames.map(frame => frame.getAttribute('data-branch-orientation')), ['normal', 'mirrored']);
   }
   if (definition.implicitSubject) {
@@ -279,7 +285,7 @@ for (const definition of kernelEngine.DEFINITIONS) {
   assert.deepEqual(flippedFrames.map(frame => frame.getAttribute('data-branch-orientation')),
     frames.map(frame => frame.getAttribute('data-branch-orientation') === 'normal' ? 'mirrored' : 'normal'));
   assert.deepEqual(flipped.filter(node => node.getAttribute('data-surface-label') !== null)
-    .map(node => node.getAttribute('data-surface-label')), definition.surface.map(item => item.label),
+    .map(node => node.getAttribute('data-surface-label')), expectedSurface,
   `${definition.id}: Flip mag de LEX-woordvolgorde niet veranderen`);
   for (const line of flipped.filter(node => node.classList.contains('utterance-coreference-line'))) {
     assert.equal(line.getAttribute('x1'), line.getAttribute('x2'),
@@ -287,9 +293,10 @@ for (const definition of kernelEngine.DEFINITIONS) {
   }
   state.kernelBranchFlip = 'auto';
 
-  // Play builds K1, K2, anaphors, and LEX in four reversible phases.
+  // Play shows K1, K2 before Flip, the local Flip, rigid anaphor alignment, and LEX.
   state.multiOgnPlayEnabled = true;
-  for (let phase = 0; phase <= 4; phase += 1) {
+  let k2BeforeFlipOrientation = null;
+  for (let phase = 0; phase <= 5; phase += 1) {
     state.multiOgnPlayStep = phase;
     drawUtteranceKernelComposition();
     const playRoot = els.svg.children[0];
@@ -299,12 +306,32 @@ for (const definition of kernelEngine.DEFINITIONS) {
     assert.deepEqual(nodes.children.map(unit => unit.getAttribute('visibility')),
       [phase >= 1 ? 'visible' : 'hidden', phase >= 2 ? 'visible' : 'hidden']);
     const anaphors = playLayers.filter(layer => layer.classList.contains('multi-ogn-coreference'));
-    assert.ok(anaphors.every(layer => layer.getAttribute('visibility') === (phase >= 3 ? 'visible' : 'hidden')));
+    assert.ok(anaphors.every(layer => layer.getAttribute('visibility') === (phase >= 4 ? 'visible' : 'hidden')));
     const lex = playLayers.find(layer => layer.classList.contains('multi-ogn-shared-lex'));
-    assert.equal(lex.getAttribute('visibility'), phase >= 4 ? 'visible' : 'hidden');
+    assert.equal(lex.getAttribute('visibility'), phase >= 5 ? 'visible' : 'hidden');
+    if (definition.type === 'causal-role-flip') {
+      assert.equal(playRoot.getAttribute('data-local-flip-applied'), phase >= 3 ? 'true' : 'false');
+      const k2Frame = descendants(playRoot).find(node => node.classList.contains('utterance-kernel-frame') && node.getAttribute('data-ogn-unit') === 'K2');
+      if (phase === 2) k2BeforeFlipOrientation = k2Frame.getAttribute('data-branch-orientation');
+      if (phase === 3) {
+        assert.notEqual(k2Frame.getAttribute('data-branch-orientation'), k2BeforeFlipOrientation,
+          `${definition.id}: Play moet de lokale K2-Flip zichtbaar maken`);
+        const reveal = descendants(playRoot).find(node => node.classList.contains('utterance-flip-reveal-layer'));
+        assert.ok(reveal, `${definition.id}: Flipstap mist gelijktijdige vóór/na-weergave`);
+        assert.equal(reveal.getAttribute('data-play-operation'), 'flip-k2-left-right');
+        assert.ok(descendants(reveal).some(node => node.classList.contains('utterance-flip-before-nodes')),
+          `${definition.id}: transparante K2-vóór ontbreekt`);
+        assert.ok(descendants(reveal).some(node => node.classList.contains('utterance-flip-motion')),
+          `${definition.id}: zichtbare verplaatsingslijnen ontbreken`);
+        assert.ok(descendants(reveal).some(node => node.classList.contains('utterance-flip-badge')),
+          `${definition.id}: FLIP K2-label ontbreekt`);
+      }
+      if (phase !== 3) assert.ok(!descendants(playRoot).some(node => node.classList.contains('utterance-flip-reveal-layer')),
+        `${definition.id}: vóór/na-overlay hoort uitsluitend bij PLAY-stap 3`);
+    }
   }
   state.multiOgnPlayEnabled = false;
-  state.multiOgnPlayStep = 4;
+  state.multiOgnPlayStep = 5;
 
   const document = buildUtteranceKernelOpnDocument(currentComposition);
   assert.equal(document.data.composition.kind, 'utterance-kernel-pair');
@@ -312,7 +339,7 @@ for (const definition of kernelEngine.DEFINITIONS) {
   assert.equal(document.data.composition.relations.length, definition.relations.length);
   assert.equal(validateImportedUtteranceComposition(document.data.composition), true);
   assert.deepEqual(document.data.composition.shared_lex_axis.items.map(item => item.label),
-    definition.surface.map(item => item.label));
+    expectedSurface);
 }
 
 const causalId = 'jan-slaat-jek-omdat-die-hem-beet';
@@ -321,9 +348,10 @@ for (const variant of kernelEngine.CAUSAL_ANAPHOR_VARIANTS) {
   const definition = currentComposition.definition;
   assert.equal(definition.anaphorVariant, variant.id);
   assert.equal(definition.title, `Jan slaat Jek omdat ${variant.text} hem beet.`);
-  assert.equal(currentComposition.units[1].layout.nodes.find(node => node.role === 'subject').label, variant.label);
+  assert.equal(currentComposition.units[1].layout.nodes.find(node => node.role === 'subject').label, 'HOND',
+    'de kernzin houdt de standaardbronknoop; alleen LEX realiseert de variant');
   assert.deepEqual(currentComposition.relations.map(relation =>
-    `${relation.antecedentLabel}↔${relation.anaphorLabel}`), [`JEK↔${variant.label}`, 'JAN↔HEM']);
+    `${relation.antecedentLabel}↔${relation.anaphorLabel}`), ['HOND↔HOND', 'JAN↔MAN']);
   drawUtteranceKernelComposition();
   assertDiagonalFreeNodeEdges(els.svg, `causale-variant/${variant.id}`);
   assert.equal(els.svg.children[0].getAttribute('data-anaphor-variant'), variant.id);
@@ -447,4 +475,4 @@ assert.equal(defaults.kernelBranchVertical, 'compact');
 assert.equal(defaults.kernelBranchFlip, 'auto');
 assert.equal(defaults.causalAnaphorVariant, 'die');
 
-console.log('UITING KERNZIN VIEW CHECK: OK (3 uitingen, 8 echte schuine free-node-takken per uiting en per layout/Flip/variant, HIJ/DIE/DIE HOND/DE HOND/JEK, klikbare subjectknoop, flexibele rastermaten, verticale anaforen, Play en OPN)');
+console.log('UITING KERNZIN VIEW CHECK: OK (5 uitingen, schuine free-node-takken, zichtbare K2-Flipstap, varianten, verticale anaforen, gedetailleerde Play en OPN)');
