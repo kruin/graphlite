@@ -4,6 +4,27 @@ Normatief ontwerpcontract voor flip in Language Tree en zijn extensies.
 
 ## Reikwijdte
 
+De eenvoudigste lineariserende fixture is `IS GEWEEST` ↔ `GEWEEST IS`.
+Daarmee wordt zichtbaar wat Flip wel en niet doet voordat meerdere Language
+Trees en anaforen worden toegevoegd.
+
+Binnen OGL kan DS **meervoudig** zijn: één uiting bevat meerdere kernzinnen.
+De solver ontvangt kernzinlidmaatschap, DS-volgorde, verticale tekenvolgorde
+en LEX-realisatievolgorde als afzonderlijke gegevens. Hij mag geen daarvan uit
+de toevallige links/rechts-geometrie afleiden.
+
+Bij drie of meer kernzinnen heet de compositie een **story**. De pair-solver
+wordt dan een globale constraintsolver: K1 is voorlopig het anker; iedere Ki
+heeft eigen flipvarianten en één starre horizontale verschuiving. Alle
+coreferentieketens worden gezamenlijk opgelost. Voor iedere unit moeten de
+vereiste verschuivingen van al haar relaties gelijk zijn. Een conflict is een
+expliciet negatief resultaat, geen toestemming voor vervorming of een schuine
+anafoorlijn.
+
+De eerste fixture voorspelt `K1=normal`, `K2=flip`, `K3=normal` voor JAN SLAAT
+HOND → HOND BIJT MAN → MAN ONTWIJKT HOND. De stresstest voegt MAN, HOND én BOT
+als drie gelijktijdige ketens naar K3 toe.
+
 Flip is geen algemene OpenGraph- of Free-Node-bewerking. Zij bestaat alleen
 binnen **Language Tree** en **Anafoor · multiple Language Trees**. De vrije
 knopen blijven OpenGraph-knopen; de flipsolver is uitsluitend de technische

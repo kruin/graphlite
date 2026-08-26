@@ -66,8 +66,12 @@
       id: 'jan-beloonde-jek-omdat-die-het-bot-terugbracht',
       title: 'Jan beloonde zijn hond Jek omdat die het bot naar hem terugbracht.',
       type: 'causal-role-flip',
+      deepStructure: Object.freeze({ plurality: 'multiple-kernel-clauses', storedOrder: Object.freeze(['K1', 'K2']), alternativeOrders: Object.freeze([Object.freeze(['K1', 'K2']), Object.freeze(['K2', 'K1'])]) }),
+      lexicalOrders: Object.freeze(['main-before-causal', 'causal-before-main']),
       upper: Object.freeze({ text: 'Jan beloont hond.', subject: 'JAN', predicate: 'BELOONT', object: 'HOND' }),
-      lower: Object.freeze({ text: 'Hond apporteert bot naar man.', subject: 'HOND', predicate: 'APPORTEERT', object: 'BOT NAAR MAN', order: 'subject-object-predicate' }),
+      // The default is TERUGBRENGEN: MAN is its goal and antecedent-bearing
+      // argument. The APPORTEREN variants use a separate two-place kernel.
+      lower: Object.freeze({ text: 'Hond brengt bot naar man.', subject: 'HOND', predicate: 'BRENGT', object: 'MAN', objectContext: 'BOT NAAR', order: 'subject-object-predicate' }),
       relations: Object.freeze([
         Object.freeze({ upperRole: 'object', lowerRole: 'subject', referent: 'jek' }),
         Object.freeze({ upperRole: 'subject', lowerRole: 'object', referent: 'jan' })
@@ -80,6 +84,34 @@
         Object.freeze({ label: 'DIE', unit: 'K2', role: 'subject' }),
         Object.freeze({ label: 'HET BOT NAAR HEM', words: Object.freeze(['HET', 'BOT', 'NAAR', 'HEM']), unit: 'K2', role: 'object' }),
         Object.freeze({ label: 'TERUGBRACHT', unit: 'K2', role: 'predicate' })
+      ])
+    }),
+    Object.freeze({
+      id: 'story-jan-sloeg-jek-waarna-hij-ontweek',
+      title: 'Jan sloeg Jek omdat die hem beet, waarna hij hem ontweek.',
+      type: 'story-role-flip',
+      deepStructure: Object.freeze({ plurality: 'story', storedOrder: Object.freeze(['K1', 'K2', 'K3']) }),
+      upper: Object.freeze({ text: 'Jan slaat hond.', subject: 'JAN', predicate: 'SLAAT', object: 'HOND' }),
+      lower: Object.freeze({ text: 'Hond bijt man.', subject: 'HOND', predicate: 'BIJT', object: 'MAN', order: 'subject-object-predicate' }),
+      third: Object.freeze({ text: 'Man ontwijkt hond.', subject: 'MAN', predicate: 'ONTWIJKT', object: 'HOND' }),
+      relations: Object.freeze([
+        Object.freeze({ fromUnit: 'K1', fromRole: 'object', toUnit: 'K2', toRole: 'subject', referent: 'jek' }),
+        Object.freeze({ fromUnit: 'K1', fromRole: 'subject', toUnit: 'K2', toRole: 'object', referent: 'jan' }),
+        Object.freeze({ fromUnit: 'K2', fromRole: 'subject', toUnit: 'K3', toRole: 'object', referent: 'jek' }),
+        Object.freeze({ fromUnit: 'K2', fromRole: 'object', toUnit: 'K3', toRole: 'subject', referent: 'jan' })
+      ]),
+      surface: Object.freeze([
+        Object.freeze({ label: 'JAN', unit: 'K1', role: 'subject' }),
+        Object.freeze({ label: 'SLOEG', unit: 'K1', role: 'predicate' }),
+        Object.freeze({ label: 'JEK', unit: 'K1', role: 'object' }),
+        Object.freeze({ label: 'OMDAT', unit: 'LINK', role: 'connector', connector: true }),
+        Object.freeze({ label: 'DIE', unit: 'K2', role: 'subject' }),
+        Object.freeze({ label: 'HEM', unit: 'K2', role: 'object' }),
+        Object.freeze({ label: 'BEET', unit: 'K2', role: 'predicate' }),
+        Object.freeze({ label: 'WAARNA', unit: 'LINK', role: 'connector', connector: true }),
+        Object.freeze({ label: 'HIJ', unit: 'K3', role: 'subject' }),
+        Object.freeze({ label: 'HEM', unit: 'K3', role: 'object' }),
+        Object.freeze({ label: 'ONTWEEK', unit: 'K3', role: 'predicate' })
       ])
     }),
     Object.freeze({
@@ -140,16 +172,21 @@
     const defaultVerb = reward ? 'terugbracht' : perfect ? 'gebeten-heeft' : 'beet';
     const verb = verbs.find(item => item.id === verbVariantId) || verbs.find(item => item.id === defaultVerb);
     const bot = BOT_VARIANTS.find(item => item.id === botVariantId) || BOT_VARIANTS[0];
-    const objectText = reward ? `${bot.text} naar hem` : 'hem';
-    const objectLabel = reward ? `${bot.words.join(' ')} NAAR HEM` : 'HEM';
+    const apporteren = reward && /apporteer|geapporteerd/.test(verb.id);
+    const objectText = reward ? (apporteren ? bot.text : `${bot.text} naar hem`) : 'hem';
+    const objectWords = reward ? (apporteren ? [...bot.words] : [...bot.words, 'NAAR', 'HEM']) : null;
+    const objectLabel = reward ? objectWords.join(' ') : 'HEM';
     // Kernel trees retain their default lexical source nodes. Anaphora,
     // inflection, articles and V-cluster choices are LEX realizations only.
-    const lower = base.lower;
+    const lower = apporteren
+      ? Object.freeze({ text: 'Hond apporteert bot.', subject: 'HOND', predicate: 'APPORTEERT', object: 'BOT', order: 'subject-object-predicate' })
+      : base.lower;
+    const relations = apporteren ? Object.freeze(base.relations.slice(0, 1)) : base.relations;
     const surface = Object.freeze(base.surface.flatMap(item => {
       if (item.unit === 'K2' && item.role === 'subject') return variant.words.map((label, index) => Object.freeze({
         ...item, label, ...(variant.phrase ? { phrase: variant.label, phrasePart: index + 1 } : {})
       }));
-      if (item.unit === 'K2' && item.role === 'object') return [{ ...item, label: objectLabel, words: reward ? Object.freeze([...bot.words, 'NAAR', 'HEM']) : undefined }];
+      if (item.unit === 'K2' && item.role === 'object') return [{ ...item, label: objectLabel, words: reward ? Object.freeze(objectWords) : undefined }];
       if (item.unit === 'K2' && item.role === 'predicate') return [{ ...item, label: verb.words.join(' '), words: verb.words }];
       return [item];
     }));
@@ -161,7 +198,7 @@
         : `Jan slaat ${subjectText} omdat ${variant.text} hem ${verb.text}.`,
       anaphorVariant: variant.id, anaphorPhrase: variant.label,
       verbVariant: verb.id, botVariant: reward ? bot.id : null, ambiguityTodo: reward && bot.ambiguous,
-      lower, surface
+      lower, relations, surface
     });
   }
 
@@ -213,8 +250,27 @@
     const definition = definitionFor(id, variantId, verbVariantId, botVariantId);
     if (!definition) throw new Error(`Onbekende uiting: ${id || '(leeg)'}.`);
     if (!compositionEngine?.composeDeclaredPair) throw new Error('Multi-OGN-engine mist compositie van gedeclareerde anafoorkolommen.');
+    if (definition.type === 'story-role-flip') return composeStory(definition, compositionEngine);
     const upper = buildLayout(definition, 'upper');
     const lower = buildLayout(definition, 'lower');
+    // APPORTEREN has no MAN argument. Move BOT off JAN's column so the only
+    // cross-kernel column is the declared HOND relation.
+    if (definition.verbVariant && /apporteer|geapporteerd/.test(definition.verbVariant)) {
+      const object = lower.nodes.find(node => node.role === 'object');
+      const predicate = lower.nodes.find(node => node.role === 'predicate');
+      const vp = lower.nodes.find(node => node.label === 'VP');
+      object.x = -6;
+      vp.x = -5;
+      predicate.x = -4;
+      lower.edges.forEach(item => {
+        const from = lower.nodes.find(node => node.id === item.from);
+        const to = lower.nodes.find(node => node.id === item.to);
+        item.fromX = from.x;
+        item.toX = to.x;
+      });
+      lower.box.minX = Math.min(...lower.nodes.map(node => node.x));
+      lower.box.maxX = Math.max(...lower.nodes.map(node => node.x));
+    }
     const declarations = definition.relations.map(relation => {
       const antecedent = upper.nodes.find(node => node.role === relation.upperRole);
       const anaphor = lower.nodes.find(node => node.role === relation.lowerRole);
@@ -248,6 +304,50 @@
       lexItems,
       surfaceText: expandedSurface.map(item => item.label).join(' ')
     };
+  }
+
+  function shiftRenameLayout(layout, fromPrefix, toPrefix, dy) {
+    const rename = id => String(id).replace(fromPrefix, toPrefix);
+    const nodes = layout.nodes.map(node => ({ ...node, id: rename(node.id), y: node.y + dy }));
+    const edges = layout.edges.map(item => ({ ...item, from: rename(item.from), to: rename(item.to), fromY: item.fromY + dy, toY: item.toY + dy }));
+    return { ...layout, node: nodes.find(node => node.label === 'S'), nodes, edges,
+      box: { minX: Math.min(...nodes.map(node => node.x)), maxX: Math.max(...nodes.map(node => node.x)), minY: Math.min(...nodes.map(node => node.y)), maxY: Math.max(...nodes.map(node => node.y)) } };
+  }
+
+  function composeStory(definition, compositionEngine) {
+    const pairDefinition = { ...definition, type: 'causal-role-flip', relations: [
+      { upperRole: 'object', lowerRole: 'subject', referent: 'jek' },
+      { upperRole: 'subject', lowerRole: 'object', referent: 'jan' }
+    ] };
+    const upper = buildLayout(pairDefinition, 'upper');
+    const lower = buildLayout(pairDefinition, 'lower');
+    const pairRelations = pairDefinition.relations.map(relation => {
+      const antecedent = upper.nodes.find(node => node.role === relation.upperRole);
+      const anaphor = lower.nodes.find(node => node.role === relation.lowerRole);
+      return { type: 'coreference', referent: relation.referent, antecedentNodeId: antecedent.id, anaphorNodeId: anaphor.id, antecedentLabel: antecedent.label, anaphorLabel: anaphor.label };
+    });
+    const pair = compositionEngine.composeDeclaredPair({ upper: { id: 'K1', layout: upper }, lower: { id: 'K2', layout: lower }, relations: pairRelations, gapRows: 2 });
+    const thirdRaw = buildLayout({ ...definition, upper: definition.third, type: 'story-normal' }, 'upper');
+    const dy = pair.box.maxY + 3 - thirdRaw.box.minY;
+    const third = shiftRenameLayout(thirdRaw, `${definition.id}-k1`, `${definition.id}-k3`, dy);
+    const units = [...pair.units, { id: 'K3', order: 3, layout: third, shift: { dx: 0, dy } }];
+    const unitMap = new Map(units.map(unit => [unit.id, unit]));
+    const relations = definition.relations.map(relation => {
+      const antecedent = unitMap.get(relation.fromUnit).layout.nodes.find(node => node.role === relation.fromRole);
+      const anaphor = unitMap.get(relation.toUnit).layout.nodes.find(node => node.role === relation.toRole);
+      return { type: 'coreference', referent: relation.referent, antecedent: { unitId: relation.fromUnit, nodeId: antecedent.id }, anaphor: { unitId: relation.toUnit, nodeId: anaphor.id }, antecedentLabel: antecedent.label, anaphorLabel: anaphor.label };
+    });
+    const expandedSurface = definition.surface;
+    const lexItems = expandedSurface.map((item, index) => {
+      if (item.connector) return { ...item, nodeId: null, unitId: 'LINK', sentenceOrder: 0, wordOrder: index + 1 };
+      const unit = unitMap.get(item.unit);
+      const node = unit.layout.nodes.find(candidate => candidate.role === item.role);
+      return { ...item, nodeId: node.id, unitId: item.unit, sentenceOrder: unit.order, wordOrder: index + 1 };
+    });
+    return { kind: 'utterance-kernel-story', units, relations, definition,
+      box: { minX: Math.min(...units.map(unit => unit.layout.box.minX)), maxX: Math.max(...units.map(unit => unit.layout.box.maxX)), minY: Math.min(...units.map(unit => unit.layout.box.minY)), maxY: Math.max(...units.map(unit => unit.layout.box.maxY)) },
+      demo: { id: definition.id, title: definition.title, sentences: [definition.upper, definition.lower, definition.third].map((item, index) => ({ id: `K${index + 1}`, order: index + 1, text: item.text })) },
+      lexItems, surfaceText: expandedSurface.map(item => item.label).join(' ') };
   }
 
   return Object.freeze({ DEFINITIONS, CAUSAL_ANAPHOR_VARIANTS, CAUSAL_VERB_VARIANTS, REWARD_VERB_VARIANTS, BOT_VARIANTS, validCausalAnaphorVariant, definitionFor, buildLayout, composeUtterance });

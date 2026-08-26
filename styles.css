@@ -8439,6 +8439,46 @@ body.main-screen-active #graphSvg .syntax-tree-edge {
   stroke-width:5px;
   stroke-linejoin:round;
 }
+@keyframes utteranceFlipNodeFlash {
+  0%,100% { filter:drop-shadow(0 0 0 rgba(245,158,11,0)); opacity:1; }
+  22%,68% { filter:drop-shadow(0 0 13px rgba(245,158,11,.98)); opacity:1; }
+  45% { filter:drop-shadow(0 0 22px rgba(239,68,68,1)); opacity:.72; }
+}
+#graphSvg .utterance-flip-active-node {
+  animation:utteranceFlipNodeFlash .72s ease-in-out 3;
+}
+#graphSvg .utterance-flip-active-node .node-circle,
+#graphSvg .utterance-flip-active-node .node-box,
+#graphSvg .utterance-flip-active-node .node-shape {
+  stroke:#f59e0b !important;
+  stroke-width:4px !important;
+}
+@media (prefers-reduced-motion:reduce) {
+  #graphSvg .utterance-flip-active-node { animation:none; }
+}
+#graphSvg .utterance-lex-movement-layer { pointer-events:none; }
+#graphSvg .utterance-lex-movement {
+  fill:none;
+  stroke:#0f766e;
+  stroke-width:2.8;
+  stroke-dasharray:9 6;
+  opacity:.92;
+}
+#graphSvg .utterance-lex-source-trace {
+  fill:#f59e0b;
+  stroke:#fff;
+  stroke-width:2px;
+}
+#graphSvg .utterance-lex-arrowhead { fill:#0f766e; }
+#graphSvg .utterance-lex-movement-label {
+  fill:#0f766e;
+  font-size:12px;
+  font-weight:800;
+  paint-order:stroke;
+  stroke:#fff;
+  stroke-width:4px;
+  stroke-linejoin:round;
+}
 .multi-ogn-tree-layout-field {
   display:grid;
   gap:.65rem;

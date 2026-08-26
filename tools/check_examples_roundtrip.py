@@ -92,8 +92,9 @@ if (datClause.lexItems.some((item, index) => movementForItem(item, index, datCla
 }}
 const mainClause = EXAMPLES.find(item => item.id === 'hond-bijt-man');
 state.example = mainClause;
-if (movementForItem(mainClause.lexItems[0], 0, mainClause.lexItems) !== null) {{
-  throw new Error('gewone subject-initiële HOND krijgt ten onrechte TOPIC');
+const mainSubjectMove = movementForItem(mainClause.lexItems[0], 0, mainClause.lexItems);
+if (mainSubjectMove?.slot !== 'topic' || mainSubjectMove?.kind !== 'subject-position') {{
+  throw new Error('gewone subject-initiële HOND krijgt niet positie 1');
 }}
 if (movementForItem(mainClause.lexItems[1], 1, mainClause.lexItems)?.slot !== 'v2') {{
   throw new Error('hoofdzin verplaatst het predicaat niet naar V2');

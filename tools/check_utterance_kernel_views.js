@@ -17,6 +17,17 @@ function extract(start, next) {
   return source.slice(begin, end);
 }
 
+const rewardId = 'jan-beloonde-jek-omdat-die-het-bot-terugbracht';
+const returned = kernelEngine.composeUtterance(rewardId, compositionEngine, 'die', 'terugbracht', 'het-bot');
+assert.equal(returned.definition.lower.text, 'Hond brengt bot naar man.');
+assert.ok(returned.surfaceText.includes('NAAR HEM'));
+assert.equal(returned.relations.length, 2);
+const fetched = kernelEngine.composeUtterance(rewardId, compositionEngine, 'die', 'apporteerde', 'het-bot');
+assert.equal(fetched.definition.lower.text, 'Hond apporteert bot.');
+assert.ok(!fetched.surfaceText.includes('NAAR'));
+assert.ok(!fetched.surfaceText.includes('HEM'));
+assert.equal(fetched.relations.length, 1, 'apporteren heeft geen MAN/HEM-relatie');
+
 class FakeElement {
   constructor(tag, attributes = {}, content = '') {
     this.tagName = tag;
@@ -84,7 +95,8 @@ function descendants(element) {
 function assertDiagonalFreeNodeEdges(rootElement, context) {
   const elements = descendants(rootElement);
   const edges = elements.filter(element => element.classList.contains('utterance-free-node-edge'));
-  assert.equal(edges.length, 8, `${context}: twee kernzinnen vereisen acht free-node-takken`);
+  assert.ok(edges.length === 8 || edges.length === 12,
+    `${context}: iedere kernzin vereist vier free-node-takken`);
   const nodes = new Map(elements
     .filter(element => element.tagName === 'circle' && element.getAttribute('data-node-id') !== null)
     .map(element => [element.getAttribute('data-node-id'), element]));
@@ -161,6 +173,8 @@ function jsonClone(value, fallback) { return value == null ? fallback : JSON.par
 function serializeLayoutGraph(layout) { return jsonClone(layout, {}); }
 
 // Execute the actual shipped SVG renderer and OPN writer, not a parallel mock.
+const multiOgnPlayPlan = eval(`(${extract('multiOgnPlayPlan(', 'multiOgnPlayMax(')})`);
+const multiOgnPlayMax = eval(`(${extract('multiOgnPlayMax(', 'multiOgnPlayOperation(')})`);
 const applyMultiOgnPlaybackVisibility = eval(`(${extract('applyMultiOgnPlaybackVisibility(', 'drawMultiOgnAnaphor()')})`);
 const drawUtteranceKernelComposition = eval(`(${extract('drawUtteranceKernelComposition()', 'drawDirectPlacement()')})`);
 const buildUtteranceKernelOpnDocument = eval(`(${extract('buildUtteranceKernelOpnDocument(', 'buildMultiOgnOpnDocument(')})`);
@@ -168,8 +182,8 @@ const validateImportedUtteranceComposition = eval(`(${extract('validateImportedU
 
 for (const definition of kernelEngine.DEFINITIONS) {
   currentComposition = kernelEngine.composeUtterance(definition.id, compositionEngine);
-  assert.equal(currentComposition.units.length, 2, `${definition.id}: geen twee kernzinnen`);
-  assert.deepEqual(currentComposition.units.map(unit => unit.id), ['K1', 'K2']);
+  const expectedUnitIds = definition.type === 'story-role-flip' ? ['K1', 'K2', 'K3'] : ['K1', 'K2'];
+  assert.deepEqual(currentComposition.units.map(unit => unit.id), expectedUnitIds);
   assert.ok(currentComposition.units.every(unit => compositionEngine.validateUnit(unit.layout)));
   for (const unit of currentComposition.units) {
     const rootNode = unit.layout.nodes.find(node => node.label === 'S');
@@ -192,7 +206,7 @@ for (const definition of kernelEngine.DEFINITIONS) {
   ), [], `${definition.id}: kernzinnen delen een rij`);
   assert.equal(compositionEngine.sharedCoordinates(
     currentComposition.units[0].layout, currentComposition.units[1].layout, 'x'
-  ).length, definition.relations.length);
+  ).length, 2);
 
   drawUtteranceKernelComposition();
   assert.equal(els.svg.children[0].getAttribute('data-branch-horizontal'), 'compact');
@@ -202,7 +216,7 @@ for (const definition of kernelEngine.DEFINITIONS) {
   assertDiagonalFreeNodeEdges(els.svg, `${definition.id}/compact`);
   const rendered = descendants(els.svg);
   const frames = rendered.filter(node => node.classList.contains('utterance-kernel-frame'));
-  assert.deepEqual(frames.map(node => node.getAttribute('data-ogn-unit')), ['K1', 'K2']);
+  assert.deepEqual(frames.map(node => node.getAttribute('data-ogn-unit')), expectedUnitIds);
   assert.ok(Number(frames[1].getAttribute('y')) > Number(frames[0].getAttribute('y')));
 
   const lines = rendered.filter(node => node.classList.contains('utterance-coreference-line'));
@@ -220,17 +234,18 @@ for (const definition of kernelEngine.DEFINITIONS) {
   assert.ok(slots.every((slot, index) => index === 0
     || Number(slot.getAttribute('y')) > Number(slots[index - 1].getAttribute('y'))),
   `${definition.id}: LEX-woorden staan niet van boven naar beneden in uitingvolgorde`);
-  if (definition.type === 'causal-role-flip') {
+  if (definition.type === 'causal-role-flip' || definition.type === 'story-role-flip') {
     const connector = slots.find(node => node.getAttribute('data-surface-label') === 'OMDAT');
     assert.equal(connector.getAttribute('data-node-id'), '');
-    assert.equal(currentComposition.relations.length, 2);
+    assert.equal(currentComposition.relations.length, definition.type === 'story-role-flip' ? 4 : 2);
     assert.equal(currentComposition.relations[0].antecedentLabel, 'HOND');
     assert.equal(currentComposition.relations[0].anaphorLabel, 'HOND');
     assert.equal(currentComposition.relations[0].referent, 'jek');
     assert.equal(currentComposition.relations[1].antecedentLabel, 'JAN');
     assert.ok(currentComposition.relations[1].anaphorLabel.includes('MAN'));
     assert.equal(currentComposition.relations[1].referent, 'jan');
-    assert.deepEqual(frames.map(frame => frame.getAttribute('data-branch-orientation')), ['normal', 'mirrored']);
+    assert.deepEqual(frames.map(frame => frame.getAttribute('data-branch-orientation')),
+      definition.type === 'story-role-flip' ? ['normal', 'mirrored', 'normal'] : ['normal', 'mirrored']);
   }
   if (definition.implicitSubject) {
     assert.equal(rendered.filter(node => node.getAttribute('data-implicit-subject') === 'true').length, 2);
@@ -293,27 +308,55 @@ for (const definition of kernelEngine.DEFINITIONS) {
   }
   state.kernelBranchFlip = 'auto';
 
-  // Play shows K1, K2 before Flip, the local Flip, rigid anaphor alignment, and LEX.
+  // PLAY shows a tree and a detailed source→LEX operation for every kernel clause.
   state.multiOgnPlayEnabled = true;
   let k2BeforeFlipOrientation = null;
-  for (let phase = 0; phase <= 5; phase += 1) {
+  const playPlan = multiOgnPlayPlan(currentComposition);
+  const playMax = playPlan.length - 1;
+  const treeStep = new Map(expectedUnitIds.map(id => [id,
+    playPlan.findIndex(item => item.id === 'tree' && item.unitId === id)]));
+  const relationStep = playPlan.findIndex(item => item.id === 'relations');
+  const flipStep = playPlan.findIndex(item => item.id === 'flip');
+  for (let phase = 0; phase <= playMax; phase += 1) {
     state.multiOgnPlayStep = phase;
     drawUtteranceKernelComposition();
     const playRoot = els.svg.children[0];
+    const operation = playPlan[phase];
     assert.equal(playRoot.getAttribute('data-play-step'), String(phase));
+    assert.equal(playRoot.getAttribute('data-play-max'), String(playMax));
+    assert.equal(playRoot.getAttribute('data-play-operation'), operation.id);
     const playLayers = playRoot.children;
     const nodes = playLayers.find(layer => layer.classList.contains('multi-ogn-tree-node-layer'));
     assert.deepEqual(nodes.children.map(unit => unit.getAttribute('visibility')),
-      [phase >= 1 ? 'visible' : 'hidden', phase >= 2 ? 'visible' : 'hidden']);
+      expectedUnitIds.map(id => phase >= treeStep.get(id) ? 'visible' : 'hidden'));
     const anaphors = playLayers.filter(layer => layer.classList.contains('multi-ogn-coreference'));
-    assert.ok(anaphors.every(layer => layer.getAttribute('visibility') === (phase >= 4 ? 'visible' : 'hidden')));
+    assert.ok(anaphors.every(layer => layer.getAttribute('visibility') === (phase >= relationStep ? 'visible' : 'hidden')));
     const lex = playLayers.find(layer => layer.classList.contains('multi-ogn-shared-lex'));
-    assert.equal(lex.getAttribute('visibility'), phase >= 5 ? 'visible' : 'hidden');
-    if (definition.type === 'causal-role-flip') {
-      assert.equal(playRoot.getAttribute('data-local-flip-applied'), phase >= 3 ? 'true' : 'false');
+    assert.equal(lex.getAttribute('visibility'), ['lex', 'lex-complete'].includes(operation.id) ? 'visible' : 'hidden');
+    const movement = playLayers.find(layer => layer.classList.contains('utterance-lex-movement-layer'));
+    if (operation.id === 'lex') {
+      const trajectories = descendants(movement).filter(node => node.classList.contains('utterance-lex-movement'));
+      const availableItems = currentComposition.lexItems.filter(item => !item.connector && item.unitId === operation.unitId).length;
+      assert.ok(trajectories.length > 0 && trajectories.length <= availableItems,
+        `${definition.id}/${operation.unitId}: alleen echte positiewijzigingen mogen een pijl krijgen`);
+      assert.ok(trajectories.every(path => path.getAttribute('data-source-label') && path.getAttribute('data-realized-label')));
+      assert.ok(trajectories.every(path => path.getAttribute('data-movement-scope') === 'lex-axis'),
+        `${definition.id}/${operation.unitId}: iedere verplaatsing moet tot de LEX-as beperkt blijven`);
+      assert.ok(trajectories.every(path => path.getAttribute('data-position-changed') === 'true'
+        && Math.abs(Number(path.getAttribute('data-from-y')) - Number(path.getAttribute('data-to-y'))) > 1),
+        `${definition.id}/${operation.unitId}: een onverplaatst woord mag geen LEX-pijl krijgen`);
+      assert.ok(trajectories.every(path => /^M\s+([-\d.]+)\s+[-\d.]+\s+V\s+[-\d.]+$/.test(path.getAttribute('d') || '')),
+        `${definition.id}/${operation.unitId}: verplaatsingen moeten verticale LEX-as-pijlen zijn`);
+      assert.ok(descendants(movement).filter(node => node.classList.contains('utterance-lex-arrowhead')).length === trajectories.length,
+        `${definition.id}/${operation.unitId}: iedere LEX-verplaatsing vereist een pijlpunt`);
+      assert.ok(!descendants(playRoot).some(node => node.classList.contains('multi-ogn-lex-projection')),
+        `${definition.id}/${operation.unitId}: boom→LEX-projectielijnen zijn verboden`);
+    }
+    if (definition.type === 'causal-role-flip' || definition.type === 'story-role-flip') {
+      assert.equal(playRoot.getAttribute('data-local-flip-applied'), phase >= flipStep ? 'true' : 'false');
       const k2Frame = descendants(playRoot).find(node => node.classList.contains('utterance-kernel-frame') && node.getAttribute('data-ogn-unit') === 'K2');
-      if (phase === 2) k2BeforeFlipOrientation = k2Frame.getAttribute('data-branch-orientation');
-      if (phase === 3) {
+      if (operation.id === 'tree' && operation.unitId === 'K2') k2BeforeFlipOrientation = k2Frame.getAttribute('data-branch-orientation');
+      if (operation.id === 'flip') {
         assert.notEqual(k2Frame.getAttribute('data-branch-orientation'), k2BeforeFlipOrientation,
           `${definition.id}: Play moet de lokale K2-Flip zichtbaar maken`);
         const reveal = descendants(playRoot).find(node => node.classList.contains('utterance-flip-reveal-layer'));
@@ -326,16 +369,16 @@ for (const definition of kernelEngine.DEFINITIONS) {
         assert.ok(descendants(reveal).some(node => node.classList.contains('utterance-flip-badge')),
           `${definition.id}: FLIP K2-label ontbreekt`);
       }
-      if (phase !== 3) assert.ok(!descendants(playRoot).some(node => node.classList.contains('utterance-flip-reveal-layer')),
-        `${definition.id}: vóór/na-overlay hoort uitsluitend bij PLAY-stap 3`);
+      if (operation.id !== 'flip') assert.ok(!descendants(playRoot).some(node => node.classList.contains('utterance-flip-reveal-layer')),
+        `${definition.id}: vóór/na-overlay hoort uitsluitend bij de Flip-stap`);
     }
   }
   state.multiOgnPlayEnabled = false;
-  state.multiOgnPlayStep = 5;
+  state.multiOgnPlayStep = 999;
 
   const document = buildUtteranceKernelOpnDocument(currentComposition);
-  assert.equal(document.data.composition.kind, 'utterance-kernel-pair');
-  assert.equal(document.data.composition.units.length, 2);
+  assert.equal(document.data.composition.kind, definition.type === 'story-role-flip' ? 'utterance-kernel-story' : 'utterance-kernel-pair');
+  assert.equal(document.data.composition.units.length, expectedUnitIds.length);
   assert.equal(document.data.composition.relations.length, definition.relations.length);
   assert.equal(validateImportedUtteranceComposition(document.data.composition), true);
   assert.deepEqual(document.data.composition.shared_lex_axis.items.map(item => item.label),
@@ -434,7 +477,10 @@ assert.ok(source.includes('id="multiTreeLayoutDensitySelect"'), 'Anafoor-config 
 assert.ok(source.includes('id="multiTreeBranchHorizontalSelect"'), 'Anafoor-config mist horizontale vertakking');
 assert.ok(source.includes('id="multiTreeBranchVerticalSelect"'), 'Anafoor-config mist verticale vertakking');
 assert.ok(source.includes('id="multiTreeBranchFlipSelect"'), 'Anafoor-config mist links/rechts-Flip');
+assert.ok(source.includes('id="multiOgnFlipHoldSelect"'), 'Anafoor-config mist instelbare PLAY-Flipstop');
+assert.ok(source.includes('MULTI_OGN_FLIP_HOLD_MODES'), 'PLAY mist Flip-houdmodi');
 assert.ok(source.includes('id="multiCausalAnaphorSelect"'), 'Anafoor-config mist flexibele subjectkeuze');
+assert.ok(source.includes('utterance-flip-active-node'), 'PLAY mist nadruk op werkelijk verplaatste Flip-knopen');
 assert.ok(source.includes('id="multiGridSizeHorizontalSelect"'));
 assert.ok(source.includes('id="multiGridSizeVerticalSelect"'));
 assert.ok(source.includes("data-node-config', 'causal-subject'"));
@@ -475,4 +521,4 @@ assert.equal(defaults.kernelBranchVertical, 'compact');
 assert.equal(defaults.kernelBranchFlip, 'auto');
 assert.equal(defaults.causalAnaphorVariant, 'die');
 
-console.log('UITING KERNZIN VIEW CHECK: OK (5 uitingen, schuine free-node-takken, zichtbare K2-Flipstap, varianten, verticale anaforen, gedetailleerde Play en OPN)');
+console.log('UITING KERNZIN VIEW CHECK: OK (6 uitingen/stories, gescheiden terugbrengen/apporteren, K1–K3, zichtbare Flip, uitsluitend verticale LEX-as-pijlen per kernzin, verticale anaforen, Play en OPN)');

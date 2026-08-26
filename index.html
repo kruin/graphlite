@@ -210,6 +210,7 @@
 <li><button class="help-topic-button" data-help-topic-button="projection-mechanism" type="button"><span class="help-lang-nl">2 · Projectie</span><span class="help-lang-en">2 · Projection</span></button></li>
 <li><button class="help-topic-button" data-help-topic-button="recursive-layout" type="button"><span class="help-lang-nl">3 · Berekende plaatsing</span><span class="help-lang-en">3 · Calculated Placement</span></button></li>
 <li><button class="help-topic-button" data-help-topic-button="multi-ogn-anaphor" type="button"><span class="help-lang-nl">Anafoor · multi-OGN</span><span class="help-lang-en">Anaphor · multi-OGN</span></button></li>
+<li><button class="help-topic-button" data-help-topic-button="flip" type="button"><span class="help-lang-nl">Flip · DS ≠ LEX</span><span class="help-lang-en">Flip · DS ≠ LEX</span></button></li>
 <li><button class="help-topic-button" data-help-topic-button="west-axis" type="button"><span class="help-lang-nl">West-as</span><span class="help-lang-en">West axis</span></button></li>
 <li><button class="help-topic-button" data-help-topic-button="south-axis" type="button"><span class="help-lang-nl">Zuid-as</span><span class="help-lang-en">South axis</span></button></li>
 </ul>
@@ -445,6 +446,30 @@
 <p>The rule that distinct nodes do not share a row or column applies <strong>per individual OGN</strong>. Across OGNs, only the declared MAN–HIJ column is permitted; every other cross-unit row or column remains forbidden.</p>
 </div>
 </article>
+<article class="help-topic-panel" data-help-topic="flip">
+<div class="help-lang-nl">
+<h3>Flip · meervoudige DS, vrije boom en uiteindelijke LEX</h3>
+<p><strong>Begin eenvoudig:</strong> één werkwoordcluster kan als <strong>IS GEWEEST</strong> of <strong>GEWEEST IS</strong> worden gerealiseerd. Dezelfde categorieën en knopen blijven bestaan; Flip kiest een toegestane takgeometrie en, alleen bij een expliciet lineariserende cluster, de bijbehorende LEX-volgorde.</p>
+<img src="images/readme/flip-minimale-language-tree.png" alt="Minimale Language Tree met links-rechts en kort-lang Flip">
+<p><strong>OGL heeft een meervoudige DS.</strong> Een uiting kan uit meer dan één kernzin bestaan. Iedere kernzin is een zelfstandige Language Tree. De DS bewaart de kernzinnen én hun mogelijke volgordes; de verticale tekenvolgorde en de uiteindelijke LEX-volgorde worden afzonderlijk bewaard. Zo kunnen onder meer <em>omdat de hond …, beloont de man …</em> en <em>de man beloont … omdat de hond …</em> uit dezelfde gekoppelde kernzinnen worden gerealiseerd zonder de bomen tot woordvolgorde te reduceren.</p>
+<p><strong>Bij anaforen is Flip essentieel.</strong> De terugbrengvariant gebruikt K1 <strong>JAN BELOONT HOND</strong> en K2 <strong>HOND BRENGT BOT NAAR MAN</strong>. Flip houdt HOND–HOND en JAN–MAN verticaal; LEX realiseert die bronnen bijvoorbeeld als DIE en HEM. De apporteervariant is afzonderlijk: <strong>HOND APPORTEERT BOT</strong>, zonder “naar hem” en zonder MAN-relatie.</p>
+<img src="images/readme/flip-vrije-vertakkingen.png" alt="Vrije schuine vertakkingen voor en na Flip">
+<p><strong>PLAY maakt het omslagpunt zichtbaar:</strong> K2 verschijnt eerst vóór Flip; in de aparte Flip-stop blijft de oude boom vaag staan, verschijnt de nieuwe boom vol, tonen stippellijnen de verplaatsing en flitsen de werkelijk verplaatste knopen. Standaard pauzeert PLAY hier. Ga verder met <strong>Play</strong> of <strong>→</strong>. Config biedt ook flash (1,2 s) en houd vast (3 s).</p>
+<p><strong>LEX is het uiteindelijke resultaat:</strong> bijvoorbeeld <em>Jan beloonde zijn hond Jek omdat die het bot naar hem terugbracht.</em> DS-volgorde, boom-links/rechts en LEX-woordvolgorde zijn dus drie verschillende eigenschappen.</p>
+<img src="images/readme/flip-language-tree-lex-syn-log.png" alt="Language Tree met LEX SYN LOG en Flip">
+</div>
+<div class="help-lang-en">
+<h3>Flip · plural DS, free tree, final LEX</h3>
+<p><strong>Start simple:</strong> one verb cluster may surface as <strong>IS GEWEEST</strong> or <strong>GEWEEST IS</strong>. Categories and node identities stay intact; Flip selects permitted branch geometry and, only for an explicitly linearizing cluster, its corresponding LEX order.</p>
+<img src="images/readme/flip-minimale-language-tree.png" alt="Minimal Language Tree with left-right and short-long Flip">
+<p><strong>OGL has a plural DS.</strong> An utterance may contain several independent kernel-clause Language Trees. DS stores those clauses and their possible orders; vertical drawing order and final LEX order are stored separately. Thus <em>omdat de hond …, beloont de man …</em> and <em>de man beloont … omdat de hond …</em> can be realized from the same linked clauses.</p>
+<p><strong>Flip is essential for anaphors.</strong> The return variant uses K1 <strong>JAN BELOONT HOND</strong> and K2 <strong>HOND BRENGT BOT NAAR MAN</strong>. Flip keeps HOND–HOND and JAN–MAN vertical; LEX may realize them as DIE and HEM. The fetch variant is separate: <strong>HOND APPORTEERT BOT</strong>, without “naar hem” and without a MAN relation.</p>
+<img src="images/readme/flip-vrije-vertakkingen.png" alt="Free branches before and after Flip">
+<p><strong>PLAY exposes the exact event:</strong> K2 first appears before Flip. At the dedicated Flip stop the prior tree remains faint, the result is solid, dotted guides show movement, and moved nodes flash. PLAY pauses here by default; continue with <strong>Play</strong> or <strong>→</strong>. Config also offers flash (1.2 s) and hold (3 s).</p>
+<p><strong>LEX is the final result.</strong> DS order, tree left/right placement, and LEX word order are three distinct properties.</p>
+<img src="images/readme/flip-language-tree-lex-syn-log.png" alt="Language Tree with LEX SYN LOG and Flip">
+</div>
+</article>
 <article class="help-topic-panel" data-help-topic="west-axis">
 <div class="help-lang-nl">
 <h3>West-as</h3>
@@ -482,8 +507,8 @@
 </div>
 </article>
 <article class="help-topic-panel" data-help-topic="lex-axis">
-<div class="help-lang-nl"><h3>LEX</h3><p>LEX is de westelijke named projection van Language Tree.</p><p>Ieder bronwoord projecteert horizontaal op bronhoogte. Het actieve profiel staat alleen expliciete topic-/V1-/V2-Wissels omhoog toe. In <code>HOND BIJT MAN</code> blijven HOND en MAN op bronhoogte.</p><p>Daarnaast kan een uitbreiding een <strong>insertieplaats</strong> leveren en kan een voegwoord rechtstreeks in <strong>Comp</strong> worden geschreven. Beide hebben geen bronpijl.</p></div>
-<div class="help-lang-en"><h3>LEX</h3><p>LEX is the west named projection of Language Tree.</p><p>Every source word projects horizontally at source height. The active profile permits explicit upward topic/V1/V2 switches only. In <code>HOND BIJT MAN</code>, HOND and MAN remain at source height.</p><p>An extension may also supply an <strong>insertion position</strong>, and a complementizer may be written directly in <strong>Comp</strong>. Neither has a source arrow.</p></div>
+<div class="help-lang-nl"><h3>LEX</h3><p>LEX is de westelijke named projection van Language Tree.</p><p>Ieder bronwoord projecteert eerst horizontaal. In <code>HOND BIJT MAN</code> gaat HOND naar positie 1, BIJT naar V2 en blijft MAN op bronhoogte: de LEX-as leest dus HOND–BIJT–MAN.</p><p>Daarnaast kan een uitbreiding een <strong>insertieplaats</strong> leveren en kan een voegwoord rechtstreeks in <strong>Comp</strong> worden geschreven. Beide hebben geen bronpijl.</p></div>
+<div class="help-lang-en"><h3>LEX</h3><p>LEX is the west named projection of Language Tree.</p><p>Every source word projects horizontally first. In <code>HOND BIJT MAN</code>, HOND moves to position 1, BIJT to V2, and MAN stays at source height: LEX therefore reads HOND–BIJT–MAN.</p><p>An extension may also supply an <strong>insertion position</strong>, and a complementizer may be written directly in <strong>Comp</strong>. Neither has a source arrow.</p></div>
 </article>
 <article class="help-topic-panel" data-help-topic="lex-free-positions">
 <div class="help-lang-nl">
@@ -505,14 +530,14 @@
 <div class="help-lang-nl">
 <h3>Voorlopig alleen Wissels omhoog</h3>
 <p>Een zichtbare Wissel wordt alleen uitgevoerd wanneer het doel op het scherm hoger ligt dan de horizontale bronprojectie. De renderer tekent nooit stilzwijgend een pijl omlaag.</p>
-<ul><li><code>TRUI BREIT VROUW</code>: TRUI kan omhoog naar topic-slot 1; BREIT kan omhoog naar V2-slot 2.</li><li><code>BIJT HOND MAN?</code>: BIJT kan omhoog naar V1/slot 1.</li><li><code>HOND BIJT MAN</code>: HOND en MAN blijven op bronhoogte; alleen BIJT heeft een V2-Wissel omhoog.</li><li><code>DAT HOND MAN BIJT</code> en <code>OMDAT HOND MAN BIJT</code>: DAT/OMDAT wordt rechtstreeks in Comp geschreven en heeft geen pijl.</li></ul>
+<ul><li><code>TRUI BREIT VROUW</code>: TRUI gaat naar positie 1; BREIT naar V2.</li><li><code>BIJT HOND MAN?</code>: BIJT gaat naar V1, vóór HOND.</li><li><code>HOND BIJT MAN</code>: HOND gaat naar positie 1 en BIJT naar V2; MAN blijft op bronhoogte.</li><li><code>DAT HOND MAN BIJT</code> en <code>OMDAT HOND MAN BIJT</code>: DAT/OMDAT wordt rechtstreeks in Comp geschreven en heeft geen pijl.</li></ul>
 <p><strong>Grens:</strong> “omhoog” beschrijft uitsluitend de tekening. Het is geen zelfstandige uitspraak over syntactische hiërarchie of c-command. Downward/post-V2, Heavy NP Shift, extrapositie en Lowering blijven buiten het actieve profiel.</p>
 <a class="button-link" href="LEX_MOVEMENT_RULES.md?v2.0.0-rc.45">Volledige LEX-regels</a>
 </div>
 <div class="help-lang-en">
 <h3>Upward switches only for now</h3>
 <p>A visible switch is executed only when its target is higher on screen than the horizontal source projection. The renderer never silently draws a downward arrow.</p>
-<ul><li><code>TRUI BREIT VROUW</code>: TRUI may switch up to topic slot 1; BREIT may switch up to V2 slot 2.</li><li><code>BIJT HOND MAN?</code>: BIJT may switch up to V1/slot 1.</li><li><code>HOND BIJT MAN</code>: HOND and MAN remain at source height; only BIJT has an upward V2 switch.</li><li><code>DAT HOND MAN BIJT</code> and <code>OMDAT HOND MAN BIJT</code>: DAT/OMDAT is written directly in Comp and has no arrow.</li></ul>
+<ul><li><code>TRUI BREIT VROUW</code>: TRUI moves to position 1; BREIT to V2.</li><li><code>BIJT HOND MAN?</code>: BIJT moves to V1, before HOND.</li><li><code>HOND BIJT MAN</code>: HOND moves to position 1 and BIJT to V2; MAN remains at source height.</li><li><code>DAT HOND MAN BIJT</code> and <code>OMDAT HOND MAN BIJT</code>: DAT/OMDAT is written directly in Comp and has no arrow.</li></ul>
 <p><strong>Boundary:</strong> “upward” describes the drawing only. It is not an independent claim about syntactic hierarchy or c-command. Downward/post-V2, Heavy NP Shift, extraposition, and Lowering remain outside the active profile.</p>
 <a class="button-link" href="LEX_MOVEMENT_RULES.md?v2.0.0-rc.45">Complete LEX rules</a>
 </div>

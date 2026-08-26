@@ -772,7 +772,7 @@ for marker, label in [
 ]:
     require(local_launcher, marker, label)
 source_build = read("SOURCE_BUILD.txt").strip()
-if source_build != "v2.0.0-rc.45-play-show-flip-before-after-20260825.16":
+if source_build != "v2.0.0-rc.45-utterance-real-lex-moves-only-20260826.22":
     errors.append(f"onverwachte of lege SOURCE_BUILD.txt: {source_build!r}")
 for stale in ['v4537', 'v2.0.0-rc.24']:
     if stale in start_bat or stale in debug_html:

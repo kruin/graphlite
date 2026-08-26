@@ -2,6 +2,43 @@
 
 ## Werkhypothese
 
+### OGL: Deep Structure is meervoudig
+
+In Open Graph Linguistics is DS geen enkele, al lineair geordende zin. Eén
+uiting kan een **meervoudige Deep Structure** bevatten: meerdere zelfstandige
+kernzinnen, elk met een eigen Language Tree. Het model bewaart apart welke
+kernzinnen tot de DS behoren, hun opgeslagen DS-volgorde, hun verticale
+tekenvolgorde en hun uiteindelijke LEX-volgorde.
+
+Voor de beloningsuiting blijven beide volgordes expliciet bewaard:
+
+- `K1 → K2`: **de man beloont … omdat de hond …**;
+- `K2 → K1`: **omdat de hond …, beloont de man …**.
+
+Dit zijn realisatiekeuzes boven dezelfde gekoppelde kernzinnen. Een andere
+LEX-volgorde herschrijft de DS-bomen niet.
+
+### Story: drie of meer kernzinnen
+
+Vanaf drie kernzinnen heet de gekoppelde uiting een **story**. De eerste
+actieve fixture is:
+
+> Jan sloeg Jek omdat die hem beet, waarna hij hem ontweek.
+
+Met de vastgelegde lezing `die=Jek`, `hem₁=Jan`, `hij=Jan`, `hem₂=Jek`:
+
+| DS | Kernzin | Verwachte oriëntatie |
+|---|---|---|
+| K1 | JAN SLAAT HOND | normaal; anker |
+| K2 | HOND BIJT MAN | Flip; beide rollen zijn gewisseld |
+| K3 | MAN ONTWIJKT HOND | normaal; rollen zijn teruggewisseld |
+
+De stresstest voegt in K3 een derde referentketen toe: MAN geeft BOT aan HOND.
+Daar moet één starre K3-verschuiving tegelijk de MAN-, HOND- en BOT-kolom
+oplossen. Als de drie vereiste `dx`-waarden na alle toegestane flips niet gelijk
+zijn, rapporteert de solver **geen gezamenlijke verticale oplossing**. Hij mag
+geen schuine anafoor tekenen en geen referent verwisselen.
+
 Een **uiting** bestaat uit één of meer **kernzinnen**. Een kernzin (`k`) is
 voorlopig de eenvoudigste syntactische `S` of functionele `CLAUSE` die voor de
 interpretatie nodig is. De definitie blijft een werkhypothese: de verhouding
@@ -15,7 +52,17 @@ lexicale realisatie.
 > geschreven uiting in haar uiteindelijke woordvolgorde. De Language Tree is
 > de structurele bron; LEX is niet nog een alternatieve boomweergave.
 
+**Correctie van de anafoorbron:** in `Hond brengt bot naar man` verwijst
+`hem` naar **man/Jan**. De tweede verticale bronrelatie is `MAN ↔ MAN` (op LEX:
+`JAN ↔ HEM`), niet `BOT ↔ MAN`. BOT is thema/patiens en geen antecedent van
+`hem`.
+
 ## Flip in één oogopslag
+
+Begin minimaal met `is geweest` ↔ `geweest is`. De knopen en categorieën
+blijven gelijk. Alleen een uitdrukkelijk lineariserende werkwoordclustertak mag
+haar childvolgorde op LEX omkeren; bij gewone takken verandert Flip slechts de
+links/rechts- en kort/lang-geometrie.
 
 Flip is, naast **Free Node**, een kernbegrip van de Language Tree. Free Node
 bepaalt dat iedere knoop een werkelijk vrije rasterplaats krijgt. Flip bepaalt
@@ -55,7 +102,7 @@ daarna realiseert LEX bijvoorbeeld `JAN SLAAT JEK OMDAT DIE HEM BEET`.
 | Jan wast zichzelf. | Jan wast Jan. | Jan wast zelf. | Jan als agens = Jan als patiens; `zich + zelf → zichzelf`. |
 | Jan slaat Jek omdat die hem beet. | Jan slaat hond. | Hond bijt man. | Oorzaak `k₂ → k₁`; `hond = Jek`; `man = Jan`; rol-flip. |
 | Jan slaat de hond omdat die hem gebeten heeft. | Jan slaat hond. | Hond bijt man. | Dezelfde bronbomen; `de hond`, `die`, `hem` en `gebeten heeft` verschijnen uitsluitend op LEX. |
-| Jan beloonde zijn hond Jek omdat die het bot naar hem terugbracht. | Jan beloont hond. | Hond apporteert bot naar man. | `hond = Jek`; `man = Jan`; terugbrengen/apporteren zijn LEX-realisaties. |
+| Jan beloonde zijn hond Jek omdat die het bot naar hem terugbracht. | Jan beloont hond. | Hond brengt bot naar man. | `hond = Jek`; `man = Jan`; LEX realiseert terugbrengen. |
 | Ken uzelf. | Ken zelf. | Ken u. | Impliciete geadresseerde = object; `u + zelf → uzelf`; imperatief. |
 
 ### Nieuwe variantgroepen
@@ -66,6 +113,15 @@ dezelfde subjectvormen, plus `terugbracht`, `heeft teruggebracht`,
 `teruggebracht heeft`, `apporteerde`, `heeft geapporteerd` en
 `geapporteerd heeft`. De bot-NP kan als `het bot` of `zijn bot` worden
 gerealiseerd. Iedere keuze verandert LEX, niet de kernzinrollen.
+
+Terugbrengen en apporteren zijn daarbij **geen gemengde analyse**:
+
+- terugbrengen: `HOND BRENGT BOT NAAR MAN` → `die het bot naar hem terugbracht`;
+- apporteren: `HOND APPORTEERT BOT` → `die het bot apporteerde`.
+
+Alleen de terugbrengvariant bevat MAN als doel en dus de relatie `MAN ↔ MAN` /
+`JAN ↔ HEM`. De apporteervariant bevat geen `naar hem` en alleen de
+HOND-coreferentie tussen K1 en K2.
 
 **TODO — ambiguïteit:** in `zijn bot` kan `zijn` naar Jan of naar Jek
 verwijzen. De software en documentatie bewaren beide lezingen en mogen niet
@@ -243,20 +299,24 @@ LEX-woord. De analytische volgorde van kernzinnen mag afwijken van hun
 zichtbare presentatie: bij de causale uiting staat de hoofdzin boven de bijzin.
 
 De bestaande `S1/S2`-demo met `MAN ↔ HIJ` blijft zelfstandig selecteerbaar.
-Een compositor voor een willekeurig aantal kernzinnen of automatisch
-afgeleide causale geometrie is niet onderdeel van deze versie.
 
 ### Play: stapsgewijze opbouw
 
 De Play-balk blijft zichtbaar in **Anafoor · multi-OGN**. `Play` toont de
 opbouw automatisch; `←` en `→` lopen handmatig terug of vooruit en `Reset`
-begint opnieuw bij het raster. De vijf inhoudelijke stappen na het raster zijn:
+begint opnieuw bij het raster. De reeks wordt uit het werkelijke aantal
+kernzinnen opgebouwd:
 
 1. **K1 berekenen:** de bovenste Language Tree verschijnt in haar eigen geldige
    free-node-layout.
-2. **K2 vóór Flip:** de onderste Language Tree verschijnt eerst met haar eigen
+2. **LEX K1:** bij ieder werkelijk verplaatst woord wordt de bronhoogte uitsluitend op
+   de LEX-as gemarkeerd. Een afzonderlijke verticale pijl loopt op diezelfde
+   as naar de doelpositie. Er wordt geen verplaatsingslijn vanuit de boom
+   getekend. Een woord dat op bronhoogte blijft, krijgt geen pijl. Het label vermeldt `bronknoop → woord · positie`; zo is zichtbaar wanneer
+   één NP-bron meer dan één LEX-woord realiseert.
+3. **K2 vóór Flip:** de onderste Language Tree verschijnt eerst met haar eigen
    ongespiegelde takrichting. Anafoorlijnen en LEX zijn nog verborgen.
-3. **Flip slaat toe op K2:** uitsluitend bij een causale rolwisseling worden
+4. **Flip slaat toe op K2:** uitsluitend bij een causale rolwisseling worden
    de binaire roltakken onder `S` en `VP` van K2 links/rechts gespiegeld. De
    knoop-id’s, categorieën, ouder-kindrelaties en LEX-volgorde veranderen niet.
    PLAY toont deze ingreep nadrukkelijk als een vóór/na-beeld: de ongeflipte K2
@@ -265,16 +325,37 @@ begint opnieuw bij het raster. De vijf inhoudelijke stappen na het raster zijn:
    `FLIP K2 · LINKS/RECHTS` benoemt de bewerking. Deze stap blijft langer in
    beeld dan voorheen en kan met `←` en `→` onbeperkt opnieuw worden bekeken.
    Bij uitingen zonder zo’n rolwisseling meldt Play: `geen lokale Flip nodig`.
-4. **Compositie en uitlijning:** de complete, inmiddels geflipte K2 wordt als
+5. **LEX K2:** na de Flip worden nu ook voor K2 bronvorm, gerealiseerde vorm en
+   positie afzonderlijk zichtbaar. Flip verandert de boomoriëntatie; deze
+   LEX-stap toont onafhankelijk daarvan de woordvolgorde.
+6. **Volgende kernzinnen:** een story herhaalt `K3-boom → LEX K3`, en hetzelfde
+   patroon geldt voor iedere verdere kernzin.
+7. **Compositie en uitlijning:** de complete bomen worden als
    één starre eenheid verschoven. Pas wanneer voor alle gedeclareerde relaties
    dezelfde verschuiving geldt, verschijnen de rechte verticale anaforen.
-5. **LEX-resultaat:** de gezamenlijke LEX-as verschijnt met de volledige
+8. **LEX-resultaat:** de gezamenlijke LEX-as verschijnt met de volledige
    gerealiseerde uiting in woordvolgorde.
 
-Samen met stap 0 (`raster / titel`) toont Play dus `stap 0/5` tot en met
-`stap 5/5`. In stap 2 staat boven de afbeelding **VÓÓR FLIP**; vanaf stap 3
-staat **FLIP SLAAT TOE OP K2**. Het K2-kader bewaart bovendien de technische
+Het eindnummer is dynamisch: een paar zonder Flip eindigt op `6`, een paar met
+Flip op `7`, en de huidige K1–K3-story op `9`. Bij K2 staat vóór de ingreep
+**VÓÓR FLIP**; in de volgende aparte stop staat **FLIP SLAAT TOE OP K2**.
+Het K2-kader bewaart bovendien de technische
 status `before` of `applied`, zodat de overgang ook automatisch testbaar is.
+
+### Lengte van een story en aantal Flips
+
+Flip kent als lokale Language-Tree-bewerking geen taalkundig maximum: iedere
+kernzin kan in beginsel haar eigen Flip-beslissing krijgen. Ook het OPN-model
+accepteert opeenvolgende eenheden `K1 … Kn`, en PLAY maakt zijn stappenlijst
+dynamisch uit de aanwezige kernzinnen.
+
+De huidige automatische compositor levert en test echter maximaal **drie**
+kernzinnen (`K1–K3`). De huidige automatische rol-Flip is bovendien bewust
+beperkt tot `K2`. Een toekomstige algemene `Kn`-flipsolver moet voor iedere
+kernzin afzonderlijk beide oriëntaties toetsen aan alle anafoorconstraints,
+een consistente combinatie kiezen en daarna de volledige set bomen star
+uitlijnen. Bij zeer lange stories is schermhoogte/paginering het praktische
+knelpunt; niet de Flip-operatie zelf.
 
 Terugspelen toont dezelfde toestanden in omgekeerde volgorde. Daardoor wordt
 ook de overgang van geflipte K2 naar K2 vóór Flip zichtbaar. Het oorspronkelijke

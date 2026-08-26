@@ -56,7 +56,7 @@ Zinsoort is een afzonderlijke Language-Tree-laag en geen toepassing:
 
 | Zinsoort | Voorbeeld | Actieve LEX-regel |
 |---|---|---|
-| Hoofdzin · mededelend | `HOND BIJT MAN` | `BIJT` kan omhoog naar V2; `HOND` en `MAN` blijven op bronhoogte |
+| Hoofdzin · mededelend | `HOND BIJT MAN` | `HOND` bezet positie 1, `BIJT` V2; `MAN` blijft op bronhoogte. Zichtbare volgorde: HOND–BIJT–MAN. |
 | Vraagzin · ja/nee | `BIJT HOND MAN?` | `BIJT` kan omhoog naar V1 |
 | Dat-zin | `DAT HOND MAN BIJT` | `DAT` direct in Comp; geen V2 |
 | Omdat-zin | `OMDAT HOND MAN BIJT` | `OMDAT` direct in Comp; geen V2 |
@@ -81,3 +81,13 @@ rightward movement of Lowering. Downward/post-V2, Heavy NP Shift,
 extrapositie en morfologische Lowering vallen buiten het actieve profiel en
 krijgen later alleen werking met een afzonderlijke regel, bron/doelcontract,
 tracegedrag, Config en regressietests.
+## PLAY per kernzin
+
+In **Anafoor · multi-OGN** is LEX niet alleen het laatste totaalbeeld. PLAY
+voegt na iedere Language Tree een eigen LEX-stop in (`LEX K1`, `LEX K2`,
+`LEX K3`, …). Per werkelijk verplaatst woord worden uitsluitend op de LEX-as de
+bronhoogte, een verticale pijl, de gerealiseerde vorm en de uiteindelijke
+positie getoond. Een woord dat op bronhoogte blijft, krijgt geen pijl. Er wordt geen verplaatsingslijn vanuit de boom getekend. Bij een
+rolwisseling staat de expliciete Flip-stop tussen `K2-boom` en `LEX K2`.
+Daarmee blijven boomoriëntatie, structurele identiteit en woordvolgorde
+afzonderlijk inspecteerbaar.

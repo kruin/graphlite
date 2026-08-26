@@ -93,6 +93,9 @@ function movementForItem(item) {{
   if (item.source === 'late') {{
     return {{ kind: 'v2', slot: 'v2', caption: 'Wissel V2', trace: 't[late]' }};
   }}
+  if (item.source === 'subject') {{
+    return {{ kind: 'subject-position', slot: 'topic', caption: 'Plaats subject → positie 1', trace: 't[subject]' }};
+  }}
   return item.source === 'predicate'
     ? {{ kind: 'v2', slot: 'v2', caption: 'Wissel V2', trace: 't[V]' }}
     : null;
@@ -130,8 +133,9 @@ const trio = [
   {{ id: 'man', label: 'MAN', source: 'object', role: 'object' }}
 ];
 const trioMoves = orderedLexMovements(trio);
-if (trioMoves.length !== 1 || trioMoves[0].item !== item || trioMoves[0].stage !== 'combined') {{
-  throw new Error(`HOND BIJT MAN mag alleen BIJT verplaatsen, kreeg ${{trioMoves.map(move => move.item.label).join('|')}}`);
+if (trioMoves.length !== 2 || trioMoves[0].item !== trio[0] || trioMoves[1].item !== item
+    || trioMoves.some(move => move.stage !== 'combined')) {{
+  throw new Error(`HOND BIJT MAN vereist HOND→positie1 en BIJT→V2, kreeg ${{trioMoves.map(move => move.item.label).join('|')}}`);
 }}
 
 const horizontal = projectedLexItemY(item, 0, y0, sourceMap, items, {{ executedMovementCount: 0 }});

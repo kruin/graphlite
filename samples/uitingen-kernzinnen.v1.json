@@ -174,12 +174,15 @@
     },
     {
       "id":"jan-beloonde-jek-omdat-die-het-bot-terugbracht","text":"Jan beloonde zijn hond Jek omdat die het bot naar hem terugbracht.","type":"causal-role-flip",
+      "deep_structure":{"plurality":"multiple-kernel-clauses","stored_order":["k1","k2"],"alternative_orders":[["k1","k2"],["k2","k1"]]},
+      "lexical_orders":["de man beloont … omdat de hond …","omdat de hond …, beloont de man …"],
       "lex":["JAN","BELOONDE","ZIJN","HOND","JEK","OMDAT","DIE","HET","BOT","NAAR","HEM","TERUGBRACHT"],
       "anaphor_variants":[{"id":"hij","surface":"hij","words":["HIJ"],"referent":"jek","category":"NP"},{"id":"die","surface":"die","words":["DIE"],"referent":"jek","category":"NP","default":true},{"id":"die-hond","surface":"die hond","words":["DIE","HOND"],"referent":"jek","category":"NP"},{"id":"de-hond","surface":"de hond","words":["DE","HOND"],"referent":"jek","category":"NP"},{"id":"jek","surface":"Jek","words":["JEK"],"referent":"jek","category":"NP"}],
       "predicate_variants":["terugbracht","heeft teruggebracht","teruggebracht heeft","apporteerde","heeft geapporteerd","geapporteerd heeft"],
       "object_variants":[{"id":"het-bot","surface":"het bot","default":true,"ambiguous":false},{"id":"zijn-bot","surface":"zijn bot","ambiguous":true,"todo":"Bepaal of zijn naar Jan of Jek verwijst; kies niet stilzwijgend."}],
-      "kernels":[{"id":"k1","text":"Jan beloont hond.","predicate":"belonen","agens":"jan","patiens":"jek"},{"id":"k2","text":"Hond apporteert bot naar man.","predicate":"apporteren","agens":"jek","patiens":"bot","recipient":"jan"}],
-      "relations":[{"type":"cause","from":"k2","to":"k1","surface":"omdat"},{"type":"coreference","members":["k1.patiens","k2.agens"]},{"type":"coreference","members":["k1.agens","k2.recipient"]},{"type":"role-flip","participants":["jan","jek"]},{"type":"ambiguity-todo","surface":"zijn bot","readings":["bezitter=jan","bezitter=jek"]}]
+      "kernel_variants":{"terugbrengen":{"text":"Hond brengt bot naar man.","predicate":"terugbrengen","agens":"jek","patiens":"bot","goal":"jan"},"apporteren":{"text":"Hond apporteert bot.","predicate":"apporteren","agens":"jek","patiens":"bot"}},
+      "kernels":[{"id":"k1","text":"Jan beloont hond.","predicate":"belonen","agens":"jan","patiens":"jek"},{"id":"k2","text":"Hond brengt bot naar man.","predicate":"terugbrengen","agens":"jek","patiens":"bot","goal":"jan"}],
+      "relations":[{"type":"cause","from":"k2","to":"k1","surface":"omdat"},{"type":"coreference","members":["k1.patiens","k2.agens"]},{"type":"coreference","members":["k1.agens","k2.goal"],"only_for":"terugbrengen"},{"type":"role-flip","participants":["jan","jek"]},{"type":"ambiguity-todo","surface":"zijn bot","readings":["bezitter=jan","bezitter=jek"]}]
     },
     {
       "id": "ken-uzelf",
@@ -232,6 +235,42 @@
           "value": "imperative"
         }
       ]
+    }
+  ],
+  "stories": [
+    {
+      "id": "jan-slaat-jek-die-beet-waarna-hij-ontweek",
+      "status": "active-fixture",
+      "text": "Jan sloeg Jek omdat die hem beet, waarna hij hem ontweek.",
+      "deep_structure": {"plurality":"multiple-kernel-clauses","stored_order":["k1","k2","k3"]},
+      "kernels": [
+        {"id":"k1","text":"Jan slaat hond.","predicate":"slaan","agens":"jan","patiens":"jek"},
+        {"id":"k2","text":"Hond bijt man.","predicate":"bijten","agens":"jek","patiens":"jan"},
+        {"id":"k3","text":"Man ontwijkt hond.","predicate":"ontwijken","agens":"jan","patiens":"jek"}
+      ],
+      "interpretation": {"die":"jek","hem_1":"jan","hij":"jan","hem_2":"jek"},
+      "coreference_chains": [
+        {"referent":"jan","members":["k1.agens","k2.patiens","k3.agens"]},
+        {"referent":"jek","members":["k1.patiens","k2.agens","k3.patiens"]}
+      ],
+      "expected_flip": {"anchor":"k1","k1":"normal","k2":"flip","k3":"normal","reason":"rollen wisselen in K2 en wisselen in K3 terug"}
+    },
+    {
+      "id": "jan-beloont-hond-die-bot-brengt-waarna-man-geeft",
+      "status": "solver-stress-fixture",
+      "text": "Jan beloonde Jek omdat die het bot naar hem terugbracht, waarna Jan het aan de hond gaf.",
+      "deep_structure": {"plurality":"multiple-kernel-clauses","stored_order":["k1","k2","k3"]},
+      "kernels": [
+        {"id":"k1","text":"Jan beloont hond.","predicate":"belonen","agens":"jan","patiens":"jek"},
+        {"id":"k2","text":"Hond brengt bot naar man.","predicate":"terugbrengen","agens":"jek","patiens":"bot","goal":"jan"},
+        {"id":"k3","text":"Man geeft bot aan hond.","predicate":"geven","agens":"jan","theme":"bot","recipient":"jek"}
+      ],
+      "coreference_chains": [
+        {"referent":"jan","members":["k1.agens","k2.goal","k3.agens"]},
+        {"referent":"jek","members":["k1.patiens","k2.agens","k3.recipient"]},
+        {"referent":"bot","members":["k2.patiens","k3.theme"]}
+      ],
+      "expected_solver": {"anchor":"k1","global":true,"required_equal_shifts_per_unit":true,"on_conflict":"report-no-joint-vertical-solution"}
     }
   ]
 }

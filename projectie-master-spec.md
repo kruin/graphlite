@@ -267,7 +267,7 @@ toY ≥ fromY  → geen traject              → blijf op de bronhoogte
 
 `Up` beschrijft SVG-geometrie en geen syntactische upward-movementclaim.
 `TRUI BREIT VROUW` illustreert topic/V2, `BIJT HOND MAN?` V1,
-`HOND BIJT MAN` laat HOND en MAN op bronhoogte, en `DAT`/`OMDAT` worden zonder
+`HOND BIJT MAN` plaatst HOND op positie 1 en BIJT op V2; MAN blijft op bronhoogte. `DAT`/`OMDAT` worden zonder
 bronpijl rechtstreeks in Comp geschreven. Een LOG-reservering mag de
 bronreferentie niet vervangen en kan dus geen lager doel legitimeren.
 
