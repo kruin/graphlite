@@ -2497,6 +2497,8 @@
     kernelSpaceComponentX: (function(){ try { return Number(localStorage.getItem('opengraph_kernel_space_component_x')) || 1; } catch (_err) { return 1; } })(),
     kernelSpaceLocalY: (function(){ try { const value = JSON.parse(localStorage.getItem('opengraph_kernel_space_local_y') || '{}'); return value && typeof value === 'object' ? value : {}; } catch (_err) { return {}; } })(),
     sentenceSpaceLocal: (function(){ try { const value = JSON.parse(localStorage.getItem('opengraph_sentence_space_local') || 'null'); return value && Number.isFinite(value.x) && Number.isFinite(value.y) ? value : { x: 1, y: 1 }; } catch (_err) { return { x: 1, y: 1 }; } })(),
+    mobileSpaceScope: 'local',
+    mobileSpaceUnit: 'K1',
     kernelSpaceDrag: null,
     multiOgnFlipHold: (function(){ try { return localStorage.getItem('opengraph_multi_ogn_flip_hold') || 'pause'; } catch (_err) { return 'pause'; } })(),
     causalAnaphorVariant: (function(){ try { return localStorage.getItem('opengraph_causal_anaphor_variant') || 'die'; } catch (_err) { return 'die'; } })(),
@@ -9802,6 +9804,11 @@
         unitGroup.addEventListener('pointerdown', event => {
           const nodeTarget = event.target?.closest?.('[data-node-id]');
           if (!nodeTarget || event.button !== 0) return;
+          state.mobileSpaceUnit = unit.id;
+          const mobileHelp = document.getElementById('spaceZoomHelp');
+          if (mobileHelp) mobileHelp.textContent = isEnglish()
+            ? `Choose Local/Global and drag H, V or H+V. Local V: ${unit.id}.`
+            : `Kies Lokaal/Globaal en sleep H, V of H+V. Lokaal V: ${unit.id}.`;
           event.preventDefault();
           event.stopPropagation();
           const global = Boolean(event.ctrlKey || event.metaKey);
@@ -15612,6 +15619,91 @@
       resetManualViewBox();
       render();
     });
+    const spaceZoomControls = document.getElementById('spaceZoomControls');
+    const persistSpaceZoom = () => {
+      try {
+        localStorage.setItem('opengraph_kernel_space_global', JSON.stringify(state.kernelSpaceGlobal || { x: 1, y: 1 }));
+        localStorage.setItem('opengraph_sentence_space_local', JSON.stringify(state.sentenceSpaceLocal || { x: 1, y: 1 }));
+        localStorage.setItem('opengraph_kernel_space_component_x', String(state.kernelSpaceComponentX || 1));
+        localStorage.setItem('opengraph_kernel_space_local_y', JSON.stringify(state.kernelSpaceLocalY || {}));
+      } catch (_err) {}
+    };
+    const syncSpaceZoomScope = () => {
+      spaceZoomControls?.querySelectorAll('[data-space-scope]').forEach(button => {
+        button.classList.toggle('is-active', button.dataset.spaceScope === state.mobileSpaceScope);
+        button.setAttribute('aria-pressed', button.dataset.spaceScope === state.mobileSpaceScope ? 'true' : 'false');
+      });
+      const help = document.getElementById('spaceZoomHelp');
+      if (help) help.textContent = isEnglish()
+        ? `Choose Local/Global and drag H, V or H+V.${multiOgnAnaphorActive() ? ` Local V: ${state.mobileSpaceUnit || 'K1'}.` : ''}`
+        : `Kies Lokaal/Globaal en sleep H, V of H+V.${multiOgnAnaphorActive() ? ` Lokaal V: ${state.mobileSpaceUnit || 'K1'}.` : ''}`;
+    };
+    spaceZoomControls?.querySelectorAll('[data-space-scope]').forEach(button => {
+      button.addEventListener('click', () => {
+        state.mobileSpaceScope = button.dataset.spaceScope === 'global' ? 'global' : 'local';
+        syncSpaceZoomScope();
+      });
+    });
+    const clampSpaceZoom = value => Math.max(0.5, Math.min(3, Math.round(value * 100) / 100));
+    spaceZoomControls?.querySelectorAll('[data-space-axis]').forEach(handle => {
+      handle.addEventListener('pointerdown', event => {
+        if (event.button !== 0) return;
+        event.preventDefault(); event.stopPropagation();
+        const axis = handle.dataset.spaceAxis || 'xy';
+        const global = state.mobileSpaceScope === 'global';
+        const unitId = state.mobileSpaceUnit || 'K1';
+        const start = {
+          pointerId: event.pointerId, clientX: event.clientX, clientY: event.clientY,
+          axis, global, unitId,
+          globalSpace: { ...(state.kernelSpaceGlobal || { x: 1, y: 1 }) },
+          sentence: { ...(state.sentenceSpaceLocal || { x: 1, y: 1 }) },
+          componentX: Number(state.kernelSpaceComponentX) || 1,
+          unitY: Number(state.kernelSpaceLocalY?.[unitId]) || 1
+        };
+        handle.setPointerCapture?.(event.pointerId);
+        const onMove = moveEvent => {
+          if (moveEvent.pointerId !== start.pointerId) return;
+          const dx = moveEvent.clientX - start.clientX;
+          const dy = moveEvent.clientY - start.clientY;
+          const changeX = axis === 'x' || axis === 'xy';
+          const changeY = axis === 'y' || axis === 'xy';
+          if (global) {
+            state.kernelSpaceGlobal = {
+              x: changeX ? clampSpaceZoom(start.globalSpace.x + dx / 160) : start.globalSpace.x,
+              y: changeY ? clampSpaceZoom(start.globalSpace.y + dy / 160) : start.globalSpace.y
+            };
+          } else if (multiOgnAnaphorActive()) {
+            if (changeX) state.kernelSpaceComponentX = clampSpaceZoom(start.componentX + dx / 160);
+            if (changeY) state.kernelSpaceLocalY = { ...(state.kernelSpaceLocalY || {}), [unitId]: clampSpaceZoom(start.unitY + dy / 160) };
+          } else {
+            state.sentenceSpaceLocal = {
+              x: changeX ? clampSpaceZoom(start.sentence.x + dx / 160) : start.sentence.x,
+              y: changeY ? clampSpaceZoom(start.sentence.y + dy / 160) : start.sentence.y
+            };
+          }
+          resetManualViewBox(); render();
+        };
+        const onEnd = endEvent => {
+          if (endEvent.pointerId !== start.pointerId) return;
+          persistSpaceZoom(); markConfigDirty('Ruimtezoom');
+          window.removeEventListener('pointermove', onMove);
+          window.removeEventListener('pointerup', onEnd);
+          window.removeEventListener('pointercancel', onEnd);
+        };
+        window.addEventListener('pointermove', onMove);
+        window.addEventListener('pointerup', onEnd);
+        window.addEventListener('pointercancel', onEnd);
+      });
+    });
+    spaceZoomControls?.querySelector('[data-space-reset]')?.addEventListener('click', () => {
+      if (state.mobileSpaceScope === 'global') state.kernelSpaceGlobal = { x: 1, y: 1 };
+      else if (multiOgnAnaphorActive()) {
+        state.kernelSpaceComponentX = 1;
+        state.kernelSpaceLocalY = { ...(state.kernelSpaceLocalY || {}), [state.mobileSpaceUnit || 'K1']: 1 };
+      } else state.sentenceSpaceLocal = { x: 1, y: 1 };
+      persistSpaceZoom(); resetManualViewBox(); render();
+    });
+    syncSpaceZoomScope();
     const updateTreeLineColor = event => { state.treeLineColor = event.target.value || 'blue'; try { localStorage.setItem('opengraph_tree_line_color', state.treeLineColor); } catch (_err) {} appendConfigLog('change-tree-color', { treeLineColor: state.treeLineColor }); markConfigDirty('Boomkleur'); render(); };
     const updateTreeLineWeight = event => { state.treeLineWeight = validLineWeight(event.target.value, 'strong'); try { localStorage.setItem('opengraph_tree_line_weight', state.treeLineWeight); } catch (_err) {} appendConfigLog('change-tree-weight', { treeLineWeight: state.treeLineWeight }); markConfigDirty('Boomlijnen'); render(); };
     els.treeLineColorSelect?.addEventListener('change', updateTreeLineColor);

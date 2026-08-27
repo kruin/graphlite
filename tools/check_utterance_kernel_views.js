@@ -9,11 +9,18 @@ const source = fs.readFileSync(path.join(root, 'viewer.js'), 'utf8');
 const compositionEngine = require(path.join(root, 'multi-ogn-composition-engine.js'));
 const kernelEngine = require(path.join(root, 'utterance-kernel-engine.js'));
 const browserRuntime = fs.readFileSync(path.join(root, 'tools', 'check_multi_ogn_anaphor_runtime.js'), 'utf8');
+const indexHtml = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
+const styles = fs.readFileSync(path.join(root, 'styles.css'), 'utf8');
 
 assert.ok(source.includes('function spaceScaledLayout('), 'universele H/V-ruimtezoom ontbreekt');
 assert.ok(source.includes('function attachSentenceSpaceDrag('), 'ruimtezoom ontbreekt in Zin');
 assert.ok(source.includes("localStorage.setItem('opengraph_sentence_space_local'"), 'lokale zinszoom wordt niet bewaard');
 assert.ok(source.includes("in Zin, Uiting en Story"), 'Help noemt de drie ruimtezoomcontexten niet');
+for (const marker of ['id="spaceZoomControls"', 'data-space-scope="local"', 'data-space-scope="global"', 'data-space-axis="x"', 'data-space-axis="y"', 'data-space-axis="xy"', 'data-space-reset']) {
+  assert.ok(indexHtml.includes(marker), `mobiele ruimtezoombediening ontbreekt: ${marker}`);
+}
+assert.ok(styles.includes('touch-action: none'), 'mobiele ruimtezoom blokkeert browsergebaar niet');
+assert.ok(source.includes("state.mobileSpaceScope === 'global'"), 'mobiele globale ruimtezoom ontbreekt');
 
 function extract(start, next) {
   const begin = source.indexOf(`  function ${start}`);

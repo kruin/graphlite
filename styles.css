@@ -8314,6 +8314,41 @@ body.placement-multi-ogn-active .lex-ambiguity-panel {
   cursor: nwse-resize;
   touch-action: none;
 }
+
+.canvas-wrap { position: relative; }
+.space-zoom-controls {
+  position: absolute;
+  z-index: 12;
+  top: 8px;
+  right: 8px;
+  display: grid;
+  gap: 5px;
+  padding: 7px;
+  max-width: min(94%, 330px);
+  border: 1px solid color-mix(in srgb, var(--border-color,#94a3b8) 72%, transparent);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--panel-bg,#fff) 92%, transparent);
+  box-shadow: 0 3px 12px rgba(15,23,42,.14);
+  touch-action: none;
+}
+.space-zoom-scope,.space-zoom-handles { display:flex; gap:4px; }
+.space-zoom-controls button {
+  min-width: 44px;
+  min-height: 36px;
+  padding: 5px 9px;
+  font-weight: 800;
+  touch-action: none;
+}
+.space-zoom-controls button.is-active {
+  background: var(--accent,#0f766e);
+  color: #fff;
+}
+.space-zoom-controls small { font-size: 11px; line-height: 1.2; }
+@media (max-width: 760px) {
+  .space-zoom-controls { top: 5px; right: 5px; padding: 5px; }
+  .space-zoom-controls button { min-height: 42px; }
+  .space-zoom-controls small { max-width: 260px; }
+}
 #graphSvg [data-space-drag-enabled="true"] .kernel-space-drag-unit [data-node-id]:hover circle,
 #graphSvg [data-space-drag-enabled="true"] .kernel-space-drag-unit [data-node-id]:hover rect {
   filter: drop-shadow(0 0 4px color-mix(in srgb, var(--lex-projection-color,#14b8a6) 75%, transparent));
