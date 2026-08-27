@@ -1,0 +1,18 @@
+{
+  "schema": "opengraph-publication-phases-v1",
+  "current_phase": 1,
+  "app_version": "v2.0.0-rc.45",
+  "canonical_url": "https://kruin.github.io/graphlite/public-phase-1.html",
+  "phases": [
+    { "id": 1, "slug": "hond-bijt-man", "status": "current", "entry": "public-phase-1.html", "topic": "Hond bijt man + Simple README" },
+    { "id": 2, "slug": "probleembomen", "status": "planned", "topic": "Probleembomen" },
+    { "id": 3, "slug": "lex-syn-log", "status": "planned", "topic": "LEX, SYN en LOG" },
+    { "id": 4, "slug": "ogn", "status": "planned", "topic": "Vrije knopen en OGN" },
+    { "id": 5, "slug": "uiting-anafoor-flip", "status": "planned", "topic": "Uiting, Anafoor en Flip" },
+    { "id": 6, "slug": "volledige-app", "status": "planned", "topic": "Volledige editor en documentatie" }
+  ],
+  "campaign_links": {
+    "linkedin": "https://kruin.github.io/graphlite/public-phase-1.html?utm_source=linkedin&utm_campaign=hond_bijt_man",
+    "reddit": "https://kruin.github.io/graphlite/public-phase-1.html?utm_source=reddit&utm_campaign=hond_bijt_man"
+  }
+}

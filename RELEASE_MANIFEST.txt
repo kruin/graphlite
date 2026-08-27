@@ -18,6 +18,7 @@ GREEDY_GROW_RECONSTRUCTION.md
 HANDOVER_FOR_COLLABORATORS.md
 LAYOUT_RULES.md
 LEESMIJ.md
+LOKAAL-TESTEN-PUBLICATIE.txt
 LEXICON_USAGE_PROFILES_AND_DISAMBIGUATION.md
 LEXICON_USAGE_PROFILE_TEST.md
 LEX_MOVEMENT_RULES.md
@@ -31,6 +32,8 @@ PRECONFIG_ARCHITECTURE.md
 PROJECT_FILES_TO_ADD_UPDATE.md
 PROJECT_STATE_CURRENT.md
 PUBLICATIE_README.md
+PUBLICATION_PHASES.md
+PRODUCTIE-GITHUB.txt
 RC29_LOCAL_START_RESET_TEST.md
 RC32_README_PROBLEM_SOLUTION_TREES_TEST.md
 RC33_README_PROBLEM_TREES_TEST.md
@@ -54,6 +57,7 @@ RECURSIVE_LAYOUT_AND_APPLICATION_CONTRACT.md
 S1_S2_RELATION_TEST_FIXTURES.md
 SOURCE_BASE.md
 SOURCE_BUILD.txt
+TEST-PUBLICATIE-FASE-1.bat
 SOURCE_CHANGES_V2.0.0-rc.10.md
 SOURCE_CHANGES_V2.0.0-rc.11.md
 SOURCE_CHANGES_V2.0.0-rc.12.md
@@ -218,6 +222,10 @@ multi-ogn-composition-engine.js
 package-lock.json
 package.json
 portrait-test.html
+public-phase-1.html
+publicatie/phases.json
+publicatie/public-phase.css
+publicatie/public-phase.js
 projectie-master-spec.md
 publicatie-carrousel/derived-manifest.json
 publicatie-carrousel/index.html
@@ -306,6 +314,7 @@ tools/check_project_config_layers_runtime.js
 tools/check_projection_cleanup.py
 tools/check_publication_carousel.py
 tools/check_publication_carousel_setup.py
+tools/check_publication_phases.py
 tools/check_publication_carousel_tooling.js
 tools/check_random_placement.js
 tools/check_readme_carousel_editor.py

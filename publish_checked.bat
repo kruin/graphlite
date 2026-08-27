@@ -49,6 +49,9 @@ echo App-versie: %APP_VERSION%
 set /p SOURCE_BUILD=<SOURCE_BUILD.txt
 echo Bronstand  : %SOURCE_BUILD%
 echo Release-zip: %RELEASE_ZIP%
+echo Publieke fase: 1 - Hond bijt man
+echo LinkedIn: https://kruin.github.io/graphlite/public-phase-1.html?utm_source=linkedin^&utm_campaign=hond_bijt_man
+echo Reddit  : https://kruin.github.io/graphlite/public-phase-1.html?utm_source=reddit^&utm_campaign=hond_bijt_man
 echo.
 
 where python >nul 2>nul

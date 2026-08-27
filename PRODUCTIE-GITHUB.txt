@@ -1,0 +1,35 @@
+PRODUCTIEVERSIE VOOR GITHUB
+===========================
+
+Bronstand:
+v2.0.0-rc.45-space-drag-default-connector-zone-production-20260827.31
+
+Deze volledige projectmap is bedoeld voor C:\git\graphlite.
+
+Werkwijze:
+1. Maak zo nodig een veilige kopie van je huidige lokale map.
+2. Pak deze ZIP uit.
+3. Neem de inhoud van OpenGraph_Lite_Viewer_v2.0.0-rc.45 over in C:\git\graphlite.
+4. Test lokaal met TEST-PUBLICATIE-FASE-1.bat.
+5. Publiceer daarna uitsluitend met publish_checked.bat.
+
+Nieuwe publieke ingang:
+public-phase-1.html
+
+Volledige app:
+index.html
+
+Deze productiebron bevat de geometrische correctie waarbij boomtakken
+aan de rand van S, VP, NP en V stoppen en niet door het knoopvlak lopen.
+JAN en andere enkelvoudige subjects blijven op hun bronhoogte; hetzelfde
+geldt voor DIE in K2. Alleen werkelijke LEX-positiewijzigingen krijgen
+een andere doelrij en een verplaatsingspijl.
+OMDAT krijgt als connector vóór K2 een eigen LEX-rij met vrije ruimte
+onder K1 en boven K2; de volgende kernzin wordt daarvoor als geheel lager
+geplaatst.
+De standaardbediening Ruimte slepen schaalt rasterruimte via een knoop:
+verticaal per kernzin, horizontaal per verbonden anafoorcomponent, H+V
+tegelijk bij schuin slepen en globaal met Ctrl+sleep. Dubbelklik of de
+Config-knop herstelt Auto. K3 schuift mee wanneer K2 hoger wordt.
+OMDAT blijft bij iedere rek buiten het K2-frame, boven S, op een eigen
+connectorrij. Ontbreekt ruimte, dan schuiven K2 en latere kernzinnen mee.

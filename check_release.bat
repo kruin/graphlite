@@ -69,6 +69,8 @@ python tools\check_publication_carousel.py
 if errorlevel 1 exit /b 1
 python tools\check_publication_carousel_setup.py
 if errorlevel 1 exit /b 1
+python tools\check_publication_phases.py
+if errorlevel 1 exit /b 1
 python tools\check_desktop_max_view.py
 if errorlevel 1 exit /b 1
 python tools\check_social_and_linguistic_export.py

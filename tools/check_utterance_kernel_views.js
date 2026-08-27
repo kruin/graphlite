@@ -231,12 +231,29 @@ for (const definition of kernelEngine.DEFINITIONS) {
   const expectedSurface = definition.surface.flatMap(item => item.words || [item.label]);
   assert.deepEqual(slots.map(node => node.getAttribute('data-surface-label')),
     expectedSurface, `${definition.id}: gerealiseerde LEX-volgorde onjuist`);
+  const singleWordSubjects = slots.filter(slot => slot.getAttribute('data-source-role') === 'subject')
+    .filter(slot => currentComposition.lexItems.filter(item => item.nodeId === slot.getAttribute('data-node-id')).length === 1);
+  assert.ok(singleWordSubjects.every(slot => Math.abs(
+    Number(slot.getAttribute('data-source-y')) - Number(slot.getAttribute('data-lex-target-y'))
+  ) < 0.01), `${definition.id}: enkelvoudig subject moet op bronhoogte blijven`);
   assert.ok(slots.every((slot, index) => index === 0
     || Number(slot.getAttribute('y')) > Number(slots[index - 1].getAttribute('y'))),
   `${definition.id}: LEX-woorden staan niet van boven naar beneden in uitingvolgorde`);
   if (definition.type === 'causal-role-flip' || definition.type === 'story-role-flip') {
     const connector = slots.find(node => node.getAttribute('data-surface-label') === 'OMDAT');
     assert.equal(connector.getAttribute('data-node-id'), '');
+    const connectorIndex = slots.indexOf(connector);
+    const previousSlot = slots[connectorIndex - 1];
+    const nextSlot = slots[connectorIndex + 1];
+    const gapBelowK1 = Number(connector.getAttribute('y')) - Number(previousSlot.getAttribute('y'));
+    const gapAboveK2 = Number(nextSlot.getAttribute('y')) - Number(connector.getAttribute('y'));
+    assert.ok(gapBelowK1 >= 50,
+      `${definition.id}: OMDAT mist vrije rij onder K1 (${gapBelowK1})`);
+    assert.ok(gapAboveK2 >= 50,
+      `${definition.id}: OMDAT mist vrije rij boven K2 (${gapAboveK2})`);
+    const k2Frame = frames.find(frame => frame.getAttribute('data-ogn-unit') === 'K2');
+    assert.ok(Number(connector.getAttribute('y')) + 48 <= Number(k2Frame.getAttribute('y')),
+      `${definition.id}: OMDAT staat binnen K2 of op S-hoogte`);
     assert.equal(currentComposition.relations.length, definition.type === 'story-role-flip' ? 4 : 2);
     assert.equal(currentComposition.relations[0].antecedentLabel, 'HOND');
     assert.equal(currentComposition.relations[0].anaphorLabel, 'HOND');
@@ -290,6 +307,39 @@ for (const definition of kernelEngine.DEFINITIONS) {
   assert.equal(els.svg.children[0].getAttribute('data-grid-size-vertical'), '150');
   state.gridSizeVertical = '100';
 
+  state.kernelSpaceDragEnabled = true;
+  state.kernelSpaceGlobal = { x: 1, y: 1 };
+  state.kernelSpaceComponentX = 1.25;
+  state.kernelSpaceLocalY = { K2: 1.4 };
+  drawUtteranceKernelComposition();
+  const stretchedRoot = els.svg.children[0];
+  assert.equal(stretchedRoot.getAttribute('data-space-drag-enabled'), 'true');
+  const stretched = descendants(els.svg);
+  const stretchedFrames = stretched.filter(node => node.classList.contains('utterance-kernel-frame'));
+  assert.ok(Number(stretchedFrames[1].getAttribute('height')) > Number(frames[1].getAttribute('height')),
+    `${definition.id}: lokale V-sleep maakt K2 niet hoger`);
+  stretchedFrames.forEach((frame, index) => {
+    if (!index) return;
+    const previousFrame = stretchedFrames[index - 1];
+    assert.ok(Number(frame.getAttribute('y')) >= Number(previousFrame.getAttribute('y')) + Number(previousFrame.getAttribute('height')),
+      `${definition.id}: lokale V-sleep laat kernzinnen overlappen`);
+  });
+  assert.ok(Number(stretchedFrames[0].getAttribute('width')) > compactWidth,
+    `${definition.id}: gekoppelde H-sleep maakt de uiting niet breder`);
+  stretched.filter(node => node.classList.contains('utterance-coreference-line')).forEach(line => {
+    assert.equal(line.getAttribute('x1'), line.getAttribute('x2'),
+      `${definition.id}: ruimte slepen maakt de anafoor scheef`);
+  });
+  stretched.filter(node => node.getAttribute('data-source-role') === 'subject').forEach(slot => {
+    if (currentComposition.lexItems.filter(item => item.nodeId === slot.getAttribute('data-node-id')).length === 1) {
+      assert.ok(Math.abs(Number(slot.getAttribute('data-source-y')) - Number(slot.getAttribute('data-lex-target-y'))) < 0.01,
+        `${definition.id}: ruimte slepen verbreekt subject-bronhoogte`);
+    }
+  });
+  state.kernelSpaceDragEnabled = false;
+  state.kernelSpaceComponentX = 1;
+  state.kernelSpaceLocalY = {};
+
   state.kernelBranchFlip = 'flip';
   drawUtteranceKernelComposition();
   assertDiagonalFreeNodeEdges(els.svg, `${definition.id}/flip`);
@@ -337,7 +387,7 @@ for (const definition of kernelEngine.DEFINITIONS) {
     if (operation.id === 'lex') {
       const trajectories = descendants(movement).filter(node => node.classList.contains('utterance-lex-movement'));
       const availableItems = currentComposition.lexItems.filter(item => !item.connector && item.unitId === operation.unitId).length;
-      assert.ok(trajectories.length > 0 && trajectories.length <= availableItems,
+      assert.ok(trajectories.length <= availableItems,
         `${definition.id}/${operation.unitId}: alleen echte positiewijzigingen mogen een pijl krijgen`);
       assert.ok(trajectories.every(path => path.getAttribute('data-source-label') && path.getAttribute('data-realized-label')));
       assert.ok(trajectories.every(path => path.getAttribute('data-movement-scope') === 'lex-axis'),

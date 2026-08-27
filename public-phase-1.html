@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="nl" data-publication-phase="1">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Graphlite fase 1: ontdek met Hond bijt man hoe structuur en woordvolgorde afzonderlijk zichtbaar worden.">
+  <meta property="og:title" content="Hond bijt man · Graphlite">
+  <meta property="og:description" content="Eén zin. Drie woorden. Wat verandert er als structuur en woordvolgorde niet hetzelfde zijn?">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://kruin.github.io/graphlite/public-phase-1.html">
+  <title>Hond bijt man · Graphlite</title>
+  <link rel="stylesheet" href="publicatie/public-phase.css?v=20260827.1">
+</head>
+<body>
+  <main class="public-shell">
+    <header class="public-header">
+      <a class="brand" href="public-phase-1.html" aria-label="Graphlite fase 1">Graphlite</a>
+      <span class="phase-badge">Fase 1</span>
+    </header>
+
+    <article class="intro-card">
+      <p class="kicker">Eén zin · drie woorden</p>
+      <h1>Hond bijt man</h1>
+      <p class="lead">Een gewone boom laat structuur en woordvolgorde gemakkelijk door elkaar lopen. Graphlite maakt beide afzonderlijk zichtbaar.</p>
+
+      <section class="demo" aria-label="Opbouw van Hond bijt man">
+        <svg id="phaseGraph" viewBox="0 0 720 390" role="img" aria-labelledby="graphTitle graphDescription">
+          <title id="graphTitle">Graphlite-weergave van Hond bijt man</title>
+          <desc id="graphDescription">Drie vrije knopen HOND, BIJT en MAN, met daaronder de uiteindelijke woordvolgorde.</desc>
+          <g class="edges">
+            <path class="draw-step step-2" d="M360 70 L220 185"></path>
+            <path class="draw-step step-3" d="M360 70 L500 235"></path>
+          </g>
+          <g class="nodes">
+            <g class="draw-step step-1"><circle cx="360" cy="70" r="32"></circle><text x="360" y="77">BIJT</text></g>
+            <g class="draw-step step-2"><circle cx="220" cy="185" r="32"></circle><text x="220" y="192">HOND</text></g>
+            <g class="draw-step step-3"><circle cx="500" cy="235" r="32"></circle><text x="500" y="242">MAN</text></g>
+          </g>
+          <g class="lex-axis draw-step step-4">
+            <line x1="116" y1="326" x2="604" y2="326"></line>
+            <text class="axis-label" x="82" y="332">LEX</text>
+            <text x="205" y="365">HOND</text><text x="345" y="365">BIJT</text><text x="485" y="365">MAN</text>
+          </g>
+        </svg>
+        <div class="demo-controls">
+          <button id="playPhaseButton" type="button">Speel de opbouw af</button>
+          <span id="playStatus" aria-live="polite">Klaar om af te spelen</span>
+        </div>
+      </section>
+
+      <section class="short-readme" aria-labelledby="whyHeading">
+        <h2 id="whyHeading">Wat zie je?</h2>
+        <p>De knopen krijgen eerst ieder een eigen plaats. Daarna verschijnt de lexicale volgorde <strong>HOND – BIJT – MAN</strong>. De tekening hoeft dus niet vooraf dezelfde links-rechtsvolgorde te hebben als de zin.</p>
+      </section>
+
+      <p class="question">Wat zou er volgens jou moeten veranderen bij <em>De man bijt de hond</em>?</p>
+      <div class="actions">
+        <a class="primary-action" id="openAppLink" href="index.html?example=hond-bijt-man&amp;public_phase=1">Open de interactieve graph</a>
+        <a class="secondary-action" href="PUBLICATION_PHASES.md">Bekijk de publicatiefasen</a>
+      </div>
+    </article>
+
+    <footer>OpenGraph Lite · publieke introductie · v2.0.0-rc.45</footer>
+  </main>
+  <script src="publicatie/public-phase.js?v=20260827.1"></script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+LOKAAL TESTEN - PUBLICATIEFASE 1
+================================
+
+1. Pak de volledige ZIP uit.
+2. Dubbelklik op TEST-PUBLICATIE-FASE-1.bat.
+3. De browser opent de lokale pagina "Hond bijt man".
+
+Hiervoor wordt niets naar GitHub gepubliceerd.
+
+Lokale fase-1-pagina:
+http://127.0.0.1:8088/public-phase-1.html
+
+De volledige app lokaal bekijken:
+dubbelklik op start_local_viewer.bat.
+
+Let op: staat er al een oudere lokale OpenGraph-server op poort 8088,
+sluit dan eerst het venster "OpenGraph local server" en probeer opnieuw.

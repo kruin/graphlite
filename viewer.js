@@ -2492,6 +2492,11 @@
     kernelBranchHorizontal: (function(){ try { return localStorage.getItem('opengraph_kernel_branch_horizontal') || 'compact'; } catch (_err) { return 'compact'; } })(),
     kernelBranchVertical: (function(){ try { return localStorage.getItem('opengraph_kernel_branch_vertical') || 'compact'; } catch (_err) { return 'compact'; } })(),
     kernelBranchFlip: (function(){ try { return localStorage.getItem('opengraph_kernel_branch_flip') || 'auto'; } catch (_err) { return 'auto'; } })(),
+    kernelSpaceDragEnabled: (function(){ try { return localStorage.getItem('opengraph_kernel_space_drag_enabled_v2') !== '0'; } catch (_err) { return true; } })(),
+    kernelSpaceGlobal: (function(){ try { const value = JSON.parse(localStorage.getItem('opengraph_kernel_space_global') || 'null'); return value && Number.isFinite(value.x) && Number.isFinite(value.y) ? value : { x: 1, y: 1 }; } catch (_err) { return { x: 1, y: 1 }; } })(),
+    kernelSpaceComponentX: (function(){ try { return Number(localStorage.getItem('opengraph_kernel_space_component_x')) || 1; } catch (_err) { return 1; } })(),
+    kernelSpaceLocalY: (function(){ try { const value = JSON.parse(localStorage.getItem('opengraph_kernel_space_local_y') || '{}'); return value && typeof value === 'object' ? value : {}; } catch (_err) { return {}; } })(),
+    kernelSpaceDrag: null,
     multiOgnFlipHold: (function(){ try { return localStorage.getItem('opengraph_multi_ogn_flip_hold') || 'pause'; } catch (_err) { return 'pause'; } })(),
     causalAnaphorVariant: (function(){ try { return localStorage.getItem('opengraph_causal_anaphor_variant') || 'die'; } catch (_err) { return 'die'; } })(),
     causalVerbVariant: (function(){ try { return localStorage.getItem('opengraph_causal_verb_variant') || ''; } catch (_err) { return ''; } })(),
@@ -9287,17 +9292,24 @@
     g.setAttribute('data-branch-flip', flipMode);
     g.setAttribute('data-branch-horizontal-scale', String(horizontalScale));
     g.setAttribute('data-branch-vertical-scale', String(verticalScale));
+    g.setAttribute('data-space-drag-enabled', state.kernelSpaceDragEnabled ? 'true' : 'false');
+    const globalSpace = state.kernelSpaceGlobal || { x: 1, y: 1 };
+    const componentSpaceX = Number(state.kernelSpaceComponentX) || 1;
+    const localSpaceY = state.kernelSpaceLocalY || {};
     const origin = { x: 760, y: 112 };
     const scaledLayout = (layout, unitId, forceLocalMirror = null) => {
       const localMirror = forceLocalMirror === null
         ? showK2BeforeLocalFlip && unitId === 'K2'
         : Boolean(forceLocalMirror) && unitId === 'K2';
       const rootX = layout.nodes.find(node => node.label === 'S')?.x || 0;
-      const mapX = value => (localMirror ? 2 * rootX - value : value) * horizontalScale * flipSign;
-      const nodes = layout.nodes.map(node => ({ ...node, x: mapX(node.x), y: node.y * verticalScale }));
+      const rootY = layout.nodes.find(node => node.label === 'S')?.y || 0;
+      const unitSpaceY = Math.max(0.5, Math.min(3, Number(localSpaceY[unitId]) || 1));
+      const mapX = value => (localMirror ? 2 * rootX - value : value) * horizontalScale * flipSign * globalSpace.x * componentSpaceX;
+      const mapY = value => (rootY + (value - rootY) * unitSpaceY) * verticalScale * globalSpace.y;
+      const nodes = layout.nodes.map(node => ({ ...node, x: mapX(node.x), y: mapY(node.y) }));
       const edges = layout.edges.map(edge => ({
-        ...edge, fromX: mapX(edge.fromX), fromY: edge.fromY * verticalScale,
-        toX: mapX(edge.toX), toY: edge.toY * verticalScale
+        ...edge, fromX: mapX(edge.fromX), fromY: mapY(edge.fromY),
+        toX: mapX(edge.toX), toY: mapY(edge.toY)
       }));
       return {
         ...layout, nodes, edges, mirrored: localMirror ? !layout.mirrored : layout.mirrored,
@@ -9306,13 +9318,34 @@
       };
     };
     const unitById = new Map(composition.units.map(unit => [unit.id, { ...unit, layout: scaledLayout(unit.layout, unit.id) }]));
-    const k2BeforeFlipLayout = showK2FlipReveal
+    const unitDisplayShiftY = new Map();
+    const shiftLayoutY = (layout, dy) => ({
+      ...layout,
+      nodes: layout.nodes.map(node => ({ ...node, y: node.y + dy })),
+      edges: layout.edges.map(edge => ({ ...edge, fromY: edge.fromY + dy, toY: edge.toY + dy })),
+      box: { ...layout.box, minY: layout.box.minY + dy, maxY: layout.box.maxY + dy }
+    });
+    const orderedDisplayUnits = composition.units.map(unit => unitById.get(unit.id));
+    const minimumUnitGap = 5 * verticalScale * globalSpace.y;
+    orderedDisplayUnits.forEach((unit, index) => {
+      if (!index) { unitDisplayShiftY.set(unit.id, 0); return; }
+      const previous = orderedDisplayUnits[index - 1];
+      const neededShift = Math.max(0, previous.layout.box.maxY + minimumUnitGap - unit.layout.box.minY);
+      if (neededShift) unit.layout = shiftLayoutY(unit.layout, neededShift);
+      unitDisplayShiftY.set(unit.id, neededShift);
+    });
+    const k2BeforeFlipBase = showK2FlipReveal
       ? scaledLayout(composition.units.find(unit => unit.id === 'K2').layout, 'K2', true)
       : null;
+    let k2BeforeFlipLayout = k2BeforeFlipBase
+      ? shiftLayoutY(k2BeforeFlipBase, unitDisplayShiftY.get('K2') || 0)
+      : null;
+    const displayLayouts = [...unitById.values()].map(unit => unit.layout);
     const displayBox = {
-      minX: (flipSign < 0 ? -composition.box.maxX : composition.box.minX) * horizontalScale,
-      maxX: (flipSign < 0 ? -composition.box.minX : composition.box.maxX) * horizontalScale,
-      minY: composition.box.minY * verticalScale, maxY: composition.box.maxY * verticalScale
+      minX: Math.min(...displayLayouts.map(layout => layout.box.minX)),
+      maxX: Math.max(...displayLayouts.map(layout => layout.box.maxX)),
+      minY: Math.min(...displayLayouts.map(layout => layout.box.minY)),
+      maxY: Math.max(...displayLayouts.map(layout => layout.box.maxY))
     };
     const nodePoint = (unitId, nodeId) => {
       const node = unitById.get(unitId)?.layout?.nodes?.find(candidate => candidate.id === nodeId);
@@ -9332,6 +9365,26 @@
       cornerRadius: Math.min(fullNodeMetrics.cornerRadius || 10, 10)
     };
     const leafRadius = kernelNodeMetrics.leafRadius;
+    function utteranceEdgeEndpoint(node, centerX, centerY, deltaX, deltaY) {
+      const length = Math.hypot(deltaX, deltaY);
+      if (!node || length < 0.01) return { x: centerX, y: centerY };
+      const unitX = deltaX / length;
+      const unitY = deltaY / length;
+      let inset;
+      if (node.kind === 'leaf') {
+        inset = kernelNodeMetrics.leafRadius + 2;
+      } else {
+        const halfWidth = kernelNodeMetrics.categoryWidth / 2 + 2;
+        const halfHeight = kernelNodeMetrics.categoryHeight / 2 + 2;
+        const insetX = Math.abs(unitX) > 0.0001 ? halfWidth / Math.abs(unitX) : Infinity;
+        const insetY = Math.abs(unitY) > 0.0001 ? halfHeight / Math.abs(unitY) : Infinity;
+        inset = Math.min(insetX, insetY);
+      }
+      return {
+        x: centerX + unitX * Math.min(inset, length * 0.45),
+        y: centerY + unitY * Math.min(inset, length * 0.45)
+      };
+    }
     g.setAttribute('data-free-node-rendering', 'slanted');
     g.setAttribute('data-node-radius', String(leafRadius));
     g.setAttribute('data-local-flip-target', hasLocalRoleFlip ? 'K2' : 'none');
@@ -9366,8 +9419,8 @@
         'data-local-flip-state': unit.id === 'K2' && hasLocalRoleFlip ? (playPhase >= flipStep ? 'applied' : 'before') : 'not-required',
         'data-branch-orientation': Boolean(displayLayout.mirrored) !== (flipSign < 0) ? 'mirrored' : 'normal'
       }));
-      frameLayer.appendChild(svgEl('text', { x: x + 18, y: y + 26, class: 'multi-ogn-unit-label' }, `${unit.id} · ${isEnglish() ? 'KERNEL CLAUSE' : 'KERNZIN'}`));
-      frameLayer.appendChild(svgEl('text', { x: x + 18, y: y + 50, class: 'multi-ogn-sentence-label' }, sentence?.text || unit.id));
+      frameLayer.appendChild(svgEl('text', { x: x + 18, y: y + 26, class: 'multi-ogn-unit-label', 'data-ogn-unit': unit.id }, `${unit.id} · ${isEnglish() ? 'KERNEL CLAUSE' : 'KERNZIN'}`));
+      frameLayer.appendChild(svgEl('text', { x: x + 18, y: y + 50, class: 'multi-ogn-sentence-label', 'data-ogn-unit': unit.id }, sentence?.text || unit.id));
     });
     g.appendChild(frameLayer);
 
@@ -9380,7 +9433,89 @@
 
     const lexSlotTop = axisTop + 34;
     const lexSlotBottom = axisBottom - 34;
-    const lexSlotSpan = Math.max(0, lexSlotBottom - lexSlotTop);
+    const lexGroupGap = 52;
+    const lexGroups = [];
+    composition.lexItems.forEach((item, index) => {
+      const previous = lexGroups[lexGroups.length - 1];
+      const groupKey = item.connector ? `connector-${index}` : `${item.unitId}:${item.nodeId}`;
+      if (!previous || previous.key !== groupKey) lexGroups.push({ key: groupKey, items: [{ item, index }] });
+      else previous.items.push({ item, index });
+    });
+    const groupRows = new Map();
+    lexGroups.forEach((group, groupIndex) => {
+      const first = group.items[0].item;
+      if (first.connector) return;
+      const point = nodePoint(first.unitId, first.nodeId);
+      let anchorY = point.py;
+      if (first.role === 'predicate') {
+        const unitGroups = lexGroups.filter(candidate => !candidate.items[0].item.connector
+          && candidate.items[0].item.unitId === first.unitId);
+        const predicateIndex = unitGroups.indexOf(group);
+        const subjectIndex = unitGroups.findIndex(candidate => candidate.items[0].item.role === 'subject');
+        const objectIndex = unitGroups.findIndex(candidate => candidate.items[0].item.role === 'object');
+        if (subjectIndex >= 0 && objectIndex >= 0
+            && predicateIndex > Math.min(subjectIndex, objectIndex)
+            && predicateIndex < Math.max(subjectIndex, objectIndex)) {
+          const subjectItem = unitGroups[subjectIndex].items[0].item;
+          const objectItem = unitGroups[objectIndex].items[0].item;
+          const subjectPoint = nodePoint(subjectItem.unitId, subjectItem.nodeId);
+          const objectPoint = nodePoint(objectItem.unitId, objectItem.nodeId);
+          anchorY = (subjectPoint.py + objectPoint.py) / 2;
+        }
+      }
+      const firstY = anchorY - ((group.items.length - 1) * lexGroupGap) / 2;
+      groupRows.set(groupIndex, group.items.map((entry, partIndex) => firstY + partIndex * lexGroupGap));
+    });
+    composition.units.forEach(unit => {
+      let previousY = -Infinity;
+      lexGroups.forEach((group, groupIndex) => {
+        const first = group.items[0].item;
+        if (first.connector || first.unitId !== unit.id) return;
+        const rows = groupRows.get(groupIndex);
+        if (previousY !== -Infinity && rows[0] <= previousY + 49) {
+          const shift = previousY + lexGroupGap - rows[0];
+          groupRows.set(groupIndex, rows.map(row => row + shift));
+        }
+        const adjustedRows = groupRows.get(groupIndex);
+        previousY = adjustedRows[adjustedRows.length - 1];
+      });
+    });
+    lexGroups.forEach((group, groupIndex) => {
+      if (!group.items[0].item.connector) return;
+      const previousRows = groupRows.get(groupIndex - 1) || [lexSlotTop - lexGroupGap];
+      const nextGroup = lexGroups.slice(groupIndex + 1).find(candidate => !candidate.items[0].item.connector);
+      const nextUnitId = nextGroup?.items[0].item.unitId;
+      const nextLayout = nextUnitId ? unitById.get(nextUnitId)?.layout : null;
+      let nextFrameTop = nextLayout ? py(nextLayout.box.minY, origin) - framePadY : lexSlotBottom + lexGroupGap;
+      let connectorY = nextFrameTop - lexGroupGap / 2;
+      const minimumConnectorY = previousRows[previousRows.length - 1] + lexGroupGap;
+      if (nextUnitId && connectorY < minimumConnectorY) {
+        const shiftPx = minimumConnectorY - connectorY;
+        const shiftGrid = shiftPx / cellY();
+        const startOrder = composition.units.find(unit => unit.id === nextUnitId)?.order || Infinity;
+        composition.units.filter(unit => unit.order >= startOrder).forEach(unit => {
+          const displayUnit = unitById.get(unit.id);
+          displayUnit.layout = shiftLayoutY(displayUnit.layout, shiftGrid);
+          unitDisplayShiftY.set(unit.id, (unitDisplayShiftY.get(unit.id) || 0) + shiftGrid);
+          Array.from(frameLayer.children).filter(element => element.getAttribute('data-ogn-unit') === unit.id).forEach(element => {
+            if (element.getAttribute('y') !== null) element.setAttribute('y', String(Number(element.getAttribute('y')) + shiftPx));
+          });
+          lexGroups.forEach((candidate, candidateIndex) => {
+            if (candidate.items[0].item.unitId !== unit.id || !groupRows.has(candidateIndex)) return;
+            groupRows.set(candidateIndex, groupRows.get(candidateIndex).map(row => row + shiftPx));
+          });
+        });
+        if (k2BeforeFlipLayout && startOrder <= 2) k2BeforeFlipLayout = shiftLayoutY(k2BeforeFlipLayout, shiftGrid);
+        nextFrameTop += shiftPx;
+        connectorY = nextFrameTop - lexGroupGap / 2;
+      }
+      groupRows.set(groupIndex, [connectorY]);
+    });
+    const lexItemRows = new Map();
+    lexGroups.forEach((group, groupIndex) => {
+      const rows = groupRows.get(groupIndex);
+      group.items.forEach((entry, partIndex) => lexItemRows.set(entry.index, rows[partIndex]));
+    });
     let previousUnit = '';
     const lexTargets = [];
     composition.lexItems.forEach((item, index) => {
@@ -9388,14 +9523,14 @@
       const lexUnit = item.connector ? (nextUnit || previousUnit || 'LINK') : item.unitId;
       const point = item.connector ? null : nodePoint(item.unitId, item.nodeId);
       if (!item.connector && !point) throw new Error(`LEX-bronknoop ontbreekt: ${item.nodeId}`);
-      const itemY = composition.lexItems.length <= 1 ? (lexSlotTop + lexSlotBottom) / 2
-        : lexSlotTop + (lexSlotSpan * index) / (composition.lexItems.length - 1);
+      const itemY = lexItemRows.get(index);
       lexLayer.appendChild(svgEl('rect', {
         x: axisX - 60, y: itemY - 24, width: 120, height: 48, rx: 13,
         class: `multi-ogn-lex-item lex-slot-box${item.connector ? ' utterance-connector' : ''}`,
         'data-node-id': item.nodeId || '', 'data-lex-index': index + 1,
         'data-sentence-order': item.sentenceOrder, 'data-surface-label': item.label,
-        'data-lex-unit': lexUnit
+        'data-lex-unit': lexUnit, 'data-source-role': item.role || '',
+        'data-source-y': point ? point.py : '', 'data-lex-target-y': itemY
       }));
       lexLayer.appendChild(svgEl('text', { x: axisX, y: itemY + 5, class: 'lex-label multi-ogn-lex-label', 'data-lex-unit': lexUnit }, item.label));
       if (!item.connector && previousUnit !== item.unitId) {
@@ -9455,10 +9590,17 @@
       });
       const ghostEdges = svgEl('g', { class: 'utterance-flip-before-edges', 'data-flip-state': 'before' });
       if (state.showRelations) {
+        const nodesById = new Map(k2BeforeFlipLayout.nodes.map(node => [node.id, node]));
         for (const edge of k2BeforeFlipLayout.edges) {
+          const fromX = px(edge.fromX, origin);
+          const fromY = py(edge.fromY, origin);
+          const toX = px(edge.toX, origin);
+          const toY = py(edge.toY, origin);
+          const start = utteranceEdgeEndpoint(nodesById.get(edge.from), fromX, fromY, toX - fromX, toY - fromY);
+          const end = utteranceEdgeEndpoint(nodesById.get(edge.to), toX, toY, fromX - toX, fromY - toY);
           ghostEdges.appendChild(svgEl('line', {
-            x1: px(edge.fromX, origin), y1: py(edge.fromY, origin),
-            x2: px(edge.toX, origin), y2: py(edge.toY, origin),
+            x1: start.x, y1: start.y,
+            x2: end.x, y2: end.y,
             class: 'tree-edge utterance-flip-ghost-edge',
             'data-from-node-id': edge.from, 'data-to-node-id': edge.to
           }));
@@ -9494,6 +9636,7 @@
     composition.units.forEach(unit => {
       const unitGroup = svgEl('g', { class: 'multi-ogn-unit multi-ogn-tree-edges', 'data-ogn-unit': unit.id, 'data-calculation-order': unit.order });
       if (state.showRelations) {
+        const nodesById = new Map(unitById.get(unit.id).layout.nodes.map(node => [node.id, node]));
         for (const edge of unitById.get(unit.id).layout.edges) {
           const fromX = px(edge.fromX, origin);
           const fromY = py(edge.fromY, origin);
@@ -9504,12 +9647,11 @@
           if (Math.abs(deltaX) < 0.01 || Math.abs(deltaY) < 0.01) {
             throw new Error(`OpenGraph free-node-tak ${edge.from} → ${edge.to} mag niet horizontaal of verticaal zijn.`);
           }
-          const length = Math.hypot(deltaX, deltaY);
-          const inset = Math.min(leafRadius * 0.45, length * 0.18);
-          const ratio = inset / length;
+          const start = utteranceEdgeEndpoint(nodesById.get(edge.from), fromX, fromY, deltaX, deltaY);
+          const end = utteranceEdgeEndpoint(nodesById.get(edge.to), toX, toY, -deltaX, -deltaY);
           unitGroup.appendChild(svgEl('line', {
-            x1: fromX + deltaX * ratio, y1: fromY + deltaY * ratio,
-            x2: toX - deltaX * ratio, y2: toY - deltaY * ratio,
+            x1: start.x, y1: start.y,
+            x2: end.x, y2: end.y,
             class: 'tree-edge syntax-tree-edge utterance-free-node-edge',
             'data-from-node-id': edge.from, 'data-to-node-id': edge.to,
             'data-free-node-edge': 'slanted'
@@ -9584,6 +9726,85 @@
           element.setAttribute('data-implicit-subject', 'true');
         });
       });
+      if (state.kernelSpaceDragEnabled) {
+        unitGroup.classList.add('kernel-space-drag-unit');
+        unitGroup.setAttribute('data-space-drag-unit', unit.id);
+        const persistKernelSpace = () => {
+          try {
+            localStorage.setItem('opengraph_kernel_space_global', JSON.stringify(state.kernelSpaceGlobal || { x: 1, y: 1 }));
+            localStorage.setItem('opengraph_kernel_space_component_x', String(state.kernelSpaceComponentX || 1));
+            localStorage.setItem('opengraph_kernel_space_local_y', JSON.stringify(state.kernelSpaceLocalY || {}));
+          } catch (_err) {}
+        };
+        unitGroup.addEventListener('pointerdown', event => {
+          const nodeTarget = event.target?.closest?.('[data-node-id]');
+          if (!nodeTarget || event.button !== 0) return;
+          event.preventDefault();
+          event.stopPropagation();
+          const global = Boolean(event.ctrlKey || event.metaKey);
+          const start = {
+            pointerId: event.pointerId, unitId: unit.id, global,
+            clientX: event.clientX, clientY: event.clientY,
+            globalX: state.kernelSpaceGlobal?.x || 1,
+            globalY: state.kernelSpaceGlobal?.y || 1,
+            componentX: state.kernelSpaceComponentX || 1,
+            localY: Number(state.kernelSpaceLocalY?.[unit.id]) || 1
+          };
+          state.kernelSpaceDrag = start;
+          const clampScale = value => Math.max(0.5, Math.min(3, Math.round(value * 100) / 100));
+          const onMove = moveEvent => {
+            if (!state.kernelSpaceDrag || moveEvent.pointerId !== start.pointerId) return;
+            let dx = moveEvent.clientX - start.clientX;
+            let dy = moveEvent.clientY - start.clientY;
+            if (Math.abs(dx) > Math.abs(dy) * 1.7) dy = 0;
+            else if (Math.abs(dy) > Math.abs(dx) * 1.7) dx = 0;
+            if (start.global) {
+              state.kernelSpaceGlobal = {
+                x: clampScale(start.globalX + dx / 180),
+                y: clampScale(start.globalY + dy / 180)
+              };
+            } else {
+              state.kernelSpaceComponentX = clampScale(start.componentX + dx / 180);
+              state.kernelSpaceLocalY = { ...(state.kernelSpaceLocalY || {}),
+                [start.unitId]: clampScale(start.localY + dy / 180) };
+            }
+            resetManualViewBox();
+            render();
+          };
+          const onEnd = endEvent => {
+            if (endEvent.pointerId !== start.pointerId) return;
+            state.kernelSpaceDrag = null;
+            persistKernelSpace();
+            appendConfigLog(start.global ? 'drag-kernel-space-global' : 'drag-kernel-space-local', {
+              unitId: start.unitId, global: state.kernelSpaceGlobal,
+              componentX: state.kernelSpaceComponentX, localY: state.kernelSpaceLocalY
+            });
+            markConfigDirty('Ruimte slepen');
+            window.removeEventListener('pointermove', onMove);
+            window.removeEventListener('pointerup', onEnd);
+            window.removeEventListener('pointercancel', onEnd);
+          };
+          window.addEventListener('pointermove', onMove);
+          window.addEventListener('pointerup', onEnd);
+          window.addEventListener('pointercancel', onEnd);
+        });
+        unitGroup.addEventListener('click', event => {
+          event.preventDefault();
+          event.stopPropagation();
+        }, true);
+        unitGroup.addEventListener('dblclick', event => {
+          event.preventDefault();
+          event.stopPropagation();
+          if (event.ctrlKey || event.metaKey) state.kernelSpaceGlobal = { x: 1, y: 1 };
+          else {
+            state.kernelSpaceComponentX = 1;
+            state.kernelSpaceLocalY = { ...(state.kernelSpaceLocalY || {}), [unit.id]: 1 };
+          }
+          persistKernelSpace();
+          resetManualViewBox();
+          render();
+        });
+      }
       nodeLayer.appendChild(unitGroup);
     });
     g.appendChild(nodeLayer);
@@ -10421,6 +10642,13 @@
     fillSelect(els.gridSizeVerticalSelect, GRID_SIZE_OPTIONS, validGridSize(state.gridSizeVertical));
     fillSelect(document.getElementById('multiGridSizeHorizontalSelect'), GRID_SIZE_OPTIONS, validGridSize(state.gridSizeHorizontal));
     fillSelect(document.getElementById('multiGridSizeVerticalSelect'), GRID_SIZE_OPTIONS, validGridSize(state.gridSizeVertical));
+    const spaceDragInput = document.getElementById('kernelSpaceDragEnabledInput');
+    if (spaceDragInput) spaceDragInput.checked = Boolean(state.kernelSpaceDragEnabled);
+    const spaceStatus = document.getElementById('kernelSpaceStatus');
+    if (spaceStatus) {
+      const localValues = Object.entries(state.kernelSpaceLocalY || {}).map(([unit, value]) => `${unit} V ${Math.round(Number(value) * 100)}%`).join(' · ');
+      spaceStatus.textContent = `${isEnglish() ? 'Global' : 'Globaal'} H ${Math.round((state.kernelSpaceGlobal?.x || 1) * 100)}% · V ${Math.round((state.kernelSpaceGlobal?.y || 1) * 100)}% · ${isEnglish() ? 'linked' : 'gekoppeld'} H ${Math.round((state.kernelSpaceComponentX || 1) * 100)}%${localValues ? ` · ${localValues}` : ''}`;
+    }
     fillSelect(els.treeLineColorSelect, PROJECTION_COLOR_OPTIONS, state.treeLineColor);
     fillSelect(els.treeLineWeightSelect, LINE_WEIGHT_OPTIONS, validLineWeight(state.treeLineWeight, 'strong'));
     fillSelect(document.getElementById('multiTreeLineColorSelect'), PROJECTION_COLOR_OPTIONS, state.treeLineColor);
@@ -13152,6 +13380,9 @@
         <label class="field mini-field"><span><span class="help-lang-nl">Causale anafoor</span><span class="help-lang-en">Causal anaphor</span></span><select id="multiCausalAnaphorSelect"></select></label>
         <label class="field mini-field"><span><span class="help-lang-nl">Rastermaat horizontaal</span><span class="help-lang-en">Horizontal grid size</span></span><select id="multiGridSizeHorizontalSelect"></select></label>
         <label class="field mini-field"><span><span class="help-lang-nl">Rastermaat verticaal</span><span class="help-lang-en">Vertical grid size</span></span><select id="multiGridSizeVerticalSelect"></select></label>
+        <label class="field checkbox-field"><input id="kernelSpaceDragEnabledInput" type="checkbox"><span><span class="help-lang-nl">Ruimte slepen</span><span class="help-lang-en">Drag spacing</span></span></label>
+        <div class="button-row"><button id="kernelSpaceResetButton" type="button"><span class="help-lang-nl">Ruimte terug naar Auto</span><span class="help-lang-en">Reset spacing to Auto</span></button></div>
+        <p id="kernelSpaceStatus" class="config-item-help"></p>
         <label class="field mini-field"><span><span class="help-lang-nl">Boomkleur</span><span class="help-lang-en">Tree color</span></span><select id="multiTreeLineColorSelect"></select></label>
         <label class="field mini-field"><span><span class="help-lang-nl">Boomlijnen</span><span class="help-lang-en">Tree lines</span></span><select id="multiTreeLineWeightSelect"></select></label>
         <label class="field mini-field"><span><span class="help-lang-nl">Boomruimte</span><span class="help-lang-en">Tree spacing</span></span><select id="multiTreeLayoutDensitySelect"></select></label>
@@ -13160,7 +13391,7 @@
         <label class="field mini-field"><span><span class="help-lang-nl">Flip · links/rechts</span><span class="help-lang-en">Flip · left/right</span></span><select id="multiTreeBranchFlipSelect"></select></label>
         <label class="field mini-field"><span><span class="help-lang-nl">PLAY · Flip-houdtijd</span><span class="help-lang-en">PLAY · Flip hold</span></span><select id="multiOgnFlipHoldSelect"></select></label>
         <p class="config-item-help"><span class="help-lang-nl"><strong>Pauzeer op Flip</strong> is standaard: de verplaatste knopen flitsen en PLAY wacht. Klik <strong>Play</strong> of <strong>→</strong> om verder te gaan. Alternatieven zijn flash (1,2 s) en houd vast (3 s).</span><span class="help-lang-en"><strong>Pause on Flip</strong> is the default: moved nodes flash and PLAY waits. Click <strong>Play</strong> or <strong>→</strong> to continue. Alternatives are flash (1.2 s) and hold (3 s).</span></p>
-        <p class="config-item-help"><span class="help-lang-nl"><strong>Klikbare knoop:</strong> klik in K2 op bronknoop HOND om de LEX-realisatie rechtstreeks te wisselen tussen HIJ, DIE, DIE HOND, DE HOND en JEK. De bronknoop blijft HOND. De twee rastermaten veranderen de echte gridcel afzonderlijk in breedte en hoogte.</span><span class="help-lang-en"><strong>Clickable node:</strong> click source node HOND in K2 to switch its LEX realization between HIJ, DIE, DIE HOND, DE HOND, and JEK. The source node remains HOND. The two grid sizes independently change the actual cell width and height.</span></p>
+        <p class="config-item-help"><span class="help-lang-nl"><strong>Ruimte slepen:</strong> sleep een knoop verticaal voor lokale rek van die kernzin, horizontaal voor gekoppelde H-rek en schuin voor H+V tegelijk. <strong>Ctrl+sleep</strong> rekt de volledige uiting. Dubbelklik herstelt de lokale ruimte. De knoop zelf wordt niet los verplaatst.</span><span class="help-lang-en"><strong>Drag spacing:</strong> drag a node vertically for local kernel-clause stretch, horizontally for linked H stretch, or at an angle to change both axes. <strong>Ctrl+drag</strong> stretches the complete utterance. Double-click resets local spacing. The node itself is not moved freely.</span></p>
         <p class="config-item-help"><span class="help-lang-nl"><strong>Flip</strong> spiegelt de zichtbare takken, maar verandert noch de structuur <code>S → NP, VP</code> / <code>VP → NP, V</code>, noch de LEX-woordvolgorde of verticale anaforen.</span><span class="help-lang-en"><strong>Flip</strong> mirrors the visible branches without changing <code>S → NP, VP</code> / <code>VP → NP, V</code> structure, LEX word order, or vertical anaphors.</span></p>
         <p class="config-item-help"><span class="help-lang-nl"><strong>Reikwijdte:</strong> Flip bestaat alleen in Language Tree en Anafoor/multiple Language Trees. LEX is het ultieme resultaat: de gerealiseerde uiting. De flipsolver kiest alleen toegestane boomgeometrie.</span><span class="help-lang-en"><strong>Scope:</strong> Flip exists only in Language Tree and Anaphor/multiple Language Trees. LEX is the ultimate result: the realized utterance. The flip solver only chooses permitted tree geometry.</span></p>
         <p class="config-item-help"><span class="help-lang-nl"><strong>TODO:</strong> <em>zijn bot</em> kan het bot van Jan of van Jek betekenen; de solver mag dit niet stilzwijgend beslissen. <em>Het bot</em> is de ondubbelzinnige standaard.</span><span class="help-lang-en"><strong>TODO:</strong> <em>zijn bot</em> may mean Jan's or Jek's bone; the solver must not silently decide. <em>Het bot</em> is the unambiguous default.</span></p>
@@ -14581,6 +14812,10 @@
       treeLineWeight: validLineWeight(state.treeLineWeight, 'strong'),
       kernelBranchHorizontal: validKernelBranchSpacing(state.kernelBranchHorizontal),
       kernelBranchVertical: validKernelBranchSpacing(state.kernelBranchVertical),
+      kernelSpaceDragEnabled: Boolean(state.kernelSpaceDragEnabled),
+      kernelSpaceGlobal: { ...(state.kernelSpaceGlobal || { x: 1, y: 1 }) },
+      kernelSpaceComponentX: Number(state.kernelSpaceComponentX) || 1,
+      kernelSpaceLocalY: { ...(state.kernelSpaceLocalY || {}) },
       kernelBranchFlip: validKernelBranchFlip(state.kernelBranchFlip),
       multiOgnFlipHold: validMultiOgnFlipHold(state.multiOgnFlipHold),
       causalAnaphorVariant: globalThis.OGNUtteranceKernels?.validCausalAnaphorVariant?.(state.causalAnaphorVariant) || 'die',
@@ -14730,6 +14965,10 @@
     if (typeof snapshot.treeLineWeight === 'string') state.treeLineWeight = validLineWeight(snapshot.treeLineWeight, 'strong');
     if (typeof snapshot.kernelBranchHorizontal === 'string') state.kernelBranchHorizontal = validKernelBranchSpacing(snapshot.kernelBranchHorizontal);
     if (typeof snapshot.kernelBranchVertical === 'string') state.kernelBranchVertical = validKernelBranchSpacing(snapshot.kernelBranchVertical);
+    if (typeof snapshot.kernelSpaceDragEnabled === 'boolean') state.kernelSpaceDragEnabled = snapshot.kernelSpaceDragEnabled;
+    if (snapshot.kernelSpaceGlobal && Number.isFinite(snapshot.kernelSpaceGlobal.x) && Number.isFinite(snapshot.kernelSpaceGlobal.y)) state.kernelSpaceGlobal = { x: snapshot.kernelSpaceGlobal.x, y: snapshot.kernelSpaceGlobal.y };
+    if (Number.isFinite(snapshot.kernelSpaceComponentX)) state.kernelSpaceComponentX = snapshot.kernelSpaceComponentX;
+    if (snapshot.kernelSpaceLocalY && typeof snapshot.kernelSpaceLocalY === 'object') state.kernelSpaceLocalY = { ...snapshot.kernelSpaceLocalY };
     if (typeof snapshot.kernelBranchFlip === 'string') state.kernelBranchFlip = validKernelBranchFlip(snapshot.kernelBranchFlip);
     if (typeof snapshot.multiOgnFlipHold === 'string') state.multiOgnFlipHold = validMultiOgnFlipHold(snapshot.multiOgnFlipHold);
     if (typeof snapshot.causalAnaphorVariant === 'string') state.causalAnaphorVariant = globalThis.OGNUtteranceKernels?.validCausalAnaphorVariant?.(snapshot.causalAnaphorVariant) || 'die';
@@ -14774,6 +15013,10 @@
       localStorage.setItem('opengraph_tree_line_weight', state.treeLineWeight);
       localStorage.setItem('opengraph_kernel_branch_horizontal', validKernelBranchSpacing(state.kernelBranchHorizontal));
       localStorage.setItem('opengraph_kernel_branch_vertical', validKernelBranchSpacing(state.kernelBranchVertical));
+      localStorage.setItem('opengraph_kernel_space_drag_enabled_v2', state.kernelSpaceDragEnabled ? '1' : '0');
+      localStorage.setItem('opengraph_kernel_space_global', JSON.stringify(state.kernelSpaceGlobal || { x: 1, y: 1 }));
+      localStorage.setItem('opengraph_kernel_space_component_x', String(state.kernelSpaceComponentX || 1));
+      localStorage.setItem('opengraph_kernel_space_local_y', JSON.stringify(state.kernelSpaceLocalY || {}));
       localStorage.setItem('opengraph_kernel_branch_flip', validKernelBranchFlip(state.kernelBranchFlip));
       localStorage.setItem('opengraph_multi_ogn_flip_hold', validMultiOgnFlipHold(state.multiOgnFlipHold));
       localStorage.setItem('opengraph_causal_anaphor_variant', state.causalAnaphorVariant);
@@ -15279,6 +15522,27 @@
     els.gridSizeVerticalSelect?.addEventListener('change', updateGridSizeVertical);
     document.getElementById('multiGridSizeHorizontalSelect')?.addEventListener('change', updateGridSizeHorizontal);
     document.getElementById('multiGridSizeVerticalSelect')?.addEventListener('change', updateGridSizeVertical);
+    document.getElementById('kernelSpaceDragEnabledInput')?.addEventListener('change', event => {
+      state.kernelSpaceDragEnabled = Boolean(event.target.checked);
+      try { localStorage.setItem('opengraph_kernel_space_drag_enabled_v2', state.kernelSpaceDragEnabled ? '1' : '0'); } catch (_err) {}
+      appendConfigLog('change-kernel-space-drag', { enabled: state.kernelSpaceDragEnabled });
+      markConfigDirty('Ruimte slepen');
+      render();
+    });
+    document.getElementById('kernelSpaceResetButton')?.addEventListener('click', () => {
+      state.kernelSpaceGlobal = { x: 1, y: 1 };
+      state.kernelSpaceComponentX = 1;
+      state.kernelSpaceLocalY = {};
+      try {
+        localStorage.setItem('opengraph_kernel_space_global', JSON.stringify(state.kernelSpaceGlobal));
+        localStorage.setItem('opengraph_kernel_space_component_x', '1');
+        localStorage.setItem('opengraph_kernel_space_local_y', '{}');
+      } catch (_err) {}
+      appendConfigLog('reset-kernel-space', { global: state.kernelSpaceGlobal, componentX: 1, localY: {} });
+      markConfigDirty('Ruimte terug naar Auto');
+      resetManualViewBox();
+      render();
+    });
     const updateTreeLineColor = event => { state.treeLineColor = event.target.value || 'blue'; try { localStorage.setItem('opengraph_tree_line_color', state.treeLineColor); } catch (_err) {} appendConfigLog('change-tree-color', { treeLineColor: state.treeLineColor }); markConfigDirty('Boomkleur'); render(); };
     const updateTreeLineWeight = event => { state.treeLineWeight = validLineWeight(event.target.value, 'strong'); try { localStorage.setItem('opengraph_tree_line_weight', state.treeLineWeight); } catch (_err) {} appendConfigLog('change-tree-weight', { treeLineWeight: state.treeLineWeight }); markConfigDirty('Boomlijnen'); render(); };
     els.treeLineColorSelect?.addEventListener('change', updateTreeLineColor);
@@ -15568,6 +15832,11 @@
     if (featureEnabled('adverbs')) await loadLexiconUsageProfiles();
     await loadExamplesFromHtml();
     refreshExamplesForFeatures();
+    const requestedExample = queryParamValue('example');
+    if (requestedExample) {
+      const publicExample = EXAMPLES.find(example => example.id === requestedExample);
+      if (publicExample) state.example = publicExample;
+    }
     if (featureEnabled('adverbs')) await loadAdverbOptionsFromHtml();
     else resetAdverbFeatureState();
     applyExampleAdverbDefaults();

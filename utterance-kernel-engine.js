@@ -282,7 +282,7 @@
     });
     const composed = compositionEngine.composeDeclaredPair({
       upper: { id: 'K1', layout: upper }, lower: { id: 'K2', layout: lower },
-      relations: declarations, gapRows: 2
+      relations: declarations, gapRows: 5
     });
     const sentences = [
       { id: 'K1', order: 1, text: definition.upper.text },
@@ -326,7 +326,7 @@
       const anaphor = lower.nodes.find(node => node.role === relation.lowerRole);
       return { type: 'coreference', referent: relation.referent, antecedentNodeId: antecedent.id, anaphorNodeId: anaphor.id, antecedentLabel: antecedent.label, anaphorLabel: anaphor.label };
     });
-    const pair = compositionEngine.composeDeclaredPair({ upper: { id: 'K1', layout: upper }, lower: { id: 'K2', layout: lower }, relations: pairRelations, gapRows: 2 });
+    const pair = compositionEngine.composeDeclaredPair({ upper: { id: 'K1', layout: upper }, lower: { id: 'K2', layout: lower }, relations: pairRelations, gapRows: 5 });
     const thirdRaw = buildLayout({ ...definition, upper: definition.third, type: 'story-normal' }, 'upper');
     const dy = pair.box.maxY + 3 - thirdRaw.box.minY;
     const third = shiftRenameLayout(thirdRaw, `${definition.id}-k1`, `${definition.id}-k3`, dy);
