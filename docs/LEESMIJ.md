@@ -1,5 +1,20 @@
 # OpenGraph Lite Viewer v2.0.0-rc.45
 
+## Begin hier: van boom naar uiting
+
+De documentatie volgt de werking van Open Graph Linguistics (OGL): **Tree
+Build → gereserveerde HOR/VER-ruimte → LEX → Flip → Uiting/Story → PLAY**.
+
+Tree Build reserveert vooraf HOR-ruimte voor vrije kolommen, vertakkingen,
+Flip en verticale anaforen, en VER-ruimte voor bronhoogtes en vrije LEX-rijen
+zoals V1, V2 en Comp. Zo hoeft een onverplaatst woord nooit achteraf mee te
+schuiven om de juiste woordvolgorde te maken.
+
+Voor `HOND BIJT MAN` blijven HOND en MAN op hun bronhoogte en krijgen zij geen
+pijl. Alleen BIJT wisselt naar de vooraf vrijgehouden V2-rij. Het resultaat is
+`HOND — BIJT — MAN`. Verplaatsingspijlen staan uitsluitend verticaal op de
+LEX-as; er lopen geen verplaatsingslijnen vanuit de boom.
+
 > Publiceren: als Playwright of Chromium lokaal ontbreekt, biedt
 > `publish_checked.bat` vóór de controles aan om beide eenmalig met de
 > vastgezette installer te installeren. Antwoord `J`; lokale hulpmiddelen

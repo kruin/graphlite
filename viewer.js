@@ -772,46 +772,6 @@
       ]
     },
     {
-      "id": "trui-breit-vrouw-topic",
-      "title": "TRUI BREIT VROUW",
-      "phase": "V2 topicalisatie",
-      "lexRule": "hoofdzininvariant",
-      "sentence": "TRUI BREIT VROUW",
-      "sentenceHtml": "<em data-role=\"object\" data-thematic-role=\"patiens\">TRUI</em> BREIT <strong data-role=\"subject\" data-thematic-role=\"agens\">VROUW</strong>",
-      "subjectDefault": "VROUW",
-      "objectDefault": "TRUI",
-      "predicate": "BREIT",
-      "lexItems": [
-        {
-          "id": "object-trui-topic",
-          "label": "TRUI",
-          "source": "object",
-          "slot": null,
-          "role": "object",
-          "thematicRole": "patiens",
-          "lexeme": "trui"
-        },
-        {
-          "id": "pred-breit",
-          "label": "BREIT",
-          "source": "predicate",
-          "slot": null,
-          "role": "predicate",
-          "thematicRole": null,
-          "lexeme": "breit"
-        },
-        {
-          "id": "subject-vrouw",
-          "label": "VROUW",
-          "source": "subject",
-          "slot": null,
-          "role": "subject",
-          "thematicRole": "agens",
-          "lexeme": "vrouw"
-        }
-      ]
-    },
-    {
       "id": "hond-heeft-man-gebeten",
       "title": "HOND HEEFT MAN GEBETEN",
       "phase": "Perfectum",
@@ -3061,8 +3021,8 @@
   }
 
   const SIMPLE_LEXICON_POLICY = {
-    trui: { roles: ['object'], themes: ['patiens'] },
-    vrouw: { roles: ['subject'], themes: ['agens'] },
+    trui: { roles: ['object'], themes: ['patiens'], animacy: 'inanimate' },
+    vrouw: { roles: ['subject'], themes: ['agens'], animacy: 'animate' },
     hond: { roles: ['subject', 'object'], themes: ['agens', 'patiens'] },
     man: { roles: ['subject', 'object'], themes: ['agens', 'patiens'] },
     jan: { roles: ['subject', 'object'], themes: ['agens', 'patiens'] },
@@ -3072,7 +3032,7 @@
   };
 
   const SIMPLE_VERB_FRAMES = {
-    breit: { subjects: ['vrouw'], objects: ['trui'], imperfectum: 'BREIDE', participle: 'GEBREID' },
+    breit: { subjects: ['vrouw'], objects: ['trui'], requiresAnimateSubject: true, imperfectum: 'BREIDE', participle: 'GEBREID' },
     bijt: { subjects: ['hond', 'kat', 'man', 'vrouw', 'jan', 'jek'], objects: ['man', 'hond', 'kat', 'vrouw', 'jan', 'jek'], imperfectum: 'BEET', participle: 'GEBETEN' },
     wast: { subjects: ['jan', 'man', 'vrouw'], objects: ['jan', 'zichzelf', 'man', 'vrouw'], imperfectum: 'WASTE', participle: 'GEWASSEN' },
     slaat: { subjects: ['jan', 'jek', 'man', 'vrouw'], objects: ['jan', 'jek', 'man', 'vrouw'], imperfectum: 'SLOEG', participle: 'GESLAGEN' },
@@ -3103,6 +3063,9 @@
       reasons.push(`${object.label}: kan niet als patiens/object; ${object.label} is ${objPolicy.themes.join('/')}.`);
     }
     if (frame) {
+      if (frame.requiresAnimateSubject && subjPolicy?.animacy !== 'animate') {
+        reasons.push(`${subject.label}: kan niet breien; BREIEN vereist een levende/handelende agens.`);
+      }
       if (subjId && !frame.subjects.includes(subjId)) reasons.push(`${subject.label}: geen voor-de-hand-liggende agens bij ${verbToken.label}.`);
       if (objId && !frame.objects.includes(objId)) reasons.push(`${object.label}: geen voor-de-hand-liggende patiens bij ${verbToken.label}.`);
     }
@@ -7125,16 +7088,16 @@
   }
 
   function topicMovementForItem(item, index) {
-    // Het eerste zinsdeel van een hoofdzin bezet de eerste lineaire positie.
-    // Bij een gewoon subject is dit positieplaatsing, geen topicalisatie; een
-    // vooropgeplaatst niet-subject (TRUI in TRUI BREIT VROUW) is wel TOPIC.
+    // Alleen een werkelijk vooropgeplaatst niet-subject is TOPIC. Een gewoon
+    // subject blijft horizontaal op zijn bronhoogte: geen positie-1-Wissel,
+    // geen trace en geen pijl.
     if (!isMainV2Rule()) return null;
     if (activeAdverbIsFronted()) return null;
     if (index !== 0 || !item?.source) return null;
     const source = String(item.source || '').toLowerCase();
     const role = String(item.role || '').toLowerCase();
     if (source === 'subject' || role === 'subject') {
-      return { kind: 'subject-position', slot: 'topic', caption: 'Plaats subject → positie 1', trace: `t[${item.role || item.source}]` };
+      return null;
     }
     return { kind: 'topic', slot: 'topic', caption: 'Wissel TOPIC', trace: `t[${item.role || item.source}]` };
   }
@@ -7227,9 +7190,10 @@
     // Een LOG-rij is eerst plannings-/reserveringsinformatie. Zij is geen
     // zelfstandige toestemming om een bronknoop van zijn horizontale
     // bronhoogte te halen. Alleen een expliciete Language-Tree-regel (zoals
-    // positie 1, TOPIC, V1 of V2) maakt van dat plan een zichtbare
-    // LEX-Wissel omhoog. In HOND BIJT MAN gaat HOND naar positie 1, BIJT naar
-    // V2 en blijft alleen MAN exact bronuitgelijnd.
+    // TOPIC, V1 of V2) maakt van dat plan een zichtbare LEX-Wissel omhoog.
+    // Tree Build reserveert vooraf een vrije verticale rij tussen subject en
+    // object. In HOND BIJT MAN blijven HOND en MAN daarom exact op hun
+    // bronhoogte; alleen BIJT wisselt naar de gereserveerde V2-rij.
     const explicit = movementForItem(item, index, items);
     if (!explicit) return null;
     const logicalRow = logicalLexPlan(items).byIndex.get(index);
@@ -7514,9 +7478,17 @@
   }
 
   function projectedV2SlotY(y0, sourceMap = null, items = state.example?.lexItems || []) {
+    if (!sourceMap) return v2SlotY(y0, items);
+    const subjectY = sourceMap.get('subject')?.py;
+    const objectY = sourceMap.get('object')?.py;
+    // Tree Build houdt tussen subject en object een vrije VER-rij voor V2.
+    // Daardoor blijven beide naamwoorden op bronhoogte en landt alleen de
+    // persoonsvorm in de juiste tussenpositie.
+    if (Number.isFinite(subjectY) && Number.isFinite(objectY)) {
+      return subjectY + (objectY - subjectY) / 2;
+    }
     const rootY = projectedLexRootY(sourceMap);
-    if (rootY === null) return v2SlotY(y0, items);
-    return rootY;
+    return rootY === null ? v2SlotY(y0, items) : rootY;
   }
 
   function projectedV1SlotY(y0, sourceMap = null, items = state.example?.lexItems || []) {

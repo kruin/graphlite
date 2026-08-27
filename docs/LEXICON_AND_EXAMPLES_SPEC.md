@@ -148,7 +148,11 @@ De volgorde van `<li class="lex-token">` in `examples-input.html` is de gezagheb
 
 ## v4430 · trace als lokaal LEX-object
 
-Voor V2 en topicalisatie wordt de trace als lokaal LEX-object behandeld. De voorbeeldzin bepaalt de gevulde slots; de Wisselregel tekent daarnaast een trace-slot op de LEX-as. Daardoor worden `HOND BIJT MAN` en `TRUI BREIT VROUW` als oppervlaktestring behouden, terwijl de oude basispositie als lokale trace zichtbaar blijft.
+Voor V2 en topicalisatie wordt de trace als lokaal LEX-object behandeld. De
+voorbeeldzin bepaalt de gevulde slots; de Wisselregel tekent daarnaast een
+trace-slot op de LEX-as. Het verwarrende zichtbare voorbeeld `TRUI BREIT VROUW`
+is verwijderd. Topicalisatie blijft als mechanisme beschikbaar met een
+ondubbelzinnige testcase.
 
 
 
@@ -157,7 +161,9 @@ Voor V2 en topicalisatie wordt de trace als lokaal LEX-object behandeld. De voor
 - Bij keuze van een nieuwe voorbeeldzin reset de groei automatisch: playback stopt, stap gaat naar 0, selectie en role-swap worden leeggemaakt.
 - Voorbeeldzinnen worden inhoudelijk gevalideerd op thematische rollen en selectieframes.
 - Ongeldige combinaties zoals `TRUI BREIT VROUW` met `TRUI` als subject/agens worden afgekeurd met reden: `trui` is patiens/object, geen agens/subject.
-- Gemarkeerde/topicalisatie-uitingen zoals `TRUI BREIT VROUW` worden geaccepteerd wanneer `TRUI` object/patiens blijft en `VROUW` subject/agens blijft; de viewer toont dan een notice.
+- `trui` heeft `animacy=inanimate` en uitsluitend object/patiens; `breien`
+  vereist een animate subject/agens. De generator kan een trui daarom nooit als
+  breier aanbieden.
 
 
 ## OVT-vormen vanaf v4535

@@ -29,7 +29,8 @@ trace op oude basispositie
 Wissel-pijl tussen trace en gevuld slot
 ```
 
-Gebruik de voorbeelden `HOND BIJT MAN`, `VROUW BREIT TRUI` of `TRUI BREIT VROUW`. In het laatste voorbeeld staat `TRUI` voorop, maar blijft het object/patiens.
+Gebruik de voorbeelden `HOND BIJT MAN` en `VROUW BREIT TRUI`. Het lexicon
+blokkeert `TRUI` als subject/agens van `BREIEN`: een trui kan niet breien.
 
 ---
 

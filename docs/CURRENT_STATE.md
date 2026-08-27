@@ -86,7 +86,7 @@ De centrale boom wordt niet meer gebruikt als vertrekpunt van de Wissel-tekening
 
 ## v4430 · LEX-as volgt de voorbeeldzin
 
-De LEX-as gebruikt de volgorde van de geselecteerde voorbeeldzin als oppervlaktestructuur. `Wissel` is nu een extra plaatsingsannotatie: het gevulde slot staat in voorbeeldzinvolgorde, de oude bronpositie wordt als trace getoond. Daarmee kan `HOND BIJT MAN`, `OMDAT HOND MAN BIJT`, `TRUI BREIT VROUW` en `HOND HEEFT MAN GEBETEN` rechtstreeks van boven naar beneden op de LEX-as worden gelezen.
+De LEX-as gebruikt de volgorde van de geselecteerde voorbeeldzin als oppervlaktestructuur. `Wissel` is nu een extra plaatsingsannotatie. `HOND BIJT MAN`, `OMDAT HOND MAN BIJT` en `HOND HEEFT MAN GEBETEN` zijn rechtstreeks van boven naar beneden leesbaar. De verwarrende zichtbare testcase `TRUI BREIT VROUW` is verwijderd.
 
 ## v4430 · V2/Wissel toegevoegd
 
@@ -99,7 +99,7 @@ slot 1 = TOPIC / vooropplaatsing
 slot 2 = V2 / persoonsvorm
 ```
 
-Voorbeeld: `TRUI BREIT VROUW` is opgenomen als topicalisatie-demo: `TRUI` blijft patiens/object; `VROUW` blijft agens/subject.
+Topicalisatie blijft ondersteund, maar gebruikt geen testcase die oppervlakkig kan worden gelezen alsof een trui de handelende breier is.
 
 ---
 

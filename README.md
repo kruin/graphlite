@@ -1,5 +1,31 @@
 # OpenGraph Lite Viewer v2.0.0-rc.45
 
+## Start here: from tree to utterance
+
+The documentation now follows the operation of Open Graph Linguistics (OGL):
+
+1. **Tree Build** constructs every kernel clause as a free Language Tree.
+2. **HOR/VER space** is reserved before drawing for valid placements and later
+   LEX switches.
+3. **LEX** realizes word order. Only a real positional change receives a
+   vertical arrow on the LEX axis.
+4. **Flip** selects another left/right or short/long rendering of the same tree
+   when required.
+5. **Utterance** combines one or more kernel clauses; three or more form a Story.
+6. **PLAY** exposes Tree Build, Flip, and LEX step by step.
+
+### Tree Build reserves movement space
+
+Tree Build must not obtain correct word order by moving an otherwise stationary
+word after the fact. It therefore reserves **HOR space** for free columns,
+branches, Flip, and vertical anaphor links, and **VER space** for source rows
+plus free LEX target rows such as V1, V2, Comp, and enabled insertions.
+
+For `HOND BIJT MAN`, HOND and MAN remain on their source rows without arrows.
+Only BIJT switches to the pre-reserved V2 row and receives a vertical LEX-axis
+arrow. The result is `HOND — BIJT — MAN`. No movement path is drawn from the
+tree itself.
+
 > Publishing: when local Playwright or Chromium is missing,
 > `publish_checked.bat` offers to install the pinned tools before running the
 > checks. Answer `J`; local tooling stays outside Git and the release ZIP.

@@ -64,7 +64,7 @@ function escapeHtml(value) {{ return String(value); }}
 function activeAdverbIsFronted() {{ return false; }}
 {import_function}
 {movement_functions}
-if (EXAMPLES.length !== 19) throw new Error(`fallback count ${{EXAMPLES.length}}`);
+if (EXAMPLES.length !== 18) throw new Error(`fallback count ${{EXAMPLES.length}}`);
 for (const id of ['jan-wast-zichzelf', 'jan-slaat-jek-omdat-die-hem-beet', 'ken-uzelf']) {{
   const utterance = EXAMPLES.find(item => item.id === id);
   if (!utterance || utterance.utteranceKernels?.length !== 2) {{
@@ -93,8 +93,8 @@ if (datClause.lexItems.some((item, index) => movementForItem(item, index, datCla
 const mainClause = EXAMPLES.find(item => item.id === 'hond-bijt-man');
 state.example = mainClause;
 const mainSubjectMove = movementForItem(mainClause.lexItems[0], 0, mainClause.lexItems);
-if (mainSubjectMove?.slot !== 'topic' || mainSubjectMove?.kind !== 'subject-position') {{
-  throw new Error('gewone subject-initiële HOND krijgt niet positie 1');
+if (mainSubjectMove !== null) {{
+  throw new Error('gewone subject-initiële HOND krijgt ten onrechte een Wissel');
 }}
 if (movementForItem(mainClause.lexItems[1], 1, mainClause.lexItems)?.slot !== 'v2') {{
   throw new Error('hoofdzin verplaatst het predicaat niet naar V2');
@@ -102,10 +102,8 @@ if (movementForItem(mainClause.lexItems[1], 1, mainClause.lexItems)?.slot !== 'v
 if (movementForItem(mainClause.lexItems[2], 2, mainClause.lexItems) !== null) {{
   throw new Error('MAN krijgt ten onrechte een Wissel');
 }}
-const topicClause = EXAMPLES.find(item => item.id === 'trui-breit-vrouw-topic');
-state.example = topicClause;
-if (movementForItem(topicClause.lexItems[0], 0, topicClause.lexItems)?.slot !== 'topic') {{
-  throw new Error('expliciet vooropgeplaatste TRUI krijgt geen TOPIC-doel');
+if (EXAMPLES.some(item => item.id === 'trui-breit-vrouw-topic')) {{
+  throw new Error('verwarrende zichtbare testcase TRUI BREIT VROUW is niet verwijderd');
 }}
 const wanted = [
   'de-hond-heeft-de-man-misschien-wel-vaak-gebeten',
@@ -143,7 +141,7 @@ for (const id of wanted) {{
     throw new Error(`oude voorbeeldpositie bestuurt LOG nog: ${{id}}`);
   }}
 }}
-console.log('EXAMPLES ROUNDTRIP: OK (19 fallbackuitingen + 5 kernzinanalyses; 4 zinsoorten; V1/V2/TOPIC-contract; lineaire multi-inserties)');
+console.log('EXAMPLES ROUNDTRIP: OK (18 fallbackuitingen + 5 kernzinanalyses; 4 zinsoorten; V1/V2/TOPIC-contract; lineaire multi-inserties)');
 """
 
 with tempfile.NamedTemporaryFile("w", suffix=".js", encoding="utf-8", delete=False) as handle:

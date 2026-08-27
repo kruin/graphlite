@@ -5,6 +5,43 @@
 > vastgezette installer te installeren. Antwoord `J`; lokale hulpmiddelen
 > blijven buiten Git en buiten de release-ZIP.
 
+## Begin hier: van boom naar uiting
+
+De documentatie volgt voortaan de werking van Open Graph Linguistics (OGL),
+niet de geschiedenis van de releases:
+
+1. **Tree Build** bouwt iedere kernzin als vrije Language Tree.
+2. **HOR/VER-ruimte** wordt vóór het tekenen gereserveerd voor geldige
+   plaatsingen en latere LEX-wissels.
+3. **LEX** realiseert de woordvolgorde. Alleen echte positiewijzigingen krijgen
+   een verticale pijl op de LEX-as.
+4. **Flip** kiest, indien nodig, een andere links/rechts- of kort/lang-vorm van
+   dezelfde boom.
+5. **Uiting** combineert een of meer kernzinnen; drie of meer vormen een Story.
+6. **PLAY** toont Tree Build, Flip en LEX stap voor stap.
+
+### Tree Build reserveert verplaatsingsruimte
+
+Tree Build mag een correcte LEX-volgorde niet maken door een onverplaatst woord
+achteraf mee te schuiven. De builder reserveert daarom vooraf afzonderlijk:
+
+- **HOR-ruimte** voor vrije kolommen, boomtakken, Flip en verticale
+  anafoorverbindingen;
+- **VER-ruimte** voor bronhoogtes én voor vrije LEX-doelrijen zoals V1, V2,
+  Comp en toegestane inserties.
+
+Voor de simplex `HOND BIJT MAN` is de invariant:
+
+| woord | bron en resultaat |
+|---|---|
+| HOND | blijft op HOND-hoogte; geen pijl |
+| BIJT | wisselt naar de vooraf vrijgehouden V2-rij; verticale LEX-pijl |
+| MAN | blijft op MAN-hoogte; geen pijl |
+
+De zichtbare volgorde wordt zo `HOND — BIJT — MAN`, zonder HOND of MAN als
+schijnverplaatsing te tekenen. Alle verplaatsingspijlen blijven uitsluitend op
+de LEX-as; er lopen geen verplaatsingslijnen vanuit de boom.
+
 ## Flip: structuur is geen woordvolgorde
 
 Flip is, naast **Free Node**, essentieel voor de Language Tree. Free Node geeft

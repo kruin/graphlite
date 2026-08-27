@@ -1,5 +1,16 @@
 # OpenGraph Lite Viewer v2.0.0-rc.45
 
+## Start here: from tree to utterance
+
+The documentation follows OGL operation: **Tree Build → reserved HOR/VER space
+→ LEX → Flip → Utterance/Story → PLAY**.
+
+Tree Build reserves HOR space for free columns, branches, Flip, and vertical
+anaphor links, and VER space for source rows plus free LEX rows such as V1, V2,
+and Comp. In `HOND BIJT MAN`, HOND and MAN remain on their source rows without
+arrows. Only BIJT switches to the pre-reserved V2 row. Movement arrows are
+vertical and confined to the LEX axis; no movement path starts in the tree.
+
 > Publishing: when local Playwright or Chromium is missing,
 > `publish_checked.bat` offers to install the pinned tools before running the
 > checks. Answer `J`; local tooling stays outside Git and the release ZIP.

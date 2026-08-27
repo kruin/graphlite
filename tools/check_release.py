@@ -772,8 +772,24 @@ for marker, label in [
 ]:
     require(local_launcher, marker, label)
 source_build = read("SOURCE_BUILD.txt").strip()
-if source_build != "v2.0.0-rc.45-utterance-real-lex-moves-only-20260826.22":
+if source_build != "v2.0.0-rc.45-feature-profile-count-after-example-removal-20260827.25":
     errors.append(f"onverwachte of lege SOURCE_BUILD.txt: {source_build!r}")
+
+leesmij = read("LEESMIJ.md")
+readme = read("README.md")
+for marker in (
+    "## Begin hier: van boom naar uiting",
+    "Tree Build reserveert verplaatsingsruimte",
+    "HOND | blijft op HOND-hoogte; geen pijl",
+    "Alle verplaatsingspijlen blijven uitsluitend op",
+):
+    require(leesmij, marker, "gereorganiseerde LEESMIJ")
+for marker in (
+    "## Start here: from tree to utterance",
+    "Tree Build reserves movement space",
+    "HOND and MAN remain on their source rows without arrows",
+):
+    require(readme, marker, "reorganized README")
 for stale in ['v4537', 'v2.0.0-rc.24']:
     if stale in start_bat or stale in debug_html:
         errors.append(f"oude lokale startversie staat nog in actieve start/debugbestanden: {stale}")
@@ -823,8 +839,12 @@ if "state.projectionBlockUnlocked = maxStep > 0 && state.growthStep >= maxStep;"
 tbody = re.search(r"<tbody>(.*?)</tbody>", read("examples-adverbs.html"), flags=re.S)
 if not tbody or len(re.findall(r"<tr\b", tbody.group(1))) != 25:
     errors.append("bijwoordtabel moet exact 25 voorbeelden bevatten")
-if examples.count('class="example-input"') != 21:
-    errors.append("voorbeeldset moet exact 21 uitingen bevatten")
+if examples.count('class="example-input"') != 20:
+    errors.append("voorbeeldset moet exact 20 uitingen bevatten")
+if 'data-id="trui-breit-vrouw-topic"' in examples or '"id": "trui-breit-vrouw-topic"' in js:
+    errors.append("verwarrende zichtbare testcase TRUI BREIT VROUW moet ontbreken")
+for marker in ('data-animacy="inanimate"', 'data-requires-animate-subject="true"'):
+    require(read("lexicon-config.html"), marker, "selectiebeperking BREIEN")
 for utterance_id in [
     "jan-wast-zichzelf",
     "jan-slaat-jek-omdat-die-hem-beet",

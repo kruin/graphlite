@@ -134,11 +134,13 @@ for source, markers, label in [
     for marker in markers:
         require(source, marker, f"{label}: profielmarker")
 
-# The source contains 21 utterances; the two insertion examples are excluded in base.
+# The source contains 20 utterances after removing the confusing visible
+# TRUI BREIT VROUW topicalization fixture; two insertion examples are excluded
+# in the base profile.
 example_count = EXAMPLES.count('class="example-input"')
 insertion_cards = len(re.findall(r'<article class="example-input"(?:(?!</article>).)*class="lex-insertion"', EXAMPLES, flags=re.S))
-if example_count != 21:
-    errors.append(f"verwacht 21 bronuitingen, gevonden {example_count}")
+if example_count != 20:
+    errors.append(f"verwacht 20 bronuitingen, gevonden {example_count}")
 if insertion_cards != 2:
     errors.append(f"verwacht 2 featurevoorbeelden, gevonden {insertion_cards}")
 

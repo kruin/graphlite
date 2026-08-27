@@ -65,6 +65,7 @@ functions = "\n".join(
         "appliedLogicalPlacementForItem",
         "baseLexY",
         "projectionAnchorY",
+        "projectedV2SlotY",
         "projectedLexItemY",
     )
 )
@@ -93,9 +94,6 @@ function movementForItem(item) {{
   if (item.source === 'late') {{
     return {{ kind: 'v2', slot: 'v2', caption: 'Wissel V2', trace: 't[late]' }};
   }}
-  if (item.source === 'subject') {{
-    return {{ kind: 'subject-position', slot: 'topic', caption: 'Plaats subject → positie 1', trace: 't[subject]' }};
-  }}
   return item.source === 'predicate'
     ? {{ kind: 'v2', slot: 'v2', caption: 'Wissel V2', trace: 't[V]' }}
     : null;
@@ -103,7 +101,6 @@ function movementForItem(item) {{
 function lexSlotIndex() {{ return '2'; }}
 function projectedTopicSlotY() {{ return 160; }}
 function projectedV1SlotY() {{ return 160; }}
-function projectedV2SlotY() {{ return 180; }}
 
 {functions}
 
@@ -111,9 +108,9 @@ const item = {{ id: 'bijt', label: 'BIJT', source: 'predicate', role: 'predicate
 const items = [item];
 state.example.lexItems = items;
 const sourceMap = new Map([
-  ['subject', {{ px: 620, py: 320 }}],
+  ['subject', {{ px: 620, py: 300 }}],
   ['predicate', {{ px: 700, py: 420 }}],
-  ['object', {{ px: 780, py: 520 }}],
+  ['object', {{ px: 780, py: 500 }}],
   ['late', {{ px: 820, py: 120 }}]
 ]);
 const y0 = 100;
@@ -133,23 +130,31 @@ const trio = [
   {{ id: 'man', label: 'MAN', source: 'object', role: 'object' }}
 ];
 const trioMoves = orderedLexMovements(trio);
-if (trioMoves.length !== 2 || trioMoves[0].item !== trio[0] || trioMoves[1].item !== item
+if (trioMoves.length !== 1 || trioMoves[0].item !== item
     || trioMoves.some(move => move.stage !== 'combined')) {{
-  throw new Error(`HOND BIJT MAN vereist HOND→positie1 en BIJT→V2, kreeg ${{trioMoves.map(move => move.item.label).join('|')}}`);
+  throw new Error(`HOND BIJT MAN vereist uitsluitend BIJT→V2, kreeg ${{trioMoves.map(move => move.item.label).join('|')}}`);
+}}
+
+const hond = trio[0];
+const hondProjectionY = projectionAnchorY(hond, 0, y0, sourceMap, trio);
+const hondFinalY = projectedLexItemY(hond, 0, y0, sourceMap, trio);
+if (hondProjectionY !== 300 || hondFinalY !== 300 || movementForItem(hond, 0, trio) !== null) {{
+  throw new Error(`HOND moet zonder pijl op bronhoogte 300 blijven, kreeg ${{hondProjectionY}}/${{hondFinalY}}`);
 }}
 
 const horizontal = projectedLexItemY(item, 0, y0, sourceMap, items, {{ executedMovementCount: 0 }});
 const afterMove = projectedLexItemY(item, 0, y0, sourceMap, items, {{ executedMovementCount: 1 }});
 const finalY = projectedLexItemY(item, 0, y0, sourceMap, items);
 if (horizontal !== 420) throw new Error(`fase LEX moet BIJT laag op 420 tonen, kreeg ${{horizontal}}`);
-if (afterMove !== 180 || finalY !== 180) throw new Error(`BIJT moet in één stap rechtstreeks naar V2 180 gaan, kreeg ${{afterMove}}/${{finalY}}`);
+if (projectedV2SlotY(y0, sourceMap, items) !== 400) throw new Error('V2 moet exact tussen HOND 300 en MAN 500 liggen');
+if (afterMove !== 400 || finalY !== 400) throw new Error(`BIJT moet in één stap rechtstreeks naar tussenrij V2 400 gaan, kreeg ${{afterMove}}/${{finalY}}`);
 
 const man = trio[2];
 const manProjectionY = projectionAnchorY(man, 2, y0, sourceMap, trio);
 const manReservedY = baseLexY(man, 2, y0, sourceMap, trio);
 const manFinalY = projectedLexItemY(man, 2, y0, sourceMap, trio);
-if (manProjectionY !== 520 || manFinalY !== 520) {{
-  throw new Error(`MAN moet exact op bronhoogte 520 blijven, kreeg ${{manProjectionY}}/${{manFinalY}}`);
+if (manProjectionY !== 500 || manFinalY !== 500) {{
+  throw new Error(`MAN moet exact op bronhoogte 500 blijven, kreeg ${{manProjectionY}}/${{manFinalY}}`);
 }}
 if (manReservedY === manFinalY) {{
   throw new Error('testopzet moet bewijzen dat LOG-reservering en zichtbare MAN-hoogte afzonderlijk zijn');
@@ -167,7 +172,7 @@ if (lateSourceY !== 120 || lateTargetY !== 120) {{
   throw new Error(`een lager doel moet in het actieve profiel op bronhoogte blijven: ${{lateSourceY}} → ${{lateTargetY}}`);
 }}
 
-console.log('HORIZONTALE LEX CHECK: OK (omhoog 420 → 180; lager doel geblokkeerd op 120; MAN blijft 520)');
+console.log('HORIZONTALE LEX CHECK: OK (HOND blijft 300; BIJT 420 → tussenrij 400; MAN blijft 500)');
 """
 
 with tempfile.NamedTemporaryFile("w", suffix=".js", encoding="utf-8", delete=False) as handle:

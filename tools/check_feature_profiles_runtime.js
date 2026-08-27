@@ -150,7 +150,7 @@ async function waitForViewer(page) {
     assert.match(resetState.docsHref, /[?&]profile=base(?:&|$)/);
 
     await page.goto(new URL('examples-input.html?profile=base', baseUrl).toString(), { waitUntil: 'networkidle' });
-    assert.equal(await page.locator('.example-input:visible').count(), 12);
+    assert.equal(await page.locator('.example-input:visible').count(), 11);
     await page.goto(new URL('lexicon-config.html?profile=base', baseUrl).toString(), { waitUntil: 'networkidle' });
     assert.equal(await page.locator('.lexicon-entry[data-kind="adv"]:visible').count(), 0);
     assert.equal(await page.locator('.lexicon-construction:visible').count(), 0);
