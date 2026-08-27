@@ -1,1 +1,1 @@
-v2.0.0-rc.45-space-drag-default-connector-zone-production-20260827.31
+v2.0.0-rc.45-universal-local-space-zoom-production-20260827.32

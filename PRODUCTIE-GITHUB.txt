@@ -2,7 +2,7 @@ PRODUCTIEVERSIE VOOR GITHUB
 ===========================
 
 Bronstand:
-v2.0.0-rc.45-space-drag-default-connector-zone-production-20260827.31
+v2.0.0-rc.45-universal-local-space-zoom-production-20260827.32
 
 Deze volledige projectmap is bedoeld voor C:\git\graphlite.
 
@@ -28,6 +28,10 @@ OMDAT krijgt als connector vóór K2 een eigen LEX-rij met vrije ruimte
 onder K1 en boven K2; de volgende kernzin wordt daarvoor als geheel lager
 geplaatst.
 De standaardbediening Ruimte slepen schaalt rasterruimte via een knoop:
+- beschikbaar in Zin, Uiting en Story;
+- lokaal horizontaal, verticaal of schuin in Zin;
+- lokaal verticaal per kernzin en gekoppeld horizontaal in Uiting/Story;
+- Ctrl+slepen schaalt de volledige weergave;
 verticaal per kernzin, horizontaal per verbonden anafoorcomponent, H+V
 tegelijk bij schuin slepen en globaal met Ctrl+sleep. Dubbelklik of de
 Config-knop herstelt Auto. K3 schuift mee wanneer K2 hoger wordt.

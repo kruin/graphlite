@@ -8310,6 +8310,10 @@ body.placement-multi-ogn-active .lex-ambiguity-panel {
   cursor: nwse-resize;
   touch-action: none;
 }
+#graphSvg .sentence-space-drag-view[data-space-drag-enabled="true"] [data-node-id] {
+  cursor: nwse-resize;
+  touch-action: none;
+}
 #graphSvg [data-space-drag-enabled="true"] .kernel-space-drag-unit [data-node-id]:hover circle,
 #graphSvg [data-space-drag-enabled="true"] .kernel-space-drag-unit [data-node-id]:hover rect {
   filter: drop-shadow(0 0 4px color-mix(in srgb, var(--lex-projection-color,#14b8a6) 75%, transparent));

@@ -2496,6 +2496,7 @@
     kernelSpaceGlobal: (function(){ try { const value = JSON.parse(localStorage.getItem('opengraph_kernel_space_global') || 'null'); return value && Number.isFinite(value.x) && Number.isFinite(value.y) ? value : { x: 1, y: 1 }; } catch (_err) { return { x: 1, y: 1 }; } })(),
     kernelSpaceComponentX: (function(){ try { return Number(localStorage.getItem('opengraph_kernel_space_component_x')) || 1; } catch (_err) { return 1; } })(),
     kernelSpaceLocalY: (function(){ try { const value = JSON.parse(localStorage.getItem('opengraph_kernel_space_local_y') || '{}'); return value && typeof value === 'object' ? value : {}; } catch (_err) { return {}; } })(),
+    sentenceSpaceLocal: (function(){ try { const value = JSON.parse(localStorage.getItem('opengraph_sentence_space_local') || 'null'); return value && Number.isFinite(value.x) && Number.isFinite(value.y) ? value : { x: 1, y: 1 }; } catch (_err) { return { x: 1, y: 1 }; } })(),
     kernelSpaceDrag: null,
     multiOgnFlipHold: (function(){ try { return localStorage.getItem('opengraph_multi_ogn_flip_hold') || 'pause'; } catch (_err) { return 'pause'; } })(),
     causalAnaphorVariant: (function(){ try { return localStorage.getItem('opengraph_causal_anaphor_variant') || 'die'; } catch (_err) { return 'die'; } })(),
@@ -6749,8 +6750,67 @@
     if (state.showLabels) g.appendChild(labelLayer);
   }
 
+  function spaceScaledLayout(sourceLayout, localSpace = { x: 1, y: 1 }, globalSpace = { x: 1, y: 1 }) {
+    const layout = cloneLayout(sourceLayout);
+    const root = layout.nodes.find(node => node.label === 'S') || layout.nodes[0] || { x: 0, y: 0 };
+    const sx = Math.max(0.5, Math.min(3, (Number(localSpace.x) || 1) * (Number(globalSpace.x) || 1)));
+    const sy = Math.max(0.5, Math.min(3, (Number(localSpace.y) || 1) * (Number(globalSpace.y) || 1)));
+    const mapX = value => root.x + (value - root.x) * sx;
+    const mapY = value => root.y + (value - root.y) * sy;
+    layout.nodes = layout.nodes.map(node => ({ ...node, x: mapX(node.x), y: mapY(node.y) }));
+    layout.edges = layout.edges.map(edge => ({ ...edge, fromX: mapX(edge.fromX), fromY: mapY(edge.fromY), toX: mapX(edge.toX), toY: mapY(edge.toY) }));
+    layout.box = { minX: Math.min(...layout.nodes.map(node => node.x)), maxX: Math.max(...layout.nodes.map(node => node.x)),
+      minY: Math.min(...layout.nodes.map(node => node.y)), maxY: Math.max(...layout.nodes.map(node => node.y)) };
+    return layout;
+  }
+
+  function attachSentenceSpaceDrag(g) {
+    if (!state.kernelSpaceDragEnabled || !g || g.dataset.sentenceSpaceDragBound === 'true') return;
+    g.dataset.sentenceSpaceDragBound = 'true';
+    g.setAttribute('data-space-drag-enabled', 'true');
+    g.classList.add('sentence-space-drag-view');
+    const persist = () => {
+      try {
+        localStorage.setItem('opengraph_kernel_space_global', JSON.stringify(state.kernelSpaceGlobal || { x: 1, y: 1 }));
+        localStorage.setItem('opengraph_sentence_space_local', JSON.stringify(state.sentenceSpaceLocal || { x: 1, y: 1 }));
+      } catch (_err) {}
+    };
+    g.addEventListener('pointerdown', event => {
+      if (!event.target?.closest?.('[data-node-id]') || event.button !== 0) return;
+      event.preventDefault(); event.stopPropagation();
+      const global = Boolean(event.ctrlKey || event.metaKey);
+      const start = { pointerId: event.pointerId, global, clientX: event.clientX, clientY: event.clientY,
+        local: { ...(state.sentenceSpaceLocal || { x: 1, y: 1 }) }, globalSpace: { ...(state.kernelSpaceGlobal || { x: 1, y: 1 }) } };
+      state.kernelSpaceDrag = start;
+      const clamp = value => Math.max(0.5, Math.min(3, Math.round(value * 100) / 100));
+      const onMove = moveEvent => {
+        if (!state.kernelSpaceDrag || moveEvent.pointerId !== start.pointerId) return;
+        let dx = moveEvent.clientX - start.clientX, dy = moveEvent.clientY - start.clientY;
+        if (Math.abs(dx) > Math.abs(dy) * 1.7) dy = 0;
+        else if (Math.abs(dy) > Math.abs(dx) * 1.7) dx = 0;
+        if (start.global) state.kernelSpaceGlobal = { x: clamp(start.globalSpace.x + dx / 180), y: clamp(start.globalSpace.y + dy / 180) };
+        else state.sentenceSpaceLocal = { x: clamp(start.local.x + dx / 180), y: clamp(start.local.y + dy / 180) };
+        resetManualViewBox(); render();
+      };
+      const onEnd = endEvent => {
+        if (endEvent.pointerId !== start.pointerId) return;
+        state.kernelSpaceDrag = null; persist(); markConfigDirty('Ruimte slepen');
+        window.removeEventListener('pointermove', onMove); window.removeEventListener('pointerup', onEnd); window.removeEventListener('pointercancel', onEnd);
+      };
+      window.addEventListener('pointermove', onMove); window.addEventListener('pointerup', onEnd); window.addEventListener('pointercancel', onEnd);
+    });
+    g.addEventListener('dblclick', event => {
+      if (!event.target?.closest?.('[data-node-id]')) return;
+      event.preventDefault(); event.stopPropagation();
+      if (event.ctrlKey || event.metaKey) state.kernelSpaceGlobal = { x: 1, y: 1 };
+      else state.sentenceSpaceLocal = { x: 1, y: 1 };
+      persist(); resetManualViewBox(); render();
+    });
+  }
+
   function drawSyntaxTree(g, origin, options = {}) {
-    const layout = options.layout ? cloneLayout(options.layout) : getSyntaxLayout();
+    const sourceLayout = options.layout ? cloneLayout(options.layout) : getSyntaxLayout();
+    const layout = options.spaceDrag === false ? sourceLayout : spaceScaledLayout(sourceLayout, state.sentenceSpaceLocal, state.kernelSpaceGlobal);
     const growthPlan = growthPlanForLayout(layout);
     layout.__growthPlan = growthPlan;
     drawSubtreeBoxes(g, layout, origin, growthPlan);
@@ -6758,6 +6818,7 @@
     drawOpnTopicalizationSlot(g, layout, origin, growthPlan);
     drawTreeNodes(g, layout, origin, options.selectable === true, growthPlan);
     if (featureEnabled('adverbs')) drawHostedAdverbSlots(g, layout, origin, growthPlan);
+    if (options.spaceDrag !== false) attachSentenceSpaceDrag(g);
     return layout;
   }
 
@@ -8018,7 +8079,8 @@
   }
 
   function drawFunctional(g, origin, options = {}) {
-    const layout = options.layout ? cloneLayout(options.layout) : getFunctionalLayout();
+    const sourceLayout = options.layout ? cloneLayout(options.layout) : getFunctionalLayout();
+    const layout = options.spaceDrag === false ? sourceLayout : spaceScaledLayout(sourceLayout, state.sentenceSpaceLocal, state.kernelSpaceGlobal);
     const rootLabel = layout.node?.label || STRUCTURE_CONFIG.functionalRoot || 'CLAUSE';
     const functionalNodes = STRUCTURE_CONFIG.functionalNodes || [];
     const rootDef = functionalNodes.find(n => n.id === STRUCTURE_CONFIG.functionalRoot);
@@ -8036,6 +8098,7 @@
     drawOpnTopicalizationSlot(g, layout, origin, growthPlan);
     drawTreeNodes(g, layout, origin, options.selectable === true, growthPlan);
     if (featureEnabled('adverbs')) drawHostedAdverbSlots(g, layout, origin, growthPlan);
+    if (options.spaceDrag !== false) attachSentenceSpaceDrag(g);
     return layout;
   }
 
@@ -10647,7 +10710,8 @@
     const spaceStatus = document.getElementById('kernelSpaceStatus');
     if (spaceStatus) {
       const localValues = Object.entries(state.kernelSpaceLocalY || {}).map(([unit, value]) => `${unit} V ${Math.round(Number(value) * 100)}%`).join(' · ');
-      spaceStatus.textContent = `${isEnglish() ? 'Global' : 'Globaal'} H ${Math.round((state.kernelSpaceGlobal?.x || 1) * 100)}% · V ${Math.round((state.kernelSpaceGlobal?.y || 1) * 100)}% · ${isEnglish() ? 'linked' : 'gekoppeld'} H ${Math.round((state.kernelSpaceComponentX || 1) * 100)}%${localValues ? ` · ${localValues}` : ''}`;
+      const sentenceLocal = state.sentenceSpaceLocal || { x: 1, y: 1 };
+      spaceStatus.textContent = `${isEnglish() ? 'Global' : 'Globaal'} H ${Math.round((state.kernelSpaceGlobal?.x || 1) * 100)}% · V ${Math.round((state.kernelSpaceGlobal?.y || 1) * 100)}% · ${isEnglish() ? 'sentence local' : 'zin lokaal'} H ${Math.round(sentenceLocal.x * 100)}% · V ${Math.round(sentenceLocal.y * 100)}% · ${isEnglish() ? 'linked utterance' : 'uiting gekoppeld'} H ${Math.round((state.kernelSpaceComponentX || 1) * 100)}%${localValues ? ` · ${localValues}` : ''}`;
     }
     fillSelect(els.treeLineColorSelect, PROJECTION_COLOR_OPTIONS, state.treeLineColor);
     fillSelect(els.treeLineWeightSelect, LINE_WEIGHT_OPTIONS, validLineWeight(state.treeLineWeight, 'strong'));
@@ -13391,7 +13455,7 @@
         <label class="field mini-field"><span><span class="help-lang-nl">Flip · links/rechts</span><span class="help-lang-en">Flip · left/right</span></span><select id="multiTreeBranchFlipSelect"></select></label>
         <label class="field mini-field"><span><span class="help-lang-nl">PLAY · Flip-houdtijd</span><span class="help-lang-en">PLAY · Flip hold</span></span><select id="multiOgnFlipHoldSelect"></select></label>
         <p class="config-item-help"><span class="help-lang-nl"><strong>Pauzeer op Flip</strong> is standaard: de verplaatste knopen flitsen en PLAY wacht. Klik <strong>Play</strong> of <strong>→</strong> om verder te gaan. Alternatieven zijn flash (1,2 s) en houd vast (3 s).</span><span class="help-lang-en"><strong>Pause on Flip</strong> is the default: moved nodes flash and PLAY waits. Click <strong>Play</strong> or <strong>→</strong> to continue. Alternatives are flash (1.2 s) and hold (3 s).</span></p>
-        <p class="config-item-help"><span class="help-lang-nl"><strong>Ruimte slepen:</strong> sleep een knoop verticaal voor lokale rek van die kernzin, horizontaal voor gekoppelde H-rek en schuin voor H+V tegelijk. <strong>Ctrl+sleep</strong> rekt de volledige uiting. Dubbelklik herstelt de lokale ruimte. De knoop zelf wordt niet los verplaatst.</span><span class="help-lang-en"><strong>Drag spacing:</strong> drag a node vertically for local kernel-clause stretch, horizontally for linked H stretch, or at an angle to change both axes. <strong>Ctrl+drag</strong> stretches the complete utterance. Double-click resets local spacing. The node itself is not moved freely.</span></p>
+        <p class="config-item-help"><span class="help-lang-nl"><strong>Ruimte slepen:</strong> werkt standaard in Zin, Uiting en Story. Sleep horizontaal, verticaal of schuin. In een zin rekt de gekozen boom lokaal; in een uiting/story is V lokaal per kernzin en blijft H gekoppeld zodat anafoorlijnen recht blijven. <strong>Ctrl+sleep</strong> rekt de volledige weergave. Dubbelklik herstelt lokaal; Ctrl+dubbelklik globaal. De knoop zelf wordt niet los verplaatst.</span><span class="help-lang-en"><strong>Drag spacing:</strong> is available by default in Sentence, Utterance and Story. Drag horizontally, vertically or at an angle. In a sentence the selected tree stretches locally; in an utterance/story V is local per kernel clause and H stays linked so anaphor lines remain straight. <strong>Ctrl+drag</strong> stretches the complete view. Double-click resets locally; Ctrl+double-click globally. The node itself is not moved freely.</span></p>
         <p class="config-item-help"><span class="help-lang-nl"><strong>Flip</strong> spiegelt de zichtbare takken, maar verandert noch de structuur <code>S → NP, VP</code> / <code>VP → NP, V</code>, noch de LEX-woordvolgorde of verticale anaforen.</span><span class="help-lang-en"><strong>Flip</strong> mirrors the visible branches without changing <code>S → NP, VP</code> / <code>VP → NP, V</code> structure, LEX word order, or vertical anaphors.</span></p>
         <p class="config-item-help"><span class="help-lang-nl"><strong>Reikwijdte:</strong> Flip bestaat alleen in Language Tree en Anafoor/multiple Language Trees. LEX is het ultieme resultaat: de gerealiseerde uiting. De flipsolver kiest alleen toegestane boomgeometrie.</span><span class="help-lang-en"><strong>Scope:</strong> Flip exists only in Language Tree and Anaphor/multiple Language Trees. LEX is the ultimate result: the realized utterance. The flip solver only chooses permitted tree geometry.</span></p>
         <p class="config-item-help"><span class="help-lang-nl"><strong>TODO:</strong> <em>zijn bot</em> kan het bot van Jan of van Jek betekenen; de solver mag dit niet stilzwijgend beslissen. <em>Het bot</em> is de ondubbelzinnige standaard.</span><span class="help-lang-en"><strong>TODO:</strong> <em>zijn bot</em> may mean Jan's or Jek's bone; the solver must not silently decide. <em>Het bot</em> is the unambiguous default.</span></p>
@@ -14816,6 +14880,7 @@
       kernelSpaceGlobal: { ...(state.kernelSpaceGlobal || { x: 1, y: 1 }) },
       kernelSpaceComponentX: Number(state.kernelSpaceComponentX) || 1,
       kernelSpaceLocalY: { ...(state.kernelSpaceLocalY || {}) },
+      sentenceSpaceLocal: { ...(state.sentenceSpaceLocal || { x: 1, y: 1 }) },
       kernelBranchFlip: validKernelBranchFlip(state.kernelBranchFlip),
       multiOgnFlipHold: validMultiOgnFlipHold(state.multiOgnFlipHold),
       causalAnaphorVariant: globalThis.OGNUtteranceKernels?.validCausalAnaphorVariant?.(state.causalAnaphorVariant) || 'die',
@@ -14969,6 +15034,7 @@
     if (snapshot.kernelSpaceGlobal && Number.isFinite(snapshot.kernelSpaceGlobal.x) && Number.isFinite(snapshot.kernelSpaceGlobal.y)) state.kernelSpaceGlobal = { x: snapshot.kernelSpaceGlobal.x, y: snapshot.kernelSpaceGlobal.y };
     if (Number.isFinite(snapshot.kernelSpaceComponentX)) state.kernelSpaceComponentX = snapshot.kernelSpaceComponentX;
     if (snapshot.kernelSpaceLocalY && typeof snapshot.kernelSpaceLocalY === 'object') state.kernelSpaceLocalY = { ...snapshot.kernelSpaceLocalY };
+    if (snapshot.sentenceSpaceLocal && Number.isFinite(snapshot.sentenceSpaceLocal.x) && Number.isFinite(snapshot.sentenceSpaceLocal.y)) state.sentenceSpaceLocal = { ...snapshot.sentenceSpaceLocal };
     if (typeof snapshot.kernelBranchFlip === 'string') state.kernelBranchFlip = validKernelBranchFlip(snapshot.kernelBranchFlip);
     if (typeof snapshot.multiOgnFlipHold === 'string') state.multiOgnFlipHold = validMultiOgnFlipHold(snapshot.multiOgnFlipHold);
     if (typeof snapshot.causalAnaphorVariant === 'string') state.causalAnaphorVariant = globalThis.OGNUtteranceKernels?.validCausalAnaphorVariant?.(snapshot.causalAnaphorVariant) || 'die';
@@ -15017,6 +15083,7 @@
       localStorage.setItem('opengraph_kernel_space_global', JSON.stringify(state.kernelSpaceGlobal || { x: 1, y: 1 }));
       localStorage.setItem('opengraph_kernel_space_component_x', String(state.kernelSpaceComponentX || 1));
       localStorage.setItem('opengraph_kernel_space_local_y', JSON.stringify(state.kernelSpaceLocalY || {}));
+      localStorage.setItem('opengraph_sentence_space_local', JSON.stringify(state.sentenceSpaceLocal || { x: 1, y: 1 }));
       localStorage.setItem('opengraph_kernel_branch_flip', validKernelBranchFlip(state.kernelBranchFlip));
       localStorage.setItem('opengraph_multi_ogn_flip_hold', validMultiOgnFlipHold(state.multiOgnFlipHold));
       localStorage.setItem('opengraph_causal_anaphor_variant', state.causalAnaphorVariant);
@@ -15533,8 +15600,10 @@
       state.kernelSpaceGlobal = { x: 1, y: 1 };
       state.kernelSpaceComponentX = 1;
       state.kernelSpaceLocalY = {};
+      state.sentenceSpaceLocal = { x: 1, y: 1 };
       try {
         localStorage.setItem('opengraph_kernel_space_global', JSON.stringify(state.kernelSpaceGlobal));
+        localStorage.setItem('opengraph_sentence_space_local', JSON.stringify(state.sentenceSpaceLocal));
         localStorage.setItem('opengraph_kernel_space_component_x', '1');
         localStorage.setItem('opengraph_kernel_space_local_y', '{}');
       } catch (_err) {}

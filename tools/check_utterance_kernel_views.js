@@ -10,6 +10,11 @@ const compositionEngine = require(path.join(root, 'multi-ogn-composition-engine.
 const kernelEngine = require(path.join(root, 'utterance-kernel-engine.js'));
 const browserRuntime = fs.readFileSync(path.join(root, 'tools', 'check_multi_ogn_anaphor_runtime.js'), 'utf8');
 
+assert.ok(source.includes('function spaceScaledLayout('), 'universele H/V-ruimtezoom ontbreekt');
+assert.ok(source.includes('function attachSentenceSpaceDrag('), 'ruimtezoom ontbreekt in Zin');
+assert.ok(source.includes("localStorage.setItem('opengraph_sentence_space_local'"), 'lokale zinszoom wordt niet bewaard');
+assert.ok(source.includes("in Zin, Uiting en Story"), 'Help noemt de drie ruimtezoomcontexten niet');
+
 function extract(start, next) {
   const begin = source.indexOf(`  function ${start}`);
   const end = source.indexOf(`\n  function ${next}`, begin);
