@@ -32,17 +32,28 @@ function extract(start, next) {
 
 const rewardId = 'jan-beloonde-jek-omdat-die-het-bot-terugbracht';
 const returned = kernelEngine.composeUtterance(rewardId, compositionEngine, 'die', 'terugbracht', 'het-bot');
-assert.equal(returned.definition.lower.text, 'Hond brengt bot naar man.');
+assert.equal(returned.definition.lower.text, 'Hond brengt het bot naar man.');
 assert.ok(returned.surfaceText.includes('NAAR HEM'));
 for (const word of ['HET', 'BOT', 'NAAR', 'HEM']) {
   assert.ok(returned.lexItems.some(item => item.label === word), `LEX mist gerealiseerd woord: ${word}`);
 }
 assert.equal(returned.relations.length, 2);
+const returnedK2 = returned.units.find(unit => unit.id === 'K2').layout;
+assert.equal(returnedK2.nodes.find(node => node.role === 'determiner')?.label, 'HET');
+assert.equal(returnedK2.nodes.find(node => node.role === 'theme')?.label, 'BOT');
+assert.equal(returnedK2.nodes.find(node => node.role === 'preposition')?.label, 'NAAR');
+assert.equal(returnedK2.nodes.find(node => node.role === 'goal')?.label, 'MAN');
+assert.equal(returned.relations[1].anaphor.nodeId, returnedK2.nodes.find(node => node.role === 'goal').id,
+  'JAN moet met goal=MAN verbonden zijn, niet met BOT');
 const fetched = kernelEngine.composeUtterance(rewardId, compositionEngine, 'die', 'apporteerde', 'het-bot');
-assert.equal(fetched.definition.lower.text, 'Hond apporteert bot.');
+assert.equal(fetched.definition.lower.text, 'Hond apporteert het bot.');
 assert.ok(!fetched.surfaceText.includes('NAAR'));
 assert.ok(!fetched.surfaceText.includes('HEM'));
 assert.equal(fetched.relations.length, 1, 'apporteren heeft geen MAN/HEM-relatie');
+const fetchedK2 = fetched.units.find(unit => unit.id === 'K2').layout;
+assert.equal(fetchedK2.nodes.find(node => node.role === 'theme')?.label, 'BOT');
+assert.ok(!fetchedK2.nodes.some(node => node.role === 'goal' || node.role === 'preposition'),
+  'apporteren mag geen doel-MAN of NAAR-PP bevatten');
 
 class FakeElement {
   constructor(tag, attributes = {}, content = '') {
@@ -111,8 +122,9 @@ function descendants(element) {
 function assertDiagonalFreeNodeEdges(rootElement, context) {
   const elements = descendants(rootElement);
   const edges = elements.filter(element => element.classList.contains('utterance-free-node-edge'));
-  assert.ok(edges.length === 8 || edges.length === 12,
-    `${context}: iedere kernzin vereist vier free-node-takken`);
+  const expectedEdges = currentComposition.units.reduce((total, unit) => total + unit.layout.edges.length, 0);
+  assert.equal(edges.length, expectedEdges,
+    `${context}: iedere gedeclareerde binaire tak moet zichtbaar zijn`);
   const nodes = new Map(elements
     .filter(element => element.tagName === 'circle' && element.getAttribute('data-node-id') !== null)
     .map(element => [element.getAttribute('data-node-id'), element]));
@@ -209,13 +221,22 @@ for (const definition of kernelEngine.DEFINITIONS) {
     const predicate = unit.layout.nodes.find(node => node.role === 'predicate');
     assert.deepEqual(unit.layout.edges.filter(edge => edge.from === rootNode.id).map(edge => edge.to),
       [subject.id, vpNode.id], `${definition.id}/${unit.id}: S moet NP, VP zijn`);
-    assert.deepEqual(unit.layout.edges.filter(edge => edge.from === vpNode.id).map(edge => edge.to),
-      [object.id, predicate.id], `${definition.id}/${unit.id}: VP moet NP, V zijn`);
-    assert.ok(object.y < predicate.y, `${definition.id}/${unit.id}: NP moet vóór V staan`);
+    const vpChildren = unit.layout.edges.filter(edge => edge.from === vpNode.id).map(edge => edge.to);
+    if (object) {
+      assert.deepEqual(vpChildren, [object.id, predicate.id], `${definition.id}/${unit.id}: VP moet NP, V zijn`);
+      assert.ok(object.y < predicate.y, `${definition.id}/${unit.id}: NP moet vóór V staan`);
+      assert.ok((object.x - vpNode.x) * (predicate.x - vpNode.x) < 0,
+        `${definition.id}/${unit.id}: VP moet visueel links/rechts vertakken`);
+    } else {
+      const themePhrase = unit.layout.nodes.find(node => node.role === 'theme-phrase');
+      assert.ok(themePhrase, `${definition.id}/${unit.id}: structurele BOT-NP ontbreekt`);
+      assert.equal(unit.layout.nodes.find(node => node.role === 'theme')?.label, 'BOT');
+      assert.ok(vpChildren.includes(themePhrase.id));
+      assert.ok(unit.layout.nodes.every(node => unit.layout.edges.filter(edge => edge.from === node.id).length <= 2),
+        `${definition.id}/${unit.id}: recursieve boom is niet binair`);
+    }
     assert.ok((subject.x - rootNode.x) * (vpNode.x - rootNode.x) < 0,
       `${definition.id}/${unit.id}: S moet visueel links/rechts vertakken`);
-    assert.ok((object.x - vpNode.x) * (predicate.x - vpNode.x) < 0,
-      `${definition.id}/${unit.id}: VP moet visueel links/rechts vertakken`);
   }
   assert.deepEqual(compositionEngine.sharedCoordinates(
     currentComposition.units[0].layout, currentComposition.units[1].layout, 'y'

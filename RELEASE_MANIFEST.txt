@@ -322,6 +322,7 @@ tools/check_readme_carousel_editor_runtime.js
 tools/check_readme_item_editor.py
 tools/check_readme_item_editor_runtime.js
 tools/check_recursive_box_fit_runtime.js
+tools/check_recursive_kernel_builder.js
 tools/check_release.py
 tools/check_release_zip_batch.py
 tools/check_social_and_linguistic_export.py

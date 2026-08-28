@@ -37,7 +37,7 @@ required_files = [
     "MULTI_OGN_ANAPHOR.md", "multi-ogn-composition-engine.js", "utterance-kernel-engine.js",
     "UITING_EN_KERNZINNEN.md", "docs/UITING_EN_KERNZINNEN.md",
     "samples/uitingen-kernzinnen.v1.json", "tools/check_utterances.js",
-    "tools/check_utterance_kernel_views.js",
+    "tools/check_utterance_kernel_views.js", "tools/check_recursive_kernel_builder.js",
     "samples/ik-zie-man-hij-draagt-hoed.multi-ogn.v1.opn",
     "PUBLICATIE_README.md", "RC44_PUBLICATION_CAROUSEL_TEST.md",
     "RC45_OGN_CORE_EXPLANATION_TEST.md", "GREEDY_GROW_RECONSTRUCTION.md",
@@ -772,7 +772,7 @@ for marker, label in [
 ]:
     require(local_launcher, marker, label)
 source_build = read("SOURCE_BUILD.txt").strip()
-if source_build != "v2.0.0-rc.45-collapsible-mobile-space-zoom-complete-lex-production-20260828.34":
+if source_build != "v2.0.0-rc.45-structural-bot-np-pp-role-aware-flip-play-20260828.36":
     errors.append(f"onverwachte of lege SOURCE_BUILD.txt: {source_build!r}")
 
 leesmij = read("LEESMIJ.md")

@@ -62,6 +62,23 @@ toepassingsverschuiving moet dezelfde invariant behouden. Na plaatsing, vóór
 render en vóór OPN-export wordt dit gecontroleerd; bij een conflict wordt geen
 fallbackknoop getekend. Zo'n conflict heet **gridlijnhergebruik**.
 
+Voor kernzinnen is dit contract nu ook uitvoerbaar via
+`buildRecursiveBinaryLayout(schema)`. De builder:
+
+- bezoekt het gedeclareerde schema recursief;
+- accepteert per knoop maximaal twee dochters;
+- bouwt stabiele knoop-id's en boom-edges;
+- controleert na opbouw dat iedere knoop een unieke x- én y-gridlijn heeft;
+- houdt grammaticale rollen zoals `subject`, `theme`, `goal` en
+  `predicate` los van de binaire categorieboom.
+
+De regressieset bevat drie oplopende schema's: `HOND BIJT MAN`,
+`HOND APPORTEERT [NP HET BOT]` en
+`HOND BRENGT [NP HET BOT] [PP NAAR MAN]`. Deze schema's zijn nu ook in de
+zichtbare uiting aangesloten. Flip spiegelt de volledige K2-boom, de
+anafooruitlijning gebruikt `goal=MAN` en PLAY rendert iedere recursief
+gedeclareerde tak.
+
 **Implementatiegrens in rc.42:** deze gridplaatsing krijgt de later gemeten
 pixelbreedtes nog niet terug als invoer. Een langer label kan dus zijn
 subtree-rechthoek verbreden, maar laat niet automatisch naburige knopen naar

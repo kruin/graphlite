@@ -174,19 +174,34 @@
     const bot = BOT_VARIANTS.find(item => item.id === botVariantId) || BOT_VARIANTS[0];
     const apporteren = reward && /apporteer|geapporteerd/.test(verb.id);
     const objectText = reward ? (apporteren ? bot.text : `${bot.text} naar hem`) : 'hem';
-    const objectWords = reward ? (apporteren ? [...bot.words] : [...bot.words, 'NAAR', 'HEM']) : null;
-    const objectLabel = reward ? objectWords.join(' ') : 'HEM';
     // Kernel trees retain their default lexical source nodes. Anaphora,
     // inflection, articles and V-cluster choices are LEX realizations only.
     const lower = apporteren
-      ? Object.freeze({ text: 'Hond apporteert bot.', subject: 'HOND', predicate: 'APPORTEERT', object: 'BOT', order: 'subject-object-predicate' })
-      : base.lower;
-    const relations = apporteren ? Object.freeze(base.relations.slice(0, 1)) : base.relations;
+      ? Object.freeze({ text: `Hond apporteert ${bot.text}.`, subject: 'HOND', predicate: 'APPORTEERT', determiner: bot.words[0], theme: bot.words[bot.words.length - 1], schema: 'apporteren', order: 'subject-theme-predicate' })
+      : reward
+        ? Object.freeze({ text: `Hond brengt ${bot.text} naar man.`, subject: 'HOND', predicate: 'BRENGT', determiner: bot.words[0], theme: bot.words[bot.words.length - 1], goal: 'MAN', schema: 'terugbrengen', order: 'subject-theme-goal-predicate' })
+        : base.lower;
+    const relations = apporteren
+      ? Object.freeze(base.relations.slice(0, 1))
+      : reward
+        ? Object.freeze(base.relations.map((relation, index) => index === 1 ? Object.freeze({ ...relation, lowerRole: 'goal' }) : relation))
+        : base.relations;
     const surface = Object.freeze(base.surface.flatMap(item => {
       if (item.unit === 'K2' && item.role === 'subject') return variant.words.map((label, index) => Object.freeze({
         ...item, label, ...(variant.phrase ? { phrase: variant.label, phrasePart: index + 1 } : {})
       }));
-      if (item.unit === 'K2' && item.role === 'object') return [{ ...item, label: objectLabel, words: reward ? Object.freeze(objectWords) : undefined }];
+      if (item.unit === 'K2' && item.role === 'object' && reward) {
+        const nounPhrase = bot.words.map((label, index) => Object.freeze({
+          ...item, words: undefined, label, role: index === bot.words.length - 1 ? 'theme' : 'determiner',
+          phrase: bot.text.toUpperCase(), phrasePart: index + 1
+        }));
+        return apporteren ? nounPhrase : [
+          ...nounPhrase,
+          Object.freeze({ ...item, words: undefined, label: 'NAAR', role: 'preposition' }),
+          Object.freeze({ ...item, words: undefined, label: 'HEM', role: 'goal' })
+        ];
+      }
+      if (item.unit === 'K2' && item.role === 'object') return [{ ...item, label: 'HEM' }];
       if (item.unit === 'K2' && item.role === 'predicate') return [{ ...item, label: verb.words.join(' '), words: verb.words }];
       return [item];
     }));
@@ -202,6 +217,51 @@
     });
   }
 
+  function buildRecursiveBinaryLayout(schema, options = {}) {
+    if (!schema || typeof schema !== 'object') throw new Error('Binaire kernboom mist een schema.');
+    const prefix = String(options.prefix || 'kernel').replace(/[^a-z0-9_-]+/gi, '-').toLowerCase();
+    const nodes = [];
+    const edges = [];
+    const seenKeys = new Set();
+    const visit = (spec, parent = null, path = 'root') => {
+      const children = Array.isArray(spec.children) ? spec.children : [];
+      if (children.length > 2) throw new Error(`Niet-binaire vertakking bij ${spec.label || path}: ${children.length} dochters.`);
+      const key = String(spec.key || spec.role || path).replace(/[^a-z0-9_-]+/gi, '-').toLowerCase();
+      if (seenKeys.has(key)) throw new Error(`Dubbele kernboom-id: ${key}.`);
+      seenKeys.add(key);
+      if (!Number.isFinite(spec.x) || !Number.isFinite(spec.y)) {
+        throw new Error(`Kernboomknoop ${spec.label || key} mist een berekende vrije x/y-positie.`);
+      }
+      const id = `${prefix}-${key}`;
+      const kind = spec.kind || (children.length ? 'cat' : 'leaf');
+      const node = {
+        id, label: String(spec.label || spec.cat || key).toUpperCase(),
+        cat: String(spec.cat || spec.label || '').toUpperCase(), kind,
+        x: Number(spec.x), y: Number(spec.y),
+        ...(spec.role ? { role: spec.role } : {}),
+        ...(spec.implicit ? { implicit: true } : {}),
+        ...(kind === 'leaf' ? { source: id } : {})
+      };
+      nodes.push(node);
+      if (parent) edges.push({ from: parent.id, to: node.id, fromX: parent.x, fromY: parent.y, toX: node.x, toY: node.y, type: 'tree' });
+      children.forEach((child, index) => visit(child, node, `${path}-${index + 1}`));
+      return node;
+    };
+    const root = visit(schema);
+    const uniqueX = new Set(nodes.map(node => node.x));
+    const uniqueY = new Set(nodes.map(node => node.y));
+    if (uniqueX.size !== nodes.length || uniqueY.size !== nodes.length) {
+      throw new Error('Recursieve kernboom schendt de OGN-regel: iedere knoop vereist een eigen x- én y-gridlijn.');
+    }
+    return {
+      node: root, nodes, edges, mirrored: Boolean(options.mirrored), boxes: [],
+      box: {
+        minX: Math.min(...nodes.map(node => node.x)), maxX: Math.max(...nodes.map(node => node.x)),
+        minY: Math.min(...nodes.map(node => node.y)), maxY: Math.max(...nodes.map(node => node.y))
+      }
+    };
+  }
+
   function buildLayout(definition, side) {
     const unit = side === 'upper' ? definition.upper : definition.lower;
     const prefix = `${definition.id}-${side === 'upper' ? 'k1' : 'k2'}`;
@@ -214,36 +274,52 @@
       : definition.type === 'causal-role-flip'
         ? { subject: 0, root: -1, object: -3, vp: -4, predicate: -5, mirrored: true }
         : { subject: -3, root: -1, object: 0, vp: 3, predicate: 4, mirrored: false };
+    if (!upper && unit.schema === 'apporteren') {
+      return buildRecursiveBinaryLayout({
+        key:'s', label:'S', x:-1, y:0, children:[
+          { key:'subject', label:unit.subject, cat:'NP', role:'subject', x:0, y:1 },
+          { key:'vp', label:'VP', x:-5, y:2, children:[
+            { key:'theme-np', label:'NP', cat:'NP', role:'theme-phrase', x:-7, y:3, children:[
+              { key:'determiner', label:unit.determiner, cat:'DET', role:'determiner', x:-9, y:4 },
+              { key:'theme', label:unit.theme, cat:'N', role:'theme', x:-6, y:5 }
+            ] },
+            { key:'predicate', label:unit.predicate, cat:'V', role:'predicate', x:3, y:6 }
+          ] }
+        ]
+      }, { prefix, mirrored:true });
+    }
+    if (!upper && unit.schema === 'terugbrengen') {
+      return buildRecursiveBinaryLayout({
+        key:'s', label:'S', x:-1, y:0, children:[
+          { key:'subject', label:unit.subject, cat:'NP', role:'subject', x:0, y:1 },
+          { key:'vp', label:'VP', x:-5, y:2, children:[
+            { key:'theme-np', label:'NP', cat:'NP', role:'theme-phrase', x:-8, y:3, children:[
+              { key:'determiner', label:unit.determiner, cat:'DET', role:'determiner', x:-10, y:4 },
+              { key:'theme', label:unit.theme, cat:'N', role:'theme', x:-7, y:5 }
+            ] },
+            { key:'vp-shell', label:"VP'", cat:'VP', x:-4, y:6, children:[
+              { key:'goal-pp', label:'PP', cat:'PP', role:'goal-phrase', x:-6, y:7, children:[
+                { key:'preposition', label:'NAAR', cat:'P', role:'preposition', x:-9, y:8 },
+                { key:'goal', label:unit.goal, cat:'NP', role:'goal', x:-3, y:9 }
+              ] },
+              { key:'predicate', label:unit.predicate, cat:'V', role:'predicate', x:4, y:10 }
+            ] }
+          ] }
+        ]
+      }, { prefix, mirrored:true });
+    }
     // Dutch kernel syntax is S → NP, VP and VP → NP, V. Surface V2 is
     // realized on LEX; it must not rewrite the underlying VP branch order.
-    const roleY = { subject: 1, object: 3, predicate: 4 };
-    const root = { id: `${prefix}-s`, label: 'S', cat: 'S', kind: 'cat', x: coordinates.root, y: 0 };
-    const vp = { id: `${prefix}-vp`, label: 'VP', cat: 'VP', kind: 'cat', x: coordinates.vp, y: 2 };
-    const subject = {
-      id: `${prefix}-subject`, label: unit.subject, cat: unit.implicitSubject ? 'PRON' : 'NP', role: 'subject',
-      source: `${prefix}-subject`, kind: 'leaf', implicit: !!unit.implicitSubject, x: coordinates.subject, y: roleY.subject
-    };
-    const predicate = {
-      id: `${prefix}-predicate`, label: unit.predicate, cat: 'V', role: 'predicate',
-      source: `${prefix}-predicate`, kind: 'leaf', x: coordinates.predicate, y: roleY.predicate
-    };
-    const object = {
-      id: `${prefix}-object`, label: unit.object, cat: 'NP', role: 'object',
-      source: `${prefix}-object`, kind: 'leaf', x: coordinates.object, y: roleY.object
-    };
-    const nodes = [root, subject, vp, object, predicate];
-    const edge = (from, to) => ({ from: from.id, to: to.id, fromX: from.x, fromY: from.y, toX: to.x, toY: to.y, type: 'tree' });
-    return {
-      node: root,
-      nodes,
-      edges: [edge(root, subject), edge(root, vp), edge(vp, object), edge(vp, predicate)],
-      mirrored: coordinates.mirrored,
-      boxes: [],
-      box: {
-        minX: Math.min(...nodes.map(node => node.x)), maxX: Math.max(...nodes.map(node => node.x)),
-        minY: Math.min(...nodes.map(node => node.y)), maxY: Math.max(...nodes.map(node => node.y))
-      }
-    };
+    return buildRecursiveBinaryLayout({
+      key: 's', label: 'S', cat: 'S', x: coordinates.root, y: 0, children: [
+        { key: 'subject', label: unit.subject, cat: unit.implicitSubject ? 'PRON' : 'NP', role: 'subject',
+          implicit: !!unit.implicitSubject, x: coordinates.subject, y: 1 },
+        { key: 'vp', label: 'VP', cat: 'VP', x: coordinates.vp, y: 2, children: [
+          { key: 'object', label: unit.object, cat: 'NP', role: 'object', x: coordinates.object, y: 3 },
+          { key: 'predicate', label: unit.predicate, cat: 'V', role: 'predicate', x: coordinates.predicate, y: 4 }
+        ] }
+      ]
+    }, { prefix, mirrored: coordinates.mirrored });
   }
 
   function composeUtterance(id, compositionEngine, variantId = 'die', verbVariantId = '', botVariantId = 'het-bot') {
@@ -253,24 +329,6 @@
     if (definition.type === 'story-role-flip') return composeStory(definition, compositionEngine);
     const upper = buildLayout(definition, 'upper');
     const lower = buildLayout(definition, 'lower');
-    // APPORTEREN has no MAN argument. Move BOT off JAN's column so the only
-    // cross-kernel column is the declared HOND relation.
-    if (definition.verbVariant && /apporteer|geapporteerd/.test(definition.verbVariant)) {
-      const object = lower.nodes.find(node => node.role === 'object');
-      const predicate = lower.nodes.find(node => node.role === 'predicate');
-      const vp = lower.nodes.find(node => node.label === 'VP');
-      object.x = -6;
-      vp.x = -5;
-      predicate.x = -4;
-      lower.edges.forEach(item => {
-        const from = lower.nodes.find(node => node.id === item.from);
-        const to = lower.nodes.find(node => node.id === item.to);
-        item.fromX = from.x;
-        item.toX = to.x;
-      });
-      lower.box.minX = Math.min(...lower.nodes.map(node => node.x));
-      lower.box.maxX = Math.max(...lower.nodes.map(node => node.x));
-    }
     const declarations = definition.relations.map(relation => {
       const antecedent = upper.nodes.find(node => node.role === relation.upperRole);
       const anaphor = lower.nodes.find(node => node.role === relation.lowerRole);
@@ -350,5 +408,5 @@
       lexItems, surfaceText: expandedSurface.map(item => item.label).join(' ') };
   }
 
-  return Object.freeze({ DEFINITIONS, CAUSAL_ANAPHOR_VARIANTS, CAUSAL_VERB_VARIANTS, REWARD_VERB_VARIANTS, BOT_VARIANTS, validCausalAnaphorVariant, definitionFor, buildLayout, composeUtterance });
+  return Object.freeze({ DEFINITIONS, CAUSAL_ANAPHOR_VARIANTS, CAUSAL_VERB_VARIANTS, REWARD_VERB_VARIANTS, BOT_VARIANTS, validCausalAnaphorVariant, definitionFor, buildRecursiveBinaryLayout, buildLayout, composeUtterance });
 });

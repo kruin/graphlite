@@ -102,7 +102,7 @@ daarna realiseert LEX bijvoorbeeld `JAN SLAAT JEK OMDAT DIE HEM BEET`.
 | Jan wast zichzelf. | Jan wast Jan. | Jan wast zelf. | Jan als agens = Jan als patiens; `zich + zelf → zichzelf`. |
 | Jan slaat Jek omdat die hem beet. | Jan slaat hond. | Hond bijt man. | Oorzaak `k₂ → k₁`; `hond = Jek`; `man = Jan`; rol-flip. |
 | Jan slaat de hond omdat die hem gebeten heeft. | Jan slaat hond. | Hond bijt man. | Dezelfde bronbomen; `de hond`, `die`, `hem` en `gebeten heeft` verschijnen uitsluitend op LEX. |
-| Jan beloonde zijn hond Jek omdat die het bot naar hem terugbracht. | Jan beloont hond. | Hond brengt bot naar man. | `hond = Jek`; `man = Jan`; LEX realiseert terugbrengen. |
+| Jan beloonde zijn hond Jek omdat die het bot naar hem terugbracht. | Jan beloont hond. | Hond brengt het bot naar man. | `hond = Jek`; `man = Jan`; BOT is een eigen structureel thema; LEX realiseert terugbrengen. |
 | Ken uzelf. | Ken zelf. | Ken u. | Impliciete geadresseerde = object; `u + zelf → uzelf`; imperatief. |
 
 ### Nieuwe variantgroepen
@@ -118,6 +118,11 @@ Terugbrengen en apporteren zijn daarbij **geen gemengde analyse**:
 
 - terugbrengen: `HOND BRENGT BOT NAAR MAN` → `die het bot naar hem terugbracht`;
 - apporteren: `HOND APPORTEERT BOT` → `die het bot apporteerde`.
+
+De boom maakt dit verschil nu eveneens structureel. Terugbrengen gebruikt een
+recursieve binaire VP met `NP → DET N` voor HET BOT en `PP → P NP` voor
+NAAR MAN. Apporteren gebruikt alleen de BOT-NP. De anafoor van JAN grijpt bij
+terugbrengen aan op `goal=MAN`; `theme=BOT` blijft een afzonderlijke rol.
 
 Alleen de terugbrengvariant bevat MAN als doel en dus de relatie `MAN ↔ MAN` /
 `JAN ↔ HEM`. De apporteervariant bevat geen `naar hem` en alleen de

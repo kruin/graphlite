@@ -2,7 +2,7 @@ PRODUCTIEVERSIE VOOR GITHUB
 ===========================
 
 Bronstand:
-v2.0.0-rc.45-collapsible-mobile-space-zoom-complete-lex-production-20260828.34
+v2.0.0-rc.45-structural-bot-np-pp-role-aware-flip-play-20260828.36
 
 Deze volledige projectmap is bedoeld voor C:\git\graphlite.
 
@@ -37,6 +37,10 @@ De standaardbediening Ruimte slepen schaalt rasterruimte via een knoop:
 - Ruimtezoom opent en sluit als compact mobiel paneel; de keuze wordt onthouden;
 - Config → Ruimte slepen schakelt paneel en functie volledig aan/uit;
 - de LEX-as groeit dynamisch mee met meerwoordrealisaties zoals HET BOT NAAR HEM, zonder wijziging van de binaire kernboom;
+- de kernboombuilder is recursief en strikt binair; transitief, NP-intern en NP+PP zijn afzonderlijk getest;
+- terugbrengen toont structureel HET BOT als NP en NAAR MAN als PP;
+- apporteren toont structureel alleen de BOT-NP, zonder MAN/PP;
+- Flip en PLAY volgen alle recursieve takken; JAN is uitsluitend verbonden met goal=MAN;
 verticaal per kernzin, horizontaal per verbonden anafoorcomponent, H+V
 tegelijk bij schuin slepen en globaal met Ctrl+sleep. Dubbelklik of de
 Config-knop herstelt Auto. K3 schuift mee wanneer K2 hoger wordt.

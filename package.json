@@ -9,7 +9,8 @@
     "carousel:check": "python tools/check_publication_carousel.py",
     "carousel:build": "python tools/build_publication_carousel_zip.py",
     "utterances:check": "node tools/check_utterances.js",
-    "utterances:views": "node tools/check_utterance_kernel_views.js"
+    "utterances:views": "node tools/check_utterance_kernel_views.js",
+    "utterances:recursive": "node tools/check_recursive_kernel_builder.js"
   },
   "devDependencies": {
     "playwright": "1.61.1"

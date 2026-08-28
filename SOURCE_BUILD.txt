@@ -1,1 +1,1 @@
-v2.0.0-rc.45-collapsible-mobile-space-zoom-complete-lex-production-20260828.34
+v2.0.0-rc.45-structural-bot-np-pp-role-aware-flip-play-20260828.36
