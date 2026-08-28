@@ -16,11 +16,14 @@ assert.ok(source.includes('function spaceScaledLayout('), 'universele H/V-ruimte
 assert.ok(source.includes('function attachSentenceSpaceDrag('), 'ruimtezoom ontbreekt in Zin');
 assert.ok(source.includes("localStorage.setItem('opengraph_sentence_space_local'"), 'lokale zinszoom wordt niet bewaard');
 assert.ok(source.includes("in Zin, Uiting en Story"), 'Help noemt de drie ruimtezoomcontexten niet');
-for (const marker of ['id="spaceZoomControls"', 'data-space-toggle', 'space-zoom-panel', 'data-space-scope="local"', 'data-space-scope="global"', 'data-space-axis="x"', 'data-space-axis="y"', 'data-space-axis="xy"', 'data-space-reset']) {
+for (const marker of ['id="spaceZoomControls"', 'data-space-toggle', 'space-zoom-panel', 'data-space-scope="local"', 'data-space-scope="global"', 'data-space-unit="K1"', 'data-space-unit="K2"', 'data-space-unit="K3"', 'data-space-axis="x"', 'data-space-axis="y"', 'data-space-axis="xy"', 'data-space-reset="selected"', 'data-space-reset="utterance"', 'data-space-reset="all"', 'id="spaceZoomStatus"']) {
   assert.ok(indexHtml.includes(marker), `mobiele ruimtezoombediening ontbreekt: ${marker}`);
 }
 assert.ok(styles.includes('touch-action: none'), 'mobiele ruimtezoom blokkeert browsergebaar niet');
 assert.ok(source.includes("state.mobileSpaceScope === 'global'"), 'mobiele globale ruimtezoom ontbreekt');
+assert.ok(source.includes("state.mobileSpaceUnit = button.dataset.spaceUnit"), 'zichtbare K1/K2/K3-keuze werkt niet');
+assert.ok(source.includes('Lokale ruimte hoort bij de actieve zin/uiting'), 'lokale zoom wordt niet bij uitingswisseling gereset');
+assert.ok(source.includes("state.kernelSpaceGlobal = { x: 1, y: 1 }"), 'globale zoomreset ontbreekt');
 assert.ok(source.includes('const lexicalAxisBottom ='), 'LEX-as reserveert geen dynamische woordrijen');
 
 function extract(start, next) {

@@ -12532,6 +12532,17 @@
     state.lastSupportedGrowthStep = 0;
     state.roleSwap = false;
     state.selectedNodeId = null;
+    // Lokale ruimte hoort bij de actieve zin/uiting en reist niet mee naar
+    // het volgende voorbeeld. Globale ruimte is wel een browservoorkeur.
+    state.kernelSpaceComponentX = 1;
+    state.kernelSpaceLocalY = {};
+    state.sentenceSpaceLocal = { x: 1, y: 1 };
+    state.mobileSpaceUnit = 'K1';
+    try {
+      localStorage.setItem('opengraph_kernel_space_component_x', '1');
+      localStorage.setItem('opengraph_kernel_space_local_y', '{}');
+      localStorage.setItem('opengraph_sentence_space_local', JSON.stringify(state.sentenceSpaceLocal));
+    } catch (_err) {}
     applyExampleAdverbDefaults();
     resetManualViewBox();
   }
@@ -13468,7 +13479,7 @@
         <label class="field mini-field"><span><span class="help-lang-nl">Flip · links/rechts</span><span class="help-lang-en">Flip · left/right</span></span><select id="multiTreeBranchFlipSelect"></select></label>
         <label class="field mini-field"><span><span class="help-lang-nl">PLAY · Flip-houdtijd</span><span class="help-lang-en">PLAY · Flip hold</span></span><select id="multiOgnFlipHoldSelect"></select></label>
         <p class="config-item-help"><span class="help-lang-nl"><strong>Pauzeer op Flip</strong> is standaard: de verplaatste knopen flitsen en PLAY wacht. Klik <strong>Play</strong> of <strong>→</strong> om verder te gaan. Alternatieven zijn flash (1,2 s) en houd vast (3 s).</span><span class="help-lang-en"><strong>Pause on Flip</strong> is the default: moved nodes flash and PLAY waits. Click <strong>Play</strong> or <strong>→</strong> to continue. Alternatives are flash (1.2 s) and hold (3 s).</span></p>
-        <p class="config-item-help"><span class="help-lang-nl"><strong>Ruimte slepen:</strong> werkt standaard in Zin, Uiting en Story. Sleep horizontaal, verticaal of schuin. In een zin rekt de gekozen boom lokaal; in een uiting/story is V lokaal per kernzin en blijft H gekoppeld zodat anafoorlijnen recht blijven. <strong>Ctrl+sleep</strong> rekt de volledige weergave. Dubbelklik herstelt lokaal; Ctrl+dubbelklik globaal. De knoop zelf wordt niet los verplaatst.</span><span class="help-lang-en"><strong>Drag spacing:</strong> is available by default in Sentence, Utterance and Story. Drag horizontally, vertically or at an angle. In a sentence the selected tree stretches locally; in an utterance/story V is local per kernel clause and H stays linked so anaphor lines remain straight. <strong>Ctrl+drag</strong> stretches the complete view. Double-click resets locally; Ctrl+double-click globally. The node itself is not moved freely.</span></p>
+        <p class="config-item-help"><span class="help-lang-nl"><strong>Ruimte slepen:</strong> werkt standaard in Zin, Uiting en Story. Open Ruimtezoom; kies bij een uiting/story zichtbaar K1, K2 of K3; houd H, V of H+V ingedrukt en sleep in de pijlrichting. V geldt voor de gekozen kernzin; H blijft voor de uiting gekoppeld zodat anafoorlijnen recht blijven. Auto K, Auto uiting en Alles 100% herstellen elk een duidelijk bereik. Bij wisseling van uiting wordt lokale zoom gereset; globale zoom blijft alleen in deze browser bewaard. De knoop zelf wordt niet los verplaatst.</span><span class="help-lang-en"><strong>Drag spacing:</strong> is available by default in Sentence, Utterance and Story. Open Space zoom; in an utterance/story visibly choose K1, K2 or K3; press and hold H, V or H+V and drag in the arrow direction. V applies to the selected kernel clause; H stays linked for the utterance so anaphor lines remain straight. Auto K, Auto utterance and All 100% each reset a clear scope. Switching utterances resets local zoom; global zoom is retained only in this browser. The node itself is not moved freely.</span></p>
         <p class="config-item-help"><span class="help-lang-nl"><strong>Flip</strong> spiegelt de zichtbare takken, maar verandert noch de structuur <code>S → NP, VP</code> / <code>VP → NP, V</code>, noch de LEX-woordvolgorde of verticale anaforen.</span><span class="help-lang-en"><strong>Flip</strong> mirrors the visible branches without changing <code>S → NP, VP</code> / <code>VP → NP, V</code> structure, LEX word order, or vertical anaphors.</span></p>
         <p class="config-item-help"><span class="help-lang-nl"><strong>Reikwijdte:</strong> Flip bestaat alleen in Language Tree en Anafoor/multiple Language Trees. LEX is het ultieme resultaat: de gerealiseerde uiting. De flipsolver kiest alleen toegestane boomgeometrie.</span><span class="help-lang-en"><strong>Scope:</strong> Flip exists only in Language Tree and Anaphor/multiple Language Trees. LEX is the ultimate result: the realized utterance. The flip solver only chooses permitted tree geometry.</span></p>
         <p class="config-item-help"><span class="help-lang-nl"><strong>TODO:</strong> <em>zijn bot</em> kan het bot van Jan of van Jek betekenen; de solver mag dit niet stilzwijgend beslissen. <em>Het bot</em> is de ondubbelzinnige standaard.</span><span class="help-lang-en"><strong>TODO:</strong> <em>zijn bot</em> may mean Jan's or Jek's bone; the solver must not silently decide. <em>Het bot</em> is the unambiguous default.</span></p>
@@ -15649,10 +15660,28 @@
         button.classList.toggle('is-active', button.dataset.spaceScope === state.mobileSpaceScope);
         button.setAttribute('aria-pressed', button.dataset.spaceScope === state.mobileSpaceScope ? 'true' : 'false');
       });
+      const multi = multiOgnAnaphorActive();
+      spaceZoomControls?.querySelector('[data-space-units]')?.classList.toggle('is-hidden', !multi || state.mobileSpaceScope === 'global');
+      spaceZoomControls?.querySelectorAll('[data-space-unit]').forEach(button => {
+        const active = button.dataset.spaceUnit === state.mobileSpaceUnit;
+        button.classList.toggle('is-active', active);
+        button.setAttribute('aria-pressed', active ? 'true' : 'false');
+      });
+      const unitId = state.mobileSpaceUnit || 'K1';
+      const status = document.getElementById('spaceZoomStatus');
+      if (status) {
+        if (state.mobileSpaceScope === 'global') {
+          status.textContent = `${isEnglish() ? 'Global' : 'Globaal'} · H ${Math.round((state.kernelSpaceGlobal?.x || 1) * 100)}% · V ${Math.round((state.kernelSpaceGlobal?.y || 1) * 100)}%`;
+        } else if (multi) {
+          status.textContent = `${unitId} · ${isEnglish() ? 'utterance H' : 'uiting H'} ${Math.round((state.kernelSpaceComponentX || 1) * 100)}% · ${unitId} V ${Math.round((Number(state.kernelSpaceLocalY?.[unitId]) || 1) * 100)}%`;
+        } else {
+          status.textContent = `${isEnglish() ? 'Sentence local' : 'Zin lokaal'} · H ${Math.round((state.sentenceSpaceLocal?.x || 1) * 100)}% · V ${Math.round((state.sentenceSpaceLocal?.y || 1) * 100)}%`;
+        }
+      }
       const help = document.getElementById('spaceZoomHelp');
       if (help) help.textContent = isEnglish()
-        ? `Choose Local/Global and drag H, V or H+V.${multiOgnAnaphorActive() ? ` Local V: ${state.mobileSpaceUnit || 'K1'}.` : ''}`
-        : `Kies Lokaal/Globaal en sleep H, V of H+V.${multiOgnAnaphorActive() ? ` Lokaal V: ${state.mobileSpaceUnit || 'K1'}.` : ''}`;
+        ? `${multi ? `Choose ${unitId}. ` : ''}Press and hold H, V or H+V, then drag in the arrow direction.`
+        : `${multi ? `Kies ${unitId}. ` : ''}Houd H, V of H+V ingedrukt en sleep in de richting van de pijl.`;
     };
     spaceZoomControls?.querySelector('[data-space-toggle]')?.addEventListener('click', () => {
       state.mobileSpacePanelOpen = !state.mobileSpacePanelOpen;
@@ -15662,6 +15691,13 @@
     spaceZoomControls?.querySelectorAll('[data-space-scope]').forEach(button => {
       button.addEventListener('click', () => {
         state.mobileSpaceScope = button.dataset.spaceScope === 'global' ? 'global' : 'local';
+        syncSpaceZoomScope();
+      });
+    });
+    spaceZoomControls?.querySelectorAll('[data-space-unit]').forEach(button => {
+      button.addEventListener('click', () => {
+        state.mobileSpaceUnit = button.dataset.spaceUnit || 'K1';
+        state.mobileSpaceScope = 'local';
         syncSpaceZoomScope();
       });
     });
@@ -15702,7 +15738,7 @@
               y: changeY ? clampSpaceZoom(start.sentence.y + dy / 160) : start.sentence.y
             };
           }
-          resetManualViewBox(); render();
+          syncSpaceZoomScope(); resetManualViewBox(); render();
         };
         const onEnd = endEvent => {
           if (endEvent.pointerId !== start.pointerId) return;
@@ -15716,14 +15752,25 @@
         window.addEventListener('pointercancel', onEnd);
       });
     });
-    spaceZoomControls?.querySelector('[data-space-reset]')?.addEventListener('click', () => {
-      if (state.mobileSpaceScope === 'global') state.kernelSpaceGlobal = { x: 1, y: 1 };
-      else if (multiOgnAnaphorActive()) {
+    spaceZoomControls?.querySelectorAll('[data-space-reset]').forEach(button => button.addEventListener('click', () => {
+      const reset = button.dataset.spaceReset || 'selected';
+      const unitId = state.mobileSpaceUnit || 'K1';
+      if (reset === 'all') {
+        state.kernelSpaceGlobal = { x: 1, y: 1 };
         state.kernelSpaceComponentX = 1;
-        state.kernelSpaceLocalY = { ...(state.kernelSpaceLocalY || {}), [state.mobileSpaceUnit || 'K1']: 1 };
+        state.kernelSpaceLocalY = {};
+        state.sentenceSpaceLocal = { x: 1, y: 1 };
+      } else if (reset === 'utterance') {
+        state.kernelSpaceComponentX = 1;
+        state.kernelSpaceLocalY = {};
+        state.sentenceSpaceLocal = { x: 1, y: 1 };
+      } else if (state.mobileSpaceScope === 'global') {
+        state.kernelSpaceGlobal = { x: 1, y: 1 };
+      } else if (multiOgnAnaphorActive()) {
+        state.kernelSpaceLocalY = { ...(state.kernelSpaceLocalY || {}), [unitId]: 1 };
       } else state.sentenceSpaceLocal = { x: 1, y: 1 };
-      persistSpaceZoom(); resetManualViewBox(); render();
-    });
+      persistSpaceZoom(); syncSpaceZoomScope(); resetManualViewBox(); render();
+    }));
     syncSpaceZoomScope();
     const updateTreeLineColor = event => { state.treeLineColor = event.target.value || 'blue'; try { localStorage.setItem('opengraph_tree_line_color', state.treeLineColor); } catch (_err) {} appendConfigLog('change-tree-color', { treeLineColor: state.treeLineColor }); markConfigDirty('Boomkleur'); render(); };
     const updateTreeLineWeight = event => { state.treeLineWeight = validLineWeight(event.target.value, 'strong'); try { localStorage.setItem('opengraph_tree_line_weight', state.treeLineWeight); } catch (_err) {} appendConfigLog('change-tree-weight', { treeLineWeight: state.treeLineWeight }); markConfigDirty('Boomlijnen'); render(); };

@@ -772,7 +772,7 @@ for marker, label in [
 ]:
     require(local_launcher, marker, label)
 source_build = read("SOURCE_BUILD.txt").strip()
-if source_build != "v2.0.0-rc.45-structural-bot-np-pp-role-aware-flip-play-20260828.36":
+if source_build != "v2.0.0-rc.45-explicit-mobile-kernel-space-zoom-20260828.37":
     errors.append(f"onverwachte of lege SOURCE_BUILD.txt: {source_build!r}")
 
 leesmij = read("LEESMIJ.md")

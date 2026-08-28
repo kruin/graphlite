@@ -8335,7 +8335,19 @@ body.placement-multi-ogn-active .lex-ambiguity-panel {
 .space-zoom-controls.is-collapsed .space-zoom-panel { display:none; }
 .space-zoom-controls.is-disabled { display:none; }
 .space-zoom-toggle { width:100%; }
-.space-zoom-scope,.space-zoom-handles { display:flex; gap:4px; }
+.space-zoom-scope,.space-zoom-handles,.space-zoom-units,.space-zoom-resets { display:flex; gap:4px; align-items:center; flex-wrap:wrap; }
+.space-zoom-units > span { font-size:11px; font-weight:800; }
+.space-zoom-units.is-hidden { display:none; }
+.space-zoom-status {
+  display:block;
+  min-height:1.35em;
+  padding:4px 6px;
+  border-radius:7px;
+  background:color-mix(in srgb, var(--accent,#0f766e) 9%, transparent);
+  font-size:11px;
+  font-weight:800;
+}
+.space-zoom-resets button { flex:1 1 auto; font-size:11px; }
 .space-zoom-controls button {
   min-width: 44px;
   min-height: 36px;
