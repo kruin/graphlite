@@ -14,9 +14,10 @@
 <script>
     (function() {
       var VERSION = 'v2.0.0-rc.45';
+      var SOURCE_BUILD = 'v2.0.0-rc.45-utterance-routing-runtime-cache-20260828.44';
       window.__OPENGRAPH_EXPECTED_VERSION__ = VERSION;
       function runCacheCleanupOnce() {
-        var flag = 'opengraph-cache-cleaned-' + VERSION;
+        var flag = 'opengraph-cache-cleaned-' + VERSION + '-' + SOURCE_BUILD;
         var alreadyCleaned = false;
         try { alreadyCleaned = sessionStorage.getItem(flag) === '1'; } catch (e) {}
         if (alreadyCleaned) return;
@@ -39,6 +40,7 @@
             var url = new URL(window.location.href);
             if (url.searchParams.get('ogv') !== VERSION) {
               url.searchParams.set('ogv', VERSION);
+              url.searchParams.set('source', SOURCE_BUILD);
               url.searchParams.set('nocache', String(Date.now()));
               window.location.replace(url.toString());
             }

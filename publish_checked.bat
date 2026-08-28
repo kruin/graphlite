@@ -170,7 +170,7 @@ endlocal
 exit /b 1
 
 :open_reset_after_push
-set "USER_RESET_URL=https://kruin.github.io/graphlite/reset-cache.html?ogv=%APP_VERSION%&nocache=%RANDOM%%RANDOM%"
+set "USER_RESET_URL=https://kruin.github.io/graphlite/reset-cache.html?ogv=%APP_VERSION%&source=%SOURCE_BUILD%&nocache=%RANDOM%%RANDOM%"
 set "RESET_MARKER=.git\opengraph-reset-%APP_VERSION%.flag"
 if exist "%RESET_MARKER%" (
   echo Reset-cache is voor %APP_VERSION% al eenmaal geopend.
@@ -199,7 +199,7 @@ if errorlevel 1 (
   echo FOUT: npm ontbreekt; een volledige Node.js-installatie is vereist.
   exit /b 1
 )
-node -e "const fs=require('fs'); const {chromium}=require('playwright'); process.exit(fs.existsSync(chromium.executablePath())?0:1)" >nul 2>nul
+node tools\check_publication_carousel_tooling.js >nul 2>nul
 if not errorlevel 1 exit /b 0
 echo.
 echo Playwright 1.61.1 of de bijbehorende Chromium-browser ontbreekt lokaal.
@@ -212,7 +212,7 @@ if errorlevel 2 (
 )
 call "%~dp0installeer-carrousel-tools.bat"
 if errorlevel 1 exit /b 1
-node -e "const fs=require('fs'); const {chromium}=require('playwright'); process.exit(fs.existsSync(chromium.executablePath())?0:1)" >nul 2>nul
+node tools\check_publication_carousel_tooling.js >nul 2>nul
 if errorlevel 1 (
   echo FOUT: Playwright of Chromium ontbreekt nog na de installatie.
   exit /b 1

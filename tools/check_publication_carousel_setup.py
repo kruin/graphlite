@@ -67,7 +67,7 @@ for marker, label in [
     require(maker, marker, label)
 for marker, label in [
     ("call :ensure_playwright_runtime", "publish-preflight voor Playwright"),
-    ("chromium.executablePath()", "publish-controle op Chromium"),
+    ("node tools\\check_publication_carousel_tooling.js", "publish-startcontrole van Chromium"),
     ('choice /C JN /N /M "Nu eenmalig installeren? [J/N]: "', "installatiekeuze in publish"),
     ('call "%~dp0installeer-carrousel-tools.bat"', "installer vanuit publish"),
 ]:

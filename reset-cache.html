@@ -15,6 +15,7 @@
   <div id="log" class="log">Start...\n</div>
   <script>
     const VERSION = 'v2.0.0-rc.45';
+    const SOURCE_BUILD = 'v2.0.0-rc.45-utterance-routing-runtime-cache-20260828.44';
     const log = document.getElementById('log');
     function add(msg){ log.textContent += msg + '\n'; }
     async function reset(){
@@ -36,6 +37,7 @@
       add('Open viewer...');
       const target = new URL('index.html', location.href);
       target.searchParams.set('ogv', VERSION);
+      target.searchParams.set('source', SOURCE_BUILD);
       target.searchParams.set('nocache', Date.now().toString());
       setTimeout(() => location.replace(target.toString()), 350);
     }

@@ -13,6 +13,9 @@ const defaults = JSON.parse(fs.readFileSync(path.join(root, 'config', 'default-c
 const publication = JSON.parse(fs.readFileSync(path.join(root, 'config', 'publication-start-items.json'), 'utf8'));
 const catalog = fs.readFileSync(path.join(root, 'publicatie-links.html'), 'utf8');
 const examplesInput = fs.readFileSync(path.join(root, 'examples-input.html'), 'utf8');
+const indexSource = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
+const resetSource = fs.readFileSync(path.join(root, 'reset-cache.html'), 'utf8');
+const sourceBuild = fs.readFileSync(path.join(root, 'SOURCE_BUILD.txt'), 'utf8').trim();
 
 const reward = 'jan-beloonde-jek-omdat-die-het-bot-terugbracht';
 const story = 'story-jan-sloeg-jek-waarna-hij-hem-ontweek';
@@ -47,6 +50,9 @@ for (const match of catalog.matchAll(/[?&]item=([^&"<]+)/g)) {
 assert.ok(catalog.includes('features=adverbs'), 'uitbreidingsitems activeren hun vereiste profiel niet');
 assert.ok(catalog.includes('<base href="https://kruin.github.io/graphlite/">'), 'publieke basis-URI ontbreekt');
 assert.ok(!catalog.includes('file:///'), 'URI-catalogus bevat een lokaal file-pad');
+assert.ok(indexSource.includes(sourceBuild), 'index-cache-identiteit mist SOURCE_BUILD');
+assert.ok(resetSource.includes(sourceBuild), 'reset-cache mist SOURCE_BUILD');
+assert.ok(source.includes(sourceBuild), 'viewer-bootidentiteit mist SOURCE_BUILD');
 for (const href of catalog.matchAll(/<a href="([^"]+)"/g)) {
   const resolved = new URL(href[1], 'https://kruin.github.io/graphlite/publicatie-links.html');
   assert.equal(resolved.protocol, 'https:', `publicatielink is niet publiek: ${href[1]}`);

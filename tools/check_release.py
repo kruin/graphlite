@@ -773,7 +773,7 @@ for marker, label in [
 ]:
     require(local_launcher, marker, label)
 source_build = read("SOURCE_BUILD.txt").strip()
-if source_build != "v2.0.0-rc.45-utterance-original-input-routing-20260828.43":
+if source_build != "v2.0.0-rc.45-utterance-routing-runtime-cache-20260828.44":
     errors.append(f"onverwachte of lege SOURCE_BUILD.txt: {source_build!r}")
 
 leesmij = read("LEESMIJ.md")
@@ -800,7 +800,7 @@ for marker, label in [
     ("call check_release.bat", "releasecontrole vóór publiceren"),
     ("call :ensure_playwright_runtime", "Playwright-preflight vóór releasecontrole"),
     (":ensure_playwright_runtime", "Playwright-preflightsubroutine"),
-    ("chromium.executablePath()", "controle op geïnstalleerde Chromium-browser"),
+    ("node tools\\check_publication_carousel_tooling.js", "volledige controle van Playwright en Chromium"),
     ('choice /C JN /N /M "Nu eenmalig installeren? [J/N]: "', "expliciete installatiekeuze"),
     ('call "%~dp0installeer-carrousel-tools.bat"', "bestaande reproduceerbare installer"),
     ("git commit -m", "commitstap"),

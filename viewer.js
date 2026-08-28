@@ -2,6 +2,7 @@
   'use strict';
 
   const VERSION = 'v2.0.0-rc.45';
+  const SOURCE_BUILD = 'v2.0.0-rc.45-utterance-routing-runtime-cache-20260828.44';
   const OPN_FORMAT_VERSION = '1.0';
   const OPN_DOCUMENT_TYPE = 'opengraph-document';
   const PARADATA_EVENT_LIMIT = 250;
@@ -16288,7 +16289,7 @@
     document.addEventListener('visibilitychange', () => {
       if (document.hidden) clearViewportGestureState();
     });
-    window.__opengraphBoot = { version: VERSION, loaded: true };
+    window.__opengraphBoot = { version: VERSION, sourceBuild: SOURCE_BUILD, loaded: true };
     // v4427: lokale ontwikkelviewer gebruikt geen PWA-cache meer.
     // Oude service workers worden actief verwijderd, zodat structure-config/examples-input
     // niet per ongeluk uit een oudere versie blijven komen.
