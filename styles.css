@@ -6631,7 +6631,17 @@ body.main-screen-active .main-topbar {
 }
 .compact-choice-popover-wide { width: min(28rem, calc(100vw - .5rem)); }
 .compact-choice-popover-small { width: min(10rem, calc(100vw - .5rem)); }
-.compact-choice-list { display: grid; gap: .24rem; max-height: min(26rem, 72vh); overflow: auto; }
+.compact-choice-list {
+  display: grid;
+  gap: .24rem;
+  max-height: min(26rem, 72vh);
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+  scrollbar-gutter: stable;
+  -webkit-overflow-scrolling: touch;
+}
 .compact-choice-option {
   width: 100%; min-height: 2rem; padding: .30rem .48rem; text-align: left;
   border: 1px solid var(--line); border-radius: .58rem; background: var(--panel-2);
@@ -6979,7 +6989,10 @@ body.main-screen-active .top-menu-popover {
   background: color-mix(in srgb, var(--panel), #fff 4%);
   box-shadow: 0 .45rem 1.3rem rgba(15,23,42,.15);
 }
-body.main-screen-active .top-menu-sentence-popover { width: min(31rem, calc(100vw - .7rem)); }
+body.main-screen-active .top-menu-sentence-popover {
+  width: min(31rem, calc(100vw - .7rem));
+  overflow: hidden !important;
+}
 body.main-screen-active .top-menu-adverb-popover { width: min(25rem, calc(100vw - .7rem)); }
 body.main-screen-active .top-menu-view-popover { width: min(15rem, calc(100vw - .7rem)); }
 body.main-screen-active .top-menu-projection-popover { width: min(22rem, calc(100vw - .7rem)); }

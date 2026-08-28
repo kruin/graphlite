@@ -62,6 +62,131 @@
   const DEFAULT_COMBINATIONS = Object.freeze([
     Object.freeze({
       schema: COMBINATION_SCHEMA,
+      id: 'de-persoon-die-ik-gisteren-gesproken-heb',
+      label: 'Onvolledige uiting · De persoon die ik gisteren gesproken heb',
+      labelEn: 'Incomplete utterance · The person I spoke to yesterday',
+      title: 'De persoon die ik gisteren gesproken heb.',
+      originalInput: 'De persoon die ik gisteren gesproken heb.',
+      completionStatus: 'incomplete',
+      utteranceForm: 'relative-np-fragment',
+      surfacePredicateObject: 'die ik gisteren gesproken heb.',
+      surfaceTemplate: '{ANAPHOR} ik gisteren gesproken heb.',
+      surfaceFromLex: true,
+      provenance: Object.freeze({ kind: 'user-supplied', catalogId: 'user-relative-np-incomplete' }),
+      sentences: Object.freeze([
+        Object.freeze({
+          id: 'S1', order: 1, text: 'De persoon',
+          tree: Object.freeze({
+            id: 'rp-i-s1-np', label: 'NP', cat: 'NP', kind: 'cat', children: Object.freeze([
+              Object.freeze({ id: 'rp-i-s1-de', label: 'DE', cat: 'DET', role: 'determiner', source: 'rp-i-s1-de', kind: 'leaf', children: Object.freeze([]) }),
+              Object.freeze({ id: 'rp-i-s1-persoon', label: 'PERSOON', cat: 'N', role: 'head', source: 'rp-i-s1-persoon', lexeme: 'persoon', kind: 'leaf', children: Object.freeze([]) })
+            ])
+          }),
+          lex: Object.freeze([
+            Object.freeze({ nodeId: 'rp-i-s1-de', label: 'DE' }),
+            Object.freeze({ nodeId: 'rp-i-s1-persoon', label: 'PERSOON' })
+          ])
+        }),
+        Object.freeze({
+          id: 'S2', order: 2, text: 'Die ik gisteren gesproken heb.', clauseType: 'subordinate', finiteVerbPlacement: 'final',
+          tree: Object.freeze({
+            id: 'rp-i-s2-rel', label: 'REL', cat: 'REL', kind: 'cat', children: Object.freeze([
+              Object.freeze({ id: 'rp-i-s2-ik', label: 'IK', cat: 'PRON', role: 'subject', source: 'rp-i-s2-ik', kind: 'leaf', children: Object.freeze([]) }),
+              Object.freeze({ id: 'rp-i-s2-vp', label: 'VP', cat: 'VP', kind: 'cat', children: Object.freeze([
+                Object.freeze({ id: 'rp-i-s2-persoon', label: 'PERSOON', cat: 'N', role: 'object', source: 'rp-i-s2-persoon', lexeme: 'persoon', kind: 'leaf', children: Object.freeze([]) }),
+                Object.freeze({ id: 'rp-i-s2-vcluster', label: 'V-CLUSTER', cat: 'VCLUSTER', kind: 'cat', children: Object.freeze([
+                  Object.freeze({ id: 'rp-i-s2-gesproken', label: 'GESPROKEN', cat: 'V', role: 'participle', source: 'rp-i-s2-gesproken', kind: 'leaf', children: Object.freeze([]) }),
+                  Object.freeze({ id: 'rp-i-s2-heb', label: 'HEB', cat: 'V', role: 'finite', source: 'rp-i-s2-heb', kind: 'leaf', children: Object.freeze([]) })
+                ]) })
+              ]) })
+            ])
+          }),
+          lexInsertions: Object.freeze([
+            Object.freeze({ schema: LEXICAL_INSERTION_SCHEMA, id: 'rp-i-gisteren', label: 'GISTEREN', layer: 'Context', axis: 'LEX', origin: 'LEX', category: 'ADV', role: 'time', placement: Object.freeze({ position: 'after', anchorNodeId: 'rp-i-s2-ik' }) })
+          ]),
+          lex: Object.freeze([
+            Object.freeze({ nodeId: 'rp-i-s2-persoon', label: 'DIE', projection: 'anaphor-lexicalization' }),
+            Object.freeze({ nodeId: 'rp-i-s2-ik', label: 'IK' }),
+            Object.freeze({ insertionId: 'rp-i-gisteren', label: 'GISTEREN', projection: 'lexical-insertion' }),
+            Object.freeze({ nodeId: 'rp-i-s2-gesproken', label: 'GESPROKEN' }),
+            Object.freeze({ nodeId: 'rp-i-s2-heb', label: 'HEB' })
+          ])
+        })
+      ]),
+      relations: Object.freeze([
+        Object.freeze({ schema: RELATION_SCHEMA, id: 'persoon-die', type: 'coreference', referent: Object.freeze({ unitId: 'S1', nodeId: 'rp-i-s1-persoon', lexeme: 'persoon' }), anaphor: Object.freeze({ unitId: 'S2', nodeId: 'rp-i-s2-persoon', sourceLabel: 'PERSOON' }), lexicalization: Object.freeze({ axis: 'LEX', profile: 'die' }), alignment: Object.freeze({ type: 'shared-column', required: true }) })
+      ]),
+      context: RESERVED_CONTEXT,
+      layoutResolution: DEFAULT_LAYOUT_RESOLUTION
+    }),
+    Object.freeze({
+      schema: COMBINATION_SCHEMA,
+      id: 'de-persoon-die-ik-gisteren-gesproken-heb-is-er-vandaag-niet-meer',
+      label: 'Uiting · De persoon die ik gisteren gesproken heb, is er vandaag niet meer',
+      labelEn: 'Utterance · The person I spoke to yesterday is no longer there today',
+      title: 'De persoon die ik gisteren gesproken heb, is er vandaag niet meer.',
+      originalInput: 'De persoon die ik gisteren gesproken heb, is er vandaag niet meer.',
+      completionStatus: 'complete',
+      utteranceForm: 'sentence-with-relative-clause',
+      surfacePredicateObject: 'is er vandaag niet meer.',
+      surfaceTemplate: '{ANAPHOR} is er vandaag niet meer.',
+      surfaceFromLex: true,
+      provenance: Object.freeze({ kind: 'user-supplied', catalogId: 'user-relative-np-complete' }),
+      sentences: Object.freeze([
+        Object.freeze({
+          id: 'S1', order: 1, text: 'De persoon die ik gisteren gesproken heb', clauseType: 'subordinate', finiteVerbPlacement: 'final',
+          tree: Object.freeze({
+            id: 'rp-c-s1-np', label: 'NP', cat: 'NP', kind: 'cat', children: Object.freeze([
+              Object.freeze({ id: 'rp-c-s1-de', label: 'DE', cat: 'DET', role: 'determiner', source: 'rp-c-s1-de', kind: 'leaf', children: Object.freeze([]) }),
+              Object.freeze({ id: 'rp-c-s1-nbar', label: "N'", cat: 'NBAR', kind: 'cat', children: Object.freeze([
+                Object.freeze({ id: 'rp-c-s1-persoon', label: 'PERSOON', cat: 'N', role: 'head', source: 'rp-c-s1-persoon', lexeme: 'persoon', kind: 'leaf', children: Object.freeze([]) }),
+                Object.freeze({ id: 'rp-c-s1-rel', label: 'REL', cat: 'REL', kind: 'cat', children: Object.freeze([
+                  Object.freeze({ id: 'rp-c-s1-ik', label: 'IK', cat: 'PRON', role: 'subject', source: 'rp-c-s1-ik', kind: 'leaf', children: Object.freeze([]) }),
+                  Object.freeze({ id: 'rp-c-s1-vp', label: 'VP', cat: 'VP', kind: 'cat', children: Object.freeze([
+                    Object.freeze({ id: 'rp-c-s1-gap', label: 'PERSOON', cat: 'N', role: 'object', source: 'rp-c-s1-gap', lexeme: 'persoon', kind: 'leaf', children: Object.freeze([]) }),
+                    Object.freeze({ id: 'rp-c-s1-vcluster', label: 'V-CLUSTER', cat: 'VCLUSTER', kind: 'cat', children: Object.freeze([
+                      Object.freeze({ id: 'rp-c-s1-gesproken', label: 'GESPROKEN', cat: 'V', role: 'participle', source: 'rp-c-s1-gesproken', kind: 'leaf', children: Object.freeze([]) }),
+                      Object.freeze({ id: 'rp-c-s1-heb', label: 'HEB', cat: 'V', role: 'finite', source: 'rp-c-s1-heb', kind: 'leaf', children: Object.freeze([]) })
+                    ]) })
+                  ]) })
+                ]) })
+              ]) })
+            ])
+          }),
+          lexInsertions: Object.freeze([
+            Object.freeze({ schema: LEXICAL_INSERTION_SCHEMA, id: 'rp-c-gisteren', label: 'GISTEREN', layer: 'Context', axis: 'LEX', origin: 'LEX', category: 'ADV', role: 'time', placement: Object.freeze({ position: 'after', anchorNodeId: 'rp-c-s1-ik' }) })
+          ]),
+          lex: Object.freeze([
+            Object.freeze({ nodeId: 'rp-c-s1-de', label: 'DE' }), Object.freeze({ nodeId: 'rp-c-s1-persoon', label: 'PERSOON' }),
+            Object.freeze({ nodeId: 'rp-c-s1-gap', label: 'DIE', projection: 'anaphor-lexicalization' }), Object.freeze({ nodeId: 'rp-c-s1-ik', label: 'IK' }),
+            Object.freeze({ insertionId: 'rp-c-gisteren', label: 'GISTEREN', projection: 'lexical-insertion' }), Object.freeze({ nodeId: 'rp-c-s1-gesproken', label: 'GESPROKEN' }), Object.freeze({ nodeId: 'rp-c-s1-heb', label: 'HEB' })
+          ])
+        }),
+        Object.freeze({
+          id: 'S2', order: 2, text: 'Persoon is er vandaag niet meer.',
+          tree: Object.freeze({ id: 'rp-c-s2-s', label: 'S', cat: 'S', kind: 'cat', children: Object.freeze([
+            Object.freeze({ id: 'rp-c-s2-persoon', label: 'PERSOON', cat: 'N', role: 'subject', source: 'rp-c-s2-persoon', lexeme: 'persoon', kind: 'leaf', children: Object.freeze([]) }),
+            Object.freeze({ id: 'rp-c-s2-is', label: 'IS', cat: 'V', role: 'predicate', source: 'rp-c-s2-is', kind: 'leaf', children: Object.freeze([]) })
+          ]) }),
+          lexInsertions: Object.freeze([
+            Object.freeze({ schema: LEXICAL_INSERTION_SCHEMA, id: 'rp-c-er', label: 'ER', layer: 'Context', axis: 'LEX', origin: 'LEX', category: 'ADV', role: 'place', placement: Object.freeze({ position: 'after', anchorNodeId: 'rp-c-s2-is' }) }),
+            Object.freeze({ schema: LEXICAL_INSERTION_SCHEMA, id: 'rp-c-vandaag', label: 'VANDAAG', layer: 'Context', axis: 'LEX', origin: 'LEX', category: 'ADV', role: 'time', placement: Object.freeze({ position: 'after', anchorNodeId: 'rp-c-s2-is' }) }),
+            Object.freeze({ schema: LEXICAL_INSERTION_SCHEMA, id: 'rp-c-niet-meer', label: 'NIET MEER', layer: 'Context', axis: 'LEX', origin: 'LEX', category: 'ADV', role: 'state', placement: Object.freeze({ position: 'after', anchorNodeId: 'rp-c-s2-is' }) })
+          ]),
+          lex: Object.freeze([
+            Object.freeze({ nodeId: 'rp-c-s2-is', label: 'IS' }), Object.freeze({ insertionId: 'rp-c-er', label: 'ER', projection: 'lexical-insertion' }),
+            Object.freeze({ insertionId: 'rp-c-vandaag', label: 'VANDAAG', projection: 'lexical-insertion' }), Object.freeze({ insertionId: 'rp-c-niet-meer', label: 'NIET MEER', projection: 'lexical-insertion' })
+          ])
+        })
+      ]),
+      relations: Object.freeze([
+        Object.freeze({ schema: RELATION_SCHEMA, id: 'persoon-matrix', type: 'coreference', referent: Object.freeze({ unitId: 'S1', nodeId: 'rp-c-s1-persoon', lexeme: 'persoon' }), anaphor: Object.freeze({ unitId: 'S2', nodeId: 'rp-c-s2-persoon', sourceLabel: 'PERSOON' }), lexicalization: Object.freeze({ axis: 'LEX', profile: 'de-persoon' }), alignment: Object.freeze({ type: 'shared-column', required: true }) })
+      ]),
+      context: RESERVED_CONTEXT,
+      layoutResolution: DEFAULT_LAYOUT_RESOLUTION
+    }),
+    Object.freeze({
+      schema: COMBINATION_SCHEMA,
       id: 'ik-zie-man-hij-draagt-hoed',
       label: 'Anafoor · Ik zie een man → hij draagt een hoed',
       labelEn: 'Anaphor · Ik zie een man → hij draagt een hoed',
@@ -233,20 +358,6 @@
           lexicalization: Object.freeze({ axis: 'LEX', profile: 'hij' }),
           alignment: Object.freeze({ type: 'shared-column', required: true }),
           line: Object.freeze({ shape: 'straight', direction: 'none' })
-        })
-      ]),
-      contextRelations: Object.freeze([
-        Object.freeze({
-          schema: CONTEXT_RELATION_SCHEMA,
-          id: 'gisteren-voor-vandaag',
-          type: 'temporal-order',
-          direction: 'earlier-to-later',
-          first: Object.freeze({ unitId: 'S1', insertionId: 'lex-s1-gisteren', axis: 'LEX' }),
-          second: Object.freeze({ unitId: 'S2', insertionId: 'lex-s2-vandaag', axis: 'LEX' }),
-          label: 'TIJD: eerder → later',
-          line: Object.freeze({ shape: 'bracket', style: 'dashed', axis: 'LEX' }),
-          affectsLayout: false,
-          affectsFlip: false
         })
       ]),
       context: RESERVED_CONTEXT,
@@ -928,6 +1039,9 @@
       label: String(value.label || value.title || `Anafoorcombinatie ${index + 1}`).trim(),
       labelEn: String(value.labelEn || value.label || value.title || `Anaphor combination ${index + 1}`).trim(),
       title: String(value.title || sentences.map(sentence => sentence.text).join(' ')).trim(),
+      originalInput: String(value.originalInput || value.title || sentences.map(sentence => sentence.text).join(' ')).trim(),
+      completionStatus: String(value.completionStatus || '').trim().toLowerCase() === 'incomplete' ? 'incomplete' : 'complete',
+      ...(String(value.utteranceForm || '').trim() ? { utteranceForm: cleanId(value.utteranceForm, 'sentence') } : {}),
       antecedentLexeme,
       surfacePredicateObject: String(value.surfacePredicateObject || sentenceTail(sentences[1])).trim(),
       surfaceTemplate,
@@ -957,7 +1071,13 @@
   }
 
   function normalizeCombinations(values, options = {}) {
-    const source = Array.isArray(values) && values.length ? values : DEFAULT_COMBINATIONS;
+    const configured = Array.isArray(values) ? values : [];
+    const source = options.replace === true
+      ? configured
+      : [...new Map([
+          ...DEFAULT_COMBINATIONS.map(value => [String(value.id || ''), value]),
+          ...configured.map(value => [String(value?.id || ''), value])
+        ]).values()];
     const normalized = [];
     const ids = new Set();
     source.forEach((value, index) => {
@@ -978,6 +1098,9 @@
       label: combination.label,
       labelEn: combination.labelEn,
       title: combination.title,
+      originalInput: combination.originalInput,
+      completionStatus: combination.completionStatus,
+      ...(combination.utteranceForm ? { utteranceForm: combination.utteranceForm } : {}),
       surfacePredicateObject: combination.surfacePredicateObject,
       surfaceTemplate: combination.surfaceTemplate,
       ...(combination.surfaceFromLex ? { surfaceFromLex: true } : {}),

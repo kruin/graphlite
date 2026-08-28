@@ -2,7 +2,7 @@
   'use strict';
 
   const VERSION = 'v2.0.0-rc.45';
-  const SOURCE_BUILD = 'v2.0.0-rc.45-utterance-routing-runtime-cache-20260828.44';
+  const SOURCE_BUILD = 'v2.0.0-rc.45-active-item-title-runtime-selection-20260829.53';
   const OPN_FORMAT_VERSION = '1.0';
   const OPN_DOCUMENT_TYPE = 'opengraph-document';
   const PARADATA_EVENT_LIMIT = 250;
@@ -2671,10 +2671,15 @@
   }
 
   function refreshExamplesForFeatures(preferredId = state.example?.id) {
+    // examples-input.html is de gezamenlijke invoerbron, maar Uiting/Story
+    // horen uitsluitend in het Uiting-menu. Ze mogen niet als de eerste
+    // gewone Zin-items verschijnen en tijdens een klik van modus wisselen.
+    const sentenceExamples = ALL_EXAMPLES.filter(example => !example.utteranceType
+      && !globalThis.OGNUtteranceKernels?.definitionFor?.(example.id));
     const available = featureEnabled('adverbs')
-      ? ALL_EXAMPLES
-      : ALL_EXAMPLES.filter(example => !exampleRequiresAdverbs(example));
-    EXAMPLES = available.length ? available : ALL_EXAMPLES.slice(0, 1);
+      ? sentenceExamples
+      : sentenceExamples.filter(example => !exampleRequiresAdverbs(example));
+    EXAMPLES = available.length ? available : sentenceExamples.slice(0, 1);
     state.example = EXAMPLES.find(example => example.id === preferredId) || EXAMPLES[0];
   }
 
@@ -3852,6 +3857,8 @@
   function explicitBranchOrder(node, options = {}) {
     if (options.branchOrder === 'normal') return 'normal';
     if (options.branchOrder === 'flip-all') return 'flip';
+    const nodeOverride = options.nodeBranchOverrides?.[String(node?.id || '')];
+    if (nodeOverride === 'normal' || nodeOverride === 'flip') return nodeOverride;
     const branchType = branchClass(node, options);
     const override = options.branchOverrides?.[branchType] || 'auto';
     if (override === 'normal' || override === 'flip') return override;
@@ -4683,16 +4690,50 @@
     );
   }
 
-  function multiOgnSentenceLayout(sentence, firstSide = -1) {
+  function multiOgnSentenceLayout(sentence, firstSide = -1, branchOverrides = {}, nodeBranchOverrides = {}) {
     // De eerste multi-OGN-versie is bewust deterministisch. Iedere zin wordt
     // met dezelfde vaste Language Tree-strategie berekend; pas daarna mag de
     // compositie-engine de complete tweede eenheid star verschuiven.
     const layout = normalizeLayout(layoutTree(cloneTree(sentence.tree), 0, {
       firstSide,
-      branchOrder: 'normal',
-      branchOverrides: { top: 'normal', middle: 'normal', other: 'normal' }
+      branchOrder: 'per-branch',
+      branchOverrides: {
+        top: branchOverrides.top === 'flip' ? 'flip' : 'normal',
+        middle: branchOverrides.middle === 'flip' ? 'flip' : 'normal',
+        other: 'normal'
+      },
+      nodeBranchOverrides
     }));
     return assertUniqueNodeGridLines(layout, `multi-OGN ${sentence.id} vóór compositie`);
+  }
+
+  function multiOgnBinaryBranchIds(tree) {
+    const ids = [];
+    (function visit(node) {
+      if (!node) return;
+      if ((node.children || []).length === 2) ids.push(String(node.id || ''));
+      (node.children || []).forEach(visit);
+    }(tree));
+    return ids.filter(Boolean);
+  }
+
+  function multiOgnLayoutCandidates(sentence) {
+    const branchIds = multiOgnBinaryBranchIds(sentence.tree);
+    const candidates = [];
+    const combinations = 2 ** branchIds.length;
+    for (const firstSide of [-1, 1]) {
+      for (let mask = 0; mask < combinations; mask += 1) {
+        const nodeBranchOverrides = Object.fromEntries(branchIds.map((id, index) => [
+          id,
+          mask & (2 ** index) ? 'flip' : 'normal'
+        ]));
+        candidates.push({
+          id: `${firstSide}:${mask}`,
+          layout: multiOgnSentenceLayout(sentence, firstSide, {}, nodeBranchOverrides)
+        });
+      }
+    }
+    return candidates;
   }
 
   function activeUtteranceDefinition() {
@@ -4732,10 +4773,12 @@
     // rolwisseling (normaal/gespiegeld). Probeer de vier volledige binaire
     // boomoriëntaties; iedere kandidaat blijft een zelfstandige OGN en alleen
     // de complete onderste OGN wordt daarna star uitgelijnd.
-    for (const upperSide of [-1, 1]) {
-      for (const lowerSide of [-1, 1]) {
-        const upper = { id: s1.id, layout: multiOgnSentenceLayout(s1, upperSide) };
-        const lower = { id: s2.id, layout: multiOgnSentenceLayout(s2, lowerSide) };
+    const upperCandidates = multiOgnLayoutCandidates(s1);
+    const lowerCandidates = multiOgnLayoutCandidates(s2);
+    for (const upperVariant of upperCandidates) {
+      for (const lowerVariant of lowerCandidates) {
+        const upper = { id: s1.id, layout: upperVariant.layout };
+        const lower = { id: s2.id, layout: lowerVariant.layout };
         try {
           composed = declaredRelations.length
             ? engine.composeDeclaredPair({ upper, lower, relations: relationDeclarations, gapRows: demo.gapRows })
@@ -4746,6 +4789,29 @@
         }
       }
       if (composed) break;
+    }
+    // Een catalogusitem mag nooit een leeg canvas opleveren. De strenge
+    // compositor blijft de eerste keuze. Als geen lokale Flip alle toevallige
+    // cross-unitkolommen wegneemt, behoud dan de afzonderlijk geldige bomen en
+    // verticale gedeclareerde relaties, maar registreer de extra kolommen.
+    if (!composed && declaredRelations.length) {
+      for (const upperVariant of upperCandidates) {
+        for (const lowerVariant of lowerCandidates) {
+          try {
+            composed = engine.composeDeclaredPair({
+              upper: { id: s1.id, layout: upperVariant.layout },
+              lower: { id: s2.id, layout: lowerVariant.layout },
+              relations: relationDeclarations,
+              gapRows: demo.gapRows,
+              allowAdditionalSharedColumns: true
+            });
+            break;
+          } catch (error) {
+            lastCompositionError = error;
+          }
+        }
+        if (composed) break;
+      }
     }
     if (!composed) throw lastCompositionError || new Error(`Geen geldige multi-OGN-compositie voor ${demo.id}.`);
     composed.units.forEach(unit => assertUniqueNodeGridLines(unit.layout, `multi-OGN ${unit.id} na compositie`));
@@ -5088,7 +5154,7 @@
     const anaphorCombination = activeAnaphorCombinationDefinition(id);
     if (definition || anaphorCombination) {
       state.multiOgnExampleId = definition?.id || anaphorCombination.id;
-      const matchingExample = EXAMPLES.find(example => example.id === definition.id);
+      const matchingExample = EXAMPLES.find(example => example.id === (definition?.id || anaphorCombination?.id));
       if (matchingExample) state.example = matchingExample;
       state.placementMode = 'multi-ogn-anaphor';
     } else {
@@ -9434,13 +9500,18 @@
     });
     g.appendChild(treeEdgeLayer);
 
-    const relation = composition.relation;
-    const antecedent = nodePoint(relation.antecedent.unitId, relation.antecedent.nodeId);
-    const anaphor = nodePoint(relation.anaphor.unitId, relation.anaphor.nodeId);
-    if (!antecedent || !anaphor || Math.abs(antecedent.px - anaphor.px) > 0.01) {
-      throw new Error('MAN en HIJ liggen niet op exact dezelfde verticale gridlijn.');
-    }
-    if (state.showRelations) {
+    const relations = Array.isArray(composition.relations) && composition.relations.length
+      ? composition.relations : [composition.relation].filter(Boolean);
+    if (!relations.length) throw new Error('De multi-OGN-compositie bevat geen anafoorrelatie.');
+    const resolvedRelations = relations.map(relation => {
+      const antecedent = nodePoint(relation.antecedent.unitId, relation.antecedent.nodeId);
+      const anaphor = nodePoint(relation.anaphor.unitId, relation.anaphor.nodeId);
+      if (!antecedent || !anaphor || Math.abs(antecedent.px - anaphor.px) > 0.01) {
+        throw new Error(`${relation.antecedentLabel || relation.antecedent.nodeId} en ${relation.anaphorLabel || relation.anaphor.nodeId} liggen niet op exact dezelfde verticale gridlijn.`);
+      }
+      return { relation, antecedent, anaphor };
+    });
+    if (state.showRelations) resolvedRelations.forEach(({ relation, antecedent, anaphor }) => {
       const coreferenceGroup = svgEl('g', {
         class: 'multi-ogn-coreference',
         'data-relation': 'coreference',
@@ -9450,8 +9521,8 @@
         'data-grid-scope': 'cross-ogn-declared'
       });
       coreferenceGroup.appendChild(svgEl('title', {}, isEnglish()
-        ? 'MAN is the antecedent; HIJ is the anaphor. Both expressions are coreferential. The line has no direction.'
-        : 'MAN is het antecedent; HIJ is de anafoor. Beide uitdrukkingen zijn coreferentieel. De lijn heeft geen richting.'));
+        ? `${relation.antecedentLabel || antecedent.label} is the antecedent; ${relation.anaphorLabel || anaphor.label} is the anaphor. The line has no direction.`
+        : `${relation.antecedentLabel || antecedent.label} is het antecedent; ${relation.anaphorLabel || anaphor.label} is de anafoor. De lijn heeft geen richting.`));
       coreferenceGroup.appendChild(svgEl('line', {
         x1: antecedent.px,
         y1: antecedent.py + leafRadius,
@@ -9460,7 +9531,7 @@
         class: 'multi-ogn-coreference-line'
       }));
       g.appendChild(coreferenceGroup);
-    }
+    });
 
     const treeNodeLayer = svgEl('g', { class: 'multi-ogn-tree-node-layer' });
     composition.units.forEach(unit => {
@@ -9474,12 +9545,14 @@
       treeNodeLayer.appendChild(unitGroup);
     });
     g.appendChild(treeNodeLayer);
-    g.querySelectorAll(`[data-node-id="${relation.antecedent.nodeId}"]`).forEach(node => node.classList.add('coreference-antecedent'));
-    g.querySelectorAll(`[data-node-id="${relation.anaphor.nodeId}"]`).forEach(node => node.classList.add('coreference-anaphor'));
+    resolvedRelations.forEach(({ relation }) => {
+      g.querySelectorAll(`[data-node-id="${relation.antecedent.nodeId}"]`).forEach(node => node.classList.add('coreference-antecedent'));
+      g.querySelectorAll(`[data-node-id="${relation.anaphor.nodeId}"]`).forEach(node => node.classList.add('coreference-anaphor'));
+    });
 
     drawCanvasGuideText(g, axisX - 72, axisBottom + 42, isEnglish()
-      ? 'MAN = antecedent · HIJ = anaphor · same referent · straight line, no arrow'
-      : 'MAN = antecedent · HIJ = anafoor · dezelfde referent · rechte lijn, geen pijl', 'rule-label multi-ogn-relation-note');
+      ? `${relations.length} declared coreference line(s) · same referent · straight, no arrow`
+      : `${relations.length} gedeclareerde coreferentielijn(en) · dezelfde referent · recht, zonder pijl`, 'rule-label multi-ogn-relation-note');
     state.lastGridBox = {
       x: axisX - 118,
       y: titleY - 44,
@@ -10300,9 +10373,15 @@
       console.error('OpenGraph render failed', err);
       try {
         if (els.svg) {
-          const g = baseSvg('render-fallback-view');
-          drawAxisTitle(g, 120, 84, 'Render fallback · Syntax tree');
-          drawSyntaxTree(g, { x: 760, y: 92 });
+          const g = baseSvg('render-error-view');
+          const selectedTitle = multiOgnAnaphorActive()
+            ? (activeMultiOgnDemo()?.title || state.multiOgnExampleId)
+            : (state.example?.title || state.example?.sentence || state.example?.id || '—');
+          drawAxisTitle(g, 120, 84, isEnglish() ? 'Rendering error' : 'Tekenfout');
+          drawCanvasGuideText(g, 120, 124,
+            `${isEnglish() ? 'Selected item' : 'Gekozen item'}: ${selectedTitle}`, 'rule-label render-error-item');
+          drawCanvasGuideText(g, 120, 158,
+            String(err?.message || err || (isEnglish() ? 'Unknown error' : 'Onbekende fout')), 'rule-label render-error-message');
           els.svg.appendChild(g);
           applyViewBoxFit(true);
         }
@@ -10364,13 +10443,12 @@
         if (els.explainText) els.explainText.textContent = `${composition.demo.sentences.map(sentence => `${sentence.id}: ${sentence.text}`).join(' · ')} · ${relationText}`;
         return;
       }
-      els.titleLine.textContent = isEnglish()
-        ? 'Anaphor · multi-OGN · Ik zie een man. Hij draagt een hoed.'
-        : 'Anafoor · multi-OGN · Ik zie een man. Hij draagt een hoed.';
+      const demoTitle = composition.demo?.title || activeMultiOgnDemo().title;
+      els.titleLine.textContent = `${isEnglish() ? 'Anaphor' : 'Anafoor'} · multi-OGN · ${demoTitle}`;
       els.metaLine.textContent = isEnglish()
         ? `S1 and S2 calculated independently · rigid S2 shift Δx=${lower.shift.dx}, Δy=${lower.shift.dy} · one shared LEX axis`
         : `S1 en S2 afzonderlijk berekend · starre S2-verschuiving Δx=${lower.shift.dx}, Δy=${lower.shift.dy} · één gezamenlijke LEX-as`;
-      if (els.sentencePreview) els.sentencePreview.textContent = MULTI_OGN_ANAPHOR_DEMO.title;
+      if (els.sentencePreview) els.sentencePreview.textContent = demoTitle;
       if (els.actionFeedback) {
         els.actionFeedback.textContent = isEnglish()
           ? 'MAN is the antecedent and HIJ the anaphor. They are coreferential: one straight vertical line, without an arrow or direction.'
@@ -10645,7 +10723,7 @@
       button.setAttribute('role', 'option');
       button.dataset.optionId = opt.id;
       button.setAttribute('aria-selected', String(active));
-      button.title = label;
+      button.setAttribute('aria-label', label);
       button.addEventListener('click', () => onChoose(opt.id));
       container.appendChild(button);
     }
@@ -10749,20 +10827,17 @@
       { id: MULTI_OGN_ANAPHOR_DEMO.id, title: MULTI_OGN_ANAPHOR_DEMO.title, label: MULTI_OGN_ANAPHOR_DEMO.title },
       ...(globalThis.OGNAnaphorCombinations?.normalizeCombinations?.() || [])
         .filter(definition => definition.id !== MULTI_OGN_ANAPHOR_DEMO.id)
-        .map(definition => ({ id: definition.id, title: definition.title, label: definition.title })),
-      ...(globalThis.OGNUtteranceKernels?.DEFINITIONS || []).map(definition => ({ id: definition.id, title: definition.title, label: definition.title }))
+        .map(definition => ({ id: definition.id, title: definition.originalInput || definition.title, label: definition.originalInput || definition.title })),
+      ...(globalThis.OGNUtteranceKernels?.DEFINITIONS || []).map(definition => ({ id: definition.id, title: definition.originalInput || definition.title, label: definition.originalInput || definition.title }))
     ];
     const multiActive = multiOgnAnaphorActive();
     fillCompactChoiceMenu(els.mainSentenceOptions, multiActive ? multiOptions : EXAMPLES, multiActive ? state.multiOgnExampleId : state.example.id, multiActive ? null : els.mainExampleSelect, id => {
       if (multiActive) {
-        stopMultiOgnPlayback();
-        state.multiOgnPlayEnabled = false;
-        state.multiOgnPlayStep = 999;
         state.multiOgnExampleId = id;
         const matchingExample = EXAMPLES.find(example => example.id === id);
         if (matchingExample) state.example = matchingExample;
         state.documentMetadata = null;
-        resetManualViewBox();
+        resetForNewExample();
         recordParadata('select-multi-ogn-utterance', { example: id });
         syncCanonicalItemUrl();
       } else {
@@ -12686,6 +12761,9 @@
 
   function resetForNewExample() {
     stopGrowthPlayback();
+    stopMultiOgnPlayback();
+    state.multiOgnPlayEnabled = false;
+    state.multiOgnPlayStep = 999;
     state.growthEnabled = false;
     state.growthStep = 0;
     state.projectionBlockUnlocked = false;
@@ -16031,6 +16109,25 @@
     [els.mainSentenceMenu, els.mainAdverbMenu, els.mainViewMenu, els.mainInterfaceMenu, els.sourceAxisMenu, els.mainExtraMenu, els.mainLanguageMenu, els.mainActionsMenu].forEach(menu => {
       menu?.addEventListener('toggle', () => { if (menu.open) closeMainChoiceMenus(menu); });
     });
+    els.mainSentenceMenu?.addEventListener('toggle', () => {
+      if (els.mainSentenceMenu.open && els.mainSentenceOptions) {
+        els.mainSentenceOptions.scrollTop = 0;
+        els.mainSentenceOptions.closest('.top-menu-popover')?.scrollTo?.({ top: 0, left: 0 });
+      }
+    });
+    els.mainSentenceOptions?.addEventListener('wheel', event => {
+      const list = els.mainSentenceOptions;
+      const before = list.scrollTop;
+      list.scrollTop += event.deltaY;
+      if (list.scrollTop !== before) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+    }, { passive: false });
+    els.mainSentenceOptions?.addEventListener('keydown', event => {
+      if (event.key === 'Home') { els.mainSentenceOptions.scrollTop = 0; event.preventDefault(); }
+      if (event.key === 'End') { els.mainSentenceOptions.scrollTop = els.mainSentenceOptions.scrollHeight; event.preventDefault(); }
+    });
     document.querySelectorAll('[data-source-axis]').forEach(button => {
       button.addEventListener('click', () => {
         toggleSourceAxis(button.dataset.sourceAxis);
@@ -16225,6 +16322,8 @@
     await loadProjectConfigLayers();
     projectConfigStatus.browserLoaded = loadSavedConfigSnapshot();
     syncProjectConfigStatus();
+    const requestedLanguage = queryParamValue('lang', 'language');
+    if (requestedLanguage) state.language = normalizeLanguage(requestedLanguage.toLowerCase());
     const requestedFeatures = queryParamValue('features', 'feature').split(',').map(value => value.trim().toLowerCase());
     if (requestedFeatures.includes('adverbs')) state.features.adverbs = true;
     if (featureEnabled('adverbs')) await loadLexiconUsageProfiles();

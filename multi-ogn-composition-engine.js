@@ -155,9 +155,10 @@
     const sharedColumns = sharedCoordinates(upper, lower, 'x');
     const sharedRows = sharedCoordinates(upper, lower, 'y');
     if (sharedRows.length) throw new Error('Afzonderlijke OGN-eenheden mogen in deze stap geen horizontale gridlijn delen.');
-    if (sharedColumns.length !== 1
+    const additionalSharedColumns = sharedColumns.filter(item => item.first !== antecedentId || item.second !== anaphorId);
+    if (!input.allowAdditionalSharedColumns && (sharedColumns.length !== 1
         || sharedColumns[0].first !== antecedentId
-        || sharedColumns[0].second !== anaphorId) {
+        || sharedColumns[0].second !== anaphorId)) {
       throw new Error('Alleen de gedeclareerde antecedent–anafoorkolom mag tussen S1 en S2 worden gedeeld.');
     }
 
@@ -180,6 +181,8 @@
         anaphor: Object.freeze({ unitId: lowerId, nodeId: anaphorId, x: anaphor.x, y: anaphor.y })
       }),
       sharedColumns: Object.freeze(sharedColumns.map(item => Object.freeze({ ...item }))),
+      additionalSharedColumns: Object.freeze(additionalSharedColumns.map(item => Object.freeze({ ...item }))),
+      compositionWarning: additionalSharedColumns.length ? 'extra-cross-unit-columns' : '',
       sharedRows: Object.freeze([]),
       box: Object.freeze(box),
       gapRows
@@ -247,8 +250,9 @@
     const sharedColumns = sharedCoordinates(upper, lower, 'x');
     const sharedRows = sharedCoordinates(upper, lower, 'y');
     if (sharedRows.length) throw new Error('De twee kernzinnen mogen geen horizontale gridlijn delen.');
-    if (sharedColumns.length !== relations.length
-        || sharedColumns.some(item => !declaredPairs.has(`${item.first}\u0000${item.second}`))) {
+    const additionalSharedColumns = sharedColumns.filter(item => !declaredPairs.has(`${item.first}\u0000${item.second}`));
+    if (!input.allowAdditionalSharedColumns && (sharedColumns.length !== relations.length
+        || sharedColumns.some(item => !declaredPairs.has(`${item.first}\u0000${item.second}`)))) {
       throw new Error('Alleen expliciet gedeclareerde antecedent–anafoorkolommen mogen tussen kernzinnen worden gedeeld.');
     }
 
@@ -262,6 +266,8 @@
       relation: relations[0],
       relations: Object.freeze(relations),
       sharedColumns: Object.freeze(sharedColumns.map(item => Object.freeze({ ...item }))),
+      additionalSharedColumns: Object.freeze(additionalSharedColumns.map(item => Object.freeze({ ...item }))),
+      compositionWarning: additionalSharedColumns.length ? 'extra-cross-unit-columns' : '',
       sharedRows: Object.freeze([]),
       box: Object.freeze({
         minX: Math.min(upper.box.minX, lower.box.minX),

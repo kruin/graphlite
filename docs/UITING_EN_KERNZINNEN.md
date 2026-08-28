@@ -398,3 +398,20 @@ heet **testmateriaal**. Uitingen kunnen worden toegevoegd, bewerkt,
 verwijderd, verplaatst en later in uitnodigende Reddit-batches worden
 gegroepeerd. Een batch is een publicatieselectie en verandert de taalkundige
 analyse niet.
+## Oorspronkelijke invoer en onvolledige uitingen
+
+De keuzelijst **Uiting** toont de oorspronkelijke gebruikersinvoer. Kernzinnen
+zijn de structurele analyse van die invoer en mogen het zichtbare keuzelabel
+niet vervangen. De routering gebruikt een stabiel item-id; een niet gevonden
+analyse wordt als tekenfout benoemd en mag nooit stilzwijgend als `HOND BIJT
+MAN` worden afgebeeld.
+
+Een uiting hoeft geen volledige zin te zijn. Het item **De persoon die ik
+gisteren gesproken heb.** is bewust een onvolledige relatieve naamwoordgroep en
+krijgt `completionStatus: incomplete`. Daarnaast bestaat het afzonderlijke,
+volledige item **De persoon die ik gisteren gesproken heb, is er vandaag niet
+meer.** Geen van beide mag automatisch in het andere worden omgezet.
+
+`GISTEREN` en `VANDAAG` zijn lexicale inserties: zij staan uitsluitend op LEX
+en zijn geen knopen van de centrale kernboom. Een expliciete contextuele
+tijdsrelatie tussen beide is voor later en wordt in deze versie niet getekend.

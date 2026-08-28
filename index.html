@@ -14,7 +14,7 @@
 <script>
     (function() {
       var VERSION = 'v2.0.0-rc.45';
-      var SOURCE_BUILD = 'v2.0.0-rc.45-utterance-routing-runtime-cache-20260828.44';
+      var SOURCE_BUILD = 'v2.0.0-rc.45-active-item-title-runtime-selection-20260829.53';
       window.__OPENGRAPH_EXPECTED_VERSION__ = VERSION;
       function runCacheCleanupOnce() {
         var flag = 'opengraph-cache-cleaned-' + VERSION + '-' + SOURCE_BUILD;
@@ -71,7 +71,7 @@
 <details class="compact-choice-menu main-sentence-menu top-menu-item" id="mainSentenceMenu">
 <summary id="mainSentenceSummary" title="Kies de voorbeeldzin">Zin</summary>
 <div aria-label="Voorbeeldzin kiezen" class="compact-choice-popover top-menu-popover top-menu-sentence-popover">
-<div aria-label="Voorbeeldzin kiezen" class="compact-choice-list main-menu-option-list" id="mainSentenceOptions" role="listbox"></div>
+<div aria-label="Voorbeeldzin kiezen" class="compact-choice-list main-menu-option-list" id="mainSentenceOptions" role="listbox" tabindex="0"></div>
 </div>
 </details>
 <details class="compact-choice-menu main-adverb-menu top-menu-item" data-feature="adverbs" hidden="" id="mainAdverbMenu">
@@ -1026,7 +1026,7 @@
 <p class="mobile-sheet-note">Sleep met één vinger om te pannen. Knijp met twee vingers om te zoomen. FIT past het zichtvenster aan de huidige boom en named projections aan; de boom zelf verandert niet.</p>
 </section>
 <script>
-    window.__opengraphBoot = { version: 'v2.0.0-rc.45', loaded: false, marker: 'viewer-index' };
+    window.__opengraphBoot = { version: 'v2.0.0-rc.45', sourceBuild: 'v2.0.0-rc.45-active-item-title-runtime-selection-20260829.53', loaded: false, marker: 'viewer-index' };
     function ogStatus(message) {
       var target = document.getElementById('actionFeedback') || document.body;
       if (target) target.textContent = message;
@@ -1061,6 +1061,6 @@
 <script defer="" src="multi-ogn-anaphor-play-engine.js?v2.0.0-rc.45"></script>
 <script defer="" src="multi-ogn-composition-engine.js?v2.0.0-rc.45"></script>
 <script defer="" src="utterance-kernel-engine.js?v2.0.0-rc.45"></script>
-<script defer="" src="viewer.js?v2.0.0-rc.45&amp;cb=5"></script>
+<script defer="" src="viewer.js?v2.0.0-rc.45&amp;source=20260829.53"></script>
 </body>
 </html>

@@ -14,8 +14,10 @@ const json = relative => JSON.parse(read(relative));
 const clone = value => JSON.parse(JSON.stringify(value));
 
 const configured = combinations.normalizeCombinations();
-assert.equal(configured.length, 5, 'vijf actieve anafoorcombinaties verwacht');
+assert.equal(configured.length, 7, 'zeven actieve anafoorcombinaties verwacht');
 assert.deepEqual(configured.map(item => item.id), [
+  'de-persoon-die-ik-gisteren-gesproken-heb',
+  'de-persoon-die-ik-gisteren-gesproken-heb-is-er-vandaag-niet-meer',
   'ik-zie-man-hij-draagt-hoed',
   'ik-zag-man-gisteren-vandaag-was-hij-er-niet-meer',
   'boer-bezit-ezel-hij-slaat-hem',
@@ -25,7 +27,25 @@ assert.deepEqual(configured.map(item => item.id), [
 assert.ok(configured.every(item => item.relations.every(relation => relation.type === 'coreference')),
   'Anafoor accepteert uitsluitend centrale Text-coreferentie');
 
-const temporal = configured[1];
+const incompleteRelative = configured.find(item => item.id === 'de-persoon-die-ik-gisteren-gesproken-heb');
+assert.equal(incompleteRelative.title, 'De persoon die ik gisteren gesproken heb.');
+assert.equal(incompleteRelative.completionStatus, 'incomplete');
+assert.equal(incompleteRelative.utteranceForm, 'relative-np-fragment');
+assert.deepEqual(incompleteRelative.sentences.flatMap(sentence => sentence.lexInsertions.map(item => item.label)), ['GISTEREN']);
+assert.equal(incompleteRelative.contextRelations, undefined);
+
+const completeRelative = configured.find(item => item.id === 'de-persoon-die-ik-gisteren-gesproken-heb-is-er-vandaag-niet-meer');
+assert.equal(completeRelative.title, 'De persoon die ik gisteren gesproken heb, is er vandaag niet meer.');
+assert.equal(completeRelative.completionStatus, 'complete');
+assert.equal(completeRelative.utteranceForm, 'sentence-with-relative-clause');
+assert.deepEqual(completeRelative.sentences.flatMap(sentence => sentence.lexInsertions.map(item => item.label)), ['GISTEREN', 'ER', 'VANDAAG', 'NIET MEER']);
+assert.equal(completeRelative.contextRelations, undefined);
+for (const insertion of completeRelative.sentences.flatMap(sentence => sentence.lexInsertions)) {
+  assert.equal(insertion.axis, 'LEX');
+  assert.equal(insertion.origin, 'LEX');
+}
+
+const temporal = configured.find(item => item.id === 'ik-zag-man-gisteren-vandaag-was-hij-er-niet-meer');
 assert.equal(temporal.provenance.kind, 'user-supplied');
 assert.equal(temporal.context.status, 'p.m.');
 assert.equal(temporal.context.notation, 'Open Graph Notation');
@@ -33,14 +53,7 @@ assert.equal(temporal.context.representation, 'minimized-tree');
 assert.equal(temporal.relations.length, 1);
 assert.equal(temporal.relations[0].referent.nodeId, 'tm-s1-man');
 assert.equal(temporal.relations[0].anaphor.nodeId, 'tm-s2-man');
-assert.equal(temporal.contextRelations.length, 1);
-assert.equal(temporal.contextRelations[0].schema, combinations.CONTEXT_RELATION_SCHEMA);
-assert.equal(temporal.contextRelations[0].type, 'temporal-order');
-assert.equal(temporal.contextRelations[0].first.insertionId, 'lex-s1-gisteren');
-assert.equal(temporal.contextRelations[0].second.insertionId, 'lex-s2-vandaag');
-assert.equal(temporal.contextRelations[0].line.axis, 'LEX');
-assert.equal(temporal.contextRelations[0].affectsLayout, false);
-assert.equal(temporal.contextRelations[0].affectsFlip, false);
+assert.equal(temporal.contextRelations, undefined, 'gisteren–vandaag blijft voorlopig zonder actieve Context-relatie');
 assert.deepEqual(temporal.sentences.map(sentence => sentence.lexInsertions.map(item => item.label)), [
   ['GISTEREN'], ['VANDAAG', 'ER', 'NIET MEER']
 ]);
@@ -61,10 +74,10 @@ for (const sentence of temporal.sentences) {
   }
 }
 
-const farmerDonkey = configured[2];
+const farmerDonkey = configured.find(item => item.id === 'boer-bezit-ezel-hij-slaat-hem');
 assert.deepEqual(farmerDonkey.relations.map(item => item.id), ['boer-hij', 'ezel-hem']);
 
-const because = configured[3];
+const because = configured.find(item => item.id === 'boer-slaat-ezel-omdat-hij-hem-bezit');
 assert.equal(because.provenance.kind, 'user-supplied');
 assert.deepEqual(because.relations.map(item => item.id), ['boer-hij', 'ezel-hem']);
 assert.equal(because.context.status, 'p.m.');
@@ -82,7 +95,7 @@ assert.equal(lexicon.resolve(lexicon.DEFAULT_PROFILES, 'hem', 'boer', 'subject')
 assert.equal(lexicon.surfaceFromTemplate({surface:'HIJ'}, because.surfaceTemplate,
   {'ezel-hem': {surface:'HEM'}}), 'omdat hij hem bezit.');
 
-const perfectFlip = configured[4];
+const perfectFlip = configured.find(item => item.id === 'man-slaat-hond-omdat-die-hem-heeft-gebeten');
 assert.equal(perfectFlip.provenance.kind, 'user-supplied');
 assert.equal(perfectFlip.surfaceFromLex, true);
 assert.deepEqual(perfectFlip.relations.map(item => item.id), ['hond-die', 'man-hem']);
@@ -193,7 +206,7 @@ assert.equal(play.stateAt(flipTimeline, flipTimeline.units[1].branchFlipStep).un
 const defaultConfig = json('config/default-config.json').config;
 assert.deepEqual(defaultConfig.anaphorFlipVariants, {});
 const fileConfigured = combinations.normalizeCombinations(defaultConfig.anaphorCombinations);
-assert.deepEqual(fileConfigured.map(item => item.relations.length),[1,1,2,2,2]);
+assert.deepEqual(fileConfigured.map(item => item.relations.length),[1,1,1,1,2,2,2]);
 
 const fixtureCatalog = json('samples/s1-s2-relation-fixtures.json');
 assert.equal(fixtureCatalog.fixtures.length,9);

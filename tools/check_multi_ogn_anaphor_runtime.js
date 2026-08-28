@@ -95,6 +95,29 @@ async function downloadVisibleConfigOpn(page) {
     await page.evaluate(() => localStorage.clear());
     await page.reload({ waitUntil: 'networkidle' });
     await page.waitForFunction(() => window.__opengraphBoot?.loaded === true);
+
+    // Regression: de popover zelf en de lijst mochten beide scrollen. Daardoor
+    // konden de eerste drie zinnen boven het klikbare vlak verdwijnen.
+    for (let index = 1; index <= 3; index += 1) {
+      await page.click('#mainSentenceSummary');
+      const option = `#mainSentenceOptions .compact-choice-option:nth-child(${index})`;
+      await page.waitForSelector(option, { state: 'visible' });
+      const id = await page.locator(option).getAttribute('data-option-id');
+      await page.click(option);
+      await page.waitForTimeout(80);
+      const sentence = await page.evaluate(expected => ({
+        active: document.querySelector('#mainSentenceOptions [aria-selected="true"]')?.dataset.optionId || '',
+        nodes: document.querySelectorAll('#graphSvg .node-shape[data-node-id]').length,
+        error: document.querySelector('#graphSvg .render-error-view') !== null,
+        expected
+      }), id);
+      assert.equal(sentence.active, id, `Zin ${index} werd niet gekozen`);
+      assert.ok(sentence.nodes > 0, `Zin ${index} heeft geen boom`);
+      assert.equal(sentence.error, false, `Zin ${index} geeft een tekenfout`);
+    }
+    const firstSentenceIds = await page.$$eval('#mainSentenceOptions .compact-choice-option:nth-child(-n+3)', nodes => nodes.map(node => node.dataset.optionId));
+    assert.deepEqual(firstSentenceIds, ['hond-bijt-man', 'bijt-hond-man-vraag', 'dat-hond-man-bijt']);
+
     await selectMultiOgnAnaphor(page);
     await page.waitForSelector('#graphSvg .multi-ogn-coreference-line', { state: 'attached' });
     await page.waitForTimeout(120);
@@ -209,6 +232,100 @@ async function downloadVisibleConfigOpn(page) {
     });
     await page.waitForSelector('body.placement-multi-ogn-active #graphSvg .multi-ogn-coreference-line', { state: 'attached' });
 
+    // Regression: a menu choice with two declared relations must replace the
+    // canvas. Previously the renderer crashed after selection and displayed
+    // its generic HOND–BIJT–MAN fallback instead.
+    await page.click('#mainSentenceSummary');
+    await page.click('#mainSentenceOptions [data-option-id="boer-bezit-ezel-hij-slaat-hem"]');
+    await page.waitForFunction(() => {
+      const selected = document.querySelector('#mainSentenceOptions [aria-selected="true"]')?.dataset.optionId;
+      const title = document.getElementById('titleLine')?.textContent || '';
+      return selected === 'boer-bezit-ezel-hij-slaat-hem'
+        && /boer bezit een ezel/i.test(title)
+        && document.querySelectorAll('#graphSvg .multi-ogn-coreference-line').length === 2
+        && !document.querySelector('#graphSvg .render-error-view');
+    });
+    const farmer = await page.evaluate(() => ({
+      selected: document.querySelector('#mainSentenceOptions [aria-selected="true"]')?.dataset.optionId || '',
+      relationCount: document.querySelectorAll('#graphSvg .multi-ogn-coreference-line').length,
+      renderError: document.querySelector('#graphSvg .render-error-view') !== null,
+      renderErrorMessage: document.querySelector('#graphSvg .render-error-message')?.textContent || '',
+      title: document.getElementById('titleLine')?.textContent || '',
+      lex: [...document.querySelectorAll('#graphSvg .multi-ogn-lex-label')].map(node => node.textContent)
+    }));
+    assert.equal(farmer.selected, 'boer-bezit-ezel-hij-slaat-hem');
+    assert.equal(farmer.renderError, false, `boer–ezel tekenfout: ${farmer.renderErrorMessage || pageErrors.join(' | ')}`);
+    assert.equal(farmer.relationCount, 2, `boer–ezel vereist twee lijnen; canvas=${JSON.stringify(farmer)}`);
+    assert.match(farmer.title, /boer bezit een ezel/i);
+    assert.deepEqual(farmer.lex, ['BOER', 'BEZIT', 'EZEL', 'BOER', 'SLAAT', 'EZEL']);
+
+    // De twee relatieve uitingen hebben diepere, onderling verschillende
+    // binaire bomen. Ze moeten werkelijk tekenen; alleen hun aanwezigheid in
+    // de keuzelijst controleren zou de eerdere lege-canvasfout niet vinden.
+    for (const relative of [
+      {
+        id: 'de-persoon-die-ik-gisteren-gesproken-heb',
+        lex: ['DE', 'PERSOON', 'DIE', 'IK', 'GISTEREN', 'GESPROKEN', 'HEB']
+      },
+      {
+        id: 'de-persoon-die-ik-gisteren-gesproken-heb-is-er-vandaag-niet-meer',
+        lex: ['DE', 'PERSOON', 'DIE', 'IK', 'GISTEREN', 'GESPROKEN', 'HEB', 'IS', 'ER', 'VANDAAG', 'NIET MEER']
+      }
+    ]) {
+      await page.click('#mainSentenceSummary');
+      await page.click(`#mainSentenceOptions [data-option-id="${relative.id}"]`);
+      await page.waitForFunction(id => {
+        const selected = document.querySelector('#mainSentenceOptions [aria-selected="true"]')?.dataset.optionId;
+        return selected === id
+          && document.querySelectorAll('#graphSvg .multi-ogn-tree-nodes .node-shape[data-node-id]').length > 0
+          && !document.querySelector('#graphSvg .render-error-view');
+      }, relative.id);
+      const rendered = await page.evaluate(id => ({
+        selected: document.querySelector('#mainSentenceOptions [aria-selected="true"]')?.dataset.optionId || '',
+        nodes: document.querySelectorAll('#graphSvg .multi-ogn-tree-nodes .node-shape[data-node-id]').length,
+        relations: document.querySelectorAll('#graphSvg .multi-ogn-coreference-line').length,
+        renderError: document.querySelector('#graphSvg .render-error-view') !== null,
+        message: document.querySelector('#graphSvg .render-error-message')?.textContent || '',
+        lex: [...document.querySelectorAll('#graphSvg .multi-ogn-lex-label')].map(node => node.textContent),
+        id
+      }), relative.id);
+      assert.equal(rendered.selected, relative.id);
+      assert.equal(rendered.renderError, false, `${relative.id}: ${rendered.message || pageErrors.join(' | ')}`);
+      assert.ok(rendered.nodes > 0, `${relative.id}: leeg canvas`);
+      assert.equal(rendered.relations, 1, `${relative.id}: één gedeclareerde relatie verwacht`);
+      assert.deepEqual(rendered.lex, relative.lex);
+    }
+
+    // Het Uiting-menu opent voorspelbaar bovenaan en blijft zelf het
+    // scrolloppervlak op muis, touchpad en toetsenbord.
+    await page.click('#mainSentenceSummary');
+    await page.evaluate(() => { document.getElementById('mainSentenceOptions').scrollTop = 9999; });
+    await page.click('#mainSentenceSummary');
+    await page.click('#mainSentenceSummary');
+    const menuScroll = await page.evaluate(() => {
+      const list = document.getElementById('mainSentenceOptions');
+      return { top: list.scrollTop, tabIndex: list.tabIndex, overflowY: getComputedStyle(list).overflowY, touchAction: getComputedStyle(list).touchAction };
+    });
+    assert.deepEqual(menuScroll, { top: 0, tabIndex: 0, overflowY: 'auto', touchAction: 'pan-y' });
+    await page.click('#mainSentenceSummary');
+
+    // U1 moet ook na Play/Reset en opnieuw kiezen volledig reconstrueren.
+    await page.click('#mainSentenceSummary');
+    await page.click('#mainSentenceOptions [data-option-id="jan-wast-zichzelf"]');
+    await page.click('#mainGrowthPlayButton');
+    await page.waitForTimeout(100);
+    await page.click('#mainResetButton');
+    await page.click('#mainSentenceSummary');
+    await page.click('#mainSentenceOptions [data-option-id="jan-wast-zichzelf"]');
+    const u1 = await page.evaluate(() => ({
+      selected: document.querySelector('#mainSentenceOptions [aria-selected="true"]')?.dataset.optionId || '',
+      nodes: document.querySelectorAll('#graphSvg .multi-ogn-tree-nodes .node-shape[data-node-id]').length,
+      error: document.querySelector('#graphSvg .render-error-view') !== null
+    }));
+    assert.equal(u1.selected, 'jan-wast-zichzelf');
+    assert.ok(u1.nodes > 0, 'U1 is na opnieuw kiezen niet gereconstrueerd');
+    assert.equal(u1.error, false);
+
     await page.click('#openConfigButton');
     await page.waitForSelector('body.config-screen-active');
     const config = await page.evaluate(() => ({
@@ -230,7 +347,7 @@ async function downloadVisibleConfigOpn(page) {
     await new Promise(resolve => local.server.close(resolve));
   }
 
-  console.log('MULTI-OGN ANAPHOR RUNTIME: OK (per-OGN invariant · rigid S2 · MAN–HIJ vertical/no arrow · S1→S2 LEX · OPN round-trip · Config)');
+  console.log('MULTI-OGN ANAPHOR RUNTIME: OK (per-OGN invariant · rigid S2 · alle gedeclareerde lijnen · boer–ezel selectie zonder fallback · S1→S2 LEX · OPN round-trip · Config)');
 })().catch(error => {
   console.error(error);
   process.exit(1);

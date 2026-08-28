@@ -94,7 +94,8 @@ for marker, label in [
     ("if (!featureEnabled('adverbs')) return;", "lexiconprofielen-loader"),
     ("ADVERB_OPTIONS = [NO_ADVERB_OPTION];", "lege bijwoordopties"),
     ("if (!featureEnabled('adverbs')) return 0;", "LEX-insertietelling"),
-    ("ALL_EXAMPLES.filter(example => !exampleRequiresAdverbs(example))", "basisvoorbeeldfilter"),
+    ("const sentenceExamples = ALL_EXAMPLES.filter", "gescheiden Zin-catalogus"),
+    ("sentenceExamples.filter(example => !exampleRequiresAdverbs(example))", "basisvoorbeeldfilter"),
 ]:
     require(JS, marker, label)
 

@@ -9,6 +9,7 @@
     Object.freeze({
       id: 'jan-wast-zichzelf',
       title: 'Jan wast zichzelf.',
+      originalInput: 'Jan wast zichzelf.',
       type: 'reflexive',
       anaphorClass: 'reflexive-local',
       upper: Object.freeze({ text: 'Jan wast Jan.', subject: 'JAN', predicate: 'WAST', object: 'JAN' }),
@@ -26,6 +27,7 @@
     Object.freeze({
       id: 'jan-slaat-jek-omdat-die-hem-beet',
       title: 'Jan slaat Jek omdat die hem beet.',
+      originalInput: 'Jan slaat Jek omdat die hem beet.',
       type: 'causal-role-flip',
       anaphorClass: 'cross-kernel',
       upper: Object.freeze({ text: 'Jan slaat hond.', subject: 'JAN', predicate: 'SLAAT', object: 'HOND' }),
@@ -47,6 +49,7 @@
     Object.freeze({
       id: 'jan-slaat-de-hond-omdat-die-hem-gebeten-heeft',
       title: 'Jan slaat de hond omdat die hem gebeten heeft.',
+      originalInput: 'Jan slaat de hond omdat die hem gebeten heeft.',
       type: 'causal-role-flip',
       anaphorClass: 'cross-kernel',
       upper: Object.freeze({ text: 'Jan slaat hond.', subject: 'JAN', predicate: 'SLAAT', object: 'HOND' }),
@@ -68,6 +71,7 @@
     Object.freeze({
       id: 'jan-beloonde-jek-omdat-die-het-bot-terugbracht',
       title: 'Jan beloonde zijn hond Jek omdat die het bot naar hem terugbracht.',
+      originalInput: 'Jan beloonde zijn hond Jek omdat die het bot naar hem terugbracht.',
       type: 'causal-role-flip',
       anaphorClass: 'cross-kernel',
       deepStructure: Object.freeze({ plurality: 'multiple-kernel-clauses', storedOrder: Object.freeze(['K1', 'K2']), alternativeOrders: Object.freeze([Object.freeze(['K1', 'K2']), Object.freeze(['K2', 'K1'])]) }),
@@ -93,6 +97,7 @@
     Object.freeze({
       id: 'story-jan-sloeg-jek-waarna-hij-hem-ontweek',
       title: 'Jan sloeg Jek omdat die hem beet, waarna hij hem ontweek.',
+      originalInput: 'Jan sloeg Jek omdat die hem beet, waarna hij hem ontweek.',
       type: 'story-role-flip',
       anaphorClass: 'cross-kernel-story',
       deepStructure: Object.freeze({ plurality: 'story', storedOrder: Object.freeze(['K1', 'K2', 'K3']) }),
@@ -122,6 +127,7 @@
     Object.freeze({
       id: 'ken-uzelf',
       title: 'Ken uzelf.',
+      originalInput: 'Ken uzelf.',
       type: 'imperative-reflexive',
       anaphorClass: 'reflexive-local-implicit-subject',
       implicitSubject: 'U',
@@ -350,7 +356,7 @@
     });
     const composed = compositionEngine.composeDeclaredPair({
       upper: { id: 'K1', layout: upper }, lower: { id: 'K2', layout: lower },
-      relations: declarations, gapRows: 5
+      relations: declarations, gapRows: 5, allowAdditionalSharedColumns: true
     });
     const sentences = [
       { id: 'K1', order: 1, text: definition.upper.text },
@@ -394,7 +400,7 @@
       const anaphor = lower.nodes.find(node => node.role === relation.lowerRole);
       return { type: 'coreference', referent: relation.referent, antecedentNodeId: antecedent.id, anaphorNodeId: anaphor.id, antecedentLabel: antecedent.label, anaphorLabel: anaphor.label };
     });
-    const pair = compositionEngine.composeDeclaredPair({ upper: { id: 'K1', layout: upper }, lower: { id: 'K2', layout: lower }, relations: pairRelations, gapRows: 5 });
+    const pair = compositionEngine.composeDeclaredPair({ upper: { id: 'K1', layout: upper }, lower: { id: 'K2', layout: lower }, relations: pairRelations, gapRows: 5, allowAdditionalSharedColumns: true });
     const thirdRaw = buildLayout({ ...definition, upper: definition.third, type: 'story-normal' }, 'upper');
     const dy = pair.box.maxY + 3 - thirdRaw.box.minY;
     const third = shiftRenameLayout(thirdRaw, `${definition.id}-k1`, `${definition.id}-k3`, dy);
