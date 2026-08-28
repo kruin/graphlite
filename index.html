@@ -905,7 +905,9 @@
 </section>
 </aside>
 <section aria-label="OpenGraph canvas" class="canvas-wrap" id="canvasWrap">
-<div class="space-zoom-controls" id="spaceZoomControls" aria-label="Ruimtezoom">
+<div class="space-zoom-controls is-collapsed" id="spaceZoomControls" aria-label="Ruimtezoom">
+<button class="space-zoom-toggle" data-space-toggle type="button" aria-expanded="false">Ruimtezoom</button>
+<div class="space-zoom-panel">
 <div class="space-zoom-scope" role="group" aria-label="Bereik ruimtezoom">
 <button class="is-active" data-space-scope="local" type="button">Lokaal</button>
 <button data-space-scope="global" type="button">Globaal</button>
@@ -917,6 +919,7 @@
 <button data-space-reset type="button" title="Herstel automatische ruimte">Auto</button>
 </div>
 <small id="spaceZoomHelp">Kies Lokaal/Globaal en sleep H, V of H+V.</small>
+</div>
 </div>
 <svg aria-label="OpenGraph projectie" id="graphSvg" role="img" tabindex="0" title="Grid is vastgezet; bediening staat buiten het boomvenster." xmlns="http://www.w3.org/2000/svg"></svg>
 <section aria-labelledby="lexAmbiguityHeading" aria-live="polite" class="lex-ambiguity-panel hidden" id="lexAmbiguityPanel" role="dialog">

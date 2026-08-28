@@ -2,7 +2,7 @@ PRODUCTIEVERSIE VOOR GITHUB
 ===========================
 
 Bronstand:
-v2.0.0-rc.45-mobile-space-zoom-controls-production-20260827.33
+v2.0.0-rc.45-collapsible-mobile-space-zoom-complete-lex-production-20260828.34
 
 Deze volledige projectmap is bedoeld voor C:\git\graphlite.
 
@@ -34,6 +34,9 @@ De standaardbediening Ruimte slepen schaalt rasterruimte via een knoop:
 - Ctrl+slepen schaalt de volledige weergave;
 - mobiel: kies zichtbaar Lokaal/Globaal en sleep H, V of H+V;
 - Auto herstelt de gekozen lokale of globale ruimte;
+- Ruimtezoom opent en sluit als compact mobiel paneel; de keuze wordt onthouden;
+- Config → Ruimte slepen schakelt paneel en functie volledig aan/uit;
+- de LEX-as groeit dynamisch mee met meerwoordrealisaties zoals HET BOT NAAR HEM, zonder wijziging van de binaire kernboom;
 verticaal per kernzin, horizontaal per verbonden anafoorcomponent, H+V
 tegelijk bij schuin slepen en globaal met Ctrl+sleep. Dubbelklik of de
 Config-knop herstelt Auto. K3 schuift mee wanneer K2 hoger wordt.

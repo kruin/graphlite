@@ -2499,6 +2499,7 @@
     sentenceSpaceLocal: (function(){ try { const value = JSON.parse(localStorage.getItem('opengraph_sentence_space_local') || 'null'); return value && Number.isFinite(value.x) && Number.isFinite(value.y) ? value : { x: 1, y: 1 }; } catch (_err) { return { x: 1, y: 1 }; } })(),
     mobileSpaceScope: 'local',
     mobileSpaceUnit: 'K1',
+    mobileSpacePanelOpen: (function(){ try { return localStorage.getItem('opengraph_space_zoom_panel_open') === '1'; } catch (_err) { return false; } })(),
     kernelSpaceDrag: null,
     multiOgnFlipHold: (function(){ try { return localStorage.getItem('opengraph_multi_ogn_flip_hold') || 'pause'; } catch (_err) { return 'pause'; } })(),
     causalAnaphorVariant: (function(){ try { return localStorage.getItem('opengraph_causal_anaphor_variant') || 'die'; } catch (_err) { return 'die'; } })(),
@@ -9418,7 +9419,12 @@
     };
     const axisX = px(displayBox.minX, origin) - Math.max(150, cellX() * horizontalScale * 1.65);
     const axisTop = py(displayBox.minY, origin) - Math.max(52, cellY() * verticalScale * 0.9);
-    const axisBottom = py(displayBox.maxY, origin) + Math.max(54, cellY() * verticalScale * 0.9);
+    const treeAxisBottom = py(displayBox.maxY, origin) + Math.max(54, cellY() * verticalScale * 0.9);
+    // LEX may realize several words from one binary source node (e.g.
+    // HET BOT NAAR HEM). Reserve visible rows for every realized word
+    // without adding daughters to, or otherwise rewriting, the binary tree.
+    const lexicalAxisBottom = axisTop + Math.max(1, composition.lexItems.length) * 52 + 68;
+    const axisBottom = Math.max(treeAxisBottom, lexicalAxisBottom);
     const titleY = axisTop - Math.max(76, cellY() * 1.25);
     const framePadX = Math.max(34, cellX() * horizontalScale * 0.45);
     const framePadY = Math.max(28, cellY() * verticalScale * 0.48);
@@ -15601,6 +15607,7 @@
       try { localStorage.setItem('opengraph_kernel_space_drag_enabled_v2', state.kernelSpaceDragEnabled ? '1' : '0'); } catch (_err) {}
       appendConfigLog('change-kernel-space-drag', { enabled: state.kernelSpaceDragEnabled });
       markConfigDirty('Ruimte slepen');
+      syncSpaceZoomScope();
       render();
     });
     document.getElementById('kernelSpaceResetButton')?.addEventListener('click', () => {
@@ -15629,6 +15636,15 @@
       } catch (_err) {}
     };
     const syncSpaceZoomScope = () => {
+      spaceZoomControls?.classList.toggle('is-collapsed', !state.mobileSpacePanelOpen);
+      spaceZoomControls?.classList.toggle('is-disabled', !state.kernelSpaceDragEnabled);
+      const toggle = spaceZoomControls?.querySelector('[data-space-toggle]');
+      if (toggle) {
+        toggle.setAttribute('aria-expanded', state.mobileSpacePanelOpen ? 'true' : 'false');
+        toggle.textContent = state.mobileSpacePanelOpen
+          ? (isEnglish() ? 'Close space zoom' : 'Ruimtezoom sluiten')
+          : (isEnglish() ? 'Space zoom' : 'Ruimtezoom');
+      }
       spaceZoomControls?.querySelectorAll('[data-space-scope]').forEach(button => {
         button.classList.toggle('is-active', button.dataset.spaceScope === state.mobileSpaceScope);
         button.setAttribute('aria-pressed', button.dataset.spaceScope === state.mobileSpaceScope ? 'true' : 'false');
@@ -15638,6 +15654,11 @@
         ? `Choose Local/Global and drag H, V or H+V.${multiOgnAnaphorActive() ? ` Local V: ${state.mobileSpaceUnit || 'K1'}.` : ''}`
         : `Kies Lokaal/Globaal en sleep H, V of H+V.${multiOgnAnaphorActive() ? ` Lokaal V: ${state.mobileSpaceUnit || 'K1'}.` : ''}`;
     };
+    spaceZoomControls?.querySelector('[data-space-toggle]')?.addEventListener('click', () => {
+      state.mobileSpacePanelOpen = !state.mobileSpacePanelOpen;
+      try { localStorage.setItem('opengraph_space_zoom_panel_open', state.mobileSpacePanelOpen ? '1' : '0'); } catch (_err) {}
+      syncSpaceZoomScope();
+    });
     spaceZoomControls?.querySelectorAll('[data-space-scope]').forEach(button => {
       button.addEventListener('click', () => {
         state.mobileSpaceScope = button.dataset.spaceScope === 'global' ? 'global' : 'local';

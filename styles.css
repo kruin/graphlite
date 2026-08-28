@@ -8331,6 +8331,10 @@ body.placement-multi-ogn-active .lex-ambiguity-panel {
   box-shadow: 0 3px 12px rgba(15,23,42,.14);
   touch-action: none;
 }
+.space-zoom-panel { display:grid; gap:5px; }
+.space-zoom-controls.is-collapsed .space-zoom-panel { display:none; }
+.space-zoom-controls.is-disabled { display:none; }
+.space-zoom-toggle { width:100%; }
 .space-zoom-scope,.space-zoom-handles { display:flex; gap:4px; }
 .space-zoom-controls button {
   min-width: 44px;
