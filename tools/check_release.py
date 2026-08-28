@@ -84,6 +84,7 @@ required_files = [
     "tools/check_random_placement.js", "tools/check_line_style_and_direct_modes.py",
     "tools/check_direct_placement_config.py",
     "tools/check_multi_ogn_anaphor.js", "tools/check_multi_ogn_anaphor_runtime.js",
+    "tools/check_reward_item_uri_runtime.js",
     "tools/check_node_grid_invariant.py", "tools/check_lex_open_slots.js",
     "tools/check_mobile_layout_rc38.py", "tools/check_mobile_layout_runtime.js",
     "tools/check_viewport_switch_runtime.js", "tools/check_landscape_composition_runtime.js",
@@ -772,7 +773,7 @@ for marker, label in [
 ]:
     require(local_launcher, marker, label)
 source_build = read("SOURCE_BUILD.txt").strip()
-if source_build != "v2.0.0-rc.45-public-links-lex-temporal-runtime-manifest-20260828.42":
+if source_build != "v2.0.0-rc.45-utterance-original-input-routing-20260828.43":
     errors.append(f"onverwachte of lege SOURCE_BUILD.txt: {source_build!r}")
 
 leesmij = read("LEESMIJ.md")

@@ -4682,12 +4682,12 @@
     );
   }
 
-  function multiOgnSentenceLayout(sentence) {
+  function multiOgnSentenceLayout(sentence, firstSide = -1) {
     // De eerste multi-OGN-versie is bewust deterministisch. Iedere zin wordt
     // met dezelfde vaste Language Tree-strategie berekend; pas daarna mag de
     // compositie-engine de complete tweede eenheid star verschuiven.
     const layout = normalizeLayout(layoutTree(cloneTree(sentence.tree), 0, {
-      firstSide: -1,
+      firstSide,
       branchOrder: 'normal',
       branchOverrides: { top: 'normal', middle: 'normal', other: 'normal' }
     }));
@@ -4719,12 +4719,34 @@
     if (!engine?.composePair) throw new Error('Multi-OGN-compositie-engine ontbreekt.');
     const demo = activeMultiOgnDemo();
     const [s1, s2] = demo.sentences;
-    const composed = engine.composePair({
-      upper: { id: s1.id, layout: multiOgnSentenceLayout(s1) },
-      lower: { id: s2.id, layout: multiOgnSentenceLayout(s2) },
-      relation: demo.relation,
-      gapRows: demo.gapRows
-    });
+    const declaredRelations = Array.isArray(demo.relations) ? demo.relations : [];
+    const relationDeclarations = declaredRelations.map(relation => ({
+      ...relation,
+      antecedentNodeId: relation.antecedentNodeId || relation.referent?.nodeId,
+      anaphorNodeId: relation.anaphorNodeId || relation.anaphor?.nodeId
+    }));
+    let composed = null;
+    let lastCompositionError = null;
+    // De catalogus bevat zowel gelijke rollen (normaal/normaal) als een
+    // rolwisseling (normaal/gespiegeld). Probeer de vier volledige binaire
+    // boomoriëntaties; iedere kandidaat blijft een zelfstandige OGN en alleen
+    // de complete onderste OGN wordt daarna star uitgelijnd.
+    for (const upperSide of [-1, 1]) {
+      for (const lowerSide of [-1, 1]) {
+        const upper = { id: s1.id, layout: multiOgnSentenceLayout(s1, upperSide) };
+        const lower = { id: s2.id, layout: multiOgnSentenceLayout(s2, lowerSide) };
+        try {
+          composed = declaredRelations.length
+            ? engine.composeDeclaredPair({ upper, lower, relations: relationDeclarations, gapRows: demo.gapRows })
+            : engine.composePair({ upper, lower, relation: demo.relation, gapRows: demo.gapRows });
+          break;
+        } catch (error) {
+          lastCompositionError = error;
+        }
+      }
+      if (composed) break;
+    }
+    if (!composed) throw lastCompositionError || new Error(`Geen geldige multi-OGN-compositie voor ${demo.id}.`);
     composed.units.forEach(unit => assertUniqueNodeGridLines(unit.layout, `multi-OGN ${unit.id} na compositie`));
     return {
       ...composed,

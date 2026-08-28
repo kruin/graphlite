@@ -320,6 +320,7 @@ tools/check_publication_carousel_setup.py
 tools/check_publication_phases.py
 tools/check_publication_carousel_tooling.js
 tools/check_random_placement.js
+tools/check_reward_item_uri_runtime.js
 tools/check_readme_carousel_editor.py
 tools/check_readme_carousel_editor_runtime.js
 tools/check_readme_item_editor.py

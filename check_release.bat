@@ -83,6 +83,8 @@ node tools\check_linkedin_video_runtime.js
 if errorlevel 1 exit /b 1
 node tools\check_multi_ogn_anaphor_runtime.js
 if errorlevel 1 exit /b 1
+node tools\check_reward_item_uri_runtime.js
+if errorlevel 1 exit /b 1
 python tools\check_play_reverse.py
 if errorlevel 1 exit /b 1
 python tools\check_release_zip_batch.py

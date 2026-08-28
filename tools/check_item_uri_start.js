@@ -32,6 +32,8 @@ assert.ok(source.includes("const DEFAULT_START_ITEM_ID = 'hond-bijt-man'"), 'vas
 assert.ok(source.includes("queryParamValue('app')"), 'app-URI voor directe plaatsing ontbreekt');
 assert.ok(source.includes("requestedApp === 'greedy-grow' || requestedApp === 'random'"), 'Greedy/Random URI-routering ontbreekt');
 assert.ok(source.includes('activeAnaphorCombinationDefinition'), 'anafoorcombinaties hebben geen canonieke item-routering');
+assert.ok(source.includes('engine.composeDeclaredPair'), 'anafoorcombinaties met meerdere relaties gebruiken niet de gezamenlijke compositor');
+assert.ok(source.includes('for (const upperSide of [-1, 1])'), 'multi-OGN-keuze probeert geen lokale links/rechts-Flip');
 assert.ok(source.includes('multi-ogn-context-relation-line'), 'LEX-Contextrelatie wordt niet getekend');
 for (const marker of ['?item=hond-bijt-man', '?item=jan-beloonde-jek-omdat-die-het-bot-terugbracht', '?app=greedy-grow', '?app=random', 'Uitleg · Notatie']) assert.ok(catalog.includes(marker), `URI-catalogus mist ${marker}`);
 const knownItems = new Set([
@@ -56,5 +58,9 @@ assert.equal(engine.definitionFor('story-jan-sloeg-jek-waarna-hij-ontweek').id, 
 assert.equal(engine.DEFINITIONS.find(item => item.id === 'jan-wast-zichzelf').anaphorClass, 'reflexive-local');
 assert.equal(engine.DEFINITIONS.find(item => item.id === 'ken-uzelf').anaphorClass, 'reflexive-local-implicit-subject');
 assert.ok(engineSource.includes("anaphorClass: 'cross-kernel-story'"));
+const combinationTitles = new Map(combinations.normalizeCombinations().map(item => [item.id, item.title]));
+assert.equal(combinationTitles.get('ik-zag-man-gisteren-vandaag-was-hij-er-niet-meer'), 'Ik zag de man gisteren. Vandaag was hij er niet meer.');
+assert.equal(combinationTitles.get('boer-bezit-ezel-hij-slaat-hem'), 'Een boer bezit een ezel. Hij slaat hem.');
+assert.equal(combinationTitles.get('man-slaat-hond-omdat-die-hem-heeft-gebeten'), 'De man slaat de hond omdat die hem heeft gebeten.');
 
 console.log('ITEM URI/START CHECK: OK (kale HOND BIJT MAN, URI-catalogus, LinkedIn-profiel, Reddit open, families apart)');
