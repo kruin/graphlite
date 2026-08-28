@@ -2,7 +2,7 @@
   'use strict';
 
   const VERSION = 'v2.0.0-rc.45';
-  const SOURCE_BUILD = 'v2.0.0-rc.45-active-item-title-runtime-selection-20260829.53';
+  const SOURCE_BUILD = 'v2.0.0-rc.45-stable-catalog-scroll-reset-20260829.56';
   const OPN_FORMAT_VERSION = '1.0';
   const OPN_DOCUMENT_TYPE = 'opengraph-document';
   const PARADATA_EVENT_LIMIT = 250;
@@ -10712,12 +10712,32 @@
   function fillCompactChoiceMenu(container, options, selected, hiddenSelect, onChoose) {
     if (!container) return;
     container.replaceChildren();
+    let currentGroup = null;
     for (const opt of options) {
+      const group = isEnglish() ? (opt.groupEn || opt.group || '') : (opt.group || opt.groupEn || '');
+      if (group && group !== currentGroup) {
+        const heading = document.createElement('div');
+        heading.className = 'compact-choice-group';
+        heading.textContent = group;
+        heading.setAttribute('role', 'presentation');
+        container.appendChild(heading);
+        currentGroup = group;
+      }
       const button = document.createElement('button');
       button.type = 'button';
       button.className = 'compact-choice-option';
       const label = localizedOptionLabel(hiddenSelect, opt);
-      button.textContent = label;
+      const labelSpan = document.createElement('span');
+      labelSpan.className = 'compact-choice-label';
+      labelSpan.textContent = label;
+      button.appendChild(labelSpan);
+      const tags = isEnglish() ? (opt.tagsEn || opt.tags || []) : (opt.tags || opt.tagsEn || []);
+      if (Array.isArray(tags) && tags.length) {
+        const tagSpan = document.createElement('span');
+        tagSpan.className = 'compact-choice-tags';
+        tagSpan.textContent = tags.join(' · ');
+        button.appendChild(tagSpan);
+      }
       const active = opt.id === selected;
       button.classList.toggle('active', active);
       button.setAttribute('role', 'option');
@@ -10727,6 +10747,57 @@
       button.addEventListener('click', () => onChoose(opt.id));
       container.appendChild(button);
     }
+  }
+
+  function catalogHasLexInsertions(definition = {}) {
+    return (definition.sentences || []).some(sentence => Array.isArray(sentence.lexInsertions) && sentence.lexInsertions.length);
+  }
+
+  function catalogHasTimeInsertions(definition = {}) {
+    return (definition.sentences || []).some(sentence => (sentence.lexInsertions || []).some(item => item.role === 'time'));
+  }
+
+  function catalogOption(definition, kind = 'combination') {
+    const type = String(definition.type || '');
+    const incomplete = definition.completionStatus === 'incomplete';
+    const story = type.startsWith('story-');
+    const relative = String(definition.utteranceForm || '').includes('relative');
+    const reflexive = type.includes('reflexive');
+    const roleFlip = type.includes('role-flip');
+    const relations = definition.relations || [];
+    const anaphor = kind === 'intro' || relations.some(relation => relation.type === 'coreference')
+      || Boolean(definition.anaphorClass);
+    const tags = [];
+    const tagsEn = [];
+    const addTag = (nl, en) => { tags.push(nl); tagsEn.push(en); };
+    if (relative) addTag('relatief', 'relative');
+    if (reflexive) addTag('reflexief', 'reflexive');
+    else if (anaphor) addTag('anafoor', 'anaphor');
+    if (roleFlip) addTag('rol-flip', 'role flip');
+    if (catalogHasTimeInsertions(definition)) addTag('tijdverband', 'time relation');
+    if (catalogHasLexInsertions(definition)) addTag('LEX-insertie', 'LEX insertion');
+    return {
+      id: definition.id,
+      title: definition.originalInput || definition.title,
+      label: definition.originalInput || definition.title,
+      group: incomplete ? 'Uiting · onaf' : story ? 'Uiting · story' : 'Uiting · af',
+      groupEn: incomplete ? 'Utterance · incomplete' : story ? 'Utterance · story' : 'Utterance · complete',
+      tags, tagsEn
+    };
+  }
+
+  function sentenceCatalogOption(example) {
+    const text = String(example.sentence || example.title || '');
+    const complex = /(?:\bomdat\b|\bterwijl\b|\bwaarna\b|[,;].+\b(?:die|dat|omdat)\b)/i.test(text);
+    const tags = [];
+    const tagsEn = [];
+    if (exampleRequiresAdverbs(example)) { tags.push('LEX-insertie'); tagsEn.push('LEX insertion'); }
+    return {
+      ...example,
+      group: complex ? 'Zin · complex' : 'Zin · simplex',
+      groupEn: complex ? 'Sentence · complex' : 'Sentence · simplex',
+      tags, tagsEn
+    };
   }
 
   function closeMainChoiceMenus(except = null) {
@@ -10823,15 +10894,21 @@
         ? 'Changes the LOG order and reserved LEX rows. It never moves a source node by itself; only an explicit Language Tree rule may do that.'
         : 'Wijzigt de LOG-volgorde en de gereserveerde LEX-rijen. Dit verplaatst nooit vanzelf een bronknoop; alleen een expliciete Language-Tree-regel mag dat doen.';
     }
+    const multiGroupOrder = { 'Uiting · af': 0, 'Uiting · onaf': 1, 'Uiting · story': 2 };
     const multiOptions = [
-      { id: MULTI_OGN_ANAPHOR_DEMO.id, title: MULTI_OGN_ANAPHOR_DEMO.title, label: MULTI_OGN_ANAPHOR_DEMO.title },
+      catalogOption(MULTI_OGN_ANAPHOR_DEMO, 'intro'),
       ...(globalThis.OGNAnaphorCombinations?.normalizeCombinations?.() || [])
         .filter(definition => definition.id !== MULTI_OGN_ANAPHOR_DEMO.id)
-        .map(definition => ({ id: definition.id, title: definition.originalInput || definition.title, label: definition.originalInput || definition.title })),
-      ...(globalThis.OGNUtteranceKernels?.DEFINITIONS || []).map(definition => ({ id: definition.id, title: definition.originalInput || definition.title, label: definition.originalInput || definition.title }))
-    ];
+        .map(definition => catalogOption(definition, 'combination')),
+      ...(globalThis.OGNUtteranceKernels?.DEFINITIONS || []).map(definition => catalogOption(definition, 'utterance'))
+    ].map((option, index) => ({ ...option, catalogOrder: index }))
+      .sort((left, right) => (multiGroupOrder[left.group] ?? 9) - (multiGroupOrder[right.group] ?? 9)
+        || left.catalogOrder - right.catalogOrder);
     const multiActive = multiOgnAnaphorActive();
-    fillCompactChoiceMenu(els.mainSentenceOptions, multiActive ? multiOptions : EXAMPLES, multiActive ? state.multiOgnExampleId : state.example.id, multiActive ? null : els.mainExampleSelect, id => {
+    const sentenceOptions = EXAMPLES.map((example, index) => ({ ...sentenceCatalogOption(example), catalogOrder: index }))
+      .sort((left, right) => Number(left.group === 'Zin · complex') - Number(right.group === 'Zin · complex')
+        || left.catalogOrder - right.catalogOrder);
+    fillCompactChoiceMenu(els.mainSentenceOptions, multiActive ? multiOptions : sentenceOptions, multiActive ? state.multiOgnExampleId : state.example.id, multiActive ? null : els.mainExampleSelect, id => {
       if (multiActive) {
         state.multiOgnExampleId = id;
         const matchingExample = EXAMPLES.find(example => example.id === id);
@@ -16111,8 +16188,17 @@
     });
     els.mainSentenceMenu?.addEventListener('toggle', () => {
       if (els.mainSentenceMenu.open && els.mainSentenceOptions) {
-        els.mainSentenceOptions.scrollTop = 0;
-        els.mainSentenceOptions.closest('.top-menu-popover')?.scrollTo?.({ top: 0, left: 0 });
+        const resetSentenceMenuScroll = () => {
+          if (!els.mainSentenceMenu?.open || !els.mainSentenceOptions) return;
+          els.mainSentenceOptions.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+          els.mainSentenceOptions.closest('.top-menu-popover')?.scrollTo?.({ top: 0, left: 0, behavior: 'instant' });
+        };
+        resetSentenceMenuScroll();
+        // Chromium herstelt de oude scrollpositie van een opnieuw geopend
+        // <details>-element pas na het toggle-event. Herhaal daarom na layout
+        // en nogmaals in de volgende taak; de catalogus opent altijd bovenaan.
+        requestAnimationFrame(resetSentenceMenuScroll);
+        setTimeout(resetSentenceMenuScroll, 0);
       }
     });
     els.mainSentenceOptions?.addEventListener('wheel', event => {

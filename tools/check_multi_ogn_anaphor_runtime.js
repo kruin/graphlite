@@ -100,10 +100,10 @@ async function downloadVisibleConfigOpn(page) {
     // konden de eerste drie zinnen boven het klikbare vlak verdwijnen.
     for (let index = 1; index <= 3; index += 1) {
       await page.click('#mainSentenceSummary');
-      const option = `#mainSentenceOptions .compact-choice-option:nth-child(${index})`;
-      await page.waitForSelector(option, { state: 'visible' });
-      const id = await page.locator(option).getAttribute('data-option-id');
-      await page.click(option);
+      const option = page.locator('#mainSentenceOptions .compact-choice-option').nth(index - 1);
+      await option.waitFor({ state: 'visible' });
+      const id = await option.getAttribute('data-option-id');
+      await option.click();
       await page.waitForTimeout(80);
       const sentence = await page.evaluate(expected => ({
         active: document.querySelector('#mainSentenceOptions [aria-selected="true"]')?.dataset.optionId || '',
@@ -115,7 +115,7 @@ async function downloadVisibleConfigOpn(page) {
       assert.ok(sentence.nodes > 0, `Zin ${index} heeft geen boom`);
       assert.equal(sentence.error, false, `Zin ${index} geeft een tekenfout`);
     }
-    const firstSentenceIds = await page.$$eval('#mainSentenceOptions .compact-choice-option:nth-child(-n+3)', nodes => nodes.map(node => node.dataset.optionId));
+    const firstSentenceIds = await page.$$eval('#mainSentenceOptions .compact-choice-option', nodes => nodes.slice(0, 3).map(node => node.dataset.optionId));
     assert.deepEqual(firstSentenceIds, ['hond-bijt-man', 'bijt-hond-man-vraag', 'dat-hond-man-bijt']);
 
     await selectMultiOgnAnaphor(page);
@@ -302,6 +302,7 @@ async function downloadVisibleConfigOpn(page) {
     await page.evaluate(() => { document.getElementById('mainSentenceOptions').scrollTop = 9999; });
     await page.click('#mainSentenceSummary');
     await page.click('#mainSentenceSummary');
+    await page.waitForFunction(() => document.getElementById('mainSentenceOptions')?.scrollTop === 0);
     const menuScroll = await page.evaluate(() => {
       const list = document.getElementById('mainSentenceOptions');
       return { top: list.scrollTop, tabIndex: list.tabIndex, overflowY: getComputedStyle(list).overflowY, touchAction: getComputedStyle(list).touchAction };
