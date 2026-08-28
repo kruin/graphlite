@@ -37,7 +37,7 @@ required_files = [
     "MULTI_OGN_ANAPHOR.md", "multi-ogn-composition-engine.js", "utterance-kernel-engine.js",
     "UITING_EN_KERNZINNEN.md", "docs/UITING_EN_KERNZINNEN.md",
     "samples/uitingen-kernzinnen.v1.json", "tools/check_utterances.js",
-    "tools/check_utterance_kernel_views.js", "tools/check_recursive_kernel_builder.js",
+    "tools/check_utterance_kernel_views.js", "tools/check_item_uri_start.js", "tools/check_recursive_kernel_builder.js",
     "samples/ik-zie-man-hij-draagt-hoed.multi-ogn.v1.opn",
     "PUBLICATIE_README.md", "RC44_PUBLICATION_CAROUSEL_TEST.md",
     "RC45_OGN_CORE_EXPLANATION_TEST.md", "GREEDY_GROW_RECONSTRUCTION.md",
@@ -772,7 +772,7 @@ for marker, label in [
 ]:
     require(local_launcher, marker, label)
 source_build = read("SOURCE_BUILD.txt").strip()
-if source_build != "v2.0.0-rc.45-explicit-mobile-kernel-space-zoom-20260828.37":
+if source_build != "v2.0.0-rc.45-public-links-lex-temporal-runtime-manifest-20260828.42":
     errors.append(f"onverwachte of lege SOURCE_BUILD.txt: {source_build!r}")
 
 leesmij = read("LEESMIJ.md")
@@ -918,6 +918,8 @@ def manifest_file(path: Path) -> bool:
         return False
     name = path.name
     lower = name.lower()
+    if rel.as_posix() == "LEESMIJ.txt" or lower.endswith(".zip"):
+        return False
     if name == "RELEASE_MANIFEST.txt" or lower.endswith((".pyc", ".pyo", ".ds_store")):
         return False
     if is_generated_release_archive(name):

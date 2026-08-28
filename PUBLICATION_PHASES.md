@@ -1,5 +1,32 @@
 # Graphlite gefaseerd publiceren
 
+## Platformstart via canonieke item-URI
+
+Iedere publicatielink gebruikt de vaste parameter `item`. De platformkeuzes
+staan machineleesbaar in `config/publication-start-items.json`.
+
+- **LinkedIn** opent voorlopig direct
+  `?item=jan-beloonde-jek-omdat-die-het-bot-terugbracht&anafoor=die&werkwoord=terugbracht&bot=het-bot`.
+  Dit sluit aan op de drie reeds geplaatste bijdragen over man en hond.
+- **Reddit** heeft nog geen vast campagne-startitem. Dat wordt pas gekozen bij
+  de eerste uitnodigende Reddit-batch.
+- De kale ingang zonder parameters opent vast `hond-bijt-man`.
+- Publicatie werkt niet via Config. Kies een expliciete URI uit
+  `publicatie-links.html`.
+- Een keuze door een bezoeker wordt nooit teruggeschreven naar GitHub.
+
+Canonieke LinkedIn-link:
+
+`https://kruin.github.io/graphlite/?item=jan-beloonde-jek-omdat-die-het-bot-terugbracht&anafoor=die&werkwoord=terugbracht&bot=het-bot&utm_source=linkedin`
+
+## Gescheiden itemfamilies
+
+**Uitleg · Notatie**, **Language Tree**, **Greedy Grow** en **Random** blijven
+afzonderlijke families. Zo worden uitlegdiagrammen geen taaldata en ook geen
+directe plaatsingsresultaten. Een publicatiebatch mag wel een route samenstellen,
+bijvoorbeeld OGN Minimal Tree → Simple Tree → één Language Tree. Greedy Grow en
+Random krijgen hun eigen publicatielijnen.
+
 De publieke ingang is bewust kleiner dan de volledige viewer. De ontwikkel- en volledige app blijft `index.html`; fase 1 staat op `public-phase-1.html`.
 
 ## Actuele fase

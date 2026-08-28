@@ -33,6 +33,14 @@ assert.equal(temporal.context.representation, 'minimized-tree');
 assert.equal(temporal.relations.length, 1);
 assert.equal(temporal.relations[0].referent.nodeId, 'tm-s1-man');
 assert.equal(temporal.relations[0].anaphor.nodeId, 'tm-s2-man');
+assert.equal(temporal.contextRelations.length, 1);
+assert.equal(temporal.contextRelations[0].schema, combinations.CONTEXT_RELATION_SCHEMA);
+assert.equal(temporal.contextRelations[0].type, 'temporal-order');
+assert.equal(temporal.contextRelations[0].first.insertionId, 'lex-s1-gisteren');
+assert.equal(temporal.contextRelations[0].second.insertionId, 'lex-s2-vandaag');
+assert.equal(temporal.contextRelations[0].line.axis, 'LEX');
+assert.equal(temporal.contextRelations[0].affectsLayout, false);
+assert.equal(temporal.contextRelations[0].affectsFlip, false);
 assert.deepEqual(temporal.sentences.map(sentence => sentence.lexInsertions.map(item => item.label)), [
   ['GISTEREN'], ['VANDAAG', 'ER', 'NIET MEER']
 ]);
@@ -138,7 +146,7 @@ function layout(nodes) {
 }
 
 const entity = temporal.relations[0];
-const composed = compositor.composePair({
+const composed = compositor.composeDeclaredPair({
   upper: {id:'S1',layout:layout([
     {id:'tm-s1-man',label:'MAN',x:3,y:0},
     {id:'tm-s1-zag',label:'ZAG',x:5,y:1}
@@ -149,8 +157,8 @@ const composed = compositor.composePair({
   ]),lexInsertions:temporal.sentences[1].lexInsertions},
   relation:entity, relations:temporal.relations,gapRows:3
 });
-assert.equal(composed.relationAlignments.length, 1);
-assert.equal(composed.relationAlignments[0].satisfied, true);
+assert.equal(composed.relations.length, 1);
+assert.equal(composed.relations[0].antecedent.x, composed.relations[0].anaphor.x);
 for (const unit of composed.units) {
   const sentence = temporal.sentences.find(item => item.id === unit.id);
   const plan = combinations.planLexInsertionRows(sentence, unit.layout);
@@ -194,6 +202,8 @@ assert.ok(fixtureCatalog.fixtures.every(fixture =>
 const baseline = fixtureCatalog.fixtures.find(item => item.id === 'user-man-yesterday-today');
 assert.equal(baseline.expected.hardRelationCount,1);
 assert.equal(baseline.expected.contextInsertionCount,4);
+assert.equal(baseline.expected.contextRelationCount,1);
+assert.equal(baseline.contextRelations[0].display,'dashed-bracket-along-lex-axis');
 assert.ok(baseline.lexInsertions.every(item => item.layer === 'Context'));
 assert.deepEqual(fixtureCatalog.contextModel,{
   notation:'Open Graph Notation',representation:'minimized-tree',status:'p.m.'

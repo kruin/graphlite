@@ -81,7 +81,7 @@ echo Git-status voor %APP_VERSION%:
 set "STATUS_ALL=%TEMP%\opengraph_status_all_%RANDOM%%RANDOM%.txt"
 set "STATUS_SITE=%TEMP%\opengraph_status_site_%RANDOM%%RANDOM%.txt"
 git status --short --untracked-files=normal > "%STATUS_ALL%"
-findstr /V /I /R /C:".*_full_source.*\.zip" /C:"local-mobile-test\.js" /C:"local-mobile-test\.html" /C:"opengraph-local-config-log-.*\.txt" /C:"local-config-log.*\.txt" "%STATUS_ALL%" > "%STATUS_SITE%"
+findstr /V /I /R /C:".*\.zip" /C:"LEESMIJ\.txt" /C:"local-mobile-test\.js" /C:"local-mobile-test\.html" /C:"opengraph-local-config-log-.*\.txt" /C:"local-config-log.*\.txt" "%STATUS_ALL%" > "%STATUS_SITE%"
 type "%STATUS_SITE%"
 for %%A in ("%STATUS_SITE%") do set "STATUS_SIZE=%%~zA"
 del "%STATUS_ALL%" >nul 2>nul
@@ -113,8 +113,8 @@ if errorlevel 1 (
   goto :fail
 )
 
-rem Release-zips en lokale test/logbestanden horen niet in de Pages-root.
-git rm --cached --ignore-unmatch -- "*_full_source*.zip" >nul 2>nul
+rem ZIP-downloads, legacy LEESMIJ.txt en lokale test/logbestanden horen niet in de Pages-root.
+git rm --cached --ignore-unmatch -- "*.zip" "LEESMIJ.txt" >nul 2>nul
 for %%f in (local-mobile-test.js local-mobile-test.html) do (
   git ls-files --error-unmatch "%%f" >nul 2>nul
   if not errorlevel 1 git rm --cached -- "%%f" >nul 2>nul

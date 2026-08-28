@@ -5,7 +5,8 @@ node_modules/
 Thumbs.db
 
 # Release artifacts: publish via GitHub Releases, niet via Pages-root.
-*_full_source*.zip
+*.zip
+/LEESMIJ.txt
 
 # Lokale testhulp: niet publiceren naar GitHub Pages.
 local-mobile-test.js

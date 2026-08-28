@@ -8,6 +8,7 @@
   const COMBINATION_SCHEMA = 'ogn-anaphor-combination-v1';
   const RELATION_SCHEMA = 'ogn-referent-anaphor-v1';
   const LEXICAL_INSERTION_SCHEMA = 'ogn-lexical-insertion-v1';
+  const CONTEXT_RELATION_SCHEMA = 'ogn-lex-context-relation-v1';
   const LAYOUT_RESOLUTION_SCHEMA = 'ogn-joint-flip-constraints-v1';
   const BRANCH_FLIP_SCHEMA = 'ogn-binary-branch-variants-v1';
   const BRANCH_VARIANTS = Object.freeze(['normal', 'left-right', 'short-long', 'both']);
@@ -232,6 +233,20 @@
           lexicalization: Object.freeze({ axis: 'LEX', profile: 'hij' }),
           alignment: Object.freeze({ type: 'shared-column', required: true }),
           line: Object.freeze({ shape: 'straight', direction: 'none' })
+        })
+      ]),
+      contextRelations: Object.freeze([
+        Object.freeze({
+          schema: CONTEXT_RELATION_SCHEMA,
+          id: 'gisteren-voor-vandaag',
+          type: 'temporal-order',
+          direction: 'earlier-to-later',
+          first: Object.freeze({ unitId: 'S1', insertionId: 'lex-s1-gisteren', axis: 'LEX' }),
+          second: Object.freeze({ unitId: 'S2', insertionId: 'lex-s2-vandaag', axis: 'LEX' }),
+          label: 'TIJD: eerder → later',
+          line: Object.freeze({ shape: 'bracket', style: 'dashed', axis: 'LEX' }),
+          affectsLayout: false,
+          affectsFlip: false
         })
       ]),
       context: RESERVED_CONTEXT,
@@ -832,9 +847,37 @@
         line: { shape: 'straight', direction: 'none' },
         direction: 'none',
         antecedentNodeId: referent.nodeId,
+        anaphorNodeId: anaphor.nodeId,
         referentNodeId: anaphor.nodeId,
         antecedentLabel: String(referentNode.label || '').trim().toUpperCase(),
         referentLabel: String(anaphorNode.label || '').trim().toUpperCase()
+      };
+    });
+    const contextRelationInputs = Array.isArray(value.contextRelations)
+      ? value.contextRelations
+      : Array.isArray(value.context_relations) ? value.context_relations : [];
+    const contextRelations = contextRelationInputs.map((relationValue, relationIndex) => {
+      const input = relationValue && typeof relationValue === 'object' ? relationValue : {};
+      const first = normalizeEndpoint(input.first, sentences[0].id, '');
+      const second = normalizeEndpoint(input.second, sentences[1].id, '');
+      if (!first.insertionId || !second.insertionId) {
+        throw new Error('Een Context-tijdsrelatie verbindt uitsluitend twee LEX-inserties.');
+      }
+      resolveSentenceEndpoint(sentenceById.get(first.unitId), first, 'Eerste Context');
+      resolveSentenceEndpoint(sentenceById.get(second.unitId), second, 'Tweede Context');
+      const type = String(input.type || '').trim().toLowerCase();
+      if (type !== 'temporal-order') throw new Error('Context-relatie v1 ondersteunt voorlopig uitsluitend temporal-order.');
+      return {
+        schema: CONTEXT_RELATION_SCHEMA,
+        id: cleanId(input.id, `context-relation-${relationIndex + 1}`),
+        type,
+        direction: 'earlier-to-later',
+        first,
+        second,
+        label: String(input.label || 'TIJD: eerder → later').trim(),
+        line: { shape: 'bracket', style: 'dashed', axis: 'LEX' },
+        affectsLayout: false,
+        affectsFlip: false
       };
     });
     const contextInput = value.context && typeof value.context === 'object' && !Array.isArray(value.context)
@@ -896,6 +939,7 @@
       gapRows: Math.max(1, Math.min(12, Number(value.gapRows) || 3)),
       sentences,
       relations,
+      ...(contextRelations.length ? { contextRelations } : {}),
       ...(contextInput ? { context: clone(RESERVED_CONTEXT) } : {}),
       relation,
       layoutResolution: {
@@ -953,6 +997,7 @@
         alignment: clone(relation.alignment),
         line: { shape: 'straight', direction: 'none' }
       })),
+      ...(combination.contextRelations ? { contextRelations: clone(combination.contextRelations) } : {}),
       ...(combination.context ? { context: clone(RESERVED_CONTEXT) } : {}),
       layoutResolution: clone(combination.layoutResolution)
     };
@@ -966,6 +1011,7 @@
     COMBINATION_SCHEMA,
     RELATION_SCHEMA,
     LEXICAL_INSERTION_SCHEMA,
+    CONTEXT_RELATION_SCHEMA,
     LAYOUT_RESOLUTION_SCHEMA,
     BRANCH_FLIP_SCHEMA,
     BRANCH_VARIANTS,

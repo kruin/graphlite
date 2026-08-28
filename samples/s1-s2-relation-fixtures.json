@@ -19,9 +19,12 @@
         {"unitId": "S2", "id": "lex-s2-er", "layer": "Context", "surface": "ER"},
         {"unitId": "S2", "id": "lex-s2-niet-meer", "layer": "Context", "surface": "NIET MEER"}
       ],
+      "contextRelations": [
+        {"schema": "ogn-lex-context-relation-v1", "id": "gisteren-voor-vandaag", "type": "temporal-order", "direction": "earlier-to-later", "first": "S1:lex-s1-gisteren", "second": "S2:lex-s2-vandaag", "display": "dashed-bracket-along-lex-axis", "affectsLayout": false, "affectsFlip": false}
+      ],
       "contextStatus": "p.m.",
       "contextNotes": ["GISTEREN en VANDAAG verschillen één dag.", "Een plaats voor ER is niet expliciet benoemd.", "NIET MEER duidt een toestandsverschil aan."],
-      "expected": {"hardRelationCount": 1, "geometricConstraintCount": 1, "contextInsertionCount": 4}
+      "expected": {"hardRelationCount": 1, "geometricConstraintCount": 1, "contextInsertionCount": 4, "contextRelationCount": 1}
     },
     {
       "id": "explicit-place-anaphor",

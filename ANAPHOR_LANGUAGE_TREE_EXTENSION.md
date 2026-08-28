@@ -195,8 +195,11 @@ Hun directe LEX-realisatie wordt per zin afzonderlijk vastgelegd:
 
 De gedeelde LEX-lijst verwijst naar `{"insertionId":"lex-s2-omdat"}`.
 Zo'n insertie heeft geen `nodeId`, geen centrale boomknoop en geen
-coreferentie. Het tijdsverschil tussen gisteren en vandaag of de causaliteit
-bij omdat hoort bij Context; nadere uitwerking blijft p.m.
+coreferentie. Het tijdsverschil tussen gisteren en vandaag hoort bij Context,
+maar beide woorden blijven uitsluitend LEX-inserties. Een gestippelde
+Context-relatie langs de LEX-as verbindt `GISTEREN → VANDAAG`; zij raakt geen
+boomknoop, verplaatst geen OGN-eenheid en beïnvloedt Flip niet. De causaliteit
+bij `OMDAT` blijft p.m.
 
 ## Meerdere relaties
 
@@ -217,8 +220,9 @@ De compositor controleert alle gedeclareerde uitlijningen. OPN-export schrijft
 alle coreferenties en markeert per relatie `rendered_in_this_version`.
 
 Tijd, plaats, toestand, causaliteit en discourse vallen onder Context en
-worden niet in `relations[]` gezet. Nadere Context-uitwerking blijft
-p.m. De positieve en negatieve S1–S2-paren staan in
+worden niet in `relations[]` gezet. De eerste afzonderlijke
+`contextRelations[]`-variant is `temporal-order` tussen twee LEX-inserties;
+andere Context-uitwerking blijft p.m. De positieve en negatieve S1–S2-paren staan in
 `S1_S2_RELATION_TEST_FIXTURES.md`.
 
 De literatuur maakt bovendien onderscheid tussen meerdere gewone links en

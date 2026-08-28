@@ -1,0 +1,21 @@
+{
+  "schema": "opengraph-publication-start-items",
+  "version": 1,
+  "canonicalParameter": "item",
+  "bareDefault": "hond-bijt-man",
+  "catalog": "publicatie-links.html",
+  "platforms": {
+    "linkedin": {
+      "enabled": true,
+      "item": "jan-beloonde-jek-omdat-die-het-bot-terugbracht",
+      "parameters": { "anafoor": "die", "werkwoord": "terugbracht", "bot": "het-bot" },
+      "reason": "Aansluiting op drie eerder geplaatste bijdragen over man en hond."
+    },
+    "reddit": {
+      "enabled": false,
+      "item": null,
+      "parameters": {},
+      "reason": "Nog geen eerdere reeks; startitem wordt bij de Reddit-publicatiebatch gekozen."
+    }
+  }
+}

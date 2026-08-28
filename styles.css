@@ -8295,6 +8295,25 @@ body.placement-multi-ogn-active .lex-ambiguity-panel {
   marker-end:none !important;
   vector-effect:non-scaling-stroke;
 }
+#graphSvg .multi-ogn-context-relation-line {
+  fill:none;
+  stroke:#7c3aed;
+  stroke-width:1.8;
+  stroke-dasharray:5 5;
+  vector-effect:non-scaling-stroke;
+}
+#graphSvg .multi-ogn-context-relation-arrow {
+  fill:#7c3aed;
+  stroke:none;
+}
+#graphSvg .multi-ogn-context-relation-label {
+  fill:#6d28d9;
+  font-size:calc(11px * var(--og-font-scale));
+  font-weight:850;
+}
+#graphSvg [data-lex-origin="context-insertion"] {
+  stroke-dasharray:4 3;
+}
 #graphSvg .coreference-antecedent circle,
 #graphSvg .coreference-anaphor circle,
 #graphSvg .coreference-antecedent rect,

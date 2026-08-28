@@ -429,20 +429,26 @@
 <article class="help-topic-panel" data-help-topic="multi-ogn-anaphor">
 <div class="help-lang-nl">
 <h3>Anafoor · multi-OGN</h3>
+<p><strong>Publicatielinks:</strong> Config kiest het startitem niet. De kale site opent HOND BIJT MAN; gebruik voor een platform een expliciete URI uit <a href="publicatie-links.html">de publicatie-URI-lijst</a>.</p>
+<p><strong>Twee groepen:</strong> HIJ/DIE/HEM verwijzen tussen K1, K2 en K3. ZICH, ZICHZELF en UZELF zijn lokale reflexieve anaforen en staan als afzonderlijke subgroep in de itemlijst. Bij <em>Ken uzelf</em> is U als impliciete subjectknoop structureel aanwezig.</p>
 <p><strong>Uiting en kernzinnen:</strong> een uiting bestaat uit één of meer verknoopte kernzinnen. De uitingen <strong>Jan wast zichzelf</strong>, <strong>Jan slaat Jek omdat hij/die/die hond hem beet</strong> en <strong>Ken uzelf</strong> openen als twee afzonderlijke kernzinbomen, K1 boven K2. Anaforen lopen verticaal; de causale uiting toont tegelijk JEK ↔ HIJ/DIE/DIE HOND en JAN ↔ HEM. DIE HOND is één subject-NP met twee LEX-woorden.</p>
 <p><strong>Flip — waar, wanneer, waarom?</strong> In de causale uiting flipt de onderste boom K2 automatisch wanneer JAN en JEK van subject/object wisselen. Zonder die spiegeling kunnen niet beide referentverbindingen verticaal blijven. De optionele globale Flip spiegelt daarna beide bomen; structuur en LEX-woordvolgorde veranderen nooit.</p>
 <p>Het vaste eerste voorbeeld is <strong>S1: Ik zie een man.</strong> en <strong>S2: Hij draagt een hoed.</strong> MAN is het <strong>antecedent</strong>; HIJ is de <strong>anafoor</strong>. De twee uitdrukkingen zijn coreferentieel: ze hebben dezelfde referent.</p>
 <p>Graphlite berekent de twee bomen eerst afzonderlijk als geldige OGN’s. Daarna blijft iedere complete boom star: S1 komt boven S2 en de complete S2 wordt horizontaal verschoven totdat MAN en HIJ exact één gridkolom delen.</p>
 <p>De LEX-as is gezamenlijk en ordent de woorden van S1 vóór die van S2. De verbinding MAN–HIJ is één rechte verticale lijn zonder pijl, richting of verwijzingslabel.</p>
+<p><strong>Context op LEX:</strong> GISTEREN en VANDAAG zijn uitsluitend lexicale inserties en hebben dus geen boomknoop of boomprojectielijn. Hun tijdsvolgorde verschijnt als een afzonderlijke gestippelde verbinding langs de LEX-as: GISTEREN → VANDAAG. Deze Context-relatie beïnvloedt de boomplaatsing en Flip niet.</p>
 <p>De regel dat verschillende knopen geen rij of kolom delen, geldt <strong>per afzonderlijke OGN</strong>. Tussen OGN’s is uitsluitend de gedeclareerde MAN–HIJ-kolom toegestaan; alle overige kruisende rijen en kolommen blijven verboden.</p>
 </div>
 <div class="help-lang-en">
 <h3>Anaphor · multi-OGN</h3>
+<p><strong>Publication links:</strong> Config does not select the start item. The bare site opens HOND BIJT MAN; use an explicit platform URI from <a href="publicatie-links.html">the publication URI list</a>.</p>
+<p><strong>Two groups:</strong> HIJ/DIE/HEM refer across K1, K2 and K3. ZICH, ZICHZELF and UZELF are local reflexive anaphors and form a separate subgroup in the item list. In <em>Ken uzelf</em>, U is structurally present as an implicit subject node.</p>
 <p><strong>Utterances and kernel clauses:</strong> an utterance consists of one or more linked kernel clauses. The utterances <strong>Jan wast zichzelf</strong>, <strong>Jan slaat Jek omdat hij/die/die hond hem beet</strong>, and <strong>Ken uzelf</strong> open as two independent kernel-clause trees, K1 above K2. Anaphors connect vertically; the causal utterance simultaneously shows JEK ↔ HIJ/DIE/DIE HOND and JAN ↔ HEM. DIE HOND is one subject NP with two LEX words.</p>
 <p><strong>Flip — where, when, why?</strong> In the causal utterance, lower tree K2 flips automatically when JAN and JEK exchange subject/object roles. Without that mirror, both reference links cannot remain vertical. The optional global Flip then mirrors both trees; structure and LEX word order never change.</p>
 <p>The fixed first example is <strong>S1: Ik zie een man.</strong> and <strong>S2: Hij draagt een hoed.</strong> MAN is the <strong>antecedent</strong>; HIJ is the <strong>anaphor</strong>. Both expressions are coreferential: they have the same referent.</p>
 <p>Graphlite first calculates both trees independently as valid OGNs. Each complete tree then remains rigid: S1 is placed above S2 and the complete S2 is shifted horizontally until MAN and HIJ share exactly one grid column.</p>
 <p>The LEX axis is shared and orders the words of S1 before those of S2. The MAN–HIJ connection is one straight vertical line without an arrow, direction or reference label.</p>
+<p><strong>Context on LEX:</strong> GISTEREN and VANDAAG are lexical insertions only and therefore have no tree node or tree projection line. Their temporal order is shown as a separate dashed connection along the LEX axis: GISTEREN → VANDAAG. This Context relation does not affect tree placement or Flip.</p>
 <p>The rule that distinct nodes do not share a row or column applies <strong>per individual OGN</strong>. Across OGNs, only the declared MAN–HIJ column is permitted; every other cross-unit row or column remains forbidden.</p>
 </div>
 </article>
@@ -1048,6 +1054,9 @@
   </script>
 <script defer="" src="greedy-grow-engine.js?v2.0.0-rc.45"></script>
 <script defer="" src="random-placement-engine.js?v2.0.0-rc.45"></script>
+<script defer="" src="anaphor-combinations-engine.js?v2.0.0-rc.45"></script>
+<script defer="" src="anaphor-lexicalization-engine.js?v2.0.0-rc.45"></script>
+<script defer="" src="multi-ogn-anaphor-play-engine.js?v2.0.0-rc.45"></script>
 <script defer="" src="multi-ogn-composition-engine.js?v2.0.0-rc.45"></script>
 <script defer="" src="utterance-kernel-engine.js?v2.0.0-rc.45"></script>
 <script defer="" src="viewer.js?v2.0.0-rc.45&amp;cb=5"></script>

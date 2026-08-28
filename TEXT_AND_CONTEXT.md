@@ -176,3 +176,9 @@ In config en OPN blijven de objecttypen expliciet gescheiden:
 - toekomstige Context-uitwerking:
   `context: {"notation": "Open Graph Notation", "representation":
   "minimized-tree", "status": "p.m."}`.
+
+De eerste zichtbare Context-relatie is beperkt tot LEX: `GISTEREN` en
+`VANDAAG` blijven inserties zonder `nodeId`; `contextRelations[]` legt
+`temporal-order` vast en tekent uitsluitend een gestippelde verbinding langs
+de LEX-as. Zij levert geen geometrische constraint voor de kernzinbomen en
+wordt niet door Flip opgelost.

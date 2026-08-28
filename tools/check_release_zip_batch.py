@@ -49,8 +49,9 @@ for folder in [
 for marker, label in [
     ('for %%I in ("%~dp0.") do set "OG_PUBLISH_PROJECT_NAME=%%~nxI"', "publish-mapnaam"),
     ("set \"RELEASE_ZIP=%OG_PUBLISH_PROJECT_NAME%_full_source.zip\"", "dynamische publish-zipnaam"),
-    ('/C:".*_full_source.*\\.zip"', "statusfilter voor release-zipkopieën"),
-    ('git rm --cached --ignore-unmatch -- "*_full_source*.zip"', "stagingfilter voor release-zipkopieën"),
+    ('/C:".*\\.zip"', "statusfilter voor alle lokale zipkopieën"),
+    ('/C:"LEESMIJ\\.txt"', "statusfilter voor legacy LEESMIJ.txt"),
+    ('git rm --cached --ignore-unmatch -- "*.zip" "LEESMIJ.txt"', "stagingfilter voor lokale zipkopieën en legacy LEESMIJ.txt"),
     ('if "%DID_PUSH%"=="1" call :open_reset_after_push', "reset-subroutine na push"),
     (':open_reset_after_push', "veilige reset-subroutine"),
     ('start "" "%USER_RESET_URL%"', "browseropening met gevulde URL"),
@@ -75,7 +76,8 @@ for marker, label in [
 ]:
     require(RELEASE_CHECK, marker, label)
 
-require(GITIGNORE, "*_full_source*.zip", "generieke gitignore voor release-zipkopieën")
+require(GITIGNORE, "*.zip", "generieke gitignore voor lokale zipkopieën")
+require(GITIGNORE, "/LEESMIJ.txt", "gitignore voor legacy LEESMIJ.txt")
 require(GITIGNORE, "node_modules/", "node_modules-gitignore")
 
 if errors:

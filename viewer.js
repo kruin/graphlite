@@ -1407,6 +1407,11 @@
   ];
 
   let ALL_EXAMPLES = EXAMPLES.slice();
+  const DEFAULT_START_ITEM_ID = 'hond-bijt-man';
+  const REWARD_ITEM_ID = 'jan-beloonde-jek-omdat-die-het-bot-terugbracht';
+  const ITEM_ID_ALIASES = Object.freeze({
+    'story-jan-sloeg-jek-waarna-hij-ontweek': 'story-jan-sloeg-jek-waarna-hij-hem-ontweek'
+  });
 
   const SENTENCE_TYPES = Object.freeze([
     Object.freeze({ id: 'main-declarative', label: 'Hoofdzin · mededelend', labelEn: 'Main clause · declarative', defaultExample: 'hond-bijt-man' }),
@@ -4693,8 +4698,18 @@
     return globalThis.OGNUtteranceKernels?.definitionFor?.(state.multiOgnExampleId, state.causalAnaphorVariant, state.causalVerbVariant, state.botVariant) || null;
   }
 
+  function activeAnaphorCombinationDefinition(id = state.multiOgnExampleId) {
+    // De vaste introductiedemo heeft bewust een eigen, reeds geteste boom
+    // (S1 MAN ↔ S2 HIJ). Een catalogusitem met dezelfde publieke id mag
+    // die interne fixture niet overschrijven.
+    if (String(id || '') === MULTI_OGN_ANAPHOR_DEMO.id) return null;
+    const engine = globalThis.OGNAnaphorCombinations;
+    if (!engine?.normalizeCombinations) return null;
+    return engine.normalizeCombinations().find(item => item.id === String(id || '')) || null;
+  }
+
   function activeMultiOgnDemo() {
-    return activeUtteranceDefinition() || MULTI_OGN_ANAPHOR_DEMO;
+    return activeUtteranceDefinition() || activeAnaphorCombinationDefinition() || MULTI_OGN_ANAPHOR_DEMO;
   }
 
   function multiOgnAnaphorComposition() {
@@ -4702,18 +4717,20 @@
     const utterance = activeUtteranceDefinition();
     if (utterance) return globalThis.OGNUtteranceKernels.composeUtterance(utterance.id, engine, state.causalAnaphorVariant, state.causalVerbVariant, state.botVariant);
     if (!engine?.composePair) throw new Error('Multi-OGN-compositie-engine ontbreekt.');
-    const [s1, s2] = MULTI_OGN_ANAPHOR_DEMO.sentences;
+    const demo = activeMultiOgnDemo();
+    const [s1, s2] = demo.sentences;
     const composed = engine.composePair({
       upper: { id: s1.id, layout: multiOgnSentenceLayout(s1) },
       lower: { id: s2.id, layout: multiOgnSentenceLayout(s2) },
-      relation: MULTI_OGN_ANAPHOR_DEMO.relation,
-      gapRows: MULTI_OGN_ANAPHOR_DEMO.gapRows
+      relation: demo.relation,
+      gapRows: demo.gapRows
     });
     composed.units.forEach(unit => assertUniqueNodeGridLines(unit.layout, `multi-OGN ${unit.id} na compositie`));
     return {
       ...composed,
-      demo: MULTI_OGN_ANAPHOR_DEMO,
-      lexItems: MULTI_OGN_ANAPHOR_DEMO.sentences.flatMap(sentence => sentence.lex.map((item, index) => ({
+      demo,
+      contextRelations: demo.contextRelations || [],
+      lexItems: demo.sentences.flatMap(sentence => sentence.lex.map((item, index) => ({
         ...item,
         unitId: sentence.id,
         sentenceOrder: sentence.order,
@@ -5035,6 +5052,70 @@
       }
     } catch (_err) {}
     return '';
+  }
+
+  function canonicalItemId(value) {
+    const id = String(value || '').trim();
+    return ITEM_ID_ALIASES[id] || id;
+  }
+
+  function activateCanonicalItem(value, { updateUrl = false } = {}) {
+    const id = canonicalItemId(value);
+    const definition = globalThis.OGNUtteranceKernels?.definitionFor?.(id, state.causalAnaphorVariant, state.causalVerbVariant, state.botVariant);
+    const anaphorCombination = activeAnaphorCombinationDefinition(id);
+    if (definition || anaphorCombination) {
+      state.multiOgnExampleId = definition?.id || anaphorCombination.id;
+      const matchingExample = EXAMPLES.find(example => example.id === definition.id);
+      if (matchingExample) state.example = matchingExample;
+      state.placementMode = 'multi-ogn-anaphor';
+    } else {
+      const example = EXAMPLES.find(item => item.id === id);
+      if (!example) return false;
+      state.example = example;
+      state.placementMode = 'language-tree';
+    }
+    state.documentMetadata = null;
+    resetForNewExample();
+    if (updateUrl) syncCanonicalItemUrl();
+    return true;
+  }
+
+  function activeCanonicalItemId() {
+    return multiOgnAnaphorActive()
+      ? canonicalItemId(state.multiOgnExampleId)
+      : canonicalItemId(state.example?.id);
+  }
+
+  function syncCanonicalItemUrl() {
+    try {
+      const url = new URL(window.location.href);
+      const mode = validPlacementMode(state.placementMode);
+      if (mode === 'greedy-grow' || mode === 'random') {
+        url.searchParams.set('app', mode);
+        for (const key of ['item', 'example', 'anafoor', 'werkwoord', 'bot']) url.searchParams.delete(key);
+        window.history.replaceState({ app: mode }, '', url.toString());
+        return;
+      }
+      const id = activeCanonicalItemId();
+      if (!id) return;
+      url.searchParams.delete('app');
+      url.searchParams.set('item', id);
+      if (!multiOgnAnaphorActive() && exampleRequiresAdverbs(state.example)) url.searchParams.set('features', 'adverbs');
+      else url.searchParams.delete('features');
+      url.searchParams.delete('example');
+      const definition = globalThis.OGNUtteranceKernels?.definitionFor?.(id);
+      if (definition?.type === 'causal-role-flip') {
+        url.searchParams.set('anafoor', state.causalAnaphorVariant || 'die');
+        url.searchParams.set('werkwoord', state.causalVerbVariant || (id === REWARD_ITEM_ID ? 'terugbracht' : 'beet'));
+        if (id === REWARD_ITEM_ID) url.searchParams.set('bot', state.botVariant || 'het-bot');
+        else url.searchParams.delete('bot');
+      } else {
+        url.searchParams.delete('anafoor');
+        url.searchParams.delete('werkwoord');
+        url.searchParams.delete('bot');
+      }
+      window.history.replaceState({ item: id }, '', url.toString());
+    } catch (_err) {}
   }
 
   function validViewportMode(value = state?.viewportMode) {
@@ -6306,6 +6387,7 @@
     const previous = validPlacementMode(state.placementMode);
     if (next === previous) {
       closeMainChoiceMenus();
+      syncCanonicalItemUrl();
       render();
       return;
     }
@@ -6326,6 +6408,7 @@
     resetManualViewBox();
     recordParadata('set-placement-mode', { from: previous, to: next, kind: placementModeDefinition().kind });
     closeMainChoiceMenus();
+    syncCanonicalItemUrl();
     render();
   }
 
@@ -9167,9 +9250,15 @@
         });
       } else if (layer.classList.contains('multi-ogn-coreference')) {
         layer.setAttribute('visibility', phase >= relationsStep ? 'visible' : 'hidden');
+      } else if (layer.classList.contains('multi-ogn-context-relation')) {
+        layer.setAttribute('visibility', phase >= relationsStep ? 'visible' : 'hidden');
       } else if (layer.classList.contains('multi-ogn-shared-lex')) {
         layer.setAttribute('visibility', operation.id === 'lex' || operation.id === 'lex-complete' ? 'visible' : 'hidden');
         Array.from(layer.children || []).forEach(element => {
+          if (element.classList?.contains('multi-ogn-context-relation')) {
+            element.setAttribute('visibility', phase >= relationsStep ? 'visible' : 'hidden');
+            return;
+          }
           const lexUnit = element.getAttribute('data-lex-unit');
           if (lexUnit) element.setAttribute('visibility', operation.id === 'lex-complete' || lexUnit === operation.unitId ? 'visible' : 'hidden');
         });
@@ -9191,6 +9280,22 @@
       const node = unitById.get(unitId)?.layout?.nodes?.find(candidate => candidate.id === nodeId);
       return node ? { ...node, px: px(node.x, origin), py: py(node.y, origin) } : null;
     };
+    const insertionPointByKey = new Map();
+    const insertionPlanner = globalThis.OGNAnaphorCombinations?.planLexInsertionRows;
+    if (insertionPlanner) {
+      composition.demo.sentences.forEach(sentence => {
+        const unit = unitById.get(sentence.id);
+        if (!unit) return;
+        insertionPlanner(sentence, unit.layout).forEach(item => {
+          insertionPointByKey.set(`${sentence.id}:${item.insertionId}`, {
+            ...item, px: null, py: py(item.y, origin)
+          });
+        });
+      });
+    }
+    const lexPoint = item => item.insertionId
+      ? insertionPointByKey.get(`${item.unitId}:${item.insertionId}`) || null
+      : nodePoint(item.unitId, item.nodeId);
     const axisX = px(composition.box.minX, origin) - Math.max(190, cellX() * 1.85);
     const axisTop = py(composition.box.minY, origin) - Math.max(52, cellY() * 0.9);
     const axisBottom = py(composition.box.maxY, origin) + Math.max(54, cellY() * 0.9);
@@ -9238,9 +9343,9 @@
     let previousUnit = '';
     const leafRadius = treeNodeRenderMetrics().leafRadius;
     composition.lexItems.forEach((item, index) => {
-      const point = nodePoint(item.unitId, item.nodeId);
-      if (!point) throw new Error(`LEX-bronknoop ontbreekt: ${item.nodeId}`);
-      if (state.showRelations) {
+      const point = lexPoint(item);
+      if (!point) throw new Error(`LEX-bron ontbreekt: ${item.nodeId || item.insertionId}`);
+      if (state.showRelations && item.nodeId) {
         lexLayer.appendChild(svgEl('path', {
           d: `M ${axisX + 62} ${point.py} H ${point.px - leafRadius}`,
           class: 'projection-line lex multi-ogn-lex-projection',
@@ -9251,7 +9356,8 @@
       lexLayer.appendChild(svgEl('rect', {
         x: axisX - 60, y: point.py - 24, width: 120, height: 48, rx: 13,
         class: 'multi-ogn-lex-item lex-slot-box',
-        'data-node-id': item.nodeId,
+        ...(item.nodeId ? { 'data-node-id': item.nodeId } : { 'data-insertion-id': item.insertionId }),
+        'data-lex-origin': item.insertionId ? 'context-insertion' : 'tree-node',
         'data-lex-index': index + 1,
         'data-sentence-order': item.sentenceOrder
       }));
@@ -9261,6 +9367,36 @@
         previousUnit = item.unitId;
       }
     });
+    if (state.showRelations && composition.contextRelations?.length) {
+      composition.contextRelations.forEach(relation => {
+        const first = insertionPointByKey.get(`${relation.first.unitId}:${relation.first.insertionId}`);
+        const second = insertionPointByKey.get(`${relation.second.unitId}:${relation.second.insertionId}`);
+        if (!first || !second) throw new Error(`Contextrelatie ${relation.id} mist een LEX-insertie.`);
+        const relationX = axisX + 76;
+        const group = svgEl('g', {
+          class: 'multi-ogn-context-relation',
+          'data-relation': relation.type,
+          'data-axis': 'LEX',
+          'data-affects-layout': 'false',
+          'data-affects-flip': 'false'
+        });
+        group.appendChild(svgEl('title', {}, `${relation.label} · uitsluitend tussen LEX-inserties`));
+        group.appendChild(svgEl('path', {
+          d: `M ${axisX + 62} ${first.py} H ${relationX} V ${second.py} H ${axisX + 62}`,
+          class: 'multi-ogn-context-relation-line'
+        }));
+        const arrowDirection = second.py >= first.py ? 1 : -1;
+        group.appendChild(svgEl('path', {
+          d: `M ${axisX + 62} ${second.py} l 10 ${-6 * arrowDirection} v ${12 * arrowDirection} z`,
+          class: 'multi-ogn-context-relation-arrow'
+        }));
+        group.appendChild(svgEl('text', {
+          x: relationX + 10, y: (first.py + second.py) / 2 + 5,
+          class: 'multi-ogn-context-relation-label'
+        }, relation.label));
+        lexLayer.appendChild(group);
+      });
+    }
     g.appendChild(lexLayer);
 
     const treeEdgeLayer = svgEl('g', { class: 'multi-ogn-tree-edge-layer' });
@@ -10588,6 +10724,9 @@
     }
     const multiOptions = [
       { id: MULTI_OGN_ANAPHOR_DEMO.id, title: MULTI_OGN_ANAPHOR_DEMO.title, label: MULTI_OGN_ANAPHOR_DEMO.title },
+      ...(globalThis.OGNAnaphorCombinations?.normalizeCombinations?.() || [])
+        .filter(definition => definition.id !== MULTI_OGN_ANAPHOR_DEMO.id)
+        .map(definition => ({ id: definition.id, title: definition.title, label: definition.title })),
       ...(globalThis.OGNUtteranceKernels?.DEFINITIONS || []).map(definition => ({ id: definition.id, title: definition.title, label: definition.title }))
     ];
     const multiActive = multiOgnAnaphorActive();
@@ -10602,14 +10741,13 @@
         state.documentMetadata = null;
         resetManualViewBox();
         recordParadata('select-multi-ogn-utterance', { example: id });
+        syncCanonicalItemUrl();
       } else {
-        state.example = EXAMPLES.find(example => example.id === id) || EXAMPLES[0];
-        resetForNewExample();
         if (globalThis.OGNUtteranceKernels?.definitionFor?.(id)) {
-          state.multiOgnExampleId = id;
-          setPlacementMode('multi-ogn-anaphor');
+          activateCanonicalItem(id, { updateUrl: true });
           return;
         }
+        activateCanonicalItem(id, { updateUrl: true });
       }
       closeMainChoiceMenus();
       render();
@@ -12309,6 +12447,7 @@
     }
     state.example = EXAMPLES[nextIndex];
     resetForNewExample();
+    syncCanonicalItemUrl();
     render();
   }
 
@@ -15007,7 +15146,7 @@
     }
     if (typeof snapshot.placementMode === 'string') state.placementMode = validPlacementMode(snapshot.placementMode);
     if (typeof snapshot.multiOgnExampleId === 'string') {
-      state.multiOgnExampleId = snapshot.multiOgnExampleId === MULTI_OGN_ANAPHOR_DEMO.id || globalThis.OGNUtteranceKernels?.definitionFor?.(snapshot.multiOgnExampleId)
+      state.multiOgnExampleId = snapshot.multiOgnExampleId === MULTI_OGN_ANAPHOR_DEMO.id || globalThis.OGNUtteranceKernels?.definitionFor?.(snapshot.multiOgnExampleId) || activeAnaphorCombinationDefinition(snapshot.multiOgnExampleId)
         ? snapshot.multiOgnExampleId : MULTI_OGN_ANAPHOR_DEMO.id;
     }
     const legacyDirectMethod = snapshot.placementMode === 'random'
@@ -15448,6 +15587,7 @@
       markConfigDirty('Causale anafoor');
       state.documentMetadata = null;
       resetManualViewBox();
+      syncCanonicalItemUrl();
       render();
     };
     els.mainCausalAnaphorSelect?.addEventListener('change', updateCausalAnaphorVariant);
@@ -15455,12 +15595,12 @@
     els.mainCausalVerbSelect?.addEventListener('change', event => {
       state.causalVerbVariant = event.target.value;
       try { localStorage.setItem('opengraph_causal_verb_variant', state.causalVerbVariant); } catch (_err) {}
-      state.documentMetadata = null; resetManualViewBox(); render();
+      state.documentMetadata = null; resetManualViewBox(); syncCanonicalItemUrl(); render();
     });
     els.mainBotSelect?.addEventListener('change', event => {
       state.botVariant = event.target.value;
       try { localStorage.setItem('opengraph_bot_variant', state.botVariant); } catch (_err) {}
-      state.documentMetadata = null; resetManualViewBox(); render();
+      state.documentMetadata = null; resetManualViewBox(); syncCanonicalItemUrl(); render();
     });
     const activateConfigurableNode = event => {
       const target = event.target?.closest?.('[data-node-config="causal-subject"]');
@@ -15486,6 +15626,7 @@
       state.documentMetadata = null;
       recordParadata('select-example', { example: state.example.id });
       resetForNewExample();
+      syncCanonicalItemUrl();
       render();
     });
     els.desktopExampleSelect?.addEventListener('change', event => {
@@ -15493,6 +15634,7 @@
       state.documentMetadata = null;
       recordParadata('select-example', { example: state.example.id });
       resetForNewExample();
+      syncCanonicalItemUrl();
       render();
     });
     els.mobileExampleSelect?.addEventListener('change', event => {
@@ -15500,6 +15642,7 @@
       state.documentMetadata = null;
       recordParadata('select-example', { example: state.example.id });
       resetForNewExample();
+      syncCanonicalItemUrl();
       render();
     });
     els.mainExampleSelect?.addEventListener('change', event => {
@@ -15507,6 +15650,7 @@
       state.documentMetadata = null;
       recordParadata('select-example', { example: state.example.id });
       resetForNewExample();
+      syncCanonicalItemUrl();
       render();
     });
     const updateMainAdverb = event => {
@@ -16058,14 +16202,28 @@
     await loadProjectConfigLayers();
     projectConfigStatus.browserLoaded = loadSavedConfigSnapshot();
     syncProjectConfigStatus();
+    const requestedFeatures = queryParamValue('features', 'feature').split(',').map(value => value.trim().toLowerCase());
+    if (requestedFeatures.includes('adverbs')) state.features.adverbs = true;
     if (featureEnabled('adverbs')) await loadLexiconUsageProfiles();
     await loadExamplesFromHtml();
     refreshExamplesForFeatures();
-    const requestedExample = queryParamValue('example');
-    if (requestedExample) {
-      const publicExample = EXAMPLES.find(example => example.id === requestedExample);
-      if (publicExample) state.example = publicExample;
-    }
+    const requestedItem = queryParamValue('item', 'example');
+    const requestedApp = queryParamValue('app');
+    const requestedAnaphor = queryParamValue('anafoor');
+    const requestedVerb = queryParamValue('werkwoord');
+    const requestedBot = queryParamValue('bot');
+    if (requestedAnaphor) state.causalAnaphorVariant = globalThis.OGNUtteranceKernels?.validCausalAnaphorVariant?.(requestedAnaphor) || state.causalAnaphorVariant;
+    if (requestedVerb && [
+      ...(globalThis.OGNUtteranceKernels?.CAUSAL_VERB_VARIANTS || []),
+      ...(globalThis.OGNUtteranceKernels?.REWARD_VERB_VARIANTS || [])
+    ].some(item => item.id === requestedVerb)) state.causalVerbVariant = requestedVerb;
+    if (requestedBot && (globalThis.OGNUtteranceKernels?.BOT_VARIANTS || []).some(item => item.id === requestedBot)) state.botVariant = requestedBot;
+    if (requestedItem) {
+      if (!activateCanonicalItem(requestedItem)) activateCanonicalItem(DEFAULT_START_ITEM_ID);
+    } else if (requestedApp === 'greedy-grow' || requestedApp === 'random') {
+      state.placementMode = requestedApp;
+      if (directPlacementActive()) ensureDirectPlacementState(true);
+    } else activateCanonicalItem(DEFAULT_START_ITEM_ID);
     if (featureEnabled('adverbs')) await loadAdverbOptionsFromHtml();
     else resetAdverbFeatureState();
     applyExampleAdverbDefaults();
@@ -16073,6 +16231,7 @@
     syncConfigSaveStatus();
     render();
     applyLanguage();
+    syncCanonicalItemUrl();
     try {
       const requestedScreen = new URLSearchParams(window.location.search || '').get('screen');
       if (requestedScreen === 'config') setAppScreen('config');
@@ -16096,6 +16255,12 @@
         resetManualViewBox();
         render();
       });
+    });
+    window.addEventListener('popstate', () => {
+      const item = queryParamValue('item', 'example');
+      const app = queryParamValue('app');
+      if (item && activateCanonicalItem(item)) render();
+      else if (app === 'greedy-grow' || app === 'random') setPlacementMode(app);
     });
     window.addEventListener('blur', clearViewportGestureState);
     document.addEventListener('visibilitychange', () => {

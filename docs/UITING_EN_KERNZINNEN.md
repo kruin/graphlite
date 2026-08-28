@@ -1,5 +1,17 @@
 # Uiting, kernzinnen en verknoping
 
+## Anaforen: twee afzonderlijke groepen
+
+De itemlijst en Help delen anaforen in zonder ze structureel te vermengen:
+
+1. **Tussen kernzinnen**: `hij`, `die` en `hem` verbinden K1, K2 en eventueel K3.
+2. **Reflexief lokaal**: `zich`, `zichzelf` en `uzelf`. Bij `Ken uzelf` is het
+   antecedent de structureel aanwezige, impliciete subjectknoop `U`.
+
+Reflexieve definities dragen daarom een lokale `anaphorClass`; stories en
+causale uitingen een `cross-kernel`-klasse. De canonieke story-id noemt beide
+anaforen: `story-jan-sloeg-jek-waarna-hij-hem-ontweek`.
+
 ## Werkhypothese
 
 ### OGL: Deep Structure is meervoudig

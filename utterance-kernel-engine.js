@@ -10,6 +10,7 @@
       id: 'jan-wast-zichzelf',
       title: 'Jan wast zichzelf.',
       type: 'reflexive',
+      anaphorClass: 'reflexive-local',
       upper: Object.freeze({ text: 'Jan wast Jan.', subject: 'JAN', predicate: 'WAST', object: 'JAN' }),
       lower: Object.freeze({ text: 'Jan wast zelf.', subject: 'JAN', predicate: 'WAST', object: 'ZELF' }),
       relations: Object.freeze([
@@ -26,6 +27,7 @@
       id: 'jan-slaat-jek-omdat-die-hem-beet',
       title: 'Jan slaat Jek omdat die hem beet.',
       type: 'causal-role-flip',
+      anaphorClass: 'cross-kernel',
       upper: Object.freeze({ text: 'Jan slaat hond.', subject: 'JAN', predicate: 'SLAAT', object: 'HOND' }),
       lower: Object.freeze({ text: 'Hond bijt man.', subject: 'HOND', predicate: 'BIJT', object: 'MAN', order: 'subject-object-predicate' }),
       relations: Object.freeze([
@@ -46,6 +48,7 @@
       id: 'jan-slaat-de-hond-omdat-die-hem-gebeten-heeft',
       title: 'Jan slaat de hond omdat die hem gebeten heeft.',
       type: 'causal-role-flip',
+      anaphorClass: 'cross-kernel',
       upper: Object.freeze({ text: 'Jan slaat hond.', subject: 'JAN', predicate: 'SLAAT', object: 'HOND' }),
       lower: Object.freeze({ text: 'Hond bijt man.', subject: 'HOND', predicate: 'BIJT', object: 'MAN', order: 'subject-object-predicate' }),
       relations: Object.freeze([
@@ -66,6 +69,7 @@
       id: 'jan-beloonde-jek-omdat-die-het-bot-terugbracht',
       title: 'Jan beloonde zijn hond Jek omdat die het bot naar hem terugbracht.',
       type: 'causal-role-flip',
+      anaphorClass: 'cross-kernel',
       deepStructure: Object.freeze({ plurality: 'multiple-kernel-clauses', storedOrder: Object.freeze(['K1', 'K2']), alternativeOrders: Object.freeze([Object.freeze(['K1', 'K2']), Object.freeze(['K2', 'K1'])]) }),
       lexicalOrders: Object.freeze(['main-before-causal', 'causal-before-main']),
       upper: Object.freeze({ text: 'Jan beloont hond.', subject: 'JAN', predicate: 'BELOONT', object: 'HOND' }),
@@ -87,9 +91,10 @@
       ])
     }),
     Object.freeze({
-      id: 'story-jan-sloeg-jek-waarna-hij-ontweek',
+      id: 'story-jan-sloeg-jek-waarna-hij-hem-ontweek',
       title: 'Jan sloeg Jek omdat die hem beet, waarna hij hem ontweek.',
       type: 'story-role-flip',
+      anaphorClass: 'cross-kernel-story',
       deepStructure: Object.freeze({ plurality: 'story', storedOrder: Object.freeze(['K1', 'K2', 'K3']) }),
       upper: Object.freeze({ text: 'Jan slaat hond.', subject: 'JAN', predicate: 'SLAAT', object: 'HOND' }),
       lower: Object.freeze({ text: 'Hond bijt man.', subject: 'HOND', predicate: 'BIJT', object: 'MAN', order: 'subject-object-predicate' }),
@@ -118,6 +123,7 @@
       id: 'ken-uzelf',
       title: 'Ken uzelf.',
       type: 'imperative-reflexive',
+      anaphorClass: 'reflexive-local-implicit-subject',
       implicitSubject: 'U',
       upper: Object.freeze({ text: 'Ken u.', subject: 'U', predicate: 'KEN', object: 'U', implicitSubject: true }),
       lower: Object.freeze({ text: 'Ken zelf.', subject: 'U', predicate: 'KEN', object: 'ZELF', implicitSubject: true }),
@@ -163,7 +169,11 @@
   }
 
   function definitionFor(id, variantId = 'die', verbVariantId = '', botVariantId = 'het-bot') {
-    const base = DEFINITIONS.find(definition => definition.id === String(id || '')) || null;
+    const requestedId = String(id || '');
+    const canonicalId = requestedId === 'story-jan-sloeg-jek-waarna-hij-ontweek'
+      ? 'story-jan-sloeg-jek-waarna-hij-hem-ontweek'
+      : requestedId;
+    const base = DEFINITIONS.find(definition => definition.id === canonicalId) || null;
     if (!base || base.type !== 'causal-role-flip') return base;
     const variant = CAUSAL_ANAPHOR_VARIANTS.find(item => item.id === validCausalAnaphorVariant(variantId));
     const reward = base.id === 'jan-beloonde-jek-omdat-die-het-bot-terugbracht';

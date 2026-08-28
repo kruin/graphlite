@@ -114,6 +114,7 @@ anaphor-lexicalization-engine.js
 check_release.bat
 config/README.md
 config/default-config.json
+config/publication-start-items.json
 config/user-config.json
 debug.html
 docs/.nojekyll
@@ -223,6 +224,7 @@ package-lock.json
 package.json
 portrait-test.html
 public-phase-1.html
+publicatie-links.html
 publicatie/phases.json
 publicatie/public-phase.css
 publicatie/public-phase.js
@@ -288,6 +290,7 @@ tools/check_desktop_max_view.py
 tools/check_direct_placement_config.py
 tools/check_examples_roundtrip.py
 tools/check_feature_profiles.py
+tools/check_item_uri_start.js
 tools/check_feature_profiles_runtime.js
 tools/check_git_publish_staging.py
 tools/check_greedy_grow_reconstruction.js

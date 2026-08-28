@@ -73,6 +73,7 @@
     "kernelBranchVertical": "compact",
   "kernelBranchFlip": "auto",
   "multiOgnFlipHold": "pause",
+    "anaphorFlipVariants": {},
     "causalAnaphorVariant": "die",
     "projectionLineWeight": "normal",
     "boxLineWeight": "normal",

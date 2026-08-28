@@ -26,6 +26,8 @@ node tools\check_utterances.js
 if errorlevel 1 exit /b 1
 node tools\check_utterance_kernel_views.js
 if errorlevel 1 exit /b 1
+node tools\check_item_uri_start.js
+if errorlevel 1 exit /b 1
 where python >nul 2>nul
 if errorlevel 1 (
   echo FOUT: python ontbreekt.
