@@ -42,6 +42,26 @@ De zichtbare volgorde wordt zo `HOND — BIJT — MAN`, zonder HOND of MAN als
 schijnverplaatsing te tekenen. Alle verplaatsingspijlen blijven uitsluitend op
 de LEX-as; er lopen geen verplaatsingslijnen vanuit de boom.
 
+## Syntax, Functional, Compact en testmateriaal
+
+De prominente schakelaar **Syntax | Functional** staat buiten het menu voor de
+plaatsingsmethode. Syntax toont de syntactische kernzin; Functional toont voor
+dezelfde goedgekeurde analyse de functionele rollen, zoals `CLAUSE`,
+`ARG-STRUCT`, `PRED`, `AGENS` en `PATIENS`. Bij een uiting of story geldt de
+keuze voor iedere kernzin. Direct, Random en Greedy Grow krijgen geen
+stilzwijgend afgeleide Functional-view.
+
+De knop **Compact** kiest de veilige compacte recursieve layout en compacte
+horizontale/verticale kernzintakken. Eerdere handmatige uitrekking wordt
+hersteld, maar tekst, labels en knoopsymbolen worden niet verkleind.
+
+Lokaal is `data/testmateriaal.sqlite` de volledige standaardcatalogus. Alleen
+`OK`-records gaan via `data/catalog.public.json` naar GitHub Pages. Een nieuwe
+graph vereist daarnaast een actieve goedgekeurde kernzinanalyse; de viewer
+analyseert nooit zelfstandig ruwe input. Zie
+[`FUNCTIONAL_DATABASE_COMPACT.md`](FUNCTIONAL_DATABASE_COMPACT.md) en
+[`TESTMATERIAAL_BEHEER.md`](TESTMATERIAAL_BEHEER.md).
+
 ## Flip: structuur is geen woordvolgorde
 
 Flip is, naast **Free Node**, essentieel voor de Language Tree. Free Node geeft

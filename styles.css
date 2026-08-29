@@ -8122,6 +8122,24 @@ body.main-screen-active #graphSvg .logical-order-badge-interactive {
   color: #fff;
   box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent), transparent 72%);
 }
+.central-view-toolbar .compact-tree-button {
+  min-height: 2rem;
+  padding: .3rem .72rem;
+  border: 2px solid color-mix(in srgb, var(--accent), var(--border) 42%);
+  border-radius: .5rem;
+  background: var(--panel);
+  color: var(--text);
+  font-size: .8rem;
+  font-weight: 900;
+  cursor: pointer;
+}
+.central-view-toolbar .compact-tree-button:hover,
+.central-view-toolbar .compact-tree-button:focus-visible,
+.central-view-toolbar .compact-tree-button.active {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent), var(--panel) 82%);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent), transparent 76%);
+}
 @media (max-width: 760px), (orientation: portrait) {
   .central-view-toolbar {
     width: 100%;
@@ -8130,6 +8148,7 @@ body.main-screen-active #graphSvg .logical-order-badge-interactive {
   }
   .central-view-toolbar .main-menu-view-options { flex: 1; }
   .central-view-toolbar .compact-choice-option { flex: 1; min-width: 0; }
+  .central-view-toolbar .compact-tree-button { flex: 0 0 auto; }
 }
 .placement-mode-picker { margin-bottom: .5rem; }
 .placement-mode-picker h3,

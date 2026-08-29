@@ -11,6 +11,21 @@ const kernelEngine = require(path.join(root, 'utterance-kernel-engine.js'));
 const browserRuntime = fs.readFileSync(path.join(root, 'tools', 'check_multi_ogn_anaphor_runtime.js'), 'utf8');
 const indexHtml = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
 const styles = fs.readFileSync(path.join(root, 'styles.css'), 'utf8');
+const functionalDatabaseCompactDoc = fs.readFileSync(path.join(root, 'FUNCTIONAL_DATABASE_COMPACT.md'), 'utf8');
+
+for (const documentationContract of [
+  'ruwe input in SQLite',
+  'Syntax | Functional',
+  'CLAUSE',
+  'ARG-STRUCT',
+  'De knop **Compact**',
+  'data/testmateriaal.sqlite',
+  'data/catalog.public.json',
+  'status = OK',
+  'analysis_status = GOEDGEKEURD',
+  'voeg-lokale-db-in'
+]) assert.ok(functionalDatabaseCompactDoc.includes(documentationContract),
+  `Samenhangsdocumentatie mist: ${documentationContract}`);
 
 assert.ok(source.includes('function spaceScaledLayout('), 'universele H/V-ruimtezoom ontbreekt');
 assert.ok(source.includes('function attachSentenceSpaceDrag('), 'ruimtezoom ontbreekt in Zin');
@@ -607,6 +622,16 @@ assert.ok(source.includes('els.languageTreeViewPicker.hidden = !(languageTree ||
   'Syntax/Functional moet ook bij kernzincomposities zichtbaar zijn');
 assert.ok(indexHtml.includes('central-view-toolbar') && styles.includes('.central-view-toolbar .compact-choice-option.active'),
   'Syntax/Functional mist de prominente tweestandenschakelaar');
+assert.ok(indexHtml.includes('id="compactTreeButton"') && styles.includes('.central-view-toolbar .compact-tree-button'),
+  'Prominente knop Compact ontbreekt');
+for (const compactContract of [
+  "state.layoutDensity = 'compact'",
+  "state.branchOrder = 'auto-compact'",
+  "state.kernelBranchHorizontal = 'compact'",
+  "state.kernelBranchVertical = 'compact'",
+  'state.kernelSpaceGlobal = { x: 1, y: 1 }',
+  'state.sentenceSpaceLocal = { x: 1, y: 1 }'
+]) assert.ok(source.includes(compactContract), `Compact-contract ontbreekt: ${compactContract}`);
 assert.ok(source.includes('drawTreeEdges(unitGroup, unitById.get(unit.id).layout'),
   'Multi-OGN-randen moeten de gekozen centrale view gebruiken');
 assert.ok(source.includes('drawTreeNodes(unitGroup, unitById.get(unit.id).layout'),

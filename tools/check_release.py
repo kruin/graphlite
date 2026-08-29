@@ -23,7 +23,7 @@ def require(source: str, marker: str, label: str) -> None:
 
 required_files = [
     "index.html", "viewer.html", "viewer.js", "styles.css", "reset-cache.html", "sw.js",
-    "testmateriaal.html", "testmateriaal.js", "TESTMATERIAAL_BEHEER.md",
+    "testmateriaal.html", "testmateriaal.js", "TESTMATERIAAL_BEHEER.md", "FUNCTIONAL_DATABASE_COMPACT.md",
     "data/testmateriaal.sqlite", "data/catalog.public.json", "tools/testmateriaal_db.py", "tools/check_testmateriaal_bulk.py",
     "tools/install_local_database.py", "voeg-lokale-db-in.bat",
     "tools/check_utterance_lex_geometry.py",
@@ -806,7 +806,7 @@ for marker, label in [
 ]:
     require(local_launcher, marker, label)
 source_build = read("SOURCE_BUILD.txt").strip()
-if source_build != "v2.0.0-rc.45-prominent-syntax-functional-20260829.70":
+if source_build != "v2.0.0-rc.45-functional-db-compact-docs-20260829.72":
     errors.append(f"onverwachte of lege SOURCE_BUILD.txt: {source_build!r}")
 
 leesmij = read("LEESMIJ.md")

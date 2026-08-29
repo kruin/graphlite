@@ -1,5 +1,21 @@
 # PROJECT_STATE_CURRENT
 
+## Actuele aanvulling · bronstand .71
+
+- `data/testmateriaal.sqlite` is lokaal de leidende standaardcatalogus; de
+  statische publieke afleiding is `data/catalog.public.json` en bevat alleen
+  `status = OK`.
+- Ruwe input wordt eerst als één of meer kernzinnen geanalyseerd. Categorie en
+  kenmerken volgen pas uit de analyse. De viewer tekent uitsluitend graphdata
+  en is geen analyzer.
+- **Syntax | Functional** staat prominent buiten het plaatsingsmethodemenu voor
+  Language Tree en kernzincomposities. Functional gebruikt dezelfde
+  knoopidentiteiten en toont `CLAUSE`, `ARG-STRUCT` en beschikbare rollen.
+- **Compact** kiest de veilige compacte recursieve layout en compacte H/V-
+  kernzintakken zonder tekst of knoopsymbolen te verkleinen.
+- Normatief: `FUNCTIONAL_DATABASE_COMPACT.md` en
+  `TESTMATERIAAL_BEHEER.md`.
+
 Leidende status van OpenGraph Lite Viewer `v2.0.0-rc.45`.
 
 Controlestatus: rc.45 is op 2 augustus 2026 handmatig goedgekeurd, inclusief

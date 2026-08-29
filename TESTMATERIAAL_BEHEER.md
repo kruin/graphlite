@@ -1,5 +1,8 @@
 # Testmateriaalbeheer · DB-schema 2
 
+Voor de gezamenlijke relatie tussen database, Functional en de knop Compact:
+zie `FUNCTIONAL_DATABASE_COMPACT.md`.
+
 `data/testmateriaal.sqlite` is lokaal de volledige, leidende en standaardcatalogus. De lokale Python-server leest haar rechtstreeks voor zowel de beheerpagina als de viewer. De volledige bron-ZIP bevat deze database. GitHub Pages bevat haar niet. De database bewaart input, bronaliassen, segmenten, voorgestelde kernzinnen, cross-kernel-relaties en plaatsingsregels afzonderlijk.
 
 Open Graphlite via de lokale starter en kies **Testmateriaal** in het hoofdmenu. Alle bestaande input is bij de eerste migratie `OK`. Nieuwe input krijgt later `NIEUW`. Een inhoudelijke wijziging van een bestaand `OK`-item zet het automatisch terug naar `TEST`, tenzij de gebruiker in dezelfde bewerking bewust opnieuw `OK` kiest.
@@ -45,7 +48,7 @@ Een voorstel bevat minimaal kernzinnen, relaties, reconstructiegegevens en een c
 
 De viewer leest uitsluitend de actieve, goedgekeurde analyse. Hij mag ruwe input, een voorstel of een alternatieve analyse nooit als noodgraph tekenen. Zonder actieve goedgekeurde analyse blijft het item lokaal zichtbaar in Testmateriaal met de melding **analyse nog niet goedgekeurd**; het verschijnt niet als nieuwe graph in de gewone viewer.
 
-In een samengestelde kernzinweergave heet de zichtbare LEX-realisatie-as **Uiting**. Intern blijft dit de LEX-projectie. Iedere verplaatsing blijft binnen haar eigen kernzin, gaat in het actieve profiel uitsluitend omhoog en is in de vaste eindweergave herkenbaar aan een gekromde pijl. De centrale keuze **Syntax/Functional** geldt ook voor uitingen en anafoorcomposities; de knoopidentiteiten en relaties blijven bij die wissel gelijk. De keuze staat als een permanent zichtbare tweestandenschakelaar boven het hoofdmenu. Functional wordt alleen aangeboden voor berekende Language Trees en goedgekeurde kernzinanalyses waarvoor de rollen bekend zijn. Greedy Grow, Random en kale Direct-weergaven krijgen geen afgeleide functionele analyse.
+In een samengestelde kernzinweergave heet de zichtbare LEX-realisatie-as **Uiting**. Intern blijft dit de LEX-projectie. Iedere verplaatsing blijft binnen haar eigen kernzin, gaat in het actieve profiel uitsluitend omhoog en is in de vaste eindweergave herkenbaar aan een gekromde pijl. De centrale keuze **Syntax/Functional** geldt ook voor uitingen en anafoorcomposities; de knoopidentiteiten en relaties blijven bij die wissel gelijk. De keuze staat als een permanent zichtbare tweestandenschakelaar boven het hoofdmenu. De knop **Compact** kiest de compacte recursieve boomlayout en compacte kernzinvertakkingen, en herstelt eerdere handmatige ruimtevergrotingen zonder lettergrootte of labels te verkleinen. Functional wordt alleen aangeboden voor berekende Language Trees en goedgekeurde kernzinanalyses waarvoor de rollen bekend zijn. Greedy Grow, Random en kale Direct-weergaven krijgen geen afgeleide functionele analyse.
 
 Publicatiestatus en analysestatus zijn onafhankelijk. `status = OK` betekent dat een item publiceerbaar is, maar een nieuwe databasegestuurde graph vereist daarnaast een actieve goedgekeurde analyse. Een bestaande gepubliceerde analyse mag actief blijven terwijl een opvolgende versie als voorstel wordt bewerkt.
 

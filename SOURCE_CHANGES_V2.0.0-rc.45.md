@@ -1,5 +1,16 @@
 # SOURCE_CHANGES v2.0.0-rc.45
 
+## Bronstand .71 — Functional, database en Compact
+
+- **Syntax | Functional** staat prominent buiten het
+  plaatsingsmethodemenu en geldt voor alle kernzinnen van een compositie.
+- Functional gebruikt dezelfde goedgekeurde analyse en tekent onder meer
+  `CLAUSE`, `ARG-STRUCT`, `PRED`, `AGENS` en `PATIENS` waar beschikbaar.
+- **Compact** kiest veilige compacte boomdichtheid, `auto-compact` en compacte
+  H/V-kernzinvertakking zonder tekst of knoopsymbolen te verkleinen.
+- De lokale SQLite-catalogus, analysepoort en publieke `OK`-export zijn samen
+  vastgelegd in `FUNCTIONAL_DATABASE_COMPACT.md`.
+
 ## Bronstand .63 — lokale kernzinzones, nummers en bulkstatus
 
 - Iedere LEX-wissel behoudt dezelfde bron- en doelkern; K2/K3 mogen niet in een eerdere kernzinzone landen.

@@ -2,7 +2,7 @@
   'use strict';
 
   const VERSION = 'v2.0.0-rc.45';
-  const SOURCE_BUILD = 'v2.0.0-rc.45-prominent-syntax-functional-20260829.70';
+  const SOURCE_BUILD = 'v2.0.0-rc.45-functional-db-compact-docs-20260829.72';
   const OPN_FORMAT_VERSION = '1.0';
   const OPN_DOCUMENT_TYPE = 'opengraph-document';
   const PARADATA_EVENT_LIMIT = 250;
@@ -156,6 +156,7 @@
     mainViewSummary: document.getElementById('mainViewSummary'),
     mainViewOptions: document.getElementById('mainViewOptions'),
     languageTreeViewPicker: document.getElementById('languageTreeViewPicker'),
+    compactTreeButton: document.getElementById('compactTreeButton'),
     mainInterfaceMenu: document.getElementById('mainInterfaceMenu'),
     mainInterfaceSummary: document.getElementById('mainInterfaceSummary'),
     mainInterfaceOptions: document.getElementById('mainInterfaceOptions'),
@@ -11044,6 +11045,17 @@
       if (nlHeading) nlHeading.textContent = multiOgn ? 'Kernzin-view' : 'Language Tree-view';
       if (enHeading) enHeading.textContent = multiOgn ? 'Kernel-clause view' : 'Language Tree view';
     }
+    if (els.compactTreeButton) {
+      const compactActive = languageTree
+        ? validLayoutDensity() === 'compact' && state.branchOrder === 'auto-compact'
+        : multiOgn && validKernelBranchSpacing(state.kernelBranchHorizontal) === 'compact'
+          && validKernelBranchSpacing(state.kernelBranchVertical) === 'compact';
+      els.compactTreeButton.classList.toggle('active', compactActive);
+      els.compactTreeButton.setAttribute('aria-pressed', String(compactActive));
+      els.compactTreeButton.title = isEnglish()
+        ? 'Make the tree as compact as possible without reducing text size.'
+        : 'Maak de tree zo compact mogelijk zonder tekst te verkleinen.';
+    }
     if (els.mainViewSummary) {
       els.mainViewSummary.textContent = isEnglish() ? (mode.labelEn || mode.label) : mode.label;
       els.mainViewSummary.title = isEnglish()
@@ -16085,6 +16097,32 @@
     };
     els.mainAdverbSelect?.addEventListener('change', updateMainAdverb);
     els.mobileAdverbSelect?.addEventListener('change', updateMainAdverb);
+    els.compactTreeButton?.addEventListener('click', () => {
+      state.layoutDensity = 'compact';
+      state.branchOrder = 'auto-compact';
+      state.kernelBranchHorizontal = 'compact';
+      state.kernelBranchVertical = 'compact';
+      state.kernelSpaceGlobal = { x: 1, y: 1 };
+      state.kernelSpaceComponentX = 1;
+      state.kernelSpaceLocalY = {};
+      state.sentenceSpaceLocal = { x: 1, y: 1 };
+      try {
+        localStorage.setItem('opengraph_kernel_branch_horizontal', 'compact');
+        localStorage.setItem('opengraph_kernel_branch_vertical', 'compact');
+        localStorage.setItem('opengraph_kernel_space_global', JSON.stringify(state.kernelSpaceGlobal));
+        localStorage.setItem('opengraph_kernel_space_component_x', '1');
+        localStorage.setItem('opengraph_kernel_space_local_y', '{}');
+        localStorage.setItem('opengraph_sentence_space_local', JSON.stringify(state.sentenceSpaceLocal));
+      } catch (_err) {}
+      appendConfigLog('compact-tree', {
+        layoutDensity: state.layoutDensity,
+        branchOrder: state.branchOrder,
+        kernelBranchHorizontal: state.kernelBranchHorizontal,
+        kernelBranchVertical: state.kernelBranchVertical
+      });
+      resetManualViewBox();
+      render();
+    });
     document.getElementById('reloadExamplesButton')?.addEventListener('click', async () => {
       const before = EXAMPLES.length;
       await loadExamplesFromHtml();

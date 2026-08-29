@@ -1,5 +1,15 @@
 # HANDOVER_FOR_COLLABORATORS
 
+## Actueel contract vanaf bronstand .71
+
+Behoud de prominente **Syntax | Functional**-schakelaar buiten het
+plaatsingsmethodemenu. Functional mag alleen rollen uit de actieve
+goedgekeurde kernzinanalyse tonen. Behoud **Compact** als zuivere layoutactie:
+compacte recursieve dichtheid en compacte H/V-kernzintakken, zonder tekst,
+analyse of relaties te wijzigen. `data/testmateriaal.sqlite` is lokaal leidend;
+de publieke JSON bevat alleen `OK`. Lees vóór wijzigingen
+`../FUNCTIONAL_DATABASE_COMPACT.md` en `../TESTMATERIAAL_BEHEER.md`.
+
 Overdracht voor OpenGraph Lite Viewer v2.0.0-rc.45.
 
 Releasebesluit: rc.45 is op 2 augustus 2026 handmatig goedgekeurd, inclusief
@@ -281,7 +291,8 @@ geladen, uitgevoerd, zichtbaar gemaakt of geëxporteerd.
 ## Niet wijzigen zonder expliciete opdracht
 
 ```text
-View-menu:       Syntax → Functional
+View-menu:       plaatsingsmethode
+Centrale balk:   Syntax → Functional → Compact
 Projectiekeuze:  Alle → Bron → LEX → SYNT → LOG
 Assen:           LEX west, SYNT oost, LOG zuid
 ```

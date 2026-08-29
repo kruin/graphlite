@@ -1,1 +1,1 @@
-v2.0.0-rc.45-prominent-syntax-functional-20260829.70
+v2.0.0-rc.45-functional-db-compact-docs-20260829.72

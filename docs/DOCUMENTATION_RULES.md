@@ -41,11 +41,16 @@ latere rulesets voor directe of berekende plaatsing.
 
 ## View versus projectie
 
-- Het View-menu bevat `Syntax` en `Functional`.
+- De prominente tweestandenschakelaar buiten het View-menu bevat `Syntax` en
+  `Functional`; het View-menu kiest de plaatsingsmethode.
 - De Projectie-keuze in de bovenbalk bevat `Alle`, `Bron`, `LEX`, `SYNT`, `LOG`.
 - De Bronassen-popover kiest LEX, SYNT en LOG onafhankelijk of gecombineerd.
 - LOG wordt uitsluitend als zuidas/projectie beschreven.
 - Functional wordt uitsluitend als tweede centrale functionele view beschreven.
+- Beschrijf `Compact` als layoutactie: zij verandert geen tekst, analyse,
+  knoopidentiteit, functie, LEX-volgorde of kernzingrens.
+- Beschrijf SQLite als lokale opslagautoriteit, de analyzer als
+  analyseautoriteit en de viewer uitsluitend als renderautoriteit.
 
 ## Actuele toestand
 

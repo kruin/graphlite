@@ -1,3 +1,16 @@
+# Release notes
+
+## Bronstand .71 · Functional, database en Compact
+
+- De centrale tweestandenschakelaar **Syntax | Functional** staat permanent
+  buiten het plaatsingsmethodemenu bij berekende taalviews.
+- Functional wordt per kernzin getekend vanuit dezelfde goedgekeurde analyse.
+- **Compact** activeert de veilige compacte layout zonder labels of
+  knoopsymbolen te verkleinen.
+- Lokaal is `data/testmateriaal.sqlite` leidend; alleen `OK` wordt naar de
+  publieke JSON geëxporteerd. Analyse- en publicatiestatus blijven gescheiden.
+- Zie `../FUNCTIONAL_DATABASE_COMPACT.md`.
+
 ## v2.0.0-rc.45 — OGN-kern vóór toepassingen
 
 ### Actuele source build 20260813.5
@@ -602,8 +615,6 @@ contract vervangen.
 - Hersteld: ontbrekende `toggleGrowthPlayback()` veroorzaakte afgebroken init in v4453.
 - Lokale viewer tekent de boom nu direct bij start.
 - Play/Pauze werkt weer voor de groeipresentatie.
-
-# Release notes
 
 ## v4430
 

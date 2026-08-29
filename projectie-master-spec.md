@@ -62,6 +62,22 @@ input → analysevoorstel → goedgekeurde actieve analyse
 
 De viewer is dus renderautoriteit, niet analyseautoriteit. De database is opslagautoriteit, maar ruwe databaserijen worden pas graphbron via de goedkeuringspoort. Publicatiestatus en analysestatus zijn afzonderlijk: `status = OK` alleen maakt een nog niet goedgekeurde nieuwe analyse niet renderbaar. Een eerder goedgekeurde actieve versie mag gepubliceerd blijven terwijl een nieuw voorstel wordt onderzocht.
 
+### 0a.2 Syntax, Functional en Compact
+
+De centrale view is een presentatie van dezelfde actieve goedgekeurde analyse.
+Syntax toont syntactische categorieën; Functional vervangt die presentatie door
+`CLAUSE`, `ARG-STRUCT` en beschikbare rollen zoals `PRED`, `AGENS`, `PATIENS`,
+`THEMA` en `DOEL`. Knoopidentiteiten, lexicale bronnen, kernzingrenzen,
+relaties en LEX-realisatie blijven gelijk. De prominente tweestandenschakelaar
+staat buiten het plaatsingsmethodemenu en geldt per compositie voor alle
+kernzinnen. Zonder bekende rollen wordt Functional niet geconstrueerd.
+
+`Compact` is uitsluitend een layoutpreset. Het kiest compacte recursieve
+boomdichtheid, `auto-compact` takvolgorde en compacte horizontale/verticale
+kernzinvertakkingen; handmatige ruimtevergroting gaat terug naar 100%. Tekst,
+knoopsymbolen, analyse en relaties veranderen niet. Normatief:
+`FUNCTIONAL_DATABASE_COMPACT.md`.
+
 ## 0. Multi-OGN-discoursecompositie
 
 De berekende toepassing **Anafoor · multi-OGN** staat naast Language Tree en

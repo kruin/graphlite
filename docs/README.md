@@ -566,8 +566,19 @@ tree.
 2. Functional
 ```
 
-Syntax shows the syntactic tree. Functional shows the functional structure for the same
-example sentence. LOG is not a central view.
+Syntax shows the syntactic tree. Functional shows the functional roles for the
+same approved kernel-clause analysis, including `CLAUSE`, `ARG-STRUCT`, `PRED`,
+`AGENS` and `PATIENS` where available. LOG is not a central view. The prominent
+**Syntax | Functional** switch is outside the placement-method menu and applies
+to every kernel clause in an utterance, story or anaphor composition. It is not
+shown for Greedy Grow, Random or bare Direct views.
+
+**Compact** is placed next to this switch. It selects the safe compact recursive
+layout, compact horizontal and vertical kernel branches, and clears previous
+manual stretching. Text, labels and node symbols keep their readable size.
+
+The complete input-to-analysis, Functional, SQLite and Compact contract is in
+[`FUNCTIONAL_DATABASE_COMPACT.md`](../FUNCTIONAL_DATABASE_COMPACT.md).
 
 ## Named projections
 
