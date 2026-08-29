@@ -1,5 +1,26 @@
 # SOURCE_CHANGES v2.0.0-rc.45
 
+## Bronstand .63 — lokale kernzinzones, nummers en bulkstatus
+
+- Iedere LEX-wissel behoudt dezelfde bron- en doelkern; K2/K3 mogen niet in een eerdere kernzinzone landen.
+- De asnaam bij uitingen is verkort tot `LEX`.
+- Het DB-nummer staat vóór de oorspronkelijke input boven de graph en in de zinnen-/uitingenlijsten.
+- Testmateriaal ondersteunt meervoudige selectie en één transactionele statuswijziging voor alle geselecteerde nummers.
+
+## Bronstand .62 — uitsluitend upward en SQLite lokaal leidend
+
+- De onjuiste neerwaartse LEX-mogelijkheid uit `.61` is verwijderd.
+- Iedere LEX-doelrij ligt op of boven haar bronrij; overtredingen stoppen de render en de releasecontrole.
+- Meerdelige realisaties eindigen op de bronrij en groeien naar boven.
+- De lokale viewer leest standaard `data/testmateriaal.sqlite` via de lokale server; GitHub Pages gebruikt uitsluitend de afgeleide `data/catalog.public.json`.
+
+## Bronstand .61 — Uiting-LEX en lokale DB-invoer
+
+- Boom→LEX-projecties zijn horizontaal; doelrijwissels lopen afzonderlijk verticaal over de LEX-as.
+- Meerdelige realisaties beginnen niet langer boven hun bronrij.
+- `voeg-lokale-db-in.bat` valideert DB-schema 2, maakt een reservekopie, vervangt atomair, exporteert de publieke catalogus en rolt bij fouten terug.
+- Lokale DB-reservekopieën blijven buiten GitHub en de volledige bron-ZIP.
+
 ## Source build 20260813.5 — Anafoor · multi-OGN
 
 - Nieuwe berekende modus **Anafoor · multi-OGN** met het vaste voorbeeld

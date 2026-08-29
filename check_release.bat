@@ -26,6 +26,8 @@ node tools\check_utterances.js
 if errorlevel 1 exit /b 1
 node tools\check_utterance_kernel_views.js
 if errorlevel 1 exit /b 1
+python tools\check_utterance_lex_geometry.py
+if errorlevel 1 exit /b 1
 node tools\check_item_uri_start.js
 if errorlevel 1 exit /b 1
 where python >nul 2>nul
@@ -38,6 +40,12 @@ if errorlevel 1 exit /b 1
 python tools\check_text_normalization.py
 if errorlevel 1 exit /b 1
 python tools\check_release.py
+if errorlevel 1 exit /b 1
+python tools\testmateriaal_db.py export
+if errorlevel 1 exit /b 1
+python tools\testmateriaal_db.py verify
+if errorlevel 1 exit /b 1
+python tools\check_testmateriaal_bulk.py
 if errorlevel 1 exit /b 1
 python tools\check_local_start.py
 if errorlevel 1 exit /b 1

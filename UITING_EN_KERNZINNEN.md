@@ -1,5 +1,13 @@
 # Uiting, kernzinnen en verknoping
 
+## LEX-geometrie bij uitingen
+
+Een boomknoop projecteert uitsluitend horizontaal naar de LEX-as, op de rij van zijn bronknoop. Als de oppervlaktevolgorde een andere LEX-doelrij vereist, wordt dat als een afzonderlijke verticale beweging op de LEX-as getekend. Een boomprojectie mag dus nooit schuin rechtstreeks naar de uiteindelijke doelrij lopen.
+
+Een realisatie met meerdere woorden eindigt op de bronrij; eerdere delen worden op vrije plaatsen erboven gezet. Ook bij botsingen worden groepen uitsluitend omhoog geschoven. `downward` is nog niet actief: de renderer weigert iedere doelrij onder de bronrij. Alleen `upward`, insertie en `Comp` zijn momenteel toegestaan.
+
+Iedere kernzin bezit voorlopig haar eigen LEX-zone. K1, K2 en K3 plannen hun vrije rijen onafhankelijk; een wissel behoudt steeds dezelfde bron- en doelkern. Een item uit K2 mag dus niet naar een rij van K1 wisselen. Cross-kernel-relaties zoals anafoor/coreferentie verbinden de analyses, maar verplaatsen geen LEX-item. Eventuele uitzonderingen vereisen later een afzonderlijk expliciet contract.
+
 ## Anaforen: twee afzonderlijke groepen
 
 De itemlijst en Help delen anaforen in zonder ze structureel te vermengen:

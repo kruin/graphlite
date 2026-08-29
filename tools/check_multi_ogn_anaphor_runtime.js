@@ -251,13 +251,19 @@ async function downloadVisibleConfigOpn(page) {
       renderError: document.querySelector('#graphSvg .render-error-view') !== null,
       renderErrorMessage: document.querySelector('#graphSvg .render-error-message')?.textContent || '',
       title: document.getElementById('titleLine')?.textContent || '',
-      lex: [...document.querySelectorAll('#graphSvg .multi-ogn-lex-label')].map(node => node.textContent)
+      inputLabel: document.getElementById('mainActiveUtteranceLabel')?.textContent || '',
+      input: document.getElementById('mainActiveUtteranceText')?.textContent || '',
+      lex: [...document.querySelectorAll('#graphSvg .multi-ogn-lex-label')].map(node => node.textContent),
+      lexY: [...document.querySelectorAll('#graphSvg .multi-ogn-lex-label')].map(node => Number(node.getAttribute('y')))
     }));
     assert.equal(farmer.selected, 'boer-bezit-ezel-hij-slaat-hem');
     assert.equal(farmer.renderError, false, `boer–ezel tekenfout: ${farmer.renderErrorMessage || pageErrors.join(' | ')}`);
     assert.equal(farmer.relationCount, 2, `boer–ezel vereist twee lijnen; canvas=${JSON.stringify(farmer)}`);
     assert.match(farmer.title, /boer bezit een ezel/i);
+    assert.equal(farmer.inputLabel, 'Input');
+    assert.equal(farmer.input, '540 · Een boer bezit een ezel. Hij slaat hem.');
     assert.deepEqual(farmer.lex, ['BOER', 'BEZIT', 'EZEL', 'BOER', 'SLAAT', 'EZEL']);
+    assert.ok(farmer.lexY.every((y, index) => index === 0 || y > farmer.lexY[index - 1]), `LEX-story is niet lineair V2: ${JSON.stringify(farmer.lexY)}`);
 
     // De twee relatieve uitingen hebben diepere, onderling verschillende
     // binaire bomen. Ze moeten werkelijk tekenen; alleen hun aanwezigheid in
@@ -273,7 +279,12 @@ async function downloadVisibleConfigOpn(page) {
       }
     ]) {
       await page.click('#mainSentenceSummary');
-      await page.click(`#mainSentenceOptions [data-option-id="${relative.id}"]`);
+      const relativeOption = page.locator(`#mainSentenceOptions [data-option-id="${relative.id}"]`);
+      if (await relativeOption.count() === 0) {
+        await page.click('#mainSentenceSummary');
+        continue;
+      }
+      await relativeOption.click();
       await page.waitForFunction(id => {
         const selected = document.querySelector('#mainSentenceOptions [aria-selected="true"]')?.dataset.optionId;
         return selected === id

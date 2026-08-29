@@ -114,7 +114,7 @@ if errorlevel 1 (
 )
 
 rem ZIP-downloads, legacy LEESMIJ.txt en lokale test/logbestanden horen niet in de Pages-root.
-git rm --cached --ignore-unmatch -- "*.zip" "LEESMIJ.txt" >nul 2>nul
+git rm --cached --ignore-unmatch -- "*.zip" "LEESMIJ.txt" "data/testmateriaal.sqlite" "data/testmateriaal.sqlite-wal" "data/testmateriaal.sqlite-shm" >nul 2>nul
 for %%f in (local-mobile-test.js local-mobile-test.html) do (
   git ls-files --error-unmatch "%%f" >nul 2>nul
   if not errorlevel 1 git rm --cached -- "%%f" >nul 2>nul

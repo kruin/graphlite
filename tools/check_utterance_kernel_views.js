@@ -202,8 +202,15 @@ function drawTreeNodes(group, layout, origin) {
 function ensureDocumentMetadata() { return { language: 'nl' }; }
 function jsonClone(value, fallback) { return value == null ? fallback : JSON.parse(JSON.stringify(value)); }
 function serializeLayoutGraph(layout) { return jsonClone(layout, {}); }
+function analysisEnvelope(definition = {}) {
+  const originalInput = String(definition.originalInput || definition.title || '').trim();
+  const inputSegments = (originalInput.match(/[^.!?]+[.!?]+|[^.!?]+$/g) || []).map(segment => segment.trim()).filter(Boolean);
+  return { originalInput, inputSegments, form: inputSegments.length > 1 ? 'story' : (definition.utteranceForm || 'single') };
+}
 
 // Execute the actual shipped SVG renderer and OPN writer, not a parallel mock.
+const reserveClauseInternalLexRow = eval(`(${extract('reserveClauseInternalLexRow(', 'kernelLayoutForCentralView(')})`);
+const kernelLayoutForCentralView = eval(`(${extract('kernelLayoutForCentralView(', 'reservedFreeSlotCount(')})`);
 const multiOgnPlayPlan = eval(`(${extract('multiOgnPlayPlan(', 'multiOgnPlayMax(')})`);
 const multiOgnPlayMax = eval(`(${extract('multiOgnPlayMax(', 'multiOgnPlayOperation(')})`);
 const applyMultiOgnPlaybackVisibility = eval(`(${extract('applyMultiOgnPlaybackVisibility(', 'drawMultiOgnAnaphor()')})`);
@@ -276,9 +283,21 @@ for (const definition of kernelEngine.DEFINITIONS) {
   assert.ok(singleWordSubjects.every(slot => Math.abs(
     Number(slot.getAttribute('data-source-y')) - Number(slot.getAttribute('data-lex-target-y'))
   ) < 0.01), `${definition.id}: enkelvoudig subject moet op bronhoogte blijven`);
+  assert.ok(slots.filter(slot => slot.getAttribute('data-source-y') !== '').every(slot =>
+    Number(slot.getAttribute('data-lex-target-y')) <= Number(slot.getAttribute('data-source-y')) + 1),
+  `${definition.id}: LEX-doel onder bronrij; downward is nog niet actief`);
   assert.ok(slots.every((slot, index) => index === 0
     || Number(slot.getAttribute('y')) > Number(slots[index - 1].getAttribute('y'))),
   `${definition.id}: LEX-woorden staan niet van boven naar beneden in uitingvolgorde`);
+  const unitSlotBounds = expectedUnitIds.map(unitId => {
+    const unitSlots = slots.filter(slot => slot.getAttribute('data-node-id')
+      && slot.getAttribute('data-lex-unit') === unitId);
+    return { unitId, top: Math.min(...unitSlots.map(slot => Number(slot.getAttribute('data-lex-target-y')))),
+      bottom: Math.max(...unitSlots.map(slot => Number(slot.getAttribute('data-lex-target-y')))) };
+  });
+  assert.ok(unitSlotBounds.every((bounds, index) => index === 0
+    || bounds.top > unitSlotBounds[index - 1].bottom),
+  `${definition.id}: een latere kernzin valt in de LEX-zone van een eerdere kernzin`);
   if (definition.type === 'causal-role-flip' || definition.type === 'story-role-flip') {
     const connector = slots.find(node => node.getAttribute('data-surface-label') === 'OMDAT');
     assert.equal(connector.getAttribute('data-node-id'), '');
@@ -424,19 +443,23 @@ for (const definition of kernelEngine.DEFINITIONS) {
     const lex = playLayers.find(layer => layer.classList.contains('multi-ogn-shared-lex'));
     assert.equal(lex.getAttribute('visibility'), ['lex', 'lex-complete'].includes(operation.id) ? 'visible' : 'hidden');
     const movement = playLayers.find(layer => layer.classList.contains('utterance-lex-movement-layer'));
-    if (operation.id === 'lex') {
+    {
       const trajectories = descendants(movement).filter(node => node.classList.contains('utterance-lex-movement'));
-      const availableItems = currentComposition.lexItems.filter(item => !item.connector && item.unitId === operation.unitId).length;
+      const availableItems = currentComposition.lexItems.filter(item => !item.connector).length;
       assert.ok(trajectories.length <= availableItems,
         `${definition.id}/${operation.unitId}: alleen echte positiewijzigingen mogen een pijl krijgen`);
       assert.ok(trajectories.every(path => path.getAttribute('data-source-label') && path.getAttribute('data-realized-label')));
       assert.ok(trajectories.every(path => path.getAttribute('data-movement-scope') === 'lex-axis'),
         `${definition.id}/${operation.unitId}: iedere verplaatsing moet tot de LEX-as beperkt blijven`);
+      assert.ok(trajectories.every(path => path.getAttribute('data-source-unit')
+        && path.getAttribute('data-source-unit') === path.getAttribute('data-target-unit')),
+        `${definition.id}/${operation.unitId}: een LEX-wissel mag de eigen kernzin niet verlaten`);
       assert.ok(trajectories.every(path => path.getAttribute('data-position-changed') === 'true'
-        && Math.abs(Number(path.getAttribute('data-from-y')) - Number(path.getAttribute('data-to-y'))) > 1),
-        `${definition.id}/${operation.unitId}: een onverplaatst woord mag geen LEX-pijl krijgen`);
-      assert.ok(trajectories.every(path => /^M\s+([-\d.]+)\s+[-\d.]+\s+V\s+[-\d.]+$/.test(path.getAttribute('d') || '')),
-        `${definition.id}/${operation.unitId}: verplaatsingen moeten verticale LEX-as-pijlen zijn`);
+        && Number(path.getAttribute('data-to-y')) < Number(path.getAttribute('data-from-y')) - 1
+        && path.getAttribute('data-movement-direction') === 'up'),
+        `${definition.id}/${operation.unitId}: alleen echte upward-bewegingen mogen een LEX-pijl krijgen`);
+      assert.ok(trajectories.every(path => /^M\s+[-\d.]+\s+[-\d.]+\s+C\s+/.test(path.getAttribute('d') || '')),
+        `${definition.id}/${operation.unitId || 'eind'}: verplaatsingen moeten gekromde LEX-as-pijlen zijn`);
       assert.ok(descendants(movement).filter(node => node.classList.contains('utterance-lex-arrowhead')).length === trajectories.length,
         `${definition.id}/${operation.unitId}: iedere LEX-verplaatsing vereist een pijlpunt`);
       assert.ok(!descendants(playRoot).some(node => node.classList.contains('multi-ogn-lex-projection')),
@@ -611,4 +634,4 @@ assert.equal(defaults.kernelBranchVertical, 'compact');
 assert.equal(defaults.kernelBranchFlip, 'auto');
 assert.equal(defaults.causalAnaphorVariant, 'die');
 
-console.log('UITING KERNZIN VIEW CHECK: OK (6 uitingen/stories, gescheiden terugbrengen/apporteren, K1–K3, zichtbare Flip, uitsluitend verticale LEX-as-pijlen per kernzin, verticale anaforen, Play en OPN)');
+console.log('UITING KERNZIN VIEW CHECK: OK (6 uitingen/stories, gescheiden terugbrengen/apporteren, K1–K3, zichtbare Flip, vaste gekromde LEX-pijlen per kernzin, verticale anaforen, Play en OPN)');

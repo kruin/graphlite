@@ -7,6 +7,10 @@ Thumbs.db
 # Release artifacts: publish via GitHub Releases, niet via Pages-root.
 *.zip
 /LEESMIJ.txt
+/data/testmateriaal.sqlite
+/data/testmateriaal.sqlite-wal
+/data/testmateriaal.sqlite-shm
+/data/backups/
 
 # Lokale testhulp: niet publiceren naar GitHub Pages.
 local-mobile-test.js

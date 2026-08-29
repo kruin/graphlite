@@ -369,6 +369,10 @@
       label: 'Anafoor · Een boer bezit een ezel → hij slaat hem',
       labelEn: 'Anaphor · Een boer bezit een ezel → hij slaat hem',
       title: 'Een boer bezit een ezel. Hij slaat hem.',
+      originalInput: 'Een boer bezit een ezel. Hij slaat hem.',
+      completionStatus: 'complete',
+      utteranceForm: 'story',
+      inputSegments: Object.freeze(['Een boer bezit een ezel.', 'Hij slaat hem.']),
       surfacePredicateObject: 'slaat hem.',
       surfaceTemplate: '{ANAPHOR} slaat {ANAPHOR:ezel-hem}.',
       interpretationId: 'farmer-donkey-resolved',
@@ -382,7 +386,7 @@
         Object.freeze({
           id: 'S1',
           order: 1,
-          text: 'Een boer bezit een ezel.',
+          text: 'Een boer bezit een ezel.', inputText: 'Een boer bezit een ezel.', clauseType: 'main', finiteVerbPlacement: 'v2',
           tree: Object.freeze({
             id: 'fd-s1-s', label: 'S', cat: 'S', kind: 'cat', children: Object.freeze([
               Object.freeze({ id: 'fd-s1-boer', label: 'BOER', cat: 'N', role: 'subject', source: 'fd-s1-boer', lexeme: 'boer', kind: 'leaf', children: Object.freeze([]) }),
@@ -401,7 +405,7 @@
         Object.freeze({
           id: 'S2',
           order: 2,
-          text: 'Boer slaat ezel.',
+          text: 'Boer slaat ezel.', inputText: 'Hij slaat hem.', clauseType: 'main', finiteVerbPlacement: 'v2',
           tree: Object.freeze({
             id: 'fd-s2-s', label: 'S', cat: 'S', kind: 'cat', children: Object.freeze([
               Object.freeze({ id: 'fd-s2-boer', label: 'BOER', cat: 'N', role: 'subject', source: 'fd-s2-boer', lexeme: 'boer', kind: 'leaf', children: Object.freeze([]) }),
@@ -607,6 +611,11 @@
 
   function clone(value) {
     return JSON.parse(JSON.stringify(value));
+  }
+
+  function splitInputSegments(input = '') {
+    const matches = String(input || '').trim().match(/[^.!?]+[.!?]+|[^.!?]+$/g) || [];
+    return matches.map(segment => segment.trim()).filter(Boolean);
   }
 
   function cleanId(value, fallback) {
@@ -1033,15 +1042,24 @@
       sentenceById
     );
 
+    const originalInput = String(value.originalInput || value.title || sentences.map(sentence => sentence.text).join(' ')).trim();
+    const inputSegments = Array.isArray(value.inputSegments) && value.inputSegments.length
+      ? value.inputSegments.map(String).map(segment => segment.trim()).filter(Boolean)
+      : splitInputSegments(originalInput);
+    const utteranceForm = inputSegments.length > 1
+      ? 'story'
+      : (String(value.utteranceForm || '').trim() ? cleanId(value.utteranceForm, 'sentence') : '');
+
     return {
       schema: COMBINATION_SCHEMA,
       id: cleanId(value.id, `anaphor-combination-${index + 1}`),
       label: String(value.label || value.title || `Anafoorcombinatie ${index + 1}`).trim(),
       labelEn: String(value.labelEn || value.label || value.title || `Anaphor combination ${index + 1}`).trim(),
       title: String(value.title || sentences.map(sentence => sentence.text).join(' ')).trim(),
-      originalInput: String(value.originalInput || value.title || sentences.map(sentence => sentence.text).join(' ')).trim(),
+      originalInput,
+      inputSegments,
       completionStatus: String(value.completionStatus || '').trim().toLowerCase() === 'incomplete' ? 'incomplete' : 'complete',
-      ...(String(value.utteranceForm || '').trim() ? { utteranceForm: cleanId(value.utteranceForm, 'sentence') } : {}),
+      ...(utteranceForm ? { utteranceForm } : {}),
       antecedentLexeme,
       surfacePredicateObject: String(value.surfacePredicateObject || sentenceTail(sentences[1])).trim(),
       surfaceTemplate,
@@ -1099,6 +1117,7 @@
       labelEn: combination.labelEn,
       title: combination.title,
       originalInput: combination.originalInput,
+      inputSegments: clone(combination.inputSegments),
       completionStatus: combination.completionStatus,
       ...(combination.utteranceForm ? { utteranceForm: combination.utteranceForm } : {}),
       surfacePredicateObject: combination.surfacePredicateObject,

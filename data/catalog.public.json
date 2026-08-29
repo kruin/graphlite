@@ -1,0 +1,1093 @@
+{
+  "schema": "opengraph-testmateriaal-public",
+  "version": 2,
+  "generated_at": "2026-08-29T21:58:53+00:00",
+  "items": [
+    {
+      "number": 110,
+      "source_id": "example:hond-bijt-man",
+      "source_ids": [
+        "example:hond-bijt-man"
+      ],
+      "original_input": "HOND BIJT MAN",
+      "category_code": 100,
+      "category_name": "Zin · simplex",
+      "sort_order": 110,
+      "status": "OK",
+      "completion": "AF",
+      "form": "simplex",
+      "features": [
+        "basis"
+      ],
+      "analysis_status": "VOORSTEL",
+      "publication_phase": null,
+      "platforms": [],
+      "segments": [
+        "HOND BIJT MAN"
+      ],
+      "kernels": [
+        {
+          "kernel_no": 1,
+          "text": "HOND BIJT MAN",
+          "analysis_status": "VOORSTEL"
+        }
+      ],
+      "relations": [],
+      "placement_rules": []
+    },
+    {
+      "number": 120,
+      "source_id": "example:hond-beet-man",
+      "source_ids": [
+        "example:hond-beet-man"
+      ],
+      "original_input": "HOND BEET MAN",
+      "category_code": 100,
+      "category_name": "Zin · simplex",
+      "sort_order": 120,
+      "status": "OK",
+      "completion": "AF",
+      "form": "simplex",
+      "features": [
+        "OVT"
+      ],
+      "analysis_status": "VOORSTEL",
+      "publication_phase": null,
+      "platforms": [],
+      "segments": [
+        "HOND BEET MAN"
+      ],
+      "kernels": [
+        {
+          "kernel_no": 1,
+          "text": "HOND BIJT MAN",
+          "analysis_status": "VOORSTEL"
+        }
+      ],
+      "relations": [],
+      "placement_rules": []
+    },
+    {
+      "number": 130,
+      "source_id": "example:vrouw-breide-trui",
+      "source_ids": [
+        "example:vrouw-breide-trui"
+      ],
+      "original_input": "VROUW BREIDE TRUI",
+      "category_code": 100,
+      "category_name": "Zin · simplex",
+      "sort_order": 130,
+      "status": "OK",
+      "completion": "AF",
+      "form": "simplex",
+      "features": [
+        "OVT"
+      ],
+      "analysis_status": "VOORSTEL",
+      "publication_phase": null,
+      "platforms": [],
+      "segments": [
+        "VROUW BREIDE TRUI"
+      ],
+      "kernels": [
+        {
+          "kernel_no": 1,
+          "text": "VROUW BREIT TRUI",
+          "analysis_status": "VOORSTEL"
+        }
+      ],
+      "relations": [],
+      "placement_rules": []
+    },
+    {
+      "number": 140,
+      "source_id": "example:vrouw-breit-trui",
+      "source_ids": [
+        "example:vrouw-breit-trui"
+      ],
+      "original_input": "VROUW BREIT TRUI",
+      "category_code": 100,
+      "category_name": "Zin · simplex",
+      "sort_order": 140,
+      "status": "OK",
+      "completion": "AF",
+      "form": "simplex",
+      "features": [
+        "basis"
+      ],
+      "analysis_status": "VOORSTEL",
+      "publication_phase": null,
+      "platforms": [],
+      "segments": [
+        "VROUW BREIT TRUI"
+      ],
+      "kernels": [
+        {
+          "kernel_no": 1,
+          "text": "VROUW BREIT TRUI",
+          "analysis_status": "VOORSTEL"
+        }
+      ],
+      "relations": [],
+      "placement_rules": []
+    },
+    {
+      "number": 150,
+      "source_id": "example:hond-heeft-man-gebeten",
+      "source_ids": [
+        "example:hond-heeft-man-gebeten"
+      ],
+      "original_input": "HOND HEEFT MAN GEBETEN",
+      "category_code": 100,
+      "category_name": "Zin · simplex",
+      "sort_order": 150,
+      "status": "OK",
+      "completion": "AF",
+      "form": "simplex",
+      "features": [
+        "perfectum",
+        "V-cluster"
+      ],
+      "analysis_status": "VOORSTEL",
+      "publication_phase": null,
+      "platforms": [],
+      "segments": [
+        "HOND HEEFT MAN GEBETEN"
+      ],
+      "kernels": [
+        {
+          "kernel_no": 1,
+          "text": "HOND BIJT MAN",
+          "analysis_status": "VOORSTEL"
+        }
+      ],
+      "relations": [],
+      "placement_rules": []
+    },
+    {
+      "number": 160,
+      "source_id": "example:jan-wast-zichzelf",
+      "source_ids": [
+        "example:jan-wast-zichzelf",
+        "utterance:jan-wast-zichzelf"
+      ],
+      "original_input": "Jan wast zichzelf.",
+      "category_code": 100,
+      "category_name": "Zin · simplex",
+      "sort_order": 160,
+      "status": "OK",
+      "completion": "AF",
+      "form": "simplex",
+      "features": [
+        "reflexief"
+      ],
+      "analysis_status": "VOORSTEL",
+      "publication_phase": null,
+      "platforms": [],
+      "segments": [
+        "Jan wast zichzelf."
+      ],
+      "kernels": [
+        {
+          "kernel_no": 1,
+          "text": "JAN WAST JAN",
+          "analysis_status": "VOORSTEL"
+        },
+        {
+          "kernel_no": 2,
+          "text": "JAN WAST ZELF",
+          "analysis_status": "VOORSTEL"
+        }
+      ],
+      "relations": [
+        {
+          "from_kernel": 1,
+          "from_referent": "JAN",
+          "to_kernel": 2,
+          "to_referent": "JAN",
+          "relation_type": "reflexief"
+        }
+      ],
+      "placement_rules": []
+    },
+    {
+      "number": 170,
+      "source_id": "example:ken-uzelf",
+      "source_ids": [
+        "example:ken-uzelf",
+        "utterance:ken-uzelf"
+      ],
+      "original_input": "Ken uzelf.",
+      "category_code": 100,
+      "category_name": "Zin · simplex",
+      "sort_order": 170,
+      "status": "OK",
+      "completion": "AF",
+      "form": "simplex",
+      "features": [
+        "bevelzin",
+        "impliciete-agens",
+        "reflexief"
+      ],
+      "analysis_status": "VOORSTEL",
+      "publication_phase": null,
+      "platforms": [],
+      "segments": [
+        "Ken uzelf."
+      ],
+      "kernels": [
+        {
+          "kernel_no": 1,
+          "text": "U KENT U",
+          "analysis_status": "VOORSTEL"
+        },
+        {
+          "kernel_no": 2,
+          "text": "U KENT ZELF",
+          "analysis_status": "VOORSTEL"
+        }
+      ],
+      "relations": [
+        {
+          "from_kernel": 1,
+          "from_referent": "U",
+          "to_kernel": 2,
+          "to_referent": "U",
+          "relation_type": "reflexief"
+        }
+      ],
+      "placement_rules": []
+    },
+    {
+      "number": 180,
+      "source_id": "example:de-hond-heeft-de-man-misschien-wel-vaak-gebeten",
+      "source_ids": [
+        "example:de-hond-heeft-de-man-misschien-wel-vaak-gebeten"
+      ],
+      "original_input": "DE HOND HEEFT DE MAN MISSCHIEN WEL VAAK GEBETEN",
+      "category_code": 100,
+      "category_name": "Zin · simplex",
+      "sort_order": 180,
+      "status": "OK",
+      "completion": "AF",
+      "form": "simplex",
+      "features": [
+        "context",
+        "LEX-insertie",
+        "V-cluster"
+      ],
+      "analysis_status": "VOORSTEL",
+      "publication_phase": null,
+      "platforms": [],
+      "segments": [
+        "DE HOND HEEFT DE MAN MISSCHIEN WEL VAAK GEBETEN"
+      ],
+      "kernels": [
+        {
+          "kernel_no": 1,
+          "text": "HOND BIJT MAN",
+          "analysis_status": "VOORSTEL"
+        }
+      ],
+      "relations": [],
+      "placement_rules": []
+    },
+    {
+      "number": 210,
+      "source_id": "example:dat-hond-man-bijt",
+      "source_ids": [
+        "example:dat-hond-man-bijt"
+      ],
+      "original_input": "DAT HOND MAN BIJT",
+      "category_code": 200,
+      "category_name": "Bijzin",
+      "sort_order": 210,
+      "status": "OK",
+      "completion": "AF",
+      "form": "bijzin",
+      "features": [
+        "dat",
+        "Comp"
+      ],
+      "analysis_status": "VOORSTEL",
+      "publication_phase": null,
+      "platforms": [],
+      "segments": [
+        "DAT HOND MAN BIJT"
+      ],
+      "kernels": [
+        {
+          "kernel_no": 1,
+          "text": "HOND BIJT MAN",
+          "analysis_status": "VOORSTEL"
+        }
+      ],
+      "relations": [],
+      "placement_rules": []
+    },
+    {
+      "number": 220,
+      "source_id": "example:omdat-hond-man-bijt",
+      "source_ids": [
+        "example:omdat-hond-man-bijt"
+      ],
+      "original_input": "OMDAT HOND MAN BIJT",
+      "category_code": 200,
+      "category_name": "Bijzin",
+      "sort_order": 220,
+      "status": "OK",
+      "completion": "AF",
+      "form": "bijzin",
+      "features": [
+        "omdat",
+        "Comp"
+      ],
+      "analysis_status": "VOORSTEL",
+      "publication_phase": null,
+      "platforms": [],
+      "segments": [
+        "OMDAT HOND MAN BIJT"
+      ],
+      "kernels": [
+        {
+          "kernel_no": 1,
+          "text": "HOND BIJT MAN",
+          "analysis_status": "VOORSTEL"
+        }
+      ],
+      "relations": [],
+      "placement_rules": []
+    },
+    {
+      "number": 230,
+      "source_id": "example:omdat-hond-man-beet",
+      "source_ids": [
+        "example:omdat-hond-man-beet"
+      ],
+      "original_input": "OMDAT HOND MAN BEET",
+      "category_code": 200,
+      "category_name": "Bijzin",
+      "sort_order": 230,
+      "status": "OK",
+      "completion": "AF",
+      "form": "bijzin",
+      "features": [
+        "omdat",
+        "OVT"
+      ],
+      "analysis_status": "VOORSTEL",
+      "publication_phase": null,
+      "platforms": [],
+      "segments": [
+        "OMDAT HOND MAN BEET"
+      ],
+      "kernels": [
+        {
+          "kernel_no": 1,
+          "text": "HOND BIJT MAN",
+          "analysis_status": "VOORSTEL"
+        }
+      ],
+      "relations": [],
+      "placement_rules": []
+    },
+    {
+      "number": 240,
+      "source_id": "example:omdat-vrouw-trui-breide",
+      "source_ids": [
+        "example:omdat-vrouw-trui-breide"
+      ],
+      "original_input": "OMDAT VROUW TRUI BREIDE",
+      "category_code": 200,
+      "category_name": "Bijzin",
+      "sort_order": 240,
+      "status": "OK",
+      "completion": "AF",
+      "form": "bijzin",
+      "features": [
+        "omdat",
+        "OVT"
+      ],
+      "analysis_status": "VOORSTEL",
+      "publication_phase": null,
+      "platforms": [],
+      "segments": [
+        "OMDAT VROUW TRUI BREIDE"
+      ],
+      "kernels": [
+        {
+          "kernel_no": 1,
+          "text": "VROUW BREIT TRUI",
+          "analysis_status": "VOORSTEL"
+        }
+      ],
+      "relations": [],
+      "placement_rules": []
+    },
+    {
+      "number": 250,
+      "source_id": "example:omdat-vrouw-trui-breit",
+      "source_ids": [
+        "example:omdat-vrouw-trui-breit"
+      ],
+      "original_input": "OMDAT VROUW TRUI BREIT",
+      "category_code": 200,
+      "category_name": "Bijzin",
+      "sort_order": 250,
+      "status": "OK",
+      "completion": "AF",
+      "form": "bijzin",
+      "features": [
+        "omdat"
+      ],
+      "analysis_status": "VOORSTEL",
+      "publication_phase": null,
+      "platforms": [],
+      "segments": [
+        "OMDAT VROUW TRUI BREIT"
+      ],
+      "kernels": [
+        {
+          "kernel_no": 1,
+          "text": "VROUW BREIT TRUI",
+          "analysis_status": "VOORSTEL"
+        }
+      ],
+      "relations": [],
+      "placement_rules": []
+    },
+    {
+      "number": 260,
+      "source_id": "example:omdat-de-hond-de-man-heeft-gebeten",
+      "source_ids": [
+        "example:omdat-de-hond-de-man-heeft-gebeten"
+      ],
+      "original_input": "OMDAT DE HOND DE MAN HEEFT GEBETEN",
+      "category_code": 200,
+      "category_name": "Bijzin",
+      "sort_order": 260,
+      "status": "OK",
+      "completion": "AF",
+      "form": "bijzin",
+      "features": [
+        "omdat",
+        "perfectum",
+        "V-cluster"
+      ],
+      "analysis_status": "VOORSTEL",
+      "publication_phase": null,
+      "platforms": [],
+      "segments": [
+        "OMDAT DE HOND DE MAN HEEFT GEBETEN"
+      ],
+      "kernels": [
+        {
+          "kernel_no": 1,
+          "text": "HOND BIJT MAN",
+          "analysis_status": "VOORSTEL"
+        }
+      ],
+      "relations": [],
+      "placement_rules": []
+    },
+    {
+      "number": 270,
+      "source_id": "example:omdat-vrouw-trui-heeft-gebreid",
+      "source_ids": [
+        "example:omdat-vrouw-trui-heeft-gebreid"
+      ],
+      "original_input": "OMDAT VROUW TRUI HEEFT GEBREID",
+      "category_code": 200,
+      "category_name": "Bijzin",
+      "sort_order": 270,
+      "status": "OK",
+      "completion": "AF",
+      "form": "bijzin",
+      "features": [
+        "omdat",
+        "perfectum",
+        "V-cluster"
+      ],
+      "analysis_status": "VOORSTEL",
+      "publication_phase": null,
+      "platforms": [],
+      "segments": [
+        "OMDAT VROUW TRUI HEEFT GEBREID"
+      ],
+      "kernels": [
+        {
+          "kernel_no": 1,
+          "text": "VROUW BREIT TRUI",
+          "analysis_status": "VOORSTEL"
+        }
+      ],
+      "relations": [],
+      "placement_rules": []
+    },
+    {
+      "number": 280,
+      "source_id": "example:omdat-de-hond-de-man-misschien-wel-vaak-gebeten-heeft",
+      "source_ids": [
+        "example:omdat-de-hond-de-man-misschien-wel-vaak-gebeten-heeft"
+      ],
+      "original_input": "OMDAT DE HOND DE MAN MISSCHIEN WEL VAAK GEBETEN HEEFT",
+      "category_code": 200,
+      "category_name": "Bijzin",
+      "sort_order": 280,
+      "status": "OK",
+      "completion": "AF",
+      "form": "bijzin",
+      "features": [
+        "omdat",
+        "context",
+        "LEX-insertie",
+        "V-cluster"
+      ],
+      "analysis_status": "VOORSTEL",
+      "publication_phase": null,
+      "platforms": [],
+      "segments": [
+        "OMDAT DE HOND DE MAN MISSCHIEN WEL VAAK GEBETEN HEEFT"
+      ],
+      "kernels": [
+        {
+          "kernel_no": 1,
+          "text": "HOND BIJT MAN",
+          "analysis_status": "VOORSTEL"
+        }
+      ],
+      "relations": [],
+      "placement_rules": []
+    },
+    {
+      "number": 310,
+      "source_id": "example:bijt-hond-man-vraag",
+      "source_ids": [
+        "example:bijt-hond-man-vraag"
+      ],
+      "original_input": "BIJT HOND MAN?",
+      "category_code": 300,
+      "category_name": "Vraagzin",
+      "sort_order": 310,
+      "status": "OK",
+      "completion": "AF",
+      "form": "vraagzin",
+      "features": [
+        "ja-nee-vraag",
+        "V1"
+      ],
+      "analysis_status": "VOORSTEL",
+      "publication_phase": null,
+      "platforms": [],
+      "segments": [
+        "BIJT HOND MAN?"
+      ],
+      "kernels": [
+        {
+          "kernel_no": 1,
+          "text": "HOND BIJT MAN",
+          "analysis_status": "VOORSTEL"
+        }
+      ],
+      "relations": [],
+      "placement_rules": [
+        {
+          "profile": "vraagzin-ja-nee",
+          "rule_type": "persoonsvormplaatsing",
+          "rule_value": "V1",
+          "status": "ACTIEF"
+        }
+      ]
+    },
+    {
+      "number": 410,
+      "source_id": "utterance:jan-slaat-de-hond-omdat-die-hem-gebeten-heeft",
+      "source_ids": [
+        "utterance:jan-slaat-de-hond-omdat-die-hem-gebeten-heeft"
+      ],
+      "original_input": "Jan slaat de hond omdat die hem gebeten heeft.",
+      "category_code": 400,
+      "category_name": "Zin · complex",
+      "sort_order": 410,
+      "status": "OK",
+      "completion": "AF",
+      "form": "complex",
+      "features": [
+        "anafoor",
+        "rol-flip",
+        "V-cluster"
+      ],
+      "analysis_status": "VOORSTEL",
+      "publication_phase": null,
+      "platforms": [],
+      "segments": [
+        "Jan slaat de hond omdat die hem gebeten heeft."
+      ],
+      "kernels": [
+        {
+          "kernel_no": 1,
+          "text": "JAN SLAAT HOND",
+          "analysis_status": "VOORSTEL"
+        },
+        {
+          "kernel_no": 2,
+          "text": "HOND BIJT JAN",
+          "analysis_status": "VOORSTEL"
+        }
+      ],
+      "relations": [
+        {
+          "from_kernel": 1,
+          "from_referent": "HOND",
+          "to_kernel": 2,
+          "to_referent": "HOND",
+          "relation_type": "coreferentie"
+        },
+        {
+          "from_kernel": 1,
+          "from_referent": "JAN",
+          "to_kernel": 2,
+          "to_referent": "JAN",
+          "relation_type": "coreferentie"
+        }
+      ],
+      "placement_rules": []
+    },
+    {
+      "number": 420,
+      "source_id": "utterance:jan-beloonde-jek-omdat-die-het-bot-terugbracht",
+      "source_ids": [
+        "utterance:jan-beloonde-jek-omdat-die-het-bot-terugbracht"
+      ],
+      "original_input": "Jan beloonde zijn hond Jek omdat die het bot naar hem terugbracht.",
+      "category_code": 400,
+      "category_name": "Zin · complex",
+      "sort_order": 420,
+      "status": "OK",
+      "completion": "AF",
+      "form": "complex",
+      "features": [
+        "anafoor",
+        "rol-flip"
+      ],
+      "analysis_status": "VOORSTEL",
+      "publication_phase": null,
+      "platforms": [],
+      "segments": [
+        "Jan beloonde zijn hond Jek omdat die het bot naar hem terugbracht."
+      ],
+      "kernels": [
+        {
+          "kernel_no": 1,
+          "text": "JAN BELOONT HOND",
+          "analysis_status": "VOORSTEL"
+        },
+        {
+          "kernel_no": 2,
+          "text": "HOND BRENGT BOT NAAR JAN",
+          "analysis_status": "VOORSTEL"
+        }
+      ],
+      "relations": [
+        {
+          "from_kernel": 1,
+          "from_referent": "HOND",
+          "to_kernel": 2,
+          "to_referent": "HOND",
+          "relation_type": "coreferentie"
+        },
+        {
+          "from_kernel": 1,
+          "from_referent": "JAN",
+          "to_kernel": 2,
+          "to_referent": "JAN",
+          "relation_type": "coreferentie"
+        }
+      ],
+      "placement_rules": []
+    },
+    {
+      "number": 430,
+      "source_id": "anaphor:boer-slaat-ezel-omdat-hij-hem-bezit",
+      "source_ids": [
+        "anaphor:boer-slaat-ezel-omdat-hij-hem-bezit"
+      ],
+      "original_input": "De boer slaat de ezel omdat hij hem bezit.",
+      "category_code": 400,
+      "category_name": "Zin · complex",
+      "sort_order": 430,
+      "status": "OK",
+      "completion": "AF",
+      "form": "complex",
+      "features": [
+        "anafoor"
+      ],
+      "analysis_status": "VOORSTEL",
+      "publication_phase": null,
+      "platforms": [],
+      "segments": [
+        "De boer slaat de ezel omdat hij hem bezit."
+      ],
+      "kernels": [
+        {
+          "kernel_no": 1,
+          "text": "BOER SLAAT EZEL",
+          "analysis_status": "VOORSTEL"
+        },
+        {
+          "kernel_no": 2,
+          "text": "BOER BEZIT EZEL",
+          "analysis_status": "VOORSTEL"
+        }
+      ],
+      "relations": [
+        {
+          "from_kernel": 1,
+          "from_referent": "BOER",
+          "to_kernel": 2,
+          "to_referent": "BOER",
+          "relation_type": "coreferentie"
+        },
+        {
+          "from_kernel": 1,
+          "from_referent": "EZEL",
+          "to_kernel": 2,
+          "to_referent": "EZEL",
+          "relation_type": "coreferentie"
+        }
+      ],
+      "placement_rules": []
+    },
+    {
+      "number": 440,
+      "source_id": "anaphor:man-slaat-hond-omdat-die-hem-heeft-gebeten",
+      "source_ids": [
+        "anaphor:man-slaat-hond-omdat-die-hem-heeft-gebeten"
+      ],
+      "original_input": "De man slaat de hond omdat die hem heeft gebeten.",
+      "category_code": 400,
+      "category_name": "Zin · complex",
+      "sort_order": 440,
+      "status": "OK",
+      "completion": "AF",
+      "form": "complex",
+      "features": [
+        "anafoor",
+        "rol-flip",
+        "V-cluster"
+      ],
+      "analysis_status": "VOORSTEL",
+      "publication_phase": null,
+      "platforms": [],
+      "segments": [
+        "De man slaat de hond omdat die hem heeft gebeten."
+      ],
+      "kernels": [
+        {
+          "kernel_no": 1,
+          "text": "MAN SLAAT HOND",
+          "analysis_status": "VOORSTEL"
+        },
+        {
+          "kernel_no": 2,
+          "text": "HOND BIJT MAN",
+          "analysis_status": "VOORSTEL"
+        }
+      ],
+      "relations": [
+        {
+          "from_kernel": 1,
+          "from_referent": "HOND",
+          "to_kernel": 2,
+          "to_referent": "HOND",
+          "relation_type": "coreferentie"
+        },
+        {
+          "from_kernel": 1,
+          "from_referent": "MAN",
+          "to_kernel": 2,
+          "to_referent": "MAN",
+          "relation_type": "coreferentie"
+        }
+      ],
+      "placement_rules": []
+    },
+    {
+      "number": 450,
+      "source_id": "example:jan-slaat-jek-omdat-die-hem-beet",
+      "source_ids": [
+        "example:jan-slaat-jek-omdat-die-hem-beet",
+        "utterance:jan-slaat-jek-omdat-die-hem-beet"
+      ],
+      "original_input": "Jan slaat Jek omdat die hem beet.",
+      "category_code": 400,
+      "category_name": "Zin · complex",
+      "sort_order": 450,
+      "status": "OK",
+      "completion": "AF",
+      "form": "complex",
+      "features": [
+        "anafoor",
+        "rol-flip"
+      ],
+      "analysis_status": "VOORSTEL",
+      "publication_phase": null,
+      "platforms": [],
+      "segments": [
+        "Jan slaat Jek omdat die hem beet."
+      ],
+      "kernels": [
+        {
+          "kernel_no": 1,
+          "text": "JAN SLAAT JEK",
+          "analysis_status": "VOORSTEL"
+        },
+        {
+          "kernel_no": 2,
+          "text": "JEK BIJT JAN",
+          "analysis_status": "VOORSTEL"
+        }
+      ],
+      "relations": [
+        {
+          "from_kernel": 1,
+          "from_referent": "JEK",
+          "to_kernel": 2,
+          "to_referent": "JEK",
+          "relation_type": "coreferentie"
+        },
+        {
+          "from_kernel": 1,
+          "from_referent": "JAN",
+          "to_kernel": 2,
+          "to_referent": "JAN",
+          "relation_type": "coreferentie"
+        }
+      ],
+      "placement_rules": []
+    },
+    {
+      "number": 510,
+      "source_id": "utterance:story-jan-sloeg-jek-waarna-hij-hem-ontweek",
+      "source_ids": [
+        "utterance:story-jan-sloeg-jek-waarna-hij-hem-ontweek"
+      ],
+      "original_input": "Jan sloeg Jek omdat die hem beet, waarna hij hem ontweek.",
+      "category_code": 500,
+      "category_name": "Story",
+      "sort_order": 510,
+      "status": "OK",
+      "completion": "AF",
+      "form": "story",
+      "features": [
+        "story",
+        "anafoor",
+        "rol-flip"
+      ],
+      "analysis_status": "VOORSTEL",
+      "publication_phase": null,
+      "platforms": [],
+      "segments": [
+        "Jan sloeg Jek omdat die hem beet, waarna hij hem ontweek."
+      ],
+      "kernels": [
+        {
+          "kernel_no": 1,
+          "text": "JAN SLAAT JEK",
+          "analysis_status": "VOORSTEL"
+        },
+        {
+          "kernel_no": 2,
+          "text": "JEK BIJT JAN",
+          "analysis_status": "VOORSTEL"
+        },
+        {
+          "kernel_no": 3,
+          "text": "JAN ONTWIJKT JEK",
+          "analysis_status": "VOORSTEL"
+        }
+      ],
+      "relations": [
+        {
+          "from_kernel": 1,
+          "from_referent": "JEK",
+          "to_kernel": 2,
+          "to_referent": "JEK",
+          "relation_type": "coreferentie"
+        },
+        {
+          "from_kernel": 1,
+          "from_referent": "JAN",
+          "to_kernel": 2,
+          "to_referent": "JAN",
+          "relation_type": "coreferentie"
+        },
+        {
+          "from_kernel": 2,
+          "from_referent": "JAN",
+          "to_kernel": 3,
+          "to_referent": "JAN",
+          "relation_type": "coreferentie"
+        },
+        {
+          "from_kernel": 2,
+          "from_referent": "JEK",
+          "to_kernel": 3,
+          "to_referent": "JEK",
+          "relation_type": "coreferentie"
+        }
+      ],
+      "placement_rules": []
+    },
+    {
+      "number": 520,
+      "source_id": "anaphor:ik-zie-man-hij-draagt-hoed",
+      "source_ids": [
+        "anaphor:ik-zie-man-hij-draagt-hoed"
+      ],
+      "original_input": "Ik zie een man. Hij draagt een hoed.",
+      "category_code": 500,
+      "category_name": "Story",
+      "sort_order": 520,
+      "status": "OK",
+      "completion": "AF",
+      "form": "story",
+      "features": [
+        "story",
+        "anafoor"
+      ],
+      "analysis_status": "VOORSTEL",
+      "publication_phase": null,
+      "platforms": [],
+      "segments": [
+        "Ik zie een man.",
+        "Hij draagt een hoed."
+      ],
+      "kernels": [
+        {
+          "kernel_no": 1,
+          "text": "IK ZIE MAN",
+          "analysis_status": "VOORSTEL"
+        },
+        {
+          "kernel_no": 2,
+          "text": "MAN DRAAGT HOED",
+          "analysis_status": "VOORSTEL"
+        }
+      ],
+      "relations": [
+        {
+          "from_kernel": 1,
+          "from_referent": "MAN",
+          "to_kernel": 2,
+          "to_referent": "MAN",
+          "relation_type": "coreferentie"
+        }
+      ],
+      "placement_rules": []
+    },
+    {
+      "number": 530,
+      "source_id": "anaphor:ik-zag-man-gisteren-vandaag-was-hij-er-niet-meer",
+      "source_ids": [
+        "anaphor:ik-zag-man-gisteren-vandaag-was-hij-er-niet-meer"
+      ],
+      "original_input": "Ik zag de man gisteren. Vandaag was hij er niet meer.",
+      "category_code": 500,
+      "category_name": "Story",
+      "sort_order": 530,
+      "status": "OK",
+      "completion": "AF",
+      "form": "story",
+      "features": [
+        "story",
+        "anafoor",
+        "context",
+        "LEX-insertie"
+      ],
+      "analysis_status": "VOORSTEL",
+      "publication_phase": null,
+      "platforms": [],
+      "segments": [
+        "Ik zag de man gisteren.",
+        "Vandaag was hij er niet meer."
+      ],
+      "kernels": [
+        {
+          "kernel_no": 1,
+          "text": "IK ZIE MAN",
+          "analysis_status": "VOORSTEL"
+        },
+        {
+          "kernel_no": 2,
+          "text": "MAN IS ER NIET MEER",
+          "analysis_status": "VOORSTEL"
+        }
+      ],
+      "relations": [
+        {
+          "from_kernel": 1,
+          "from_referent": "MAN",
+          "to_kernel": 2,
+          "to_referent": "MAN",
+          "relation_type": "coreferentie"
+        }
+      ],
+      "placement_rules": []
+    },
+    {
+      "number": 540,
+      "source_id": "anaphor:boer-bezit-ezel-hij-slaat-hem",
+      "source_ids": [
+        "anaphor:boer-bezit-ezel-hij-slaat-hem"
+      ],
+      "original_input": "Een boer bezit een ezel. Hij slaat hem.",
+      "category_code": 500,
+      "category_name": "Story",
+      "sort_order": 540,
+      "status": "OK",
+      "completion": "AF",
+      "form": "story",
+      "features": [
+        "story",
+        "anafoor"
+      ],
+      "analysis_status": "VOORSTEL",
+      "publication_phase": null,
+      "platforms": [],
+      "segments": [
+        "Een boer bezit een ezel.",
+        "Hij slaat hem."
+      ],
+      "kernels": [
+        {
+          "kernel_no": 1,
+          "text": "BOER BEZIT EZEL",
+          "analysis_status": "VOORSTEL"
+        },
+        {
+          "kernel_no": 2,
+          "text": "BOER SLAAT EZEL",
+          "analysis_status": "VOORSTEL"
+        }
+      ],
+      "relations": [
+        {
+          "from_kernel": 1,
+          "from_referent": "BOER",
+          "to_kernel": 2,
+          "to_referent": "BOER",
+          "relation_type": "coreferentie"
+        },
+        {
+          "from_kernel": 1,
+          "from_referent": "EZEL",
+          "to_kernel": 2,
+          "to_referent": "EZEL",
+          "relation_type": "coreferentie"
+        }
+      ],
+      "placement_rules": []
+    }
+  ]
+}

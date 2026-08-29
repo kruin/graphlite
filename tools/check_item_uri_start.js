@@ -19,6 +19,7 @@ const sourceBuild = fs.readFileSync(path.join(root, 'SOURCE_BUILD.txt'), 'utf8')
 
 const reward = 'jan-beloonde-jek-omdat-die-het-bot-terugbracht';
 const story = 'story-jan-sloeg-jek-waarna-hij-hem-ontweek';
+const farmerStory = combinations.normalizeCombinations().find(item => item.id === 'boer-bezit-ezel-hij-slaat-hem');
 
 assert.ok(!Object.prototype.hasOwnProperty.call(defaults.config, 'startItemId'), 'startitem mag niet via Config worden bestuurd');
 assert.equal(publication.bareDefault, 'hond-bijt-man', 'kale ingang is niet HOND BIJT MAN');
@@ -39,6 +40,8 @@ assert.ok(!source.includes('Startitem van de app'), 'Config bevat nog een starti
 assert.ok(source.includes("const DEFAULT_START_ITEM_ID = 'hond-bijt-man'"), 'vaste kale ingang ontbreekt');
 assert.ok(source.includes("queryParamValue('app')"), 'app-URI voor directe plaatsing ontbreekt');
 assert.ok(source.includes("requestedApp === 'greedy-grow' || requestedApp === 'random'"), 'Greedy/Random URI-routering ontbreekt');
+assert.ok(source.includes('function analysisEnvelope('), 'uniforme input→kernzinprocedure ontbreekt');
+assert.ok(source.includes("form: inputSegments.length > 1 ? 'story'"), 'meerzinnen worden niet automatisch story');
 assert.ok(source.includes('activeAnaphorCombinationDefinition'), 'anafoorcombinaties hebben geen canonieke item-routering');
 assert.ok(source.includes('definition.originalInput || definition.title'), 'Uiting-lijst gebruikt niet aantoonbaar de oorspronkelijke invoer');
 assert.ok(source.includes('definition?.id || anaphorCombination?.id'), 'canonieke anafoorselectie dereferenceert een ontbrekende Uiting-definitie');
@@ -77,6 +80,13 @@ for (const href of catalog.matchAll(/<a href="([^"]+)"/g)) {
 }
 
 assert.ok(engine.DEFINITIONS.some(item => item.id === story), 'gecorrigeerde story-id ontbreekt');
+assert.equal(farmerStory.originalInput, 'Een boer bezit een ezel. Hij slaat hem.');
+assert.equal(farmerStory.utteranceForm, 'story');
+assert.deepEqual(farmerStory.inputSegments, ['Een boer bezit een ezel.', 'Hij slaat hem.']);
+assert.deepEqual(farmerStory.sentences.map(sentence => sentence.finiteVerbPlacement), ['v2', 'v2']);
+assert.deepEqual(farmerStory.sentences.map(sentence => sentence.lex.map(item => item.label)), [
+  ['BOER', 'BEZIT', 'EZEL'], ['BOER', 'SLAAT', 'EZEL']
+]);
 assert.equal(engine.definitionFor('story-jan-sloeg-jek-waarna-hij-ontweek').id, story, 'oude story-URI heeft geen alias');
 assert.equal(engine.DEFINITIONS.find(item => item.id === 'jan-wast-zichzelf').anaphorClass, 'reflexive-local');
 assert.equal(engine.DEFINITIONS.find(item => item.id === 'ken-uzelf').anaphorClass, 'reflexive-local-implicit-subject');

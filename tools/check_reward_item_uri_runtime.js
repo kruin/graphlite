@@ -51,7 +51,7 @@ function startServer() {
     }), itemId);
     assert.equal(result.item, itemId);
     assert.equal(result.selected, itemId);
-    assert.equal(result.activeText, expectedTitle);
+    assert.equal(result.activeText, `420 · ${expectedTitle}`);
     assert.match(result.title, /Jan beloonde/);
     assert.deepEqual(result.units, ['K1', 'K2']);
     assert.ok(result.lex.includes('HET') && result.lex.includes('BOT'), `LEX mist HET BOT: ${result.lex.join(' ')}`);

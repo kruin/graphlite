@@ -47,6 +47,21 @@ blauw, zwaar en in beide richtingen compact.
 Normatief: `UITING_EN_KERNZINNEN.md`; corpus:
 `samples/uitingen-kernzinnen.v1.json`.
 
+### 0a.1 Input, analyse en viewerautoriteit
+
+Ruwe input is geen graphdefinitie. Iedere input doorloopt eerst een afzonderlijke analysefase. De analyzer—een lokale deterministische regelmodule of Codex—levert één of meer versieerbare voorstellen met kernzinnen, relaties, LEX-realisatie, reconstructie en categorievoorstel. De gebruiker hoeft kernzinnen niet handmatig in te voeren; alleen onoplosbare of inhoudelijk relevante ambiguïteit wordt voorgelegd.
+
+De database bewaart zowel ruwe input als analyseversies. Eén versie kan als actief worden aangewezen, maar alleen wanneer haar analysestatus `GOEDGEKEURD` is. Graphlite-engine en viewer mogen uitsluitend deze actieve goedgekeurde analyse consumeren. Zij mogen nooit rechtstreeks uit ruwe input analyseren, ontbrekende tekst aanvullen of een voorstel als noodgraph tekenen.
+
+De normatieve richting is:
+
+```text
+input → analysevoorstel → goedgekeurde actieve analyse
+→ Graphlite-engine → graphdata → viewer
+```
+
+De viewer is dus renderautoriteit, niet analyseautoriteit. De database is opslagautoriteit, maar ruwe databaserijen worden pas graphbron via de goedkeuringspoort. Publicatiestatus en analysestatus zijn afzonderlijk: `status = OK` alleen maakt een nog niet goedgekeurde nieuwe analyse niet renderbaar. Een eerder goedgekeurde actieve versie mag gepubliceerd blijven terwijl een nieuw voorstel wordt onderzocht.
+
 ## 0. Multi-OGN-discoursecompositie
 
 De berekende toepassing **Anafoor · multi-OGN** staat naast Language Tree en

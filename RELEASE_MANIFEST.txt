@@ -2,6 +2,16 @@
 .gitattributes
 .gitignore
 .nojekyll
+TESTMATERIAAL_BEHEER.md
+data/catalog.public.json
+data/testmateriaal.sqlite
+testmateriaal.html
+testmateriaal.js
+tools/testmateriaal_db.py
+tools/check_testmateriaal_bulk.py
+tools/install_local_database.py
+tools/check_utterance_lex_geometry.py
+voeg-lokale-db-in.bat
 ADVERB_ORIGIN_MECHANISMS.md
 ANAPHOR_AND_S1_S2_RELATION_DEFINITIONS.md
 ANAPHOR_LANGUAGE_TREE_EXTENSION.md

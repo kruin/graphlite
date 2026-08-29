@@ -63,7 +63,7 @@ powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -Command ^
   "  Get-ChildItem -LiteralPath $source -Recurse -File | Where-Object {" ^
   "    $relative=$_.FullName.Substring($source.Length+1);" ^
   "    $parts=$relative -split '[\\/]';" ^
-  "    -not (($parts -contains '.git') -or ($parts -contains '__pycache__') -or ($parts -contains 'node_modules') -or ($_.Name -match '(?i)_full_source.*\.zip(?:\.sha256)?$') -or ($_.Name -match '(?i)^(?:opengraph-)?local-config-log.*\.txt$') -or ($_.Name -match '(?i)\.(?:pyc|pyo|ds_store)$'))" ^
+  "    -not (($parts -contains '.git') -or ($parts -contains '__pycache__') -or ($parts -contains 'node_modules') -or (($parts -contains 'data') -and ($parts -contains 'backups')) -or ($_.Name -match '(?i)_full_source.*\.zip(?:\.sha256)?$') -or ($_.Name -match '(?i)^(?:opengraph-)?local-config-log.*\.txt$') -or ($_.Name -match '(?i)\.(?:pyc|pyo|ds_store)$'))" ^
   "  } | ForEach-Object {" ^
   "    $relative=$_.FullName.Substring($source.Length+1);" ^
   "    $destination=Join-Path $stageProject $relative;" ^

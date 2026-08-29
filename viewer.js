@@ -2,7 +2,7 @@
   'use strict';
 
   const VERSION = 'v2.0.0-rc.45';
-  const SOURCE_BUILD = 'v2.0.0-rc.45-stable-catalog-scroll-reset-20260829.56';
+  const SOURCE_BUILD = 'v2.0.0-rc.45-status-neutral-public-runtime-20260829.67';
   const OPN_FORMAT_VERSION = '1.0';
   const OPN_DOCUMENT_TYPE = 'opengraph-document';
   const PARADATA_EVENT_LIMIT = 250;
@@ -1406,6 +1406,57 @@
       ]
     }
   ];
+  let PUBLIC_ALLOWED_ITEM_IDS = null;
+  let PUBLIC_ITEM_NUMBERS = new Map();
+
+  async function loadPublicTestmateriaalCatalog() {
+    try {
+      let document = null;
+      const localHost = ['127.0.0.1', 'localhost'].includes(String(location.hostname || '').toLowerCase());
+      const sources = localHost
+        ? ['/__opengraph_testmateriaal', '/__opengraph_testmateriaal_public', 'data/catalog.public.json']
+        : ['data/catalog.public.json'];
+      for (const source of sources) {
+        try {
+          const response = await fetch(source, { cache: 'no-store' });
+          if (!response.ok) continue;
+          document = await response.json();
+          if (Array.isArray(document?.items)) break;
+        } catch (_sourceError) {
+          document = null;
+        }
+      }
+      if (!document) throw new Error('Geen testmateriaalcatalogus beschikbaar');
+      const items = Array.isArray(document?.items) ? document.items : [];
+      PUBLIC_ITEM_NUMBERS = new Map();
+      items.forEach(item => {
+        const sourceIds = Array.isArray(item.source_ids) && item.source_ids.length ? item.source_ids : [item.source_id];
+        sourceIds.map(sourceId => String(sourceId || '').split(':').slice(1).join(':')).filter(Boolean)
+          .forEach(id => PUBLIC_ITEM_NUMBERS.set(id, Number(item.number)));
+      });
+      PUBLIC_ALLOWED_ITEM_IDS = new Set(items.flatMap(item => Array.isArray(item.source_ids) && item.source_ids.length ? item.source_ids : [item.source_id]).map(sourceId => String(sourceId || '').split(':').slice(1).join(':')).filter(Boolean));
+      ALL_EXAMPLES = ALL_EXAMPLES.filter(example => PUBLIC_ALLOWED_ITEM_IDS.has(example.id));
+      EXAMPLES = EXAMPLES.filter(example => PUBLIC_ALLOWED_ITEM_IDS.has(example.id));
+    } catch (_err) {
+      // Ontwikkelbestanden via file:// behouden de ingebouwde catalogus.
+      PUBLIC_ALLOWED_ITEM_IDS = null;
+      PUBLIC_ITEM_NUMBERS = new Map();
+    }
+  }
+
+  function publicItemAllowed(id) {
+    return !PUBLIC_ALLOWED_ITEM_IDS || PUBLIC_ALLOWED_ITEM_IDS.has(String(id || ''));
+  }
+
+  function testmateriaalNumber(id) {
+    const number = PUBLIC_ITEM_NUMBERS.get(String(id || ''));
+    return Number.isInteger(number) ? number : null;
+  }
+
+  function numberedTestmateriaalLabel(id, label) {
+    const number = testmateriaalNumber(id);
+    return number === null ? String(label || '') : `${number} · ${label}`;
+  }
 
   let ALL_EXAMPLES = EXAMPLES.slice();
   const DEFAULT_START_ITEM_ID = 'hond-bijt-man';
@@ -3962,6 +4013,35 @@
     return shiftLayout(layout, dx, 0);
   }
 
+  function reserveClauseInternalLexRow(layout, rootId = 's') {
+    if (!layout?.nodes?.length) return layout;
+    const root = layout.nodes.find(node => String(node.id || '') === String(rootId))
+      || layout.nodes.find(node => ['S', 'CLAUSE'].includes(String(node.label || '').toUpperCase()));
+    if (!root) return layout;
+    const moveY = y => y > root.y + 0.001 ? y + 1 : y;
+    const nodes = layout.nodes.map(node => ({ ...node, y: moveY(node.y) }));
+    const edges = layout.edges.map(edge => ({ ...edge, fromY: moveY(edge.fromY), toY: moveY(edge.toY) }));
+    return {
+      ...layout, nodes, edges,
+      box: { ...layout.box, minY: Math.min(...nodes.map(node => node.y)), maxY: Math.max(...nodes.map(node => node.y)) }
+    };
+  }
+
+  function kernelLayoutForCentralView(layout) {
+    if (state.centerMode !== 'ft' || !layout?.nodes?.length) return layout;
+    const roleCategory = role => ({
+      subject: 'AGENS', object: 'PATIENS', theme: 'THEMA', goal: 'DOEL', predicate: 'PRED'
+    })[String(role || '').toLowerCase()] || '';
+    const nodes = layout.nodes.map(node => {
+      if (node.kind === 'leaf') return { ...node, cat: roleCategory(node.role) || node.cat };
+      const label = String(node.label || '').toUpperCase();
+      if (label === 'S') return { ...node, label: 'CLAUSE', kind: 'role-root' };
+      if (label === 'VP') return { ...node, label: 'ARG-STRUCT', kind: 'role' };
+      return node;
+    });
+    return { ...layout, nodes };
+  }
+
   function reservedFreeSlotCount() {
     const n = Number(state.freeSlotCount);
     if (!Number.isFinite(n)) return 2;
@@ -4754,6 +4834,29 @@
     return activeUtteranceDefinition() || activeAnaphorCombinationDefinition() || MULTI_OGN_ANAPHOR_DEMO;
   }
 
+  function splitInputSegments(input = '') {
+    const matches = String(input || '').trim().match(/[^.!?]+[.!?]+|[^.!?]+$/g) || [];
+    return matches.map(segment => segment.trim()).filter(Boolean);
+  }
+
+  function analysisEnvelope(definition = state.example) {
+    const originalInput = String(definition?.originalInput || definition?.sentence || definition?.title || '').trim();
+    const inputSegments = Array.isArray(definition?.inputSegments)
+      ? [...definition.inputSegments]
+      : splitInputSegments(originalInput);
+    const declaredKernels = definition?.sentences || definition?.utteranceKernels || [];
+    const kernels = declaredKernels.length ? [...declaredKernels] : [{
+      id: 'K1', order: 1, text: originalInput, inputText: inputSegments[0] || originalInput,
+      clauseType: 'main', finiteVerbPlacement: 'v2', sourceExampleId: definition?.id || ''
+    }];
+    return Object.freeze({
+      originalInput,
+      inputSegments: Object.freeze(inputSegments),
+      form: inputSegments.length > 1 ? 'story' : (definition?.utteranceForm || 'single'),
+      kernels: Object.freeze(kernels)
+    });
+  }
+
   function multiOgnAnaphorComposition() {
     const engine = globalThis.OGNMultiComposition;
     const utterance = activeUtteranceDefinition();
@@ -5008,7 +5111,8 @@
     // the local OSV visual marker below.
     const spec = mode === 'OSV' ? cloneTree(treeSpec()) : southAwareSyntaxSpec(mode);
     const base0 = addOpnTopicalizationSlot(layoutTree(spec, 0, { firstSide, branchOrder: state.branchOrder, branchOverrides: state.branchOverrides }), STRUCTURE_CONFIG.syntaxRoot || 's');
-    const base = applyLexInsertionBranchExtensions(normalizeLayout(applyLexAdverbAxisSlotSpace(base0)), 'syntax');
+    let base = applyLexInsertionBranchExtensions(normalizeLayout(applyLexAdverbAxisSlotSpace(base0)), 'syntax');
+    if (isQuestionV1Rule()) base = reserveClauseInternalLexRow(base, STRUCTURE_CONFIG.syntaxRoot || 's');
     return assertUniqueNodeGridLines(normalizeLayout(applySouthLogicalSyntaxGroupOrder(base, mode)), `Syntax · LOG-volgorde ${mode}`);
   }
 
@@ -5149,6 +5253,7 @@
   }
 
   function activateCanonicalItem(value, { updateUrl = false } = {}) {
+    if (!publicItemAllowed(value)) return false;
     const id = canonicalItemId(value);
     const definition = globalThis.OGNUtteranceKernels?.definitionFor?.(id, state.causalAnaphorVariant, state.causalVerbVariant, state.botVariant);
     const anaphorCombination = activeAnaphorCombinationDefinition(id);
@@ -7734,7 +7839,11 @@
 
   function projectedV1SlotY(y0, sourceMap = null, items = state.example?.lexItems || []) {
     const rootY = projectedLexRootY(sourceMap);
-    return rootY === null ? v1SlotY(y0, items) : rootY;
+    if (rootY === null) return v1SlotY(y0, items);
+    const firstBelowRoot = Math.min(...[...sourceMap.values()]
+      .map(point => point?.py)
+      .filter(y => Number.isFinite(y) && y > rootY + 1));
+    return Number.isFinite(firstBelowRoot) ? rootY + (firstBelowRoot - rootY) / 2 : rootY + 64;
   }
 
   function projectedLexItemY(item, index, y0, sourceMap = null, items = state.example?.lexItems || [], options = {}) {
@@ -9352,7 +9461,7 @@
           if (lexUnit) element.setAttribute('visibility', operation.id === 'lex-complete' || lexUnit === operation.unitId ? 'visible' : 'hidden');
         });
       } else if (layer.classList.contains('utterance-lex-movement-layer')) {
-        layer.setAttribute('visibility', operation.id === 'lex' ? 'visible' : 'hidden');
+        layer.setAttribute('visibility', 'visible');
       } else if (layer.classList.contains('multi-ogn-relation-note')) {
         layer.setAttribute('visibility', phase >= relationsStep ? 'visible' : 'hidden');
       }
@@ -9363,8 +9472,18 @@
     if (activeUtteranceDefinition()) return drawUtteranceKernelComposition();
     const composition = multiOgnAnaphorComposition();
     const g = baseSvg('multi-ogn-anaphor-view');
+    g.setAttribute('data-central-view', state.centerMode === 'ft' ? 'functional' : 'syntax');
     const origin = { x: 760, y: 112 };
-    const unitById = new Map(composition.units.map(unit => [unit.id, unit]));
+    const unitById = new Map(composition.units.map(unit => [unit.id, {
+      ...unit, layout: reserveClauseInternalLexRow(kernelLayoutForCentralView(unit.layout), 's')
+    }]));
+    const displayLayouts = [...unitById.values()].map(unit => unit.layout);
+    const displayBox = {
+      minX: Math.min(...displayLayouts.map(layout => layout.box.minX)),
+      maxX: Math.max(...displayLayouts.map(layout => layout.box.maxX)),
+      minY: Math.min(...displayLayouts.map(layout => layout.box.minY)),
+      maxY: Math.max(...displayLayouts.map(layout => layout.box.maxY))
+    };
     const nodePoint = (unitId, nodeId) => {
       const node = unitById.get(unitId)?.layout?.nodes?.find(candidate => candidate.id === nodeId);
       return node ? { ...node, px: px(node.x, origin), py: py(node.y, origin) } : null;
@@ -9385,10 +9504,36 @@
     const lexPoint = item => item.insertionId
       ? insertionPointByKey.get(`${item.unitId}:${item.insertionId}`) || null
       : nodePoint(item.unitId, item.nodeId);
-    const axisX = px(composition.box.minX, origin) - Math.max(190, cellX() * 1.85);
-    const axisTop = py(composition.box.minY, origin) - Math.max(52, cellY() * 0.9);
-    const axisBottom = py(composition.box.maxY, origin) + Math.max(54, cellY() * 0.9);
-    const treeRight = px(composition.box.maxX, origin) + Math.max(90, cellX() * 0.75);
+    const axisX = px(displayBox.minX, origin) - Math.max(190, cellX() * 1.85);
+    const rawAxisTop = py(displayBox.minY, origin) - Math.max(52, cellY() * 0.9);
+    const lexRowStep = Math.max(54, cellY() * 0.88);
+    // Iedere kernzin plant haar eigen LEX-rijen. K2 kan daardoor nooit de
+    // doelrijen van K1 omhoog trekken of in de K1-sequentie terechtkomen.
+    const lexItemRows = new Map();
+    const unitLexBounds = new Map();
+    composition.units.forEach(unit => {
+      const unitItems = composition.lexItems.filter(item => item.unitId === unit.id);
+      if (!unitItems.length) return;
+      const unitStart = Math.min(...unitItems.map((item, localIndex) => {
+        const point = lexPoint(item);
+        if (!point) throw new Error(`LEX-bron ontbreekt: ${item.nodeId || item.insertionId}`);
+        return point.py - localIndex * lexRowStep;
+      }));
+      unitItems.forEach((item, localIndex) => lexItemRows.set(item, unitStart + localIndex * lexRowStep));
+      unitLexBounds.set(unit.id, { top: unitStart, bottom: unitStart + (unitItems.length - 1) * lexRowStep });
+    });
+    for (let index = 1; index < composition.units.length; index += 1) {
+      const previous = unitLexBounds.get(composition.units[index - 1].id);
+      const current = unitLexBounds.get(composition.units[index].id);
+      if (previous && current && current.top <= previous.bottom) {
+        throw new Error(`${composition.units[index].id}-LEX valt buiten de eigen kernzinzone`);
+      }
+    }
+    const allLexRows = [...lexItemRows.values()];
+    const axisTop = Math.min(rawAxisTop, Math.min(...allLexRows) - 28);
+    const lexSequenceBottom = Math.max(...allLexRows) + 28;
+    const axisBottom = Math.max(py(displayBox.maxY, origin) + Math.max(54, cellY() * 0.9), lexSequenceBottom);
+    const treeRight = px(displayBox.maxX, origin) + Math.max(90, cellX() * 0.75);
     const titleY = axisTop - Math.max(76, cellY() * 1.25);
     const framePadX = Math.max(54, cellX() * 0.48);
     const framePadY = Math.max(36, cellY() * 0.56);
@@ -9424,43 +9569,65 @@
       'data-lex-order': 'S1-before-S2',
       'data-composition-role': 'shared-lex-axis'
     });
-    lexLayer.appendChild(svgEl('text', { x: axisX - 78, y: axisTop - 24, class: 'axis-title multi-ogn-lex-title' }, 'LEX · SEQUENTIE {S1, S2}'));
+    lexLayer.appendChild(svgEl('text', { x: axisX - 78, y: axisTop - 24, class: 'axis-title multi-ogn-lex-title' }, isEnglish() ? 'Utterance' : 'Uiting'));
     lexLayer.appendChild(svgEl('line', {
       x1: axisX, y1: axisTop, x2: axisX, y2: axisBottom,
       class: 'multi-ogn-lex-axis lex-axis-line'
     }));
     let previousUnit = '';
+    const lexTargetByKey = new Map();
     const leafRadius = treeNodeRenderMetrics().leafRadius;
     composition.lexItems.forEach((item, index) => {
       const point = lexPoint(item);
       if (!point) throw new Error(`LEX-bron ontbreekt: ${item.nodeId || item.insertionId}`);
-      if (state.showRelations && item.nodeId) {
+      const itemY = lexItemRows.get(item);
+      lexTargetByKey.set(`${item.unitId}:${item.nodeId || item.insertionId}`, itemY);
+      if (item.nodeId) {
         lexLayer.appendChild(svgEl('path', {
           d: `M ${axisX + 62} ${point.py} H ${point.px - leafRadius}`,
           class: 'projection-line lex multi-ogn-lex-projection',
           'data-source-node-id': item.nodeId,
-          'data-ogn-unit': item.unitId
+          'data-ogn-unit': item.unitId,
+          'data-projection-direction': 'horizontal'
         }));
+        if (itemY > point.py + 0.5) throw new Error(`Neerwaartse LEX-verplaatsing is niet actief: ${item.label}`);
+        if (itemY < point.py - 0.5) {
+          const laneX = axisX + 72 + (index % 4) * 11;
+          lexLayer.appendChild(svgEl('path', {
+            d: `M ${laneX} ${point.py} C ${laneX + 46} ${point.py} ${laneX + 46} ${itemY} ${laneX} ${itemY}`,
+            class: 'utterance-lex-movement multi-ogn-lex-movement',
+            'data-source-node-id': item.nodeId,
+            'data-ogn-unit': item.unitId,
+            'data-source-unit': item.unitId,
+            'data-target-unit': item.unitId,
+            'data-movement-direction': 'up'
+          }));
+          lexLayer.appendChild(svgEl('polygon', {
+            points: `${laneX},${itemY} ${laneX + 9},${itemY - 6} ${laneX + 9},${itemY + 6}`,
+            class: 'utterance-lex-arrowhead', 'data-ogn-unit': item.unitId
+          }));
+        }
       }
       lexLayer.appendChild(svgEl('rect', {
-        x: axisX - 60, y: point.py - 24, width: 120, height: 48, rx: 13,
+        x: axisX - 60, y: itemY - 24, width: 120, height: 48, rx: 13,
         class: 'multi-ogn-lex-item lex-slot-box',
         ...(item.nodeId ? { 'data-node-id': item.nodeId } : { 'data-insertion-id': item.insertionId }),
         'data-lex-origin': item.insertionId ? 'context-insertion' : 'tree-node',
+        'data-lex-unit': item.unitId,
         'data-lex-index': index + 1,
         'data-sentence-order': item.sentenceOrder
       }));
-      lexLayer.appendChild(svgEl('text', { x: axisX, y: point.py + 5, class: 'lex-label multi-ogn-lex-label' }, item.label));
+      lexLayer.appendChild(svgEl('text', { x: axisX, y: itemY + 5, class: 'lex-label multi-ogn-lex-label', 'data-lex-unit': item.unitId }, item.label));
       if (previousUnit !== item.unitId) {
-        lexLayer.appendChild(svgEl('text', { x: axisX - 78, y: point.py + 5, class: 'multi-ogn-lex-unit-label' }, item.unitId));
+        lexLayer.appendChild(svgEl('text', { x: axisX - 78, y: itemY + 5, class: 'multi-ogn-lex-unit-label' }, item.unitId));
         previousUnit = item.unitId;
       }
     });
     if (state.showRelations && composition.contextRelations?.length) {
       composition.contextRelations.forEach(relation => {
-        const first = insertionPointByKey.get(`${relation.first.unitId}:${relation.first.insertionId}`);
-        const second = insertionPointByKey.get(`${relation.second.unitId}:${relation.second.insertionId}`);
-        if (!first || !second) throw new Error(`Contextrelatie ${relation.id} mist een LEX-insertie.`);
+        const firstY = lexTargetByKey.get(`${relation.first.unitId}:${relation.first.insertionId}`);
+        const secondY = lexTargetByKey.get(`${relation.second.unitId}:${relation.second.insertionId}`);
+        if (!Number.isFinite(firstY) || !Number.isFinite(secondY)) throw new Error(`Contextrelatie ${relation.id} mist een LEX-insertie.`);
         const relationX = axisX + 76;
         const group = svgEl('g', {
           class: 'multi-ogn-context-relation',
@@ -9471,16 +9638,16 @@
         });
         group.appendChild(svgEl('title', {}, `${relation.label} · uitsluitend tussen LEX-inserties`));
         group.appendChild(svgEl('path', {
-          d: `M ${axisX + 62} ${first.py} H ${relationX} V ${second.py} H ${axisX + 62}`,
+          d: `M ${axisX + 62} ${firstY} H ${relationX} V ${secondY} H ${axisX + 62}`,
           class: 'multi-ogn-context-relation-line'
         }));
-        const arrowDirection = second.py >= first.py ? 1 : -1;
+        const arrowDirection = secondY >= firstY ? 1 : -1;
         group.appendChild(svgEl('path', {
-          d: `M ${axisX + 62} ${second.py} l 10 ${-6 * arrowDirection} v ${12 * arrowDirection} z`,
+          d: `M ${axisX + 62} ${secondY} l 10 ${-6 * arrowDirection} v ${12 * arrowDirection} z`,
           class: 'multi-ogn-context-relation-arrow'
         }));
         group.appendChild(svgEl('text', {
-          x: relationX + 10, y: (first.py + second.py) / 2 + 5,
+          x: relationX + 10, y: (firstY + secondY) / 2 + 5,
           class: 'multi-ogn-context-relation-label'
         }, relation.label));
         lexLayer.appendChild(group);
@@ -9569,6 +9736,7 @@
     const g = baseSvg('multi-ogn-anaphor-view utterance-kernel-view');
     g.setAttribute('data-utterance-id', definition.id);
     g.setAttribute('data-kernel-count', String(composition.units.length));
+    g.setAttribute('data-central-view', state.centerMode === 'ft' ? 'functional' : 'syntax');
     if (definition.anaphorVariant) g.setAttribute('data-anaphor-variant', definition.anaphorVariant);
     const horizontalSpacing = validKernelBranchSpacing(state.kernelBranchHorizontal);
     const verticalSpacing = validKernelBranchSpacing(state.kernelBranchVertical);
@@ -9599,8 +9767,9 @@
       const localMirror = forceLocalMirror === null
         ? showK2BeforeLocalFlip && unitId === 'K2'
         : Boolean(forceLocalMirror) && unitId === 'K2';
-      const rootX = layout.nodes.find(node => node.label === 'S')?.x || 0;
-      const rootY = layout.nodes.find(node => node.label === 'S')?.y || 0;
+      const root = layout.nodes.find(node => ['S', 'CLAUSE'].includes(String(node.label || '').toUpperCase()));
+      const rootX = root?.x || 0;
+      const rootY = root?.y || 0;
       const unitSpaceY = Math.max(0.5, Math.min(3, Number(localSpaceY[unitId]) || 1));
       const mapX = value => (localMirror ? 2 * rootX - value : value) * horizontalScale * flipSign * globalSpace.x * componentSpaceX;
       const mapY = value => (rootY + (value - rootY) * unitSpaceY) * verticalScale * globalSpace.y;
@@ -9615,7 +9784,51 @@
           minY: Math.min(...nodes.map(node => node.y)), maxY: Math.max(...nodes.map(node => node.y)) }
       };
     };
-    const unitById = new Map(composition.units.map(unit => [unit.id, { ...unit, layout: scaledLayout(unit.layout, unit.id) }]));
+    const expandLayoutForUpwardLex = (layout, unitId) => {
+      layout = reserveClauseInternalLexRow(layout, 's');
+      const unitItems = composition.lexItems.filter(item => !item.connector && item.unitId === unitId);
+      const groups = [];
+      unitItems.forEach(item => {
+        const previous = groups[groups.length - 1];
+        if (!previous || previous.nodeId !== item.nodeId) groups.push({ nodeId: item.nodeId, role: item.role, count: 1 });
+        else previous.count += 1;
+      });
+      const subjectIndex = groups.findIndex(group => group.role === 'subject');
+      const objectIndex = groups.findIndex(group => group.role === 'object');
+      const predicateIndex = groups.findIndex(group => group.role === 'predicate');
+      const v2Predicate = predicateIndex > Math.min(subjectIndex, objectIndex)
+        && predicateIndex < Math.max(subjectIndex, objectIndex);
+      const gapGrid = 52 / cellY();
+      const anchors = [];
+      let surfaceEnd = null;
+      groups.forEach((group, index) => {
+        const node = layout.nodes.find(candidate => candidate.id === group.nodeId);
+        if (!node) return;
+        if (v2Predicate && index === predicateIndex) {
+          surfaceEnd = (surfaceEnd ?? node.y) + group.count * gapGrid;
+          return;
+        }
+        const desired = surfaceEnd === null ? node.y : Math.max(node.y, surfaceEnd + group.count * gapGrid);
+        anchors.push({ sourceY: node.y, shiftY: desired - node.y });
+        surfaceEnd = desired;
+      });
+      const shiftForY = y => anchors.reduce((shift, anchor) => y + 0.001 >= anchor.sourceY
+        ? Math.max(shift, anchor.shiftY) : shift, 0);
+      const nodes = layout.nodes.map(node => ({ ...node, y: node.y + shiftForY(node.y) }));
+      const edges = layout.edges.map(edge => ({
+        ...edge,
+        fromY: edge.fromY + shiftForY(edge.fromY),
+        toY: edge.toY + shiftForY(edge.toY)
+      }));
+      return {
+        ...layout, nodes, edges,
+        box: { ...layout.box, minY: Math.min(...nodes.map(node => node.y)), maxY: Math.max(...nodes.map(node => node.y)) }
+      };
+    };
+    const unitById = new Map(composition.units.map(unit => {
+      const layout = expandLayoutForUpwardLex(scaledLayout(kernelLayoutForCentralView(unit.layout), unit.id), unit.id);
+      return [unit.id, { ...unit, layout }];
+    }));
     const unitDisplayShiftY = new Map();
     const shiftLayoutY = (layout, dy) => ({
       ...layout,
@@ -9731,7 +9944,7 @@
       class: 'multi-ogn-shared-lex utterance-surface-lex',
       'data-composition-role': 'shared-lex-axis', 'data-lex-order': 'utterance-surface'
     });
-    lexLayer.appendChild(svgEl('text', { x: axisX - 78, y: axisTop - 24, class: 'axis-title multi-ogn-lex-title' }, isEnglish() ? 'LEX · UTTERANCE' : 'LEX · UITING'));
+    lexLayer.appendChild(svgEl('text', { x: axisX - 78, y: axisTop - 24, class: 'axis-title multi-ogn-lex-title' }, isEnglish() ? 'Utterance' : 'Uiting'));
     lexLayer.appendChild(svgEl('line', { x1: axisX, y1: axisTop, x2: axisX, y2: axisBottom, class: 'multi-ogn-lex-axis lex-axis-line' }));
 
     const lexSlotTop = axisTop + 34;
@@ -9763,25 +9976,28 @@
           const objectItem = unitGroups[objectIndex].items[0].item;
           const subjectPoint = nodePoint(subjectItem.unitId, subjectItem.nodeId);
           const objectPoint = nodePoint(objectItem.unitId, objectItem.nodeId);
-          anchorY = (subjectPoint.py + objectPoint.py) / 2;
+          anchorY = Math.min(point.py, (subjectPoint.py + objectPoint.py) / 2);
         }
       }
-      const firstY = anchorY - ((group.items.length - 1) * lexGroupGap) / 2;
+      // Het laatste deel blijft op de bron-/doelrij; eerdere delen krijgen
+      // uitsluitend hogere vrije LEX-plaatsen.
+      const firstY = anchorY - (group.items.length - 1) * lexGroupGap;
       groupRows.set(groupIndex, group.items.map((entry, partIndex) => firstY + partIndex * lexGroupGap));
     });
     composition.units.forEach(unit => {
-      let previousY = -Infinity;
-      lexGroups.forEach((group, groupIndex) => {
+      let nextY = Infinity;
+      for (let groupIndex = lexGroups.length - 1; groupIndex >= 0; groupIndex -= 1) {
+        const group = lexGroups[groupIndex];
         const first = group.items[0].item;
-        if (first.connector || first.unitId !== unit.id) return;
+        if (first.connector || first.unitId !== unit.id) continue;
         const rows = groupRows.get(groupIndex);
-        if (previousY !== -Infinity && rows[0] <= previousY + 49) {
-          const shift = previousY + lexGroupGap - rows[0];
-          groupRows.set(groupIndex, rows.map(row => row + shift));
+        if (nextY !== Infinity && rows[rows.length - 1] >= nextY - 49) {
+          const shiftUp = rows[rows.length - 1] - (nextY - lexGroupGap);
+          groupRows.set(groupIndex, rows.map(row => row - shiftUp));
         }
         const adjustedRows = groupRows.get(groupIndex);
-        previousY = adjustedRows[adjustedRows.length - 1];
-      });
+        nextY = adjustedRows[0];
+      }
     });
     lexGroups.forEach((group, groupIndex) => {
       if (!group.items[0].item.connector) return;
@@ -9827,6 +10043,7 @@
       const point = item.connector ? null : nodePoint(item.unitId, item.nodeId);
       if (!item.connector && !point) throw new Error(`LEX-bronknoop ontbreekt: ${item.nodeId}`);
       const itemY = lexItemRows.get(index);
+      if (point && itemY > point.py + 1) throw new Error(`Neerwaartse LEX-verplaatsing is niet actief: ${item.label}`);
       lexLayer.appendChild(svgEl('rect', {
         x: axisX - 60, y: itemY - 24, width: 120, height: 48, rx: 13,
         class: `multi-ogn-lex-item lex-slot-box${item.connector ? ' utterance-connector' : ''}`,
@@ -9848,30 +10065,27 @@
       class: 'utterance-lex-movement-layer', 'data-lex-unit': playOperation.unitId || '',
       'aria-label': isEnglish() ? 'LEX source-to-utterance movements' : 'LEX-verplaatsingen van bron naar uiting'
     });
-    if (playOperation.id === 'lex') {
+    {
       lexTargets
-        .filter(target => target.lexUnit === playOperation.unitId)
         .filter(target => Math.abs(target.itemY - target.point.py) > 1)
         .forEach((target, movementIndex) => {
         const movementX = axisX + 72 + (movementIndex % 4) * 11;
-        const movingUp = target.itemY < target.point.py;
         lexMovementLayer.appendChild(svgEl('path', {
-          d: `M ${movementX} ${target.point.py} V ${target.itemY}`,
+          d: `M ${movementX} ${target.point.py} C ${movementX + 46} ${target.point.py} ${movementX + 46} ${target.itemY} ${movementX} ${target.itemY}`,
           class: 'utterance-lex-movement', 'data-source-node-id': target.nodeId,
           'data-source-label': target.point.label, 'data-realized-label': target.label,
+          'data-source-unit': target.lexUnit, 'data-target-unit': target.lexUnit,
           'data-target-word-order': target.wordOrder ?? target.index + 1,
           'data-movement-scope': 'lex-axis', 'data-axis-x': movementX,
           'data-from-y': target.point.py, 'data-to-y': target.itemY,
-          'data-position-changed': 'true'
+          'data-position-changed': 'true', 'data-movement-direction': 'up'
         }));
         lexMovementLayer.appendChild(svgEl('circle', {
           cx: movementX, cy: target.point.py, r: 4.5, class: 'utterance-lex-source-trace',
           'data-movement-index': movementIndex + 1
         }));
         lexMovementLayer.appendChild(svgEl('polygon', {
-          points: movingUp
-            ? `${movementX},${target.itemY} ${movementX - 6},${target.itemY + 10} ${movementX + 6},${target.itemY + 10}`
-            : `${movementX},${target.itemY} ${movementX - 6},${target.itemY - 10} ${movementX + 6},${target.itemY - 10}`,
+          points: `${movementX},${target.itemY} ${movementX + 9},${target.itemY - 6} ${movementX + 9},${target.itemY + 6}`,
           class: 'utterance-lex-arrowhead', 'data-movement-index': movementIndex + 1
         }));
         lexMovementLayer.appendChild(svgEl('text', {
@@ -10410,11 +10624,11 @@
 
   function renderStatus() {
     if (els.mainActiveUtteranceLabel) {
-      els.mainActiveUtteranceLabel.textContent = isEnglish() ? 'Utterance' : 'Uiting';
+      els.mainActiveUtteranceLabel.textContent = 'Input';
     }
     if (els.mainActiveUtteranceText) {
-      els.mainActiveUtteranceText.textContent = multiOgnAnaphorActive()
-        ? activeMultiOgnDemo().title : activeSentenceText();
+      const inputSource = multiOgnAnaphorActive() ? activeMultiOgnDemo() : state.example;
+      els.mainActiveUtteranceText.textContent = numberedTestmateriaalLabel(inputSource?.id, analysisEnvelope(inputSource).originalInput);
     }
     if (els.mainCausalAnaphorLabel) els.mainCausalAnaphorLabel.textContent = isEnglish() ? 'Anaphor' : 'Anafoor';
     if (els.mainCausalAnaphorChoice) {
@@ -10443,7 +10657,7 @@
         if (els.explainText) els.explainText.textContent = `${composition.demo.sentences.map(sentence => `${sentence.id}: ${sentence.text}`).join(' · ')} · ${relationText}`;
         return;
       }
-      const demoTitle = composition.demo?.title || activeMultiOgnDemo().title;
+      const demoTitle = analysisEnvelope(composition.demo).originalInput;
       els.titleLine.textContent = `${isEnglish() ? 'Anaphor' : 'Anafoor'} · multi-OGN · ${demoTitle}`;
       els.metaLine.textContent = isEnglish()
         ? `S1 and S2 calculated independently · rigid S2 shift Δx=${lower.shift.dx}, Δy=${lower.shift.dy} · one shared LEX axis`
@@ -10688,9 +10902,11 @@
   };
 
   function localizedOptionLabel(select, opt) {
-    if (!select) return isEnglish() ? (opt.labelEn || opt.titleEn || opt.label || opt.title || opt.id) : (opt.label || opt.title || opt.id);
-    if (!isEnglish()) return opt.label || opt.title || opt.id;
-    return SELECT_OPTION_LABELS_EN[select.id]?.[String(opt.id)] || opt.labelEn || opt.titleEn || opt.label || opt.title || opt.id;
+    let label;
+    if (!select) label = isEnglish() ? (opt.labelEn || opt.titleEn || opt.label || opt.title || opt.id) : (opt.label || opt.title || opt.id);
+    else if (!isEnglish()) label = opt.label || opt.title || opt.id;
+    else label = SELECT_OPTION_LABELS_EN[select.id]?.[String(opt.id)] || opt.labelEn || opt.titleEn || opt.label || opt.title || opt.id;
+    return numberedTestmateriaalLabel(opt.id, label);
   }
 
   function fillSelect(select, options, selected) {
@@ -10760,7 +10976,7 @@
   function catalogOption(definition, kind = 'combination') {
     const type = String(definition.type || '');
     const incomplete = definition.completionStatus === 'incomplete';
-    const story = type.startsWith('story-');
+    const story = type.startsWith('story-') || analysisEnvelope(definition).form === 'story';
     const relative = String(definition.utteranceForm || '').includes('relative');
     const reflexive = type.includes('reflexive');
     const roleFlip = type.includes('role-flip');
@@ -10896,11 +11112,11 @@
     }
     const multiGroupOrder = { 'Uiting · af': 0, 'Uiting · onaf': 1, 'Uiting · story': 2 };
     const multiOptions = [
-      catalogOption(MULTI_OGN_ANAPHOR_DEMO, 'intro'),
+      ...(publicItemAllowed(MULTI_OGN_ANAPHOR_DEMO.id) ? [catalogOption(MULTI_OGN_ANAPHOR_DEMO, 'intro')] : []),
       ...(globalThis.OGNAnaphorCombinations?.normalizeCombinations?.() || [])
-        .filter(definition => definition.id !== MULTI_OGN_ANAPHOR_DEMO.id)
+        .filter(definition => definition.id !== MULTI_OGN_ANAPHOR_DEMO.id && publicItemAllowed(definition.id))
         .map(definition => catalogOption(definition, 'combination')),
-      ...(globalThis.OGNUtteranceKernels?.DEFINITIONS || []).map(definition => catalogOption(definition, 'utterance'))
+      ...(globalThis.OGNUtteranceKernels?.DEFINITIONS || []).filter(definition => publicItemAllowed(definition.id)).map(definition => catalogOption(definition, 'utterance'))
     ].map((option, index) => ({ ...option, catalogOrder: index }))
       .sort((left, right) => (multiGroupOrder[left.group] ?? 9) - (multiGroupOrder[right.group] ?? 9)
         || left.catalogOrder - right.catalogOrder);
@@ -11798,6 +12014,7 @@
 
   function currentExampleSnapshot() {
     const ex = state.example || EXAMPLES[0];
+    const analysis = analysisEnvelope(ex);
     return {
       id: ex.id,
       title: ex.title,
@@ -11809,6 +12026,12 @@
       predicate: roleLabels().predicate,
       sentence_type: sentenceTypeForExample(ex),
       lex_rule: ex.lexRule || null,
+      input_analysis: {
+        original_input: analysis.originalInput,
+        input_segments: [...analysis.inputSegments],
+        form: analysis.form,
+        kernels: jsonClone(analysis.kernels, [])
+      },
       ...(ex.utteranceType || ex.utteranceKernels?.length ? {
         utterance_type: ex.utteranceType || null,
         utterance_kernels: jsonClone(ex.utteranceKernels || [], []),
@@ -11829,6 +12052,7 @@
     const baseMetadata = ensureDocumentMetadata();
     const now = new Date().toISOString();
     const example = EXAMPLES.find(candidate => candidate.id === composition.definition.id);
+    const inputAnalysis = analysisEnvelope(composition.definition);
     const units = composition.units.map(unit => ({
       id: unit.id,
       order: unit.order,
@@ -11855,6 +12079,9 @@
       data: {
         example: {
           id: composition.definition.id, title: composition.definition.title,
+          original_input: inputAnalysis.originalInput,
+          input_segments: [...inputAnalysis.inputSegments],
+          form: inputAnalysis.form,
           utterance_type: composition.definition.type,
           ...(composition.definition.anaphorVariant ? {
             anaphor_variant: composition.definition.anaphorVariant,
@@ -11901,6 +12128,7 @@
     if (composition.definition) return buildUtteranceKernelOpnDocument(composition, includeParadata);
     const baseMetadata = ensureDocumentMetadata();
     const now = new Date().toISOString();
+    const inputAnalysis = analysisEnvelope(composition.demo);
     const units = composition.units.map(unit => {
       const sentence = composition.demo.sentences.find(item => item.id === unit.id);
       return {
@@ -11918,7 +12146,7 @@
       opn_version: OPN_FORMAT_VERSION,
       metadata: {
         ...jsonClone(baseMetadata, {}),
-        title: MULTI_OGN_ANAPHOR_DEMO.title,
+        title: inputAnalysis.originalInput,
         language: state.language || baseMetadata.language || 'nl',
         modified_at: now,
         schema: 'data-metadata-paradata',
@@ -11928,9 +12156,16 @@
       },
       data: {
         example: {
-          id: MULTI_OGN_ANAPHOR_DEMO.id,
-          title: MULTI_OGN_ANAPHOR_DEMO.title,
-          sentences: composition.demo.sentences.map(sentence => ({ id: sentence.id, order: sentence.order, text: sentence.text }))
+          id: composition.demo.id,
+          title: inputAnalysis.originalInput,
+          original_input: inputAnalysis.originalInput,
+          input_segments: [...inputAnalysis.inputSegments],
+          form: inputAnalysis.form,
+          kernels: composition.demo.sentences.map(sentence => ({
+            id: sentence.id, order: sentence.order, text: sentence.text,
+            input_text: sentence.inputText || inputAnalysis.inputSegments[sentence.order - 1] || sentence.text,
+            finite_verb_placement: sentence.finiteVerbPlacement || null
+          }))
         },
         composition: {
           schema: composition.schema,
@@ -16414,6 +16649,7 @@
     if (requestedFeatures.includes('adverbs')) state.features.adverbs = true;
     if (featureEnabled('adverbs')) await loadLexiconUsageProfiles();
     await loadExamplesFromHtml();
+    await loadPublicTestmateriaalCatalog();
     refreshExamplesForFeatures();
     const requestedItem = queryParamValue('item', 'example');
     const requestedApp = queryParamValue('app');

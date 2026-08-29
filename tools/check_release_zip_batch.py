@@ -51,7 +51,7 @@ for marker, label in [
     ("set \"RELEASE_ZIP=%OG_PUBLISH_PROJECT_NAME%_full_source.zip\"", "dynamische publish-zipnaam"),
     ('/C:".*\\.zip"', "statusfilter voor alle lokale zipkopieën"),
     ('/C:"LEESMIJ\\.txt"', "statusfilter voor legacy LEESMIJ.txt"),
-    ('git rm --cached --ignore-unmatch -- "*.zip" "LEESMIJ.txt"', "stagingfilter voor lokale zipkopieën en legacy LEESMIJ.txt"),
+    ('git rm --cached --ignore-unmatch -- "*.zip" "LEESMIJ.txt" "data/testmateriaal.sqlite"', "stagingfilter voor lokale zipkopieën, database en legacy LEESMIJ.txt"),
     ('if "%DID_PUSH%"=="1" call :open_reset_after_push', "reset-subroutine na push"),
     (':open_reset_after_push', "veilige reset-subroutine"),
     ('start "" "%USER_RESET_URL%"', "browseropening met gevulde URL"),

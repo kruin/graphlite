@@ -7,6 +7,7 @@ import json
 import sys
 
 ROOT = Path(__file__).resolve().parent
+from tools import testmateriaal_db
 APP_VERSION = (ROOT / 'VERSION.txt').read_text(encoding='utf-8-sig').strip()
 SOURCE_BUILD = (ROOT / 'SOURCE_BUILD.txt').read_text(encoding='utf-8-sig').strip()
 ALLOWED_WRITES = {
@@ -33,7 +34,27 @@ class NoCacheHandler(SimpleHTTPRequestHandler):
         self.wfile.write(data)
 
     def do_POST(self):
-        if self.path.split('?', 1)[0] != '/__opengraph_save_file':
+        clean_path = self.path.split('?', 1)[0]
+        if clean_path == '/__opengraph_testmateriaal_bulk_status':
+            try:
+                length = int(self.headers.get('Content-Length', '0'))
+                payload = json.loads(self.rfile.read(length).decode('utf-8'))
+                result = testmateriaal_db.bulk_status(payload.get('numbers') or [], payload.get('status'))
+                self._json_response(200, {'ok': True, **result})
+            except Exception as exc:
+                self._json_response(400, {'ok': False, 'error': str(exc)})
+            return
+        if clean_path.startswith('/__opengraph_testmateriaal/'):
+            try:
+                number = int(clean_path.rsplit('/', 1)[1])
+                length = int(self.headers.get('Content-Length', '0'))
+                payload = json.loads(self.rfile.read(length).decode('utf-8'))
+                testmateriaal_db.update(number, payload)
+                self._json_response(200, {'ok': True, 'number': number})
+            except Exception as exc:
+                self._json_response(400, {'ok': False, 'error': str(exc)})
+            return
+        if clean_path != '/__opengraph_save_file':
             self._json_response(404, {'ok': False, 'error': 'unknown endpoint'})
             return
         try:
@@ -67,6 +88,31 @@ class NoCacheHandler(SimpleHTTPRequestHandler):
         except Exception as exc:
             self._json_response(500, {'ok': False, 'error': str(exc)})
 
+    def do_GET(self):
+        if self.path.split('?', 1)[0] == '/__opengraph_runtime_identity':
+            self._json_response(200, {
+                'app_version': APP_VERSION,
+                'source_build': SOURCE_BUILD,
+                'capabilities': ['testmateriaal-bulk-status-v1'],
+            })
+            return
+        if self.path.split('?', 1)[0] == '/__opengraph_testmateriaal_public':
+            try:
+                self._json_response(200, testmateriaal_db.public_document())
+            except Exception as exc:
+                self._json_response(500, {'ok': False, 'error': str(exc)})
+            return
+        if self.path.split('?', 1)[0] == '/__opengraph_testmateriaal':
+            try:
+                con = testmateriaal_db.connect()
+                payload = {'items': testmateriaal_db.rows(con), 'categories': [dict(x) for x in con.execute('SELECT code,name FROM categories ORDER BY code')]}
+                con.close()
+                self._json_response(200, payload)
+            except Exception as exc:
+                self._json_response(500, {'ok': False, 'error': str(exc)})
+            return
+        super().do_GET()
+
 
 def _probe_text(host, port, path, nonce):
     query = urlencode({'nocache': nonce})
@@ -94,14 +140,23 @@ def probe_server_state(host, port, expected_version, nonce, expected_build=None)
     if expected_build is None:
         return 'ok', served_version
 
-    status, served_build = _probe_text(host, port, 'SOURCE_BUILD.txt', nonce)
+    status, runtime_text = _probe_text(host, port, '__opengraph_runtime_identity', nonce)
     if status == 'down':
         return 'down', ''
     if status == 'http':
-        return 'wrong', f'{served_version} | SOURCE_BUILD.txt {served_build}'
+        return 'wrong', f'{served_version} | serverruntime {runtime_text}'
+
+    try:
+        runtime = json.loads(runtime_text)
+    except (TypeError, json.JSONDecodeError):
+        return 'wrong', f'{served_version} | ongeldige serverruntime'
+    served_build = str(runtime.get('source_build') or '')
+    capabilities = set(runtime.get('capabilities') or [])
 
     identity = f'{served_version} | {served_build or "<lege SOURCE_BUILD.txt>"}'
-    if served_build == expected_build:
+    if (runtime.get('app_version') == expected_version
+            and served_build == expected_build
+            and 'testmateriaal-bulk-status-v1' in capabilities):
         return 'ok', identity
     return 'wrong', identity
 

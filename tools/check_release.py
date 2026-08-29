@@ -23,6 +23,10 @@ def require(source: str, marker: str, label: str) -> None:
 
 required_files = [
     "index.html", "viewer.html", "viewer.js", "styles.css", "reset-cache.html", "sw.js",
+    "testmateriaal.html", "testmateriaal.js", "TESTMATERIAAL_BEHEER.md",
+    "data/testmateriaal.sqlite", "data/catalog.public.json", "tools/testmateriaal_db.py", "tools/check_testmateriaal_bulk.py",
+    "tools/install_local_database.py", "voeg-lokale-db-in.bat",
+    "tools/check_utterance_lex_geometry.py",
     ".editorconfig", ".gitattributes", ".gitignore",
     "structure-config.html", "structure-editor.html", "examples-input.html", "examples-editor.html",
     "examples-adverbs.html", "lexicon-config.html", "lexicon-editor.html", ".nojekyll",
@@ -121,7 +125,26 @@ start_bat = read("start_local_viewer.bat")
 debug_html = read("debug.html")
 local_mobile = read("local-mobile-test.js")
 server = read("server_nocache.py")
+require(server, "/__opengraph_runtime_identity", "dynamische lokale serveridentiteit")
+require(server, "testmateriaal-bulk-status-v1", "bulkstatus-capability in serveridentiteit")
 publication_readme = read("PUBLICATIE_README.md")
+testmateriaal_beheer = read("TESTMATERIAAL_BEHEER.md")
+master_spec = read("projectie-master-spec.md")
+
+for marker, label in [
+    ("ruwe input", "ruwe-inputfase"),
+    ("analysevoorstel", "analysevoorstelfase"),
+    ("active_analysis_version", "actieve analyseversie"),
+    ("De viewer leest uitsluitend de actieve, goedgekeurde analyse", "viewer-goedkeuringspoort"),
+    ("Publicatiestatus en analysestatus zijn onafhankelijk", "gescheiden statussen"),
+]:
+    require(testmateriaal_beheer, marker, f"testmateriaal-analysecontract: {label}")
+for marker, label in [
+    ("Input, analyse en viewerautoriteit", "mastersectie"),
+    ("De viewer is dus renderautoriteit, niet analyseautoriteit", "autoriteitsscheiding"),
+    ("input → analysevoorstel → goedgekeurde actieve analyse", "normatieve richting"),
+]:
+    require(master_spec, marker, f"master-analysecontract: {label}")
 
 # Deterministic Git/worktree line endings and exactly one terminal EOL.
 for marker, label in [
@@ -235,6 +258,16 @@ for rel, marker in [
 require(read("check_release.bat"), "check_greedy_grow_reconstruction.js", "Greedy-regressie in releaseflow")
 require(read("check_release.bat"), "check_random_placement.js", "Random-regressie in releaseflow")
 require(read("check_release.bat"), "check_direct_placement_config.py", "directe Config-regressie in releaseflow")
+require(read("check_release.bat"), "check_utterance_lex_geometry.py", "LEX-geometriecontrole in releaseflow")
+require(read("viewer.js"), "numberedTestmateriaalLabel(inputSource?.id", "testmateriaalnummer boven graph")
+require(read("viewer.js"), "return numberedTestmateriaalLabel(opt.id, label);", "testmateriaalnummer in keuzelijsten")
+require(read("check_release.bat"), "check_testmateriaal_bulk.py", "bulkstatuscontrole in releaseflow")
+if "LEX · UITING" in read("viewer.js") or "LEX · UTTERANCE" in read("viewer.js"):
+    errors.append("LEX-asnaam moet uitsluitend LEX zijn")
+require(read("voeg-lokale-db-in.bat"), "install_local_database.py", "lokaal DB-invoegcommando")
+require(read("tools/install_local_database.py"), "os.replace(temporary, TARGET)", "atomaire DB-vervanging")
+require(read("tools/install_local_database.py"), "shutil.copy2(backup, TARGET)", "automatische DB-rollback")
+require(read("maak-volledige-zip.bat"), "$parts -contains 'backups'", "lokale DB-reservekopieën buiten ZIP")
 require(read("check_release.bat"), "check_multi_ogn_anaphor.js", "multi-OGN-regressie in releaseflow")
 runtime_multi_ogn = read("tools/check_multi_ogn_anaphor_runtime.js")
 for marker, label in [
@@ -773,7 +806,7 @@ for marker, label in [
 ]:
     require(local_launcher, marker, label)
 source_build = read("SOURCE_BUILD.txt").strip()
-if source_build != "v2.0.0-rc.45-stable-catalog-scroll-reset-20260829.56":
+if source_build != "v2.0.0-rc.45-status-neutral-public-runtime-20260829.67":
     errors.append(f"onverwachte of lege SOURCE_BUILD.txt: {source_build!r}")
 
 leesmij = read("LEESMIJ.md")
@@ -915,7 +948,7 @@ for generated_name in [
 def manifest_file(path: Path) -> bool:
     rel = path.relative_to(ROOT)
     parts = rel.parts
-    if ".git" in parts or "__pycache__" in parts or "node_modules" in parts:
+    if ".git" in parts or "__pycache__" in parts or "node_modules" in parts or ("data" in parts and "backups" in parts):
         return False
     name = path.name
     lower = name.lower()
