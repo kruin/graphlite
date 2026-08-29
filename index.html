@@ -14,7 +14,7 @@
 <script>
     (function() {
       var VERSION = 'v2.0.0-rc.45';
-      var SOURCE_BUILD = 'v2.0.0-rc.45-functional-picker-runtime-20260829.69';
+      var SOURCE_BUILD = 'v2.0.0-rc.45-prominent-syntax-functional-20260829.70';
       window.__OPENGRAPH_EXPECTED_VERSION__ = VERSION;
       function runCacheCleanupOnce() {
         var flag = 'opengraph-cache-cleaned-' + VERSION + '-' + SOURCE_BUILD;
@@ -67,6 +67,10 @@
 </header>
 <main class="app-shell">
 <section aria-label="Hoofdmenu" class="main-topbar">
+<section class="language-tree-view-picker central-view-toolbar" id="languageTreeViewPicker" aria-label="Syntax of Functional kiezen">
+<h3><span class="help-lang-nl">Language Tree-view</span><span class="help-lang-en">Language Tree view</span></h3>
+<div aria-label="Syntax of Functional kiezen" class="compact-choice-list main-menu-option-list main-menu-view-options" id="mainViewOptions" role="listbox"></div>
+</section>
 <nav aria-label="Topmenu" class="main-top-menu">
 <details class="compact-choice-menu main-sentence-menu top-menu-item" id="mainSentenceMenu">
 <summary id="mainSentenceSummary" title="Kies de voorbeeldzin">Zin</summary>
@@ -93,10 +97,6 @@
 <button class="placement-mode-option" data-placement-mode="greedy-grow" type="button"><strong>Greedy Grow</strong><small><span class="help-lang-nl">direct · OGN-illustratie</span><span class="help-lang-en">direct · OGN illustration</span></small></button>
 <button class="placement-mode-option" data-placement-mode="random" type="button"><strong>Random</strong><small><span class="help-lang-nl">direct · OGN-illustratie</span><span class="help-lang-en">direct · OGN illustration</span></small></button>
 </div>
-</section>
-<section class="language-tree-view-picker" id="languageTreeViewPicker">
-<h3><span class="help-lang-nl">Language Tree-view</span><span class="help-lang-en">Language Tree view</span></h3>
-<div aria-label="View kiezen" class="compact-choice-list main-menu-option-list main-menu-view-options" id="mainViewOptions" role="listbox"></div>
 </section>
 </div>
 </details>
@@ -1027,7 +1027,7 @@
 <p class="mobile-sheet-note">Sleep met één vinger om te pannen. Knijp met twee vingers om te zoomen. FIT past het zichtvenster aan de huidige boom en named projections aan; de boom zelf verandert niet.</p>
 </section>
 <script>
-    window.__opengraphBoot = { version: 'v2.0.0-rc.45', sourceBuild: 'v2.0.0-rc.45-functional-picker-runtime-20260829.69', loaded: false, marker: 'viewer-index' };
+    window.__opengraphBoot = { version: 'v2.0.0-rc.45', sourceBuild: 'v2.0.0-rc.45-prominent-syntax-functional-20260829.70', loaded: false, marker: 'viewer-index' };
     function ogStatus(message) {
       var target = document.getElementById('actionFeedback') || document.body;
       if (target) target.textContent = message;

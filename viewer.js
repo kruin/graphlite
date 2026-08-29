@@ -2,7 +2,7 @@
   'use strict';
 
   const VERSION = 'v2.0.0-rc.45';
-  const SOURCE_BUILD = 'v2.0.0-rc.45-functional-picker-runtime-20260829.69';
+  const SOURCE_BUILD = 'v2.0.0-rc.45-prominent-syntax-functional-20260829.70';
   const OPN_FORMAT_VERSION = '1.0';
   const OPN_DOCUMENT_TYPE = 'opengraph-document';
   const PARADATA_EVENT_LIMIT = 250;

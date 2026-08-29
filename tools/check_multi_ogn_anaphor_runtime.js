@@ -122,7 +122,6 @@ async function downloadVisibleConfigOpn(page) {
     await page.waitForSelector('#graphSvg .multi-ogn-coreference-line', { state: 'attached' });
     await page.waitForTimeout(120);
 
-    await page.click('#mainViewSummary');
     await page.waitForSelector('#languageTreeViewPicker:not([hidden]) #mainViewOptions [data-option-id="ft"]', { state: 'visible' });
     await page.click('#mainViewOptions [data-option-id="ft"]');
     await page.waitForFunction(() => {
@@ -130,7 +129,6 @@ async function downloadVisibleConfigOpn(page) {
       const labels = [...svg.querySelectorAll('text')].map(node => node.textContent);
       return svg.querySelector('[data-central-view="functional"]') && labels.includes('CLAUSE') && labels.includes('ARG-STRUCT');
     });
-    await page.click('#mainViewSummary');
     await page.click('#mainViewOptions [data-option-id="syntax"]');
     await page.waitForSelector('#graphSvg [data-central-view="syntax"]', { state: 'attached' });
 

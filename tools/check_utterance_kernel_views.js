@@ -605,6 +605,8 @@ assert.ok(source.includes('layoutVisualProfile().cellX * gridSizeScale(state.gri
 assert.ok(source.includes('layoutVisualProfile().cellY * gridSizeScale(state.gridSizeVertical)'));
 assert.ok(source.includes('els.languageTreeViewPicker.hidden = !(languageTree || multiOgn)'),
   'Syntax/Functional moet ook bij kernzincomposities zichtbaar zijn');
+assert.ok(indexHtml.includes('central-view-toolbar') && styles.includes('.central-view-toolbar .compact-choice-option.active'),
+  'Syntax/Functional mist de prominente tweestandenschakelaar');
 assert.ok(source.includes('drawTreeEdges(unitGroup, unitById.get(unit.id).layout'),
   'Multi-OGN-randen moeten de gekozen centrale view gebruiken');
 assert.ok(source.includes('drawTreeNodes(unitGroup, unitById.get(unit.id).layout'),
