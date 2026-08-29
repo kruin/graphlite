@@ -806,7 +806,7 @@ for marker, label in [
 ]:
     require(local_launcher, marker, label)
 source_build = read("SOURCE_BUILD.txt").strip()
-if source_build != "v2.0.0-rc.45-status-neutral-public-runtime-20260829.67":
+if source_build != "v2.0.0-rc.45-functional-picker-runtime-20260829.69":
     errors.append(f"onverwachte of lege SOURCE_BUILD.txt: {source_build!r}")
 
 leesmij = read("LEESMIJ.md")

@@ -603,6 +603,14 @@ assert.ok(source.includes("input,select,button,a,label,[data-action],[data-node-
 assert.ok(stylesheet.includes('pointer-events:auto !important'));
 assert.ok(source.includes('layoutVisualProfile().cellX * gridSizeScale(state.gridSizeHorizontal)'));
 assert.ok(source.includes('layoutVisualProfile().cellY * gridSizeScale(state.gridSizeVertical)'));
+assert.ok(source.includes('els.languageTreeViewPicker.hidden = !(languageTree || multiOgn)'),
+  'Syntax/Functional moet ook bij kernzincomposities zichtbaar zijn');
+assert.ok(source.includes('drawTreeEdges(unitGroup, unitById.get(unit.id).layout'),
+  'Multi-OGN-randen moeten de gekozen centrale view gebruiken');
+assert.ok(source.includes('drawTreeNodes(unitGroup, unitById.get(unit.id).layout'),
+  'Multi-OGN-knopen moeten de gekozen centrale view gebruiken');
+assert.ok(browserRuntime.includes('[data-central-view="functional"]'),
+  'Browsertest moet Functional werkelijk tekenen');
 assert.ok(source.includes('<strong>Waar?</strong>'), 'Interface mist uitleg waar Flip optreedt');
 assert.ok(source.includes('<strong>Wanneer?</strong>'), 'Interface mist uitleg wanneer Flip nodig is');
 assert.ok(source.includes('<strong>Waarom?</strong>'), 'Interface mist uitleg waarom Flip nodig is');

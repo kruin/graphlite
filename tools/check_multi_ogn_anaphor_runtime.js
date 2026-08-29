@@ -122,6 +122,18 @@ async function downloadVisibleConfigOpn(page) {
     await page.waitForSelector('#graphSvg .multi-ogn-coreference-line', { state: 'attached' });
     await page.waitForTimeout(120);
 
+    await page.click('#mainViewSummary');
+    await page.waitForSelector('#languageTreeViewPicker:not([hidden]) #mainViewOptions [data-option-id="ft"]', { state: 'visible' });
+    await page.click('#mainViewOptions [data-option-id="ft"]');
+    await page.waitForFunction(() => {
+      const svg = document.getElementById('graphSvg');
+      const labels = [...svg.querySelectorAll('text')].map(node => node.textContent);
+      return svg.querySelector('[data-central-view="functional"]') && labels.includes('CLAUSE') && labels.includes('ARG-STRUCT');
+    });
+    await page.click('#mainViewSummary');
+    await page.click('#mainViewOptions [data-option-id="syntax"]');
+    await page.waitForSelector('#graphSvg [data-central-view="syntax"]', { state: 'attached' });
+
     const result = await page.evaluate(() => {
       const svg = document.getElementById('graphSvg');
       const units = [...svg.querySelectorAll('.multi-ogn-tree-nodes[data-ogn-unit]')].map(group => ({
@@ -171,6 +183,7 @@ async function downloadVisibleConfigOpn(page) {
     });
 
     assert.equal(result.modeClass, true);
+    assert.equal(result.hidden.viewPicker, false, 'Syntax/Functional moet zichtbaar zijn voor kernzincomposities');
     assert.equal(result.frames, 2);
     assert.equal(result.units.length, 2);
     assert.deepEqual(result.units.map(unit => unit.id), ['S1', 'S2']);
@@ -211,7 +224,7 @@ async function downloadVisibleConfigOpn(page) {
     assert.deepEqual(result.lex.map(item => item.index), [1, 2, 3, 4, 5, 6]);
     assert.deepEqual(result.lex.map(item => item.sentenceOrder), [1, 1, 1, 2, 2, 2]);
     assert.ok(result.lex.every((item, index) => index === 0 || item.y > result.lex[index - 1].y));
-    assert.deepEqual(result.hidden, { sentence: false, viewPicker: true, projections: true, log: true });
+    assert.deepEqual(result.hidden, { sentence: false, viewPicker: false, projections: true, log: true });
     assert.match(result.title, /Anafoor|Anaphor/);
     assert.match(result.meta, /afzonderlijk|independently/);
 

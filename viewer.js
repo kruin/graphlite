@@ -2,7 +2,7 @@
   'use strict';
 
   const VERSION = 'v2.0.0-rc.45';
-  const SOURCE_BUILD = 'v2.0.0-rc.45-status-neutral-public-runtime-20260829.67';
+  const SOURCE_BUILD = 'v2.0.0-rc.45-functional-picker-runtime-20260829.69';
   const OPN_FORMAT_VERSION = '1.0';
   const OPN_DOCUMENT_TYPE = 'opengraph-document';
   const PARADATA_EVENT_LIMIT = 250;
@@ -9471,6 +9471,7 @@
   function drawMultiOgnAnaphor() {
     if (activeUtteranceDefinition()) return drawUtteranceKernelComposition();
     const composition = multiOgnAnaphorComposition();
+    const centralViewLabel = state.centerMode === 'ft' ? 'Functional' : 'Syntax';
     const g = baseSvg('multi-ogn-anaphor-view');
     g.setAttribute('data-central-view', state.centerMode === 'ft' ? 'functional' : 'syntax');
     const origin = { x: 760, y: 112 };
@@ -9539,15 +9540,15 @@
     const framePadY = Math.max(36, cellY() * 0.56);
 
     drawAxisTitle(g, axisX - 72, titleY, isEnglish()
-      ? 'ANAPHOR · MULTI-OGN · two independently calculated trees'
-      : 'ANAFOOR · MULTI-OGN · twee afzonderlijk berekende bomen');
+      ? `ANAPHOR · MULTI-OGN · ${centralViewLabel} · two independently calculated trees`
+      : `ANAFOOR · MULTI-OGN · ${centralViewLabel} · twee afzonderlijk berekende bomen`);
     drawCanvasGuideText(g, axisX - 72, titleY + 28, isEnglish()
       ? 'Composition: keep both OGN units rigid → S1 above S2 → align MAN and HIJ on one declared column.'
       : 'Compositie: beide OGN’s star houden → S1 boven S2 → MAN en HIJ op één gedeclareerde kolom uitlijnen.', 'rule-label');
 
     const frameLayer = svgEl('g', { class: 'multi-ogn-unit-frame-layer' });
     composition.units.forEach(unit => {
-      const box = unit.layout.box;
+      const box = unitById.get(unit.id).layout.box;
       const x = px(box.minX, origin) - framePadX;
       const y = py(box.minY, origin) - framePadY;
       const width = px(box.maxX, origin) - px(box.minX, origin) + framePadX * 2;
@@ -9559,7 +9560,7 @@
         'data-ogn-unit': unit.id,
         'data-grid-invariant-scope': 'per-ogn'
       }));
-      frameLayer.appendChild(svgEl('text', { x: x + 18, y: y + 26, class: 'multi-ogn-unit-label' }, `${unit.id} · OGN ${unit.order}`));
+      frameLayer.appendChild(svgEl('text', { x: x + 18, y: y + 26, class: 'multi-ogn-unit-label' }, `${unit.id} · ${centralViewLabel} · OGN ${unit.order}`));
       frameLayer.appendChild(svgEl('text', { x: x + 18, y: y + 50, class: 'multi-ogn-sentence-label' }, sentence?.text || unit.id));
     });
     g.appendChild(frameLayer);
@@ -9662,7 +9663,7 @@
         'data-ogn-unit': unit.id,
         'data-calculation-order': unit.order
       });
-      drawTreeEdges(unitGroup, unit.layout, origin, null);
+      drawTreeEdges(unitGroup, unitById.get(unit.id).layout, origin, null);
       treeEdgeLayer.appendChild(unitGroup);
     });
     g.appendChild(treeEdgeLayer);
@@ -9708,7 +9709,7 @@
         'data-rigid-shift-x': unit.shift.dx,
         'data-rigid-shift-y': unit.shift.dy
       });
-      drawTreeNodes(unitGroup, unit.layout, origin, false, null);
+      drawTreeNodes(unitGroup, unitById.get(unit.id).layout, origin, false, null);
       treeNodeLayer.appendChild(unitGroup);
     });
     g.appendChild(treeNodeLayer);
@@ -9907,9 +9908,10 @@
     const flipStep = playPlan.findIndex(item => item.id === 'flip');
     g.setAttribute('data-local-flip-applied', hasLocalRoleFlip && playPhase >= flipStep ? 'true' : 'false');
 
+    const centralViewLabel = state.centerMode === 'ft' ? 'Functional' : 'Syntax';
     drawAxisTitle(g, axisX - 72, titleY, isEnglish()
-      ? `${composition.units.length > 2 ? 'STORY' : 'UTTERANCE'} · ${composition.units.length} KERNEL CLAUSES · ${definition.title}`
-      : `${composition.units.length > 2 ? 'STORY' : 'UITING'} · ${composition.units.length} KERNZINNEN · ${definition.title}`);
+      ? `${composition.units.length > 2 ? 'STORY' : 'UTTERANCE'} · ${composition.units.length} KERNEL CLAUSES · ${centralViewLabel} · ${definition.title}`
+      : `${composition.units.length > 2 ? 'STORY' : 'UITING'} · ${composition.units.length} KERNZINNEN · ${centralViewLabel} · ${definition.title}`);
     drawCanvasGuideText(g, axisX - 72, titleY + 28, isEnglish()
       ? 'K1 above K2 · declared anaphors align vertically · LEX shows the realized utterance.'
       : 'K1 boven K2 · gedeclareerde anaforen staan verticaal · LEX toont de gerealiseerde uiting.', 'rule-label');
@@ -9935,7 +9937,7 @@
         'data-local-flip-state': unit.id === 'K2' && hasLocalRoleFlip ? (playPhase >= flipStep ? 'applied' : 'before') : 'not-required',
         'data-branch-orientation': Boolean(displayLayout.mirrored) !== (flipSign < 0) ? 'mirrored' : 'normal'
       }));
-      frameLayer.appendChild(svgEl('text', { x: x + 18, y: y + 26, class: 'multi-ogn-unit-label', 'data-ogn-unit': unit.id }, `${unit.id} · ${isEnglish() ? 'KERNEL CLAUSE' : 'KERNZIN'}`));
+      frameLayer.appendChild(svgEl('text', { x: x + 18, y: y + 26, class: 'multi-ogn-unit-label', 'data-ogn-unit': unit.id }, `${unit.id} · ${centralViewLabel} · ${isEnglish() ? 'KERNEL CLAUSE' : 'KERNZIN'}`));
       frameLayer.appendChild(svgEl('text', { x: x + 18, y: y + 50, class: 'multi-ogn-sentence-label', 'data-ogn-unit': unit.id }, sentence?.text || unit.id));
     });
     g.appendChild(frameLayer);
@@ -11035,7 +11037,13 @@
       button.classList.toggle('active', active);
       button.setAttribute('aria-pressed', String(active));
     });
-    if (els.languageTreeViewPicker) els.languageTreeViewPicker.hidden = !languageTree;
+    if (els.languageTreeViewPicker) {
+      els.languageTreeViewPicker.hidden = !(languageTree || multiOgn);
+      const nlHeading = els.languageTreeViewPicker.querySelector('.help-lang-nl');
+      const enHeading = els.languageTreeViewPicker.querySelector('.help-lang-en');
+      if (nlHeading) nlHeading.textContent = multiOgn ? 'Kernzin-view' : 'Language Tree-view';
+      if (enHeading) enHeading.textContent = multiOgn ? 'Kernel-clause view' : 'Language Tree view';
+    }
     if (els.mainViewSummary) {
       els.mainViewSummary.textContent = isEnglish() ? (mode.labelEn || mode.label) : mode.label;
       els.mainViewSummary.title = isEnglish()

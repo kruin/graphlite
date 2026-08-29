@@ -1,5 +1,5 @@
 /* OpenGraph Lite v2.0.0-rc.45: service-worker cleanup only. Do not cache viewer assets in local/dev builds. */
-const OPENGRAPH_SW_VERSION = 'v2.0.0-rc.45-status-neutral-public-runtime-20260829.67-cleanup';
+const OPENGRAPH_SW_VERSION = 'v2.0.0-rc.45-functional-picker-runtime-20260829.69-cleanup';
 self.addEventListener('install', event => {
   self.skipWaiting();
 });
@@ -17,7 +17,7 @@ self.addEventListener('activate', event => {
       for (const client of clients) {
         const url = new URL(client.url);
         url.searchParams.set('ogv', 'v2.0.0-rc.45');
-        url.searchParams.set('source', 'v2.0.0-rc.45-status-neutral-public-runtime-20260829.67');
+        url.searchParams.set('source', 'v2.0.0-rc.45-functional-picker-runtime-20260829.69');
         url.searchParams.set('swreset', Date.now().toString());
         client.navigate(url.toString());
       }
