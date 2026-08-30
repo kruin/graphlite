@@ -1,7 +1,7 @@
 {
   "schema": "opengraph-testmateriaal-public",
   "version": 2,
-  "generated_at": "2026-08-29T23:32:13+00:00",
+  "generated_at": "2026-08-30T10:32:50+00:00",
   "items": [
     {
       "number": 110,
@@ -864,6 +864,88 @@
           "relation_type": "coreferentie"
         }
       ],
+      "placement_rules": []
+    },
+    {
+      "number": 460,
+      "source_id": "anaphor:de-persoon-die-ik-gisteren-gesproken-heb-is-er-vandaag-niet-meer",
+      "source_ids": [
+        "anaphor:de-persoon-die-ik-gisteren-gesproken-heb-is-er-vandaag-niet-meer"
+      ],
+      "original_input": "De persoon die ik gisteren gesproken heb, is er vandaag niet meer.",
+      "category_code": 400,
+      "category_name": "Zin · complex",
+      "sort_order": 460,
+      "status": "OK",
+      "completion": "AF",
+      "form": "complex",
+      "features": [
+        "relatief",
+        "anafoor",
+        "context",
+        "LEX-insertie"
+      ],
+      "analysis_status": "VOORSTEL",
+      "publication_phase": null,
+      "platforms": [],
+      "segments": [
+        "De persoon die ik gisteren gesproken heb, is er vandaag niet meer."
+      ],
+      "kernels": [
+        {
+          "kernel_no": 1,
+          "text": "IK SPREEK PERSOON",
+          "analysis_status": "VOORSTEL"
+        },
+        {
+          "kernel_no": 2,
+          "text": "PERSOON IS ER NIET MEER",
+          "analysis_status": "VOORSTEL"
+        }
+      ],
+      "relations": [
+        {
+          "from_kernel": 1,
+          "from_referent": "PERSOON",
+          "to_kernel": 2,
+          "to_referent": "PERSOON",
+          "relation_type": "coreferentie"
+        }
+      ],
+      "placement_rules": []
+    },
+    {
+      "number": 470,
+      "source_id": "anaphor:de-persoon-die-ik-gisteren-gesproken-heb",
+      "source_ids": [
+        "anaphor:de-persoon-die-ik-gisteren-gesproken-heb"
+      ],
+      "original_input": "De persoon die ik gisteren gesproken heb.",
+      "category_code": 400,
+      "category_name": "Zin · complex",
+      "sort_order": 470,
+      "status": "OK",
+      "completion": "ONAF",
+      "form": "complex",
+      "features": [
+        "relatief",
+        "context",
+        "LEX-insertie"
+      ],
+      "analysis_status": "VOORSTEL",
+      "publication_phase": null,
+      "platforms": [],
+      "segments": [
+        "De persoon die ik gisteren gesproken heb."
+      ],
+      "kernels": [
+        {
+          "kernel_no": 1,
+          "text": "IK SPREEK PERSOON",
+          "analysis_status": "VOORSTEL"
+        }
+      ],
+      "relations": [],
       "placement_rules": []
     },
     {

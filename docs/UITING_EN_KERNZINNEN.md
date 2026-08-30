@@ -399,7 +399,7 @@ toepassing. Horizontaal en verticaal zijn onafhankelijk instelbaar als
 De standaard is blauw met zware, goed zichtbare taklijnen; raster-, projectie-
 en boxlijnen behouden hun eigen instellingen.
 
-### Syntax, Functional en de knop Compact
+### Syntax, Functional en automatische compactie
 
 De prominente schakelaar **Syntax | Functional** geldt voor alle kernzinnen
 van de actieve uiting of story. Syntax toont `S`, `NP` en `VP`; Functional
@@ -407,11 +407,10 @@ toont dezelfde goedgekeurde analyse als `CLAUSE`, `ARG-STRUCT`, `PRED` en de
 beschikbare rollen. Referentkolommen, anaforen, Flip, LEX-uiting en
 knoopidentiteiten veranderen bij de wissel niet.
 
-De knop **Compact** kiest voor alle kernzinnen de veilige compacte H/V-
-vertakking en verwijdert eerdere handmatige uitrekking. Lettergrootte, labels
-en knoopsymbolen blijven gelijk. K1, K2 en K3 behouden hun eigen zone; Compact
-mag nooit een verplaatsing of knoop naar een andere kernzinzone brengen. Zie
-`../FUNCTIONAL_DATABASE_COMPACT.md`.
+De kolommen van alle kernzinnen worden automatisch compact aaneengesloten.
+Lege gaten tussen bezette bronkolommen verdwijnen; lettergrootte, labels en
+knoopsymbolen blijven gelijk. K1, K2 en K3 behouden hun eigen zone. Handmatige
+H/V-ruimte kan de compacte basis verruimen. Zie `../FUNCTIONAL_DATABASE_COMPACT.md`.
 
 ## Uitingenbeheer
 

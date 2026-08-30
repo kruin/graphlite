@@ -1,1 +1,1 @@
-v2.0.0-rc.45-functional-db-compact-docs-20260829.72
+v2.0.0-rc.45-auto-compact-columns-20260830.73

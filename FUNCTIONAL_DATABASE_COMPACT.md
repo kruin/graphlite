@@ -48,25 +48,18 @@ Functional verschijnt alleen wanneer de actieve goedgekeurde analyse voldoende
 rollen bevat. Greedy Grow, Random en kale Direct-weergaven krijgen geen
 stilzwijgend afgeleide functionele analyse.
 
-## Compact
+## Automatisch compacte plaatsing
 
-De knop **Compact** staat naast **Syntax | Functional**. De knop wijzigt alleen
-de weergave:
+De kernzinbomen worden automatisch aaneengesloten geplaatst; een aparte knop
+**Compact** is daarom niet nodig. Ongebruikte gaten tussen bezette bronkolommen
+worden verwijderd. Zo staat in testitem 420 `BRENGT` dichter bij de overige
+knopen van K2, zonder dat tekst wordt verkleind.
 
-- recursieve boomdichtheid: `compact`;
-- takvolgorde: `auto-compact`;
-- kernzinvertakking horizontaal: `compact`;
-- kernzinvertakking verticaal: `compact`;
-- eerdere handmatige globale, lokale en gekoppelde uitrekking: terug naar
-  `100%`.
-
-Compact verkleint geen tekst, labels of knoopsymbolen. Ouder-kindrelaties,
-rollen, Flip, LEX-volgorde en anafoorverbindingen blijven gelijk. Bij meerdere
-kernzinnen blijft iedere verplaatsing binnen haar eigen kernzin; Compact mag
-K2/K3 nooit in de ruimte van een eerdere kernzin plaatsen.
-
-De actieve Compact-markering betekent dat het veilige compacte preset actief
-is. Verdere handmatige ruimteaanpassing mag de boom weer verruimen.
+Iedere knoop behoudt een eigen rij en kolom. Ouder-kindrelaties, rollen, Flip,
+LEX-volgorde en anafoorverbindingen blijven gelijk. Bij meerdere kernzinnen
+blijft iedere verplaatsing binnen haar eigen kernzin en K2/K3 worden niet in de
+ruimte van een eerdere kernzin geplaatst. De bestaande handmatige H/V-
+ruimtebediening kan de automatisch compacte basis daarna nog verruimen.
 
 ## Lokale SQLite-database
 
@@ -138,7 +131,7 @@ De releasecontrole bewaakt minimaal:
 - alleen `OK` in de publieke export;
 - zichtbare Syntax/Functional-schakelaar bij berekende kernzinviews;
 - daadwerkelijk tekenen van `CLAUSE` en `ARG-STRUCT` in Functional;
-- Compact-knop en compact-contract;
+- automatische compacte kolomplaatsing en het eigen-kolomcontract;
 - onveranderde knoopidentiteiten en kernzingrenzen;
 - uitsluitend upward LEX-verplaatsingen binnen de eigen kernzin.
 

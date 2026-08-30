@@ -14,7 +14,7 @@
 <script>
     (function() {
       var VERSION = 'v2.0.0-rc.45';
-      var SOURCE_BUILD = 'v2.0.0-rc.45-functional-db-compact-docs-20260829.72';
+      var SOURCE_BUILD = 'v2.0.0-rc.45-auto-compact-columns-20260830.73';
       window.__OPENGRAPH_EXPECTED_VERSION__ = VERSION;
       function runCacheCleanupOnce() {
         var flag = 'opengraph-cache-cleaned-' + VERSION + '-' + SOURCE_BUILD;
@@ -70,7 +70,6 @@
 <section class="language-tree-view-picker central-view-toolbar" id="languageTreeViewPicker" aria-label="Syntax of Functional kiezen">
 <h3><span class="help-lang-nl">Language Tree-view</span><span class="help-lang-en">Language Tree view</span></h3>
 <div aria-label="Syntax of Functional kiezen" class="compact-choice-list main-menu-option-list main-menu-view-options" id="mainViewOptions" role="listbox"></div>
-<button aria-pressed="false" class="compact-tree-button" id="compactTreeButton" title="Maak de tree compact zonder tekst te verkleinen" type="button">Compact</button>
 </section>
 <nav aria-label="Topmenu" class="main-top-menu">
 <details class="compact-choice-menu main-sentence-menu top-menu-item" id="mainSentenceMenu">
@@ -1028,7 +1027,7 @@
 <p class="mobile-sheet-note">Sleep met één vinger om te pannen. Knijp met twee vingers om te zoomen. FIT past het zichtvenster aan de huidige boom en named projections aan; de boom zelf verandert niet.</p>
 </section>
 <script>
-    window.__opengraphBoot = { version: 'v2.0.0-rc.45', sourceBuild: 'v2.0.0-rc.45-functional-db-compact-docs-20260829.72', loaded: false, marker: 'viewer-index' };
+    window.__opengraphBoot = { version: 'v2.0.0-rc.45', sourceBuild: 'v2.0.0-rc.45-auto-compact-columns-20260830.73', loaded: false, marker: 'viewer-index' };
     function ogStatus(message) {
       var target = document.getElementById('actionFeedback') || document.body;
       if (target) target.textContent = message;

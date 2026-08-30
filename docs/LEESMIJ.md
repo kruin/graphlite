@@ -29,9 +29,9 @@ dezelfde goedgekeurde analyse de functionele rollen, zoals `CLAUSE`,
 keuze voor iedere kernzin. Direct, Random en Greedy Grow krijgen geen
 stilzwijgend afgeleide Functional-view.
 
-De knop **Compact** kiest de veilige compacte recursieve layout en compacte
-horizontale/verticale kernzintakken. Eerdere handmatige uitrekking wordt
-hersteld, maar tekst, labels en knoopsymbolen worden niet verkleind.
+Kernzinbomen worden automatisch compact aaneengesloten: ongebruikte gaten
+tussen bezette kolommen verdwijnen. Tekst, labels en knoopsymbolen worden niet
+verkleind; handmatige H/V-ruimte kan de basisweergave nog verruimen.
 
 Lokaal is `data/testmateriaal.sqlite` de volledige standaardcatalogus. Alleen
 `OK`-records gaan via `data/catalog.public.json` naar GitHub Pages. Een nieuwe

@@ -1,5 +1,14 @@
 # SOURCE_CHANGES v2.0.0-rc.45
 
+## Bronstand .73 — automatische compacte kernzinkolommen
+
+- De afzonderlijke knop **Compact** is verwijderd.
+- Kernzinbomen sluiten hun bezette kolommen automatisch aaneen; item 420 zet
+  `BRENGT` daardoor dichter bij de overige knopen van K2.
+- Verticale anafoor- en coreferentieankers behouden exact hun bestaande kolom.
+- Alle knopen blijven unieke x- en y-gridlijnen houden; handmatige H/V-ruimte
+  kan de compacte basisweergave nog verruimen.
+
 ## Bronstand .71 — Functional, database en Compact
 
 - **Syntax | Functional** staat prominent buiten het

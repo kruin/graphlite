@@ -2,7 +2,7 @@
   'use strict';
 
   const VERSION = 'v2.0.0-rc.45';
-  const SOURCE_BUILD = 'v2.0.0-rc.45-functional-db-compact-docs-20260829.72';
+  const SOURCE_BUILD = 'v2.0.0-rc.45-auto-compact-columns-20260830.73';
   const OPN_FORMAT_VERSION = '1.0';
   const OPN_DOCUMENT_TYPE = 'opengraph-document';
   const PARADATA_EVENT_LIMIT = 250;
@@ -156,7 +156,6 @@
     mainViewSummary: document.getElementById('mainViewSummary'),
     mainViewOptions: document.getElementById('mainViewOptions'),
     languageTreeViewPicker: document.getElementById('languageTreeViewPicker'),
-    compactTreeButton: document.getElementById('compactTreeButton'),
     mainInterfaceMenu: document.getElementById('mainInterfaceMenu'),
     mainInterfaceSummary: document.getElementById('mainInterfaceSummary'),
     mainInterfaceOptions: document.getElementById('mainInterfaceOptions'),
@@ -4041,6 +4040,52 @@
       return node;
     });
     return { ...layout, nodes };
+  }
+
+  function compactKernelColumns(layout, protectedNodeIds = new Set()) {
+    if (!layout?.nodes?.length) return layout;
+    const columns = [...new Set(layout.nodes.map(node => Number(node.x)))].sort((a, b) => a - b);
+    if (columns.some(column => !Number.isFinite(column))) return layout;
+    const protectedColumns = [...new Set(layout.nodes
+      .filter(node => protectedNodeIds.has(node.id))
+      .map(node => Number(node.x)))].sort((a, b) => a - b);
+    const columnMap = new Map(protectedColumns.map(column => [column, column]));
+    if (!protectedColumns.length) {
+      const root = layout.nodes.find(node => ['S', 'CLAUSE'].includes(String(node.label || '').toUpperCase()))
+        || layout.nodes[0];
+      const rootIndex = Math.max(0, columns.indexOf(Number(root.x)));
+      columns.forEach((column, index) => columnMap.set(column, Number(root.x) + index - rootIndex));
+    } else {
+      const unprotected = columns.filter(column => !columnMap.has(column));
+      const first = protectedColumns[0];
+      const last = protectedColumns[protectedColumns.length - 1];
+      const below = unprotected.filter(column => column < first);
+      below.forEach((column, index) => columnMap.set(column, first - below.length + index));
+      const above = unprotected.filter(column => column > last);
+      above.forEach((column, index) => columnMap.set(column, last + index + 1));
+      for (let index = 0; index < protectedColumns.length - 1; index += 1) {
+        const lower = protectedColumns[index];
+        const upper = protectedColumns[index + 1];
+        const between = unprotected.filter(column => column > lower && column < upper);
+        if (between.length > upper - lower - 1) return layout;
+        between.forEach((column, offset) => columnMap.set(column, lower + offset + 1));
+      }
+    }
+    const compactX = value => columnMap.get(Number(value)) ?? Number(value);
+    const nodes = layout.nodes.map(node => ({ ...node, x: compactX(node.x) }));
+    const edges = layout.edges.map(edge => ({
+      ...edge, fromX: compactX(edge.fromX), toX: compactX(edge.toX)
+    }));
+    return {
+      ...layout,
+      nodes,
+      edges,
+      box: {
+        ...layout.box,
+        minX: Math.min(...nodes.map(node => node.x)),
+        maxX: Math.max(...nodes.map(node => node.x))
+      }
+    };
   }
 
   function reservedFreeSlotCount() {
@@ -9766,6 +9811,10 @@
     const localSpaceY = state.kernelSpaceLocalY || {};
     const origin = { x: 760, y: 112 };
     const scaledLayout = (layout, unitId, forceLocalMirror = null) => {
+      const protectedNodeIds = new Set(composition.relations.flatMap(relation => [relation.antecedent, relation.anaphor])
+        .filter(anchor => anchor?.unitId === unitId)
+        .map(anchor => anchor.nodeId));
+      layout = compactKernelColumns(layout, protectedNodeIds);
       const localMirror = forceLocalMirror === null
         ? showK2BeforeLocalFlip && unitId === 'K2'
         : Boolean(forceLocalMirror) && unitId === 'K2';
@@ -11044,17 +11093,6 @@
       const enHeading = els.languageTreeViewPicker.querySelector('.help-lang-en');
       if (nlHeading) nlHeading.textContent = multiOgn ? 'Kernzin-view' : 'Language Tree-view';
       if (enHeading) enHeading.textContent = multiOgn ? 'Kernel-clause view' : 'Language Tree view';
-    }
-    if (els.compactTreeButton) {
-      const compactActive = languageTree
-        ? validLayoutDensity() === 'compact' && state.branchOrder === 'auto-compact'
-        : multiOgn && validKernelBranchSpacing(state.kernelBranchHorizontal) === 'compact'
-          && validKernelBranchSpacing(state.kernelBranchVertical) === 'compact';
-      els.compactTreeButton.classList.toggle('active', compactActive);
-      els.compactTreeButton.setAttribute('aria-pressed', String(compactActive));
-      els.compactTreeButton.title = isEnglish()
-        ? 'Make the tree as compact as possible without reducing text size.'
-        : 'Maak de tree zo compact mogelijk zonder tekst te verkleinen.';
     }
     if (els.mainViewSummary) {
       els.mainViewSummary.textContent = isEnglish() ? (mode.labelEn || mode.label) : mode.label;
@@ -16097,32 +16135,6 @@
     };
     els.mainAdverbSelect?.addEventListener('change', updateMainAdverb);
     els.mobileAdverbSelect?.addEventListener('change', updateMainAdverb);
-    els.compactTreeButton?.addEventListener('click', () => {
-      state.layoutDensity = 'compact';
-      state.branchOrder = 'auto-compact';
-      state.kernelBranchHorizontal = 'compact';
-      state.kernelBranchVertical = 'compact';
-      state.kernelSpaceGlobal = { x: 1, y: 1 };
-      state.kernelSpaceComponentX = 1;
-      state.kernelSpaceLocalY = {};
-      state.sentenceSpaceLocal = { x: 1, y: 1 };
-      try {
-        localStorage.setItem('opengraph_kernel_branch_horizontal', 'compact');
-        localStorage.setItem('opengraph_kernel_branch_vertical', 'compact');
-        localStorage.setItem('opengraph_kernel_space_global', JSON.stringify(state.kernelSpaceGlobal));
-        localStorage.setItem('opengraph_kernel_space_component_x', '1');
-        localStorage.setItem('opengraph_kernel_space_local_y', '{}');
-        localStorage.setItem('opengraph_sentence_space_local', JSON.stringify(state.sentenceSpaceLocal));
-      } catch (_err) {}
-      appendConfigLog('compact-tree', {
-        layoutDensity: state.layoutDensity,
-        branchOrder: state.branchOrder,
-        kernelBranchHorizontal: state.kernelBranchHorizontal,
-        kernelBranchVertical: state.kernelBranchVertical
-      });
-      resetManualViewBox();
-      render();
-    });
     document.getElementById('reloadExamplesButton')?.addEventListener('click', async () => {
       const before = EXAMPLES.length;
       await loadExamplesFromHtml();

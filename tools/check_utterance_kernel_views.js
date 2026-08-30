@@ -18,7 +18,7 @@ for (const documentationContract of [
   'Syntax | Functional',
   'CLAUSE',
   'ARG-STRUCT',
-  'De knop **Compact**',
+  'automatisch aaneengesloten',
   'data/testmateriaal.sqlite',
   'data/catalog.public.json',
   'status = OK',
@@ -225,7 +225,22 @@ function analysisEnvelope(definition = {}) {
 
 // Execute the actual shipped SVG renderer and OPN writer, not a parallel mock.
 const reserveClauseInternalLexRow = eval(`(${extract('reserveClauseInternalLexRow(', 'kernelLayoutForCentralView(')})`);
-const kernelLayoutForCentralView = eval(`(${extract('kernelLayoutForCentralView(', 'reservedFreeSlotCount(')})`);
+const kernelLayoutForCentralView = eval(`(${extract('kernelLayoutForCentralView(', 'compactKernelColumns(')})`);
+const compactKernelColumns = eval(`(${extract('compactKernelColumns(', 'reservedFreeSlotCount(')})`);
+const returnedK2Anchors = new Set(returned.relations.flatMap(relation => [relation.antecedent, relation.anaphor])
+  .filter(anchor => anchor.unitId === 'K2').map(anchor => anchor.nodeId));
+const compactReturnedK2 = compactKernelColumns(returnedK2, returnedK2Anchors);
+assert.ok(compactReturnedK2.box.maxX - compactReturnedK2.box.minX < returnedK2.box.maxX - returnedK2.box.minX,
+  '420 K2 moet automatisch minder ver naar rechts uitwaaieren');
+assert.equal(new Set(compactReturnedK2.nodes.map(node => node.x)).size, compactReturnedK2.nodes.length,
+  'Automatische compactie moet iedere knoop in een eigen kolom houden');
+assert.deepEqual(compactReturnedK2.nodes.map(node => node.id), returnedK2.nodes.map(node => node.id),
+  'Automatische compactie mag geen knopen wijzigen');
+for (const nodeId of returnedK2Anchors) {
+  assert.equal(compactReturnedK2.nodes.find(node => node.id === nodeId).x,
+    returnedK2.nodes.find(node => node.id === nodeId).x,
+    'Automatische compactie moet verticale relatieankers op hun kolom houden');
+}
 const multiOgnPlayPlan = eval(`(${extract('multiOgnPlayPlan(', 'multiOgnPlayMax(')})`);
 const multiOgnPlayMax = eval(`(${extract('multiOgnPlayMax(', 'multiOgnPlayOperation(')})`);
 const applyMultiOgnPlaybackVisibility = eval(`(${extract('applyMultiOgnPlaybackVisibility(', 'drawMultiOgnAnaphor()')})`);
@@ -622,16 +637,10 @@ assert.ok(source.includes('els.languageTreeViewPicker.hidden = !(languageTree ||
   'Syntax/Functional moet ook bij kernzincomposities zichtbaar zijn');
 assert.ok(indexHtml.includes('central-view-toolbar') && styles.includes('.central-view-toolbar .compact-choice-option.active'),
   'Syntax/Functional mist de prominente tweestandenschakelaar');
-assert.ok(indexHtml.includes('id="compactTreeButton"') && styles.includes('.central-view-toolbar .compact-tree-button'),
-  'Prominente knop Compact ontbreekt');
-for (const compactContract of [
-  "state.layoutDensity = 'compact'",
-  "state.branchOrder = 'auto-compact'",
-  "state.kernelBranchHorizontal = 'compact'",
-  "state.kernelBranchVertical = 'compact'",
-  'state.kernelSpaceGlobal = { x: 1, y: 1 }',
-  'state.sentenceSpaceLocal = { x: 1, y: 1 }'
-]) assert.ok(source.includes(compactContract), `Compact-contract ontbreekt: ${compactContract}`);
+assert.ok(!indexHtml.includes('id="compactTreeButton"') && !styles.includes('.central-view-toolbar .compact-tree-button'),
+  'De overbodige knop Compact is nog aanwezig');
+assert.ok(source.includes('layout = compactKernelColumns(layout, protectedNodeIds);'),
+  'Automatische compacte kolomplaatsing ontbreekt');
 assert.ok(source.includes('drawTreeEdges(unitGroup, unitById.get(unit.id).layout'),
   'Multi-OGN-randen moeten de gekozen centrale view gebruiken');
 assert.ok(source.includes('drawTreeNodes(unitGroup, unitById.get(unit.id).layout'),
