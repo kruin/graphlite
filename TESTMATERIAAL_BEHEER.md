@@ -7,6 +7,12 @@ zie `FUNCTIONAL_DATABASE_COMPACT.md`.
 
 Open Graphlite via de lokale starter en kies **Testmateriaal** in het hoofdmenu. Alle bestaande input is bij de eerste migratie `OK`. Nieuwe input krijgt later `NIEUW`. Een inhoudelijke wijziging van een bestaand `OK`-item zet het automatisch terug naar `TEST`, tenzij de gebruiker in dezelfde bewerking bewust opnieuw `OK` kiest.
 
+De beheerknop staat alleen lokaal en blijft op desktop in het hoofdscherm; hij
+wordt niet naar Config verplaatst en is publiek verborgen. Op mobiele
+viewerinterfaces worden alle beschikbare genummerde testitems in één dropdown
+boven de graph aangeboden. De interface-emulatie zelf staat onder
+**Config → Algemeen**.
+
 De hoofdreeksen zijn: 100 Zin · simplex; 200 Bijzin; 300 Vraagzin; 400 Zin · complex; 500 Story; 600–800 Gereserveerd; 900 Experimenteel. `AF/ONAF` en kenmerken zoals anafoor, relatief, reflexief, context, LEX-insertie en rol-flip staan daar los van. Categorieën volgen uit de kernzinanalyse. Vraagzinnen bevatten verplicht `?` en zijn `AF`; Story bevat minimaal twee kernzinnen en minimaal één aantoonbare cross-kernel-relatie.
 
 `data/catalog.public.json` is uitsluitend de statische GitHub-Pages-export. Alleen records met exact `status = OK` staan erin. Alle bronaliassen worden geëxporteerd, zodat samengevoegde dubbele invoer onder de bestaande viewer-ID’s bereikbaar blijft. `check_release.bat` bouwt en controleert deze export vóór publicatie. De viewer probeert lokaal eerst de SQLite-API en valt alleen online terug op deze JSON.

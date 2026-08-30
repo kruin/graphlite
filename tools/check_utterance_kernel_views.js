@@ -15,7 +15,7 @@ const functionalDatabaseCompactDoc = fs.readFileSync(path.join(root, 'FUNCTIONAL
 
 for (const documentationContract of [
   'ruwe input in SQLite',
-  'Syntax | Functional',
+  'Syntax | Functies',
   'CLAUSE',
   'ARG-STRUCT',
   'automatisch aaneengesloten',
@@ -456,6 +456,13 @@ for (const definition of kernelEngine.DEFINITIONS) {
     playPlan.findIndex(item => item.id === 'tree' && item.unitId === id)]));
   const relationStep = playPlan.findIndex(item => item.id === 'relations');
   const flipStep = playPlan.findIndex(item => item.id === 'flip');
+  const firstLexStep = playPlan.findIndex(item => item.id === 'lex-word');
+  const lexWordSteps = playPlan.filter(item => item.id === 'lex-word');
+  assert.equal(lexWordSteps.length, currentComposition.lexItems.length,
+    `${definition.id}: ieder gesproken LEX-item vereist één Play-stap`);
+  assert.deepEqual(lexWordSteps.map(item => item.lexIndex),
+    currentComposition.lexItems.map((_item, index) => index + 1),
+  `${definition.id}: LEX Play moet exact van boven naar beneden lopen`);
   for (let phase = 0; phase <= playMax; phase += 1) {
     state.multiOgnPlayStep = phase;
     drawUtteranceKernelComposition();
@@ -471,7 +478,17 @@ for (const definition of kernelEngine.DEFINITIONS) {
     const anaphors = playLayers.filter(layer => layer.classList.contains('multi-ogn-coreference'));
     assert.ok(anaphors.every(layer => layer.getAttribute('visibility') === (phase >= relationStep ? 'visible' : 'hidden')));
     const lex = playLayers.find(layer => layer.classList.contains('multi-ogn-shared-lex'));
-    assert.equal(lex.getAttribute('visibility'), ['lex', 'lex-complete'].includes(operation.id) ? 'visible' : 'hidden');
+    assert.equal(lex.getAttribute('visibility'), phase >= firstLexStep ? 'visible' : 'hidden');
+    const revealedLexIndex = playPlan.slice(0, phase + 1)
+      .filter(item => item.id === 'lex-word')
+      .reduce((maximum, item) => Math.max(maximum, Number(item.lexIndex) || 0), 0);
+    const indexedLexItems = descendants(lex)
+      .filter(node => Number(node.getAttribute('data-lex-index')) > 0);
+    assert.ok(indexedLexItems.length >= currentComposition.lexItems.length,
+      `${definition.id}: LEX-items moeten afzonderlijk bestuurbaar zijn`);
+    assert.ok(indexedLexItems.every(node => node.getAttribute('visibility') === (
+      Number(node.getAttribute('data-lex-index')) <= revealedLexIndex ? 'visible' : 'hidden'
+    )), `${definition.id}: LEX-woorden moeten één voor één blijven verschijnen`);
     const movement = playLayers.find(layer => layer.classList.contains('utterance-lex-movement-layer'));
     {
       const trajectories = descendants(movement).filter(node => node.classList.contains('utterance-lex-movement'));

@@ -196,12 +196,12 @@ if not nav_match:
 else:
     nav = nav_match.group(0)
     for item in [
-        "mainSentenceMenu", "mainAdverbMenu", "mainViewMenu", "mainInterfaceMenu",
+        "mainSentenceMenu", "mainAdverbMenu", "mainViewMenu",
         "sourceAxisMenu", "mainExtraMenu", "mainLanguageMenu", "openHelpButton", "openConfigButton",
     ]:
         require(nav, f'id="{item}"', f"topmenu-item {item}")
-    if nav.count("<details") != 7:
-        errors.append("topmenu moet zeven directe choice-details bevatten")
+    if nav.count("<details") != 6:
+        errors.append("topmenu moet zes directe choice-details bevatten")
     require(nav, 'data-feature="adverbs" hidden="" id="mainAdverbMenu"', "optioneel verborgen Bijwoordmenu")
 
 # Functional naming, interface selector, languages and English default.
@@ -215,11 +215,13 @@ for marker, label in [
     ("id: 'es', label: 'Español'", "Español"),
     ("The sentence examples are Dutch and illustrate Dutch sentence word order.", "Nederlandse zinsnotitie EN"),
     ("De voorbeeldzinnen zijn Nederlands en tonen de Nederlandse woordvolgorde.", "Nederlandse zinsnotitie NL"),
-    ("id=\"mainInterfaceMenu\"", "Interface-menu"),
-    ("{ id: 'ft', label: 'Functional', labelEn: 'Functional' }", "Functional-view"),
+    ("id=\"configViewportModeSelect\"", "Interface-keuze in Config"),
+    ("{ id: 'ft', label: 'Functies', labelEn: 'Functions' }", "Functies-view"),
 ]:
-    source = index if marker.startswith("id=\"") else js
+    source = js
     require(source, marker, label)
+if 'id="mainInterfaceMenu"' in index:
+    errors.append("Interface-keuze staat nog in het hoofdmenu")
 for stale in ["data-language-toggle", ">NL/EN</button>", "Syntax/FT", "Syntax / FT", ">FT<"]:
     if stale in index:
         errors.append(f"oude zichtbare UI-term staat nog in index.html: {stale}")
@@ -806,7 +808,7 @@ for marker, label in [
 ]:
     require(local_launcher, marker, label)
 source_build = read("SOURCE_BUILD.txt").strip()
-if source_build != "v2.0.0-rc.45-auto-compact-columns-20260830.73":
+if source_build != "v2.0.0-rc.45-mobile-catalog-spoken-lex-config-interface-20260830.74":
     errors.append(f"onverwachte of lege SOURCE_BUILD.txt: {source_build!r}")
 
 leesmij = read("LEESMIJ.md")

@@ -46,7 +46,7 @@ for marker, label in [
     ("setConfigScreen(true, validPlacementMode(state.placementMode));", "Config opent in actieve toepassingscontext"),
     ("sidePanel.replaceChildren(scopeNav, tabList, saveSlot, ...panels.values());", "globale Config-save boven alle tabpanelen"),
     ("const CONFIG_ITEM_HELP = {", "instellingsuitleg"),
-    ("Kiest de centrale Syntax- of Functional-view.", "uitleg centrale view"),
+    ("Kiest de centrale Syntax- of Functies-view.", "uitleg centrale view"),
     ("een expliciete zinsplaats heeft voorrang", "uitleg lineaire plaatsingsprioriteit"),
 ]:
     require(JS, marker, label)
@@ -70,8 +70,7 @@ for marker, label in [
     ('id="mainSentenceOptions"', "Zin-keuzelijst"),
     ('id="mainAdverbOptions"', "Bijwoord-keuzelijst"),
     ('data-feature="adverbs" hidden="" id="mainAdverbMenu"', "Bijwoordmenu standaard verborgen"),
-    ('id="mainViewOptions"', "Syntax/Functional-keuzelijst"),
-    ('id="mainInterfaceOptions"', "Interface-keuzelijst"),
+    ('id="mainViewOptions"', "Syntax/Functies-keuzelijst"),
     ('id="mainLanguageMenu"', "vijftalig menu"),
     ('data-language-option="en"', "English taaloptie"),
     ('data-language-option="nl"', "Nederlandse taaloptie"),
@@ -86,10 +85,14 @@ for marker, label in [
 
 # The semantic top bar has six choices on row 1 and three actions on row 2.
 for menu_id in [
-    "mainSentenceMenu", "mainAdverbMenu", "mainViewMenu", "mainInterfaceMenu",
+    "mainSentenceMenu", "mainAdverbMenu", "mainViewMenu",
     "sourceAxisMenu", "mainExtraMenu", "mainLanguageMenu", "openHelpButton", "openConfigButton",
 ]:
     require(INDEX, f'id="{menu_id}"', f"topmenu-item {menu_id}")
+
+require(JS, 'id="configViewportModeSelect"', "Interface-keuze in Config")
+if 'id="mainInterfaceMenu"' in INDEX:
+    errors.append("Interface-keuze staat nog in het hoofdmenu")
 
 if "Syntax/FT" in INDEX or "Syntax / FT" in INDEX or ">FT<" in INDEX:
     errors.append("zichtbare oude FT-naam staat nog in index.html")

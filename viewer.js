@@ -2,7 +2,7 @@
   'use strict';
 
   const VERSION = 'v2.0.0-rc.45';
-  const SOURCE_BUILD = 'v2.0.0-rc.45-auto-compact-columns-20260830.73';
+  const SOURCE_BUILD = 'v2.0.0-rc.45-mobile-catalog-spoken-lex-config-interface-20260830.74';
   const OPN_FORMAT_VERSION = '1.0';
   const OPN_DOCUMENT_TYPE = 'opengraph-document';
   const PARADATA_EVENT_LIMIT = 250;
@@ -156,10 +156,7 @@
     mainViewSummary: document.getElementById('mainViewSummary'),
     mainViewOptions: document.getElementById('mainViewOptions'),
     languageTreeViewPicker: document.getElementById('languageTreeViewPicker'),
-    mainInterfaceMenu: document.getElementById('mainInterfaceMenu'),
-    mainInterfaceSummary: document.getElementById('mainInterfaceSummary'),
-    mainInterfaceOptions: document.getElementById('mainInterfaceOptions'),
-    mainInterfaceHelp: document.getElementById('mainInterfaceHelp'),
+    openTestmateriaal: document.getElementById('openTestmateriaal'),
     mainLanguageMenu: document.getElementById('mainLanguageMenu'),
     mainLanguageSummary: document.getElementById('mainLanguageSummary'),
     configLanguageMenu: document.getElementById('configLanguageMenu'),
@@ -1485,7 +1482,7 @@
 
   const CENTER_MODES = [
     { id: 'syntax', label: 'Syntax' },
-    { id: 'ft', label: 'Functional', labelEn: 'Functional' }
+    { id: 'ft', label: 'Functies', labelEn: 'Functions' }
   ];
 
   const PROJECTION_OPTIONS = [
@@ -6217,7 +6214,10 @@
     (composition?.units || []).forEach(unit => {
       plan.push({ id: 'tree', unitId: unit.id, beforeFlip: hasFlip && unit.id === 'K2' });
       if (hasFlip && unit.id === 'K2') plan.push({ id: 'flip', unitId: unit.id });
-      plan.push({ id: 'lex', unitId: unit.id });
+    });
+    (composition?.lexItems || []).forEach((item, index) => {
+      const nextUnit = (composition.lexItems || []).slice(index + 1).find(candidate => !candidate.connector)?.unitId;
+      plan.push({ id: 'lex-word', unitId: item.unitId || nextUnit || 'LINK', lexIndex: index + 1, label: item.label });
     });
     plan.push({ id: 'relations' }, { id: 'lex-complete' });
     return plan;
@@ -6240,7 +6240,7 @@
       grid: isEnglish() ? 'grid / title' : 'raster / titel',
       tree: `${operation.unitId} · ${isEnglish() ? (operation.beforeFlip ? 'tree before Flip' : 'calculate tree') : (operation.beforeFlip ? 'boom vóór Flip' : 'boom berekenen')}`,
       flip: `FLIP ${operation.unitId} · ${isEnglish() ? 'mirror role branches' : 'roltakken spiegelen'}`,
-      lex: `LEX ${operation.unitId} · ${isEnglish() ? 'source → realized word and order' : 'bron → gerealiseerd woord en volgorde'}`,
+      'lex-word': `LEX ${operation.unitId} · ${operation.label} · ${isEnglish() ? 'next spoken word' : 'volgend gesproken woord'}`,
       relations: isEnglish() ? 'align vertical anaphors' : 'verticale anaforen uitlijnen',
       'lex-complete': isEnglish() ? 'LEX · complete realized utterance' : 'LEX · volledige gerealiseerde uiting'
     };
@@ -9480,6 +9480,10 @@
     const treeStep = new Map(composition.units.map(unit => [unit.id,
       plan.findIndex(item => item.id === 'tree' && item.unitId === unit.id)]));
     const relationsStep = plan.findIndex(item => item.id === 'relations');
+    const firstLexStep = plan.findIndex(item => item.id === 'lex-word');
+    const revealedLexIndex = plan.slice(0, phase + 1)
+      .filter(item => item.id === 'lex-word')
+      .reduce((maximum, item) => Math.max(maximum, Number(item.lexIndex) || 0), 0);
     for (const layer of Array.from(group.children || [])) {
       if (layer.classList.contains('multi-ogn-unit-frame-layer')) {
         Array.from(layer.children || []).forEach(element => {
@@ -9497,17 +9501,21 @@
       } else if (layer.classList.contains('multi-ogn-context-relation')) {
         layer.setAttribute('visibility', phase >= relationsStep ? 'visible' : 'hidden');
       } else if (layer.classList.contains('multi-ogn-shared-lex')) {
-        layer.setAttribute('visibility', operation.id === 'lex' || operation.id === 'lex-complete' ? 'visible' : 'hidden');
+        layer.setAttribute('visibility', phase >= firstLexStep ? 'visible' : 'hidden');
         Array.from(layer.children || []).forEach(element => {
           if (element.classList?.contains('multi-ogn-context-relation')) {
             element.setAttribute('visibility', phase >= relationsStep ? 'visible' : 'hidden');
             return;
           }
-          const lexUnit = element.getAttribute('data-lex-unit');
-          if (lexUnit) element.setAttribute('visibility', operation.id === 'lex-complete' || lexUnit === operation.unitId ? 'visible' : 'hidden');
+          const lexIndex = Number(element.getAttribute('data-lex-index'));
+          if (lexIndex) element.setAttribute('visibility', lexIndex <= revealedLexIndex ? 'visible' : 'hidden');
         });
       } else if (layer.classList.contains('utterance-lex-movement-layer')) {
-        layer.setAttribute('visibility', 'visible');
+        layer.setAttribute('visibility', phase >= firstLexStep ? 'visible' : 'hidden');
+        Array.from(layer.children || []).forEach(element => {
+          const lexIndex = Number(element.getAttribute('data-lex-index'));
+          if (lexIndex) element.setAttribute('visibility', lexIndex <= revealedLexIndex ? 'visible' : 'hidden');
+        });
       } else if (layer.classList.contains('multi-ogn-relation-note')) {
         layer.setAttribute('visibility', phase >= relationsStep ? 'visible' : 'hidden');
       }
@@ -9517,7 +9525,7 @@
   function drawMultiOgnAnaphor() {
     if (activeUtteranceDefinition()) return drawUtteranceKernelComposition();
     const composition = multiOgnAnaphorComposition();
-    const centralViewLabel = state.centerMode === 'ft' ? 'Functional' : 'Syntax';
+    const centralViewLabel = state.centerMode === 'ft' ? (isEnglish() ? 'Functions' : 'Functies') : 'Syntax';
     const g = baseSvg('multi-ogn-anaphor-view');
     g.setAttribute('data-central-view', state.centerMode === 'ft' ? 'functional' : 'syntax');
     const origin = { x: 760, y: 112 };
@@ -9958,7 +9966,7 @@
     const flipStep = playPlan.findIndex(item => item.id === 'flip');
     g.setAttribute('data-local-flip-applied', hasLocalRoleFlip && playPhase >= flipStep ? 'true' : 'false');
 
-    const centralViewLabel = state.centerMode === 'ft' ? 'Functional' : 'Syntax';
+    const centralViewLabel = state.centerMode === 'ft' ? (isEnglish() ? 'Functions' : 'Functies') : 'Syntax';
     drawAxisTitle(g, axisX - 72, titleY, isEnglish()
       ? `${composition.units.length > 2 ? 'STORY' : 'UTTERANCE'} · ${composition.units.length} KERNEL CLAUSES · ${centralViewLabel} · ${definition.title}`
       : `${composition.units.length > 2 ? 'STORY' : 'UITING'} · ${composition.units.length} KERNZINNEN · ${centralViewLabel} · ${definition.title}`);
@@ -10104,9 +10112,9 @@
         'data-lex-unit': lexUnit, 'data-source-role': item.role || '',
         'data-source-y': point ? point.py : '', 'data-lex-target-y': itemY
       }));
-      lexLayer.appendChild(svgEl('text', { x: axisX, y: itemY + 5, class: 'lex-label multi-ogn-lex-label', 'data-lex-unit': lexUnit }, item.label));
+      lexLayer.appendChild(svgEl('text', { x: axisX, y: itemY + 5, class: 'lex-label multi-ogn-lex-label', 'data-lex-unit': lexUnit, 'data-lex-index': index + 1 }, item.label));
       if (!item.connector && previousUnit !== item.unitId) {
-        lexLayer.appendChild(svgEl('text', { x: axisX - 78, y: itemY + 5, class: 'multi-ogn-lex-unit-label', 'data-lex-unit': lexUnit }, item.unitId));
+        lexLayer.appendChild(svgEl('text', { x: axisX - 78, y: itemY + 5, class: 'multi-ogn-lex-unit-label', 'data-lex-unit': lexUnit, 'data-lex-index': index + 1 }, item.unitId));
         previousUnit = item.unitId;
       }
       if (point) lexTargets.push({ ...item, point, itemY, lexUnit, index });
@@ -10125,6 +10133,7 @@
         lexMovementLayer.appendChild(svgEl('path', {
           d: `M ${movementX} ${target.point.py} C ${movementX + 46} ${target.point.py} ${movementX + 46} ${target.itemY} ${movementX} ${target.itemY}`,
           class: 'utterance-lex-movement', 'data-source-node-id': target.nodeId,
+          'data-lex-index': target.index + 1,
           'data-source-label': target.point.label, 'data-realized-label': target.label,
           'data-source-unit': target.lexUnit, 'data-target-unit': target.lexUnit,
           'data-target-word-order': target.wordOrder ?? target.index + 1,
@@ -10134,14 +10143,14 @@
         }));
         lexMovementLayer.appendChild(svgEl('circle', {
           cx: movementX, cy: target.point.py, r: 4.5, class: 'utterance-lex-source-trace',
-          'data-movement-index': movementIndex + 1
+          'data-movement-index': movementIndex + 1, 'data-lex-index': target.index + 1
         }));
         lexMovementLayer.appendChild(svgEl('polygon', {
           points: `${movementX},${target.itemY} ${movementX + 9},${target.itemY - 6} ${movementX + 9},${target.itemY + 6}`,
-          class: 'utterance-lex-arrowhead', 'data-movement-index': movementIndex + 1
+          class: 'utterance-lex-arrowhead', 'data-movement-index': movementIndex + 1, 'data-lex-index': target.index + 1
         }));
         lexMovementLayer.appendChild(svgEl('text', {
-          x: movementX + 12, y: target.itemY - 9, class: 'utterance-lex-movement-label'
+          x: movementX + 12, y: target.itemY - 9, class: 'utterance-lex-movement-label', 'data-lex-index': target.index + 1
         }, `${target.point.label} → ${target.label} · ${isEnglish() ? 'position' : 'positie'} ${target.wordOrder ?? target.index + 1}`));
       });
     }
@@ -10891,10 +10900,10 @@
   }
 
   const SELECT_OPTION_LABELS_EN = {
-    centralModeSelect: { syntax: 'Syntax tree', ft: 'Functional · functional structure (CLAUSE)' },
-    mainViewSelect: { syntax: 'Syntax', ft: 'Functional' },
+    centralModeSelect: { syntax: 'Syntax tree', ft: 'Functions · functional structure (CLAUSE)' },
+    mainViewSelect: { syntax: 'Syntax', ft: 'Functions' },
     mainProjectionSelect: { axes: 'All', source: 'Source', lex: 'LEX', synt: 'SYNT', log: 'LOG' },
-    mobileViewSelect: { syntax: 'Syntax tree', ft: 'Functional · functional structure' },
+    mobileViewSelect: { syntax: 'Syntax tree', ft: 'Functions · functional structure' },
     treeChoiceSelect: { 'auto-min': 'tree choice: auto per sample type', 'structure-config': 'tree choice: structure-config base tree' },
     functionalOrderSelect: { 'left-first': 'layout: left-first', 'right-first': 'layout: right-first' },
     branchOrderSelect: { normal: 'default: grammatical order', 'auto-compact': 'goal: compact - auto per branch', 'auto-align': 'goal: align subject/agent + object/patient', 'flip-all': 'global: flip all branches' },
@@ -11069,7 +11078,7 @@
   }
 
   function closeMainChoiceMenus(except = null) {
-    [els.mainSentenceMenu, els.mainAdverbMenu, els.mainViewMenu, els.mainInterfaceMenu, els.sourceAxisMenu, els.mainExtraMenu, els.mainLanguageMenu, els.mainActionsMenu].forEach(menu => {
+    [els.mainSentenceMenu, els.mainAdverbMenu, els.mainViewMenu, els.sourceAxisMenu, els.mainExtraMenu, els.mainLanguageMenu, els.mainActionsMenu].forEach(menu => {
       if (menu && menu !== except) menu.open = false;
     });
   }
@@ -11089,10 +11098,6 @@
     });
     if (els.languageTreeViewPicker) {
       els.languageTreeViewPicker.hidden = !(languageTree || multiOgn);
-      const nlHeading = els.languageTreeViewPicker.querySelector('.help-lang-nl');
-      const enHeading = els.languageTreeViewPicker.querySelector('.help-lang-en');
-      if (nlHeading) nlHeading.textContent = multiOgn ? 'Kernzin-view' : 'Language Tree-view';
-      if (enHeading) enHeading.textContent = multiOgn ? 'Kernel-clause view' : 'Language Tree view';
     }
     if (els.mainViewSummary) {
       els.mainViewSummary.textContent = isEnglish() ? (mode.labelEn || mode.label) : mode.label;
@@ -11121,8 +11126,8 @@
           : `${label}: directe OGN-illustratie. Language Tree blijft de primaire berekende toepassing.`;
       } else {
         subtitle.textContent = isEnglish()
-          ? 'Top menu with Sentence, Syntax / Functional, Interface, Projections, LOG order, Language, README and Config.'
-          : 'Topmenu met Zin, Syntax / Functional, Interface, Projecties, LOG-volgorde, Taal, LEESMIJ en Config.';
+          ? 'Top menu with Sentence, Syntax / Functions, Projections, LOG order, Language, README and Config.'
+          : 'Topmenu met Zin, Syntax / Functies, Projecties, LOG-volgorde, Taal, LEESMIJ en Config.';
       }
     }
     if (document.body?.classList.contains('config-screen-active')) {
@@ -11144,13 +11149,6 @@
       els.mainAdverbSummary.title = isEnglish() ? 'Choose an adverb' : 'Kies een bijwoord';
     }
     syncPlacementModeUi();
-    if (els.mainInterfaceSummary) {
-      els.mainInterfaceSummary.textContent = isEnglish() ? 'Interface' : 'Interface';
-      els.mainInterfaceSummary.title = isEnglish() ? 'Choose automatic, desktop, mobile portrait or mobile landscape' : 'Kies automatisch, desktop, mobiel staand of mobiel liggend';
-    }
-    if (els.mainInterfaceHelp) els.mainInterfaceHelp.textContent = isEnglish()
-      ? 'Automatic follows the actual screen. Mobile portrait and mobile landscape are also available as test views on desktop.'
-      : 'Automatisch volgt het echte scherm. Mobiel staand en mobiel liggend zijn ook op desktop als testweergave beschikbaar.';
     if (els.sourceAxisSummaryLabel) {
       els.sourceAxisSummaryLabel.textContent = isEnglish() ? 'Projections' : 'Projecties';
     }
@@ -11218,14 +11216,6 @@
       closeMainChoiceMenus();
       render();
     });
-    fillCompactChoiceMenu(els.mainInterfaceOptions, VIEWPORT_TEST_MODES, validViewportMode(state.viewportMode), null, id => {
-      state.viewportMode = validViewportMode(id);
-      applyHelpLayoutMode();
-      syncViewportTestClasses();
-      resetManualViewBox();
-      closeMainChoiceMenus();
-      render();
-    });
   }
 
   function renderLexInsertionTargetControls() {
@@ -11256,10 +11246,30 @@
     });
   }
 
+  function mobileTestmateriaalOptions() {
+    const candidates = [
+      ...EXAMPLES.map(example => sentenceCatalogOption(example)),
+      ...(publicItemAllowed(MULTI_OGN_ANAPHOR_DEMO.id) ? [catalogOption(MULTI_OGN_ANAPHOR_DEMO, 'intro')] : []),
+      ...(globalThis.OGNAnaphorCombinations?.normalizeCombinations?.() || [])
+        .filter(definition => definition.id !== MULTI_OGN_ANAPHOR_DEMO.id && publicItemAllowed(definition.id))
+        .map(definition => catalogOption(definition, 'combination')),
+      ...(globalThis.OGNUtteranceKernels?.DEFINITIONS || [])
+        .filter(definition => publicItemAllowed(definition.id))
+        .map(definition => catalogOption(definition, 'utterance'))
+    ];
+    const unique = new Map();
+    candidates.forEach(option => { if (!unique.has(option.id)) unique.set(option.id, option); });
+    return [...unique.values()].sort((left, right) => {
+      const leftNumber = testmateriaalNumber(left.id) ?? Number.MAX_SAFE_INTEGER;
+      const rightNumber = testmateriaalNumber(right.id) ?? Number.MAX_SAFE_INTEGER;
+      return leftNumber - rightNumber || String(left.label || left.title || left.id).localeCompare(String(right.label || right.title || right.id), 'nl');
+    });
+  }
+
   function syncControls() {
     fillSelect(els.exampleSelect, EXAMPLES, state.example.id);
     fillSelect(els.desktopExampleSelect, EXAMPLES, state.example.id);
-    fillSelect(els.mobileExampleSelect, EXAMPLES, state.example.id);
+    fillSelect(els.mobileExampleSelect, mobileTestmateriaalOptions(), activeCanonicalItemId());
     fillSelect(els.mainExampleSelect, EXAMPLES, state.example.id);
     if (featureEnabled('adverbs')) {
       fillSelect(els.mainAdverbSelect, ADVERB_OPTIONS, state.selectedAdverbId);
@@ -11272,6 +11282,11 @@
     fillSelect(els.centralModeSelect, CENTER_MODES, state.centerMode);
     fillSelect(els.mainViewSelect, CENTER_MODES, state.centerMode);
     fillSelect(els.mobileViewSelect, CENTER_MODES, state.centerMode);
+    fillSelect(document.getElementById('configViewportModeSelect'), VIEWPORT_TEST_MODES, validViewportMode(state.viewportMode));
+    if (els.openTestmateriaal) {
+      const localHost = ['127.0.0.1', 'localhost'].includes(String(location.hostname || '').toLowerCase());
+      els.openTestmateriaal.hidden = !localHost;
+    }
     fillSelect(els.mainProjectionSelect, PROJECTION_OPTIONS, state.projection);
     renderMainChoiceMenus();
     document.querySelectorAll('[data-source-axis]').forEach(button => {
@@ -13546,6 +13561,18 @@
     const generalViewGrid = document.createElement('div');
     generalViewGrid.className = 'config-primary-view-grid config-general-view-grid';
     generalViewGrid.setAttribute('aria-label', 'Algemene interface-instellingen');
+    const viewportModeLabel = document.createElement('label');
+    viewportModeLabel.className = 'select-field';
+    viewportModeLabel.innerHTML = `<span><span class="help-lang-nl">Interface</span><span class="help-lang-en">Interface</span></span><select id="configViewportModeSelect"></select><small class="config-item-help"><span class="help-lang-nl">Automatisch volgt het scherm; kies Desktop, Mobiel staand of Mobiel liggend om die interface gericht te testen.</span><span class="help-lang-en">Automatic follows the screen; choose Desktop, Mobile portrait or Mobile landscape to test that interface explicitly.</span></small>`;
+    fillSelect(viewportModeLabel.querySelector('select'), VIEWPORT_TEST_MODES, validViewportMode(state.viewportMode));
+    viewportModeLabel.querySelector('select').addEventListener('change', event => {
+      state.viewportMode = validViewportMode(event.target.value);
+      applyHelpLayoutMode();
+      syncViewportTestClasses();
+      resetManualViewBox();
+      render();
+    });
+    generalViewGrid.appendChild(viewportModeLabel);
 
     const primaryViewGrid = document.createElement('div');
     primaryViewGrid.className = 'config-primary-view-grid';
@@ -14109,7 +14136,7 @@
     panels.get('examples').appendChild(examplesCard);
     panels.get('advanced').appendChild(advancedCard);
     const CONFIG_ITEM_HELP = {
-      centralModeSelect: ['Kiest de centrale Syntax- of Functional-view.', 'Chooses the central Syntax or Functional view.'],
+      centralModeSelect: ['Kiest de centrale Syntax- of Functies-view.', 'Chooses the central Syntax or Functions view.'],
       treeChoiceSelect: ['Kiest welke bronboom als centrale structuur wordt gebruikt.', 'Chooses the source tree used as the central structure.'],
       functionalOrderSelect: ['Wijzigt alleen de takvolgorde in Functional.', 'Changes branch order in Functional only.'],
       branchOrderSelect: ['Bepaalt de standaard links/rechts-volgorde van vertakkingen.', 'Sets the default left/right order of branches.'],
@@ -14241,12 +14268,12 @@
       ? 'Language Tree default: Tree spacing MAX and six free tree rows — large type with a deliberately low tree.'
       : 'Language Tree-standaard: Boomruimte MAX en zes vrije boomrijen — groot letterbeeld met een bewust lage boom.');
     setText('.right-menu-width-callout .inline-help', en ? 'Set the width of the right menu directly. The grid uses only the space needed for the active view; the remaining space goes to this column.' : 'Kies hier direct de breedte van het rechter menu. Het grid gebruikt alleen de benodigde ruimte voor de actieve view; de rest gaat naar deze kolom.');
-    setText('[data-config-card="tree"] > .sticky-note', en ? 'View selects Syntax or Functional. Window fit describes how the tree uses the available app window.' : 'View kiest Syntax of Functional. Venstervulling beschrijft hoe de boom het beschikbare appvenster gebruikt.');
+    setText('[data-config-card="tree"] > .sticky-note', en ? 'View selects Syntax or Functions. Window fit describes how the tree uses the available app window.' : 'View kiest Syntax of Functies. Venstervulling beschrijft hoe de boom het beschikbare appvenster gebruikt.');
 
     setLabelSpan('rightMenuWidthSelectTop', en ? 'Right column visible' : 'Rechterkolom zichtbaar');
-    setLabelSpan('centralModeSelect', 'View', en ? 'Choose central view: Syntax or Functional (functional structure).' : 'Kies de centrale view: Syntax of Functional (functionele structuur).');
-    setLabelSpan('mainViewSelect', 'View', en ? 'Choose central view: Syntax or Functional (functional structure).' : 'Kies de centrale view: Syntax of Functional (functionele structuur).');
-    setLabelSpan('mobileViewSelect', 'View', en ? 'Choose central view: Syntax or Functional (functional structure).' : 'Kies de centrale view: Syntax of Functional (functionele structuur).');
+    setLabelSpan('centralModeSelect', 'View', en ? 'Choose central view: Syntax or Functions.' : 'Kies de centrale view: Syntax of Functies.');
+    setLabelSpan('mainViewSelect', 'View', en ? 'Choose central view: Syntax or Functions.' : 'Kies de centrale view: Syntax of Functies.');
+    setLabelSpan('mobileViewSelect', 'View', en ? 'Choose central view: Syntax or Functions.' : 'Kies de centrale view: Syntax of Functies.');
     setLabelSpan('treeChoiceSelect', en ? 'Tree choice' : 'Boomkeuze');
     setLabelSpan('functionalOrderSelect', en ? 'Layout order' : 'Layout order');
     setLabelSpan('branchOrderSelect', en ? 'Branch order' : 'Takvolgorde');
@@ -14380,7 +14407,6 @@
     if (!t) return;
     if (els.mainSentenceSummary) els.mainSentenceSummary.textContent = t.sentence;
     if (els.mainAdverbSummary && (state.selectedAdverbId === 'none' || !state.selectedAdverbId)) els.mainAdverbSummary.textContent = t.adverb;
-    if (els.mainInterfaceSummary) els.mainInterfaceSummary.textContent = t.interface;
     if (els.sourceAxisSummaryLabel) els.sourceAxisSummaryLabel.textContent = t.projections;
     if (els.mainExtraSummary) els.mainExtraSummary.textContent = t.logOrder;
     setText('#mainSouthHeading', t.logOrder);
@@ -14427,8 +14453,8 @@
     setText('.help-topbar h2', en ? 'Project information' : 'Projectinformatie');
     setText('.help-topbar p', en ? 'README topics and the selected text are both visible immediately. Drag the divider to enlarge or reduce the text panel.' : 'LEESMIJ-onderwerpen en de geselecteerde tekst zijn direct zichtbaar. Sleep de scheidingslijn om het tekstscherm groter of kleiner te maken.');
     setText('.header-subtitle', featureEnabled('adverbs')
-      ? (en ? 'Top menu with Sentence, Adverb, Syntax / Functional, Interface, Projections, LOG order, Language, README and Config.' : 'Topmenu met Zin, Bijwoord, Syntax / Functional, Interface, Projecties, LOG-volgorde, taal, LEESMIJ en Config.')
-      : (en ? 'Top menu with Sentence, Syntax / Functional, Interface, Projections, LOG order, Language, README and Config.' : 'Topmenu met Zin, Syntax / Functional, Interface, Projecties, LOG-volgorde, taal, LEESMIJ en Config.'));
+      ? (en ? 'Top menu with Sentence, Adverb, Syntax / Functions, Projections, LOG order, Language, README and Config.' : 'Topmenu met Zin, Bijwoord, Syntax / Functies, Projecties, LOG-volgorde, taal, LEESMIJ en Config.')
+      : (en ? 'Top menu with Sentence, Syntax / Functions, Projections, LOG order, Language, README and Config.' : 'Topmenu met Zin, Syntax / Functies, Projecties, LOG-volgorde, taal, LEESMIJ en Config.'));
     setText('[data-projection="axes"], [data-main-projection="axes"]', en ? 'All' : 'Alle');
     document.querySelectorAll('[data-source-axis-action="all"]').forEach(node => { node.textContent = en ? 'All' : 'Alle'; });
     document.querySelectorAll('[data-source-axis-action="none"]').forEach(node => { node.textContent = en ? 'None' : 'Geen'; });
@@ -16109,11 +16135,9 @@
       render();
     });
     els.mobileExampleSelect?.addEventListener('change', event => {
-      state.example = EXAMPLES.find(e => e.id === event.target.value) || EXAMPLES[0];
-      state.documentMetadata = null;
-      recordParadata('select-example', { example: state.example.id });
-      resetForNewExample();
-      syncCanonicalItemUrl();
+      const id = event.target.value;
+      if (!activateCanonicalItem(id, { updateUrl: true })) return;
+      recordParadata('select-mobile-testmateriaal', { example: id });
       render();
     });
     els.mainExampleSelect?.addEventListener('change', event => {
@@ -16476,7 +16500,7 @@
       setProjection(event.target.value || 'axes');
       render();
     });
-    [els.mainSentenceMenu, els.mainAdverbMenu, els.mainViewMenu, els.mainInterfaceMenu, els.sourceAxisMenu, els.mainExtraMenu, els.mainLanguageMenu, els.mainActionsMenu].forEach(menu => {
+    [els.mainSentenceMenu, els.mainAdverbMenu, els.mainViewMenu, els.sourceAxisMenu, els.mainExtraMenu, els.mainLanguageMenu, els.mainActionsMenu].forEach(menu => {
       menu?.addEventListener('toggle', () => { if (menu.open) closeMainChoiceMenus(menu); });
     });
     els.mainSentenceMenu?.addEventListener('toggle', () => {
@@ -16522,7 +16546,7 @@
       });
     });
     document.addEventListener('pointerdown', event => {
-      [els.mainSentenceMenu, els.mainAdverbMenu, els.mainViewMenu, els.mainInterfaceMenu, els.sourceAxisMenu, els.mainExtraMenu, els.mainLanguageMenu, els.mainActionsMenu].forEach(menu => {
+      [els.mainSentenceMenu, els.mainAdverbMenu, els.mainViewMenu, els.sourceAxisMenu, els.mainExtraMenu, els.mainLanguageMenu, els.mainActionsMenu].forEach(menu => {
         if (menu?.open && !menu.contains(event.target)) menu.open = false;
       });
     });

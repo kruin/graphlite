@@ -127,8 +127,8 @@ async function chooseLocalMode(page, mode) {
     near(initial.shell.w, 1440, 1, 'auto: app-shell-breedte');
     near(initial.shell.h, 1000, 1, 'auto: app-shell-hoogte');
 
-    await page.click('#mainInterfaceSummary');
-    await page.locator('#mainInterfaceOptions .compact-choice-option').nth(2).click();
+    await page.click('#openConfigButton');
+    await page.selectOption('#configViewportModeSelect', 'mobile-portrait');
     await page.waitForTimeout(1200);
     assertPhoneFrame(await metrics(page), 'mobile-portrait', 390, 844);
 

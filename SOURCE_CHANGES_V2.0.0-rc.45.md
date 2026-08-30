@@ -1,5 +1,16 @@
 # SOURCE_CHANGES v2.0.0-rc.45
 
+## Bronstand .74 — mobiele catalogus, gesproken LEX en Interface in Config
+
+- **Interface** (Automatisch/Desktop/Mobiel staand/Mobiel liggend) staat onder
+  Config → Algemeen en niet meer in het hoofdmenu.
+- **Testmateriaal** blijft lokaal op het desktop-hoofdscherm en is publiek
+  verborgen; mobiel gebruikt één genummerde dropdown voor alle testitems.
+- De zichtbare viewkeuze heet uitsluitend **Syntax/Functies**; de tekst
+  `KERNZIN-VIEW` is verwijderd.
+- Play bouwt de LEX-uiting woord voor woord van boven naar beneden op en laat
+  reeds gesproken woorden zichtbaar.
+
 ## Bronstand .73 — automatische compacte kernzinkolommen
 
 - De afzonderlijke knop **Compact** is verwijderd.

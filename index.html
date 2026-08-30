@@ -14,7 +14,7 @@
 <script>
     (function() {
       var VERSION = 'v2.0.0-rc.45';
-      var SOURCE_BUILD = 'v2.0.0-rc.45-auto-compact-columns-20260830.73';
+      var SOURCE_BUILD = 'v2.0.0-rc.45-mobile-catalog-spoken-lex-config-interface-20260830.74';
       window.__OPENGRAPH_EXPECTED_VERSION__ = VERSION;
       function runCacheCleanupOnce() {
         var flag = 'opengraph-cache-cleaned-' + VERSION + '-' + SOURCE_BUILD;
@@ -61,15 +61,14 @@
 <div>
 <div class="eyebrow">OpenGraph · JaN · Open Notation</div>
 <h1>OpenGraph Lite Viewer <span class="version-tag">v2.0.0-rc.45</span></h1>
-<p class="header-subtitle">Top menu with Sentence, Syntax / Functional, Interface, Projections, LOG order, Language, README and Config.</p>
+<p class="header-subtitle">Top menu with Sentence, Syntax / Functions, Projections, LOG order, Language, README and Config.</p>
 </div>
 <button class="ghost hidden" id="installButton" type="button">Install</button>
 </header>
 <main class="app-shell">
 <section aria-label="Hoofdmenu" class="main-topbar">
-<section class="language-tree-view-picker central-view-toolbar" id="languageTreeViewPicker" aria-label="Syntax of Functional kiezen">
-<h3><span class="help-lang-nl">Language Tree-view</span><span class="help-lang-en">Language Tree view</span></h3>
-<div aria-label="Syntax of Functional kiezen" class="compact-choice-list main-menu-option-list main-menu-view-options" id="mainViewOptions" role="listbox"></div>
+<section class="language-tree-view-picker central-view-toolbar" id="languageTreeViewPicker" aria-label="Syntax of Functies kiezen">
+<div aria-label="Syntax of Functies kiezen" class="compact-choice-list main-menu-option-list main-menu-view-options" id="mainViewOptions" role="listbox"></div>
 </section>
 <nav aria-label="Topmenu" class="main-top-menu">
 <details class="compact-choice-menu main-sentence-menu top-menu-item" id="mainSentenceMenu">
@@ -100,12 +99,7 @@
 </section>
 </div>
 </details>
-<details class="compact-choice-menu main-interface-menu top-menu-item" id="mainInterfaceMenu">
-<summary id="mainInterfaceSummary" title="Choose desktop or a mobile interface">Interface</summary>
-<div aria-label="Choose interface" class="compact-choice-popover top-menu-popover top-menu-interface-popover">
-<div aria-label="Choose interface" class="compact-choice-list main-menu-option-list main-menu-interface-options" id="mainInterfaceOptions" role="listbox"></div>
-<p class="main-menu-help" id="mainInterfaceHelp">Automatic follows the actual screen. Mobile portrait and mobile landscape are also available as test views on desktop.</p>
-</div></details><details class="compact-choice-menu source-axis-menu main-projection-menu top-menu-item" id="sourceAxisMenu">
+<details class="compact-choice-menu source-axis-menu main-projection-menu top-menu-item" id="sourceAxisMenu">
 <summary id="sourceAxisSummary" title="Kies zichtbare projecties"><span id="sourceAxisSummaryLabel">Projecties</span></summary>
 <div aria-label="Projecties kiezen" class="compact-choice-popover top-menu-popover top-menu-projection-popover">
 <div aria-label="Projecties kiezen" class="source-axis-toggle-row" role="group">
@@ -141,7 +135,7 @@
 </div></details>
 <button class="top-menu-action help-open-button" id="openHelpButton" title="Open README." type="button">README</button>
 <button class="top-menu-action primary config-open-button" id="openConfigButton" title="Open het configuratiescherm met alle projectie-, LEX-, layout- en documentatie-instellingen." type="button">Config</button>
-<a class="top-menu-action" href="testmateriaal.html" id="openTestmateriaal" title="Open het lokale beheer van input, nummering en status.">Testmateriaal</a>
+<a class="top-menu-action" href="testmateriaal.html" hidden id="openTestmateriaal" title="Open het lokale beheer van input, nummering en status.">Testmateriaal</a>
 </nav>
 <select aria-hidden="true" class="main-control-select-compat" id="mainExampleSelect" tabindex="-1"></select>
 <select aria-hidden="true" class="main-control-select-compat" id="mainAdverbSelect" tabindex="-1"></select>
@@ -710,8 +704,8 @@
 </section>
 <section aria-label="Mobiele voorbeeldzin-keuze" class="mobile-sentence-bar">
 <label class="mobile-sentence-field" for="mobileExampleSelect">
-<span>Zinnen</span>
-<select aria-label="Zinnen kiezen" id="mobileExampleSelect"></select>
+<span>Testmateriaal</span>
+<select aria-label="Alle testmateriaal kiezen" id="mobileExampleSelect"></select>
 </label>
 <label class="mobile-adverb-field" data-feature="adverbs" for="mobileAdverbSelect" hidden="">
 <span>Bijwoorden</span>
@@ -1027,7 +1021,7 @@
 <p class="mobile-sheet-note">Sleep met één vinger om te pannen. Knijp met twee vingers om te zoomen. FIT past het zichtvenster aan de huidige boom en named projections aan; de boom zelf verandert niet.</p>
 </section>
 <script>
-    window.__opengraphBoot = { version: 'v2.0.0-rc.45', sourceBuild: 'v2.0.0-rc.45-auto-compact-columns-20260830.73', loaded: false, marker: 'viewer-index' };
+    window.__opengraphBoot = { version: 'v2.0.0-rc.45', sourceBuild: 'v2.0.0-rc.45-mobile-catalog-spoken-lex-config-interface-20260830.74', loaded: false, marker: 'viewer-index' };
     function ogStatus(message) {
       var target = document.getElementById('actionFeedback') || document.body;
       if (target) target.textContent = message;

@@ -1,1 +1,1 @@
-v2.0.0-rc.45-auto-compact-columns-20260830.73
+v2.0.0-rc.45-mobile-catalog-spoken-lex-config-interface-20260830.74

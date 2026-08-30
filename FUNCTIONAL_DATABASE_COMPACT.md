@@ -19,9 +19,9 @@ De database bewaart; de analyzer analyseert; de Graphlite-engine maakt
 graphdata; de viewer tekent. De viewer leidt nooit zelfstandig kernzinnen of
 rollen af uit de ruwe input.
 
-## Functional
+## Syntax en Functies
 
-**Syntax** toont de syntactische structuur. **Functional** toont voor dezelfde
+**Syntax** toont de syntactische structuur. **Functies** toont voor dezelfde
 goedgekeurde kernzin de functionele rollen. De zichtbare rollen zijn, waar van
 toepassing:
 
@@ -35,16 +35,16 @@ toepassing:
 | `THEMA` | thema |
 | `DOEL` | doel/ontvanger |
 
-Syntax en Functional gebruiken dezelfde lexicale bronknopen, knoopidentiteiten,
+Syntax en Functies gebruiken dezelfde lexicale bronknopen, knoopidentiteiten,
 LEX-realisatie, kernzingrenzen en cross-kernel-relaties. Wisselen van view
 verandert dus geen analyse, woordvolgorde, anafoor of databasegegeven.
 
-De tweestandenschakelaar **Syntax | Functional** staat permanent en prominent
+De tweestandenschakelaar **Syntax | Functies** staat permanent en prominent
 buiten het menu **View/Placement method** wanneer de actieve toepassing een
 berekende Language Tree of kernzincompositie is. Bij een uiting, story of
 anafoorcompositie geldt de gekozen view voor iedere kernzin afzonderlijk.
 
-Functional verschijnt alleen wanneer de actieve goedgekeurde analyse voldoende
+Functies verschijnt alleen wanneer de actieve goedgekeurde analyse voldoende
 rollen bevat. Greedy Grow, Random en kale Direct-weergaven krijgen geen
 stilzwijgend afgeleide functionele analyse.
 
@@ -108,6 +108,25 @@ records kunnen worden geselecteerd en in één transactie bijvoorbeeld op `TEST`
 worden gezet. Iedere wijziging krijgt een revisierecord; daarna wordt de
 publieke JSON eenmaal opnieuw opgebouwd.
 
+De knop **Testmateriaal** blijft op een lokaal desktopscherm in het hoofdmenu.
+Op een publieke host is deze beheerknop verborgen. Op mobiel — staand én
+liggend — worden alle beschikbare testitems samengebracht in één genummerde
+keuzelijst boven de graph; er zijn daar geen afzonderlijke testmateriaallijsten.
+
+De geforceerde interfacekeuze (**Automatisch**, **Desktop**, **Mobiel staand**
+en **Mobiel liggend**) staat onder **Config → Algemeen**. Zij is een
+weergave-/testinstelling en verplaatst het lokale testmateriaalbeheer niet naar
+Config.
+
+## LEX Play als gesproken uiting
+
+Na het opbouwen van de kernzinbomen laat Play de gerealiseerde uiting op LEX
+woord voor woord verschijnen. De volgorde loopt van boven naar beneden over de
+LEX-as. Eerder verschenen woorden blijven zichtbaar wanneer het volgende woord
+verschijnt. Pas nadat alle woorden zichtbaar zijn, worden de resterende
+relaties en het volledige eindbeeld afgerond. Iedere wisselpijl blijft daarbij
+gekromd, upward en binnen de eigen kernzin.
+
 Alleen records met exact `status = OK` gaan mee in
 `data/catalog.public.json`. Nieuwe of gewijzigde input kan lokaal aanwezig zijn
 zonder online zichtbaar te worden.
@@ -129,8 +148,10 @@ De releasecontrole bewaakt minimaal:
 - DB-schema, SQLite-integriteit, vraagzin- en Story-contract;
 - meervoudige statuswijziging via de echte lokale HTTP-route;
 - alleen `OK` in de publieke export;
-- zichtbare Syntax/Functional-schakelaar bij berekende kernzinviews;
-- daadwerkelijk tekenen van `CLAUSE` en `ARG-STRUCT` in Functional;
+- zichtbare Syntax/Functies-schakelaar bij berekende kernzinviews;
+- daadwerkelijk tekenen van `CLAUSE` en `ARG-STRUCT` in Functies;
+- één mobiele testmateriaalkeuzelijst en lokaal beheer op het hoofdscherm;
+- progressieve LEX Play in de zichtbare volgorde van boven naar beneden;
 - automatische compacte kolomplaatsing en het eigen-kolomcontract;
 - onveranderde knoopidentiteiten en kernzingrenzen;
 - uitsluitend upward LEX-verplaatsingen binnen de eigen kernzin.

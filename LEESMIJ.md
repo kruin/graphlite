@@ -42,14 +42,14 @@ De zichtbare volgorde wordt zo `HOND — BIJT — MAN`, zonder HOND of MAN als
 schijnverplaatsing te tekenen. Alle verplaatsingspijlen blijven uitsluitend op
 de LEX-as; er lopen geen verplaatsingslijnen vanuit de boom.
 
-## Syntax, Functional, Compact en testmateriaal
+## Syntax, Functies, automatische compactheid en testmateriaal
 
-De prominente schakelaar **Syntax | Functional** staat buiten het menu voor de
-plaatsingsmethode. Syntax toont de syntactische kernzin; Functional toont voor
+De prominente schakelaar **Syntax | Functies** staat buiten het menu voor de
+plaatsingsmethode. Syntax toont de syntactische kernzin; Functies toont voor
 dezelfde goedgekeurde analyse de functionele rollen, zoals `CLAUSE`,
 `ARG-STRUCT`, `PRED`, `AGENS` en `PATIENS`. Bij een uiting of story geldt de
 keuze voor iedere kernzin. Direct, Random en Greedy Grow krijgen geen
-stilzwijgend afgeleide Functional-view.
+stilzwijgend afgeleide functionele view.
 
 Kernzinbomen worden automatisch compact aaneengesloten: ongebruikte gaten
 tussen bezette kolommen verdwijnen. Tekst, labels en knoopsymbolen worden niet
@@ -61,6 +61,16 @@ graph vereist daarnaast een actieve goedgekeurde kernzinanalyse; de viewer
 analyseert nooit zelfstandig ruwe input. Zie
 [`FUNCTIONAL_DATABASE_COMPACT.md`](FUNCTIONAL_DATABASE_COMPACT.md) en
 [`TESTMATERIAAL_BEHEER.md`](TESTMATERIAAL_BEHEER.md).
+
+Op een lokaal desktopscherm blijft **Testmateriaal** in het hoofdmenu. De knop
+is publiek verborgen. Op mobiel, zowel staand als liggend, staan alle
+testitems in één genummerde dropdown boven de graph. De keuze voor
+**Automatisch/Desktop/Mobiel staand/Mobiel liggend** staat onder
+**Config → Algemeen**; Testmateriaal zelf staat niet in Config.
+
+Tijdens **Play** verschijnt de gerealiseerde LEX-uiting woord voor woord van
+boven naar beneden, alsof zij wordt uitgesproken. Reeds verschenen woorden
+blijven staan; daarna volgen relaties en het volledige eindbeeld.
 
 ## Flip: structuur is geen woordvolgorde
 
