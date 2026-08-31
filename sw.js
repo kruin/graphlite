@@ -1,5 +1,5 @@
 /* OpenGraph Lite v3.1.0-rc.10: service-worker cleanup only. Do not cache viewer assets in local/dev builds. */
-const OPENGRAPH_SW_VERSION = 'v3.1.0-rc.10-visible-lex-views-grouped-lists-20260831.10-cleanup';
+const OPENGRAPH_SW_VERSION = 'v3.1.0-rc.10-simplex-north-south-stable-unflipped-20260831.12-cleanup';
 self.addEventListener('install', event => {
   self.skipWaiting();
 });
@@ -17,7 +17,7 @@ self.addEventListener('activate', event => {
       for (const client of clients) {
         const url = new URL(client.url);
         url.searchParams.set('ogv', 'v3.1.0-rc.10');
-        url.searchParams.set('source', 'v3.1.0-rc.10-visible-lex-views-grouped-lists-20260831.10');
+        url.searchParams.set('source', 'v3.1.0-rc.10-simplex-north-south-stable-unflipped-20260831.12');
         url.searchParams.set('swreset', Date.now().toString());
         client.navigate(url.toString());
       }

@@ -74,9 +74,9 @@ Tijdens **Play** verschijnt de gerealiseerde LEX-uiting woord voor woord in de
 vaste leesrichting, alsof zij wordt uitgesproken. Reeds verschenen woorden
 blijven staan; daarna volgen relaties en het volledige eindbeeld.
 
-Vanaf v3.1.0-rc.10 kan de zichtbare hoofdmenuknop **LEX-view** en
-**Config → Algemeen → Presentatie en leesrichting** West, Oost, Noord of Zuid
-kiezen. Oost is de startdefault; West blijft direct beschikbaar.
+Vanaf v3.1.0-rc.10 kan **Config → Algemeen → Presentatie en leesrichting**
+West, Oost, Noord of Zuid kiezen. De bestaande afzonderlijke LEX-keuze staat
+ook op Main. Oost is de startdefault; West blijft direct beschikbaar.
 West/Oost lezen boven→beneden; Noord/Zuid links→rechts. Een Wissel gaat
 semantisch **naar voren in de uiting**: omhoog op een verticale LEX-as en naar
 links op een horizontale LEX-as. Zie

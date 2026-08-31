@@ -1,13 +1,13 @@
 # LEX-asoriëntaties · v3.1.0-rc.10
 
-De LEX-view staat zichtbaar in het hoofdmenu onder **LEX-view** en bovenaan onder **Config
+De LEX-zijde staat op het hoofdscherm onder **LEX** en bovenaan onder **Config
 → Algemeen → Presentatie en leesrichting**. Daar zijn West, Oost, Noord en
 Zuid direct kiesbaar; de onderliggende keuzelijst biedt dezelfde instelling.
 De standaardwaarde is **Oost**. West blijft als alternatief beschikbaar. De
 graphdata, kernzinnen, rollen, knoopidentiteiten en Flip worden
 niet door de keuze herschreven.
 
-| LEX-view | Leesrichting uiting | Boom ligt | S/Clause ontspringt |
+| LEX-zijde | Leesrichting uiting | Boom ligt | S/Clause ontspringt |
 |---|---|---|---|
 | West | boven → beneden | rechts van LEX | boven |
 | Oost | boven → beneden | boom blijft op dezelfde plaats; LEX rechts, SYNT links | boven |
@@ -66,10 +66,12 @@ geen Flip.
 
 ## rc.9: Noord/Zuid en lijsten
 
-Noord en Zuid roteren de volledige grafische inhoud nu als één rigide
-eenheid. De eerdere niet-uniforme rek is verwijderd: takken, knoopvormen,
-omcirkelingen en labels blijven daardoor bij elkaar. Gemeten woord-, label- en
-vormbreedtes blijven als controleerbare layoutmetadata beschikbaar.
+Bij Zin-simplex gebruiken Noord en Zuid dezelfde grammaticale boomrichting.
+Zuid wisselt eerst de canonieke LEX- en SYNT-zijde en gebruikt daarna dezelfde
+rotatie als Noord. Daardoor verplaatst alleen de as; NP/VP- en NP/V-takken
+worden niet ongemerkt geflipt. De simplex-dwarsmaat volgt de gemeten
+teksthoogte, zodat de horizontale view compact blijft. De afzonderlijke
+Uiting-compositie behoudt haar eigen reeds geldige Noord/Zuid-geometrie.
 
 Oost is de startdefault en wordt eenmalig pas ná project- en browser-Config
 toegepast. Config biedt voor Noord/Zuid afzonderlijke LEX-schakelaars voor

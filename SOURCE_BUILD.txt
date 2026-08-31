@@ -1,1 +1,1 @@
-v3.1.0-rc.10-visible-lex-views-grouped-lists-20260831.10
+v3.1.0-rc.10-simplex-north-south-stable-unflipped-20260831.12

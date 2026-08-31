@@ -76,7 +76,7 @@ required_files = [
     "tools/sync_source_build.py",
     "tools/check_local_start.py", "tools/check_config_tabs_and_menus.py",
     "tools/check_examples_roundtrip.py", "tools/check_log_slot_distance.py",
-    "tools/check_lex_horizontal_projection.py", "tools/check_projection_cleanup.py",
+    "tools/check_lex_horizontal_projection.py", "tools/check_lex_axis_orientations.js", "tools/check_projection_cleanup.py",
     "tools/check_desktop_max_view.py", "tools/check_social_and_linguistic_export.py",
     "tools/check_linkedin_video_export.py", "tools/check_linkedin_video_runtime.js",
     "tools/check_play_reverse.py", "tools/check_release_zip_batch.py",
@@ -189,20 +189,21 @@ for rel in ["index.html", "viewer.html"]:
     if duplicates:
         errors.append(f"dubbele HTML-id's in {rel}: {', '.join(duplicates)}")
 
-# Main menu: the visible LEX-view choice plus the existing choices. The
-# optional Adverb choice remains present but hidden when its profile is off.
+# Main menu: five base choices plus the optional Adverb choice on row 1,
+# Language/README/Config on row 2. The established LEX orientation control
+# remains a separate topbar view control.
 nav_match = re.search(r'<nav[^>]*class="[^"]*main-top-menu[^"]*"[^>]*>.*?</nav>', index, flags=re.S)
 if not nav_match:
     errors.append("main-top-menu ontbreekt")
 else:
     nav = nav_match.group(0)
     for item in [
-        "mainLexOrientationMenu", "mainSentenceMenu", "mainAdverbMenu", "mainViewMenu",
+        "mainSentenceMenu", "mainAdverbMenu", "mainViewMenu",
         "sourceAxisMenu", "mainExtraMenu", "mainLanguageMenu", "openHelpButton", "openConfigButton",
     ]:
         require(nav, f'id="{item}"', f"topmenu-item {item}")
-    if nav.count("<details") != 7:
-        errors.append("topmenu moet zeven directe choice-details bevatten")
+    if nav.count("<details") != 6:
+        errors.append("topmenu moet zes directe choice-details bevatten")
     require(nav, 'data-feature="adverbs" hidden="" id="mainAdverbMenu"', "optioneel verborgen Bijwoordmenu")
 
 # Functional naming, interface selector, languages and English default.
@@ -262,6 +263,7 @@ require(read("check_release.bat"), "check_greedy_grow_reconstruction.js", "Greed
 require(read("check_release.bat"), "check_random_placement.js", "Random-regressie in releaseflow")
 require(read("check_release.bat"), "check_direct_placement_config.py", "directe Config-regressie in releaseflow")
 require(read("check_release.bat"), "check_utterance_lex_geometry.py", "LEX-geometriecontrole in releaseflow")
+require(read("check_release.bat"), "check_lex_axis_orientations.js", "Noord/Zuid-simplexcontrole in releaseflow")
 require(read("viewer.js"), "numberedTestmateriaalLabel(inputSource?.id", "testmateriaalnummer boven graph")
 require(read("viewer.js"), "return numberedTestmateriaalLabel(opt.id, label);", "testmateriaalnummer in keuzelijsten")
 require(read("check_release.bat"), "check_testmateriaal_bulk.py", "bulkstatuscontrole in releaseflow")
@@ -810,7 +812,7 @@ for marker, label in [
 ]:
     require(local_launcher, marker, label)
 source_build = read("SOURCE_BUILD.txt").strip()
-if source_build != "v3.1.0-rc.10-visible-lex-views-grouped-lists-20260831.10":
+if source_build != "v3.1.0-rc.10-simplex-north-south-stable-unflipped-20260831.12":
     errors.append(f"onverwachte of lege SOURCE_BUILD.txt: {source_build!r}")
 
 leesmij = read("LEESMIJ.md")

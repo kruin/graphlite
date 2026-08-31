@@ -34,6 +34,9 @@ assert.ok(source.includes("'data-semantic-movement-direction', 'forward'"));
 assert.ok(source.includes("? 'left' : 'up'"));
 assert.ok(source.includes("if (side === 'south') return `matrix(0 ${-crossScale} ${horizontalStretch} 0"), 'Zuid moet uit West draaien, spreiden en de dwarsrichting comprimeren');
 assert.ok(source.includes("if (side === 'north') return `matrix(0 ${crossScale} ${horizontalStretch} 0"), 'Noord moet de leesrichting links→rechts bewaren');
+assert.ok(source.includes("const transformSide = side === 'south' && !compositeUtteranceView ? 'north' : side"), 'Simplex Noord/Zuid moeten dezelfde niet-spiegelende boomrotatie gebruiken');
+assert.ok(source.includes("const crossScale = compositeUtteranceView ? 1 : measuredCrossScale"), 'Alleen simplex moet de gemeten compacte dwarsmaat toepassen');
+assert.ok(source.includes("configuredLexSide === 'east' || configuredLexSide === 'south'"), 'Zuid-simplex moet LEX/SYNT vóór de stabiele rotatie wisselen');
 assert.ok(source.includes("horizontalLexReadingScale(content)"), 'Horizontale uitingen moeten woordlengte-afhankelijke leesafstand krijgen');
 assert.ok(source.includes("widestGraphicItem + 34"), 'Het breedste grafische item moet de kolombreedte bepalen');
 assert.ok(source.includes("'.tree-node'"), 'Knoopvormen moeten de horizontale breedte bepalen');
@@ -45,7 +48,7 @@ assert.ok(source.includes("!child.classList?.contains('grid')"), 'Het hulpraster
 assert.ok(source.includes("config-orientation-card"), 'Config moet een herkenbare oriëntatiekaart bieden');
 assert.ok(source.includes("data-lex-axis-side-choice"), 'De vier oriëntaties moeten direct kiesbaar zijn');
 assert.ok(source.includes("mainLexOrientationMenu"), 'De algemene oriëntatieknop moet op Main staan');
-assert.ok(indexHtml.indexOf('<nav aria-label="Topmenu" class="main-top-menu">') < indexHtml.indexOf('id="mainLexOrientationMenu"'), 'LEX-view moet binnen het zichtbare hoofdmenu staan');
+assert.ok(indexHtml.indexOf('id="mainLexOrientationMenu"') < indexHtml.indexOf('<nav aria-label="Topmenu" class="main-top-menu">'), 'De eerdere afzonderlijke Noord/Zuid-viewcontrol moet behouden blijven');
 assert.ok(indexHtml.includes('>Noord →</button>') && indexHtml.includes('>Zuid →</button>'), 'Noord en Zuid moeten rechtstreeks in de LEX-viewkeuze staan');
 assert.ok(source.includes("lexAxisMobileWarning"), 'Mobiel moet voor horizontale uitingen waarschuwen');
 assert.ok(source.includes("const orientationExcluded = directPlacementActive()"), 'Greedy Grow en Random moeten uitgesloten blijven');
@@ -85,12 +88,20 @@ const points = {
 };
 const map = {
   west: ({ x, y }) => ({ x, y }),
-  south: ({ x, y }) => ({ x: y, y: -x }),
+  south: ({ x, y }) => ({ x: y, y: x }),
   north: ({ x, y }) => ({ x: y, y: x })
 };
+const swappedAxes = {
+  ...points,
+  lexAxis: points.syntAxis,
+  syntAxis: points.lexAxis,
+  word1: { x: 10, y: -10 },
+  word2: { x: 10, y: 10 }
+};
 const oriented = side => side === 'east'
-  ? { ...points, lexAxis: points.syntAxis, syntAxis: points.lexAxis, word1: { x: 10, y: -10 }, word2: { x: 10, y: 10 } }
-  : Object.fromEntries(Object.entries(points).map(([key, value]) => [key, map[side](value)]));
+  ? swappedAxes
+  : Object.fromEntries(Object.entries(side === 'south' ? swappedAxes : points)
+    .map(([key, value]) => [key, map[side](value)]));
 assert.deepEqual(oriented('east').tree, oriented('west').tree, 'Oost mag de boom niet verplaatsen of spiegelen');
 assert.deepEqual(oriented('east').root, oriented('west').root, 'Oost moet dezelfde wortelpositie behouden');
 assert.equal(oriented('east').lexAxis.x, oriented('west').syntAxis.x, 'LEX moet naar de oostzijde wisselen');
@@ -103,6 +114,7 @@ for (const side of ['north', 'south']) {
 }
 assert.ok(oriented('south').tree.y < oriented('south').lexAxis.y, 'Zuid: boom moet boven LEX liggen');
 assert.ok(oriented('north').tree.y > oriented('north').lexAxis.y, 'Noord: boom moet onder LEX liggen');
+assert.equal(oriented('north').root.y - oriented('north').tree.y, oriented('south').root.y - oriented('south').tree.y, 'Noord/Zuid mogen de boomtakken niet impliciet flippen');
 assert.ok((Math.max(92, 88 + 34) / 52) * 52 >= 122, 'Een langer woord moet een overeenkomstig langere horizontale stap krijgen');
 
 console.log('LEX AXIS ORIENTATION CHECK: OK (W/O alleen assenwissel; boom stabiel; gedeelde ruimtecorridor; N/Z ongewijzigd)');

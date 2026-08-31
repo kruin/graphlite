@@ -55,6 +55,8 @@ python tools\check_log_slot_distance.py
 if errorlevel 1 exit /b 1
 python tools\check_lex_horizontal_projection.py
 if errorlevel 1 exit /b 1
+node tools\check_lex_axis_orientations.js
+if errorlevel 1 exit /b 1
 python tools\check_projection_cleanup.py
 if errorlevel 1 exit /b 1
 python tools\check_config_tabs_and_menus.py

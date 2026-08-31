@@ -2,7 +2,7 @@
   'use strict';
 
   const VERSION = 'v3.1.0-rc.10';
-  const SOURCE_BUILD = 'v3.1.0-rc.10-visible-lex-views-grouped-lists-20260831.10';
+  const SOURCE_BUILD = 'v3.1.0-rc.10-simplex-north-south-stable-unflipped-20260831.12';
   const OPN_FORMAT_VERSION = '1.0';
   const OPN_DOCUMENT_TYPE = 'opengraph-document';
   const PARADATA_EVENT_LIMIT = 250;
@@ -7996,7 +7996,12 @@
   }
 
   function drawLexAxis(g, x, y0, items, sourceMap = null, options = {}) {
-    const axisSide = options.axisSide || (validLexAxisSide(state.lexAxisSide) === 'east' ? 'east' : 'west');
+    // In de horizontale simplexweergave gebruikt Zuid de canonieke oost-as:
+    // Noord en Zuid kunnen dan met exact dezelfde boomrotatie worden getekend,
+    // terwijl alleen LEX en SYNT van boven/onder wisselen. Dit voorkomt dat de
+    // grammaticale takvolgorde impliciet als een Flip wordt gespiegeld.
+    const configuredLexSide = validLexAxisSide(state.lexAxisSide);
+    const axisSide = options.axisSide || (['east', 'south'].includes(configuredLexSide) ? 'east' : 'west');
     const horizontalProjectionMode = !!sourceMap && horizontalLexProjectionEnabled();
     const systemY0 = sourceMap ? projectedLexSystemY0(y0, sourceMap) : y0;
 
@@ -8228,7 +8233,8 @@
     // v4571: de projectie-as is een echte rechter-as. De regelboxen
     // staan rechts van de as, met een kleine vaste marge. Ze overschrijven
     // de SYNT/LOG-as dus niet meer, maar blijven wel direct aangesloten.
-    const axisSide = options.axisSide || (validLexAxisSide(state.lexAxisSide) === 'east' ? 'west' : 'east');
+    const configuredLexSide = validLexAxisSide(state.lexAxisSide);
+    const axisSide = options.axisSide || (['east', 'south'].includes(configuredLexSide) ? 'west' : 'east');
     const axisBoxGap = Number.isFinite(options.axisBoxGap) ? options.axisBoxGap : 22;
     const boxLeft = axisSide === 'west' ? x - axisBoxGap - width : x + axisBoxGap;
     const boxCenter = boxLeft + width / 2;
@@ -8581,7 +8587,12 @@
     // Syntax en Functional delen één oostas op de rechterrand van hun
     // gezamenlijke layout-envelop. Vooral in landschap voorkomt dit dat de
     // smallere Syntaxboom een smal raster in een breed stabiel frame krijgt.
-    const eastPresentation = validLexAxisSide(state.lexAxisSide) === 'east';
+    // Zuid wisselt in de canonieke simplexruimte eerst LEX en SYNT. Daarna
+    // gebruikt het dezelfde niet-spiegelende horizontale rotatie als Noord.
+    // Samengestelde Uiting-views bouwen hun eigen as en gaan niet via deze
+    // context; hun reeds correcte Noord/Zuid-geometrie blijft dus onaangeraakt.
+    const configuredLexSide = validLexAxisSide(state.lexAxisSide);
+    const eastPresentation = configuredLexSide === 'east' || configuredLexSide === 'south';
     const westAxisX = eastPresentation ? canonicalEastAxisX : canonicalWestAxisX;
     const eastAxisX = eastPresentation ? canonicalWestAxisX : canonicalEastAxisX;
     return {
@@ -10836,7 +10847,7 @@
   }
 
   // De graphdata blijven canoniek in de bestaande West-oriëntatie. Deze
-  // presentatietransformatie roteert/spiegelt de volledige assenruimte pas na
+  // presentatietransformatie roteert de volledige assenruimte pas na
   // het tekenen. Tekst en compacte knoop-/slotboxen worden lokaal
   // teruggedraaid, zodat labels in alle vier oriëntaties normaal leesbaar
   // blijven. Flip blijft hierdoor een onafhankelijke boomoperatie.
@@ -10886,16 +10897,25 @@
     const cx = box.x + box.width / 2;
     const cy = box.y + box.height / 2;
     const horizontalStretch = horizontalLexReadingScale(content);
-    horizontalStableTextCrossScale(content);
-    const crossScale = 1;
-    content.setAttribute('transform', lexOrientationTransform(side, cx, cy, horizontalStretch, crossScale));
+    const compositeUtteranceView = group.classList?.contains('multi-ogn-anaphor-view');
+    // Uiting had al een goedgekeurde, eigen compositie. Alleen simplex gebruikt
+    // de compacte dwarsmaat die hier uit de werkelijke teksthoogte volgt.
+    const measuredCrossScale = horizontalStableTextCrossScale(content);
+    const crossScale = compositeUtteranceView ? 1 : measuredCrossScale;
+    // Voor simplex blijft de grammaticale eerste tak bij zowel Noord als Zuid
+    // aan dezelfde verticale kant. Zuid verplaatst de LEX-as al in
+    // canonicalProjectionContext; een tegenrotatie van de boom is dus fout.
+    const transformSide = side === 'south' && !compositeUtteranceView ? 'north' : side;
+    group.setAttribute('data-tree-orientation', 'stable-unflipped');
+    group.setAttribute('data-horizontal-transform-side', transformSide);
+    content.setAttribute('transform', lexOrientationTransform(transformSide, cx, cy, horizontalStretch, crossScale));
     content.setAttribute('data-horizontal-reading-gap-scale', String(horizontalStretch));
     content.setAttribute('data-horizontal-stable-text-cross-scale', String(crossScale));
     content.querySelectorAll?.('.tree-node').forEach(nodeGroup => {
       try {
         const nodeBox = nodeGroup.getBBox?.();
         if (!nodeBox) return;
-        nodeGroup.setAttribute('transform', lexOrientationCounterTransform(side, nodeBox.x + nodeBox.width / 2, nodeBox.y + nodeBox.height / 2, horizontalStretch, crossScale));
+        nodeGroup.setAttribute('transform', lexOrientationCounterTransform(transformSide, nodeBox.x + nodeBox.width / 2, nodeBox.y + nodeBox.height / 2, horizontalStretch, crossScale));
       } catch (_err) {}
     });
     content.querySelectorAll?.('text').forEach(textNode => {
@@ -10903,7 +10923,7 @@
       const x = Number(textNode.getAttribute('x'));
       const y = Number(textNode.getAttribute('y'));
       if (!Number.isFinite(x) || !Number.isFinite(y)) return;
-      textNode.setAttribute('transform', lexOrientationCounterTransform(side, x, y, horizontalStretch, crossScale));
+      textNode.setAttribute('transform', lexOrientationCounterTransform(transformSide, x, y, horizontalStretch, crossScale));
     });
   }
 
@@ -11664,8 +11684,8 @@
     if (els.mainLexOrientationSummary) {
       const option = LEX_AXIS_SIDE_OPTIONS.find(item => item.id === validLexAxisSide(state.lexAxisSide));
       els.mainLexOrientationSummary.textContent = orientationExcluded
-        ? (isEnglish() ? 'LEX view · fixed' : 'LEX-view · vast')
-        : `${isEnglish() ? 'LEX view' : 'LEX-view'} · ${isEnglish() ? (option?.labelEn || option?.label) : option?.label}`;
+        ? (isEnglish() ? 'LEX · fixed' : 'LEX · vast')
+        : `LEX · ${isEnglish() ? (option?.labelEn || option?.label) : option?.label}`;
     }
     if (els.mainLexOrientationMenu) {
       els.mainLexOrientationMenu.classList.toggle('is-disabled', orientationExcluded);
@@ -14002,7 +14022,7 @@
     primaryViewGrid.setAttribute('aria-label', 'Language Tree-beeldinstellingen');
     const lexAxisSideLabel = document.createElement('label');
     lexAxisSideLabel.className = 'select-field lex-axis-side-select-field';
-    lexAxisSideLabel.innerHTML = `<span><span class="help-lang-nl">LEX-view</span><span class="help-lang-en">LEX view</span></span><select id="lexAxisSideSelect"></select><small class="config-item-help"><span class="help-lang-nl">Oost is de startdefault. West/Oost lezen boven→beneden; Noord/Zuid lezen links→rechts. Naar voren betekent omhoog of naar links.</span><span class="help-lang-en">East is the startup default. West/East read top-to-bottom; North/South read left-to-right. Forward means upward or leftward.</span></small>`;
+    lexAxisSideLabel.innerHTML = `<span><span class="help-lang-nl">LEX-zijde</span><span class="help-lang-en">LEX side</span></span><select id="lexAxisSideSelect"></select><small class="config-item-help"><span class="help-lang-nl">Oost is de startdefault. West/Oost lezen boven→beneden; Noord/Zuid lezen links→rechts. Naar voren betekent omhoog of naar links.</span><span class="help-lang-en">East is the startup default. West/East read top-to-bottom; North/South read left-to-right. Forward means upward or leftward.</span></small>`;
     fillSelect(lexAxisSideLabel.querySelector('select'), LEX_AXIS_SIDE_OPTIONS, validLexAxisSide(state.lexAxisSide));
     lexAxisSideLabel.querySelector('select').addEventListener('change', event => setLexAxisSide(event.target.value));
     const orientationCard = document.createElement('section');
