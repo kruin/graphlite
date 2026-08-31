@@ -1,7 +1,7 @@
 'use strict';
 
 const assert = require('node:assert/strict');
-const { chromium } = require('playwright');
+const { chromium, launchChromium } = require('./launch_chromium');
 
 const baseUrl = process.argv[2] || 'http://127.0.0.1:8088/';
 
@@ -107,7 +107,7 @@ async function dragHelpResizer(page, metrics, amount = 70) {
 }
 
 (async () => {
-  const browser = await chromium.launch({
+  const browser = await launchChromium(chromium, {
     headless: true,
     ...(process.env.OGN_CHROMIUM_EXECUTABLE ? { executablePath: process.env.OGN_CHROMIUM_EXECUTABLE } : {}),
     args: ['--no-sandbox', '--disable-dev-shm-usage']

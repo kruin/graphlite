@@ -4,7 +4,7 @@ const fs = require('node:fs');
 const crypto = require('node:crypto');
 const http = require('node:http');
 const path = require('node:path');
-const { chromium } = require('playwright');
+const { chromium, launchChromium } = require('./launch_chromium');
 
 const root = path.resolve(__dirname, '..');
 const source = path.join(root, 'publicatie-carrousel', 'index.html');
@@ -81,7 +81,7 @@ async function startServer() {
   fs.mkdirSync(outputDirectory, { recursive: true });
   const { server, baseUrl } = await startServer();
   const launchArgs = chromiumLaunchArgs();
-  const browser = await chromium.launch({
+  const browser = await launchChromium(chromium, {
     headless: true,
     ...(process.env.OGN_CHROMIUM_EXECUTABLE
       ? { executablePath: process.env.OGN_CHROMIUM_EXECUTABLE }

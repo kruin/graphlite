@@ -5,8 +5,9 @@ from pathlib import Path
 root = Path(__file__).resolve().parents[1]
 source = (root / "viewer.js").read_text(encoding="utf-8")
 required = {
-    "horizontale boomprojectie": "d: `M ${axisX + 62} ${point.py} H ${point.px - leafRadius}`",
-    "gekromde LEX-beweging": "C ${laneX + 46} ${point.py} ${laneX + 46} ${itemY}",
+    "horizontale boomprojectie": "d: `M ${axisX + inward * 62} ${point.py} H ${point.px - inward * leafRadius}`",
+    "gekromde LEX-beweging": "C ${laneX + inward * 46} ${point.py} ${laneX + inward * 46} ${itemY}",
+    "West/Oost-richting": "const inward = lexOnEast ? -1 : 1;",
     "alle LEX-doelen maximaal op bronrij": "point.py - localIndex * lexRowStep",
     "planning per kernzin": "const unitLexBounds = new Map();",
     "kernzinzones mogen niet overlappen": "-LEX valt buiten de eigen kernzinzone",

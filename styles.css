@@ -823,6 +823,7 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
   font-weight: 850;
   text-anchor: end;
 }
+.lex-trace-label.east-axis-trace { text-anchor: start; }
 .lex-trace-marker {
   pointer-events: none;
 }
@@ -5361,6 +5362,129 @@ body.main-screen-active .main-window-fit-menu {
   }
 }
 
+.grouped-testmateriaal-list {
+  column-count: var(--testmateriaal-list-count, 1);
+  column-gap: .45rem;
+  min-width: calc(var(--testmateriaal-list-count, 1) * 15rem);
+}
+.grouped-testmateriaal-list .compact-choice-group,
+.grouped-testmateriaal-list .compact-choice-option {
+  width: 100%;
+  break-inside: avoid;
+  box-sizing: border-box;
+  margin-bottom: .14rem;
+}
+@media (max-width: 760px), (orientation: portrait) {
+  .grouped-testmateriaal-list { min-width: calc(var(--testmateriaal-list-count, 1) * 12.5rem); }
+}
+
+/* v3.1.0-rc.10: Config begint met een herkenbare oriëntatiekaart. */
+.config-orientation-card {
+  margin: 12px 0 18px;
+  border: 1px solid #b8c7db;
+  background: linear-gradient(145deg, #f8fbff, #edf4fc);
+  box-shadow: 0 8px 24px rgba(32, 56, 85, .08);
+}
+.config-section-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+.config-section-heading h2 { margin: 2px 0 0; }
+.config-section-kicker {
+  color: #52677f;
+  font-size: .74rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.config-section-number {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #172235;
+  color: #fff;
+  font-weight: 800;
+}
+.lex-axis-choice-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(92px, 1fr));
+  gap: 8px;
+  margin: 14px 0 10px;
+}
+.lex-axis-choice-grid button {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  min-height: 50px;
+  padding: 9px 12px;
+  border: 1px solid #9fb1c7;
+  border-radius: 12px;
+  background: #fff;
+  color: #172235;
+  text-align: left;
+}
+.lex-axis-choice-grid button small { color: #52677f; font-weight: 800; }
+.lex-axis-choice-grid button:hover { border-color: #385d8c; background: #f4f8fd; }
+.lex-axis-choice-grid button.active {
+  border-color: #172235;
+  background: #172235;
+  color: #fff;
+  box-shadow: 0 3px 10px rgba(23, 34, 53, .18);
+}
+.lex-axis-choice-grid button.active small { color: #d9e8fa; }
+.lex-axis-side-select-field { margin-top: 8px; }
+@media (max-width: 680px) {
+  .lex-axis-choice-grid { grid-template-columns: repeat(2, minmax(110px, 1fr)); }
+}
+
+/* v3.1.0-rc.10: algemene oriëntatie ook rechtstreeks op Main. */
+.main-lex-orientation-menu { position:relative; flex:0 0 auto; }
+.main-lex-orientation-menu > summary {
+  min-height:2rem;
+  display:flex;
+  align-items:center;
+  padding:.28rem .58rem;
+  border:1px solid #9fb1c7;
+  border-radius:.62rem;
+  background:#fff;
+  color:#172235;
+  font-weight:850;
+  list-style:none;
+  cursor:pointer;
+}
+.main-lex-orientation-menu > summary::-webkit-details-marker { display:none; }
+.main-lex-orientation-menu > summary::after { content:'▾'; margin-left:.3rem; font-size:.62rem; }
+.main-lex-orientation-popover {
+  left:0;
+  top:calc(100% + .35rem);
+  width:min(20rem,calc(100vw - .7rem));
+  padding:.62rem;
+  z-index:120;
+}
+.main-lex-orientation-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:.35rem; margin:.5rem 0; }
+.main-lex-orientation-grid button { min-height:2rem; border:1px solid #9fb1c7; border-radius:.55rem; background:#fff; font-weight:800; }
+.main-lex-orientation-grid button.active { background:#172235; color:#fff; border-color:#172235; }
+.main-lex-orientation-menu.is-disabled { opacity:.55; }
+.main-lex-orientation-menu.is-disabled > summary { cursor:not-allowed; }
+.lex-axis-mobile-warning {
+  margin:.28rem .55rem;
+  padding:.42rem .58rem;
+  border:1px solid #f59e0b;
+  border-radius:.55rem;
+  background:#fffbeb;
+  color:#78350f;
+  font-size:.78rem;
+}
+.lex-axis-mobile-warning[hidden], body:not(.main-screen-active) .lex-axis-mobile-warning { display:none !important; }
+@media (max-width:760px), (max-height:480px) {
+  .main-lex-orientation-menu > summary { min-height:1.85rem; padding:.2rem .4rem; font-size:.72rem; }
+  .lex-axis-mobile-warning { font-size:.7rem; margin:.2rem .35rem; padding:.34rem .45rem; }
+}
+
 /* v1.0.3: SYNT-knop toont geïsoleerde syntax-regels, zonder centrale boomkopie. */
 .synt-isolated-view .synt-isolated-title {
   fill: var(--synt);
@@ -8121,6 +8245,70 @@ body.main-screen-active #graphSvg .logical-order-badge-interactive {
   background: var(--accent);
   color: #fff;
   box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent), transparent 72%);
+}
+.east-axis-label { text-anchor: start !important; }
+
+/* rc.8: op mobiel is Syntax/Functies een kleine secundaire keuze rechts.
+   De volledige testmateriaalcatalogus staat in één rustige, scrollbare lijst. */
+@media (max-width: 760px), (orientation: portrait) {
+  body.main-screen-active .main-topbar { position: relative !important; }
+  body.main-screen-active .central-view-toolbar {
+    position: absolute !important;
+    z-index: 470 !important;
+    top: .14rem !important;
+    right: .22rem !important;
+    left: auto !important;
+    width: auto !important;
+    margin: 0 !important;
+    padding: .08rem !important;
+    gap: .08rem !important;
+    border-width: 1px !important;
+    border-color: color-mix(in srgb, var(--line), transparent 25%) !important;
+    background: color-mix(in srgb, var(--panel), transparent 8%) !important;
+    box-shadow: none !important;
+    opacity: .78;
+  }
+  body.main-screen-active .central-view-toolbar:focus-within { opacity: 1; }
+  body.main-screen-active .central-view-toolbar .main-menu-view-options { gap: .06rem !important; }
+  body.main-screen-active .central-view-toolbar .compact-choice-option {
+    flex: 0 0 auto !important;
+    min-width: 2.95rem !important;
+    min-height: 1.34rem !important;
+    height: 1.34rem !important;
+    padding: .04rem .22rem !important;
+    font-size: .60rem !important;
+    font-weight: 760 !important;
+    border-radius: .34rem !important;
+  }
+  body.main-screen-active .central-view-toolbar .compact-choice-option.active {
+    box-shadow: none !important;
+    background: color-mix(in srgb, var(--accent), var(--panel) 32%) !important;
+  }
+  body.main-screen-active .main-top-menu { padding-right: 6.45rem !important; box-sizing: border-box !important; }
+  body.main-screen-active .top-menu-sentence-popover {
+    position: fixed !important;
+    left: .28rem !important;
+    right: .28rem !important;
+    top: 3.55rem !important;
+    width: auto !important;
+    max-height: calc(100dvh - 6.3rem) !important;
+    padding: .30rem !important;
+  }
+  body.main-screen-active #mainSentenceOptions {
+    max-height: calc(100dvh - 7rem) !important;
+    gap: .14rem !important;
+  }
+  body.main-screen-active #mainSentenceOptions .compact-choice-option {
+    min-height: 1.72rem !important;
+    padding: .22rem .38rem !important;
+    font-size: .70rem !important;
+    border-radius: .42rem !important;
+  }
+  body.main-screen-active #mainSentenceOptions .compact-choice-group {
+    margin-top: .08rem !important;
+    padding: .18rem .34rem .12rem !important;
+    font-size: .60rem !important;
+  }
 }
 @media (max-width: 760px), (orientation: portrait) {
   .central-view-toolbar {

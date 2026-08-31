@@ -1,8 +1,8 @@
 (() => {
   'use strict';
 
-  const VERSION = 'v2.0.0-rc.45';
-  const SOURCE_BUILD = 'v2.0.0-rc.45-mobile-catalog-spoken-lex-config-interface-20260830.74';
+  const VERSION = 'v3.1.0-rc.10';
+  const SOURCE_BUILD = 'v3.1.0-rc.10-unified-multi-ogn-demo-route-20260831.9';
   const OPN_FORMAT_VERSION = '1.0';
   const OPN_DOCUMENT_TYPE = 'opengraph-document';
   const PARADATA_EVENT_LIMIT = 250;
@@ -156,6 +156,9 @@
     mainViewSummary: document.getElementById('mainViewSummary'),
     mainViewOptions: document.getElementById('mainViewOptions'),
     languageTreeViewPicker: document.getElementById('languageTreeViewPicker'),
+    mainLexOrientationMenu: document.getElementById('mainLexOrientationMenu'),
+    mainLexOrientationSummary: document.getElementById('mainLexOrientationSummary'),
+    lexAxisMobileWarning: document.getElementById('lexAxisMobileWarning'),
     openTestmateriaal: document.getElementById('openTestmateriaal'),
     mainLanguageMenu: document.getElementById('mainLanguageMenu'),
     mainLanguageSummary: document.getElementById('mainLanguageSummary'),
@@ -1575,6 +1578,74 @@
     { id: 'mobile-landscape', label: 'Mobiel liggend', labelEn: 'Mobile landscape' }
   ];
 
+  const LEX_AXIS_SIDE_OPTIONS = [
+    { id: 'west', label: 'West', labelEn: 'West' },
+    { id: 'east', label: 'Oost · standaard', labelEn: 'East · default' },
+    { id: 'north', label: 'Noord', labelEn: 'North' },
+    { id: 'south', label: 'Zuid', labelEn: 'South' }
+  ];
+
+  const CANVAS_HORIZONTAL_ALIGNMENTS = [
+    { id: 'left', label: 'Links · standaard', labelEn: 'Left · default' },
+    { id: 'center', label: 'Midden', labelEn: 'Centre' },
+    { id: 'right', label: 'Rechts', labelEn: 'Right' }
+  ];
+
+  function validCanvasHorizontalAlignment(value) {
+    const id = String(value || 'left').toLowerCase();
+    return CANVAS_HORIZONTAL_ALIGNMENTS.some(option => option.id === id) ? id : 'left';
+  }
+
+  function setCanvasHorizontalAlignment(value) {
+    state.canvasHorizontalAlignment = validCanvasHorizontalAlignment(value);
+    try { localStorage.setItem('opengraph_canvas_horizontal_alignment', state.canvasHorizontalAlignment); } catch (_err) {}
+    appendConfigLog('change-canvas-horizontal-alignment', { canvasHorizontalAlignment: state.canvasHorizontalAlignment });
+    markConfigDirty('Presentatie');
+    resetManualViewBox();
+    render();
+  }
+
+  function validLexAxisSide(value) {
+    const side = String(value || 'east').toLowerCase();
+    return LEX_AXIS_SIDE_OPTIONS.some(option => option.id === side) ? side : 'east';
+  }
+
+  function initialLexAxisSide() {
+    try {
+      return validLexAxisSide(localStorage.getItem('opengraph_lex_axis_side'));
+    } catch (_err) { return 'east'; }
+  }
+
+  function enforceEastStartupDefault() {
+    try {
+      const migrationKey = 'opengraph_lex_axis_default_east_rc9';
+      if (localStorage.getItem(migrationKey) === '1') return;
+      state.lexAxisSide = 'east';
+      localStorage.setItem('opengraph_lex_axis_side', 'east');
+      localStorage.setItem(migrationKey, '1');
+    } catch (_err) { state.lexAxisSide = 'east'; }
+  }
+
+  function validTestmateriaalListCount(value, fallback = 1) {
+    const count = Math.round(Number(value));
+    return Number.isFinite(count) ? Math.max(1, Math.min(4, count)) : fallback;
+  }
+
+  function normalizeHorizontalLexUnits(value = {}) {
+    const normalized = {};
+    for (let index = 1; index <= 8; index += 1) normalized[`K${index}`] = value[`K${index}`] !== false;
+    return normalized;
+  }
+
+  function setLexAxisSide(value) {
+    state.lexAxisSide = validLexAxisSide(value);
+    try { localStorage.setItem('opengraph_lex_axis_side', state.lexAxisSide); } catch (_err) {}
+    appendConfigLog('change-lex-axis-side', { lexAxisSide: state.lexAxisSide });
+    markConfigDirty('Presentatie');
+    resetManualViewBox();
+    render();
+  }
+
 
   const SOUTH_LOGICAL_MODES = ['SOV', 'SVO', 'OVS', 'OSV', 'VSO', 'VOS'];
   const SOUTH_LOGICAL_MOVEMENT_REQUIRED_MODES = new Set(['OSV', 'VSO', 'VOS']);
@@ -2464,7 +2535,7 @@
 
   const LEXICON_USAGE_PROFILES = new Map();
   const LEXICON_CONSTRUCTIONS = new Map();
-  const LEX_ANALYSIS_STORAGE_KEY = 'opengraph_lex_analysis_choices_v2.0.0-rc.45';
+  const LEX_ANALYSIS_STORAGE_KEY = 'opengraph_lex_analysis_choices_v3.1.0-rc.10';
 
   function normalizeInsertionOrigin(value) {
     const origin = String(value || 'LOG').trim().toUpperCase().replace('MIXED', 'LOG+LEX');
@@ -2535,6 +2606,11 @@
     projectionBoxManual: (function(){ try { const raw = localStorage.getItem('opengraph_projection_box_manual_v1014'); return raw ? JSON.parse(raw) : null; } catch (_err) { return null; } })(),
     projectionBoxDrag: null,
     lexProjectionColor: (function(){ try { return localStorage.getItem('opengraph_projection_color_lex') || 'blue'; } catch (_err) { return 'blue'; } })(),
+    lexAxisSide: initialLexAxisSide(),
+    desktopTestmateriaalListCount: (function(){ try { return validTestmateriaalListCount(localStorage.getItem('opengraph_desktop_testmateriaal_lists'), 2); } catch (_err) { return 2; } })(),
+    mobileTestmateriaalListCount: (function(){ try { return validTestmateriaalListCount(localStorage.getItem('opengraph_mobile_testmateriaal_lists'), 1); } catch (_err) { return 1; } })(),
+    horizontalLexUnits: (function(){ try { return normalizeHorizontalLexUnits(JSON.parse(localStorage.getItem('opengraph_horizontal_lex_units') || '{}')); } catch (_err) { return normalizeHorizontalLexUnits(); } })(),
+    canvasHorizontalAlignment: (function(){ try { return validCanvasHorizontalAlignment(localStorage.getItem('opengraph_canvas_horizontal_alignment')); } catch (_err) { return 'left'; } })(),
     syntProjectionColor: (function(){ try { return localStorage.getItem('opengraph_projection_color_synt') || 'green'; } catch (_err) { return 'green'; } })(),
     logProjectionColor: (function(){ try { return localStorage.getItem('opengraph_projection_color_log') || 'purple'; } catch (_err) { return 'purple'; } })(),
     gridColor: (function(){ try { return localStorage.getItem('opengraph_grid_color') || 'soft-slate'; } catch (_err) { return 'soft-slate'; } })(),
@@ -5300,8 +5376,9 @@
     const id = canonicalItemId(value);
     const definition = globalThis.OGNUtteranceKernels?.definitionFor?.(id, state.causalAnaphorVariant, state.causalVerbVariant, state.botVariant);
     const anaphorCombination = activeAnaphorCombinationDefinition(id);
-    if (definition || anaphorCombination) {
-      state.multiOgnExampleId = definition?.id || anaphorCombination.id;
+    const builtInMultiOgnDemo = id === MULTI_OGN_ANAPHOR_DEMO.id;
+    if (definition || anaphorCombination || builtInMultiOgnDemo) {
+      state.multiOgnExampleId = definition?.id || anaphorCombination?.id || MULTI_OGN_ANAPHOR_DEMO.id;
       const matchingExample = EXAMPLES.find(example => example.id === (definition?.id || anaphorCombination?.id));
       if (matchingExample) state.example = matchingExample;
       state.placementMode = 'multi-ogn-anaphor';
@@ -5737,7 +5814,7 @@
     const landscapeHandheld = isHandheldLandscapeViewport();
     if (mode === 'max') {
       if (landscapeHandheld) {
-        // v2.0.0-rc.45: landschap heeft veel breedte maar weinig hoogte.
+        // v3.1.0-rc.10: landschap heeft veel breedte maar weinig hoogte.
         // Maak de projectie daarom werkelijk platter in plaats van een hoge
         // portretlayout met cover-zoom af te snijden. Font en knopen behouden
         // hun leesbare maat; vooral de horizontale/verticale celafstand wordt
@@ -5829,12 +5906,15 @@
     const theoreticalRight = Number(context?.eastAxisX);
     const theoreticalBottom = Number(context?.southAxisY);
 
-    const left = lex
-      ? lex.x
-      : (Number.isFinite(theoreticalLeft) ? theoreticalLeft : fallbackBox.x);
-    const right = synt
-      ? synt.x + synt.w
-      : (Number.isFinite(theoreticalRight) ? theoreticalRight : fallbackBox.x + fallbackBox.w);
+    const renderedLefts = [lex?.x, synt?.x].filter(Number.isFinite);
+    const renderedRights = [lex ? lex.x + lex.w : null, synt ? synt.x + synt.w : null].filter(Number.isFinite);
+    const theoreticalAxes = [theoreticalLeft, theoreticalRight].filter(Number.isFinite);
+    const left = renderedLefts.length
+      ? Math.min(...renderedLefts)
+      : (theoreticalAxes.length ? Math.min(...theoreticalAxes) : fallbackBox.x);
+    const right = renderedRights.length
+      ? Math.max(...renderedRights)
+      : (theoreticalAxes.length ? Math.max(...theoreticalAxes) : fallbackBox.x + fallbackBox.w);
     const topCandidates = [
       lex?.y,
       synt?.y,
@@ -5871,7 +5951,7 @@
       // moeten de volledige LEX-inhoud links en regelboxen rechts bevatten.
       const left = westAxis - activeLexRenderLeftReach();
       const eastAxisRight = px(union.maxX, origin) + 118;
-      // v2.0.0-rc.45: in portret hoort niet alleen de groene SYNT-as, maar
+      // v3.1.0-rc.10: in portret hoort niet alleen de groene SYNT-as, maar
       // ook de volledige regelbox rechts ervan in de eerste MAX-fit. Gebruik
       // de unie van Syntax en Functional zodat een viewwissel niet verspringt.
       const syntaxRuleRight = projectedRuleRightEdge(
@@ -7780,7 +7860,7 @@
     };
   }
 
-  function drawLexTrace(g, x, y, label, caption = 'trace') {
+  function drawLexTrace(g, x, y, label, caption = 'trace', axisSide = 'west') {
     const group = svgEl('g', { class: 'lex-trace-marker' });
     group.appendChild(svgEl('title', {}, `${caption}: ${label}`));
     group.appendChild(svgEl('line', {
@@ -7790,15 +7870,21 @@
       y2: y,
       class: 'lex-trace-tick'
     }));
-    group.appendChild(svgEl('text', { x: x - 14, y: y + 5, class: 'lex-trace-label' }, label));
+    group.appendChild(svgEl('text', {
+      x: x + (axisSide === 'east' ? 14 : -14),
+      y: y + 5,
+      class: `lex-trace-label${axisSide === 'east' ? ' east-axis-trace' : ''}`,
+      'text-anchor': axisSide === 'east' ? 'start' : 'end'
+    }, label));
     g.appendChild(group);
   }
 
-  function drawLexWissel(g, x, fromY, toY, label, lane = 0) {
+  function drawLexWissel(g, x, fromY, toY, label, lane = 0, axisSide = 'west') {
     // Downward en same-row zijn in het actieve profiel niet beschikbaar.
     if (!(toY < fromY - 1)) return;
     const safeLane = Math.max(0, lane);
-    const sideX = x + LEX_MOVEMENT_LANE_START + (safeLane % 4) * LEX_MOVEMENT_LANE_STEP;
+    const outward = axisSide === 'east' ? -1 : 1;
+    const sideX = x + outward * (LEX_MOVEMENT_LANE_START + (safeLane % 4) * LEX_MOVEMENT_LANE_STEP);
     const displayDirection = 'up';
     const directionLabel = isEnglish() ? 'earlier/up on LEX' : 'eerder/omhoog op LEX';
     const directionCaveat = isEnglish()
@@ -7810,10 +7896,10 @@
       'data-display-direction': displayDirection
     });
     group.appendChild(svgEl('title', {}, `${label} · ${directionLabel}. ${directionCaveat}`));
-    group.appendChild(pathEl(`M ${sideX} ${fromY} C ${sideX + LEX_MOVEMENT_CURVE_REACH} ${fromY} ${sideX + LEX_MOVEMENT_CURVE_REACH} ${toY} ${sideX} ${toY}`, { class: 'lex-wissel-line' }));
-    group.appendChild(svgEl('polygon', { points: `${sideX},${toY} ${sideX + 9},${toY - 6} ${sideX + 9},${toY + 6}`, class: 'lex-wissel-arrow' }));
+    group.appendChild(pathEl(`M ${sideX} ${fromY} C ${sideX + outward * LEX_MOVEMENT_CURVE_REACH} ${fromY} ${sideX + outward * LEX_MOVEMENT_CURVE_REACH} ${toY} ${sideX} ${toY}`, { class: 'lex-wissel-line' }));
+    group.appendChild(svgEl('polygon', { points: `${sideX},${toY} ${sideX + outward * 9},${toY - 6} ${sideX + outward * 9},${toY + 6}`, class: 'lex-wissel-arrow' }));
     group.appendChild(svgEl('text', {
-      x: sideX + LEX_MOVEMENT_LABEL_OFFSET,
+      x: sideX + outward * LEX_MOVEMENT_LABEL_OFFSET,
       y: (fromY + toY) / 2 + 4,
       class: 'lex-wissel-step-label'
     }, `LEX ${safeLane + 1}`));
@@ -7910,6 +7996,7 @@
   }
 
   function drawLexAxis(g, x, y0, items, sourceMap = null, options = {}) {
+    const axisSide = options.axisSide || (validLexAxisSide(state.lexAxisSide) === 'east' ? 'east' : 'west');
     const horizontalProjectionMode = !!sourceMap && horizontalLexProjectionEnabled();
     const systemY0 = sourceMap ? projectedLexSystemY0(y0, sourceMap) : y0;
 
@@ -7992,8 +8079,8 @@
       });
 
       if (horizontalProjectionMode && options.showProjectionLines !== false && p && Number.isFinite(p.px) && Number.isFinite(p.py) && item.source) {
-        const startX = p.px - 62;
-        const endX = x + 62;
+        const startX = p.px + (axisSide === 'east' ? 62 : -62);
+        const endX = x + (axisSide === 'east' ? -62 : 62);
         g.appendChild(svgEl('path', {
           d: `M ${startX} ${p.py} H ${endX}`,
           fill: 'none',
@@ -8006,8 +8093,8 @@
         const word = String(item.label || item.role || item.source || 'LEX').toUpperCase();
         const movementLabel = explicitMovement?.caption || 'Plaats LOG → LEX';
         const movementLane = Math.max(0, movementOrderIndex(item, i, 'combined', items));
-        drawLexTrace(g, x, projectionY, `t[${word}]`, 'horizontale bronprojectie');
-        drawLexWissel(g, x, projectionY, y, movementLabel, movementLane);
+        drawLexTrace(g, x, projectionY, `t[${word}]`, 'horizontale bronprojectie', axisSide);
+        drawLexWissel(g, x, projectionY, y, movementLabel, movementLane, axisSide);
       }
 
       if (!item.source && item.slot === 'comp') {
@@ -8100,6 +8187,24 @@
     return Number.isFinite(maxX) ? px(maxX, origin) + 118 : px(4, origin) + 118;
   }
 
+  function stableVerticalProjectionAxes(origin) {
+    const layouts = [getSouthAwareSyntaxLayout(), getSouthAwareFunctionalLayout()];
+    const boxes = layouts.map(layout => layout?.box).filter(Boolean);
+    const minX = boxes.length ? Math.min(...boxes.map(box => Number(box.minX || 0))) : -3;
+    const maxX = boxes.length ? Math.max(...boxes.map(box => Number(box.maxX || 0))) : 4;
+    const treeLeft = px(minX - SUBTREE_AXIS_ENVELOPE_X_PAD, origin);
+    const treeRight = px(maxX + SUBTREE_AXIS_ENVELOPE_X_PAD, origin);
+    // Eén gereserveerde corridor voor beide standen. De grootste behoefte van
+    // LEX en SYNT bepaalt zowel links als rechts de aspositie; de boom blijft
+    // daardoor exact staan wanneer alleen West/Oost wisselt.
+    const corridor = Math.max(
+      118,
+      activeLexRenderRightReach() + LEX_TREE_CLEARANCE,
+      activeLexRenderLeftReach() + LEX_TREE_CLEARANCE
+    );
+    return { west: treeLeft - corridor, east: treeRight + corridor, treeLeft, treeRight, corridor };
+  }
+
   function projectedRuleRightEdge(layout, spec, origin, mode = 'syntax') {
     if (!layout?.box || !spec || !origin) return -Infinity;
     const eastAxisX = stableEastProjectionAxisX(origin);
@@ -8123,8 +8228,9 @@
     // v4571: de projectie-as is een echte rechter-as. De regelboxen
     // staan rechts van de as, met een kleine vaste marge. Ze overschrijven
     // de SYNT/LOG-as dus niet meer, maar blijven wel direct aangesloten.
+    const axisSide = options.axisSide || (validLexAxisSide(state.lexAxisSide) === 'east' ? 'west' : 'east');
     const axisBoxGap = Number.isFinite(options.axisBoxGap) ? options.axisBoxGap : 22;
-    const boxLeft = x + axisBoxGap;
+    const boxLeft = axisSide === 'west' ? x - axisBoxGap - width : x + axisBoxGap;
     const boxCenter = boxLeft + width / 2;
     const topY = Math.max(28, (rows[0]?.y || 92) - 56);
     const axisTop = Math.max(24, Math.min(...rows.map(row => row.y)) - 46);
@@ -8139,9 +8245,9 @@
     }));
     rows.forEach(row => {
       g.appendChild(svgEl('line', {
-        x1: row.x0 + 58,
+        x1: row.x0 + (axisSide === 'west' ? -58 : 58),
         y1: row.y,
-        x2: boxLeft,
+        x2: axisSide === 'west' ? boxLeft + width : boxLeft,
         y2: row.y,
         class: `projection-line ${cls} orthogonal projected-rule-line`
       }));
@@ -8463,7 +8569,9 @@
       sourceMap = layoutNodeMap(centralLayout, origin);
     }
     const southItems = southLogicalItemsFromCentralLayout(centralLayout, origin, centralKind, southLogicalOrder());
-    const westAxisX = westLexAxisX(centralLayout, origin);
+    const verticalAxes = stableVerticalProjectionAxes(origin);
+    const canonicalWestAxisX = verticalAxes.west;
+    const canonicalEastAxisX = verticalAxes.east;
     const southAxisY = py((centralLayout?.box?.maxY || 0) + 2.1, origin);
     const logicalSlots = southItems.map(item => Number(item.logicalSlot)).filter(Number.isFinite);
     const logicalSpan = Math.max(1, Math.max(...logicalSlots) - Math.min(...logicalSlots)) * logAxisSlotPixels();
@@ -8473,8 +8581,16 @@
     // Syntax en Functional delen één oostas op de rechterrand van hun
     // gezamenlijke layout-envelop. Vooral in landschap voorkomt dit dat de
     // smallere Syntaxboom een smal raster in een breed stabiel frame krijgt.
-    const eastAxisX = stableEastProjectionAxisX(origin);
-    return { origin, sourceMap, centralLayout, centralKind, southItems, westAxisX, eastAxisX, southAxisX1, southAxisX2, southAxisY };
+    const eastPresentation = validLexAxisSide(state.lexAxisSide) === 'east';
+    const westAxisX = eastPresentation ? canonicalEastAxisX : canonicalWestAxisX;
+    const eastAxisX = eastPresentation ? canonicalWestAxisX : canonicalEastAxisX;
+    return {
+      origin, sourceMap, centralLayout, centralKind, southItems,
+      westAxisX, eastAxisX, southAxisX1, southAxisX2, southAxisY,
+      canonicalWestAxisX, canonicalEastAxisX,
+      lexAxisSide: eastPresentation ? 'east' : 'west',
+      syntAxisSide: eastPresentation ? 'west' : 'east'
+    };
   }
 
   function stableCentralViewOrigin() {
@@ -8499,8 +8615,9 @@
     const rightTreePx = px(union.maxX + 0.9, origin);
     const topTreePx = py(union.minY - 1.6, origin);
     const bottomTreePx = py(union.maxY + 2.1, origin);
-    const westAxisX = Math.min(...layouts.map(layout => westLexAxisX(layout, origin)));
-    const eastAxisX = rightTreePx + 118;
+    const verticalAxes = stableVerticalProjectionAxes(origin);
+    const westAxisX = verticalAxes.west;
+    const eastAxisX = verticalAxes.east;
     const southAxisY = py(union.maxY + 2.1, origin);
     const logicalSequence = activeLogicalSlotSequence();
     const logicalSlots = logicalSequence.map(item => Number(item.logicalSlot)).filter(Number.isFinite);
@@ -8508,9 +8625,12 @@
     const treeCenterPx = px((union.minX + union.maxX) / 2, origin);
     const logicalLeft = treeCenterPx - logicalSpan / 2;
     const logicalRight = treeCenterPx + logicalSpan / 2;
-    const left = Math.min(-120, westAxisX - 260, leftTreePx - 300, logicalLeft - 260);
+    const syntaxWidth = projectedRuleBoxWidth(treeSpec(), layouts[0], origin, 'syntax');
+    const functionalWidth = projectedRuleBoxWidth(functionalSpec(), layouts[1], origin, 'functional');
+    const sideNeed = Math.max(activeLexRenderLeftReach(), activeLexRenderRightReach(), syntaxWidth + 22, functionalWidth + 22);
+    const left = Math.min(westAxisX - sideNeed, leftTreePx - 100, logicalLeft - 260);
     const top = Math.min(-180, topTreePx - 120);
-    const right = Math.max(2180, eastAxisX + 650, rightTreePx + 760, logicalRight + 260);
+    const right = Math.max(eastAxisX + sideNeed, rightTreePx + 100, logicalRight + 260);
     const bottom = Math.max(1120, southAxisY + 340, bottomTreePx + 360);
     return { x: left, y: top, w: right - left, h: bottom - top };
   }
@@ -8532,24 +8652,22 @@
     const leftTreePx = px(union.minX - 0.9, origin);
     const topTreePx = py(union.minY - 1.6, origin);
     const bottomTreePx = py(union.maxY + 2.1, origin);
-    const westAxisX = Math.min(...layouts.map(layout => westLexAxisX(layout, origin)));
+    const verticalAxes = stableVerticalProjectionAxes(origin);
+    const westAxisX = verticalAxes.west;
+    const eastAxisX = verticalAxes.east;
     const southAxisY = py(union.maxY + 2.1, origin);
-    const syntaxRuleRight = projectedRuleRightEdge(layouts[0], treeSpec(), origin, 'syntax');
-    const functionalRuleRight = projectedRuleRightEdge(
-      layouts[1],
-      nodeConfigToTree(STRUCTURE_CONFIG.functionalNodes, STRUCTURE_CONFIG.functionalRoot),
-      origin,
-      'functional'
-    );
+    const syntaxWidth = projectedRuleBoxWidth(treeSpec(), layouts[0], origin, 'syntax');
+    const functionalWidth = projectedRuleBoxWidth(functionalSpec(), layouts[1], origin, 'functional');
+    const sideNeed = Math.max(activeLexRenderLeftReach(), activeLexRenderRightReach(), syntaxWidth + 22, functionalWidth + 22);
     const logicalSequence = activeLogicalSlotSequence();
     const logicalSlots = logicalSequence.map(item => Number(item.logicalSlot)).filter(Number.isFinite);
     const logicalSpan = Math.max(1, Math.max(...logicalSlots) - Math.min(...logicalSlots)) * logAxisSlotPixels();
     const treeCenterPx = px((union.minX + union.maxX) / 2, origin);
     const logicalLeft = treeCenterPx - logicalSpan / 2;
     const logicalRight = treeCenterPx + logicalSpan / 2;
-    const left = Math.min(-12, westAxisX - activeLexRenderLeftReach(), leftTreePx - 100, logicalLeft - 96);
+    const left = Math.min(westAxisX - sideNeed, leftTreePx - 100, logicalLeft - 96);
     const top = Math.min(-150, topTreePx - 150);
-    const right = Math.max(1580, syntaxRuleRight, functionalRuleRight, logicalRight + 150) + 72;
+    const right = Math.max(eastAxisX + sideNeed, logicalRight + 150) + 72;
     const bottom = Math.max(910, southAxisY + 150, bottomTreePx + 140);
     return { x: left, y: top, w: right - left, h: bottom - top };
   }
@@ -8605,7 +8723,7 @@
     drawGraphSentence(g, ctx.centralLayout, ctx.origin);
     const growthPlan = ctx.centralLayout?.__growthPlan;
     if (kind === 'lex') {
-      drawAxisTitle(g, ctx.westAxisX - 40, 40, 'LEX · geselecteerde named projection op vaste west-aspositie');
+      drawAxisTitle(g, ctx.westAxisX - 40, 40, `LEX · named projection · ${validLexAxisSide(state.lexAxisSide).toUpperCase()}`);
       drawLexAxis(g, ctx.westAxisX, 126, activeLexItems(), ctx.sourceMap);
     } else if (kind === 'synt') {
       if (state.centerMode === 'ft') drawFunctionalRules(g, ctx.eastAxisX, ctx.centralLayout, ctx.origin, null);
@@ -8868,7 +8986,10 @@
       h: Math.max(80, Number(box.h) || 900)
     };
     els.svg.setAttribute('viewBox', viewBoxToString(next));
-    els.svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+    const horizontalAnchor = validCanvasHorizontalAlignment(state.canvasHorizontalAlignment) === 'right'
+      ? 'xMax'
+      : validCanvasHorizontalAlignment(state.canvasHorizontalAlignment) === 'center' ? 'xMid' : 'xMin';
+    els.svg.setAttribute('preserveAspectRatio', `${horizontalAnchor}YMid meet`);
     sizeDynamicGridToBox(next);
     syncMobileCanvasHeight(next);
     syncMainOverlayControlPlacement();
@@ -8923,7 +9044,7 @@
 
   function canvasAspectRatio() {
     syncMainTopbarLayout();
-    // v2.0.0-rc.45: in handheld-landscape reserveert het SVG zelf ruimte
+    // v3.1.0-rc.10: in handheld-landscape reserveert het SVG zelf ruimte
     // voor menu en Play. Gebruik daarom de werkelijk tekenbare SVG-maat en
     // niet de buitenste telefoonframe/canvas-wrap-maat.
     const svgRect = els.svg?.getBoundingClientRect?.();
@@ -9219,10 +9340,20 @@
     if (Math.abs(boxAspect - aspect) < 0.01) return box;
     if (boxAspect < aspect) {
       const w = box.h * aspect;
-      return { x: centerX - w / 2, y: box.y, w, h: box.h };
+      const alignment = validCanvasHorizontalAlignment(state.canvasHorizontalAlignment);
+      const x = alignment === 'right'
+        ? box.x + box.w - w
+        : alignment === 'center' ? centerX - w / 2 : box.x;
+      return { x, y: box.y, w, h: box.h };
     }
     const h = box.w / aspect;
     return { x: box.x, y: centerY - h / 2, w: box.w, h };
+  }
+
+  function expandBoxToAspectFromLeft(box, aspect = null) {
+    // Historische naam behouden voor bestaande call-sites. Links blijft de
+    // default; de algemene Config-keuze mag de vrije schermmarge verplaatsen.
+    return expandBoxToAspect(box, aspect);
   }
 
   function handheldMaximumViewBox(fit) {
@@ -9251,7 +9382,7 @@
       w: axes.w + padX * 2,
       h: axes.h + padY * 2
     };
-    // v2.0.0-rc.45: ook in landschap is MAX een contain-fit. De voormalige
+    // v3.1.0-rc.10: ook in landschap is MAX een contain-fit. De voormalige
     // cover-zoom vulde wel de breedte, maar sneed de rastertop en de volledige
     // LOG-as af. De plattere landschapscellen hierboven benutten de breedte
     // zonder semantische projecties buiten het scherm te plaatsen.
@@ -9337,17 +9468,21 @@
       const margin = isMobileViewport()
         ? Math.max(20, Math.min(42, base * 0.024))
         : Math.max(16, Math.min(34, base * 0.018));
+      const horizontalLexPresentation = !directPlacementActive() && ['north', 'south'].includes(validLexAxisSide(state.lexAxisSide));
+      const leftMargin = horizontalLexPresentation ? 0 : margin;
       const fit = {
-        x: bbox.x - margin,
+        x: bbox.x - leftMargin,
         y: bbox.y - margin,
-        w: bbox.width + margin * 2,
+        w: bbox.width + leftMargin + margin,
         h: bbox.height + margin * 2
       };
       state.lastGridBox = { ...fit };
       if (!growthActive() || !state.maximumContentFit) {
         state.maximumContentFit = { ...fit };
       }
-      return handheldMaximumViewBox(fit);
+      return horizontalLexPresentation
+        ? expandBoxToAspectFromLeft(fit, canvasAspectRatio())
+        : handheldMaximumViewBox(fit);
     } catch (_err) {
       return null;
     } finally {
@@ -9364,7 +9499,8 @@
     // v2.0.0-rc.14: alle projectie-views gebruiken één geometrisch viewport,
     // onafhankelijk van welke overlay zichtbaar is. Dit sluit auto-fit-
     // verschillen uit en voorkomt elke horizontale of verticale verspringing.
-    if (isMainScreenActive() && languageTreeActive() && ['axes', 'source', 'lex', 'synt', 'log'].includes(state.projection)) {
+    const horizontalLexPresentation = !directPlacementActive() && ['north', 'south'].includes(validLexAxisSide(state.lexAxisSide));
+    if (!horizontalLexPresentation && isMainScreenActive() && languageTreeActive() && ['axes', 'source', 'lex', 'synt', 'log'].includes(state.projection)) {
       const frame = projectionStableFrameBox();
       const gridMargin = Math.max(18, Math.min(42, Math.max(frame.w, frame.h) * 0.018));
       state.lastGridBox = {
@@ -9395,10 +9531,11 @@
         : (isMobileViewport()
           ? Math.max(18, Math.min(38, base * 0.024))
           : Math.max(24, Math.min(56, base * 0.028)));
+      const leftMargin = horizontalLexPresentation ? 0 : margin;
       const fit = {
-        x: bbox.x - margin,
+        x: bbox.x - leftMargin,
         y: bbox.y - margin,
-        w: bbox.width + margin * 2,
+        w: bbox.width + leftMargin + margin,
         h: bbox.height + margin * 2
       };
       // v4571: raster volgt de inhoud strakker dan de aspect-viewBox.
@@ -9415,6 +9552,7 @@
       };
       // Hoofdvenster gebruikt standaard 'volledige boom zichtbaar'.
       // Niet-Main schermen blijven de gewone aspect-fit gebruiken.
+      if (horizontalLexPresentation) return expandBoxToAspectFromLeft(fit, canvasAspectRatio());
       return main ? expandFitBoxForMainWindow(fit) : expandBoxToAspect(fit, canvasAspectRatio());
     } catch (_err) {
       return fallbackViewBox();
@@ -9559,7 +9697,13 @@
     const lexPoint = item => item.insertionId
       ? insertionPointByKey.get(`${item.unitId}:${item.insertionId}`) || null
       : nodePoint(item.unitId, item.nodeId);
-    const axisX = px(displayBox.minX, origin) - Math.max(190, cellX() * 1.85);
+    const verticalLexSide = validLexAxisSide(state.lexAxisSide) === 'east' ? 'east' : 'west';
+    const lexOnEast = verticalLexSide === 'east';
+    const treeLeft = px(displayBox.minX, origin) - Math.max(90, cellX() * 0.75);
+    const treeRightEdge = px(displayBox.maxX, origin) + Math.max(90, cellX() * 0.75);
+    const axisGap = Math.max(190, cellX() * 1.85);
+    const axisX = lexOnEast ? treeRightEdge + axisGap : treeLeft - axisGap;
+    const inward = lexOnEast ? -1 : 1;
     const rawAxisTop = py(displayBox.minY, origin) - Math.max(52, cellY() * 0.9);
     const lexRowStep = Math.max(54, cellY() * 0.88);
     // Iedere kernzin plant haar eigen LEX-rijen. K2 kan daardoor nooit de
@@ -9588,15 +9732,16 @@
     const axisTop = Math.min(rawAxisTop, Math.min(...allLexRows) - 28);
     const lexSequenceBottom = Math.max(...allLexRows) + 28;
     const axisBottom = Math.max(py(displayBox.maxY, origin) + Math.max(54, cellY() * 0.9), lexSequenceBottom);
-    const treeRight = px(displayBox.maxX, origin) + Math.max(90, cellX() * 0.75);
+    const treeRight = treeRightEdge;
     const titleY = axisTop - Math.max(76, cellY() * 1.25);
     const framePadX = Math.max(54, cellX() * 0.48);
     const framePadY = Math.max(36, cellY() * 0.56);
 
-    drawAxisTitle(g, axisX - 72, titleY, isEnglish()
+    const titleX = Math.min(axisX, treeLeft) - 72;
+    drawAxisTitle(g, titleX, titleY, isEnglish()
       ? `ANAPHOR · MULTI-OGN · ${centralViewLabel} · two independently calculated trees`
       : `ANAFOOR · MULTI-OGN · ${centralViewLabel} · twee afzonderlijk berekende bomen`);
-    drawCanvasGuideText(g, axisX - 72, titleY + 28, isEnglish()
+    drawCanvasGuideText(g, titleX, titleY + 28, isEnglish()
       ? 'Composition: keep both OGN units rigid → S1 above S2 → align MAN and HIJ on one declared column.'
       : 'Compositie: beide OGN’s star houden → S1 boven S2 → MAN en HIJ op één gedeclareerde kolom uitlijnen.', 'rule-label');
 
@@ -9622,9 +9767,10 @@
     const lexLayer = svgEl('g', {
       class: 'multi-ogn-shared-lex',
       'data-lex-order': 'S1-before-S2',
-      'data-composition-role': 'shared-lex-axis'
+      'data-composition-role': 'shared-lex-axis',
+      'data-lex-axis-side': verticalLexSide
     });
-    lexLayer.appendChild(svgEl('text', { x: axisX - 78, y: axisTop - 24, class: 'axis-title multi-ogn-lex-title' }, isEnglish() ? 'Utterance' : 'Uiting'));
+    lexLayer.appendChild(svgEl('text', { x: axisX - inward * 78, y: axisTop - 24, class: `axis-title multi-ogn-lex-title${lexOnEast ? ' east-axis-label' : ''}` }, isEnglish() ? 'Utterance' : 'Uiting'));
     lexLayer.appendChild(svgEl('line', {
       x1: axisX, y1: axisTop, x2: axisX, y2: axisBottom,
       class: 'multi-ogn-lex-axis lex-axis-line'
@@ -9639,7 +9785,7 @@
       lexTargetByKey.set(`${item.unitId}:${item.nodeId || item.insertionId}`, itemY);
       if (item.nodeId) {
         lexLayer.appendChild(svgEl('path', {
-          d: `M ${axisX + 62} ${point.py} H ${point.px - leafRadius}`,
+          d: `M ${axisX + inward * 62} ${point.py} H ${point.px - inward * leafRadius}`,
           class: 'projection-line lex multi-ogn-lex-projection',
           'data-source-node-id': item.nodeId,
           'data-ogn-unit': item.unitId,
@@ -9647,9 +9793,9 @@
         }));
         if (itemY > point.py + 0.5) throw new Error(`Neerwaartse LEX-verplaatsing is niet actief: ${item.label}`);
         if (itemY < point.py - 0.5) {
-          const laneX = axisX + 72 + (index % 4) * 11;
+          const laneX = axisX + inward * (72 + (index % 4) * 11);
           lexLayer.appendChild(svgEl('path', {
-            d: `M ${laneX} ${point.py} C ${laneX + 46} ${point.py} ${laneX + 46} ${itemY} ${laneX} ${itemY}`,
+            d: `M ${laneX} ${point.py} C ${laneX + inward * 46} ${point.py} ${laneX + inward * 46} ${itemY} ${laneX} ${itemY}`,
             class: 'utterance-lex-movement multi-ogn-lex-movement',
             'data-source-node-id': item.nodeId,
             'data-ogn-unit': item.unitId,
@@ -9658,7 +9804,7 @@
             'data-movement-direction': 'up'
           }));
           lexLayer.appendChild(svgEl('polygon', {
-            points: `${laneX},${itemY} ${laneX + 9},${itemY - 6} ${laneX + 9},${itemY + 6}`,
+            points: `${laneX},${itemY} ${laneX + inward * 9},${itemY - 6} ${laneX + inward * 9},${itemY + 6}`,
             class: 'utterance-lex-arrowhead', 'data-ogn-unit': item.unitId
           }));
         }
@@ -9674,7 +9820,7 @@
       }));
       lexLayer.appendChild(svgEl('text', { x: axisX, y: itemY + 5, class: 'lex-label multi-ogn-lex-label', 'data-lex-unit': item.unitId }, item.label));
       if (previousUnit !== item.unitId) {
-        lexLayer.appendChild(svgEl('text', { x: axisX - 78, y: itemY + 5, class: 'multi-ogn-lex-unit-label' }, item.unitId));
+        lexLayer.appendChild(svgEl('text', { x: axisX - inward * 78, y: itemY + 5, class: `multi-ogn-lex-unit-label${lexOnEast ? ' east-axis-label' : ''}` }, item.unitId));
         previousUnit = item.unitId;
       }
     });
@@ -9683,7 +9829,7 @@
         const firstY = lexTargetByKey.get(`${relation.first.unitId}:${relation.first.insertionId}`);
         const secondY = lexTargetByKey.get(`${relation.second.unitId}:${relation.second.insertionId}`);
         if (!Number.isFinite(firstY) || !Number.isFinite(secondY)) throw new Error(`Contextrelatie ${relation.id} mist een LEX-insertie.`);
-        const relationX = axisX + 76;
+        const relationX = axisX + inward * 76;
         const group = svgEl('g', {
           class: 'multi-ogn-context-relation',
           'data-relation': relation.type,
@@ -9693,17 +9839,17 @@
         });
         group.appendChild(svgEl('title', {}, `${relation.label} · uitsluitend tussen LEX-inserties`));
         group.appendChild(svgEl('path', {
-          d: `M ${axisX + 62} ${firstY} H ${relationX} V ${secondY} H ${axisX + 62}`,
+          d: `M ${axisX + inward * 62} ${firstY} H ${relationX} V ${secondY} H ${axisX + inward * 62}`,
           class: 'multi-ogn-context-relation-line'
         }));
         const arrowDirection = secondY >= firstY ? 1 : -1;
         group.appendChild(svgEl('path', {
-          d: `M ${axisX + 62} ${secondY} l 10 ${-6 * arrowDirection} v ${12 * arrowDirection} z`,
+          d: `M ${axisX + inward * 62} ${secondY} l ${inward * 10} ${-6 * arrowDirection} v ${12 * arrowDirection} z`,
           class: 'multi-ogn-context-relation-arrow'
         }));
         group.appendChild(svgEl('text', {
-          x: relationX + 10, y: (firstY + secondY) / 2 + 5,
-          class: 'multi-ogn-context-relation-label'
+          x: relationX + inward * 10, y: (firstY + secondY) / 2 + 5,
+          class: `multi-ogn-context-relation-label${lexOnEast ? ' east-axis-label' : ''}`
         }, relation.label));
         lexLayer.appendChild(group);
       });
@@ -9772,13 +9918,13 @@
       g.querySelectorAll(`[data-node-id="${relation.anaphor.nodeId}"]`).forEach(node => node.classList.add('coreference-anaphor'));
     });
 
-    drawCanvasGuideText(g, axisX - 72, axisBottom + 42, isEnglish()
+    drawCanvasGuideText(g, titleX, axisBottom + 42, isEnglish()
       ? `${relations.length} declared coreference line(s) · same referent · straight, no arrow`
       : `${relations.length} gedeclareerde coreferentielijn(en) · dezelfde referent · recht, zonder pijl`, 'rule-label multi-ogn-relation-note');
     state.lastGridBox = {
-      x: axisX - 118,
+      x: Math.min(axisX - 118, treeLeft),
       y: titleY - 44,
-      w: treeRight - axisX + 168,
+      w: Math.max(axisX + 118, treeRight) - Math.min(axisX - 118, treeLeft),
       h: axisBottom - titleY + 132
     };
     applyMultiOgnPlaybackVisibility(g, composition);
@@ -9921,7 +10067,13 @@
       const node = unitById.get(unitId)?.layout?.nodes?.find(candidate => candidate.id === nodeId);
       return node ? { ...node, px: px(node.x, origin), py: py(node.y, origin) } : null;
     };
-    const axisX = px(displayBox.minX, origin) - Math.max(150, cellX() * horizontalScale * 1.65);
+    const verticalLexSide = validLexAxisSide(state.lexAxisSide) === 'east' ? 'east' : 'west';
+    const lexOnEast = verticalLexSide === 'east';
+    const inward = lexOnEast ? -1 : 1;
+    const treeLeft = px(displayBox.minX, origin) - Math.max(70, cellX() * horizontalScale * 0.75);
+    const treeRightEdge = px(displayBox.maxX, origin) + Math.max(70, cellX() * horizontalScale * 0.75);
+    const axisGap = Math.max(150, cellX() * horizontalScale * 1.65);
+    const axisX = lexOnEast ? treeRightEdge + axisGap : treeLeft - axisGap;
     const axisTop = py(displayBox.minY, origin) - Math.max(52, cellY() * verticalScale * 0.9);
     const treeAxisBottom = py(displayBox.maxY, origin) + Math.max(54, cellY() * verticalScale * 0.9);
     // LEX may realize several words from one binary source node (e.g.
@@ -9967,14 +10119,15 @@
     g.setAttribute('data-local-flip-applied', hasLocalRoleFlip && playPhase >= flipStep ? 'true' : 'false');
 
     const centralViewLabel = state.centerMode === 'ft' ? (isEnglish() ? 'Functions' : 'Functies') : 'Syntax';
-    drawAxisTitle(g, axisX - 72, titleY, isEnglish()
+    const titleX = Math.min(axisX, treeLeft) - 72;
+    drawAxisTitle(g, titleX, titleY, isEnglish()
       ? `${composition.units.length > 2 ? 'STORY' : 'UTTERANCE'} · ${composition.units.length} KERNEL CLAUSES · ${centralViewLabel} · ${definition.title}`
       : `${composition.units.length > 2 ? 'STORY' : 'UITING'} · ${composition.units.length} KERNZINNEN · ${centralViewLabel} · ${definition.title}`);
-    drawCanvasGuideText(g, axisX - 72, titleY + 28, isEnglish()
+    drawCanvasGuideText(g, titleX, titleY + 28, isEnglish()
       ? 'K1 above K2 · declared anaphors align vertically · LEX shows the realized utterance.'
       : 'K1 boven K2 · gedeclareerde anaforen staan verticaal · LEX toont de gerealiseerde uiting.', 'rule-label');
     if (hasLocalRoleFlip) {
-      drawCanvasGuideText(g, axisX - 72, titleY + 50, isEnglish()
+      drawCanvasGuideText(g, titleX, titleY + 50, isEnglish()
         ? (showK2BeforeLocalFlip ? 'BEFORE FLIP: K2 keeps its own branch orientation.' : playPhase >= flipStep ? 'FLIP HITS K2: its S and VP role branches mirror; node identities and syntax stay unchanged.' : 'K2 will flip because JAN and JEK exchange roles; both reference lines must remain vertical.')
         : (showK2BeforeLocalFlip ? 'VÓÓR FLIP: K2 behoudt eerst zijn eigen takrichting.' : playPhase >= flipStep ? 'FLIP SLAAT TOE OP K2: de roltakken onder S en VP spiegelen; knoopidentiteit en syntaxis blijven gelijk.' : 'K2 zal flippen omdat JAN en JEK van rol wisselen; beide verwijslijnen moeten verticaal blijven.'),
       'rule-label utterance-flip-explanation');
@@ -10002,9 +10155,10 @@
 
     const lexLayer = svgEl('g', {
       class: 'multi-ogn-shared-lex utterance-surface-lex',
-      'data-composition-role': 'shared-lex-axis', 'data-lex-order': 'utterance-surface'
+      'data-composition-role': 'shared-lex-axis', 'data-lex-order': 'utterance-surface',
+      'data-lex-axis-side': verticalLexSide
     });
-    lexLayer.appendChild(svgEl('text', { x: axisX - 78, y: axisTop - 24, class: 'axis-title multi-ogn-lex-title' }, isEnglish() ? 'Utterance' : 'Uiting'));
+    lexLayer.appendChild(svgEl('text', { x: axisX - inward * 78, y: axisTop - 24, class: `axis-title multi-ogn-lex-title${lexOnEast ? ' east-axis-label' : ''}` }, isEnglish() ? 'Utterance' : 'Uiting'));
     lexLayer.appendChild(svgEl('line', { x1: axisX, y1: axisTop, x2: axisX, y2: axisBottom, class: 'multi-ogn-lex-axis lex-axis-line' }));
 
     const lexSlotTop = axisTop + 34;
@@ -10114,7 +10268,7 @@
       }));
       lexLayer.appendChild(svgEl('text', { x: axisX, y: itemY + 5, class: 'lex-label multi-ogn-lex-label', 'data-lex-unit': lexUnit, 'data-lex-index': index + 1 }, item.label));
       if (!item.connector && previousUnit !== item.unitId) {
-        lexLayer.appendChild(svgEl('text', { x: axisX - 78, y: itemY + 5, class: 'multi-ogn-lex-unit-label', 'data-lex-unit': lexUnit, 'data-lex-index': index + 1 }, item.unitId));
+        lexLayer.appendChild(svgEl('text', { x: axisX - inward * 78, y: itemY + 5, class: `multi-ogn-lex-unit-label${lexOnEast ? ' east-axis-label' : ''}`, 'data-lex-unit': lexUnit, 'data-lex-index': index + 1 }, item.unitId));
         previousUnit = item.unitId;
       }
       if (point) lexTargets.push({ ...item, point, itemY, lexUnit, index });
@@ -10129,9 +10283,9 @@
       lexTargets
         .filter(target => Math.abs(target.itemY - target.point.py) > 1)
         .forEach((target, movementIndex) => {
-        const movementX = axisX + 72 + (movementIndex % 4) * 11;
+        const movementX = axisX + inward * (72 + (movementIndex % 4) * 11);
         lexMovementLayer.appendChild(svgEl('path', {
-          d: `M ${movementX} ${target.point.py} C ${movementX + 46} ${target.point.py} ${movementX + 46} ${target.itemY} ${movementX} ${target.itemY}`,
+          d: `M ${movementX} ${target.point.py} C ${movementX + inward * 46} ${target.point.py} ${movementX + inward * 46} ${target.itemY} ${movementX} ${target.itemY}`,
           class: 'utterance-lex-movement', 'data-source-node-id': target.nodeId,
           'data-lex-index': target.index + 1,
           'data-source-label': target.point.label, 'data-realized-label': target.label,
@@ -10146,11 +10300,11 @@
           'data-movement-index': movementIndex + 1, 'data-lex-index': target.index + 1
         }));
         lexMovementLayer.appendChild(svgEl('polygon', {
-          points: `${movementX},${target.itemY} ${movementX + 9},${target.itemY - 6} ${movementX + 9},${target.itemY + 6}`,
+          points: `${movementX},${target.itemY} ${movementX + inward * 9},${target.itemY - 6} ${movementX + inward * 9},${target.itemY + 6}`,
           class: 'utterance-lex-arrowhead', 'data-movement-index': movementIndex + 1, 'data-lex-index': target.index + 1
         }));
         lexMovementLayer.appendChild(svgEl('text', {
-          x: movementX + 12, y: target.itemY - 9, class: 'utterance-lex-movement-label', 'data-lex-index': target.index + 1
+          x: movementX + inward * 12, y: target.itemY - 9, class: `utterance-lex-movement-label${lexOnEast ? ' east-axis-label' : ''}`, 'data-lex-index': target.index + 1
         }, `${target.point.label} → ${target.label} · ${isEnglish() ? 'position' : 'positie'} ${target.wordOrder ?? target.index + 1}`));
       });
     }
@@ -10397,11 +10551,15 @@
     });
 
     const relationText = composition.relations.map(relation => `${relation.antecedentLabel} ↔ ${relation.anaphorLabel}`).join(' · ');
-    drawCanvasGuideText(g, axisX - 72, axisBottom + 42,
+    drawCanvasGuideText(g, titleX, axisBottom + 42,
       `${relationText}${definition.implicitSubject ? ` · ${isEnglish() ? 'implicit subject' : 'impliciet subject'}=${definition.implicitSubject}` : ''}`,
       'rule-label multi-ogn-relation-note');
-    const treeRight = px(displayBox.maxX, origin) + Math.max(70, cellX() * horizontalScale * 0.75);
-    state.lastGridBox = { x: axisX - 118, y: titleY - 44, w: treeRight - axisX + 168, h: axisBottom - titleY + 132 };
+    const treeRight = treeRightEdge;
+    state.lastGridBox = {
+      x: Math.min(axisX - 118, treeLeft), y: titleY - 44,
+      w: Math.max(axisX + 118, treeRight) - Math.min(axisX - 118, treeLeft),
+      h: axisBottom - titleY + 132
+    };
     applyMultiOgnPlaybackVisibility(g, composition);
     els.svg.appendChild(g);
   }
@@ -10623,6 +10781,132 @@
     });
   }
 
+  function lexOrientationTransform(side, cx, cy, horizontalStretch = 1, crossScale = 1) {
+    if (side === 'south') return `matrix(0 ${-crossScale} ${horizontalStretch} 0 ${cx - horizontalStretch * cy} ${cy + crossScale * cx})`;
+    if (side === 'north') return `matrix(0 ${crossScale} ${horizontalStretch} 0 ${cx - horizontalStretch * cy} ${cy - crossScale * cx})`;
+    return '';
+  }
+
+  function lexOrientationCounterTransform(side, x, y, horizontalStretch = 1, crossScale = 1) {
+    if (side === 'south') return `matrix(0 ${1 / horizontalStretch} ${-1 / crossScale} 0 ${x + y / crossScale} ${y - x / horizontalStretch})`;
+    if (side === 'north') return `matrix(0 ${1 / horizontalStretch} ${1 / crossScale} 0 ${x - y / crossScale} ${y - x / horizontalStretch})`;
+    return '';
+  }
+
+  function horizontalLexReadingScale(content) {
+    const graphicItems = [...(content.querySelectorAll?.([
+      'text', '.tree-node', '.lex-slot-box', '.log-role-box',
+      '.logical-order-badge', '.logical-order-badge-interactive'
+    ].join(',')) || [])]
+      .filter(item => !item.closest?.('[data-hidden-for-horizontal-utterance="true"]'));
+    const widths = graphicItems.map(item => {
+      try {
+        if (item.tagName?.toLowerCase() === 'text') {
+          const measured = Number(item.getComputedTextLength?.());
+          if (Number.isFinite(measured) && measured > 0) return measured;
+        }
+        const box = item.getBBox?.();
+        if (box && Number.isFinite(box.width) && box.width > 0) return box.width;
+      } catch (_err) {}
+      return Math.max(1, String(item.textContent || '').trim().length) * 8.4;
+    });
+    const widestGraphicItem = Math.max(56, ...widths);
+    // Noord/Zuid gebruiken geen vaste geroteerde gridcel. De breedste
+    // aanwezige zichtbare vorm bepaalt de kolombreedte: woorden en labels,
+    // maar ook omcirkelingen, knoopgroepen en LOG-badges.
+    const desiredGap = Math.max(92, widestGraphicItem + 34);
+    content.setAttribute('data-horizontal-max-graphic-width', String(Math.round(widestGraphicItem * 10) / 10));
+    content.setAttribute('data-horizontal-column-width', String(Math.round(desiredGap * 10) / 10));
+    return Math.max(1.55, Math.min(3.4, desiredGap / 52));
+  }
+
+  function horizontalStableTextCrossScale(content) {
+    const labels = [...(content.querySelectorAll?.('text') || [])]
+      .filter(label => !label.closest?.('[data-hidden-for-horizontal-utterance="true"]'));
+    const heights = labels.map(label => {
+      try {
+        const box = label.getBBox?.();
+        if (box && Number.isFinite(box.height) && box.height > 0) return box.height;
+      } catch (_err) {}
+      return 18;
+    });
+    const stableTextHeight = Math.max(18, ...heights);
+    const desiredCellHeight = stableTextHeight + 14;
+    return Math.max(0.42, Math.min(0.72, desiredCellHeight / Math.max(1, cellX())));
+  }
+
+  // De graphdata blijven canoniek in de bestaande West-oriëntatie. Deze
+  // presentatietransformatie roteert/spiegelt de volledige assenruimte pas na
+  // het tekenen. Tekst en compacte knoop-/slotboxen worden lokaal
+  // teruggedraaid, zodat labels in alle vier oriëntaties normaal leesbaar
+  // blijven. Flip blijft hierdoor een onafhankelijke boomoperatie.
+  function applyLexAxisOrientation() {
+    const side = validLexAxisSide(state.lexAxisSide);
+    const group = els.svg?.firstElementChild;
+    if (!group || directPlacementActive()) return;
+    group.setAttribute('data-lex-axis-side', side);
+    group.setAttribute('data-utterance-reading', ['north', 'south'].includes(side)
+      ? 'left-to-right' : 'top-to-bottom');
+    group.setAttribute('data-forward-direction', ['north', 'south'].includes(side)
+      ? 'left' : 'up');
+    group.querySelectorAll?.('.utterance-lex-movement').forEach(path => {
+      path.setAttribute('data-semantic-movement-direction', 'forward');
+      path.setAttribute('data-movement-direction', ['north', 'south'].includes(side) ? 'left' : 'up');
+    });
+    if (['north', 'south'].includes(side)) {
+      group.querySelectorAll?.('.graph-sentence-heading, .multi-ogn-unit-label').forEach(heading => {
+        heading.setAttribute('display', 'none');
+        heading.setAttribute('data-hidden-for-horizontal-utterance', 'true');
+      });
+      group.querySelectorAll?.('[data-lex-unit], [data-ogn-unit].multi-ogn-lex-unit, [data-source-unit].utterance-lex-movement').forEach(element => {
+        const unit = String(element.getAttribute('data-lex-unit') || element.getAttribute('data-ogn-unit') || element.getAttribute('data-source-unit') || '').toUpperCase();
+        if (/^K\d+$/.test(unit) && state.horizontalLexUnits?.[unit] === false) {
+          element.setAttribute('display', 'none');
+          element.setAttribute('data-horizontal-lex-hidden', 'true');
+        }
+      });
+    }
+    if (['west', 'east'].includes(side)) {
+      const axes = stableVerticalProjectionAxes(stableCentralViewOrigin());
+      group.setAttribute('data-vertical-shared-reference-box', `${axes.west},${axes.east}`);
+      group.setAttribute('data-tree-orientation', 'stable-unflipped');
+      group.setAttribute('data-axis-swap-only', side === 'east' ? 'west-east' : 'none');
+      return;
+    }
+    if (typeof group.getBBox !== 'function') return;
+    // Het raster blijft ongedraaid en vierkant. Alleen de inhoudelijke
+    // assenruimte wordt georiënteerd; daardoor bepaalt het grote hulpraster
+    // niet langer ten onrechte het draaicentrum.
+    const content = svgEl('g', { class: 'lex-oriented-content', 'data-lex-axis-side': side });
+    Array.from(group.children).filter(child => !child.classList?.contains('grid')).forEach(child => content.appendChild(child));
+    group.appendChild(content);
+    let box;
+    try { box = content.getBBox(); } catch (_err) { return; }
+    if (!box || !Number.isFinite(box.x) || !Number.isFinite(box.y)) return;
+    const cx = box.x + box.width / 2;
+    const cy = box.y + box.height / 2;
+    const horizontalStretch = horizontalLexReadingScale(content);
+    horizontalStableTextCrossScale(content);
+    const crossScale = 1;
+    content.setAttribute('transform', lexOrientationTransform(side, cx, cy, horizontalStretch, crossScale));
+    content.setAttribute('data-horizontal-reading-gap-scale', String(horizontalStretch));
+    content.setAttribute('data-horizontal-stable-text-cross-scale', String(crossScale));
+    content.querySelectorAll?.('.tree-node').forEach(nodeGroup => {
+      try {
+        const nodeBox = nodeGroup.getBBox?.();
+        if (!nodeBox) return;
+        nodeGroup.setAttribute('transform', lexOrientationCounterTransform(side, nodeBox.x + nodeBox.width / 2, nodeBox.y + nodeBox.height / 2, horizontalStretch, crossScale));
+      } catch (_err) {}
+    });
+    content.querySelectorAll?.('text').forEach(textNode => {
+      if (textNode.closest?.('.tree-node')) return;
+      const x = Number(textNode.getAttribute('x'));
+      const y = Number(textNode.getAttribute('y'));
+      if (!Number.isFinite(x) || !Number.isFinite(y)) return;
+      textNode.setAttribute('transform', lexOrientationCounterTransform(side, x, y, horizontalStretch, crossScale));
+    });
+  }
+
   function render() {
     try {
       applyProjectionColors();
@@ -10636,6 +10920,7 @@
       else if (state.projection === 'synt') drawSynt();
       else if (state.projection === 'log') drawLog();
       else drawAxes();
+      applyLexAxisOrientation();
       applyViewBoxFit(false);
       syncMobileCanvasHeight(parseViewBox());
       renderSideLists();
@@ -10834,8 +11119,8 @@
     if (isEnglish()) {
       if (state.projection === 'source') return `Source: the Syntax and Functional structures are read from structure-config.html. Selected axes at Source: ${sourceAxesShortLabel()}. LEX, SYNT and LOG can be combined without moving or rescaling the central view.`;
       if (state.projection === 'lex') return featureEnabled('adverbs')
-        ? 'LEX: west named projection. Every source projects horizontally at source height. The active profile permits only explicit upward topic/V1/V2 switches, direct insertions, and Comp.'
-        : 'LEX: west named projection. Every lexical source projects horizontally at source height. The active profile permits only explicit upward topic/V1/V2 switches and Comp.';
+        ? `LEX: ${validLexAxisSide(state.lexAxisSide)} named projection. The utterance reads top-to-bottom on West/East and left-to-right on North/South. Explicit topic/V1/V2 switches move forward in the utterance; direct insertions and Comp remain available.`
+        : `LEX: ${validLexAxisSide(state.lexAxisSide)} named projection. The utterance reads top-to-bottom on West/East and left-to-right on North/South. Explicit topic/V1/V2 switches move forward in the utterance; Comp remains available.`;
       if (state.projection === 'synt') return 'SYNT: isolated syntax-rule set. Rules are placed at their source height; the central tree is only used as a hidden height anchor.';
       if (state.projection === 'log') return featureEnabled('adverbs')
         ? 'LOG: south named projection. S, O and V are majors. Only insertions with a LOG or LOG+LEX profile appear as minors; direct LEX profiles remain absent from this axis.'
@@ -10844,8 +11129,8 @@
     }
     if (state.projection === 'source') return `Bron: de Syntax- en Functional-structuren worden gelezen uit structure-config.html. Gekozen assen bij Bron: ${sourceAxesShortLabel()}. LEX, SYNT en LOG kunnen gecombineerd worden zonder de centrale view te verplaatsen of te herschalen.`;
     if (state.projection === 'lex') return featureEnabled('adverbs')
-      ? 'LEX: westelijke named projection. Iedere bron projecteert horizontaal op bronhoogte. Het actieve profiel staat alleen expliciete topic-/V1-/V2-Wissels omhoog, directe inserties en Comp toe.'
-      : 'LEX: westelijke named projection. Iedere lexicale bron projecteert horizontaal op bronhoogte. Het actieve profiel staat alleen expliciete topic-/V1-/V2-Wissels omhoog en Comp toe.';
+      ? `LEX: named projection op ${validLexAxisSide(state.lexAxisSide)}. De uiting leest op West/Oost boven→beneden en op Noord/Zuid links→rechts. Expliciete topic-/V1-/V2-Wissels gaan naar voren in de uiting; directe inserties en Comp blijven beschikbaar.`
+      : `LEX: named projection op ${validLexAxisSide(state.lexAxisSide)}. De uiting leest op West/Oost boven→beneden en op Noord/Zuid links→rechts. Expliciete topic-/V1-/V2-Wissels gaan naar voren in de uiting; Comp blijft beschikbaar.`;
     if (state.projection === 'synt') return 'SYNT: geïsoleerde syntax-regelset. Regels staan op bronhoogte; de centrale boom dient alleen als verborgen hoogteanker.';
     if (state.projection === 'log') return featureEnabled('adverbs')
       ? 'LOG: named projection op de zuidas. S, O en V zijn majors. Alleen inserties met een LOG- of LOG+LEX-profiel verschijnen als minor; directe LEX-profielen ontbreken op deze as.'
@@ -11026,6 +11311,16 @@
     }
   }
 
+  function fillGroupedTestmateriaalMenu(container, options, selected, onChoose) {
+    const count = isMobileViewport()
+      ? validTestmateriaalListCount(state.mobileTestmateriaalListCount, 1)
+      : validTestmateriaalListCount(state.desktopTestmateriaalListCount, 2);
+    fillCompactChoiceMenu(container, options, selected, null, onChoose);
+    container.classList.add('grouped-testmateriaal-list');
+    container.style.setProperty('--testmateriaal-list-count', String(count));
+    container.setAttribute('data-testmateriaal-list-count', String(count));
+  }
+
   function catalogHasLexInsertions(definition = {}) {
     return (definition.sentences || []).some(sentence => Array.isArray(sentence.lexInsertions) && sentence.lexInsertions.length);
   }
@@ -11108,7 +11403,7 @@
     if (els.mainSentenceMenu) els.mainSentenceMenu.hidden = !(languageTree || multiOgn);
     if (els.mainAdverbMenu) els.mainAdverbMenu.hidden = !languageTree || !featureEnabled('adverbs');
     if (els.sourceAxisMenu) els.sourceAxisMenu.hidden = !languageTree;
-    if (els.mainExtraMenu) els.mainExtraMenu.hidden = !languageTree;
+    if (els.mainExtraMenu) els.mainExtraMenu.hidden = false;
     const subtitle = document.querySelector('.header-subtitle');
     if (subtitle) {
       if (multiOgn && activeUtteranceDefinition()) {
@@ -11137,9 +11432,12 @@
   }
 
   function renderMainChoiceMenus() {
+    const unifiedTestmateriaalCatalog = true;
     if (els.mainSentenceSummary) {
       const utteranceMenu = multiOgnAnaphorActive();
-      els.mainSentenceSummary.textContent = utteranceMenu ? (isEnglish() ? 'Utterance' : 'Uiting') : (isEnglish() ? 'Sentence' : 'Zin');
+      els.mainSentenceSummary.textContent = unifiedTestmateriaalCatalog
+        ? (isEnglish() ? 'Test material' : 'Testmateriaal')
+        : utteranceMenu ? (isEnglish() ? 'Utterance' : 'Uiting') : (isEnglish() ? 'Sentence' : 'Zin');
       els.mainSentenceSummary.title = utteranceMenu
         ? (isEnglish() ? 'Choose a linked kernel-clause utterance' : 'Kies een uiting met verknoopte kernzinnen')
         : (isEnglish() ? 'Choose the sample sentence' : 'Kies de voorbeeldzin');
@@ -11157,8 +11455,8 @@
       els.mainActionsSummary.title = isEnglish() ? 'Open the complete main menu' : 'Open het volledige hoofdmenu';
     }
     if (els.mainExtraSummary) {
-      els.mainExtraSummary.textContent = isEnglish() ? 'LOG order' : 'LOG-volgorde';
-      els.mainExtraSummary.title = isEnglish() ? 'Choose the LOG order' : 'Kies de LOG-volgorde';
+      els.mainExtraSummary.textContent = 'Extra';
+      els.mainExtraSummary.title = isEnglish() ? 'Extra options' : 'Extra opties';
     }
     if (els.mainSouthHeading) els.mainSouthHeading.textContent = isEnglish() ? 'LOG order' : 'LOG-volgorde';
     if (els.mainSouthExplanation) {
@@ -11180,7 +11478,16 @@
     const sentenceOptions = EXAMPLES.map((example, index) => ({ ...sentenceCatalogOption(example), catalogOrder: index }))
       .sort((left, right) => Number(left.group === 'Zin · complex') - Number(right.group === 'Zin · complex')
         || left.catalogOrder - right.catalogOrder);
-    fillCompactChoiceMenu(els.mainSentenceOptions, multiActive ? multiOptions : sentenceOptions, multiActive ? state.multiOgnExampleId : state.example.id, multiActive ? null : els.mainExampleSelect, id => {
+    const menuOptions = unifiedTestmateriaalCatalog ? mobileTestmateriaalOptions() : multiActive ? multiOptions : sentenceOptions;
+    const selectedMenuId = unifiedTestmateriaalCatalog ? activeCanonicalItemId() : multiActive ? state.multiOgnExampleId : state.example.id;
+    fillGroupedTestmateriaalMenu(els.mainSentenceOptions, menuOptions, selectedMenuId, id => {
+      if (unifiedTestmateriaalCatalog) {
+        if (!activateCanonicalItem(id, { updateUrl: true })) return;
+        recordParadata('select-testmateriaal-list', { example: id, interface: isMobileViewport() ? 'mobile' : 'desktop' });
+        closeMainChoiceMenus();
+        render();
+        return;
+      }
       if (multiActive) {
         state.multiOgnExampleId = id;
         const matchingExample = EXAMPLES.find(example => example.id === id);
@@ -11283,6 +11590,33 @@
     fillSelect(els.mainViewSelect, CENTER_MODES, state.centerMode);
     fillSelect(els.mobileViewSelect, CENTER_MODES, state.centerMode);
     fillSelect(document.getElementById('configViewportModeSelect'), VIEWPORT_TEST_MODES, validViewportMode(state.viewportMode));
+    fillSelect(document.getElementById('canvasHorizontalAlignmentSelect'), CANVAS_HORIZONTAL_ALIGNMENTS, validCanvasHorizontalAlignment(state.canvasHorizontalAlignment));
+    fillSelect(document.getElementById('lexAxisSideSelect'), LEX_AXIS_SIDE_OPTIONS, validLexAxisSide(state.lexAxisSide));
+    const orientationExcluded = directPlacementActive();
+    if (els.mainLexOrientationSummary) {
+      const option = LEX_AXIS_SIDE_OPTIONS.find(item => item.id === validLexAxisSide(state.lexAxisSide));
+      els.mainLexOrientationSummary.textContent = orientationExcluded
+        ? (isEnglish() ? 'LEX · fixed' : 'LEX · vast')
+        : `LEX · ${isEnglish() ? (option?.labelEn || option?.label) : option?.label}`;
+    }
+    if (els.mainLexOrientationMenu) {
+      els.mainLexOrientationMenu.classList.toggle('is-disabled', orientationExcluded);
+      els.mainLexOrientationMenu.title = orientationExcluded
+        ? (isEnglish() ? 'Not applicable to Greedy Grow or Random' : 'Niet van toepassing op Greedy Grow of Random') : '';
+    }
+    document.querySelectorAll('[data-lex-axis-side-choice]').forEach(button => {
+      const active = button.getAttribute('data-lex-axis-side-choice') === validLexAxisSide(state.lexAxisSide);
+      button.classList.toggle('active', active);
+      button.setAttribute('aria-pressed', active ? 'true' : 'false');
+      button.disabled = orientationExcluded && Boolean(button.closest('.main-lex-orientation-menu'));
+    });
+    if (els.lexAxisMobileWarning) {
+      const showWarning = !orientationExcluded && ['north', 'south'].includes(validLexAxisSide(state.lexAxisSide)) && isMobileViewport();
+      els.lexAxisMobileWarning.hidden = !showWarning;
+      els.lexAxisMobileWarning.innerHTML = isEnglish()
+        ? '<strong>Note:</strong> horizontal utterances use word-length-dependent spacing and may require horizontal panning or FIT on mobile.'
+        : '<strong>Let op:</strong> de horizontale uiting gebruikt woordlengte-afhankelijke ruimte en kan op mobiel horizontaal pannen of FIT vereisen.';
+    }
     if (els.openTestmateriaal) {
       const localHost = ['127.0.0.1', 'localhost'].includes(String(location.hostname || '').toLowerCase());
       els.openTestmateriaal.hidden = !localHost;
@@ -13574,9 +13908,63 @@
     });
     generalViewGrid.appendChild(viewportModeLabel);
 
+    const canvasAlignmentLabel = document.createElement('label');
+    canvasAlignmentLabel.className = 'select-field canvas-horizontal-alignment-field';
+    canvasAlignmentLabel.innerHTML = `<span><span class="help-lang-nl">Tekening in venster</span><span class="help-lang-en">Drawing in viewport</span></span><select id="canvasHorizontalAlignmentSelect"></select><small class="config-item-help"><span class="help-lang-nl">Links is standaard. Midden en Rechts verplaatsen alleen de vrije schermmarge; boom en projectieassen behouden hun onderlinge geometrie.</span><span class="help-lang-en">Left is the default. Centre and Right only move unused viewport space; tree and projection axes retain their geometry.</span></small>`;
+    fillSelect(canvasAlignmentLabel.querySelector('select'), CANVAS_HORIZONTAL_ALIGNMENTS, validCanvasHorizontalAlignment(state.canvasHorizontalAlignment));
+    canvasAlignmentLabel.querySelector('select').addEventListener('change', event => setCanvasHorizontalAlignment(event.target.value));
+    generalViewGrid.appendChild(canvasAlignmentLabel);
+
+    const desktopListsLabel = document.createElement('label');
+    desktopListsLabel.className = 'select-field';
+    desktopListsLabel.innerHTML = `<span><span class="help-lang-nl">Testmateriaallijsten · desktop</span><span class="help-lang-en">Test-material lists · desktop</span></span><select><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option></select><small class="config-item-help"><span class="help-lang-nl">Eén tot vier lijstkolommen; groepskoppen blijven behouden.</span><span class="help-lang-en">One to four list columns; group headings remain intact.</span></small>`;
+    desktopListsLabel.querySelector('select').value = String(state.desktopTestmateriaalListCount);
+    desktopListsLabel.querySelector('select').addEventListener('change', event => { state.desktopTestmateriaalListCount = validTestmateriaalListCount(event.target.value, 2); markConfigDirty('Testmateriaallijsten'); render(); });
+    generalViewGrid.appendChild(desktopListsLabel);
+
+    const mobileListsLabel = document.createElement('label');
+    mobileListsLabel.className = 'select-field';
+    mobileListsLabel.innerHTML = `<span><span class="help-lang-nl">Testmateriaallijsten · mobiel</span><span class="help-lang-en">Test-material lists · mobile</span></span><select><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option></select><small class="config-item-help"><span class="help-lang-nl">Ook mobiel zijn twee of meer gegroepeerde lijsten mogelijk.</span><span class="help-lang-en">Two or more grouped lists are also available on mobile.</span></small>`;
+    mobileListsLabel.querySelector('select').value = String(state.mobileTestmateriaalListCount);
+    mobileListsLabel.querySelector('select').addEventListener('change', event => { state.mobileTestmateriaalListCount = validTestmateriaalListCount(event.target.value, 1); markConfigDirty('Testmateriaallijsten'); render(); });
+    generalViewGrid.appendChild(mobileListsLabel);
+
     const primaryViewGrid = document.createElement('div');
     primaryViewGrid.className = 'config-primary-view-grid';
     primaryViewGrid.setAttribute('aria-label', 'Language Tree-beeldinstellingen');
+    const lexAxisSideLabel = document.createElement('label');
+    lexAxisSideLabel.className = 'select-field lex-axis-side-select-field';
+    lexAxisSideLabel.innerHTML = `<span><span class="help-lang-nl">LEX-zijde</span><span class="help-lang-en">LEX side</span></span><select id="lexAxisSideSelect"></select><small class="config-item-help"><span class="help-lang-nl">Oost is de startdefault. West/Oost lezen boven→beneden; Noord/Zuid lezen links→rechts. Naar voren betekent omhoog of naar links.</span><span class="help-lang-en">East is the startup default. West/East read top-to-bottom; North/South read left-to-right. Forward means upward or leftward.</span></small>`;
+    fillSelect(lexAxisSideLabel.querySelector('select'), LEX_AXIS_SIDE_OPTIONS, validLexAxisSide(state.lexAxisSide));
+    lexAxisSideLabel.querySelector('select').addEventListener('change', event => setLexAxisSide(event.target.value));
+    const orientationCard = document.createElement('section');
+    orientationCard.className = 'panel-card config-orientation-card';
+    orientationCard.dataset.configCard = 'lex-orientation';
+    orientationCard.innerHTML = `
+      <div class="config-section-heading"><div><span class="config-section-kicker">Algemeen</span><h2><span class="help-lang-nl">Presentatie en leesrichting</span><span class="help-lang-en">Presentation and reading direction</span></h2></div><span class="config-section-number">1</span></div>
+      <p class="inline-help"><span class="help-lang-nl">Algemeen voor alle berekende views, waaronder Language Tree, Uiting en Anafoor · multi-OGN. Niet van toepassing op Greedy Grow en Random. De uiting blijft natuurlijk lezen; tekst blijft rechtop.</span><span class="help-lang-en">General for all calculated views, including Language Tree, Utterance and Anaphor · multi-OGN. Not applicable to Greedy Grow and Random. Reading stays natural and text remains upright.</span></p>
+      <div class="lex-axis-choice-grid" role="group" aria-label="LEX-zijde kiezen">
+        <button type="button" data-lex-axis-side-choice="west"><strong>West</strong><small>↓</small></button>
+        <button type="button" data-lex-axis-side-choice="east"><strong><span class="help-lang-nl">Oost</span><span class="help-lang-en">East</span></strong><small>↓ · default</small></button>
+        <button type="button" data-lex-axis-side-choice="north"><strong><span class="help-lang-nl">Noord</span><span class="help-lang-en">North</span></strong><small>→</small></button>
+        <button type="button" data-lex-axis-side-choice="south"><strong><span class="help-lang-nl">Zuid</span><span class="help-lang-en">South</span></strong><small>→</small></button>
+      </div>`;
+    orientationCard.appendChild(lexAxisSideLabel);
+    const horizontalLexUnits = document.createElement('div');
+    horizontalLexUnits.className = 'check-grid horizontal-lex-unit-config';
+    horizontalLexUnits.innerHTML = `<div class="config-item-help"><strong><span class="help-lang-nl">Noord/Zuid · LEX per kernzin</span><span class="help-lang-en">North/South · LEX per kernel clause</span></strong></div>`;
+    for (let index = 1; index <= 8; index += 1) {
+      const unit = `K${index}`;
+      const label = document.createElement('label');
+      label.className = 'toggle-line';
+      label.innerHTML = `<input type="checkbox" ${state.horizontalLexUnits[unit] !== false ? 'checked' : ''}><span>${unit}</span>`;
+      label.querySelector('input').addEventListener('change', event => { state.horizontalLexUnits[unit] = event.target.checked; markConfigDirty(`LEX ${unit}`); render(); });
+      horizontalLexUnits.appendChild(label);
+    }
+    orientationCard.appendChild(horizontalLexUnits);
+    orientationCard.querySelectorAll('[data-lex-axis-side-choice]').forEach(button => {
+      button.addEventListener('click', () => setLexAxisSide(button.getAttribute('data-lex-axis-side-choice')));
+    });
     const helpLayoutLabel = document.createElement('label');
     helpLayoutLabel.className = 'select-field';
     helpLayoutLabel.innerHTML = `<span><span class="help-lang-nl">LEESMIJ-indeling</span><span class="help-lang-en">README layout</span></span><select id="helpLayoutModeSelect"><option value="auto">Automatic</option><option value="stacked">List above text</option><option value="side">List left, text right</option></select><small class="config-item-help"><span class="help-lang-nl">Automatisch gebruikt links-rechts alleen op mobiel liggend; elders staat de lijst boven de tekst.</span><span class="help-lang-en">Automatic uses side-by-side only on mobile landscape; elsewhere the list is above the text.</span></small>`;
@@ -13587,6 +13975,7 @@
     const viewFitLabel = els.viewFitSelect?.closest?.('label');
     if (viewFitLabel) generalViewGrid.appendChild(viewFitLabel);
     generalViewGrid.appendChild(helpLayoutLabel);
+    generalUiCard.appendChild(orientationCard);
     generalUiCard.appendChild(generalViewGrid);
     const lineStyleField = treeCard.querySelector('.line-style-field');
     if (lineStyleField) generalUiCard.appendChild(lineStyleField);
@@ -13607,7 +13996,12 @@
 
     const treeHeading = treeCard.querySelector(':scope > h2');
     treeHeading?.insertAdjacentElement('afterend', maxCallout);
-    maxCallout.insertAdjacentElement('afterend', primaryViewGrid);
+    const treeLayoutCard = document.createElement('section');
+    treeLayoutCard.className = 'panel-card config-tree-layout-card';
+    treeLayoutCard.dataset.configCard = 'tree-layout';
+    treeLayoutCard.innerHTML = `<div class="config-section-heading"><div><span class="config-section-kicker">Language Tree</span><h2><span class="help-lang-nl">Boom en venster</span><span class="help-lang-en">Tree and viewport</span></h2></div><span class="config-section-number">2</span></div>`;
+    treeLayoutCard.appendChild(primaryViewGrid);
+    maxCallout.insertAdjacentElement('afterend', treeLayoutCard);
 
     const logSettingsCard = document.createElement('section');
     logSettingsCard.className = 'panel-card config-log-settings-card';
@@ -14408,7 +14802,7 @@
     if (els.mainSentenceSummary) els.mainSentenceSummary.textContent = t.sentence;
     if (els.mainAdverbSummary && (state.selectedAdverbId === 'none' || !state.selectedAdverbId)) els.mainAdverbSummary.textContent = t.adverb;
     if (els.sourceAxisSummaryLabel) els.sourceAxisSummaryLabel.textContent = t.projections;
-    if (els.mainExtraSummary) els.mainExtraSummary.textContent = t.logOrder;
+    if (els.mainExtraSummary) els.mainExtraSummary.textContent = 'Extra';
     setText('#mainSouthHeading', t.logOrder);
     setText('#openHelpButton, #openHelpFromConfigButton', t.readme);
     setText('#openConfigButton, #openConfigFromHelpButton', t.config);
@@ -15526,6 +15920,11 @@
       greedyGrowConfig: normalizeGreedyGrowConfig(state.greedyGrowConfig),
       randomPlacementConfig: normalizeRandomPlacementConfig(state.randomPlacementConfig),
       lexProjectionColor: state.lexProjectionColor,
+      lexAxisSide: validLexAxisSide(state.lexAxisSide),
+      desktopTestmateriaalListCount: validTestmateriaalListCount(state.desktopTestmateriaalListCount, 2),
+      mobileTestmateriaalListCount: validTestmateriaalListCount(state.mobileTestmateriaalListCount, 1),
+      horizontalLexUnits: normalizeHorizontalLexUnits(state.horizontalLexUnits),
+      canvasHorizontalAlignment: validCanvasHorizontalAlignment(state.canvasHorizontalAlignment),
       syntProjectionColor: state.syntProjectionColor,
       logProjectionColor: state.logProjectionColor,
       gridColor: state.gridColor,
@@ -15680,6 +16079,11 @@
     stopDirectPlacementPlayback();
     state.directPlacementState = null;
     if (typeof snapshot.lexProjectionColor === 'string') state.lexProjectionColor = snapshot.lexProjectionColor;
+    if (typeof snapshot.lexAxisSide === 'string') state.lexAxisSide = validLexAxisSide(snapshot.lexAxisSide);
+    if (snapshot.desktopTestmateriaalListCount != null) state.desktopTestmateriaalListCount = validTestmateriaalListCount(snapshot.desktopTestmateriaalListCount, 2);
+    if (snapshot.mobileTestmateriaalListCount != null) state.mobileTestmateriaalListCount = validTestmateriaalListCount(snapshot.mobileTestmateriaalListCount, 1);
+    if (snapshot.horizontalLexUnits && typeof snapshot.horizontalLexUnits === 'object') state.horizontalLexUnits = normalizeHorizontalLexUnits(snapshot.horizontalLexUnits);
+    if (typeof snapshot.canvasHorizontalAlignment === 'string') state.canvasHorizontalAlignment = validCanvasHorizontalAlignment(snapshot.canvasHorizontalAlignment);
     if (typeof snapshot.syntProjectionColor === 'string') state.syntProjectionColor = snapshot.syntProjectionColor;
     if (typeof snapshot.logProjectionColor === 'string') state.logProjectionColor = snapshot.logProjectionColor;
     if (typeof snapshot.gridColor === 'string') state.gridColor = snapshot.gridColor;
@@ -15729,6 +16133,11 @@
     if (Array.isArray(savedTopMenus)) state.topMenusAbove = normalizeTopMenusAbove(savedTopMenus);
     try {
       localStorage.setItem('opengraph_projection_color_lex', state.lexProjectionColor);
+      localStorage.setItem('opengraph_lex_axis_side', validLexAxisSide(state.lexAxisSide));
+      localStorage.setItem('opengraph_desktop_testmateriaal_lists', String(state.desktopTestmateriaalListCount));
+      localStorage.setItem('opengraph_mobile_testmateriaal_lists', String(state.mobileTestmateriaalListCount));
+      localStorage.setItem('opengraph_horizontal_lex_units', JSON.stringify(normalizeHorizontalLexUnits(state.horizontalLexUnits)));
+      localStorage.setItem('opengraph_canvas_horizontal_alignment', validCanvasHorizontalAlignment(state.canvasHorizontalAlignment));
       localStorage.setItem('opengraph_projection_color_synt', state.syntProjectionColor);
       localStorage.setItem('opengraph_projection_color_log', state.logProjectionColor);
       localStorage.setItem('opengraph_grid_color', state.gridColor);
@@ -16427,6 +16836,14 @@
     document.querySelectorAll('[data-placement-mode]').forEach(button => {
       button.addEventListener('click', () => setPlacementMode(button.dataset.placementMode));
     });
+    document.querySelectorAll('[data-lex-axis-side-choice]').forEach(button => {
+      if (button.closest('.config-orientation-card')) return;
+      button.addEventListener('click', () => {
+        if (directPlacementActive()) return;
+        setLexAxisSide(button.getAttribute('data-lex-axis-side-choice'));
+        if (els.mainLexOrientationMenu) els.mainLexOrientationMenu.open = false;
+      });
+    });
     els.projectionBoxDraggableInput?.addEventListener('change', event => { updateProjectionBoxDraggable(event.target.checked); appendConfigLog('change-projection-box-draggable', { enabled: !!event.target.checked }); markConfigDirty('Projecties-box'); });
     els.southBoxDraggableInput?.addEventListener('change', event => { updateSouthBoxDraggable(event.target.checked); appendConfigLog('change-south-box-draggable', { enabled: !!event.target.checked }); markConfigDirty('Taalactiebox'); });
     const updateLexFreeSlotCount = event => { state.lexFreeSlotCount = Math.max(0, Math.min(8, Number(event.target.value) || 0)); resetManualViewBox(); render(); };
@@ -16724,6 +17141,7 @@
     await loadStructureConfig();
     await loadProjectConfigLayers();
     projectConfigStatus.browserLoaded = loadSavedConfigSnapshot();
+    enforceEastStartupDefault();
     syncProjectConfigStatus();
     const requestedLanguage = queryParamValue('lang', 'language');
     if (requestedLanguage) state.language = normalizeLanguage(requestedLanguage.toLowerCase());

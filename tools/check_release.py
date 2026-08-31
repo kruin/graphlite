@@ -73,6 +73,7 @@ required_files = [
     "start_local_viewer.bat", "start_local_viewer.py",
     "check_release.bat", "publish_checked.bat",
     "tools/check_release.py", "tools/normalize_text_files.py", "tools/check_text_normalization.py",
+    "tools/sync_source_build.py",
     "tools/check_local_start.py", "tools/check_config_tabs_and_menus.py",
     "tools/check_examples_roundtrip.py", "tools/check_log_slot_distance.py",
     "tools/check_lex_horizontal_projection.py", "tools/check_projection_cleanup.py",
@@ -163,8 +164,8 @@ require(editor_config, "insert_final_newline = true", "editor-finale-EOL-beleid"
 require(editor_config, "[*.{bat,cmd,ps1}]", "editor-Windows-scriptbeleid")
 
 # Version identity and the paired entry pages.
-if not VERSION or VERSION != "v2.0.0-rc.45":
-    errors.append(f"VERSION.txt moet v2.0.0-rc.45 bevatten, gevonden: {VERSION!r}")
+if not VERSION or VERSION != "v3.1.0-rc.10":
+    errors.append(f"VERSION.txt moet v3.1.0-rc.10 bevatten, gevonden: {VERSION!r}")
 for rel in ["index.html", "viewer.html", "viewer.js", "reset-cache.html", "sw.js"]:
     if VERSION not in read(rel):
         errors.append(f"versie ontbreekt in {rel}")
@@ -273,8 +274,8 @@ require(read("maak-volledige-zip.bat"), "$parts -contains 'backups'", "lokale DB
 require(read("check_release.bat"), "check_multi_ogn_anaphor.js", "multi-OGN-regressie in releaseflow")
 runtime_multi_ogn = read("tools/check_multi_ogn_anaphor_runtime.js")
 for marker, label in [
-    ("await page.click('#mainViewSummary');", "browsertest opent eerst het hoofdmenu"),
-    ("#mainViewMenu[open] [data-placement-mode=\"multi-ogn-anaphor\"]", "browsertest kiest zichtbare modus"),
+    ("await page.click('#mainSentenceSummary');", "browsertest opent de zichtbare testmateriaallijst"),
+    ("#mainSentenceMenu[open] #mainSentenceOptions [data-option-id=\"ik-zie-man-hij-draagt-hoed\"]", "browsertest kiest zichtbaar multi-OGN-testmateriaal"),
     (":scope > .node-shape-layer > .node-shape[data-node-id]", "browsertest gebruikt actuele knooplaag"),
     ('[data-config-scope-button="general"]', "browsertest opent algemene config voor export"),
     ('[data-config-tab-button="files"]', "browsertest opent zichtbare bestandentab voor export"),
@@ -793,6 +794,7 @@ for marker, label in [
 ]:
     require(start_bat, marker, label)
 require(publish_bat, "SOURCE_BUILD.txt", "publicatiecontrole op bronstand")
+require(publish_bat, "python tools\\sync_source_build.py", "synchronisatie van bronstand vóór releasecontrole")
 if "Invoke-WebRequest" in start_bat:
     errors.append("start_local_viewer.bat gebruikt nog de foutgevoelige PowerShell-probe")
 if "for /f" in start_bat.lower():
@@ -808,7 +810,7 @@ for marker, label in [
 ]:
     require(local_launcher, marker, label)
 source_build = read("SOURCE_BUILD.txt").strip()
-if source_build != "v2.0.0-rc.45-mobile-catalog-spoken-lex-config-interface-20260830.74":
+if source_build != "v3.1.0-rc.10-unified-multi-ogn-demo-route-20260831.9":
     errors.append(f"onverwachte of lege SOURCE_BUILD.txt: {source_build!r}")
 
 leesmij = read("LEESMIJ.md")

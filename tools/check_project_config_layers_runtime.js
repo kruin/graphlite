@@ -4,7 +4,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const http = require('node:http');
 const path = require('node:path');
-const { chromium } = require('playwright');
+const { chromium, launchChromium } = require('./launch_chromium');
 
 const root = path.resolve(__dirname, '..');
 const version = fs.readFileSync(path.join(root, 'VERSION.txt'), 'utf8').trim();
@@ -89,7 +89,7 @@ async function createServer() {
   const server = await createServer();
   const address = server.address();
   const baseUrl = `http://127.0.0.1:${address.port}/`;
-  const browser = await chromium.launch({
+  const browser = await launchChromium(chromium, {
     headless: true,
     ...(process.env.OGN_CHROMIUM_EXECUTABLE ? { executablePath: process.env.OGN_CHROMIUM_EXECUTABLE } : {})
   });

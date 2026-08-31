@@ -4,7 +4,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const http = require('node:http');
 const path = require('node:path');
-const { chromium } = require('playwright');
+const { chromium, launchChromium } = require('./launch_chromium');
 
 const root = path.resolve(__dirname, '..');
 const itemId = 'jan-beloonde-jek-omdat-die-het-bot-terugbracht';
@@ -27,7 +27,7 @@ function startServer() {
 
 (async () => {
   const local = await startServer();
-  const browser = await chromium.launch({ headless:true, args:['--no-sandbox', '--disable-dev-shm-usage'] });
+  const browser = await launchChromium(chromium, { headless:true, args:['--no-sandbox', '--disable-dev-shm-usage'] });
   const page = await browser.newPage({ viewport:{ width:1440, height:1000 } });
   const pageErrors = [];
   page.on('pageerror', error => pageErrors.push(error.message));

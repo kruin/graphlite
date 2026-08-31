@@ -3,6 +3,7 @@
 .gitignore
 .nojekyll
 FUNCTIONAL_DATABASE_COMPACT.md
+LEX_AXIS_ORIENTATIONS.md
 TESTMATERIAAL_BEHEER.md
 data/catalog.public.json
 data/testmateriaal.sqlite
@@ -68,6 +69,7 @@ RECURSIVE_LAYOUT_AND_APPLICATION_CONTRACT.md
 S1_S2_RELATION_TEST_FIXTURES.md
 SOURCE_BASE.md
 SOURCE_BUILD.txt
+SOURCE_CHANGES_V3.1.0-rc.10.md
 TEST-PUBLICATIE-FASE-1.bat
 SOURCE_CHANGES_V2.0.0-rc.10.md
 SOURCE_CHANGES_V2.0.0-rc.11.md
@@ -342,12 +344,15 @@ tools/check_release.py
 tools/check_release_zip_batch.py
 tools/check_social_and_linguistic_export.py
 tools/check_text_normalization.py
+tools/check_lex_axis_orientations.js
 tools/check_utterance_kernel_views.js
 tools/check_utterances.js
 tools/check_viewport_switch_runtime.js
 tools/export_publication_carousel.js
 tools/normalize_text_files.py
+tools/launch_chromium.js
 tools/sync_anaphor_default_config.js
+tools/sync_source_build.py
 utterance-kernel-engine.js
 viewer.html
 viewer.js

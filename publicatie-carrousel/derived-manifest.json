@@ -1,6 +1,6 @@
 {
   "schema": "opengraph-publication-carousel-derived-v1",
-  "app_version": "v2.0.0-rc.45",
+  "app_version": "v3.1.0-rc.10",
   "generated_by": "tools/export_publication_carousel.js",
   "inputs": [
     {
@@ -13,11 +13,11 @@
     },
     {
       "path": "VERSION.txt",
-      "sha256": "d7ef9af82b73bb412a57cfda82fdfc19ce108f3f9641f5e659548147e4bd0157"
+      "sha256": "7e1936931462dac543b96821845584866e646cfa37e6c7e35eeb6903e15738fc"
     },
     {
       "path": "tools/export_publication_carousel.js",
-      "sha256": "3ee38cc644e387aca49b84e37d100e854c01798c8cfc7ee0f2ae0cdca0f6e700"
+      "sha256": "8669c0378660af2a96b32d370d20a21194c7c5d762670938d6eee348327a3c57"
     }
   ],
   "outputs": [

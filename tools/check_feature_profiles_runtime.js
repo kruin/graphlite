@@ -1,7 +1,7 @@
 'use strict';
 
 const assert = require('node:assert/strict');
-const { chromium } = require('playwright');
+const { chromium, launchChromium } = require('./launch_chromium');
 
 const baseUrl = process.argv[2] || 'http://127.0.0.1:8088/';
 const appUrl = new URL('index.html?runtime-profile-check=1', baseUrl).toString();
@@ -23,7 +23,7 @@ async function waitForViewer(page) {
 }
 
 (async () => {
-  const browser = await chromium.launch({
+  const browser = await launchChromium(chromium, {
     headless: true,
     ...(process.env.OGN_CHROMIUM_EXECUTABLE ? { executablePath: process.env.OGN_CHROMIUM_EXECUTABLE } : {})
   });

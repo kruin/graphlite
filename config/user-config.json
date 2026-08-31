@@ -1,6 +1,6 @@
 {
   "schema": "opengraph-project-config",
-  "version": "v2.0.0-rc.45",
+  "version": "v3.1.0-rc.10",
   "kind": "user",
   "enabled": false,
   "description": "Placeholder. Use Config > Files & export > Write current Config to project to replace this file.",

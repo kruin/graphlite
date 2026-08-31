@@ -1,5 +1,17 @@
 # Projectie-master-spec · bronhoogte, planning en expliciete Wissels
 
+## LEX-zijde vanaf v3.1.0-rc.10
+
+De canonieke LEX-zijde blijft West. Config kan de volledige assenruimte direct
+naar Oost, Noord of Zuid oriënteren. De uiting leest op West/Oost altijd
+boven→beneden en op Noord/Zuid altijd links→rechts. De boom ligt aan de
+binnenzijde van het veld; bij Noord en Zuid ontspringt S/Clause links.
+
+`forward`/`naar voren in de uiting` is de semantische bewegingsrichting:
+geometrisch omhoog op West/Oost en naar links op Noord/Zuid. Zij vervangt
+`upward` als algemene regelnaam; `upward` blijft alleen een eigenschap van de
+verticale presentaties. Flip en LEX-zijde zijn onafhankelijke operaties.
+
 Normatieve projectiespecificatie voor OpenGraph Lite Viewer `v2.0.0-rc.45`.
 
 ## 0a. Uiting en kernzinnen

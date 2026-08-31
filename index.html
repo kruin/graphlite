@@ -1,7 +1,7 @@
 <!doctype html>
 
-<!-- OPENGRAPH_ROOT_VIEWER_INDEX_v2.0.0-rc.45: this root index is the app, not docs. -->
-<html data-opengraph-app="viewer" data-version="v2.0.0-rc.45" lang="en">
+<!-- OPENGRAPH_ROOT_VIEWER_INDEX_v3.1.0-rc.10: this root index is the app, not docs. -->
+<html data-opengraph-app="viewer" data-version="v3.1.0-rc.10" lang="en">
 <head>
 <meta charset="utf-8"/>
 <meta content="no-store, no-cache, must-revalidate, max-age=0" http-equiv="Cache-Control"/>
@@ -10,11 +10,11 @@
 <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport"/>
 <meta content="#0f172a" name="theme-color"/>
 <meta content="OpenGraph Lite Viewer: vrije JAN-bronknopen, edits, LEX-plaatsingsregels en projecties." name="description"/>
-<title>OpenGraph Lite Viewer v2.0.0-rc.45</title>
+<title>OpenGraph Lite Viewer v3.1.0-rc.10</title>
 <script>
     (function() {
-      var VERSION = 'v2.0.0-rc.45';
-      var SOURCE_BUILD = 'v2.0.0-rc.45-mobile-catalog-spoken-lex-config-interface-20260830.74';
+      var VERSION = 'v3.1.0-rc.10';
+      var SOURCE_BUILD = 'v3.1.0-rc.10-unified-multi-ogn-demo-route-20260831.9';
       window.__OPENGRAPH_EXPECTED_VERSION__ = VERSION;
       function runCacheCleanupOnce() {
         var flag = 'opengraph-cache-cleaned-' + VERSION + '-' + SOURCE_BUILD;
@@ -54,13 +54,13 @@
 <link href="icons/icon-192.svg" rel="icon" type="image/svg+xml"/>
 <!-- v4552: manifest disabled in local/dev build to avoid PWA/service-worker confusion. -->
 <!-- <link rel="manifest" href="manifest.webmanifest"> -->
-<link href="styles.css?v2.0.0-rc.45" rel="stylesheet"/>
+<link href="styles.css?v3.1.0-rc.10" rel="stylesheet"/>
 </head>
 <body class="main-screen-active">
 <header class="app-header">
 <div>
 <div class="eyebrow">OpenGraph · JaN · Open Notation</div>
-<h1>OpenGraph Lite Viewer <span class="version-tag">v2.0.0-rc.45</span></h1>
+<h1>OpenGraph Lite Viewer <span class="version-tag">v3.1.0-rc.10</span></h1>
 <p class="header-subtitle">Top menu with Sentence, Syntax / Functions, Projections, LOG order, Language, README and Config.</p>
 </div>
 <button class="ghost hidden" id="installButton" type="button">Install</button>
@@ -70,6 +70,19 @@
 <section class="language-tree-view-picker central-view-toolbar" id="languageTreeViewPicker" aria-label="Syntax of Functies kiezen">
 <div aria-label="Syntax of Functies kiezen" class="compact-choice-list main-menu-option-list main-menu-view-options" id="mainViewOptions" role="listbox"></div>
 </section>
+<details class="compact-choice-menu main-lex-orientation-menu top-menu-item" id="mainLexOrientationMenu">
+<summary id="mainLexOrientationSummary" title="Kies de algemene LEX-zijde">LEX · Oost</summary>
+<div class="compact-choice-popover main-lex-orientation-popover">
+<strong><span class="help-lang-nl">Presentatie</span><span class="help-lang-en">Presentation</span></strong>
+<div class="main-lex-orientation-grid" role="group" aria-label="Algemene LEX-zijde">
+<button type="button" data-lex-axis-side-choice="west">West ↓</button>
+<button type="button" data-lex-axis-side-choice="east">Oost ↓ · default</button>
+<button type="button" data-lex-axis-side-choice="north">Noord →</button>
+<button type="button" data-lex-axis-side-choice="south">Zuid →</button>
+</div>
+<small><span class="help-lang-nl">Algemeen voor alle berekende views; niet voor Greedy Grow en Random.</span><span class="help-lang-en">General for all calculated views; not for Greedy Grow and Random.</span></small>
+</div>
+</details>
 <nav aria-label="Topmenu" class="main-top-menu">
 <details class="compact-choice-menu main-sentence-menu top-menu-item" id="mainSentenceMenu">
 <summary id="mainSentenceSummary" title="Kies de voorbeeldzin">Zin</summary>
@@ -83,7 +96,7 @@
 <div aria-label="Bijwoord kiezen" class="compact-choice-list main-menu-option-list" id="mainAdverbOptions" role="listbox"></div>
 </div>
 </details>
-<details class="compact-choice-menu main-view-menu top-menu-item" id="mainViewMenu">
+<details class="compact-choice-menu main-view-menu top-menu-item" id="mainViewMenu" hidden>
 <summary id="mainViewSummary" title="Choose a placement method">Language Tree</summary>
 <div aria-label="View kiezen" class="compact-choice-popover top-menu-popover top-menu-view-popover">
 <section class="placement-mode-picker" aria-label="Plaatsingsmethode">
@@ -115,8 +128,12 @@
 </div>
 </details>
 <details class="compact-choice-menu main-extra-menu main-log-menu top-menu-item" id="mainExtraMenu">
-<summary id="mainExtraSummary" title="Kies de LOG-volgorde">LOG-volgorde</summary>
-<div aria-label="LOG-volgorde kiezen" class="compact-choice-popover top-menu-popover top-menu-log-popover">
+<summary id="mainExtraSummary" title="Extra opties">Extra</summary>
+<div aria-label="Extra opties" class="compact-choice-popover top-menu-popover top-menu-log-popover">
+<div class="placement-mode-direct-options">
+<button class="placement-mode-option" data-placement-mode="greedy-grow" type="button"><strong>Greedy Grow</strong><small>direct · OGN-illustratie</small></button>
+<button class="placement-mode-option" data-placement-mode="random" type="button"><strong>Random</strong><small>direct · OGN-illustratie</small></button>
+</div>
 <h3 class="top-menu-panel-heading" id="mainSouthHeading">LOG-volgorde</h3>
 <div aria-label="LOG-volgorde kiezen" class="extra-south-control" data-south-logical-control="">
 <button id="mainSouthPrevButton" title="Vorige LOG-volgorde" type="button">‹</button>
@@ -142,6 +159,7 @@
 <select aria-hidden="true" class="main-control-select-compat" id="mainViewSelect" tabindex="-1"></select>
 <select aria-hidden="true" class="main-control-select-compat" id="mainProjectionSelect" tabindex="-1"></select>
 </section>
+<p class="lex-axis-mobile-warning" id="lexAxisMobileWarning" hidden><strong>Let op:</strong> de horizontale uiting gebruikt woordlengte-afhankelijke ruimte en kan op mobiel horizontaal pannen of FIT vereisen.</p>
 <section aria-live="polite" class="main-active-utterance" id="mainActiveUtterance">
 <span class="main-active-utterance-label" id="mainActiveUtteranceLabel">Uiting</span>
 <strong class="main-active-utterance-text" id="mainActiveUtteranceText">—</strong>
@@ -535,14 +553,14 @@
 <p>Een zichtbare Wissel wordt alleen uitgevoerd wanneer het doel op het scherm hoger ligt dan de horizontale bronprojectie. De renderer tekent nooit stilzwijgend een pijl omlaag.</p>
 <ul><li><code>HOND BIJT MAN</code>: HOND en MAN blijven op bronhoogte; alleen BIJT gaat naar de vrije V2-rij tussen beide.</li><li><code>BIJT HOND MAN?</code>: BIJT gaat naar V1, vóór HOND.</li><li><code>VROUW BREIT TRUI</code>: het lexicon staat alleen VROUW als animate agens en TRUI als inanimate patiens toe.</li><li><code>DAT HOND MAN BIJT</code> en <code>OMDAT HOND MAN BIJT</code>: DAT/OMDAT wordt rechtstreeks in Comp geschreven en heeft geen pijl.</li></ul>
 <p><strong>Grens:</strong> “omhoog” beschrijft uitsluitend de tekening. Het is geen zelfstandige uitspraak over syntactische hiërarchie of c-command. Downward/post-V2, Heavy NP Shift, extrapositie en Lowering blijven buiten het actieve profiel.</p>
-<a class="button-link" href="LEX_MOVEMENT_RULES.md?v2.0.0-rc.45">Volledige LEX-regels</a>
+<a class="button-link" href="LEX_MOVEMENT_RULES.md?v3.1.0-rc.10">Volledige LEX-regels</a>
 </div>
 <div class="help-lang-en">
 <h3>Upward switches only for now</h3>
 <p>A visible switch is executed only when its target is higher on screen than the horizontal source projection. The renderer never silently draws a downward arrow.</p>
 <ul><li><code>HOND BIJT MAN</code>: HOND and MAN remain at source height; only BIJT moves to the free V2 row between them.</li><li><code>BIJT HOND MAN?</code>: BIJT moves to V1, before HOND.</li><li><code>VROUW BREIT TRUI</code>: the lexicon permits only VROUW as animate agent and TRUI as inanimate patient.</li><li><code>DAT HOND MAN BIJT</code> and <code>OMDAT HOND MAN BIJT</code>: DAT/OMDAT is written directly in Comp and has no arrow.</li></ul>
 <p><strong>Boundary:</strong> “upward” describes the drawing only. It is not an independent claim about syntactic hierarchy or c-command. Downward/post-V2, Heavy NP Shift, extraposition, and Lowering remain outside the active profile.</p>
-<a class="button-link" href="LEX_MOVEMENT_RULES.md?v2.0.0-rc.45">Complete LEX rules</a>
+<a class="button-link" href="LEX_MOVEMENT_RULES.md?v3.1.0-rc.10">Complete LEX rules</a>
 </div>
 </article>
 <article class="help-topic-panel" data-help-topic="sentence-types">
@@ -715,17 +733,17 @@
 </section>
 <section aria-label="Hoofdbediening" class="toolbar">
 <div aria-label="Zin-input" class="input-sentence-tools">
-<a class="button-link" href="examples-input.html?v2.0.0-rc.45" title="Open de HTML-inputfile met voorbeeldzinnen, subject vet en object cursief">HTML-input</a>
-<a class="button-link" data-feature="adverbs" hidden="" href="examples-adverbs.html?v2.0.0-rc.45" title="Voorbeeldset met één bijwoord per zin en default-host per categorie">Bijwoordvoorbeelden</a>
-<a class="button-link" data-feature="adverbs" hidden="" href="docs/LEX_ADVERB_PLACEMENT_RULES_CHECKED.md?v2.0.0-rc.45" title="Bijwoordklasse en scope als input voor LOG-minors; default en gemarkeerd">Bijwoordregels</a>
-<a class="button-link" data-feature="adverbs" hidden="" href="examples-adverb-rules-v4552.html?v2.0.0-rc.45" title="Controle per bijwoord: uitzonderingen en eigen regels">Bijwoordcheck</a>
-<a class="button-link" data-feature="adverbs" hidden="" href="examples-adverb-rules-v4552.html?v2.0.0-rc.45" title="Controle per bijwoord: uitzonderingen en eigen regels">Bijwoordcheck</a>
-<a class="button-link" href="lexicon-config.html?v2.0.0-rc.45" title="Leesbare lexicon-config voor voorbeeldzinnen">Lexicon</a>
-<a class="button-link" href="lexicon-editor.html?v2.0.0-rc.45" title="Lexicon én korte voorbeelduitingen beheren; exporteert lexicon-config.html en examples-input.html">Lexicon+uitingen-editor</a>
-<a class="button-link" href="structure-editor.html?v2.0.0-rc.45" title="Bewerk syntax-, functional- en LOG-slotconfig">Structure-editor</a>
-<a class="button-link" href="docs/docs-home.html?v2.0.0-rc.45" title="Projectcontext, layoutspec en release notes">Docs</a>
-<a class="button-link" href="lex-movement-rules.html?v2.0.0-rc.45" title="Simpele uitleg van de LEX-Wissels per zinstype">Plaatsingsregels</a>
-<a class="button-link" href="reset-cache.html?v2.0.0-rc.45" title="Verwijder browsercache/service worker en open de viewer opnieuw">Reset cache</a>
+<a class="button-link" href="examples-input.html?v3.1.0-rc.10" title="Open de HTML-inputfile met voorbeeldzinnen, subject vet en object cursief">HTML-input</a>
+<a class="button-link" data-feature="adverbs" hidden="" href="examples-adverbs.html?v3.1.0-rc.10" title="Voorbeeldset met één bijwoord per zin en default-host per categorie">Bijwoordvoorbeelden</a>
+<a class="button-link" data-feature="adverbs" hidden="" href="docs/LEX_ADVERB_PLACEMENT_RULES_CHECKED.md?v3.1.0-rc.10" title="Bijwoordklasse en scope als input voor LOG-minors; default en gemarkeerd">Bijwoordregels</a>
+<a class="button-link" data-feature="adverbs" hidden="" href="examples-adverb-rules-v4552.html?v3.1.0-rc.10" title="Controle per bijwoord: uitzonderingen en eigen regels">Bijwoordcheck</a>
+<a class="button-link" data-feature="adverbs" hidden="" href="examples-adverb-rules-v4552.html?v3.1.0-rc.10" title="Controle per bijwoord: uitzonderingen en eigen regels">Bijwoordcheck</a>
+<a class="button-link" href="lexicon-config.html?v3.1.0-rc.10" title="Leesbare lexicon-config voor voorbeeldzinnen">Lexicon</a>
+<a class="button-link" href="lexicon-editor.html?v3.1.0-rc.10" title="Lexicon én korte voorbeelduitingen beheren; exporteert lexicon-config.html en examples-input.html">Lexicon+uitingen-editor</a>
+<a class="button-link" href="structure-editor.html?v3.1.0-rc.10" title="Bewerk syntax-, functional- en LOG-slotconfig">Structure-editor</a>
+<a class="button-link" href="docs/docs-home.html?v3.1.0-rc.10" title="Projectcontext, layoutspec en release notes">Docs</a>
+<a class="button-link" href="lex-movement-rules.html?v3.1.0-rc.10" title="Simpele uitleg van de LEX-Wissels per zinstype">Plaatsingsregels</a>
+<a class="button-link" href="reset-cache.html?v3.1.0-rc.10" title="Verwijder browsercache/service worker en open de viewer opnieuw">Reset cache</a>
 </div>
 <div class="button-row compact-actions">
 <button id="resetExampleButton" title="Herlaad het gekozen voorbeeld" type="button">Reset voorbeeld</button>
@@ -877,11 +895,11 @@
 <h2>Uitingen</h2>
 <p class="inline-help">Voeg voorbeeldzinnen toe via de editor. Start lokaal met <code>start_local_viewer.bat</code>; dan schrijft <strong>Opslaan</strong> direct naar <code>examples-input.html</code>. Daarna kun je hier de lijst herladen.</p>
 <div class="button-row">
-<a class="button-link primary" href="examples-editor.html?v2.0.0-rc.45" title="Voorbeeldzinnen toevoegen en opslaan">Uitingen-editor</a>
-<a class="button-link" href="examples-input.html?v2.0.0-rc.45" title="Leesbare HTML-input met voorbeeldzinnen">HTML-input</a>
-<a class="button-link" data-feature="adverbs" hidden="" href="examples-adverbs.html?v2.0.0-rc.45" title="Bijwoordvoorbeelden met default-host en gemarkeerde host">Bijwoordvoorbeelden</a>
-<a class="button-link" data-feature="adverbs" hidden="" href="docs/LEX_ADVERB_PLACEMENT_RULES_CHECKED.md?v2.0.0-rc.45" title="Bijwoordklasse en scope als input voor LOG-minors; default en gemarkeerd">Bijwoordregels</a>
-<a class="button-link" data-feature="adverbs" hidden="" href="examples-adverb-rules-v4552.html?v2.0.0-rc.45" title="Controle per bijwoord: uitzonderingen en eigen regels">Bijwoordcheck</a>
+<a class="button-link primary" href="examples-editor.html?v3.1.0-rc.10" title="Voorbeeldzinnen toevoegen en opslaan">Uitingen-editor</a>
+<a class="button-link" href="examples-input.html?v3.1.0-rc.10" title="Leesbare HTML-input met voorbeeldzinnen">HTML-input</a>
+<a class="button-link" data-feature="adverbs" hidden="" href="examples-adverbs.html?v3.1.0-rc.10" title="Bijwoordvoorbeelden met default-host en gemarkeerde host">Bijwoordvoorbeelden</a>
+<a class="button-link" data-feature="adverbs" hidden="" href="docs/LEX_ADVERB_PLACEMENT_RULES_CHECKED.md?v3.1.0-rc.10" title="Bijwoordklasse en scope als input voor LOG-minors; default en gemarkeerd">Bijwoordregels</a>
+<a class="button-link" data-feature="adverbs" hidden="" href="examples-adverb-rules-v4552.html?v3.1.0-rc.10" title="Controle per bijwoord: uitzonderingen en eigen regels">Bijwoordcheck</a>
 <button id="reloadExamplesButton" title="Herlees examples-input.html zonder de hele pagina opnieuw te openen" type="button">Herlaad uitingen</button>
 </div>
 </section>
@@ -1013,15 +1031,15 @@
 <div aria-label="Documentatie" class="mobile-sheet-section">
 <h3>Documentatie</h3>
 <div class="mobile-link-grid">
-<a href="docs/docs-home.html?v2.0.0-rc.45">Docs</a>
-<a href="lex-movement-rules.html?v2.0.0-rc.45">Plaatsingsregels</a>
-<a href="reset-cache.html?v2.0.0-rc.45">Reset cache</a>
+<a href="docs/docs-home.html?v3.1.0-rc.10">Docs</a>
+<a href="lex-movement-rules.html?v3.1.0-rc.10">Plaatsingsregels</a>
+<a href="reset-cache.html?v3.1.0-rc.10">Reset cache</a>
 </div>
 </div>
 <p class="mobile-sheet-note">Sleep met één vinger om te pannen. Knijp met twee vingers om te zoomen. FIT past het zichtvenster aan de huidige boom en named projections aan; de boom zelf verandert niet.</p>
 </section>
 <script>
-    window.__opengraphBoot = { version: 'v2.0.0-rc.45', sourceBuild: 'v2.0.0-rc.45-mobile-catalog-spoken-lex-config-interface-20260830.74', loaded: false, marker: 'viewer-index' };
+    window.__opengraphBoot = { version: 'v3.1.0-rc.10', sourceBuild: 'v3.1.0-rc.10-unified-multi-ogn-demo-route-20260831.9', loaded: false, marker: 'viewer-index' };
     function ogStatus(message) {
       var target = document.getElementById('actionFeedback') || document.body;
       if (target) target.textContent = message;
@@ -1034,7 +1052,7 @@
     });
     setTimeout(function() {
       if (!window.__opengraphBoot || !window.__opengraphBoot.loaded) {
-        ogStatus('Viewer start niet volledig. Gebruik Reset cache of open http://127.0.0.1:8088/reset-cache.html?v2.0.0-rc.45.');
+        ogStatus('Viewer start niet volledig. Gebruik Reset cache of open http://127.0.0.1:8088/reset-cache.html?v3.1.0-rc.10.');
       }
     }, 2500);
   </script>
@@ -1044,18 +1062,18 @@
       var isLocal = window.location.protocol === 'file:' || !host || host === 'localhost' || host === '127.0.0.1';
       if (!isLocal) return;
       var script = document.createElement('script');
-      script.src = 'local-mobile-test.js?v2.0.0-rc.45';
+      script.src = 'local-mobile-test.js?v3.1.0-rc.10';
       script.defer = true;
       document.head.appendChild(script);
     })();
   </script>
-<script defer="" src="greedy-grow-engine.js?v2.0.0-rc.45"></script>
-<script defer="" src="random-placement-engine.js?v2.0.0-rc.45"></script>
-<script defer="" src="anaphor-combinations-engine.js?v2.0.0-rc.45"></script>
-<script defer="" src="anaphor-lexicalization-engine.js?v2.0.0-rc.45"></script>
-<script defer="" src="multi-ogn-anaphor-play-engine.js?v2.0.0-rc.45"></script>
-<script defer="" src="multi-ogn-composition-engine.js?v2.0.0-rc.45"></script>
-<script defer="" src="utterance-kernel-engine.js?v2.0.0-rc.45"></script>
-<script defer="" src="viewer.js?v2.0.0-rc.45&amp;source=20260829.57"></script>
+<script defer="" src="greedy-grow-engine.js?v3.1.0-rc.10"></script>
+<script defer="" src="random-placement-engine.js?v3.1.0-rc.10"></script>
+<script defer="" src="anaphor-combinations-engine.js?v3.1.0-rc.10"></script>
+<script defer="" src="anaphor-lexicalization-engine.js?v3.1.0-rc.10"></script>
+<script defer="" src="multi-ogn-anaphor-play-engine.js?v3.1.0-rc.10"></script>
+<script defer="" src="multi-ogn-composition-engine.js?v3.1.0-rc.10"></script>
+<script defer="" src="utterance-kernel-engine.js?v3.1.0-rc.10"></script>
+<script defer="" src="viewer.js?v3.1.0-rc.10&amp;source=20260831.9"></script>
 </body>
 </html>

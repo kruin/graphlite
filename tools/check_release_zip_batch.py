@@ -57,6 +57,7 @@ for marker, label in [
     ('start "" "%USER_RESET_URL%"', "browseropening met gevulde URL"),
     ('call :ensure_playwright_runtime', "Playwright-preflight vóór releasechecks"),
     ('call "%~dp0installeer-carrousel-tools.bat"', "reproduceerbare herstelroute voor testtools"),
+    ('python tools\\sync_source_build.py', "bronstand-synchronisatie vóór releasecontrole"),
 ]:
     require(PUBLISH, marker, label)
 

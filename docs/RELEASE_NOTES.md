@@ -1,5 +1,17 @@
 # Release notes
 
+## v3.1.0-rc.10
+
+- Oost wordt eenmalig ná default-, user- en browser-Config als startstand
+  ingesteld; een oude Zuid-snapshot kan de release-default niet meer kapen.
+- Testmateriaal staat op desktop én mobiel in één volledige lijst. Config kan
+  per interface één tot vier lijstkolommen tonen, met behoud van groepskoppen.
+- Noord/Zuid kan LEX per kernzin K1–K8 aan- of uitzetten.
+- De Noord/Zuid-presentatie roteert de grafiek als één rigide eenheid. De
+  niet-uniforme rek die takken, knopen, omcirkelingen en labels uiteen trok is
+  verwijderd; gemeten woord- en labelbreedte blijft beschikbaar als
+  layoutmetadata.
+
 ## Bronstand .71 · Functional, database en Compact
 
 - De centrale tweestandenschakelaar **Syntax | Functional** staat permanent
@@ -1213,3 +1225,10 @@ Dit blijft een LEX/FUNC-regel. De SYNT-boom wordt niet gemuteerd.
 - Desktop en mobiel starten op deze veilige fit-modus.
 - De fitbox krijgt extra ondermarge voor LOG en extra rechterruimte voor de SYNT-as.
 - `strak`, `scroll` en `vast/debug` blijven beschikbaar als secundaire opties.
+# v3.1.0-rc.10
+
+Rc.10 vereenvoudigt het hoofdmenu: Language Tree en Anafoor zijn geen apart
+submenu meer; Greedy Grow en Random staan onder **Extra**. De Noord/Zuid-view
+houdt labels vrij, bepaalt horizontale ruimte uit de breedte van aanwezige
+grafische elementen en houdt boomknoopgroepen leesbaar. Browserchecks kunnen
+tevens een aanwezige Chrome/Edge-installatie gebruiken.

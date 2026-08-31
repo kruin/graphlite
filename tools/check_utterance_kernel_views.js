@@ -170,6 +170,7 @@ const state = {
   layoutDensity: 'standard', viewFitMode: 'fit', paradataEvents: [],
   multiOgnPlayEnabled: false, multiOgnPlayStep: 4,
   kernelBranchHorizontal: 'compact', kernelBranchVertical: 'compact', kernelBranchFlip: 'auto',
+  lexAxisSide: 'east',
   gridSizeHorizontal: '100', gridSizeVertical: '100',
   canvasPanEnabled: true, activePointers: new Map(), viewClickSuppressed: false,
   paradataSessionId: 'test', paradataStartedAt: '2026-08-24T00:00:00.000Z'
@@ -187,6 +188,7 @@ globalThis.OGNUtteranceKernels = kernelEngine;
 
 function multiOgnAnaphorComposition() { return currentComposition; }
 function multiOgnAnaphorActive() { return true; }
+function validLexAxisSide(value) { return ['west','east','north','south'].includes(value) ? value : 'east'; }
 function svgEl(tag, attributes = {}, content = '') { return new FakeElement(tag, attributes, content); }
 function baseSvg(classes) { els.svg.children = []; return svgEl('g', { class: classes }); }
 function validGridSize(value) { return ['60', '80', '100', '125', '150', '200'].includes(String(value)) ? String(value) : '100'; }
@@ -671,10 +673,10 @@ assert.ok(source.includes('payload?.data?.example?.anaphor_variant'), 'OPN-impor
 assert.ok(stylesheet.includes('stroke-width:var(--og-tree-line-width,3.55) !important'));
 assert.ok(stylesheet.includes('#graphSvg .utterance-kernel-view .node-main-label'),
   'Compacte free-node-weergave mist aangepaste knooplabels');
-assert.ok(browserRuntime.includes("await page.click('#mainViewSummary');"),
-  'Browsertest moet het hoofdmenu openen voordat de modusknop zichtbaar is');
-assert.ok(browserRuntime.includes("'#mainViewMenu[open] [data-placement-mode=\"multi-ogn-anaphor\"]'"),
-  'Browsertest moet de zichtbare modusknop binnen het geopende menu selecteren');
+assert.ok(browserRuntime.includes("await page.click('#mainSentenceSummary');"),
+  'Browsertest moet de zichtbare testmateriaallijst openen');
+assert.ok(browserRuntime.includes("'#mainSentenceMenu[open] #mainSentenceOptions [data-option-id=\"ik-zie-man-hij-draagt-hoed\"]'"),
+  'Browsertest moet multi-OGN via zichtbaar testmateriaal selecteren');
 assert.ok(browserRuntime.includes("':scope > .node-shape-layer > .node-shape[data-node-id]'"),
   'Browsertest moet knopen binnen de actuele vormlaag zoeken');
 assert.ok(browserRuntime.includes("await page.click('[data-config-scope-button=\"general\"]')"),

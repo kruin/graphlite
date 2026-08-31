@@ -70,6 +70,13 @@ if errorlevel 1 (
   goto :fail
 )
 
+echo Bronstand synchroniseren met SOURCE_BUILD.txt...
+python tools\sync_source_build.py
+if errorlevel 1 (
+  echo FOUT: bronstand kon niet worden gesynchroniseerd.
+  goto :fail
+)
+
 call check_release.bat
 if errorlevel 1 (
   echo FOUT: releasecontrole mislukt.

@@ -93,6 +93,7 @@ const sources = {
 for (const [source, markers] of [
   [sources.html, ['data-placement-mode="multi-ogn-anaphor"', 'multi-ogn-composition-engine.js']],
   [sources.js, ['MULTI_OGN_ANAPHOR_DEMO', 'function drawMultiOgnAnaphor()', "'data-directed': 'false'", 'composePair({']],
+  [sources.js, ["'data-lex-axis-side': verticalLexSide", "const lexOnEast = verticalLexSide === 'east'", "const inward = lexOnEast ? -1 : 1"]],
   [sources.css, ['.multi-ogn-coreference-line', '.multi-ogn-lex-axis']],
   [sources.docs, ['antecedent', 'anafoor', 'coreferentieel', 'star verschuiven', 'per afzonderlijke OGN']]
 ]) {

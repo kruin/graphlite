@@ -68,9 +68,16 @@ testitems in één genummerde dropdown boven de graph. De keuze voor
 **Automatisch/Desktop/Mobiel staand/Mobiel liggend** staat onder
 **Config → Algemeen**; Testmateriaal zelf staat niet in Config.
 
-Tijdens **Play** verschijnt de gerealiseerde LEX-uiting woord voor woord van
-boven naar beneden, alsof zij wordt uitgesproken. Reeds verschenen woorden
+Tijdens **Play** verschijnt de gerealiseerde LEX-uiting woord voor woord in de
+vaste leesrichting, alsof zij wordt uitgesproken. Reeds verschenen woorden
 blijven staan; daarna volgen relaties en het volledige eindbeeld.
+
+Vanaf v3.1.0-rc.10 kan **Config → Language Tree → LEX-zijde** West, Oost,
+Noord of Zuid kiezen. Oost is de startdefault; West blijft direct beschikbaar.
+West/Oost lezen boven→beneden; Noord/Zuid links→rechts. Een Wissel gaat
+semantisch **naar voren in de uiting**: omhoog op een verticale LEX-as en naar
+links op een horizontale LEX-as. Zie
+[`LEX_AXIS_ORIENTATIONS.md`](LEX_AXIS_ORIENTATIONS.md).
 
 ## Flip: structuur is geen woordvolgorde
 

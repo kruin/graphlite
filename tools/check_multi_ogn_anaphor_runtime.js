@@ -5,7 +5,7 @@ const fs = require('node:fs');
 const http = require('node:http');
 const os = require('node:os');
 const path = require('node:path');
-const { chromium } = require('playwright');
+const { chromium, launchChromium } = require('./launch_chromium');
 
 const root = path.resolve(__dirname, '..');
 const screenshotPath = path.resolve(os.tmpdir(), 'opengraph-runtime-checks', 'multi-ogn-anaphor.png');
@@ -59,10 +59,11 @@ async function readDownload(page, selector) {
 }
 
 async function selectMultiOgnAnaphor(page) {
-  await page.click('#mainViewSummary');
-  const selector = '#mainViewMenu[open] [data-placement-mode="multi-ogn-anaphor"]';
+  await page.click('#mainSentenceSummary');
+  const selector = '#mainSentenceMenu[open] #mainSentenceOptions [data-option-id="ik-zie-man-hij-draagt-hoed"]';
   await page.waitForSelector(selector, { state: 'visible' });
   await page.click(selector);
+  await page.waitForSelector('body.placement-multi-ogn-active', { state: 'attached' });
 }
 
 async function downloadVisibleConfigOpn(page) {
@@ -80,7 +81,7 @@ async function downloadVisibleConfigOpn(page) {
 
 (async () => {
   const local = await startServer();
-  const browser = await chromium.launch({
+  const browser = await launchChromium(chromium, {
     headless: true,
     ...(process.env.OGN_CHROMIUM_EXECUTABLE ? { executablePath: process.env.OGN_CHROMIUM_EXECUTABLE } : {}),
     args: ['--no-sandbox', '--disable-dev-shm-usage']
@@ -98,11 +99,13 @@ async function downloadVisibleConfigOpn(page) {
 
     // Regression: de popover zelf en de lijst mochten beide scrollen. Daardoor
     // konden de eerste drie zinnen boven het klikbare vlak verdwijnen.
+    const testedSentenceIds = [];
     for (let index = 1; index <= 3; index += 1) {
       await page.click('#mainSentenceSummary');
       const option = page.locator('#mainSentenceOptions .compact-choice-option').nth(index - 1);
       await option.waitFor({ state: 'visible' });
       const id = await option.getAttribute('data-option-id');
+      testedSentenceIds.push(id);
       await option.click();
       await page.waitForTimeout(80);
       const sentence = await page.evaluate(expected => ({
@@ -116,7 +119,8 @@ async function downloadVisibleConfigOpn(page) {
       assert.equal(sentence.error, false, `Zin ${index} geeft een tekenfout`);
     }
     const firstSentenceIds = await page.$$eval('#mainSentenceOptions .compact-choice-option', nodes => nodes.slice(0, 3).map(node => node.dataset.optionId));
-    assert.deepEqual(firstSentenceIds, ['hond-bijt-man', 'bijt-hond-man-vraag', 'dat-hond-man-bijt']);
+    assert.equal(firstSentenceIds[0], 'hond-bijt-man', 'de kale ingang is niet de eerste zin');
+    assert.deepEqual(firstSentenceIds, testedSentenceIds, 'de eerste drie zinnen zijn tijdens kiezen herschikt');
 
     await selectMultiOgnAnaphor(page);
     await page.waitForSelector('#graphSvg .multi-ogn-coreference-line', { state: 'attached' });
@@ -222,7 +226,7 @@ async function downloadVisibleConfigOpn(page) {
     assert.deepEqual(result.lex.map(item => item.index), [1, 2, 3, 4, 5, 6]);
     assert.deepEqual(result.lex.map(item => item.sentenceOrder), [1, 1, 1, 2, 2, 2]);
     assert.ok(result.lex.every((item, index) => index === 0 || item.y > result.lex[index - 1].y));
-    assert.deepEqual(result.hidden, { sentence: false, viewPicker: false, projections: true, log: true });
+    assert.deepEqual(result.hidden, { sentence: false, viewPicker: false, projections: true, log: false });
     assert.match(result.title, /Anafoor|Anaphor/);
     assert.match(result.meta, /afzonderlijk|independently/);
 

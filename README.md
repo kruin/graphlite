@@ -289,6 +289,18 @@ code defaults → config/default-config.json → config/user-config.json
 The final browser-local snapshot remains device-specific until it is written
 to the project user file.
 
+### LEX orientation and test-material lists
+
+The viewer starts with LEX on **East**. This release default is applied once
+after project and browser Config have loaded, so an older South snapshot cannot
+silently win during startup. West/East keep the tree fixed and only exchange
+the projection sides. North/South rotate the complete graph as one rigid unit;
+branches, node shapes, circles and labels therefore remain connected.
+
+Config offers one to four grouped test-material list columns independently for
+desktop and mobile. Group headings are retained. For North/South, LEX can also
+be enabled or disabled separately for kernel clauses K1 through K8.
+
 ## Ready-to-upload publication carousel
 
 Every project zip includes seven numbered 1080 × 1080 PNG slides under

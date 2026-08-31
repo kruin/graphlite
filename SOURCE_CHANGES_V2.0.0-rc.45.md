@@ -1,5 +1,93 @@
 # SOURCE_CHANGES v2.0.0-rc.45
 
+## v3.1.0-rc.10 — Oost-default, alle OGN-items en herbouwd Noord/Zuid
+
+- Oost is de nieuwe startdefault; een bestaande browserstand wordt bij de
+  eerste rc.8-start eenmalig naar Oost gemigreerd.
+- Anafoor · multi-OGN en alle uitings-/storyitems plaatsen hun eigen LEX-as nu
+  eveneens werkelijk op West of Oost; de kernbomen blijven daarbij star.
+- Mobiel toont één volledige, gegroepeerde testmateriaallijst. De
+  Syntax/Functies-keuze is kleiner, rustiger en rechts geplaatst.
+- Noord/Zuid berekent de horizontale kolombreedte uit de breedste zichtbare
+  grafische vorm: tekst, knoopomtrek, LEX-box of LOG-badge. Cirkels en compacte
+  boxen blijven bij rotatie vormvast; de vertakkingen nemen de berekende ruimte
+  over.
+
+## v3.1.0-rc.7 — horizontale vensteruitlijning
+
+- De tekening sluit standaard links aan; vrije aspectruimte verschijnt rechts.
+- Config → Algemeen → Tekening in venster biedt Links, Midden en Rechts.
+- De keuze verplaatst uitsluitend de vrije viewportmarge. Boomcoördinaten,
+  takrichting en de onderlinge posities van LEX, SYNT en LOG blijven gelijk.
+- West/Oost blijft daardoor een zuivere assenwissel rond exact dezelfde boom.
+
+## v3.1.0-rc.6 — West/Oost wisselt assen, niet de boom
+
+- Oost spiegelt de graph niet meer: boomknopen, takrichting, wortelpositie en
+  onderlinge volgorde blijven pixelstabiel gelijk aan West.
+- Alleen LEX en SYNT wisselen van verticale zijde; LEX-projecties en
+  Wisselbogen openen daarbij naar hun nieuwe buitenzijde.
+- Eén symmetrische corridor wordt vooraf berekend uit de grootste benodigde
+  LEX- en SYNT-ruimte in beide standen.
+- Het stabiele projectieframe gebruikt dezelfde tweezijdige maximumruimte,
+  zodat West/Oost niet door een andere schaal of viewport alsnog verspringt.
+- Noord/Zuid blijven in rc.6 ongewijzigd en volgen later.
+
+## v3.1.0-rc.5 — linksanker en tekstgedreven oriëntatiematen
+
+- Noord/Zuid sluiten links zonder FIT-marge aan; aspectruimte groeit alleen
+  naar rechts.
+- Horizontale lengte volgt de grootste behoefte uit LEX-items én zichtbare
+  regel-, box- en knooplabels.
+- De celhoogte dwars op de x-as volgt stabiele teksthoogte plus een kleine
+  leesgoot, niet de oude ruime verticale gridcel.
+- West/Oost gebruiken dezelfde maximale canonieke inhoudsbox; Oost is daarvan
+  de exacte spiegel, zodat de grootste box op dezelfde plek blijft.
+
+## v3.1.0-rc.4 — geen dubbele zintitel bij Noord/Zuid
+
+- Noord en Zuid verbergen de losse zintitel links van de gedraaide graph.
+- De woorden op de horizontale uitingsas en de actieve uiting boven het canvas
+  blijven zichtbaar.
+- De titel telt niet meer mee voor de inhoudsbox; de vrijgekomen ruimte is
+  beschikbaar voor projectieregels en labeltekst.
+- West en Oost blijven ongewijzigd.
+
+## v3.1.0-rc.3 — woordlengte, Main-knop en algemene scope
+
+- Bij Noord/Zuid bepaalt de langste zichtbare woordvorm de horizontale
+  leesgoot en daarmee de lengte van meedraaiende vertakkingen en projecties.
+- De vierstandenkeuze staat zowel op Main als onder Config → Algemeen →
+  Presentatie en leesrichting.
+- De keuze geldt voor alle berekende views, waaronder Uiting en Anafoor ·
+  multi-OGN; Greedy Grow en Random zijn expliciet uitgesloten.
+- Op mobiel waarschuwt Noord/Zuid dat woordlengte-afhankelijke breedte pannen
+  of FIT kan vereisen.
+
+## v3.1.0-rc.2 — echte horizontale presentatie en heringerichte Config
+
+- Noord en Zuid draaien uitsluitend de inhoud; het vierkante hulpraster blijft
+  staan en kan het draaicentrum of de automatische passing niet vervormen.
+- De horizontale uiting krijgt een eigen leesafstand. Woorden, knopen en
+  labels blijven rechtop en waaieren niet onnodig uit.
+- Zuid zet de boom boven LEX en Noord eronder; in beide gevallen ontspringt
+  S/Clause links en blijft de uiting van links naar rechts lopen.
+- Config → Language Tree begint met de aparte kaart **Presentatie en
+  leesrichting**, met vier directe keuzes. **Boom en venster** staat als tweede
+  samenhangende kaart eronder.
+- rc.1 blijft als afzonderlijke, afgekeurde kandidaat traceerbaar; deze
+  correctie wordt niet stil over die ZIP heen geschreven.
+
+## v3.1.0-rc.1 — vier LEX-zijden
+
+- Config biedt West, Oost, Noord en Zuid; West blijft ongewijzigde default.
+- West/Oost lezen boven→beneden; Noord/Zuid links→rechts.
+- De algemene Wisselrichting heet **naar voren in de uiting**: omhoog of naar
+  links, afhankelijk van de oriëntatie.
+- De assentransformatie blijft onafhankelijk van boom-Flip en houdt tekst
+  normaal leesbaar.
+- De voorafgaande `.74`-bronstand is afzonderlijk bevroren als v3.0.0.
+
 ## Bronstand .74 — mobiele catalogus, gesproken LEX en Interface in Config
 
 - **Interface** (Automatisch/Desktop/Mobiel staand/Mobiel liggend) staat onder
