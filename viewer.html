@@ -14,7 +14,7 @@
 <script>
     (function() {
       var VERSION = 'v3.1.0-rc.10';
-      var SOURCE_BUILD = 'v3.1.0-rc.10-unified-multi-ogn-demo-route-20260831.9';
+      var SOURCE_BUILD = 'v3.1.0-rc.10-visible-lex-views-grouped-lists-20260831.10';
       window.__OPENGRAPH_EXPECTED_VERSION__ = VERSION;
       function runCacheCleanupOnce() {
         var flag = 'opengraph-cache-cleaned-' + VERSION + '-' + SOURCE_BUILD;
@@ -70,20 +70,20 @@
 <section class="language-tree-view-picker central-view-toolbar" id="languageTreeViewPicker" aria-label="Syntax of Functies kiezen">
 <div aria-label="Syntax of Functies kiezen" class="compact-choice-list main-menu-option-list main-menu-view-options" id="mainViewOptions" role="listbox"></div>
 </section>
+<nav aria-label="Topmenu" class="main-top-menu">
 <details class="compact-choice-menu main-lex-orientation-menu top-menu-item" id="mainLexOrientationMenu">
-<summary id="mainLexOrientationSummary" title="Kies de algemene LEX-zijde">LEX · Oost</summary>
-<div class="compact-choice-popover main-lex-orientation-popover">
-<strong><span class="help-lang-nl">Presentatie</span><span class="help-lang-en">Presentation</span></strong>
-<div class="main-lex-orientation-grid" role="group" aria-label="Algemene LEX-zijde">
+<summary id="mainLexOrientationSummary" title="Kies de algemene LEX-view">LEX-view · Oost</summary>
+<div class="compact-choice-popover top-menu-popover main-lex-orientation-popover">
+<strong><span class="help-lang-nl">LEX-view</span><span class="help-lang-en">LEX view</span></strong>
+<div class="main-lex-orientation-grid" role="group" aria-label="Algemene LEX-view">
 <button type="button" data-lex-axis-side-choice="west">West ↓</button>
 <button type="button" data-lex-axis-side-choice="east">Oost ↓ · default</button>
 <button type="button" data-lex-axis-side-choice="north">Noord →</button>
 <button type="button" data-lex-axis-side-choice="south">Zuid →</button>
 </div>
-<small><span class="help-lang-nl">Algemeen voor alle berekende views; niet voor Greedy Grow en Random.</span><span class="help-lang-en">General for all calculated views; not for Greedy Grow and Random.</span></small>
+<small><span class="help-lang-nl">West, Oost, Noord en Zuid zijn views van dezelfde berekende graph; niet voor Greedy Grow en Random.</span><span class="help-lang-en">West, East, North and South are views of the same calculated graph; not for Greedy Grow and Random.</span></small>
 </div>
 </details>
-<nav aria-label="Topmenu" class="main-top-menu">
 <details class="compact-choice-menu main-sentence-menu top-menu-item" id="mainSentenceMenu">
 <summary id="mainSentenceSummary" title="Kies de voorbeeldzin">Zin</summary>
 <div aria-label="Voorbeeldzin kiezen" class="compact-choice-popover top-menu-popover top-menu-sentence-popover">
@@ -1039,7 +1039,7 @@
 <p class="mobile-sheet-note">Sleep met één vinger om te pannen. Knijp met twee vingers om te zoomen. FIT past het zichtvenster aan de huidige boom en named projections aan; de boom zelf verandert niet.</p>
 </section>
 <script>
-    window.__opengraphBoot = { version: 'v3.1.0-rc.10', sourceBuild: 'v3.1.0-rc.10-unified-multi-ogn-demo-route-20260831.9', loaded: false, marker: 'viewer-index' };
+    window.__opengraphBoot = { version: 'v3.1.0-rc.10', sourceBuild: 'v3.1.0-rc.10-visible-lex-views-grouped-lists-20260831.10', loaded: false, marker: 'viewer-index' };
     function ogStatus(message) {
       var target = document.getElementById('actionFeedback') || document.body;
       if (target) target.textContent = message;
@@ -1074,6 +1074,6 @@
 <script defer="" src="multi-ogn-anaphor-play-engine.js?v3.1.0-rc.10"></script>
 <script defer="" src="multi-ogn-composition-engine.js?v3.1.0-rc.10"></script>
 <script defer="" src="utterance-kernel-engine.js?v3.1.0-rc.10"></script>
-<script defer="" src="viewer.js?v3.1.0-rc.10&amp;source=20260831.9"></script>
+<script defer="" src="viewer.js?v3.1.0-rc.10&amp;source=20260831.10"></script>
 </body>
 </html>

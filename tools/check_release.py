@@ -189,20 +189,20 @@ for rel in ["index.html", "viewer.html"]:
     if duplicates:
         errors.append(f"dubbele HTML-id's in {rel}: {', '.join(duplicates)}")
 
-# Main menu: five base choices plus the optional Adverb choice on row 1,
-# Language/README/Config on row 2.
+# Main menu: the visible LEX-view choice plus the existing choices. The
+# optional Adverb choice remains present but hidden when its profile is off.
 nav_match = re.search(r'<nav[^>]*class="[^"]*main-top-menu[^"]*"[^>]*>.*?</nav>', index, flags=re.S)
 if not nav_match:
     errors.append("main-top-menu ontbreekt")
 else:
     nav = nav_match.group(0)
     for item in [
-        "mainSentenceMenu", "mainAdverbMenu", "mainViewMenu",
+        "mainLexOrientationMenu", "mainSentenceMenu", "mainAdverbMenu", "mainViewMenu",
         "sourceAxisMenu", "mainExtraMenu", "mainLanguageMenu", "openHelpButton", "openConfigButton",
     ]:
         require(nav, f'id="{item}"', f"topmenu-item {item}")
-    if nav.count("<details") != 6:
-        errors.append("topmenu moet zes directe choice-details bevatten")
+    if nav.count("<details") != 7:
+        errors.append("topmenu moet zeven directe choice-details bevatten")
     require(nav, 'data-feature="adverbs" hidden="" id="mainAdverbMenu"', "optioneel verborgen Bijwoordmenu")
 
 # Functional naming, interface selector, languages and English default.
@@ -810,7 +810,7 @@ for marker, label in [
 ]:
     require(local_launcher, marker, label)
 source_build = read("SOURCE_BUILD.txt").strip()
-if source_build != "v3.1.0-rc.10-unified-multi-ogn-demo-route-20260831.9":
+if source_build != "v3.1.0-rc.10-visible-lex-views-grouped-lists-20260831.10":
     errors.append(f"onverwachte of lege SOURCE_BUILD.txt: {source_build!r}")
 
 leesmij = read("LEESMIJ.md")

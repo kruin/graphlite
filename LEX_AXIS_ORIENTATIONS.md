@@ -1,13 +1,13 @@
 # LEX-asoriëntaties · v3.1.0-rc.10
 
-De LEX-zijde staat op het hoofdscherm onder **LEX** en bovenaan onder **Config
+De LEX-view staat zichtbaar in het hoofdmenu onder **LEX-view** en bovenaan onder **Config
 → Algemeen → Presentatie en leesrichting**. Daar zijn West, Oost, Noord en
 Zuid direct kiesbaar; de onderliggende keuzelijst biedt dezelfde instelling.
 De standaardwaarde is **Oost**. West blijft als alternatief beschikbaar. De
 graphdata, kernzinnen, rollen, knoopidentiteiten en Flip worden
 niet door de keuze herschreven.
 
-| LEX-zijde | Leesrichting uiting | Boom ligt | S/Clause ontspringt |
+| LEX-view | Leesrichting uiting | Boom ligt | S/Clause ontspringt |
 |---|---|---|---|
 | West | boven → beneden | rechts van LEX | boven |
 | Oost | boven → beneden | boom blijft op dezelfde plaats; LEX rechts, SYNT links | boven |
@@ -73,6 +73,7 @@ vormbreedtes blijven als controleerbare layoutmetadata beschikbaar.
 
 Oost is de startdefault en wordt eenmalig pas ná project- en browser-Config
 toegepast. Config biedt voor Noord/Zuid afzonderlijke LEX-schakelaars voor
-K1–K8. Desktop en mobiel gebruiken dezelfde volledige testmateriaalcatalogus;
-per interface zijn één tot vier lijstkolommen mogelijk, met behoud van de
-groepskoppen.
+K1–K8. Desktop en mobiel gebruiken dezelfde volledige testmateriaalcatalogus.
+Per interface zijn één tot vier echte lijstpanelen mogelijk. Een groep blijft
+altijd volledig binnen één paneel; standaard scheidt desktop de families Zin
+en Uiting over twee panelen, terwijl mobiel met één paneel begint.

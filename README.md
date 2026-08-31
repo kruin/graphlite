@@ -297,9 +297,11 @@ silently win during startup. West/East keep the tree fixed and only exchange
 the projection sides. North/South rotate the complete graph as one rigid unit;
 branches, node shapes, circles and labels therefore remain connected.
 
-Config offers one to four grouped test-material list columns independently for
-desktop and mobile. Group headings are retained. For North/South, LEX can also
-be enabled or disabled separately for kernel clauses K1 through K8.
+The visible **LEX view** menu contains West, East, North and South. Config
+offers one to four real test-material list panels independently for desktop
+and mobile. A group always remains inside one panel; desktop starts with the
+Sentence and Utterance families separated across two panels. For North/South,
+LEX can also be enabled or disabled separately for kernel clauses K1 through K8.
 
 ## Ready-to-upload publication carousel
 

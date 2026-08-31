@@ -5363,19 +5363,35 @@ body.main-screen-active .main-window-fit-menu {
 }
 
 .grouped-testmateriaal-list {
-  column-count: var(--testmateriaal-list-count, 1);
-  column-gap: .45rem;
+  grid-template-columns: repeat(var(--testmateriaal-list-count, 1), minmax(14.5rem, 1fr));
+  align-items: start;
+  gap: .45rem;
   min-width: calc(var(--testmateriaal-list-count, 1) * 15rem);
+  overflow-x: auto;
 }
-.grouped-testmateriaal-list .compact-choice-group,
-.grouped-testmateriaal-list .compact-choice-option {
+.testmateriaal-list-panel {
+  display: grid;
+  align-content: start;
+  gap: .24rem;
+  min-width: 0;
+  padding: .22rem;
+  border: 1px solid color-mix(in srgb, var(--line), transparent 18%);
+  border-radius: .62rem;
+  background: color-mix(in srgb, var(--panel), var(--bg) 7%);
+  box-sizing: border-box;
+}
+.testmateriaal-list-panel .compact-choice-group,
+.testmateriaal-list-panel .compact-choice-option {
   width: 100%;
-  break-inside: avoid;
   box-sizing: border-box;
   margin-bottom: .14rem;
 }
+.testmateriaal-list-panel .compact-choice-group { position: static; }
 @media (max-width: 760px), (orientation: portrait) {
-  .grouped-testmateriaal-list { min-width: calc(var(--testmateriaal-list-count, 1) * 12.5rem); }
+  .grouped-testmateriaal-list {
+    grid-template-columns: repeat(var(--testmateriaal-list-count, 1), minmax(11.25rem, 1fr));
+    min-width: calc(var(--testmateriaal-list-count, 1) * 11.5rem);
+  }
 }
 
 /* v3.1.0-rc.10: Config begint met een herkenbare oriëntatiekaart. */
@@ -7128,7 +7144,7 @@ body.main-screen-active .top-menu-popover {
   box-shadow: 0 .45rem 1.3rem rgba(15,23,42,.15);
 }
 body.main-screen-active .top-menu-sentence-popover {
-  width: min(31rem, calc(100vw - .7rem));
+  width: min(var(--testmateriaal-popover-width, 31rem), calc(100vw - .7rem));
   overflow: hidden !important;
 }
 body.main-screen-active .top-menu-adverb-popover { width: min(25rem, calc(100vw - .7rem)); }

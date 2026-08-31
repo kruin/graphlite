@@ -6,6 +6,8 @@ const path = require('node:path');
 
 const root = path.resolve(__dirname, '..');
 const source = fs.readFileSync(path.join(root, 'viewer.js'), 'utf8');
+const indexHtml = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
+const stylesheet = fs.readFileSync(path.join(root, 'styles.css'), 'utf8');
 const config = JSON.parse(fs.readFileSync(path.join(root, 'config', 'default-config.json'), 'utf8'));
 const documentation = fs.readFileSync(path.join(root, 'LEX_AXIS_ORIENTATIONS.md'), 'utf8');
 
@@ -43,6 +45,8 @@ assert.ok(source.includes("!child.classList?.contains('grid')"), 'Het hulpraster
 assert.ok(source.includes("config-orientation-card"), 'Config moet een herkenbare oriëntatiekaart bieden');
 assert.ok(source.includes("data-lex-axis-side-choice"), 'De vier oriëntaties moeten direct kiesbaar zijn');
 assert.ok(source.includes("mainLexOrientationMenu"), 'De algemene oriëntatieknop moet op Main staan');
+assert.ok(indexHtml.indexOf('<nav aria-label="Topmenu" class="main-top-menu">') < indexHtml.indexOf('id="mainLexOrientationMenu"'), 'LEX-view moet binnen het zichtbare hoofdmenu staan');
+assert.ok(indexHtml.includes('>Noord →</button>') && indexHtml.includes('>Zuid →</button>'), 'Noord en Zuid moeten rechtstreeks in de LEX-viewkeuze staan');
 assert.ok(source.includes("lexAxisMobileWarning"), 'Mobiel moet voor horizontale uitingen waarschuwen');
 assert.ok(source.includes("const orientationExcluded = directPlacementActive()"), 'Greedy Grow en Random moeten uitgesloten blijven');
 assert.ok(source.includes("data-hidden-for-horizontal-utterance"), 'Noord/Zuid moeten de dubbele zintitel verbergen');
@@ -56,7 +60,11 @@ assert.ok(!source.includes("translate(${2 * cx} 0) scale(-1 1)"), 'Oost mag de v
 assert.ok(source.includes("stableVerticalProjectionAxes(origin)"), 'Beide standen moeten één berekende ascorridor gebruiken');
 assert.ok(source.includes("data-lex-axis-side': verticalLexSide"), 'Anafoor- en uitingsitems moeten West/Oost zelf toepassen');
 assert.ok(source.includes("const lexOnEast = verticalLexSide === 'east'"), 'Samengestelde OGN-items moeten LEX werkelijk naar Oost kunnen zetten');
-assert.ok(source.includes("fillGroupedTestmateriaalMenu"), 'Desktop en mobiel moeten één gegroepeerde testmateriaallijst gebruiken');
+assert.ok(source.includes("fillGroupedTestmateriaalMenu"), 'Desktop en mobiel moeten de gegroepeerde testmateriaalcatalogus gebruiken');
+assert.ok(source.includes("testmateriaal-list-panel"), 'Lijstaantal moet echte afzonderlijke lijstpanelen opleveren');
+assert.ok(source.includes("familyEntries") && source.includes("familyPanels"), 'Zin- en Uitinggroepen moeten als hele groepen over lijstpanelen worden verdeeld');
+assert.ok(!stylesheet.includes('column-count: var(--testmateriaal-list-count'), 'Lijstaantal mag niet slechts CSS-kolommen binnen één lijst maken');
+assert.ok(stylesheet.includes('grid-template-columns: repeat(var(--testmateriaal-list-count'), 'Lijstpanelen moeten door de configureerbare 1–4-lijstindeling worden geplaatst');
 assert.equal(config.config.desktopTestmateriaalListCount, 2, 'Desktop moet standaard twee lijstkolommen ondersteunen');
 assert.equal(config.config.mobileTestmateriaalListCount, 1, 'Mobiel moet configureerbaar vanuit één lijst starten');
 assert.ok(source.includes('horizontalLexUnits'), 'Noord/Zuid moeten LEX per kernzin kunnen schakelen');

@@ -2,7 +2,7 @@
   'use strict';
 
   const VERSION = 'v3.1.0-rc.10';
-  const SOURCE_BUILD = 'v3.1.0-rc.10-unified-multi-ogn-demo-route-20260831.9';
+  const SOURCE_BUILD = 'v3.1.0-rc.10-visible-lex-views-grouped-lists-20260831.10';
   const OPN_FORMAT_VERSION = '1.0';
   const OPN_DOCUMENT_TYPE = 'opengraph-document';
   const PARADATA_EVENT_LIMIT = 250;
@@ -11315,10 +11315,78 @@
     const count = isMobileViewport()
       ? validTestmateriaalListCount(state.mobileTestmateriaalListCount, 1)
       : validTestmateriaalListCount(state.desktopTestmateriaalListCount, 2);
-    fillCompactChoiceMenu(container, options, selected, null, onChoose);
+    if (!container) return;
+    container.replaceChildren();
     container.classList.add('grouped-testmateriaal-list');
     container.style.setProperty('--testmateriaal-list-count', String(count));
     container.setAttribute('data-testmateriaal-list-count', String(count));
+    const popover = container.closest('.top-menu-sentence-popover');
+    popover?.style.setProperty('--testmateriaal-popover-width', `${Math.min(64, Math.max(16, count * 16))}rem`);
+
+    const blocks = [];
+    for (const option of options) {
+      const group = String(option.group || option.groupEn || (isEnglish() ? 'Other' : 'Overig'));
+      const last = blocks[blocks.length - 1];
+      if (!last || last.group !== group) blocks.push({ group, options: [option] });
+      else last.options.push(option);
+    }
+    const familyOrder = [];
+    const families = new Map();
+    for (const block of blocks) {
+      const family = block.group.split(' · ')[0] || block.group;
+      if (!families.has(family)) {
+        families.set(family, { family, blocks: [], size: 0, columns: 0 });
+        familyOrder.push(family);
+      }
+      const entry = families.get(family);
+      entry.blocks.push(block);
+      entry.size += block.options.length;
+    }
+    const familyEntries = familyOrder.map(family => families.get(family));
+    if (count === 1 || familyEntries.length === 0) {
+      const panel = document.createElement('section');
+      panel.className = 'testmateriaal-list-panel';
+      panel.setAttribute('role', 'presentation');
+      fillCompactChoiceMenu(panel, options, selected, null, onChoose);
+      container.appendChild(panel);
+      return;
+    }
+
+    const usableFamilies = familyEntries.slice(0, count);
+    usableFamilies.forEach(entry => { entry.columns = 1; });
+    for (const overflow of familyEntries.slice(count)) {
+      usableFamilies[usableFamilies.length - 1].blocks.push(...overflow.blocks);
+      usableFamilies[usableFamilies.length - 1].size += overflow.size;
+    }
+    let remaining = count - usableFamilies.length;
+    while (remaining > 0) {
+      const expandable = usableFamilies
+        .filter(entry => entry.columns < entry.blocks.length)
+        .sort((left, right) => (right.size / right.columns) - (left.size / left.columns))[0];
+      if (!expandable) break;
+      expandable.columns += 1;
+      remaining -= 1;
+    }
+
+    const panelOptions = [];
+    for (const entry of usableFamilies) {
+      const familyPanels = Array.from({ length: entry.columns }, () => ({ blocks: [], size: 0 }));
+      for (const block of entry.blocks) {
+        const target = familyPanels.reduce((best, candidate) => candidate.size < best.size ? candidate : best, familyPanels[0]);
+        target.blocks.push(block);
+        target.size += block.options.length;
+      }
+      familyPanels.forEach(panel => panelOptions.push(panel.blocks.flatMap(block => block.options)));
+    }
+    while (panelOptions.length < count) panelOptions.push([]);
+    panelOptions.forEach((panelItems, index) => {
+      const panel = document.createElement('section');
+      panel.className = 'testmateriaal-list-panel';
+      panel.dataset.testmateriaalList = String(index + 1);
+      panel.setAttribute('role', 'presentation');
+      fillCompactChoiceMenu(panel, panelItems, selected, null, onChoose);
+      container.appendChild(panel);
+    });
   }
 
   function catalogHasLexInsertions(definition = {}) {
@@ -11596,8 +11664,8 @@
     if (els.mainLexOrientationSummary) {
       const option = LEX_AXIS_SIDE_OPTIONS.find(item => item.id === validLexAxisSide(state.lexAxisSide));
       els.mainLexOrientationSummary.textContent = orientationExcluded
-        ? (isEnglish() ? 'LEX · fixed' : 'LEX · vast')
-        : `LEX · ${isEnglish() ? (option?.labelEn || option?.label) : option?.label}`;
+        ? (isEnglish() ? 'LEX view · fixed' : 'LEX-view · vast')
+        : `${isEnglish() ? 'LEX view' : 'LEX-view'} · ${isEnglish() ? (option?.labelEn || option?.label) : option?.label}`;
     }
     if (els.mainLexOrientationMenu) {
       els.mainLexOrientationMenu.classList.toggle('is-disabled', orientationExcluded);
@@ -13934,7 +14002,7 @@
     primaryViewGrid.setAttribute('aria-label', 'Language Tree-beeldinstellingen');
     const lexAxisSideLabel = document.createElement('label');
     lexAxisSideLabel.className = 'select-field lex-axis-side-select-field';
-    lexAxisSideLabel.innerHTML = `<span><span class="help-lang-nl">LEX-zijde</span><span class="help-lang-en">LEX side</span></span><select id="lexAxisSideSelect"></select><small class="config-item-help"><span class="help-lang-nl">Oost is de startdefault. West/Oost lezen boven→beneden; Noord/Zuid lezen links→rechts. Naar voren betekent omhoog of naar links.</span><span class="help-lang-en">East is the startup default. West/East read top-to-bottom; North/South read left-to-right. Forward means upward or leftward.</span></small>`;
+    lexAxisSideLabel.innerHTML = `<span><span class="help-lang-nl">LEX-view</span><span class="help-lang-en">LEX view</span></span><select id="lexAxisSideSelect"></select><small class="config-item-help"><span class="help-lang-nl">Oost is de startdefault. West/Oost lezen boven→beneden; Noord/Zuid lezen links→rechts. Naar voren betekent omhoog of naar links.</span><span class="help-lang-en">East is the startup default. West/East read top-to-bottom; North/South read left-to-right. Forward means upward or leftward.</span></small>`;
     fillSelect(lexAxisSideLabel.querySelector('select'), LEX_AXIS_SIDE_OPTIONS, validLexAxisSide(state.lexAxisSide));
     lexAxisSideLabel.querySelector('select').addEventListener('change', event => setLexAxisSide(event.target.value));
     const orientationCard = document.createElement('section');

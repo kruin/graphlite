@@ -4,8 +4,9 @@
 
 - Oost wordt eenmalig ná default-, user- en browser-Config als startstand
   ingesteld; een oude Zuid-snapshot kan de release-default niet meer kapen.
-- Testmateriaal staat op desktop én mobiel in één volledige lijst. Config kan
-  per interface één tot vier lijstkolommen tonen, met behoud van groepskoppen.
+- Desktop en mobiel gebruiken één volledige testmateriaalcatalogus. Config kan
+  per interface één tot vier echte lijstpanelen tonen; groepen worden nooit
+  over panelen gebroken.
 - Noord/Zuid kan LEX per kernzin K1–K8 aan- of uitzetten.
 - De Noord/Zuid-presentatie roteert de grafiek als één rigide eenheid. De
   niet-uniforme rek die takken, knopen, omcirkelingen en labels uiteen trok is
