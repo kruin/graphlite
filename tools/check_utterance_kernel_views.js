@@ -30,10 +30,12 @@ for (const documentationContract of [
 assert.ok(source.includes('function spaceScaledLayout('), 'universele H/V-ruimtezoom ontbreekt');
 assert.ok(source.includes('function attachSentenceSpaceDrag('), 'ruimtezoom ontbreekt in Zin');
 assert.ok(source.includes("localStorage.setItem('opengraph_sentence_space_local'"), 'lokale zinszoom wordt niet bewaard');
-assert.ok(source.includes("in Zin, Uiting en Story"), 'Help noemt de drie ruimtezoomcontexten niet');
-for (const marker of ['id="spaceZoomControls"', 'data-space-toggle', 'space-zoom-panel', 'data-space-scope="local"', 'data-space-scope="global"', 'data-space-unit="K1"', 'data-space-unit="K2"', 'data-space-unit="K3"', 'data-space-axis="x"', 'data-space-axis="y"', 'data-space-axis="xy"', 'data-space-reset="selected"', 'data-space-reset="utterance"', 'data-space-reset="all"', 'id="spaceZoomStatus"']) {
-  assert.ok(indexHtml.includes(marker), `mobiele ruimtezoombediening ontbreekt: ${marker}`);
+assert.ok(source.includes("in Zin, Uiting of Story"), 'Help noemt de drie ruimtecontexten niet');
+for (const marker of ['id="spaceZoomControls"', 'data-space-toggle', 'space-zoom-panel']) {
+  assert.ok(!indexHtml.includes(marker), `Main mag geen losse Ruimtezoom-bediening tonen: ${marker}`);
 }
+assert.ok(source.includes('id="kernelSpaceDragEnabledInput"'), 'Config moet Ruimte slepen kunnen activeren');
+assert.ok(source.includes('id="kernelSpaceResetButton"'), 'Config moet ruimte naar Auto kunnen herstellen');
 assert.ok(styles.includes('touch-action: none'), 'mobiele ruimtezoom blokkeert browsergebaar niet');
 assert.ok(source.includes("state.mobileSpaceScope === 'global'"), 'mobiele globale ruimtezoom ontbreekt');
 assert.ok(source.includes("state.mobileSpaceUnit = button.dataset.spaceUnit"), 'zichtbare K1/K2/K3-keuze werkt niet');

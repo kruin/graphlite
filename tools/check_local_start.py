@@ -17,6 +17,7 @@ SERVER = ROOT / "server_nocache.py"
 VERSION = (ROOT / "VERSION.txt").read_text(encoding="utf-8").strip()
 SOURCE_BUILD = (ROOT / "SOURCE_BUILD.txt").read_text(encoding="utf-8").strip()
 START_BAT = (ROOT / "start_local_viewer.bat").read_text(encoding="utf-8")
+LOCALSERVER_BAT = (ROOT / "localserver.bat").read_text(encoding="utf-8")
 
 
 def free_port() -> int:
@@ -56,6 +57,7 @@ def main() -> None:
     require("for /f" not in START_BAT.lower(), "BAT bevat nog complexe FOR-probelogica")
     require("Invoke-WebRequest" not in START_BAT, "oude PowerShell-probe staat nog in BAT")
     require("Pak de gedownloade ZIP eerst volledig uit" in START_BAT, "uitpakinstructie ontbreekt")
+    require('call "%~dp0start_local_viewer.bat" %*' in LOCALSERVER_BAT, "localserver.bat verwijst niet rechtstreeks naar de gecontroleerde starter")
     require(not (ROOT / "startlocalviewer.bat").exists(), "tweede start-BAT bestaat nog")
 
     port = free_port()

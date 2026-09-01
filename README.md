@@ -434,10 +434,11 @@ index.html
 Or run locally:
 
 ```bat
-start_local_viewer.bat
+localserver.bat
 ```
 
-`start_local_viewer.bat` is the only starter. It uses one detected Python 3
+`localserver.bat` is the familiar short name and delegates directly to
+`start_local_viewer.bat`. That checked launcher uses one detected Python 3
 installation. First choose **Extract all** for the downloaded ZIP; do not run
 the BAT from inside the compressed folder. The BAT only checks that extraction
 is complete and starts

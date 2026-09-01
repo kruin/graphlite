@@ -32,6 +32,7 @@
       "K8": true
     },
     "canvasHorizontalAlignment": "left",
+    "canvasLeftMarginPercent": 0,
     "projection": "axes",
     "sourceAxes": [
       "lex",

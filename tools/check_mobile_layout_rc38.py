@@ -23,7 +23,7 @@ for marker, label in [
     ("const startX = Math.ceil(", "geen rasterlijn links van de as"),
     ("const startY = Math.ceil(", "geen rasterlijn boven de grens"),
     ("function handheldMaximumViewBox(", "mobiele MAX-focus"),
-    ("return handheldMaximumViewBox(fit);", "mobiele MAX-toepassing"),
+    (": handheldMaximumViewBox(fit);", "mobiele MAX-toepassing buiten horizontale LEX"),
     ("Tijdens init is README nog verborgen", "veilige README-maatherstel"),
 ]:
     require(JS, marker, label)

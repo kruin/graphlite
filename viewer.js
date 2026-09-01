@@ -2,7 +2,7 @@
   'use strict';
 
   const VERSION = 'v3.1.0-rc.10';
-  const SOURCE_BUILD = 'v3.1.0-rc.10-simplex-north-south-stable-unflipped-20260831.12';
+  const SOURCE_BUILD = 'v3.1.0-rc.10-measured-lex-letter-spacing-20260901.29';
   const OPN_FORMAT_VERSION = '1.0';
   const OPN_DOCUMENT_TYPE = 'opengraph-document';
   const PARADATA_EVENT_LIMIT = 250;
@@ -158,6 +158,9 @@
     languageTreeViewPicker: document.getElementById('languageTreeViewPicker'),
     mainLexOrientationMenu: document.getElementById('mainLexOrientationMenu'),
     mainLexOrientationSummary: document.getElementById('mainLexOrientationSummary'),
+    mainLexLabelTurnDial: document.getElementById('mainLexLabelTurnDial'),
+    mainLexLabelTurnOutput: document.getElementById('mainLexLabelTurnOutput'),
+    mainLexLabelTurnCalibration: document.getElementById('mainLexLabelTurnCalibration'),
     lexAxisMobileWarning: document.getElementById('lexAxisMobileWarning'),
     openTestmateriaal: document.getElementById('openTestmateriaal'),
     mainLanguageMenu: document.getElementById('mainLanguageMenu'),
@@ -1596,6 +1599,38 @@
     return CANVAS_HORIZONTAL_ALIGNMENTS.some(option => option.id === id) ? id : 'left';
   }
 
+  function validCanvasLeftMarginPercent(value) {
+    const percent = Math.round(Number(value));
+    return Number.isFinite(percent) ? Math.max(0, Math.min(25, percent)) : 0;
+  }
+
+  function enforceTrimmedAxisMarginDefault() {
+    try {
+      const migrationKey = 'opengraph_trimmed_horizontal_lex_axis_margin_rc10';
+      if (localStorage.getItem(migrationKey) === '1') return;
+      state.canvasLeftMarginPercent = 0;
+      localStorage.setItem('opengraph_canvas_left_margin_percent', '0');
+      const rawSnapshot = localStorage.getItem(CONFIG_STORAGE_KEY);
+      if (rawSnapshot) {
+        const snapshot = JSON.parse(rawSnapshot);
+        if (snapshot && typeof snapshot === 'object') {
+          snapshot.canvasLeftMarginPercent = 0;
+          localStorage.setItem(CONFIG_STORAGE_KEY, JSON.stringify(snapshot));
+        }
+      }
+      localStorage.setItem(migrationKey, '1');
+    } catch (_err) { state.canvasLeftMarginPercent = 0; }
+  }
+
+  function setCanvasLeftMarginPercent(value) {
+    state.canvasLeftMarginPercent = validCanvasLeftMarginPercent(value);
+    try { localStorage.setItem('opengraph_canvas_left_margin_percent', String(state.canvasLeftMarginPercent)); } catch (_err) {}
+    appendConfigLog('change-canvas-left-margin', { canvasLeftMarginPercent: state.canvasLeftMarginPercent });
+    markConfigDirty('Marge links');
+    resetManualViewBox();
+    render();
+  }
+
   function setCanvasHorizontalAlignment(value) {
     state.canvasHorizontalAlignment = validCanvasHorizontalAlignment(value);
     try { localStorage.setItem('opengraph_canvas_horizontal_alignment', state.canvasHorizontalAlignment); } catch (_err) {}
@@ -1614,6 +1649,61 @@
     try {
       return validLexAxisSide(localStorage.getItem('opengraph_lex_axis_side'));
     } catch (_err) { return 'east'; }
+  }
+
+  function validLexLabelTurnDegrees(value) {
+    const degrees = Math.round(Number(value));
+    return Number.isFinite(degrees) ? Math.max(0, Math.min(90, degrees)) : 90;
+  }
+
+  function initialLexLabelTurnDegrees() {
+    try {
+      const value = localStorage.getItem('opengraph_lex_label_turn_degrees');
+      return value == null ? 90 : validLexLabelTurnDegrees(value);
+    } catch (_err) { return 90; }
+  }
+
+  function lexLabelTurnProgress() {
+    return validLexLabelTurnDegrees(state.lexLabelTurnDegrees) / 90;
+  }
+
+  function setLexLabelTurnDegrees(value) {
+    const degrees = validLexLabelTurnDegrees(value);
+    if (degrees === state.lexLabelTurnDegrees) return;
+    state.lexLabelTurnDegrees = degrees;
+    state.lexLabelTurnNeedsCalibration = false;
+    try { localStorage.setItem('opengraph_lex_label_turn_degrees', String(degrees)); } catch (_err) {}
+    // Houd tijdens het draaien hetzelfde zichtvenster vast. Een automatische
+    // FIT na iedere graad zou de smallere graph meteen weer beeldvullend
+    // vergroten en daarmee het zichtbare effect van de draaiknop uitwissen.
+    if (!state.manualViewBox) {
+      const currentViewBox = parseViewBox();
+      if (currentViewBox && Number.isFinite(currentViewBox.w) && Number.isFinite(currentViewBox.h)) {
+        state.manualViewBox = { ...currentViewBox };
+      }
+    }
+    render();
+  }
+
+  function calibrateLexLabelTurn(content, group) {
+    const labels = [...(content.querySelectorAll?.('.lex-label, .lex-local-label') || [])]
+      .map(label => String(label.textContent || '').trim())
+      .filter(Boolean);
+    const unitIds = new Set([...(content.querySelectorAll?.('[data-lex-unit]') || [])]
+      .map(element => String(element.getAttribute('data-lex-unit') || '').trim())
+      .filter(Boolean));
+    const declaredKernelCount = Number(group?.getAttribute?.('data-kernel-count'));
+    const kernelCount = Number.isFinite(declaredKernelCount) && declaredKernelCount > 0
+      ? declaredKernelCount : Math.max(1, unitIds.size || 1);
+    const longestItem = Math.max(1, ...labels.map(label => verticalLexGraphemes(label).length));
+    const labelCount = Math.max(1, labels.length);
+    const complexity = 28
+      + Math.max(0, kernelCount - 1) * 22
+      + Math.max(0, longestItem - 4) * 4
+      + Math.max(0, labelCount - 3) * 1.5;
+    const degrees = validLexLabelTurnDegrees(Math.round(Math.max(24, Math.min(90, complexity))));
+    const density = degrees >= 75 ? 'dense' : degrees >= 50 ? 'compact' : 'comfortable';
+    return { degrees, density, kernelCount, longestItem, labelCount };
   }
 
   function enforceEastStartupDefault() {
@@ -1645,7 +1735,6 @@
     resetManualViewBox();
     render();
   }
-
 
   const SOUTH_LOGICAL_MODES = ['SOV', 'SVO', 'OVS', 'OSV', 'VSO', 'VOS'];
   const SOUTH_LOGICAL_MOVEMENT_REQUIRED_MODES = new Set(['OSV', 'VSO', 'VOS']);
@@ -2607,10 +2696,14 @@
     projectionBoxDrag: null,
     lexProjectionColor: (function(){ try { return localStorage.getItem('opengraph_projection_color_lex') || 'blue'; } catch (_err) { return 'blue'; } })(),
     lexAxisSide: initialLexAxisSide(),
+    lexLabelTurnDegrees: initialLexLabelTurnDegrees(),
+    lexLabelTurnNeedsCalibration: true,
+    lexLabelTurnCalibration: null,
     desktopTestmateriaalListCount: (function(){ try { return validTestmateriaalListCount(localStorage.getItem('opengraph_desktop_testmateriaal_lists'), 2); } catch (_err) { return 2; } })(),
     mobileTestmateriaalListCount: (function(){ try { return validTestmateriaalListCount(localStorage.getItem('opengraph_mobile_testmateriaal_lists'), 1); } catch (_err) { return 1; } })(),
     horizontalLexUnits: (function(){ try { return normalizeHorizontalLexUnits(JSON.parse(localStorage.getItem('opengraph_horizontal_lex_units') || '{}')); } catch (_err) { return normalizeHorizontalLexUnits(); } })(),
     canvasHorizontalAlignment: (function(){ try { return validCanvasHorizontalAlignment(localStorage.getItem('opengraph_canvas_horizontal_alignment')); } catch (_err) { return 'left'; } })(),
+    canvasLeftMarginPercent: (function(){ try { const raw = localStorage.getItem('opengraph_canvas_left_margin_percent'); return raw == null ? 0 : validCanvasLeftMarginPercent(raw); } catch (_err) { return 0; } })(),
     syntProjectionColor: (function(){ try { return localStorage.getItem('opengraph_projection_color_synt') || 'green'; } catch (_err) { return 'green'; } })(),
     logProjectionColor: (function(){ try { return localStorage.getItem('opengraph_projection_color_log') || 'purple'; } catch (_err) { return 'purple'; } })(),
     gridColor: (function(){ try { return localStorage.getItem('opengraph_grid_color') || 'soft-slate'; } catch (_err) { return 'soft-slate'; } })(),
@@ -5760,6 +5853,19 @@
     if (!workspace) return null;
     const total = Math.max(320, workspace.clientWidth || window.innerWidth || 360);
     const splitterWidth = paneSplitterWidth();
+    // Main heeft geen rechterkolom: side-panel en splitter zijn daar verborgen.
+    // Laat de oude editor-split daarom nooit als --stage-pane-width in Main
+    // doorwerken. Dat gaf bij Noord/Zuid een smal SVG links en een groot leeg
+    // vlak rechts, ook al beslaat canvas-wrap visueel het hele venster.
+    if (isMainScreenActive()) {
+      const full = { stageWidth: total, menuWidth: 0, splitterWidth: 0, totalWidth: total };
+      workspace.style.setProperty('--stage-pane-width', `${total}px`);
+      workspace.style.setProperty('--side-pane-width', '0px');
+      workspace.style.setProperty('--pane-splitter-width', '0px');
+      document.documentElement?.style.setProperty('--stage-pane-width', `${total}px`);
+      document.documentElement?.style.setProperty('--side-pane-width', '0px');
+      return full;
+    }
     const profile = rightMenuProfile();
     const maxMenu = Math.max(170, total - splitterWidth - 120);
     const minMenu = Math.max(150, Math.min(maxMenu, Math.max(Number(profile.minPx) || 320, Math.round(total * (Number(profile.minFraction) || 0.42)))));
@@ -6753,7 +6859,10 @@
   function activePlacementReset() {
     if (multiOgnAnaphorActive()) {
       stopMultiOgnPlayback();
-      setMultiOgnPlayStep(0);
+      applyProjectionAxes(SOURCE_AXIS_IDS);
+      resetForNewExample();
+      state.multiOgnPlayStep = 0;
+      render();
       return;
     }
     if (directPlacementActive()) {
@@ -8018,9 +8127,43 @@
     const configuredSlots = lexConfiguredFreeSlots(systemY0, items, [...itemYs, ...baseYs, ...projectionYs, ...(topicSlotY === null ? [] : [topicSlotY]), ...(v1SlotY === null ? [] : [v1SlotY]), ...(v2SlotY === null ? [] : [v2SlotY])], sourceMap);
     const occupiedYs = [...itemYs, ...baseYs, ...projectionYs, ...configuredSlots.map(slot => slot.y), ...(topicSlotY === null ? [] : [topicSlotY]), ...(v1SlotY === null ? [] : [v1SlotY]), ...(v2SlotY === null ? [] : [v2SlotY])];
     const openSlots = lexConfiguredOpenSlots(systemY0, occupiedYs);
-    const axisYs = [...occupiedYs, ...openSlots.map(slot => slot.y), systemY0 - 48, systemY0 + Math.max(4, items.length + 1) * 64 + 40];
-    const axisMinY = Math.min(...axisYs) - 36;
-    const axisMaxY = Math.max(...axisYs) + 44;
+    const topicOccupied = topicIndex >= 0
+      && appliedMovementForItem(items[topicIndex], topicIndex, items, options)?.slot === 'topic';
+    const v2Occupied = v2Index >= 0
+      && appliedMovementForItem(items[v2Index], v2Index, items, options)?.slot === 'v2';
+    const v1Occupied = v1Index >= 0
+      && appliedMovementForItem(items[v1Index], v1Index, items, options)?.slot === 'v1';
+    const visibleTraceYs = items.flatMap((item, index) => {
+      if (!item?.source) return [];
+      const targetY = itemYs[index];
+      const projectionY = projectionYs[index];
+      const movements = localAxisMovement(item, index, projectionY, targetY, items, options);
+      const appliedPlacement = movements.explicit || movements.logical;
+      return appliedPlacement && Math.abs(projectionY - targetY) > 1 ? [projectionY] : [];
+    });
+    const visibleEmptySlotYs = [
+      topicSlotY !== null && isMainV2Rule() && !frontedAdverb && !topicOccupied ? topicSlotY : null,
+      v1SlotY !== null && !v1Occupied ? v1SlotY : null,
+      v2SlotY !== null && !v2Occupied ? v2SlotY : null
+    ].filter(Number.isFinite);
+    const horizontalAxisPresentation = ['north', 'south'].includes(configuredLexSide);
+    const visibleHorizontalAxisYs = [
+      ...itemYs,
+      ...visibleTraceYs,
+      ...configuredSlots.map(slot => slot.y),
+      ...openSlots.map(slot => slot.y),
+      ...visibleEmptySlotYs
+    ].filter(Number.isFinite);
+    const actualAxisYs = horizontalAxisPresentation ? visibleHorizontalAxisYs : occupiedYs.filter(Number.isFinite);
+    const axisYs = horizontalAxisPresentation
+      ? (actualAxisYs.length ? actualAxisYs : [systemY0])
+      : [...actualAxisYs, systemY0 - 48, systemY0 + Math.max(4, items.length + 1) * 64 + 40];
+    // Na de Noord/Zuid-rotatie wordt de canonieke verticale lengte de
+    // horizontale LEX-as. Alleen werkelijke items, slots en projectiepunten
+    // mogen die lengte bepalen; de oude synthetische systeemstaart veroorzaakte
+    // honderden pixels lege as links van het eerste woord.
+    const axisMinY = Math.min(...axisYs) - (horizontalAxisPresentation ? 22 : 36);
+    const axisMaxY = Math.max(...axisYs) + (horizontalAxisPresentation ? 22 : 44);
     drawAxisTitle(g, x - 98, axisMinY - 28, logicalAuthorityEnabled()
       ? 'LEX-projectie · bronhoogte → alleen een expliciete Wissel mag verplaatsen'
       : (horizontalProjectionMode ? 'LEX-projectie · projectiemerkers + Wisselregels' : 'LEX-as · lokale plaatsingsregels'));
@@ -8030,6 +8173,7 @@
       x2: x,
       y2: axisMaxY,
       class: 'lex-axis-line',
+      'data-horizontal-axis-trimmed': horizontalAxisPresentation ? 'true' : 'false',
       'data-render-right-reach': activeLexRenderRightReach(),
       'data-tree-clearance': LEX_TREE_CLEARANCE
     }));
@@ -8039,12 +8183,6 @@
     // horizontale bronprojectie en verhuist daarna uitsluitend langs LEX.
     openSlots.forEach(slot => drawLexOpenSlot(g, x, slot));
     configuredSlots.forEach(slot => drawLexConfiguredFreeSlot(g, x, slot));
-    const topicOccupied = topicIndex >= 0
-      && appliedMovementForItem(items[topicIndex], topicIndex, items, options)?.slot === 'topic';
-    const v2Occupied = v2Index >= 0
-      && appliedMovementForItem(items[v2Index], v2Index, items, options)?.slot === 'v2';
-    const v1Occupied = v1Index >= 0
-      && appliedMovementForItem(items[v1Index], v1Index, items, options)?.slot === 'v1';
     if (topicSlotY !== null && isMainV2Rule() && !frontedAdverb && !topicOccupied) {
       drawLexTopicSlot(g, x, topicSlotY);
     }
@@ -8700,10 +8838,11 @@
     const extra = portrait
       ? { left: fit.w * 0.018, top: fit.h * 0.034, right: fit.w * 0.045, bottom: fit.h * 0.20 }
       : { left: fit.w * 0.018, top: fit.h * 0.034, right: fit.w * 0.18, bottom: fit.h * 0.14 };
+    const configuredLeftMargin = frame.w * validCanvasLeftMarginPercent(state.canvasLeftMarginPercent) / 100;
     const expanded = {
-      x: fit.x - extra.left,
+      x: fit.x - extra.left - configuredLeftMargin,
       y: fit.y - extra.top,
-      w: fit.w + extra.left + extra.right,
+      w: fit.w + extra.left + extra.right + configuredLeftMargin,
       h: fit.h + extra.top + extra.bottom
     };
     // Geen tweede aanpassing aan de actuele canvas-aspectratio: die ratio kan
@@ -9469,9 +9608,12 @@
       const maximumFrame = isMainScreenActive() && projectionView
         ? maximumProjectionFrameBox()
         : null;
-      const bbox = maximumFrame
-        ? { x: maximumFrame.x, y: maximumFrame.y, width: maximumFrame.w, height: maximumFrame.h }
-        : els.svg.getBBox();
+      const transformedHorizontalBox = horizontalLexPresentationBox();
+      const bbox = transformedHorizontalBox
+        ? { x: transformedHorizontalBox.x, y: transformedHorizontalBox.y, width: transformedHorizontalBox.w, height: transformedHorizontalBox.h }
+        : maximumFrame
+          ? { x: maximumFrame.x, y: maximumFrame.y, width: maximumFrame.w, height: maximumFrame.h }
+          : els.svg.getBBox();
       if (!bbox || !Number.isFinite(bbox.x) || !Number.isFinite(bbox.y)
           || !Number.isFinite(bbox.width) || !Number.isFinite(bbox.height)
           || bbox.width <= 0 || bbox.height <= 0) return null;
@@ -9480,7 +9622,8 @@
         ? Math.max(20, Math.min(42, base * 0.024))
         : Math.max(16, Math.min(34, base * 0.018));
       const horizontalLexPresentation = !directPlacementActive() && ['north', 'south'].includes(validLexAxisSide(state.lexAxisSide));
-      const leftMargin = horizontalLexPresentation ? 0 : margin;
+      const configuredLeftMargin = bbox.width * validCanvasLeftMarginPercent(state.canvasLeftMarginPercent) / 100;
+      const leftMargin = (horizontalLexPresentation ? Math.max(18, margin * 0.4) : margin) + configuredLeftMargin;
       const fit = {
         x: bbox.x - leftMargin,
         y: bbox.y - margin,
@@ -9528,7 +9671,10 @@
       // FIT volgt uitsluitend boom + named projections. Raster en hulplabels
       // mogen de fit-box niet breder of hoger maken.
       ignored.forEach(node => { node.style.display = 'none'; });
-      const bbox = els.svg.getBBox();
+      const transformedHorizontalBox = horizontalLexPresentationBox();
+      const bbox = transformedHorizontalBox
+        ? { x: transformedHorizontalBox.x, y: transformedHorizontalBox.y, width: transformedHorizontalBox.w, height: transformedHorizontalBox.h }
+        : els.svg.getBBox();
       if (!bbox || !Number.isFinite(bbox.width) || !Number.isFinite(bbox.height) || bbox.width <= 0 || bbox.height <= 0) {
         return fallbackViewBox();
       }
@@ -9542,7 +9688,8 @@
         : (isMobileViewport()
           ? Math.max(18, Math.min(38, base * 0.024))
           : Math.max(24, Math.min(56, base * 0.028)));
-      const leftMargin = horizontalLexPresentation ? 0 : margin;
+      const configuredLeftMargin = bbox.width * validCanvasLeftMarginPercent(state.canvasLeftMarginPercent) / 100;
+      const leftMargin = (horizontalLexPresentation ? Math.max(18, margin * 0.4) : margin) + configuredLeftMargin;
       const fit = {
         x: bbox.x - leftMargin,
         y: bbox.y - margin,
@@ -10804,6 +10951,36 @@
     return '';
   }
 
+  function transformedElementBox(element) {
+    if (!element?.getBBox || !element?.getCTM) return null;
+    try {
+      const box = element.getBBox();
+      const matrix = element.getCTM();
+      if (!box || !matrix) return null;
+      const points = [
+        [box.x, box.y], [box.x + box.width, box.y],
+        [box.x, box.y + box.height], [box.x + box.width, box.y + box.height]
+      ].map(([x, y]) => ({
+        x: matrix.a * x + matrix.c * y + matrix.e,
+        y: matrix.b * x + matrix.d * y + matrix.f
+      }));
+      const xs = points.map(point => point.x);
+      const ys = points.map(point => point.y);
+      const left = Math.min(...xs), right = Math.max(...xs);
+      const top = Math.min(...ys), bottom = Math.max(...ys);
+      if (![left, right, top, bottom].every(Number.isFinite) || right <= left || bottom <= top) return null;
+      return { x: left, y: top, w: right - left, h: bottom - top };
+    } catch (_err) { return null; }
+  }
+
+  function horizontalLexPresentationBox() {
+    if (directPlacementActive() || !['north', 'south'].includes(validLexAxisSide(state.lexAxisSide))) return null;
+    const content = els.svg?.querySelector?.('.lex-oriented-content');
+    const box = transformedElementBox(content);
+    if (box) content.setAttribute('data-transformed-fit-box', `${box.x},${box.y},${box.w},${box.h}`);
+    return box;
+  }
+
   function horizontalLexReadingScale(content) {
     const graphicItems = [...(content.querySelectorAll?.([
       'text', '.tree-node', '.lex-slot-box', '.log-role-box',
@@ -10844,6 +11021,97 @@
     const stableTextHeight = Math.max(18, ...heights);
     const desiredCellHeight = stableTextHeight + 14;
     return Math.max(0.42, Math.min(0.72, desiredCellHeight / Math.max(1, cellX())));
+  }
+
+  function verticalLexGraphemes(value) {
+    const text = String(value || '').toUpperCase();
+    try {
+      if (typeof Intl?.Segmenter === 'function') {
+        return [...new Intl.Segmenter(undefined, { granularity: 'grapheme' }).segment(text)].map(part => part.segment);
+      }
+    } catch (_err) {}
+    return Array.from(text);
+  }
+
+  function verticalLexItemReadingScale(content) {
+    const graphicItems = [...(content.querySelectorAll?.([
+      '.tree-node', '.lex-slot-box', '.log-role-box',
+      '.logical-order-badge', '.logical-order-badge-interactive'
+    ].join(',')) || [])]
+      .filter(item => !item.closest?.('[data-hidden-for-horizontal-utterance="true"]'));
+    const widths = graphicItems.map(item => {
+      try {
+        const box = item.getBBox?.();
+        if (box && Number.isFinite(box.width) && box.width > 0) return box.width;
+      } catch (_err) {}
+      return 56;
+    });
+    const widestStructuralItem = Math.max(56, ...widths);
+    // Volledige woordbreedte bepaalt Noord/Zuid niet langer. De kolom hoeft
+    // alleen de compacte knoopvorm plus een leesgoot te dragen; hierdoor wordt
+    // de boom tijdens de letterdraaiing aantoonbaar smaller.
+    const desiredGap = Math.max(78, Math.min(122, widestStructuralItem + 22));
+    content.setAttribute('data-vertical-lex-column-width', String(Math.round(desiredGap * 10) / 10));
+    return Math.max(1.5, Math.min(2.35, desiredGap / 52));
+  }
+
+  function positionLexItemsForTurn(content, side, crossScale, progress) {
+    const turnProgress = Math.max(0, Math.min(1, Number(progress) || 0));
+    const labels = [...(content.querySelectorAll?.('.lex-label, .lex-local-label') || [])];
+    labels.forEach(label => {
+      const original = String(label.textContent || '').trim();
+      const letters = verticalLexGraphemes(original);
+      if (!letters.length) return;
+      const x = Number(label.getAttribute('x'));
+      const y = Number(label.getAttribute('y'));
+      if (!Number.isFinite(x) || !Number.isFinite(y)) return;
+      let measuredTextWidth = 0;
+      let measuredTextHeight = 0;
+      try {
+        measuredTextWidth = Number(label.getComputedTextLength?.()) || 0;
+        measuredTextHeight = Number(label.getBBox?.()?.height) || 0;
+      } catch (_err) {}
+      // De letterstap volgt het werkelijk gerenderde font. De oude vaste
+      // waarden 10/18 waren kleiner dan brede kapitalen zoals M en W.
+      const rowStep = Math.max(15, measuredTextHeight * 0.78, (measuredTextWidth / Math.max(1, letters.length)) * 1.12);
+      const lineHeight = Math.max(24, measuredTextHeight * 1.28);
+      const startY = y - ((letters.length - 1) * lineHeight) / 2;
+      const startX = x - ((letters.length - 1) * rowStep) / 2;
+      label.replaceChildren();
+      label.setAttribute('aria-label', original);
+      label.setAttribute('data-vertical-lex-item', side);
+      label.setAttribute('data-vertical-letter-count', String(letters.length));
+      label.setAttribute('data-lex-row-letter-step', String(Math.round(rowStep * 10) / 10));
+      label.setAttribute('data-lex-column-line-height', String(Math.round(lineHeight * 10) / 10));
+      letters.forEach((letter, index) => {
+        const finalY = startY + index * lineHeight;
+        const rowX = startX + index * rowStep;
+        const currentX = rowX + (x - rowX) * turnProgress;
+        const currentY = y + (finalY - y) * turnProgress;
+        const tspan = svgEl('tspan', { x: currentX, y: currentY, class: 'vertical-lex-letter' }, letter === ' ' ? '\u00a0' : letter);
+        label.appendChild(tspan);
+      });
+      let itemBox = label.previousElementSibling;
+      while (itemBox && !(itemBox.classList?.contains('lex-slot-box') || itemBox.classList?.contains('lex-local-slot'))) {
+        itemBox = itemBox.previousElementSibling;
+      }
+      if (itemBox?.classList?.contains('lex-slot-box') || itemBox?.classList?.contains('lex-local-slot')) {
+        const originalX = Number(itemBox.getAttribute('x'));
+        const originalWidth = Number(itemBox.getAttribute('width'));
+        const desiredScreenHeight = Math.max(56, letters.length * lineHeight + 24);
+        const canonicalWidth = Math.max(96, desiredScreenHeight / Math.max(0.25, crossScale));
+        const rowWidth = Number.isFinite(originalWidth) && originalWidth > 0
+          ? originalWidth : Math.max(96, letters.length * 20 + 34);
+        const currentWidth = rowWidth + (canonicalWidth - rowWidth) * turnProgress;
+        const rowCenter = Number.isFinite(originalX) ? originalX + rowWidth / 2 : x;
+        const currentCenter = rowCenter + (x - rowCenter) * turnProgress;
+        itemBox.setAttribute('x', String(currentCenter - currentWidth / 2));
+        itemBox.setAttribute('width', String(currentWidth));
+        itemBox.setAttribute('data-vertical-lex-item-box', side);
+      }
+    });
+    content.setAttribute('data-vertical-lex-items', side);
+    content.setAttribute('data-lex-label-turn-progress', String(turnProgress));
   }
 
   // De graphdata blijven canoniek in de bestaande West-oriëntatie. Deze
@@ -10896,26 +11164,60 @@
     if (!box || !Number.isFinite(box.x) || !Number.isFinite(box.y)) return;
     const cx = box.x + box.width / 2;
     const cy = box.y + box.height / 2;
-    const horizontalStretch = horizontalLexReadingScale(content);
+    const turnCalibration = calibrateLexLabelTurn(content, group);
+    state.lexLabelTurnCalibration = turnCalibration;
+    if (state.lexLabelTurnNeedsCalibration) {
+      state.lexLabelTurnDegrees = turnCalibration.degrees;
+      state.lexLabelTurnNeedsCalibration = false;
+      try { localStorage.setItem('opengraph_lex_label_turn_degrees', String(turnCalibration.degrees)); } catch (_err) {}
+      window.requestAnimationFrame?.(() => syncControls());
+    }
+    content.setAttribute('data-lex-turn-density', turnCalibration.density);
+    content.setAttribute('data-lex-turn-kernel-count', String(turnCalibration.kernelCount));
+    content.setAttribute('data-lex-turn-longest-item', String(turnCalibration.longestItem));
+    content.setAttribute('data-lex-turn-label-count', String(turnCalibration.labelCount));
+    const rowReadingStretch = horizontalLexReadingScale(content);
     const compositeUtteranceView = group.classList?.contains('multi-ogn-anaphor-view');
     // Uiting had al een goedgekeurde, eigen compositie. Alleen simplex gebruikt
     // de compacte dwarsmaat die hier uit de werkelijke teksthoogte volgt.
     const measuredCrossScale = horizontalStableTextCrossScale(content);
     const crossScale = compositeUtteranceView ? 1 : measuredCrossScale;
+    const horizontalStretch = verticalLexItemReadingScale(content);
+    const labelTurnProgress = lexLabelTurnProgress();
+    const liveStretch = rowReadingStretch + (horizontalStretch - rowReadingStretch) * labelTurnProgress;
+    positionLexItemsForTurn(content, side, crossScale, labelTurnProgress);
     // Voor simplex blijft de grammaticale eerste tak bij zowel Noord als Zuid
     // aan dezelfde verticale kant. Zuid verplaatst de LEX-as al in
     // canonicalProjectionContext; een tegenrotatie van de boom is dus fout.
-    const transformSide = side === 'south' && !compositeUtteranceView ? 'north' : side;
+    // Simplex gebruikt voor Noord én Zuid een echte klokwijzerrotatie. Zuid
+    // wisselt LEX/SYNT al vóór deze stap; zo blijft het eindbeeld correct
+    // zonder een oriëntatie-omkerende matrix of impliciete Flip.
+    const transformSide = compositeUtteranceView ? side : 'south';
     group.setAttribute('data-tree-orientation', 'stable-unflipped');
     group.setAttribute('data-horizontal-transform-side', transformSide);
-    content.setAttribute('transform', lexOrientationTransform(transformSide, cx, cy, horizontalStretch, crossScale));
-    content.setAttribute('data-horizontal-reading-gap-scale', String(horizontalStretch));
+    content.setAttribute('transform', lexOrientationTransform(transformSide, cx, cy, liveStretch, crossScale));
+    content.setAttribute('data-horizontal-reading-gap-scale', String(liveStretch));
+    content.setAttribute('data-lex-label-turn-degrees', String(validLexLabelTurnDegrees(state.lexLabelTurnDegrees)));
     content.setAttribute('data-horizontal-stable-text-cross-scale', String(crossScale));
     content.querySelectorAll?.('.tree-node').forEach(nodeGroup => {
       try {
         const nodeBox = nodeGroup.getBBox?.();
         if (!nodeBox) return;
-        nodeGroup.setAttribute('transform', lexOrientationCounterTransform(transformSide, nodeBox.x + nodeBox.width / 2, nodeBox.y + nodeBox.height / 2, horizontalStretch, crossScale));
+        nodeGroup.setAttribute('transform', lexOrientationCounterTransform(transformSide, nodeBox.x + nodeBox.width / 2, nodeBox.y + nodeBox.height / 2, liveStretch, crossScale));
+      } catch (_err) {}
+    });
+    // De volledige assenruimte draait mee. Alleen afzonderlijke leesobjecten
+    // worden lokaal teruggedraaid: in de foutieve versie bleef hun box smal
+    // verticaal terwijl alleen het label rechtop kwam te staan.
+    content.querySelectorAll?.('.syntax-rule-box, .logical-order-box, .log-role-box').forEach(boxElement => {
+      try {
+        const box = boxElement.getBBox?.();
+        if (!box) return;
+        boxElement.setAttribute('transform', lexOrientationCounterTransform(
+          transformSide, box.x + box.width / 2, box.y + box.height / 2,
+          liveStretch, crossScale
+        ));
+        boxElement.setAttribute('data-horizontal-readable-box', 'true');
       } catch (_err) {}
     });
     content.querySelectorAll?.('text').forEach(textNode => {
@@ -10923,7 +11225,7 @@
       const x = Number(textNode.getAttribute('x'));
       const y = Number(textNode.getAttribute('y'));
       if (!Number.isFinite(x) || !Number.isFinite(y)) return;
-      textNode.setAttribute('transform', lexOrientationCounterTransform(transformSide, x, y, horizontalStretch, crossScale));
+      textNode.setAttribute('transform', lexOrientationCounterTransform(transformSide, x, y, liveStretch, crossScale));
     });
   }
 
@@ -11679,18 +11981,53 @@
     fillSelect(els.mobileViewSelect, CENTER_MODES, state.centerMode);
     fillSelect(document.getElementById('configViewportModeSelect'), VIEWPORT_TEST_MODES, validViewportMode(state.viewportMode));
     fillSelect(document.getElementById('canvasHorizontalAlignmentSelect'), CANVAS_HORIZONTAL_ALIGNMENTS, validCanvasHorizontalAlignment(state.canvasHorizontalAlignment));
+    const canvasLeftMarginInput = document.getElementById('canvasLeftMarginPercentInput');
+    if (canvasLeftMarginInput) canvasLeftMarginInput.value = String(validCanvasLeftMarginPercent(state.canvasLeftMarginPercent));
+    const canvasLeftMarginOutput = document.getElementById('canvasLeftMarginPercentOutput');
+    if (canvasLeftMarginOutput) canvasLeftMarginOutput.textContent = `${validCanvasLeftMarginPercent(state.canvasLeftMarginPercent)}%`;
     fillSelect(document.getElementById('lexAxisSideSelect'), LEX_AXIS_SIDE_OPTIONS, validLexAxisSide(state.lexAxisSide));
     const orientationExcluded = directPlacementActive();
     if (els.mainLexOrientationSummary) {
       const option = LEX_AXIS_SIDE_OPTIONS.find(item => item.id === validLexAxisSide(state.lexAxisSide));
+      const turnMark = ['north', 'south'].includes(validLexAxisSide(state.lexAxisSide))
+        ? ` · ${validLexLabelTurnDegrees(state.lexLabelTurnDegrees)}°` : '';
       els.mainLexOrientationSummary.textContent = orientationExcluded
         ? (isEnglish() ? 'LEX · fixed' : 'LEX · vast')
-        : `LEX · ${isEnglish() ? (option?.labelEn || option?.label) : option?.label}`;
+        : `LEX · ${isEnglish() ? (option?.labelEn || option?.label) : option?.label}${turnMark}`;
     }
     if (els.mainLexOrientationMenu) {
       els.mainLexOrientationMenu.classList.toggle('is-disabled', orientationExcluded);
       els.mainLexOrientationMenu.title = orientationExcluded
         ? (isEnglish() ? 'Not applicable to Greedy Grow or Random' : 'Niet van toepassing op Greedy Grow of Random') : '';
+    }
+    if (els.mainLexLabelTurnDial) {
+      // Eén bron van waarheid: Noord/Zuid maakt de draaiknop actief. De
+      // plaatsingsmodus mag een geldig Uiting- of Anafooritem niet opnieuw
+      // als 'direct/uitgesloten' classificeren.
+      const canTurn = ['north', 'south'].includes(validLexAxisSide(state.lexAxisSide));
+      const degrees = validLexLabelTurnDegrees(state.lexLabelTurnDegrees);
+      const dialAngle = -135 + (degrees / 90) * 270;
+      els.mainLexLabelTurnDial.style.setProperty('--dial-angle', `${dialAngle}deg`);
+      els.mainLexLabelTurnDial.classList.toggle('is-disabled', !canTurn);
+      els.mainLexLabelTurnDial.setAttribute('aria-disabled', canTurn ? 'false' : 'true');
+      els.mainLexLabelTurnDial.setAttribute('aria-valuenow', String(degrees));
+      els.mainLexLabelTurnDial.setAttribute('aria-valuetext', isEnglish()
+        ? `${degrees} degrees · ${degrees === 0 ? 'word row' : degrees === 90 ? 'letter column' : 'intermediate position'}`
+        : `${degrees} graden · ${degrees === 0 ? 'woordrij' : degrees === 90 ? 'letterkolom' : 'tussenstand'}`);
+      els.mainLexLabelTurnDial.tabIndex = canTurn ? 0 : -1;
+      // Geen native title-tooltip: die bleef tijdens een viewwissel soms met
+      // de oude tekst boven de kalibratiekaart hangen. De instructie staat
+      // blijvend leesbaar onder de knop en in aria-valuetext.
+      els.mainLexLabelTurnDial.removeAttribute('title');
+      if (els.mainLexLabelTurnOutput) els.mainLexLabelTurnOutput.textContent = `${degrees}°`;
+      if (els.mainLexLabelTurnCalibration) {
+        const calibration = state.lexLabelTurnCalibration;
+        els.mainLexLabelTurnCalibration.textContent = calibration
+          ? (isEnglish()
+              ? `Auto: ${calibration.kernelCount} clause(s) · longest ${calibration.longestItem} · start ${calibration.degrees}°`
+              : `Auto: ${calibration.kernelCount} kernzin(nen) · langste ${calibration.longestItem} · start ${calibration.degrees}°`)
+          : (isEnglish() ? 'Automatic per test item' : 'Automatisch per testitem');
+      }
     }
     document.querySelectorAll('[data-lex-axis-side-choice]').forEach(button => {
       const active = button.getAttribute('data-lex-axis-side-choice') === validLexAxisSide(state.lexAxisSide);
@@ -11702,8 +12039,8 @@
       const showWarning = !orientationExcluded && ['north', 'south'].includes(validLexAxisSide(state.lexAxisSide)) && isMobileViewport();
       els.lexAxisMobileWarning.hidden = !showWarning;
       els.lexAxisMobileWarning.innerHTML = isEnglish()
-        ? '<strong>Note:</strong> horizontal utterances use word-length-dependent spacing and may require horizontal panning or FIT on mobile.'
-        : '<strong>Let op:</strong> de horizontale uiting gebruikt woordlengte-afhankelijke ruimte en kan op mobiel horizontaal pannen of FIT vereisen.';
+        ? '<strong>Note:</strong> North/South use compact vertical LEX items; FIT frames the complete rotated axes on mobile.'
+        : '<strong>Let op:</strong> Noord/Zuid gebruikt compacte verticale LEX-items; FIT kadert op mobiel de volledige meegedraaide assen.';
     }
     if (els.openTestmateriaal) {
       const localHost = ['127.0.0.1', 'localhost'].includes(String(location.hostname || '').toLowerCase());
@@ -13585,6 +13922,7 @@
     state.kernelSpaceLocalY = {};
     state.sentenceSpaceLocal = { x: 1, y: 1 };
     state.mobileSpaceUnit = 'K1';
+    state.lexLabelTurnNeedsCalibration = true;
     try {
       localStorage.setItem('opengraph_kernel_space_component_x', '1');
       localStorage.setItem('opengraph_kernel_space_local_y', '{}');
@@ -13592,6 +13930,20 @@
     } catch (_err) {}
     applyExampleAdverbDefaults();
     resetManualViewBox();
+  }
+
+  function applyFullStartupState() {
+    // Een browserstart herstelt de tijdelijke kijk- en werkstand, maar raakt
+    // de opgeslagen Config-snapshot, projecten, testmateriaal en database niet.
+    // URL-items worden pas hierna verwerkt en blijven dus leidend.
+    state.centerMode = 'syntax';
+    state.projection = 'axes';
+    state.sourceAxes = SOURCE_AXIS_IDS.slice();
+    state.mobileSheetOpen = false;
+    state.mobileSpacePanelOpen = false;
+    state.documentMetadata = null;
+    resetForNewExample();
+    try { localStorage.setItem('opengraph_source_axes_v200rc9', JSON.stringify(state.sourceAxes)); } catch (_err) {}
   }
 
   function registerPaneSplitter() {
@@ -14002,6 +14354,12 @@
     fillSelect(canvasAlignmentLabel.querySelector('select'), CANVAS_HORIZONTAL_ALIGNMENTS, validCanvasHorizontalAlignment(state.canvasHorizontalAlignment));
     canvasAlignmentLabel.querySelector('select').addEventListener('change', event => setCanvasHorizontalAlignment(event.target.value));
     generalViewGrid.appendChild(canvasAlignmentLabel);
+
+    const canvasLeftMarginLabel = document.createElement('label');
+    canvasLeftMarginLabel.className = 'select-field canvas-left-margin-field';
+    canvasLeftMarginLabel.innerHTML = `<span><span class="help-lang-nl">Marge links</span><span class="help-lang-en">Left margin</span> · <output id="canvasLeftMarginPercentOutput">${validCanvasLeftMarginPercent(state.canvasLeftMarginPercent)}%</output></span><input id="canvasLeftMarginPercentInput" type="range" min="0" max="25" step="1" value="${validCanvasLeftMarginPercent(state.canvasLeftMarginPercent)}"><small class="config-item-help"><span class="help-lang-nl">Extra vrije ruimte links binnen FIT. Dit verschuift de complete graph naar rechts zonder knopen, assen of handmatige pan te wijzigen.</span><span class="help-lang-en">Extra free space on the left within FIT. This moves the complete graph right without changing nodes, axes, or manual pan.</span></small>`;
+    canvasLeftMarginLabel.querySelector('input').addEventListener('input', event => setCanvasLeftMarginPercent(event.target.value));
+    generalViewGrid.appendChild(canvasLeftMarginLabel);
 
     const desktopListsLabel = document.createElement('label');
     desktopListsLabel.className = 'select-field';
@@ -14598,7 +14956,7 @@
         <label class="field mini-field"><span><span class="help-lang-nl">Flip · links/rechts</span><span class="help-lang-en">Flip · left/right</span></span><select id="multiTreeBranchFlipSelect"></select></label>
         <label class="field mini-field"><span><span class="help-lang-nl">PLAY · Flip-houdtijd</span><span class="help-lang-en">PLAY · Flip hold</span></span><select id="multiOgnFlipHoldSelect"></select></label>
         <p class="config-item-help"><span class="help-lang-nl"><strong>Pauzeer op Flip</strong> is standaard: de verplaatste knopen flitsen en PLAY wacht. Klik <strong>Play</strong> of <strong>→</strong> om verder te gaan. Alternatieven zijn flash (1,2 s) en houd vast (3 s).</span><span class="help-lang-en"><strong>Pause on Flip</strong> is the default: moved nodes flash and PLAY waits. Click <strong>Play</strong> or <strong>→</strong> to continue. Alternatives are flash (1.2 s) and hold (3 s).</span></p>
-        <p class="config-item-help"><span class="help-lang-nl"><strong>Ruimte slepen:</strong> werkt standaard in Zin, Uiting en Story. Open Ruimtezoom; kies bij een uiting/story zichtbaar K1, K2 of K3; houd H, V of H+V ingedrukt en sleep in de pijlrichting. V geldt voor de gekozen kernzin; H blijft voor de uiting gekoppeld zodat anafoorlijnen recht blijven. Auto K, Auto uiting en Alles 100% herstellen elk een duidelijk bereik. Bij wisseling van uiting wordt lokale zoom gereset; globale zoom blijft alleen in deze browser bewaard. De knoop zelf wordt niet los verplaatst.</span><span class="help-lang-en"><strong>Drag spacing:</strong> is available by default in Sentence, Utterance and Story. Open Space zoom; in an utterance/story visibly choose K1, K2 or K3; press and hold H, V or H+V and drag in the arrow direction. V applies to the selected kernel clause; H stays linked for the utterance so anaphor lines remain straight. Auto K, Auto utterance and All 100% each reset a clear scope. Switching utterances resets local zoom; global zoom is retained only in this browser. The node itself is not moved freely.</span></p>
+        <p class="config-item-help"><span class="help-lang-nl"><strong>Ruimte slepen:</strong> activeer dit hier; er staat geen losse Ruimtezoom-knop in Main. Sleep daarna rechtstreeks vanaf een knoop in Zin, Uiting of Story. In een uiting bepaalt de aangeklikte kernzin het lokale verticale bereik; horizontale ruimte blijft gekoppeld zodat anafoorlijnen recht blijven. <strong>Ruimte terug naar Auto</strong> herstelt alle ruimtewaarden naar 100%. De knoop zelf wordt niet los verplaatst.</span><span class="help-lang-en"><strong>Drag spacing:</strong> enable it here; Main has no separate Space zoom button. Then drag directly from a node in Sentence, Utterance or Story. In an utterance the clicked kernel clause determines the local vertical scope; horizontal spacing remains linked so anaphor lines stay straight. <strong>Reset spacing to Auto</strong> restores all spacing values to 100%. The node itself is not moved freely.</span></p>
         <p class="config-item-help"><span class="help-lang-nl"><strong>Flip</strong> spiegelt de zichtbare takken, maar verandert noch de structuur <code>S → NP, VP</code> / <code>VP → NP, V</code>, noch de LEX-woordvolgorde of verticale anaforen.</span><span class="help-lang-en"><strong>Flip</strong> mirrors the visible branches without changing <code>S → NP, VP</code> / <code>VP → NP, V</code> structure, LEX word order, or vertical anaphors.</span></p>
         <p class="config-item-help"><span class="help-lang-nl"><strong>Reikwijdte:</strong> Flip bestaat alleen in Language Tree en Anafoor/multiple Language Trees. LEX is het ultieme resultaat: de gerealiseerde uiting. De flipsolver kiest alleen toegestane boomgeometrie.</span><span class="help-lang-en"><strong>Scope:</strong> Flip exists only in Language Tree and Anaphor/multiple Language Trees. LEX is the ultimate result: the realized utterance. The flip solver only chooses permitted tree geometry.</span></p>
         <p class="config-item-help"><span class="help-lang-nl"><strong>TODO:</strong> <em>zijn bot</em> kan het bot van Jan of van Jek betekenen; de solver mag dit niet stilzwijgend beslissen. <em>Het bot</em> is de ondubbelzinnige standaard.</span><span class="help-lang-en"><strong>TODO:</strong> <em>zijn bot</em> may mean Jan's or Jek's bone; the solver must not silently decide. <em>Het bot</em> is the unambiguous default.</span></p>
@@ -16013,6 +16371,7 @@
       mobileTestmateriaalListCount: validTestmateriaalListCount(state.mobileTestmateriaalListCount, 1),
       horizontalLexUnits: normalizeHorizontalLexUnits(state.horizontalLexUnits),
       canvasHorizontalAlignment: validCanvasHorizontalAlignment(state.canvasHorizontalAlignment),
+      canvasLeftMarginPercent: validCanvasLeftMarginPercent(state.canvasLeftMarginPercent),
       syntProjectionColor: state.syntProjectionColor,
       logProjectionColor: state.logProjectionColor,
       gridColor: state.gridColor,
@@ -16172,6 +16531,7 @@
     if (snapshot.mobileTestmateriaalListCount != null) state.mobileTestmateriaalListCount = validTestmateriaalListCount(snapshot.mobileTestmateriaalListCount, 1);
     if (snapshot.horizontalLexUnits && typeof snapshot.horizontalLexUnits === 'object') state.horizontalLexUnits = normalizeHorizontalLexUnits(snapshot.horizontalLexUnits);
     if (typeof snapshot.canvasHorizontalAlignment === 'string') state.canvasHorizontalAlignment = validCanvasHorizontalAlignment(snapshot.canvasHorizontalAlignment);
+    if (snapshot.canvasLeftMarginPercent != null) state.canvasLeftMarginPercent = validCanvasLeftMarginPercent(snapshot.canvasLeftMarginPercent);
     if (typeof snapshot.syntProjectionColor === 'string') state.syntProjectionColor = snapshot.syntProjectionColor;
     if (typeof snapshot.logProjectionColor === 'string') state.logProjectionColor = snapshot.logProjectionColor;
     if (typeof snapshot.gridColor === 'string') state.gridColor = snapshot.gridColor;
@@ -16226,6 +16586,7 @@
       localStorage.setItem('opengraph_mobile_testmateriaal_lists', String(state.mobileTestmateriaalListCount));
       localStorage.setItem('opengraph_horizontal_lex_units', JSON.stringify(normalizeHorizontalLexUnits(state.horizontalLexUnits)));
       localStorage.setItem('opengraph_canvas_horizontal_alignment', validCanvasHorizontalAlignment(state.canvasHorizontalAlignment));
+      localStorage.setItem('opengraph_canvas_left_margin_percent', String(validCanvasLeftMarginPercent(state.canvasLeftMarginPercent)));
       localStorage.setItem('opengraph_projection_color_synt', state.syntProjectionColor);
       localStorage.setItem('opengraph_projection_color_log', state.logProjectionColor);
       localStorage.setItem('opengraph_grid_color', state.gridColor);
@@ -16928,10 +17289,66 @@
       if (button.closest('.config-orientation-card')) return;
       button.addEventListener('click', () => {
         if (directPlacementActive()) return;
-        setLexAxisSide(button.getAttribute('data-lex-axis-side-choice'));
+        const chosenSide = button.getAttribute('data-lex-axis-side-choice');
+        setLexAxisSide(chosenSide);
         if (els.mainLexOrientationMenu) els.mainLexOrientationMenu.open = false;
       });
     });
+    if (els.mainLexLabelTurnDial) {
+      let dialDragging = false;
+      const dialEnabled = () => ['north', 'south'].includes(validLexAxisSide(state.lexAxisSide));
+      const updateDialFromPointer = event => {
+        if (!dialEnabled()) return;
+        const rect = els.mainLexLabelTurnDial.getBoundingClientRect();
+        const cx = rect.left + rect.width / 2;
+        const cy = rect.top + rect.height / 2;
+        let arc = Math.atan2(event.clientY - cy, event.clientX - cx) * 180 / Math.PI + 135;
+        if (arc < 0) arc += 360;
+        if (arc > 270) arc = arc < 315 ? 270 : 0;
+        setLexLabelTurnDegrees(Math.round((arc / 270) * 90));
+      };
+      els.mainLexLabelTurnDial.addEventListener('pointerdown', event => {
+        if (!dialEnabled()) return;
+        dialDragging = true;
+        els.mainLexLabelTurnDial.setPointerCapture?.(event.pointerId);
+        updateDialFromPointer(event);
+        event.preventDefault();
+        event.stopPropagation();
+      });
+      els.mainLexLabelTurnDial.addEventListener('pointermove', event => {
+        if (!dialDragging) return;
+        updateDialFromPointer(event);
+        event.preventDefault();
+        event.stopPropagation();
+      });
+      const stopDialDrag = event => {
+        if (!dialDragging) return;
+        dialDragging = false;
+        if (els.mainLexLabelTurnDial.hasPointerCapture?.(event.pointerId)) {
+          els.mainLexLabelTurnDial.releasePointerCapture?.(event.pointerId);
+        }
+        event.preventDefault();
+        event.stopPropagation();
+      };
+      els.mainLexLabelTurnDial.addEventListener('pointerup', stopDialDrag);
+      els.mainLexLabelTurnDial.addEventListener('pointercancel', stopDialDrag);
+      els.mainLexLabelTurnDial.addEventListener('dragstart', event => event.preventDefault());
+      els.mainLexLabelTurnDial.addEventListener('click', event => {
+        event.preventDefault();
+        event.stopPropagation();
+      });
+      els.mainLexLabelTurnDial.addEventListener('keydown', event => {
+        if (!dialEnabled()) return;
+        const current = validLexLabelTurnDegrees(state.lexLabelTurnDegrees);
+        const next = event.key === 'Home' ? 0
+          : event.key === 'End' ? 90
+            : ['ArrowRight', 'ArrowUp'].includes(event.key) ? current + 1
+              : ['ArrowLeft', 'ArrowDown'].includes(event.key) ? current - 1 : null;
+        if (next == null) return;
+        setLexLabelTurnDegrees(next);
+        event.preventDefault();
+      });
+    }
     els.projectionBoxDraggableInput?.addEventListener('change', event => { updateProjectionBoxDraggable(event.target.checked); appendConfigLog('change-projection-box-draggable', { enabled: !!event.target.checked }); markConfigDirty('Projecties-box'); });
     els.southBoxDraggableInput?.addEventListener('change', event => { updateSouthBoxDraggable(event.target.checked); appendConfigLog('change-south-box-draggable', { enabled: !!event.target.checked }); markConfigDirty('Taalactiebox'); });
     const updateLexFreeSlotCount = event => { state.lexFreeSlotCount = Math.max(0, Math.min(8, Number(event.target.value) || 0)); resetManualViewBox(); render(); };
@@ -17230,6 +17647,7 @@
     await loadProjectConfigLayers();
     projectConfigStatus.browserLoaded = loadSavedConfigSnapshot();
     enforceEastStartupDefault();
+    enforceTrimmedAxisMarginDefault();
     syncProjectConfigStatus();
     const requestedLanguage = queryParamValue('lang', 'language');
     if (requestedLanguage) state.language = normalizeLanguage(requestedLanguage.toLowerCase());
@@ -17239,6 +17657,7 @@
     await loadExamplesFromHtml();
     await loadPublicTestmateriaalCatalog();
     refreshExamplesForFeatures();
+    applyFullStartupState();
     const requestedItem = queryParamValue('item', 'example');
     const requestedApp = queryParamValue('app');
     const requestedAnaphor = queryParamValue('anafoor');

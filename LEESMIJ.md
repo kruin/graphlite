@@ -478,10 +478,11 @@ index.html
 Of lokaal:
 
 ```bat
-start_local_viewer.bat
+localserver.bat
 ```
 
-`start_local_viewer.bat` is de enige starter en gebruikt één gevonden Python
+`localserver.bat` is de vertrouwde korte naam en verwijst rechtstreeks naar
+`start_local_viewer.bat`. Die gecontroleerde starter gebruikt één gevonden Python
 3-installatie. Kies bij de gedownloade ZIP eerst **Alles uitpakken**; start de
 BAT niet vanuit de gecomprimeerde map. De BAT controleert alleen of alles is
 uitgepakt en start daarna

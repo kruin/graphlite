@@ -14,7 +14,7 @@
 <script>
     (function() {
       var VERSION = 'v3.1.0-rc.10';
-      var SOURCE_BUILD = 'v3.1.0-rc.10-simplex-north-south-stable-unflipped-20260831.12';
+      var SOURCE_BUILD = 'v3.1.0-rc.10-measured-lex-letter-spacing-20260901.29';
       window.__OPENGRAPH_EXPECTED_VERSION__ = VERSION;
       function runCacheCleanupOnce() {
         var flag = 'opengraph-cache-cleaned-' + VERSION + '-' + SOURCE_BUILD;
@@ -80,7 +80,15 @@
 <button type="button" data-lex-axis-side-choice="north">Noord →</button>
 <button type="button" data-lex-axis-side-choice="south">Zuid →</button>
 </div>
-<small><span class="help-lang-nl">Algemeen voor alle berekende views; niet voor Greedy Grow en Random.</span><span class="help-lang-en">General for all calculated views; not for Greedy Grow and Random.</span></small>
+<div class="lex-label-turn-control">
+<div aria-label="LEX-labels draaien" aria-valuemax="90" aria-valuemin="0" aria-valuenow="90" aria-valuetext="90 graden · letterkolom" class="lex-label-turn-dial" id="mainLexLabelTurnDial" role="slider" tabindex="0">
+<span class="lex-label-turn-dial-pointer" aria-hidden="true"></span><span class="lex-label-turn-dial-center" aria-hidden="true"></span>
+</div>
+<output id="mainLexLabelTurnOutput">90°</output>
+<div class="lex-label-turn-scale"><span>0° · woordrij</span><span>90° · letterkolom</span></div>
+<div class="lex-label-turn-calibration" id="mainLexLabelTurnCalibration">Automatisch per testitem</div>
+</div>
+<small><span class="help-lang-nl">Sleep of draai de knop. Labels, boom en assen passen zich direct aan.</span><span class="help-lang-en">Drag or turn the dial. Labels, tree and axes adjust immediately.</span></small>
 </div>
 </details>
 <nav aria-label="Topmenu" class="main-top-menu">
@@ -159,7 +167,7 @@
 <select aria-hidden="true" class="main-control-select-compat" id="mainViewSelect" tabindex="-1"></select>
 <select aria-hidden="true" class="main-control-select-compat" id="mainProjectionSelect" tabindex="-1"></select>
 </section>
-<p class="lex-axis-mobile-warning" id="lexAxisMobileWarning" hidden><strong>Let op:</strong> de horizontale uiting gebruikt woordlengte-afhankelijke ruimte en kan op mobiel horizontaal pannen of FIT vereisen.</p>
+<p class="lex-axis-mobile-warning" id="lexAxisMobileWarning" hidden><strong>Let op:</strong> Noord/Zuid gebruikt compacte verticale LEX-items; FIT kadert op mobiel de volledige meegedraaide assen.</p>
 <section aria-live="polite" class="main-active-utterance" id="mainActiveUtterance">
 <span class="main-active-utterance-label" id="mainActiveUtteranceLabel">Uiting</span>
 <strong class="main-active-utterance-text" id="mainActiveUtteranceText">—</strong>
@@ -926,33 +934,6 @@
 </section>
 </aside>
 <section aria-label="OpenGraph canvas" class="canvas-wrap" id="canvasWrap">
-<div class="space-zoom-controls is-collapsed" id="spaceZoomControls" aria-label="Ruimtezoom">
-<button class="space-zoom-toggle" data-space-toggle type="button" aria-expanded="false">Ruimtezoom</button>
-<div class="space-zoom-panel">
-<div class="space-zoom-scope" role="group" aria-label="Bereik ruimtezoom">
-<button class="is-active" data-space-scope="local" type="button">Lokaal</button>
-<button data-space-scope="global" type="button">Globaal</button>
-</div>
-<div class="space-zoom-units" data-space-units role="group" aria-label="Kies kernzin">
-<span>Kernzin:</span>
-<button class="is-active" data-space-unit="K1" type="button">K1</button>
-<button data-space-unit="K2" type="button">K2</button>
-<button data-space-unit="K3" type="button">K3</button>
-</div>
-<div class="space-zoom-handles" role="group" aria-label="Richting ruimtezoom">
-<button data-space-axis="x" type="button" title="Sleep horizontaal">H ↔</button>
-<button data-space-axis="y" type="button" title="Sleep verticaal">V ↕</button>
-<button data-space-axis="xy" type="button" title="Sleep horizontaal en verticaal">H+V ⤡</button>
-</div>
-<output class="space-zoom-status" id="spaceZoomStatus" aria-live="polite"></output>
-<div class="space-zoom-resets">
-<button data-space-reset="selected" type="button">Auto K</button>
-<button data-space-reset="utterance" type="button">Auto uiting</button>
-<button data-space-reset="all" type="button">Alles 100%</button>
-</div>
-<small id="spaceZoomHelp">Kies K1/K2/K3. Houd daarna H, V of H+V ingedrukt en sleep.</small>
-</div>
-</div>
 <svg aria-label="OpenGraph projectie" id="graphSvg" role="img" tabindex="0" title="Grid is vastgezet; bediening staat buiten het boomvenster." xmlns="http://www.w3.org/2000/svg"></svg>
 <section aria-labelledby="lexAmbiguityHeading" aria-live="polite" class="lex-ambiguity-panel hidden" id="lexAmbiguityPanel" role="dialog">
 <div class="lex-ambiguity-kicker">LEX-analyse</div>
@@ -1039,7 +1020,7 @@
 <p class="mobile-sheet-note">Sleep met één vinger om te pannen. Knijp met twee vingers om te zoomen. FIT past het zichtvenster aan de huidige boom en named projections aan; de boom zelf verandert niet.</p>
 </section>
 <script>
-    window.__opengraphBoot = { version: 'v3.1.0-rc.10', sourceBuild: 'v3.1.0-rc.10-simplex-north-south-stable-unflipped-20260831.12', loaded: false, marker: 'viewer-index' };
+    window.__opengraphBoot = { version: 'v3.1.0-rc.10', sourceBuild: 'v3.1.0-rc.10-measured-lex-letter-spacing-20260901.29', loaded: false, marker: 'viewer-index' };
     function ogStatus(message) {
       var target = document.getElementById('actionFeedback') || document.body;
       if (target) target.textContent = message;
@@ -1074,6 +1055,6 @@
 <script defer="" src="multi-ogn-anaphor-play-engine.js?v3.1.0-rc.10"></script>
 <script defer="" src="multi-ogn-composition-engine.js?v3.1.0-rc.10"></script>
 <script defer="" src="utterance-kernel-engine.js?v3.1.0-rc.10"></script>
-<script defer="" src="viewer.js?v3.1.0-rc.10&amp;source=20260831.12"></script>
+<script defer="" src="viewer.js?v3.1.0-rc.10&amp;source=20260901.29"></script>
 </body>
 </html>

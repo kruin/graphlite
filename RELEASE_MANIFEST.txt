@@ -3,6 +3,7 @@
 .gitignore
 .nojekyll
 FUNCTIONAL_DATABASE_COMPACT.md
+FIT_AND_RESET.md
 LEX_AXIS_ORIENTATIONS.md
 TESTMATERIAAL_BEHEER.md
 data/catalog.public.json
@@ -146,6 +147,7 @@ docs/DEVELOPER_NOTES.md
 docs/DIRECT_PLACEMENT_CONFIG.md
 docs/DOCUMENTATION_RULES.md
 docs/ENGLISH_VERSION.md
+docs/FIT_AND_RESET.md
 docs/FLIP_CONSTRAINT_SOLVER.md
 docs/GREEDY_GROW_RECONSTRUCTION.md
 docs/HANDOVER_FOR_COLLABORATORS.md
@@ -289,6 +291,7 @@ samples/short_demo.json
 samples/space3_gridH20W20_grow_demo.json
 samples/uitingen-kernzinnen.v1.json
 server_nocache.py
+localserver.bat
 start_local_viewer.bat
 start_local_viewer.py
 structure-config.html
@@ -345,6 +348,7 @@ tools/check_release_zip_batch.py
 tools/check_social_and_linguistic_export.py
 tools/check_text_normalization.py
 tools/check_lex_axis_orientations.js
+tools/check_fit_reset_contract.js
 tools/check_utterance_kernel_views.js
 tools/check_utterances.js
 tools/check_viewport_switch_runtime.js

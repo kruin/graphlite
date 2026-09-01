@@ -70,7 +70,7 @@ required_files = [
     "images/readme/ogn-placement-strategies.svg", "images/readme/ogn-three-layers.svg",
     "maak-publicatie-carrousel.bat", "installeer-carrousel-tools.bat", "maak-volledige-zip.bat",
     "package.json", "package-lock.json",
-    "start_local_viewer.bat", "start_local_viewer.py",
+    "localserver.bat", "start_local_viewer.bat", "start_local_viewer.py",
     "check_release.bat", "publish_checked.bat",
     "tools/check_release.py", "tools/normalize_text_files.py", "tools/check_text_normalization.py",
     "tools/sync_source_build.py",
@@ -812,7 +812,7 @@ for marker, label in [
 ]:
     require(local_launcher, marker, label)
 source_build = read("SOURCE_BUILD.txt").strip()
-if source_build != "v3.1.0-rc.10-simplex-north-south-stable-unflipped-20260831.12":
+if source_build != "v3.1.0-rc.10-measured-lex-letter-spacing-20260901.29":
     errors.append(f"onverwachte of lege SOURCE_BUILD.txt: {source_build!r}")
 
 leesmij = read("LEESMIJ.md")
