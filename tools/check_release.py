@@ -813,7 +813,7 @@ for marker, label in [
 ]:
     require(local_launcher, marker, label)
 source_build = read("SOURCE_BUILD.txt").strip()
-if source_build != "v3.1.0-rc.10-grammar-dropdown-mobile-no-lex-20260901.32":
+if source_build != "v3.1.0-rc.10-mobile-points-to-desktop-options-20260901.33":
     errors.append(f"onverwachte of lege SOURCE_BUILD.txt: {source_build!r}")
 
 leesmij = read("LEESMIJ.md")

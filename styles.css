@@ -8906,6 +8906,57 @@ body.mobile-menu-basic.main-screen-active .top-menu-sentence-popover {
   max-height: calc(100dvh - 5.4rem) !important;
 }
 
+.mobile-desktop-options-note { display: none; }
+body.mobile-menu-basic.main-screen-active .mobile-desktop-options-note,
+body.mobile-menu-advanced.main-screen-active .mobile-desktop-options-note {
+  display: block;
+  position: relative;
+  grid-column: 1 / -1;
+  width: 100%;
+  min-width: 0;
+  z-index: 2150;
+}
+.mobile-desktop-options-note > summary {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 1.25rem;
+  padding: .12rem .38rem;
+  border: 1px solid color-mix(in srgb, var(--accent), transparent 62%);
+  border-radius: .38rem;
+  background: color-mix(in srgb, var(--accent), var(--panel) 94%);
+  color: color-mix(in srgb, var(--accent), var(--text) 32%);
+  font-size: .59rem;
+  font-weight: 820;
+  line-height: 1.05;
+  text-align: center;
+  cursor: pointer;
+  list-style: none;
+}
+.mobile-desktop-options-note > summary::-webkit-details-marker { display: none; }
+.mobile-desktop-options-note > summary::after { content: ' ▾'; }
+.mobile-desktop-options-note[open] > summary::after { content: ' ▴'; }
+.mobile-desktop-options-content {
+  position: fixed;
+  z-index: 2300;
+  top: 4.05rem;
+  left: .28rem;
+  right: .28rem;
+  max-height: calc(100dvh - 6.4rem);
+  overflow: auto;
+  padding: .52rem .62rem;
+  border: 1px solid var(--line);
+  border-radius: .62rem;
+  background: var(--panel);
+  box-shadow: 0 .7rem 1.7rem rgba(15,23,42,.2);
+  color: var(--text);
+  font-size: .68rem;
+  line-height: 1.28;
+  text-align: left;
+}
+.mobile-desktop-options-content p { margin: 0 0 .32rem; font-weight: 780; }
+.mobile-desktop-options-content ul { margin: 0; padding-left: 1.15rem; }
+.mobile-desktop-options-content li + li { margin-top: .18rem; }
+
 /* Keep the active test utterance above the graph in every main viewer mode. */
 .main-active-utterance {
   display:flex;

@@ -1,1 +1,1 @@
-v3.1.0-rc.10-grammar-dropdown-mobile-no-lex-20260901.32
+v3.1.0-rc.10-mobile-points-to-desktop-options-20260901.33

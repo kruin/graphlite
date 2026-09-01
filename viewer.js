@@ -2,7 +2,7 @@
   'use strict';
 
   const VERSION = 'v3.1.0-rc.10';
-  const SOURCE_BUILD = 'v3.1.0-rc.10-grammar-dropdown-mobile-no-lex-20260901.32';
+  const SOURCE_BUILD = 'v3.1.0-rc.10-mobile-points-to-desktop-options-20260901.33';
   const OPN_FORMAT_VERSION = '1.0';
   const OPN_DOCUMENT_TYPE = 'opengraph-document';
   const PARADATA_EVENT_LIMIT = 250;

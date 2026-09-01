@@ -14,7 +14,7 @@
 <script>
     (function() {
       var VERSION = 'v3.1.0-rc.10';
-      var SOURCE_BUILD = 'v3.1.0-rc.10-grammar-dropdown-mobile-no-lex-20260901.32';
+      var SOURCE_BUILD = 'v3.1.0-rc.10-mobile-points-to-desktop-options-20260901.33';
       window.__OPENGRAPH_EXPECTED_VERSION__ = VERSION;
       function runCacheCleanupOnce() {
         var flag = 'opengraph-cache-cleaned-' + VERSION + '-' + SOURCE_BUILD;
@@ -165,6 +165,14 @@
 <button class="top-menu-action primary config-open-button" id="openConfigButton" title="Open het configuratiescherm met alle projectie-, LEX-, layout- en documentatie-instellingen." type="button">Config</button>
 <a class="top-menu-action" href="testmateriaal.html" hidden id="openTestmateriaal" title="Open het lokale beheer van input, nummering en status.">Testmateriaal</a>
 </nav>
+<details class="mobile-desktop-options-note" id="mobileDesktopOptionsNote">
+<summary><span class="help-lang-nl">Meer op desktop · dezelfde URL</span><span class="help-lang-en">More on desktop · same URL</span></summary>
+<div class="mobile-desktop-options-content">
+<p><span class="help-lang-nl">Open precies deze URL op een desktop of breed venster voor directe toegang tot:</span><span class="help-lang-en">Open this exact URL on a desktop or wide window for direct access to:</span></p>
+<ul class="help-lang-nl"><li>LEX West/Oost/Noord/Zuid, inclusief graduele labeldraaiing en kalibratie;</li><li>afzonderlijke projecties LEX, SYNT en LOG;</li><li>LOG-volgorden SOV, SVO, OVS, OSV, VSO en VOS;</li><li>Extra met Greedy Grow en Random;</li><li>Ruimte slepen/zoom, boomruimte, Flip en uitgebreide layoutinstellingen;</li><li>meerdere kolommen testmateriaal;</li><li>volledige Config en export naar OPN, SVG, LinkedIn-PNG en Play-video.</li></ul>
+<ul class="help-lang-en"><li>LEX West/East/North/South, including gradual label rotation and calibration;</li><li>separate LEX, SYNT and LOG projections;</li><li>LOG orders SOV, SVO, OVS, OSV, VSO and VOS;</li><li>Extra with Greedy Grow and Random;</li><li>spacing drag/zoom, tree spacing, Flip and extended layout controls;</li><li>multiple test-material columns;</li><li>full Config and export to OPN, SVG, LinkedIn PNG and Play video.</li></ul>
+</div>
+</details>
 <select aria-hidden="true" class="main-control-select-compat" id="mainExampleSelect" tabindex="-1"></select>
 <select aria-hidden="true" class="main-control-select-compat" id="mainAdverbSelect" tabindex="-1"></select>
 <select aria-hidden="true" class="main-control-select-compat" id="mainViewSelect" tabindex="-1"></select>
@@ -605,11 +613,13 @@
 <h3>Views</h3>
 <p>Het menu <strong>Grammar</strong> kiest het centrale beeld: standaard <strong>Syntactic</strong>, of <strong>Functional</strong>.</p>
 <p>Een view is het hoofdbeeld in de boomruimte. Named projections staan daar omheen.</p>
+<p><strong>Mobiel is bewust eenvoudig.</strong> De desktopversie staat op dezelfde URL en geeft daarnaast directe toegang tot LEX West/Oost/Noord/Zuid met graduele draaiing, afzonderlijke LEX/SYNT/LOG-projecties, zes LOG-volgorden, Greedy Grow, Random, Ruimtezoom, uitgebreide layout, meerdere testmateriaalkolommen en export naar OPN, SVG, LinkedIn-PNG en Play-video.</p>
 </div>
 <div class="help-lang-en">
 <h3>Views</h3>
 <p>The <strong>Grammar</strong> menu chooses the central image: <strong>Syntactic</strong> by default, or <strong>Functional</strong>.</p>
 <p>A view is the main image in the tree area. Named projections are placed around it.</p>
+<p><strong>Mobile is intentionally simple.</strong> The desktop version uses the same URL and additionally provides direct access to LEX West/East/North/South with gradual rotation, separate LEX/SYNT/LOG projections, six LOG orders, Greedy Grow, Random, Space zoom, extended layout, multiple test-material columns, and export to OPN, SVG, LinkedIn PNG and Play video.</p>
 </div>
 </article>
 <article class="help-topic-panel" data-help-topic="syntax-view">
@@ -1023,7 +1033,7 @@
 <p class="mobile-sheet-note">Sleep met één vinger om te pannen. Knijp met twee vingers om te zoomen. FIT past het zichtvenster aan de huidige boom en named projections aan; de boom zelf verandert niet.</p>
 </section>
 <script>
-    window.__opengraphBoot = { version: 'v3.1.0-rc.10', sourceBuild: 'v3.1.0-rc.10-grammar-dropdown-mobile-no-lex-20260901.32', loaded: false, marker: 'viewer-index' };
+    window.__opengraphBoot = { version: 'v3.1.0-rc.10', sourceBuild: 'v3.1.0-rc.10-mobile-points-to-desktop-options-20260901.33', loaded: false, marker: 'viewer-index' };
     function ogStatus(message) {
       var target = document.getElementById('actionFeedback') || document.body;
       if (target) target.textContent = message;
@@ -1058,6 +1068,6 @@
 <script defer="" src="multi-ogn-anaphor-play-engine.js?v3.1.0-rc.10"></script>
 <script defer="" src="multi-ogn-composition-engine.js?v3.1.0-rc.10"></script>
 <script defer="" src="utterance-kernel-engine.js?v3.1.0-rc.10"></script>
-<script defer="" src="viewer.js?v3.1.0-rc.10&amp;source=20260901.32"></script>
+<script defer="" src="viewer.js?v3.1.0-rc.10&amp;source=20260901.33"></script>
 </body>
 </html>
