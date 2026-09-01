@@ -91,8 +91,23 @@ for menu_id in [
     require(INDEX, f'id="{menu_id}"', f"topmenu-item {menu_id}")
 
 require(JS, 'id="configViewportModeSelect"', "Interface-keuze in Config")
+require(JS, 'id="mobileMenuModeSelect"', "mobiele Basis/Uitgebreid-keuze in Config")
 if 'id="mainInterfaceMenu"' in INDEX:
     errors.append("Interface-keuze staat nog in het hoofdmenu")
+
+for marker, label in [
+    ("function mobileBasicMenuActive()", "mobiele Basisprofiel-helper"),
+    ("function effectiveSpaceDragEnabled()", "Ruimtezoomblokkade in Basis"),
+    ("syncMobileMenuProfile();", "mobiel profiel vóór render"),
+    ("mobileMenuMode: validMobileMenuMode(state.mobileMenuMode)", "mobiel menu in Configsnapshot"),
+]:
+    require(JS, marker, label)
+for marker, label in [
+    ("body.mobile-menu-basic.main-screen-active #mainLexOrientationMenu", "draaiknop en N/Z verborgen in Basis"),
+    ("body.mobile-menu-basic.main-screen-active .space-zoom-controls", "Ruimtezoom verborgen in Basis"),
+    ("grid-template-columns: minmax(6.35rem, 7rem) minmax(0, 1fr)", "passende mobiele Syntax/Functies-knop"),
+]:
+    require(CSS, marker, label)
 
 if "Syntax/FT" in INDEX or "Syntax / FT" in INDEX or ">FT<" in INDEX:
     errors.append("zichtbare oude FT-naam staat nog in index.html")

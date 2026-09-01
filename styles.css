@@ -8791,6 +8791,95 @@ body.placement-multi-ogn-active .lex-ambiguity-panel {
   .placement-mode-calculated-options { grid-template-columns:1fr; }
 }
 
+/* rc.10 build .30: rustige mobiele Basisstand. Desktop en de expliciete
+   mobiele stand Uitgebreid behouden het volledige presentatiemenu. */
+body.mobile-menu-basic.main-screen-active #mainLexOrientationMenu,
+body.mobile-menu-basic.main-screen-active #sourceAxisMenu,
+body.mobile-menu-basic.main-screen-active #mainExtraMenu,
+body.mobile-menu-basic.main-screen-active #mainAdverbMenu,
+body.mobile-menu-basic.main-screen-active #mainViewMenu,
+body.mobile-menu-basic.main-screen-active #lexAxisMobileWarning,
+body.mobile-menu-basic.main-screen-active .space-zoom-controls {
+  display: none !important;
+}
+
+body.mobile-menu-basic.main-screen-active .main-topbar {
+  display: grid !important;
+  grid-template-columns: minmax(6.35rem, 7rem) minmax(0, 1fr) !important;
+  align-items: center !important;
+  min-height: 2.32rem !important;
+  height: auto !important;
+  padding: .14rem .20rem !important;
+  gap: .18rem !important;
+}
+body.mobile-menu-basic.main-screen-active .central-view-toolbar {
+  position: static !important;
+  inset: auto !important;
+  z-index: auto !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: .06rem !important;
+  border-width: 1px !important;
+  opacity: 1 !important;
+  box-shadow: none !important;
+}
+body.mobile-menu-basic.main-screen-active .central-view-toolbar .main-menu-view-options {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  width: 100% !important;
+  gap: .05rem !important;
+}
+body.mobile-menu-basic.main-screen-active .central-view-toolbar .compact-choice-option {
+  min-width: 0 !important;
+  width: 100% !important;
+  min-height: 1.48rem !important;
+  height: 1.48rem !important;
+  padding: .04rem .10rem !important;
+  border-radius: .34rem !important;
+  font-size: .56rem !important;
+  font-weight: 720 !important;
+  line-height: 1 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+body.mobile-menu-basic.main-screen-active .main-top-menu {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1.15fr) repeat(3, minmax(0, .72fr)) !important;
+  grid-template-rows: auto !important;
+  width: 100% !important;
+  padding: 0 !important;
+  gap: .12rem !important;
+}
+body.mobile-menu-basic.main-screen-active .main-top-menu > #mainSentenceMenu,
+body.mobile-menu-basic.main-screen-active .main-top-menu > #mainLanguageMenu,
+body.mobile-menu-basic.main-screen-active .main-top-menu > #openHelpButton,
+body.mobile-menu-basic.main-screen-active .main-top-menu > #openConfigButton {
+  display: block !important;
+  grid-row: 1 !important;
+  grid-column: auto !important;
+}
+body.mobile-menu-basic.main-screen-active .main-top-menu > #mainSentenceMenu > summary,
+body.mobile-menu-basic.main-screen-active .main-top-menu > #mainLanguageMenu > summary,
+body.mobile-menu-basic.main-screen-active .main-top-menu > #openHelpButton,
+body.mobile-menu-basic.main-screen-active .main-top-menu > #openConfigButton {
+  min-width: 0 !important;
+  width: 100% !important;
+  min-height: 1.62rem !important;
+  height: 1.62rem !important;
+  padding: .06rem .12rem !important;
+  font-size: .57rem !important;
+  line-height: 1 !important;
+}
+body.mobile-menu-basic.main-screen-active .main-top-menu > :not(#mainSentenceMenu):not(#mainLanguageMenu):not(#openHelpButton):not(#openConfigButton) {
+  display: none !important;
+}
+body.mobile-menu-basic.main-screen-active .top-menu-sentence-popover {
+  top: 2.72rem !important;
+  max-height: calc(100dvh - 5.4rem) !important;
+}
+
 /* Keep the active test utterance above the graph in every main viewer mode. */
 .main-active-utterance {
   display:flex;

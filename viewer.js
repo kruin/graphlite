@@ -2,7 +2,7 @@
   'use strict';
 
   const VERSION = 'v3.1.0-rc.10';
-  const SOURCE_BUILD = 'v3.1.0-rc.10-measured-lex-letter-spacing-20260901.29';
+  const SOURCE_BUILD = 'v3.1.0-rc.10-mobile-basic-menu-configurable-20260901.31';
   const OPN_FORMAT_VERSION = '1.0';
   const OPN_DOCUMENT_TYPE = 'opengraph-document';
   const PARADATA_EVENT_LIMIT = 250;
@@ -1645,6 +1645,22 @@
     return LEX_AXIS_SIDE_OPTIONS.some(option => option.id === side) ? side : 'east';
   }
 
+  function validMobileMenuMode(value) {
+    return String(value || '').toLowerCase() === 'advanced' ? 'advanced' : 'basic';
+  }
+
+  function mobileBasicMenuActive() {
+    return isMobileViewport() && validMobileMenuMode(state?.mobileMenuMode) === 'basic';
+  }
+
+  function configuredLexAxisSide() {
+    return validLexAxisSide(state?.mobileBasicSavedLexAxisSide || state?.lexAxisSide);
+  }
+
+  function effectiveSpaceDragEnabled() {
+    return Boolean(state?.kernelSpaceDragEnabled) && !mobileBasicMenuActive();
+  }
+
   function initialLexAxisSide() {
     try {
       return validLexAxisSide(localStorage.getItem('opengraph_lex_axis_side'));
@@ -1728,9 +1744,16 @@
   }
 
   function setLexAxisSide(value) {
-    state.lexAxisSide = validLexAxisSide(value);
-    try { localStorage.setItem('opengraph_lex_axis_side', state.lexAxisSide); } catch (_err) {}
-    appendConfigLog('change-lex-axis-side', { lexAxisSide: state.lexAxisSide });
+    const side = validLexAxisSide(value);
+    if (mobileBasicMenuActive()) {
+      state.mobileBasicSavedLexAxisSide = side;
+      state.lexAxisSide = 'east';
+    } else {
+      state.mobileBasicSavedLexAxisSide = null;
+      state.lexAxisSide = side;
+    }
+    try { localStorage.setItem('opengraph_lex_axis_side', side); } catch (_err) {}
+    appendConfigLog('change-lex-axis-side', { lexAxisSide: side });
     markConfigDirty('Presentatie');
     resetManualViewBox();
     render();
@@ -2696,6 +2719,8 @@
     projectionBoxDrag: null,
     lexProjectionColor: (function(){ try { return localStorage.getItem('opengraph_projection_color_lex') || 'blue'; } catch (_err) { return 'blue'; } })(),
     lexAxisSide: initialLexAxisSide(),
+    mobileMenuMode: (function(){ try { return validMobileMenuMode(localStorage.getItem('opengraph_mobile_menu_mode')); } catch (_err) { return 'basic'; } })(),
+    mobileBasicSavedLexAxisSide: null,
     lexLabelTurnDegrees: initialLexLabelTurnDegrees(),
     lexLabelTurnNeedsCalibration: true,
     lexLabelTurnCalibration: null,
@@ -5570,6 +5595,24 @@
     }
   }
 
+  function syncMobileMenuProfile() {
+    const basic = mobileBasicMenuActive();
+    if (basic && state.lexAxisSide !== 'east') {
+      state.mobileBasicSavedLexAxisSide = validLexAxisSide(state.lexAxisSide);
+      state.lexAxisSide = 'east';
+      resetManualViewBox();
+    } else if (!basic && state.mobileBasicSavedLexAxisSide) {
+      state.lexAxisSide = validLexAxisSide(state.mobileBasicSavedLexAxisSide);
+      state.mobileBasicSavedLexAxisSide = null;
+      resetManualViewBox();
+    }
+    [document.documentElement, document.body].forEach(node => {
+      node?.classList.toggle('mobile-menu-basic', basic);
+      node?.classList.toggle('mobile-menu-advanced', isMobileViewport() && !basic);
+      if (node) node.dataset.mobileMenuMode = basic ? 'basic' : 'advanced';
+    });
+  }
+
   function isPhysicalHandheldViewport() {
     if (typeof window === 'undefined') return false;
     const viewport = window.visualViewport;
@@ -7280,7 +7323,7 @@
   }
 
   function attachSentenceSpaceDrag(g) {
-    if (!state.kernelSpaceDragEnabled || !g || g.dataset.sentenceSpaceDragBound === 'true') return;
+    if (!effectiveSpaceDragEnabled() || !g || g.dataset.sentenceSpaceDragBound === 'true') return;
     g.dataset.sentenceSpaceDragBound = 'true';
     g.setAttribute('data-space-drag-enabled', 'true');
     g.classList.add('sentence-space-drag-view');
@@ -10110,6 +10153,11 @@
     const showK2FlipReveal = hasLocalRoleFlip && playOperation.id === 'flip' && playOperation.unitId === 'K2';
     const horizontalScale = kernelBranchScale(horizontalSpacing);
     const verticalScale = kernelBranchScale(verticalSpacing);
+    // Deze renderer wordt ook zelfstandig uit viewer.js geëvalueerd door de
+    // releasecontrole. Houd de mobiele profielcheck daarom lokaal en laat het
+    // geïsoleerde testharnas terugvallen op de opgeslagen Configwaarde.
+    const spaceDragEnabled = Boolean(state.kernelSpaceDragEnabled)
+      && (typeof mobileBasicMenuActive !== 'function' || !mobileBasicMenuActive());
     g.setAttribute('data-grid-size-horizontal', validGridSize(state.gridSizeHorizontal));
     g.setAttribute('data-grid-size-vertical', validGridSize(state.gridSizeVertical));
     g.setAttribute('data-branch-horizontal', horizontalSpacing);
@@ -10117,7 +10165,7 @@
     g.setAttribute('data-branch-flip', flipMode);
     g.setAttribute('data-branch-horizontal-scale', String(horizontalScale));
     g.setAttribute('data-branch-vertical-scale', String(verticalScale));
-    g.setAttribute('data-space-drag-enabled', state.kernelSpaceDragEnabled ? 'true' : 'false');
+    g.setAttribute('data-space-drag-enabled', spaceDragEnabled ? 'true' : 'false');
     const globalSpace = state.kernelSpaceGlobal || { x: 1, y: 1 };
     const componentSpaceX = Number(state.kernelSpaceComponentX) || 1;
     const localSpaceY = state.kernelSpaceLocalY || {};
@@ -10616,7 +10664,7 @@
           element.setAttribute('data-implicit-subject', 'true');
         });
       });
-      if (state.kernelSpaceDragEnabled) {
+      if (spaceDragEnabled) {
         unitGroup.classList.add('kernel-space-drag-unit');
         unitGroup.setAttribute('data-space-drag-unit', unit.id);
         const persistKernelSpace = () => {
@@ -11231,6 +11279,7 @@
 
   function render() {
     try {
+      syncMobileMenuProfile();
       applyProjectionColors();
       syncPortraitStageMode();
       syncMainTopbarLayout();
@@ -14348,6 +14397,20 @@
     });
     generalViewGrid.appendChild(viewportModeLabel);
 
+    const mobileMenuModeLabel = document.createElement('label');
+    mobileMenuModeLabel.className = 'select-field mobile-menu-mode-field';
+    mobileMenuModeLabel.innerHTML = `<span><span class="help-lang-nl">Mobiel menu</span><span class="help-lang-en">Mobile menu</span></span><select id="mobileMenuModeSelect"><option value="basic">Basis</option><option value="advanced">Uitgebreid</option></select><small class="config-item-help"><span class="help-lang-nl">Basis toont Testmateriaal, Syntax/Functies, Taal, LEESMIJ en Config. N/Z, draaiknop, Ruimtezoom en extra presentatieregelaars blijven uit beeld. Uitgebreid toont het volledige mobiele menu.</span><span class="help-lang-en">Basic shows Test material, Syntax/Functions, Language, README and Config. N/S, the dial, Space zoom and extra presentation controls stay out of view. Advanced shows the full mobile menu.</span></small>`;
+    mobileMenuModeLabel.querySelector('select').value = validMobileMenuMode(state.mobileMenuMode);
+    mobileMenuModeLabel.querySelector('select').addEventListener('change', event => {
+      state.mobileMenuMode = validMobileMenuMode(event.target.value);
+      try { localStorage.setItem('opengraph_mobile_menu_mode', state.mobileMenuMode); } catch (_err) {}
+      appendConfigLog('change-mobile-menu-mode', { mobileMenuMode: state.mobileMenuMode });
+      markConfigDirty('Mobiel menu');
+      resetManualViewBox();
+      render();
+    });
+    generalViewGrid.appendChild(mobileMenuModeLabel);
+
     const canvasAlignmentLabel = document.createElement('label');
     canvasAlignmentLabel.className = 'select-field canvas-horizontal-alignment-field';
     canvasAlignmentLabel.innerHTML = `<span><span class="help-lang-nl">Tekening in venster</span><span class="help-lang-en">Drawing in viewport</span></span><select id="canvasHorizontalAlignmentSelect"></select><small class="config-item-help"><span class="help-lang-nl">Links is standaard. Midden en Rechts verplaatsen alleen de vrije schermmarge; boom en projectieassen behouden hun onderlinge geometrie.</span><span class="help-lang-en">Left is the default. Centre and Right only move unused viewport space; tree and projection axes retain their geometry.</span></small>`;
@@ -16366,7 +16429,8 @@
       greedyGrowConfig: normalizeGreedyGrowConfig(state.greedyGrowConfig),
       randomPlacementConfig: normalizeRandomPlacementConfig(state.randomPlacementConfig),
       lexProjectionColor: state.lexProjectionColor,
-      lexAxisSide: validLexAxisSide(state.lexAxisSide),
+      lexAxisSide: configuredLexAxisSide(),
+      mobileMenuMode: validMobileMenuMode(state.mobileMenuMode),
       desktopTestmateriaalListCount: validTestmateriaalListCount(state.desktopTestmateriaalListCount, 2),
       mobileTestmateriaalListCount: validTestmateriaalListCount(state.mobileTestmateriaalListCount, 1),
       horizontalLexUnits: normalizeHorizontalLexUnits(state.horizontalLexUnits),
@@ -16527,6 +16591,7 @@
     state.directPlacementState = null;
     if (typeof snapshot.lexProjectionColor === 'string') state.lexProjectionColor = snapshot.lexProjectionColor;
     if (typeof snapshot.lexAxisSide === 'string') state.lexAxisSide = validLexAxisSide(snapshot.lexAxisSide);
+    if (typeof snapshot.mobileMenuMode === 'string') state.mobileMenuMode = validMobileMenuMode(snapshot.mobileMenuMode);
     if (snapshot.desktopTestmateriaalListCount != null) state.desktopTestmateriaalListCount = validTestmateriaalListCount(snapshot.desktopTestmateriaalListCount, 2);
     if (snapshot.mobileTestmateriaalListCount != null) state.mobileTestmateriaalListCount = validTestmateriaalListCount(snapshot.mobileTestmateriaalListCount, 1);
     if (snapshot.horizontalLexUnits && typeof snapshot.horizontalLexUnits === 'object') state.horizontalLexUnits = normalizeHorizontalLexUnits(snapshot.horizontalLexUnits);
@@ -16581,7 +16646,8 @@
     if (Array.isArray(savedTopMenus)) state.topMenusAbove = normalizeTopMenusAbove(savedTopMenus);
     try {
       localStorage.setItem('opengraph_projection_color_lex', state.lexProjectionColor);
-      localStorage.setItem('opengraph_lex_axis_side', validLexAxisSide(state.lexAxisSide));
+      localStorage.setItem('opengraph_lex_axis_side', configuredLexAxisSide());
+      localStorage.setItem('opengraph_mobile_menu_mode', validMobileMenuMode(state.mobileMenuMode));
       localStorage.setItem('opengraph_desktop_testmateriaal_lists', String(state.desktopTestmateriaalListCount));
       localStorage.setItem('opengraph_mobile_testmateriaal_lists', String(state.mobileTestmateriaalListCount));
       localStorage.setItem('opengraph_horizontal_lex_units', JSON.stringify(normalizeHorizontalLexUnits(state.horizontalLexUnits)));

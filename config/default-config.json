@@ -19,6 +19,7 @@
     },
     "centerMode": "syntax",
     "lexAxisSide": "east",
+    "mobileMenuMode": "basic",
     "desktopTestmateriaalListCount": 2,
     "mobileTestmateriaalListCount": 1,
     "horizontalLexUnits": {
