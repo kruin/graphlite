@@ -70,7 +70,8 @@ for marker, label in [
     ('id="mainSentenceOptions"', "Zin-keuzelijst"),
     ('id="mainAdverbOptions"', "Bijwoord-keuzelijst"),
     ('data-feature="adverbs" hidden="" id="mainAdverbMenu"', "Bijwoordmenu standaard verborgen"),
-    ('id="mainViewOptions"', "Syntax/Functies-keuzelijst"),
+    ('id="mainGrammarSummary"', "Grammar-dropdown"),
+    ('id="mainViewOptions"', "Syntactic/Functional-keuzelijst"),
     ('id="mainLanguageMenu"', "vijftalig menu"),
     ('data-language-option="en"', "English taaloptie"),
     ('data-language-option="nl"', "Nederlandse taaloptie"),
@@ -105,7 +106,8 @@ for marker, label in [
 for marker, label in [
     ("body.mobile-menu-basic.main-screen-active #mainLexOrientationMenu", "draaiknop en N/Z verborgen in Basis"),
     ("body.mobile-menu-basic.main-screen-active .space-zoom-controls", "Ruimtezoom verborgen in Basis"),
-    ("grid-template-columns: minmax(6.35rem, 7rem) minmax(0, 1fr)", "passende mobiele Syntax/Functies-knop"),
+    ("grid-template-columns: minmax(4.85rem, 5.35rem) minmax(0, 1fr)", "passende mobiele Grammar-knop"),
+    ("body.mobile-menu-advanced.main-screen-active #mainLexOrientationMenu", "LEX-keuze ook mobiel Uitgebreid verborgen"),
 ]:
     require(CSS, marker, label)
 

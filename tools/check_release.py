@@ -218,7 +218,8 @@ for marker, label in [
     ("The sentence examples are Dutch and illustrate Dutch sentence word order.", "Nederlandse zinsnotitie EN"),
     ("De voorbeeldzinnen zijn Nederlands en tonen de Nederlandse woordvolgorde.", "Nederlandse zinsnotitie NL"),
     ("id=\"configViewportModeSelect\"", "Interface-keuze in Config"),
-    ("{ id: 'ft', label: 'Functies', labelEn: 'Functions' }", "Functies-view"),
+    ("{ id: 'syntax', label: 'Syntactic', labelEn: 'Syntactic' }", "Syntactic Grammar-view"),
+    ("{ id: 'ft', label: 'Functional', labelEn: 'Functional' }", "Functional Grammar-view"),
 ]:
     source = js
     require(source, marker, label)
@@ -812,7 +813,7 @@ for marker, label in [
 ]:
     require(local_launcher, marker, label)
 source_build = read("SOURCE_BUILD.txt").strip()
-if source_build != "v3.1.0-rc.10-mobile-basic-menu-configurable-20260901.31":
+if source_build != "v3.1.0-rc.10-grammar-dropdown-mobile-no-lex-20260901.32":
     errors.append(f"onverwachte of lege SOURCE_BUILD.txt: {source_build!r}")
 
 leesmij = read("LEESMIJ.md")

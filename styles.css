@@ -8803,16 +8803,41 @@ body.mobile-menu-basic.main-screen-active .space-zoom-controls {
   display: none !important;
 }
 
+.main-grammar-menu {
+  position: relative;
+  width: auto;
+  margin: 0;
+}
+.main-grammar-menu > summary {
+  min-width: 5.4rem;
+  text-align: center;
+}
+.main-grammar-menu .grammar-popover {
+  width: min(11rem, calc(100vw - .7rem));
+}
+.main-grammar-menu .main-menu-view-options {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: .18rem !important;
+}
+
+body.mobile-menu-basic.main-screen-active #mainLexOrientationMenu,
+body.mobile-menu-advanced.main-screen-active #mainLexOrientationMenu,
+body.mobile-menu-basic.main-screen-active #lexAxisMobileWarning,
+body.mobile-menu-advanced.main-screen-active #lexAxisMobileWarning {
+  display: none !important;
+}
+
 body.mobile-menu-basic.main-screen-active .main-topbar {
   display: grid !important;
-  grid-template-columns: minmax(6.35rem, 7rem) minmax(0, 1fr) !important;
+  grid-template-columns: minmax(4.85rem, 5.35rem) minmax(0, 1fr) !important;
   align-items: center !important;
   min-height: 2.32rem !important;
   height: auto !important;
   padding: .14rem .20rem !important;
   gap: .18rem !important;
 }
-body.mobile-menu-basic.main-screen-active .central-view-toolbar {
+body.mobile-menu-basic.main-screen-active .main-grammar-menu {
   position: static !important;
   inset: auto !important;
   z-index: auto !important;
@@ -8824,25 +8849,26 @@ body.mobile-menu-basic.main-screen-active .central-view-toolbar {
   opacity: 1 !important;
   box-shadow: none !important;
 }
-body.mobile-menu-basic.main-screen-active .central-view-toolbar .main-menu-view-options {
-  display: grid !important;
-  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-  width: 100% !important;
-  gap: .05rem !important;
-}
-body.mobile-menu-basic.main-screen-active .central-view-toolbar .compact-choice-option {
+body.mobile-menu-basic.main-screen-active .main-grammar-menu > summary {
   min-width: 0 !important;
   width: 100% !important;
-  min-height: 1.48rem !important;
-  height: 1.48rem !important;
-  padding: .04rem .10rem !important;
+  min-height: 1.62rem !important;
+  height: 1.62rem !important;
+  padding: .04rem .16rem !important;
   border-radius: .34rem !important;
-  font-size: .56rem !important;
-  font-weight: 720 !important;
+  font-size: .60rem !important;
+  font-weight: 780 !important;
   line-height: 1 !important;
   overflow: hidden !important;
   text-overflow: ellipsis !important;
   white-space: nowrap !important;
+}
+body.mobile-menu-basic.main-screen-active .main-grammar-menu .grammar-popover {
+  position: fixed !important;
+  left: .28rem !important;
+  right: .28rem !important;
+  top: 2.72rem !important;
+  width: auto !important;
 }
 body.mobile-menu-basic.main-screen-active .main-top-menu {
   display: grid !important;

@@ -2,7 +2,7 @@
   'use strict';
 
   const VERSION = 'v3.1.0-rc.10';
-  const SOURCE_BUILD = 'v3.1.0-rc.10-mobile-basic-menu-configurable-20260901.31';
+  const SOURCE_BUILD = 'v3.1.0-rc.10-grammar-dropdown-mobile-no-lex-20260901.32';
   const OPN_FORMAT_VERSION = '1.0';
   const OPN_DOCUMENT_TYPE = 'opengraph-document';
   const PARADATA_EVENT_LIMIT = 250;
@@ -156,6 +156,7 @@
     mainViewSummary: document.getElementById('mainViewSummary'),
     mainViewOptions: document.getElementById('mainViewOptions'),
     languageTreeViewPicker: document.getElementById('languageTreeViewPicker'),
+    mainGrammarSummary: document.getElementById('mainGrammarSummary'),
     mainLexOrientationMenu: document.getElementById('mainLexOrientationMenu'),
     mainLexOrientationSummary: document.getElementById('mainLexOrientationSummary'),
     mainLexLabelTurnDial: document.getElementById('mainLexLabelTurnDial'),
@@ -1487,8 +1488,8 @@
   }
 
   const CENTER_MODES = [
-    { id: 'syntax', label: 'Syntax' },
-    { id: 'ft', label: 'Functies', labelEn: 'Functions' }
+    { id: 'syntax', label: 'Syntactic', labelEn: 'Syntactic' },
+    { id: 'ft', label: 'Functional', labelEn: 'Functional' }
   ];
 
   const PROJECTION_OPTIONS = [
@@ -11812,7 +11813,7 @@
   }
 
   function closeMainChoiceMenus(except = null) {
-    [els.mainSentenceMenu, els.mainAdverbMenu, els.mainViewMenu, els.sourceAxisMenu, els.mainExtraMenu, els.mainLanguageMenu, els.mainActionsMenu].forEach(menu => {
+    [els.mainSentenceMenu, els.mainAdverbMenu, els.languageTreeViewPicker, els.mainViewMenu, els.sourceAxisMenu, els.mainExtraMenu, els.mainLanguageMenu, els.mainActionsMenu].forEach(menu => {
       if (menu && menu !== except) menu.open = false;
     });
   }
@@ -11860,8 +11861,8 @@
           : `${label}: directe OGN-illustratie. Language Tree blijft de primaire berekende toepassing.`;
       } else {
         subtitle.textContent = isEnglish()
-          ? 'Top menu with Sentence, Syntax / Functions, Projections, LOG order, Language, README and Config.'
-          : 'Topmenu met Zin, Syntax / Functies, Projecties, LOG-volgorde, Taal, LEESMIJ en Config.';
+          ? 'Top menu with Test material, Grammar, Projections, LOG order, Language, README and Config.'
+          : 'Topmenu met Testmateriaal, Grammar, Projecties, LOG-volgorde, Taal, LEESMIJ en Config.';
       }
     }
     if (document.body?.classList.contains('config-screen-active')) {
@@ -11872,6 +11873,12 @@
 
   function renderMainChoiceMenus() {
     const unifiedTestmateriaalCatalog = true;
+    if (els.mainGrammarSummary) {
+      els.mainGrammarSummary.textContent = 'Grammar';
+      els.mainGrammarSummary.title = state.centerMode === 'ft'
+        ? 'Grammar · Functional selected'
+        : 'Grammar · Syntactic selected';
+    }
     if (els.mainSentenceSummary) {
       const utteranceMenu = multiOgnAnaphorActive();
       els.mainSentenceSummary.textContent = unifiedTestmateriaalCatalog
@@ -14399,7 +14406,7 @@
 
     const mobileMenuModeLabel = document.createElement('label');
     mobileMenuModeLabel.className = 'select-field mobile-menu-mode-field';
-    mobileMenuModeLabel.innerHTML = `<span><span class="help-lang-nl">Mobiel menu</span><span class="help-lang-en">Mobile menu</span></span><select id="mobileMenuModeSelect"><option value="basic">Basis</option><option value="advanced">Uitgebreid</option></select><small class="config-item-help"><span class="help-lang-nl">Basis toont Testmateriaal, Syntax/Functies, Taal, LEESMIJ en Config. N/Z, draaiknop, Ruimtezoom en extra presentatieregelaars blijven uit beeld. Uitgebreid toont het volledige mobiele menu.</span><span class="help-lang-en">Basic shows Test material, Syntax/Functions, Language, README and Config. N/S, the dial, Space zoom and extra presentation controls stay out of view. Advanced shows the full mobile menu.</span></small>`;
+    mobileMenuModeLabel.innerHTML = `<span><span class="help-lang-nl">Mobiel menu</span><span class="help-lang-en">Mobile menu</span></span><select id="mobileMenuModeSelect"><option value="basic">Basis</option><option value="advanced">Uitgebreid</option></select><small class="config-item-help"><span class="help-lang-nl">Basis toont Testmateriaal, Grammar, Taal, LEESMIJ en Config. De LEX-keuze, N/Z, draaiknop, Ruimtezoom en extra presentatieregelaars blijven uit beeld. Uitgebreid toont meer bediening, maar de LEX-keuze blijft op mobiel in Config.</span><span class="help-lang-en">Basic shows Test material, Grammar, Language, README and Config. The LEX selector, N/S, the dial, Space zoom and extra presentation controls stay out of view. Advanced shows more controls, but the LEX selector remains in Config on mobile.</span></small>`;
     mobileMenuModeLabel.querySelector('select').value = validMobileMenuMode(state.mobileMenuMode);
     mobileMenuModeLabel.querySelector('select').addEventListener('change', event => {
       state.mobileMenuMode = validMobileMenuMode(event.target.value);

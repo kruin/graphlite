@@ -656,8 +656,11 @@ assert.ok(source.includes('layoutVisualProfile().cellX * gridSizeScale(state.gri
 assert.ok(source.includes('layoutVisualProfile().cellY * gridSizeScale(state.gridSizeVertical)'));
 assert.ok(source.includes('els.languageTreeViewPicker.hidden = !(languageTree || multiOgn)'),
   'Syntax/Functional moet ook bij kernzincomposities zichtbaar zijn');
-assert.ok(indexHtml.includes('central-view-toolbar') && styles.includes('.central-view-toolbar .compact-choice-option.active'),
-  'Syntax/Functional mist de prominente tweestandenschakelaar');
+assert.ok(indexHtml.includes('id="mainGrammarSummary"')
+  && indexHtml.includes('id="mainViewOptions"')
+  && source.includes("{ id: 'syntax', label: 'Syntactic', labelEn: 'Syntactic' }")
+  && source.includes("{ id: 'ft', label: 'Functional', labelEn: 'Functional' }"),
+  'Grammar mist de dropdown met Syntactic/Functional');
 assert.ok(!indexHtml.includes('id="compactTreeButton"') && !styles.includes('.central-view-toolbar .compact-tree-button'),
   'De overbodige knop Compact is nog aanwezig');
 assert.ok(source.includes('layout = compactKernelColumns(layout, protectedNodeIds);'),

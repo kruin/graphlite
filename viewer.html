@@ -14,7 +14,7 @@
 <script>
     (function() {
       var VERSION = 'v3.1.0-rc.10';
-      var SOURCE_BUILD = 'v3.1.0-rc.10-mobile-basic-menu-configurable-20260901.31';
+      var SOURCE_BUILD = 'v3.1.0-rc.10-grammar-dropdown-mobile-no-lex-20260901.32';
       window.__OPENGRAPH_EXPECTED_VERSION__ = VERSION;
       function runCacheCleanupOnce() {
         var flag = 'opengraph-cache-cleaned-' + VERSION + '-' + SOURCE_BUILD;
@@ -61,15 +61,18 @@
 <div>
 <div class="eyebrow">OpenGraph · JaN · Open Notation</div>
 <h1>OpenGraph Lite Viewer <span class="version-tag">v3.1.0-rc.10</span></h1>
-<p class="header-subtitle">Top menu with Sentence, Syntax / Functions, Projections, LOG order, Language, README and Config.</p>
+<p class="header-subtitle">Top menu with Test material, Grammar, Projections, LOG order, Language, README and Config.</p>
 </div>
 <button class="ghost hidden" id="installButton" type="button">Install</button>
 </header>
 <main class="app-shell">
 <section aria-label="Hoofdmenu" class="main-topbar">
-<section class="language-tree-view-picker central-view-toolbar" id="languageTreeViewPicker" aria-label="Syntax of Functies kiezen">
-<div aria-label="Syntax of Functies kiezen" class="compact-choice-list main-menu-option-list main-menu-view-options" id="mainViewOptions" role="listbox"></div>
-</section>
+<details class="compact-choice-menu main-grammar-menu top-menu-item language-tree-view-picker" id="languageTreeViewPicker">
+<summary id="mainGrammarSummary" title="Choose grammar view">Grammar</summary>
+<div class="compact-choice-popover top-menu-popover grammar-popover">
+<div aria-label="Grammar kiezen" class="compact-choice-list main-menu-option-list main-menu-view-options" id="mainViewOptions" role="listbox"></div>
+</div>
+</details>
 <details class="compact-choice-menu main-lex-orientation-menu top-menu-item" id="mainLexOrientationMenu">
 <summary id="mainLexOrientationSummary" title="Kies de algemene LEX-zijde">LEX · Oost</summary>
 <div class="compact-choice-popover main-lex-orientation-popover">
@@ -600,12 +603,12 @@
 <article class="help-topic-panel" data-help-topic="views">
 <div class="help-lang-nl">
 <h3>Views</h3>
-<p>Het View-menu kiest het centrale beeld. De standaardkeuze is <strong>Syntax tree</strong>. De alternatieve keuze is <strong>Functional structure</strong>.</p>
+<p>Het menu <strong>Grammar</strong> kiest het centrale beeld: standaard <strong>Syntactic</strong>, of <strong>Functional</strong>.</p>
 <p>Een view is het hoofdbeeld in de boomruimte. Named projections staan daar omheen.</p>
 </div>
 <div class="help-lang-en">
 <h3>Views</h3>
-<p>The View menu chooses the central image. The standard choice is <strong>Syntax tree</strong>. The alternative choice is <strong>Functional structure</strong>.</p>
+<p>The <strong>Grammar</strong> menu chooses the central image: <strong>Syntactic</strong> by default, or <strong>Functional</strong>.</p>
 <p>A view is the main image in the tree area. Named projections are placed around it.</p>
 </div>
 </article>
@@ -777,7 +780,7 @@
 <aside aria-label="Projecties en bewerking" class="side-panel">
 <section class="panel-card">
 <h2>Boom</h2>
-<p class="inline-help sticky-note">View kiest Syntax of Functional. Venstervulling beschrijft hoe de boom het beschikbare appvenster gebruikt.</p>
+<p class="inline-help sticky-note">Grammar kiest Syntactic of Functional. Venstervulling beschrijft hoe de boom het beschikbare appvenster gebruikt.</p>
 <label class="field center-mode-field"><span>View</span><select id="centralModeSelect"></select></label>
 <label class="field center-mode-field"><span>Boomkeuze</span><select id="treeChoiceSelect"></select></label>
 <label class="field center-mode-field"><span>Layout order</span><select id="functionalOrderSelect"></select></label>
@@ -1020,7 +1023,7 @@
 <p class="mobile-sheet-note">Sleep met één vinger om te pannen. Knijp met twee vingers om te zoomen. FIT past het zichtvenster aan de huidige boom en named projections aan; de boom zelf verandert niet.</p>
 </section>
 <script>
-    window.__opengraphBoot = { version: 'v3.1.0-rc.10', sourceBuild: 'v3.1.0-rc.10-mobile-basic-menu-configurable-20260901.31', loaded: false, marker: 'viewer-index' };
+    window.__opengraphBoot = { version: 'v3.1.0-rc.10', sourceBuild: 'v3.1.0-rc.10-grammar-dropdown-mobile-no-lex-20260901.32', loaded: false, marker: 'viewer-index' };
     function ogStatus(message) {
       var target = document.getElementById('actionFeedback') || document.body;
       if (target) target.textContent = message;
@@ -1055,6 +1058,6 @@
 <script defer="" src="multi-ogn-anaphor-play-engine.js?v3.1.0-rc.10"></script>
 <script defer="" src="multi-ogn-composition-engine.js?v3.1.0-rc.10"></script>
 <script defer="" src="utterance-kernel-engine.js?v3.1.0-rc.10"></script>
-<script defer="" src="viewer.js?v3.1.0-rc.10&amp;source=20260901.31"></script>
+<script defer="" src="viewer.js?v3.1.0-rc.10&amp;source=20260901.32"></script>
 </body>
 </html>
