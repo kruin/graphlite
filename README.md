@@ -1,6 +1,27 @@
-# OpenGraph Lite Viewer v2.0.0-rc.45
+# OpenGraph Lite Viewer v3.1.0-rc.10
 
-## Start here: from tree to utterance
+> **Want to test or contribute?** Start with
+> [MEEDOEN.md](MEEDOEN.md). The same structure is used for numbered
+> publications: one built-in README topic with its own carousel per episode.
+> See [AFLEVERINGEN_PUBLICEREN.md](AFLEVERINGEN_PUBLICEREN.md) for the
+> workflow and [AFLEVERINGEN_PLANNING.md](AFLEVERINGEN_PLANNING.md) for the
+> seven-episode plan and its slide-by-slide carousels.
+
+## Start here: the OGN core
+
+Open Graph Notation writes nodes one at a time into free positions of an open
+grid. Every node owns one horizontal and one vertical grid line:
+`A ≠ B ⇒ x(A) ≠ x(B) and y(A) ≠ y(B)`.
+
+The fixed explanatory order is **OGN Free Placement**, **OGN Projection**,
+then **OGN Calculated Placement**. A Language Tree is a calculated application
+of OGN, not the definition of OGN itself. Episode 1 and its seven-slide
+carousel form one canonical README content unit. Language Tree, LEX, branching
+versus utterance order, and transformation diagrams follow in later episodes.
+See [`OGN_CORE_PLACEMENT_ARCHITECTURE.md`](OGN_CORE_PLACEMENT_ARCHITECTURE.md)
+and [`AFLEVERINGEN_PLANNING.md`](AFLEVERINGEN_PLANNING.md).
+
+## Then: from Language Tree to utterance
 
 The documentation now follows the operation of Open Graph Linguistics (OGL):
 
@@ -97,6 +118,20 @@ contracts without importing source files from the abandoned alternate version
 line.
 
 Dutch documentation: [`LEESMIJ.md`](LEESMIJ.md).
+
+The minimal functional contrast **DE MUZIEK ONTROERT ANNA** preserves the
+syntax (`S → NP VP`; `VP → NP V`) while the Functional CLAUSE labels the
+subject as **STIMULUS** and the object as **EXPERIENCER**. This prevents
+subject/object from being conflated with agent/patient. The role contrast is
+grounded in Belletti & Rizzi (1988),
+[Psych-Verbs and Theta-Theory](https://doi.org/10.1007/BF00133902).
+
+General Flip and V-cluster Flip are distinct. A general Flip only changes the
+free graphical realization of a binary subtree and must preserve node
+identity, structure, roles, LEX, the OGN uniqueness invariant, and required
+anaphor alignments. A V-cluster Flip swaps the actual syntactic daughters and
+therefore rebuilds their derived LEX order; it is enabled only for a genuine
+multi-member cluster in a subordinate input with a registered alternative.
 
 > **Validation status:** rc.45 was manually approved on 2 August 2026,
 > including the Greedy Grow reconstruction, its evidence boundary, desktop,
@@ -291,9 +326,10 @@ to the project user file.
 
 ### LEX orientation and test-material lists
 
-The viewer starts with LEX on **East**. This release default is applied once
-after project and browser Config have loaded, so an older South snapshot cannot
-silently win during startup. West/East keep the tree fixed and only exchange
+The viewer starts with LEX on **West**. After project and browser Config have
+loaded, every page load resets East, North or South to West. All four sides
+remain available during the current session. This applies both through the local
+server and on GitHub Pages. West/East keep the tree fixed and only exchange
 the projection sides. North/South rotate the complete graph as one rigid unit;
 branches, node shapes, circles and labels therefore remain connected.
 
@@ -302,6 +338,19 @@ Config offers one to four real test-material list panels independently for deskt
 and mobile. A group always remains inside one panel; desktop starts with the
 Sentence and Utterance families separated across two panels. For North/South,
 LEX can also be enabled or disabled separately for kernel clauses K1 through K8.
+
+A verbal-cluster flip is available only when the input has subordinate-clause
+order and contains a real syntactic `V-CLUSTER`, for example with `dat`,
+`omdat`, or `hoewel`. Click the `V-CLUSTER` node itself to exchange its two
+daughters: `OMDAT VROUW TRUI HEEFT GEBREID ↔ OMDAT VROUW TRUI GEBREID HEEFT`.
+There is no separate flip button beside the input.
+
+The pipeline is **input → syntactic analysis → reconstructed LEX utterance**.
+Initially, LEX reconstructs the input. A flip first changes the V-CLUSTER
+subtree; LEX is then derived again from that tree. SYN displays the changed
+structure, while Functional and LOG remain unchanged when functions, roles,
+and interpretation do not change. Main clauses and single finite forms such as
+`BEET` receive no cluster flip. The action never changes an anaphor's referent.
 
 ## Ready-to-upload publication carousel
 
@@ -456,6 +505,21 @@ inside an 844 × 390 frame. The large automatic view returns only after
 selecting `auto`.
 
 ## Build the full source ZIP on Windows
+
+## Continue in a new ChatGPT conversation
+
+After all local changes have been pushed, GitHub's automatically generated ZIP
+of branch `main` is the standard hand-off. It contains the checked SQLite
+database, source references, configuration, tests and `PROJECT_MEMORY.md`.
+Upload that ZIP to the new conversation and ask it to read
+`PROJECT_MEMORY.md` before changing the project. ChatGPT account memory and
+earlier conversation text are not repository files and are therefore not
+transferred. Local browser snapshots, logs, database backups, SQLite WAL/SHM,
+`node_modules`, Playwright browser binaries and unpushed changes are also not
+included and are not required to reconstruct the checked source.
+
+See [`PROJECT_MEMORY.md`](PROJECT_MEMORY.md) and GitHub's
+[source archive documentation](https://docs.github.com/en/repositories/working-with-files/using-files/downloading-source-code-archives).
 
 Rename the project directory to the intended release name and double-click:
 
@@ -692,14 +756,20 @@ check_release.bat
 
 ## What problem OGN solves
 
-A classical constituent tree often makes horizontal branch order perform two
-representational tasks at once: it encodes structural relations and also
-suggests the linear order in which the sentence is pronounced. OGN separates
-those tasks.
+A classical planar constituent tree often makes one geometric ordering perform
+two representational tasks. Formally, those tasks must be distinguished:
+
+- **branching order** is the structural ordering of nodes, determined by
+  dominance and precedence among sister branches;
+- **utterance order** is the total linear ordering of realized lexical
+  elements.
+
+When the left-to-right order of the terminals must encode both, the two
+orderings are conflated. OGN separates those tasks.
 
 ```text
-central branching under S = structural relations
-LEX projection           = linear sentence word order
+central branching under S = branching order
+LEX projection            = utterance order
 ```
 
 The same central structure can therefore support different surface strings
@@ -727,7 +797,34 @@ reveals the precomputed layout step by step.
 - Working notation: `S:np-VP`, explicitly not `S:NP-VP`.
 - Research notation: `S+ np-VP`.
 - Binary trees first; non-binary multi-branching trees later.
-- Verbal-cluster flip: `heeft gebeten` ↔ `gebeten heeft`.
+- V-clusterflip: verwissel de twee dochters van de V-CLUSTER-subboom; LEX
+  wordt daarna opnieuw uit die boom afgeleid (`heeft gebeten` ↔ `gebeten heeft`).
+
+## Tijdsvorming zonder dubbele testzinnen
+
+Een testitem vertegenwoordigt voortaan een **zinsfamilie**. De keuze
+**Tijdsvorm** bouwt zin, Language Tree en alle projecties opnieuw op:
+
+- **OTT — onvoltooid tegenwoordige tijd**;
+- **OVT — onvoltooid verleden tijd**;
+- **VTT — voltooid tegenwoordige tijd**;
+- **VVT — voltooid verleden tijd**.
+
+`HOND BIJT MAN`, `HOND BEET MAN`, `HOND HEEFT MAN GEBETEN` en
+`HOND HAD MAN GEBETEN` zijn dus geen vier testitems meer. Hetzelfde geldt
+voor `terugbrengt/terugbracht/heeft teruggebracht/had teruggebracht`.
+De intransitieve controlefamilie `HOND VALT` gebruikt in de voltooide tijden
+correct **zijn**: `HOND IS GEVALLEN` en `HOND WAS GEVALLEN`.
+Ook de functionele testcase `DE MUZIEK ONTROERT ANNA` is een tijdsfamilie;
+de rollen blijven Stimulus/Experiencer terwijl de tijdsvorm verandert. Bij
+meervoudige uitingen is K1 de bedieningsbron: na een expliciete tijdskeuze
+volgen K2 en K3 dezelfde tijd en worden al hun bomen en projecties herbouwd.
+De oorspronkelijke input blijft de onaangetaste beginweergave.
+
+Tijdsvorming is een formatieve/morfosyntactische bewerking, geen Flip.
+Vraagvorming en passief worden later als afzonderlijke formaties toegevoegd;
+ze worden niet in de tijdsvormknop verstopt. Zie
+[`TIJDSVORMING_EN_FORMATIE.md`](TIJDSVORMING_EN_FORMATIE.md).
 
 ## Resizable README panel
 

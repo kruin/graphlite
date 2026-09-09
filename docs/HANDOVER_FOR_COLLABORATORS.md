@@ -1,6 +1,10 @@
 # HANDOVER_FOR_COLLABORATORS
 
-## Actueel contract vanaf bronstand .71
+> Actuele overdracht begint in `../PROJECT_MEMORY.md` en in de rootversie van
+> dit document. Een GitHub-ZIP bevat de gecontroleerde SQLite-database; alleen
+> tijdelijke WAL/SHM-, back-up-, log- en afhankelijkheidsbestanden ontbreken.
+
+## Actueel contract vanaf bronstand .34
 
 Behoud de prominente **Syntax | Functional**-schakelaar buiten het
 plaatsingsmethodemenu. Functional mag alleen rollen uit de actieve
@@ -10,7 +14,15 @@ analyse of relaties te wijzigen. `data/testmateriaal.sqlite` is lokaal leidend;
 de publieke JSON bevat alleen `OK`. Lees vóór wijzigingen
 `../FUNCTIONAL_DATABASE_COMPACT.md` en `../TESTMATERIAAL_BEHEER.md`.
 
-Overdracht voor OpenGraph Lite Viewer v2.0.0-rc.45.
+Overdracht voor OpenGraph Lite Viewer v3.1.0-rc.10.
+
+Gebruik `../MEEDOEN.md` als korte instaproute voor testers en bijdragers.
+Behoud daarnaast het contract
+`LEESMIJ-item + eigen carrousel → controle → afleveringspakket → publicatie`
+uit `../AFLEVERINGEN_PUBLICEREN.md`. Een lokale LEESMIJ-overschrijving via
+Config is een kladversie en geen releasebron. Iedere aflevering heeft een eigen
+nummer, slug, vaste URL, status, alt-teksten en handmatig visueel akkoord.
+Publiceer testmateriaal niet als één grote batch.
 
 Releasebesluit: rc.45 is op 2 augustus 2026 handmatig goedgekeurd, inclusief
 de Greedy Grow-reconstructie en de rechtstreeks afgeleide publicatieslide.
@@ -28,7 +40,7 @@ Boomknopen staan onder `.node-shape-layer`. Bewaar runtime-screenshots buiten
 de repository in de tijdelijke systeemmap.
 
 Actuele source build:
-`v2.0.0-rc.45-publish-visible-browser-controls-20260825.11`. Behoud Language Tree
+`v3.1.0-rc.10-readme-contributing-episodes-20260904.34`. Behoud Language Tree
 als prominente berekende toepassing en Greedy Grow/Random als kleinere
 directe OGN-illustraties. Wijzig `greedy-grow-engine.js` niet voor Random: die
 engine is onderdeel van het afleidingsbewijs van publicatieslide 5. Random

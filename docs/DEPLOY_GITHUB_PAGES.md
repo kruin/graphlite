@@ -99,7 +99,6 @@ test-/logbestanden worden bovendien expliciet uit de index gehouden.
 
 ```text
 OpenGraph_Lite_Viewer_v*.zip
-local-mobile-test.js
 local-mobile-test.html
 ```
 
@@ -162,7 +161,6 @@ Deze bestanden blijven lokaal of buiten de Pages-root:
 
 ```text
 *_full_source*.zip
-local-mobile-test.js
 local-mobile-test.html
 opengraph-local-config-log-*.txt
 local-config-log*.txt
@@ -172,5 +170,12 @@ Reden:
 
 - full-source-releasezips zijn downloadartefacten, geen sitebestanden; ook een
   browserkopie met `(1)` in de naam wordt genegeerd;
-- `local-mobile-test.*` is alleen voor lokale mobile-test op desktop;
+- `local-mobile-test.html` blijft tijdelijke lokale testhulp;
+- `local-mobile-test.js` gaat mee als reproduceerbare projectbron, maar
+  activeert zichzelf uitsluitend op `file:`, `localhost` of `127.0.0.1`;
 - config-logbestanden zijn lokale werksessie-logs.
+
+`data/testmateriaal.sqlite` gaat na integriteitscontrole mee naar GitHub. Zij
+is openbaar downloadbaar en maakt de automatische branch-ZIP geschikt voor
+projectoverdracht. De Pages-viewer blijft uitsluitend
+`data/catalog.public.json` lezen; alleen actieve `OK`-records verschijnen daar.

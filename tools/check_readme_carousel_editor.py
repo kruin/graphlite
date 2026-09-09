@@ -1,3 +1,4 @@
+import re
 from pathlib import Path
 
 
@@ -68,6 +69,16 @@ if INDEX != VIEWER:
 topic_count = INDEX.count('class="help-topic-panel')
 if topic_count < 20:
     errors.append(f"verwacht minstens 20 LEESMIJ-items, gevonden {topic_count}")
+simple_nav = re.search(
+    r'<nav[^>]*class="help-topic-tree help-topic-tree-simple"[^>]*>(.*?)</nav>',
+    INDEX,
+    re.DOTALL,
+)
+visible_topics = re.findall(r'data-help-topic-button="([^"]+)"', simple_nav.group(1)) if simple_nav else []
+expected_topics = ["readme", "tree-notation", "named-projections", "multi-ogn-anaphor", "views", "contributing"]
+if visible_topics != expected_topics:
+    errors.append(f"vereenvoudigde LEESMIJ-route wijkt af: {visible_topics!r}")
+require(INDEX, 'class="help-screen help-tree-screen help-simple-screen"', "vereenvoudigde mobiele LEESMIJ-layout")
 require(INDEX, 'data-help-topic="carousel"', "LEESMIJ-uitleg over carousels")
 require(INDEX, 'data-readme-carousel=""', "bestaande broncarousel")
 

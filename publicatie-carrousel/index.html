@@ -812,6 +812,13 @@
     stroke-width: 4;
   }
 
+  .language-lex-projection {
+    fill: none;
+    stroke: var(--lex);
+    stroke-width: 3;
+    stroke-dasharray: 8 7;
+  }
+
   .language-lex-move {
     fill: none;
     stroke: var(--lex);
@@ -836,6 +843,13 @@
     fill: #64748b;
     font-size: 14px;
     font-weight: 800;
+  }
+
+  .language-free-note {
+    fill: #16835a;
+    font-size: 14px;
+    font-weight: 900;
+    letter-spacing: .5px;
   }
 
   .slide[data-slide="6"] .example-github {
@@ -1300,53 +1314,61 @@
     <div class="language-example-card">
       <svg viewBox="0 0 900 500" role="img" aria-label="Final HOND BIJT MAN Language Tree with HOND BIJT MAN moved onto the west LEX axis">
         <g stroke="#e1e8f1" stroke-width="1.5">
-          <path d="M210 45V470M310 45V470M410 45V470M510 45V470M610 45V470M710 45V470M810 45V470"/>
-          <path d="M210 70H860M210 150H860M210 230H860M210 310H860M210 390H860M210 470H860"/>
+          <path d="M260 45V470M340 45V470M420 45V470M500 45V470M580 45V470M660 45V470M740 45V470M820 45V470"/>
+          <path d="M240 70H875M240 125H875M240 180H875M240 235H875M240 290H875M240 345H875M240 400H875M240 455H875"/>
         </g>
-        <line class="language-lex-axis" x1="120" y1="65" x2="120" y2="445"/>
-        <text x="120" y="38" fill="#2f67ff" font-size="18" font-weight="950" text-anchor="middle" letter-spacing="1.5">LEX · WEST</text>
+        <defs><marker id="slide6-lex-arrow" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0L9 4.5L0 9Z" fill="#2f67ff"/></marker></defs>
+        <line class="language-lex-axis" x1="215" y1="65" x2="215" y2="470"/>
+        <text x="112" y="38" fill="#2f67ff" font-size="18" font-weight="950" text-anchor="middle" letter-spacing="1.5">LEX · WEST</text>
+        <text class="language-free-note" x="690" y="38">FREE · NO SHARED ROWS</text>
 
         <g class="language-tree-edge">
-          <path d="M560 90L410 160M560 90L700 190"/>
-          <path d="M410 160L350 280"/>
-          <path d="M700 190L610 300M700 190L790 320"/>
-          <path d="M610 300L550 410M790 320L830 450"/>
+          <path d="M580 70L420 125M580 70L690 180"/>
+          <path d="M420 125L340 235"/>
+          <path d="M690 180L610 290M690 180L770 345"/>
+          <path d="M610 290L530 400M770 345L850 455"/>
         </g>
 
         <g data-ogn-node-set="carousel-slide-6-language-tree">
-          <circle class="language-tree-node" cx="560" cy="90" r="29"/>
-          <circle class="language-tree-node" cx="410" cy="160" r="29"/>
-          <circle class="language-tree-node" cx="350" cy="280" r="31"/>
-          <circle class="language-tree-node" cx="700" cy="190" r="29"/>
-          <circle class="language-tree-node" cx="610" cy="300" r="29"/>
-          <circle class="language-tree-node" cx="550" cy="410" r="31"/>
-          <circle class="language-tree-node" cx="790" cy="320" r="29"/>
-          <circle class="language-tree-node" cx="830" cy="450" r="31"/>
+          <circle class="language-tree-node" cx="580" cy="70" r="29"/>
+          <circle class="language-tree-node" cx="420" cy="125" r="29"/>
+          <circle class="language-tree-node" cx="340" cy="235" r="31"/>
+          <circle class="language-tree-node" cx="690" cy="180" r="29"/>
+          <circle class="language-tree-node" cx="610" cy="290" r="29"/>
+          <circle class="language-tree-node" cx="530" cy="400" r="31"/>
+          <circle class="language-tree-node" cx="770" cy="345" r="29"/>
+          <circle class="language-tree-node" cx="850" cy="455" r="31"/>
         </g>
         <g class="language-tree-label">
-          <text x="560" y="96">S</text><text x="410" y="166">NP</text><text x="350" y="285">HOND</text>
-          <text x="700" y="196">VP</text><text x="610" y="306">NP</text><text x="550" y="415">MAN</text>
-          <text x="790" y="326">V</text><text x="830" y="455">BIJT</text>
+          <text x="580" y="76">S</text><text x="420" y="131">NP</text><text x="340" y="240">HOND</text>
+          <text x="690" y="186">VP</text><text x="610" y="296">NP</text><text x="530" y="405">MAN</text>
+          <text x="770" y="351">V</text><text x="850" y="460">BIJT</text>
         </g>
 
+        <g aria-label="Rechte horizontale projecties naar West">
+          <line class="language-lex-projection" x1="309" y1="235" x2="215" y2="235"/>
+          <line class="language-lex-projection" x1="499" y1="400" x2="215" y2="400"/>
+          <line class="language-lex-projection" x1="819" y1="455" x2="215" y2="455"/>
+        </g>
         <g>
-          <rect class="language-lex-slot" x="42" y="112" width="156" height="52" rx="15"/>
-          <rect class="language-lex-slot" x="42" y="202" width="156" height="52" rx="15"/>
-          <rect class="language-lex-slot" x="42" y="292" width="156" height="52" rx="15"/>
-          <text class="language-lex-word" x="120" y="145">1 · HOND</text>
-          <text class="language-lex-word" x="120" y="235">2 · BIJT</text>
-          <text class="language-lex-word" x="120" y="325">3 · MAN</text>
+          <line class="language-lex-axis" x1="190" y1="235" x2="215" y2="235"/>
+          <line class="language-lex-axis" x1="190" y1="315" x2="215" y2="315"/>
+          <line class="language-lex-axis" x1="190" y1="400" x2="215" y2="400"/>
+          <rect class="language-lex-slot" x="30" y="209" width="160" height="52" rx="15"/>
+          <rect class="language-lex-slot" x="30" y="289" width="160" height="52" rx="15"/>
+          <rect class="language-lex-slot" x="30" y="374" width="160" height="52" rx="15"/>
+          <text class="language-lex-word" x="110" y="242">1 · HOND</text>
+          <text class="language-lex-word" x="110" y="322">2 · BIJT</text>
+          <text class="language-lex-word" x="110" y="407">3 · MAN</text>
         </g>
 
         <g class="language-lex-move">
-          <path d="M319 280C270 280 255 138 198 138"/>
-          <path d="M799 450C690 450 300 228 198 228"/>
-          <path d="M519 410C405 410 310 318 198 318"/>
+          <line x1="215" y1="455" x2="215" y2="320" marker-end="url(#slide6-lex-arrow)"/>
         </g>
         <g class="language-trace">
-          <text x="250" y="267">t[HOND]</text>
-          <text x="677" y="442">t[BIJT]</text>
-          <text x="430" y="400">t[MAN]</text>
+          <text x="248" y="225">t[HOND]</text>
+          <text x="688" y="445">t[BIJT]</text>
+          <text x="390" y="390">t[MAN]</text>
         </g>
       </svg>
       <a class="example-github" href="https://github.com/kruin/graphlite" rel="noreferrer">GitHub · kruin/graphlite · Language Tree</a>

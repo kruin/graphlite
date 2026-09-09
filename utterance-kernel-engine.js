@@ -11,9 +11,10 @@
       title: 'Jan wast zichzelf.',
       originalInput: 'Jan wast zichzelf.',
       type: 'reflexive',
+      inputTense: 'ott',
       anaphorClass: 'reflexive-local',
-      upper: Object.freeze({ text: 'Jan wast Jan.', subject: 'JAN', predicate: 'WAST', object: 'JAN' }),
-      lower: Object.freeze({ text: 'Jan wast zelf.', subject: 'JAN', predicate: 'WAST', object: 'ZELF' }),
+      upper: Object.freeze({ text: 'Jan wast Jan.', subject: 'JAN', predicate: 'WAST', object: 'JAN', lemma: 'wassen', surfaceOrder: 'v2' }),
+      lower: Object.freeze({ text: 'Jan wast zelf.', subject: 'JAN', predicate: 'WAST', object: 'ZELF', lemma: 'wassen', surfaceOrder: 'v2' }),
       relations: Object.freeze([
         Object.freeze({ upperRole: 'subject', lowerRole: 'subject', referent: 'jan' }),
         Object.freeze({ upperRole: 'object', lowerRole: 'object', referent: 'jan' })
@@ -29,9 +30,10 @@
       title: 'Jan slaat Jek omdat die hem beet.',
       originalInput: 'Jan slaat Jek omdat die hem beet.',
       type: 'causal-role-flip',
+      inputTense: 'ott',
       anaphorClass: 'cross-kernel',
-      upper: Object.freeze({ text: 'Jan slaat hond.', subject: 'JAN', predicate: 'SLAAT', object: 'HOND' }),
-      lower: Object.freeze({ text: 'Hond bijt man.', subject: 'HOND', predicate: 'BIJT', object: 'MAN', order: 'subject-object-predicate' }),
+      upper: Object.freeze({ text: 'Jan slaat hond.', subject: 'JAN', predicate: 'SLAAT', object: 'HOND', lemma: 'slaan', surfaceOrder: 'v2' }),
+      lower: Object.freeze({ text: 'Hond bijt man.', subject: 'HOND', predicate: 'BIJT', object: 'MAN', lemma: 'bijten', order: 'subject-object-predicate', surfaceOrder: 'subordinate' }),
       relations: Object.freeze([
         Object.freeze({ upperRole: 'object', lowerRole: 'subject', referent: 'jek' }),
         Object.freeze({ upperRole: 'subject', lowerRole: 'object', referent: 'jan' })
@@ -47,39 +49,18 @@
       ])
     }),
     Object.freeze({
-      id: 'jan-slaat-de-hond-omdat-die-hem-gebeten-heeft',
-      title: 'Jan slaat de hond omdat die hem gebeten heeft.',
-      originalInput: 'Jan slaat de hond omdat die hem gebeten heeft.',
-      type: 'causal-role-flip',
-      anaphorClass: 'cross-kernel',
-      upper: Object.freeze({ text: 'Jan slaat hond.', subject: 'JAN', predicate: 'SLAAT', object: 'HOND' }),
-      lower: Object.freeze({ text: 'Hond bijt man.', subject: 'HOND', predicate: 'BIJT', object: 'MAN', order: 'subject-object-predicate' }),
-      relations: Object.freeze([
-        Object.freeze({ upperRole: 'object', lowerRole: 'subject', referent: 'jek' }),
-        Object.freeze({ upperRole: 'subject', lowerRole: 'object', referent: 'jan' })
-      ]),
-      surface: Object.freeze([
-        Object.freeze({ label: 'JAN', unit: 'K1', role: 'subject' }),
-        Object.freeze({ label: 'SLAAT', unit: 'K1', role: 'predicate' }),
-        Object.freeze({ label: 'DE HOND', words: Object.freeze(['DE', 'HOND']), unit: 'K1', role: 'object' }),
-        Object.freeze({ label: 'OMDAT', unit: 'LINK', role: 'connector', connector: true }),
-        Object.freeze({ label: 'DIE', unit: 'K2', role: 'subject' }),
-        Object.freeze({ label: 'HEM', unit: 'K2', role: 'object' }),
-        Object.freeze({ label: 'GEBETEN HEEFT', words: Object.freeze(['GEBETEN', 'HEEFT']), unit: 'K2', role: 'predicate' })
-      ])
-    }),
-    Object.freeze({
       id: 'jan-beloonde-jek-omdat-die-het-bot-terugbracht',
       title: 'Jan beloonde zijn hond Jek omdat die het bot naar hem terugbracht.',
       originalInput: 'Jan beloonde zijn hond Jek omdat die het bot naar hem terugbracht.',
       type: 'causal-role-flip',
+      inputTense: 'ovt',
       anaphorClass: 'cross-kernel',
       deepStructure: Object.freeze({ plurality: 'multiple-kernel-clauses', storedOrder: Object.freeze(['K1', 'K2']), alternativeOrders: Object.freeze([Object.freeze(['K1', 'K2']), Object.freeze(['K2', 'K1'])]) }),
       lexicalOrders: Object.freeze(['main-before-causal', 'causal-before-main']),
-      upper: Object.freeze({ text: 'Jan beloont hond.', subject: 'JAN', predicate: 'BELOONT', object: 'HOND' }),
+      upper: Object.freeze({ text: 'Jan beloont hond.', subject: 'JAN', predicate: 'BELOONT', object: 'HOND', lemma: 'belonen', surfaceOrder: 'v2' }),
       // The default is TERUGBRENGEN: MAN is its goal and antecedent-bearing
       // argument. The APPORTEREN variants use a separate two-place kernel.
-      lower: Object.freeze({ text: 'Hond brengt bot naar man.', subject: 'HOND', predicate: 'BRENGT', object: 'MAN', objectContext: 'BOT NAAR', order: 'subject-object-predicate' }),
+      lower: Object.freeze({ text: 'Hond brengt bot naar man.', subject: 'HOND', predicate: 'BRENGT', object: 'MAN', objectContext: 'BOT NAAR', lemma: 'terugbrengen', order: 'subject-object-predicate', surfaceOrder: 'subordinate' }),
       relations: Object.freeze([
         Object.freeze({ upperRole: 'object', lowerRole: 'subject', referent: 'jek' }),
         Object.freeze({ upperRole: 'subject', lowerRole: 'object', referent: 'jan' })
@@ -99,11 +80,12 @@
       title: 'Jan sloeg Jek omdat die hem beet, waarna hij hem ontweek.',
       originalInput: 'Jan sloeg Jek omdat die hem beet, waarna hij hem ontweek.',
       type: 'story-role-flip',
+      inputTense: 'ovt',
       anaphorClass: 'cross-kernel-story',
       deepStructure: Object.freeze({ plurality: 'story', storedOrder: Object.freeze(['K1', 'K2', 'K3']) }),
-      upper: Object.freeze({ text: 'Jan slaat hond.', subject: 'JAN', predicate: 'SLAAT', object: 'HOND' }),
-      lower: Object.freeze({ text: 'Hond bijt man.', subject: 'HOND', predicate: 'BIJT', object: 'MAN', order: 'subject-object-predicate' }),
-      third: Object.freeze({ text: 'Man ontwijkt hond.', subject: 'MAN', predicate: 'ONTWIJKT', object: 'HOND' }),
+      upper: Object.freeze({ text: 'Jan slaat hond.', subject: 'JAN', predicate: 'SLAAT', object: 'HOND', lemma: 'slaan', surfaceOrder: 'v2' }),
+      lower: Object.freeze({ text: 'Hond bijt man.', subject: 'HOND', predicate: 'BIJT', object: 'MAN', lemma: 'bijten', order: 'subject-object-predicate', surfaceOrder: 'subordinate' }),
+      third: Object.freeze({ text: 'Man ontwijkt hond.', subject: 'MAN', predicate: 'ONTWIJKT', object: 'HOND', lemma: 'ontwijken', surfaceOrder: 'subordinate' }),
       relations: Object.freeze([
         Object.freeze({ fromUnit: 'K1', fromRole: 'object', toUnit: 'K2', toRole: 'subject', referent: 'jek' }),
         Object.freeze({ fromUnit: 'K1', fromRole: 'subject', toUnit: 'K2', toRole: 'object', referent: 'jan' }),
@@ -153,14 +135,20 @@
   ]);
 
   const CAUSAL_VERB_VARIANTS = Object.freeze([
+    Object.freeze({ id: 'bijt', words: Object.freeze(['BIJT']), text: 'bijt' }),
     Object.freeze({ id: 'beet', words: Object.freeze(['BEET']), text: 'beet' }),
     Object.freeze({ id: 'heeft-gebeten', words: Object.freeze(['HEEFT', 'GEBETEN']), text: 'heeft gebeten' }),
-    Object.freeze({ id: 'gebeten-heeft', words: Object.freeze(['GEBETEN', 'HEEFT']), text: 'gebeten heeft' })
+    Object.freeze({ id: 'gebeten-heeft', words: Object.freeze(['GEBETEN', 'HEEFT']), text: 'gebeten heeft' }),
+    Object.freeze({ id: 'had-gebeten', words: Object.freeze(['HAD', 'GEBETEN']), text: 'had gebeten' }),
+    Object.freeze({ id: 'gebeten-had', words: Object.freeze(['GEBETEN', 'HAD']), text: 'gebeten had' })
   ]);
   const REWARD_VERB_VARIANTS = Object.freeze([
+    Object.freeze({ id: 'terugbrengt', words: Object.freeze(['TERUGBRENGT']), text: 'terugbrengt' }),
     Object.freeze({ id: 'terugbracht', words: Object.freeze(['TERUGBRACHT']), text: 'terugbracht' }),
     Object.freeze({ id: 'heeft-teruggebracht', words: Object.freeze(['HEEFT', 'TERUGGEBRACHT']), text: 'heeft teruggebracht' }),
     Object.freeze({ id: 'teruggebracht-heeft', words: Object.freeze(['TERUGGEBRACHT', 'HEEFT']), text: 'teruggebracht heeft' }),
+    Object.freeze({ id: 'had-teruggebracht', words: Object.freeze(['HAD', 'TERUGGEBRACHT']), text: 'had teruggebracht' }),
+    Object.freeze({ id: 'teruggebracht-had', words: Object.freeze(['TERUGGEBRACHT', 'HAD']), text: 'teruggebracht had' }),
     Object.freeze({ id: 'apporteerde', words: Object.freeze(['APPORTEERDE']), text: 'apporteerde' }),
     Object.freeze({ id: 'heeft-geapporteerd', words: Object.freeze(['HEEFT', 'GEAPPORTEERD']), text: 'heeft geapporteerd' }),
     Object.freeze({ id: 'geapporteerd-heeft', words: Object.freeze(['GEAPPORTEERD', 'HEEFT']), text: 'geapporteerd heeft' })
@@ -170,22 +158,99 @@
     Object.freeze({ id: 'zijn-bot', words: Object.freeze(['ZIJN', 'BOT']), text: 'zijn bot', ambiguous: true })
   ]);
 
+  const SYNCHRONIZED_TENSE_FORMS = Object.freeze({
+    wassen: Object.freeze({ ott:['WAST'], ovt:['WASTE'], vtt:['HEEFT','GEWASSEN'], vvt:['HAD','GEWASSEN'] }),
+    slaan: Object.freeze({ ott:['SLAAT'], ovt:['SLOEG'], vtt:['HEEFT','GESLAGEN'], vvt:['HAD','GESLAGEN'] }),
+    belonen: Object.freeze({ ott:['BELOONT'], ovt:['BELOONDE'], vtt:['HEEFT','BELOOND'], vvt:['HAD','BELOOND'] }),
+    bijten: Object.freeze({ ott:['BIJT'], ovt:['BEET'], vtt:['HEEFT','GEBETEN'], vvt:['HAD','GEBETEN'] }),
+    terugbrengen: Object.freeze({ ott:['TERUGBRENGT'], ovt:['TERUGBRACHT'], vtt:['HEEFT','TERUGGEBRACHT'], vvt:['HAD','TERUGGEBRACHT'] }),
+    apporteren: Object.freeze({ ott:['APPORTEERT'], ovt:['APPORTEERDE'], vtt:['HEEFT','GEAPPORTEERD'], vvt:['HAD','GEAPPORTEERD'] }),
+    ontwijken: Object.freeze({ ott:['ONTWIJKT'], ovt:['ONTWEEK'], vtt:['HEEFT','ONTWEKEN'], vvt:['HAD','ONTWEKEN'] })
+  });
+
+  function sentenceCase(value) {
+    const text = String(value || '').toLowerCase();
+    return text ? text[0].toUpperCase() + text.slice(1) : '';
+  }
+
+  function inflectKernelUnit(unit, tense) {
+    const words = SYNCHRONIZED_TENSE_FORMS[unit?.lemma]?.[tense];
+    if (!words) return unit;
+    const perfect = words.length === 2;
+    const complements = unit.schema === 'terugbrengen'
+      ? `${unit.determiner || 'HET'} ${unit.theme || 'BOT'} NAAR ${unit.goal || unit.object || 'MAN'}`
+      : unit.schema === 'apporteren'
+        ? `${unit.determiner || 'HET'} ${unit.theme || 'BOT'}`
+        : String(unit.object || '');
+    const text = perfect
+      ? `${sentenceCase(unit.subject)} ${words[0].toLowerCase()} ${complements.toLowerCase()} ${words[1].toLowerCase()}.`
+      : `${sentenceCase(unit.subject)} ${words[0].toLowerCase()} ${complements.toLowerCase()}.`;
+    return Object.freeze({ ...unit, predicate: words.join(' '), verbWords: Object.freeze(words.slice()), text: text.replace(/\s+\./, '.') });
+  }
+
+  function synchronizeSurface(surface, units, tense) {
+    const byId = new Map(Object.entries(units));
+    const result = [];
+    for (const item of surface) {
+      if (item.role !== 'predicate' || !byId.has(item.unit)) { result.push(item); continue; }
+      const unit = byId.get(item.unit);
+      const words = SYNCHRONIZED_TENSE_FORMS[unit?.lemma]?.[tense];
+      if (!words) { result.push(item); continue; }
+      const make = (label, part) => Object.freeze({ ...item, label, words: undefined, phrase: words.join(' '), phrasePart: part, tenseSynchronized: true });
+      if (words.length === 1) { result.push(make(words[0], 1)); continue; }
+      if (unit.surfaceOrder === 'v2') {
+        result.push(make(words[0], 1));
+        const pending = make(words[1], 2);
+        result.push(Object.freeze({ ...pending, deferToUnitEnd: true }));
+      } else {
+        result.push(make(words[0], 1), make(words[1], 2));
+      }
+    }
+    const ordered = [];
+    const pending = new Map();
+    for (const item of result) {
+      if (item.deferToUnitEnd) { pending.set(item.unit, Object.freeze({ ...item, deferToUnitEnd: undefined })); continue; }
+      if (item.connector) {
+        for (const value of pending.values()) ordered.push(value);
+        pending.clear();
+      }
+      ordered.push(item);
+    }
+    for (const value of pending.values()) ordered.push(value);
+    return Object.freeze(ordered);
+  }
+
+  function synchronizeDefinitionTense(definition, tense) {
+    if (!['ott','ovt','vtt','vvt'].includes(tense) || definition.type === 'imperative-reflexive') return definition;
+    const units = {
+      K1: inflectKernelUnit(definition.upper, tense),
+      K2: inflectKernelUnit(definition.lower, tense),
+      ...(definition.third ? { K3: inflectKernelUnit(definition.third, tense) } : {})
+    };
+    const surface = synchronizeSurface(definition.surface, units, tense);
+    return Object.freeze({
+      ...definition, upper: units.K1, lower: units.K2, ...(units.K3 ? { third: units.K3 } : {}),
+      surface, synchronizedTense: tense,
+      title: `${sentenceCase(surface.map(item => item.label).join(' '))}.`
+    });
+  }
+
   function validCausalAnaphorVariant(value) {
     return CAUSAL_ANAPHOR_VARIANTS.some(variant => variant.id === value) ? value : 'die';
   }
 
-  function definitionFor(id, variantId = 'die', verbVariantId = '', botVariantId = 'het-bot') {
+  function definitionFor(id, variantId = 'die', verbVariantId = '', botVariantId = 'het-bot', synchronizedTense = '') {
     const requestedId = String(id || '');
     const canonicalId = requestedId === 'story-jan-sloeg-jek-waarna-hij-ontweek'
       ? 'story-jan-sloeg-jek-waarna-hij-hem-ontweek'
       : requestedId;
     const base = DEFINITIONS.find(definition => definition.id === canonicalId) || null;
-    if (!base || base.type !== 'causal-role-flip') return base;
+    if (!base) return base;
+    if (base.type !== 'causal-role-flip') return synchronizeDefinitionTense(base, synchronizedTense);
     const variant = CAUSAL_ANAPHOR_VARIANTS.find(item => item.id === validCausalAnaphorVariant(variantId));
     const reward = base.id === 'jan-beloonde-jek-omdat-die-het-bot-terugbracht';
-    const perfect = base.id === 'jan-slaat-de-hond-omdat-die-hem-gebeten-heeft';
     const verbs = reward ? REWARD_VERB_VARIANTS : CAUSAL_VERB_VARIANTS;
-    const defaultVerb = reward ? 'terugbracht' : perfect ? 'gebeten-heeft' : 'beet';
+    const defaultVerb = reward ? 'terugbracht' : 'beet';
     const verb = verbs.find(item => item.id === verbVariantId) || verbs.find(item => item.id === defaultVerb);
     const bot = BOT_VARIANTS.find(item => item.id === botVariantId) || BOT_VARIANTS[0];
     const apporteren = reward && /apporteer|geapporteerd/.test(verb.id);
@@ -193,10 +258,10 @@
     // Kernel trees retain their default lexical source nodes. Anaphora,
     // inflection, articles and V-cluster choices are LEX realizations only.
     const lower = apporteren
-      ? Object.freeze({ text: `Hond apporteert ${bot.text}.`, subject: 'HOND', predicate: 'APPORTEERT', determiner: bot.words[0], theme: bot.words[bot.words.length - 1], schema: 'apporteren', order: 'subject-theme-predicate' })
+      ? Object.freeze({ text: `Hond apporteert ${bot.text}.`, subject: 'HOND', predicate: 'APPORTEERT', determiner: bot.words[0], theme: bot.words[bot.words.length - 1], lemma: 'apporteren', schema: 'apporteren', order: 'subject-theme-predicate', surfaceOrder: 'subordinate' })
       : reward
-        ? Object.freeze({ text: `Hond brengt ${bot.text} naar man.`, subject: 'HOND', predicate: 'BRENGT', determiner: bot.words[0], theme: bot.words[bot.words.length - 1], goal: 'MAN', schema: 'terugbrengen', order: 'subject-theme-goal-predicate' })
-        : base.lower;
+        ? Object.freeze({ text: `Hond brengt ${bot.text} naar man.`, subject: 'HOND', predicate: 'BRENGT', determiner: bot.words[0], theme: bot.words[bot.words.length - 1], goal: 'MAN', lemma: 'terugbrengen', schema: 'terugbrengen', order: 'subject-theme-goal-predicate', surfaceOrder: 'subordinate' })
+        : Object.freeze({ ...base.lower, verbWords: verb.words });
     const relations = apporteren
       ? Object.freeze(base.relations.slice(0, 1))
       : reward
@@ -221,8 +286,8 @@
       if (item.unit === 'K2' && item.role === 'predicate') return [{ ...item, label: verb.words.join(' '), words: verb.words }];
       return [item];
     }));
-    const subjectText = reward ? 'zijn hond Jek' : perfect ? 'de hond' : 'Jek';
-    return Object.freeze({
+    const subjectText = reward ? 'zijn hond Jek' : 'Jek';
+    return synchronizeDefinitionTense(Object.freeze({
       ...base,
       title: reward
         ? `Jan beloonde ${subjectText} omdat ${variant.text} ${objectText} ${verb.text}.`
@@ -230,7 +295,7 @@
       anaphorVariant: variant.id, anaphorPhrase: variant.label,
       verbVariant: verb.id, botVariant: reward ? bot.id : null, ambiguityTodo: reward && bot.ambiguous,
       lower, relations, surface
-    });
+    }), synchronizedTense);
   }
 
   function buildRecursiveBinaryLayout(schema, options = {}) {
@@ -290,6 +355,7 @@
       : definition.type === 'causal-role-flip'
         ? { subject: 0, root: -1, object: -3, vp: -4, predicate: -5, mirrored: true }
         : { subject: -3, root: -1, object: 0, vp: 3, predicate: 4, mirrored: false };
+    const auxiliaryLabels = new Set(['HEEFT','HAD','IS','WAS']);
     if (!upper && unit.schema === 'apporteren') {
       return buildRecursiveBinaryLayout({
         key:'s', label:'S', x:-1, y:0, children:[
@@ -299,7 +365,12 @@
               { key:'determiner', label:unit.determiner, cat:'DET', role:'determiner', x:-9, y:4 },
               { key:'theme', label:unit.theme, cat:'N', role:'theme', x:-6, y:5 }
             ] },
-            { key:'predicate', label:unit.predicate, cat:'V', role:'predicate', x:3, y:6 }
+            ...(Array.isArray(unit.verbWords) && unit.verbWords.length === 2 ? [{
+              key:'v-cluster', label:'V-CLUSTER', cat:'V-CLUSTER', role:'predicate', x:3, y:6, children:[
+                { key:'v-first', label:unit.verbWords[0], cat:'AUX', role:'auxiliary', x:1, y:7 },
+                { key:'v-second', label:unit.verbWords[1], cat:'V', role:'participle', x:5, y:8 }
+              ]
+            }] : [{ key:'predicate', label:unit.predicate, cat:'V', role:'predicate', x:3, y:6 }])
           ] }
         ]
       }, { prefix, mirrored:true });
@@ -318,11 +389,36 @@
                 { key:'preposition', label:'NAAR', cat:'P', role:'preposition', x:-9, y:8 },
                 { key:'goal', label:unit.goal, cat:'NP', role:'goal', x:-3, y:9 }
               ] },
-              { key:'predicate', label:unit.predicate, cat:'V', role:'predicate', x:4, y:10 }
+              ...(Array.isArray(unit.verbWords) && unit.verbWords.length === 2 ? [{
+                key:'v-cluster', label:'V-CLUSTER', cat:'V-CLUSTER', role:'predicate', x:4, y:10, children:[
+                  { key:'v-first', label:unit.verbWords[0], cat:'AUX', role:'auxiliary', x:2, y:11 },
+                  { key:'v-second', label:unit.verbWords[1], cat:'V', role:'participle', x:6, y:12 }
+                ]
+              }] : [{ key:'predicate', label:unit.predicate, cat:'V', role:'predicate', x:4, y:10 }])
             ] }
           ] }
         ]
       }, { prefix, mirrored:true });
+    }
+    if (Array.isArray(unit.verbWords) && unit.verbWords.length === 2) {
+      const [first, second] = unit.verbWords;
+      const occupiedX = new Set([coordinates.root, coordinates.subject, coordinates.vp, coordinates.object, coordinates.predicate]);
+      let firstX = coordinates.predicate - 2;
+      while (occupiedX.has(firstX)) firstX -= 1;
+      let secondX = coordinates.predicate + 3;
+      while (occupiedX.has(secondX) || secondX === firstX) secondX += 1;
+      return buildRecursiveBinaryLayout({
+        key: 's', label: 'S', cat: 'S', x: coordinates.root, y: 0, children: [
+          { key: 'subject', label: unit.subject, cat: 'NP', role: 'subject', x: coordinates.subject, y: 1 },
+          { key: 'vp', label: 'VP', cat: 'VP', x: coordinates.vp, y: 2, children: [
+            { key: 'object', label: unit.object, cat: 'NP', role: 'object', x: coordinates.object, y: 3 },
+            { key: 'v-cluster', label: 'V-CLUSTER', cat: 'V-CLUSTER', role: 'predicate', x: coordinates.predicate, y: 4, children: [
+              { key: 'v-first', label: first, cat: auxiliaryLabels.has(first) ? 'AUX' : 'V', role: auxiliaryLabels.has(first) ? 'auxiliary' : 'participle', x: firstX, y: 5 },
+              { key: 'v-second', label: second, cat: auxiliaryLabels.has(second) ? 'AUX' : 'V', role: auxiliaryLabels.has(second) ? 'auxiliary' : 'participle', x: secondX, y: 6 }
+            ] }
+          ] }
+        ]
+      }, { prefix, mirrored: coordinates.mirrored });
     }
     // Dutch kernel syntax is S → NP, VP and VP → NP, V. Surface V2 is
     // realized on LEX; it must not rewrite the underlying VP branch order.
@@ -338,8 +434,17 @@
     }, { prefix, mirrored: coordinates.mirrored });
   }
 
-  function composeUtterance(id, compositionEngine, variantId = 'die', verbVariantId = '', botVariantId = 'het-bot') {
-    const definition = definitionFor(id, variantId, verbVariantId, botVariantId);
+  function orderedVClusterDaughters(layout) {
+    const cluster = (layout?.nodes || []).find(node => node.label === 'V-CLUSTER');
+    if (!cluster) return [];
+    return (layout.edges || [])
+      .filter(edge => edge.from === cluster.id)
+      .map(edge => layout.nodes.find(node => node.id === edge.to))
+      .filter(Boolean);
+  }
+
+  function composeUtterance(id, compositionEngine, variantId = 'die', verbVariantId = '', botVariantId = 'het-bot', synchronizedTense = '') {
+    const definition = definitionFor(id, variantId, verbVariantId, botVariantId, synchronizedTense);
     if (!definition) throw new Error(`Onbekende uiting: ${id || '(leeg)'}.`);
     if (!compositionEngine?.composeDeclaredPair) throw new Error('Multi-OGN-engine mist compositie van gedeclareerde anafoorkolommen.');
     if (definition.type === 'story-role-flip') return composeStory(definition, compositionEngine);
@@ -362,13 +467,30 @@
       { id: 'K1', order: 1, text: definition.upper.text },
       { id: 'K2', order: 2, text: definition.lower.text }
     ];
-    const expandedSurface = definition.surface.flatMap(item => item.words?.length
-      ? item.words.map((label, part) => ({ ...item, label, phrase: item.label, phrasePart: part + 1 }))
-      : [item]);
+    const clusterDaughters = new Map(composed.units.map(unit => [unit.id, orderedVClusterDaughters(unit.layout)]));
+    const expandedSurface = definition.surface.flatMap(item => {
+      const daughters = clusterDaughters.get(item.unit) || [];
+      if (item.role === 'predicate' && daughters.length === 2 && item.tenseSynchronized) {
+        const daughter = daughters[Math.max(0, Number(item.phrasePart || 1) - 1)];
+        return [{ ...item, vClusterDaughterNodeId: daughter?.id }];
+      }
+      if (item.role === 'predicate' && daughters.length === 2 && !item.tenseSynchronized) {
+        const phrase = daughters.map(node => node.label).join(' ');
+        return daughters.map((node, part) => ({
+          ...item, words: undefined, label: node.label, phrase, phrasePart: part + 1,
+          vClusterDaughterNodeId: node.id
+        }));
+      }
+      return item.words?.length
+        ? item.words.map((label, part) => ({ ...item, label, phrase: item.label, phrasePart: part + 1 }))
+        : [item];
+    });
     const lexItems = expandedSurface.map((item, index) => {
       if (item.connector) return { ...item, nodeId: null, unitId: 'LINK', sentenceOrder: 0, wordOrder: index + 1 };
       const unit = composed.units.find(candidate => candidate.id === item.unit);
-      const node = unit.layout.nodes.find(candidate => candidate.role === item.role);
+      const node = item.vClusterDaughterNodeId
+        ? unit.layout.nodes.find(candidate => candidate.id === item.vClusterDaughterNodeId)
+        : unit.layout.nodes.find(candidate => candidate.role === item.role);
       return { ...item, nodeId: node.id, unitId: item.unit, sentenceOrder: unit.order, wordOrder: index + 1 };
     });
     return {
@@ -411,11 +533,27 @@
       const anaphor = unitMap.get(relation.toUnit).layout.nodes.find(node => node.role === relation.toRole);
       return { type: 'coreference', referent: relation.referent, antecedent: { unitId: relation.fromUnit, nodeId: antecedent.id }, anaphor: { unitId: relation.toUnit, nodeId: anaphor.id }, antecedentLabel: antecedent.label, anaphorLabel: anaphor.label };
     });
-    const expandedSurface = definition.surface;
+    const storyClusterDaughters = new Map(units.map(unit => [unit.id, orderedVClusterDaughters(unit.layout)]));
+    const expandedSurface = definition.surface.flatMap(item => {
+      const daughters = storyClusterDaughters.get(item.unit) || [];
+      if (item.role === 'predicate' && daughters.length === 2) {
+        if (item.tenseSynchronized) {
+          const daughter = daughters[Math.max(0, Number(item.phrasePart || 1) - 1)];
+          return [{ ...item, vClusterDaughterNodeId: daughter?.id }];
+        }
+        const phrase = daughters.map(node => node.label).join(' ');
+        return daughters.map((node, part) => ({ ...item, label:node.label, phrase, phrasePart:part + 1, vClusterDaughterNodeId:node.id }));
+      }
+      return item.words?.length
+        ? item.words.map((label, part) => ({ ...item, label, phrase:item.label, phrasePart:part + 1 }))
+        : [item];
+    });
     const lexItems = expandedSurface.map((item, index) => {
       if (item.connector) return { ...item, nodeId: null, unitId: 'LINK', sentenceOrder: 0, wordOrder: index + 1 };
       const unit = unitMap.get(item.unit);
-      const node = unit.layout.nodes.find(candidate => candidate.role === item.role);
+      const node = item.vClusterDaughterNodeId
+        ? unit.layout.nodes.find(candidate => candidate.id === item.vClusterDaughterNodeId)
+        : unit.layout.nodes.find(candidate => candidate.role === item.role);
       return { ...item, nodeId: node.id, unitId: item.unit, sentenceOrder: unit.order, wordOrder: index + 1 };
     });
     return { kind: 'utterance-kernel-story', units, relations, definition,
@@ -424,5 +562,5 @@
       lexItems, surfaceText: expandedSurface.map(item => item.label).join(' ') };
   }
 
-  return Object.freeze({ DEFINITIONS, CAUSAL_ANAPHOR_VARIANTS, CAUSAL_VERB_VARIANTS, REWARD_VERB_VARIANTS, BOT_VARIANTS, validCausalAnaphorVariant, definitionFor, buildRecursiveBinaryLayout, buildLayout, composeUtterance });
+  return Object.freeze({ DEFINITIONS, CAUSAL_ANAPHOR_VARIANTS, CAUSAL_VERB_VARIANTS, REWARD_VERB_VARIANTS, BOT_VARIANTS, SYNCHRONIZED_TENSE_FORMS, validCausalAnaphorVariant, synchronizeDefinitionTense, definitionFor, buildRecursiveBinaryLayout, buildLayout, orderedVClusterDaughters, composeUtterance });
 });

@@ -35,11 +35,39 @@ class NoCacheHandler(SimpleHTTPRequestHandler):
 
     def do_POST(self):
         clean_path = self.path.split('?', 1)[0]
+        if clean_path == '/__opengraph_testmateriaal':
+            try:
+                length = int(self.headers.get('Content-Length', '0'))
+                payload = json.loads(self.rfile.read(length).decode('utf-8'))
+                result = testmateriaal_db.create(payload)
+                self._json_response(201, {'ok': True, **result})
+            except Exception as exc:
+                self._json_response(400, {'ok': False, 'error': str(exc)})
+            return
+        if clean_path == '/__opengraph_testmateriaal_bulk_group':
+            try:
+                length = int(self.headers.get('Content-Length', '0'))
+                payload = json.loads(self.rfile.read(length).decode('utf-8'))
+                result = testmateriaal_db.bulk_group(payload.get('numbers') or [], payload.get('group_name'))
+                self._json_response(200, {'ok': True, **result})
+            except Exception as exc:
+                self._json_response(400, {'ok': False, 'error': str(exc)})
+            return
         if clean_path == '/__opengraph_testmateriaal_bulk_status':
             try:
                 length = int(self.headers.get('Content-Length', '0'))
                 payload = json.loads(self.rfile.read(length).decode('utf-8'))
                 result = testmateriaal_db.bulk_status(payload.get('numbers') or [], payload.get('status'))
+                self._json_response(200, {'ok': True, **result})
+            except Exception as exc:
+                self._json_response(400, {'ok': False, 'error': str(exc)})
+            return
+        if clean_path.startswith('/__opengraph_testmateriaal/') and clean_path.endswith('/active'):
+            try:
+                number = int(clean_path.split('/')[-2])
+                length = int(self.headers.get('Content-Length', '0'))
+                payload = json.loads(self.rfile.read(length).decode('utf-8'))
+                result = testmateriaal_db.set_active(number, bool(payload.get('is_active')))
                 self._json_response(200, {'ok': True, **result})
             except Exception as exc:
                 self._json_response(400, {'ok': False, 'error': str(exc)})
@@ -88,12 +116,24 @@ class NoCacheHandler(SimpleHTTPRequestHandler):
         except Exception as exc:
             self._json_response(500, {'ok': False, 'error': str(exc)})
 
+    def do_DELETE(self):
+        clean_path = self.path.split('?', 1)[0]
+        if clean_path.startswith('/__opengraph_testmateriaal/'):
+            try:
+                number = int(clean_path.rsplit('/', 1)[1])
+                result = testmateriaal_db.delete(number)
+                self._json_response(200, {'ok': True, **result})
+            except Exception as exc:
+                self._json_response(400, {'ok': False, 'error': str(exc)})
+            return
+        self._json_response(404, {'ok': False, 'error': 'unknown endpoint'})
+
     def do_GET(self):
         if self.path.split('?', 1)[0] == '/__opengraph_runtime_identity':
             self._json_response(200, {
                 'app_version': APP_VERSION,
                 'source_build': SOURCE_BUILD,
-                'capabilities': ['testmateriaal-bulk-status-v1'],
+                'capabilities': ['testmateriaal-bulk-status-v1', 'testmateriaal-crud-v1', 'testmateriaal-groups-v1'],
             })
             return
         if self.path.split('?', 1)[0] == '/__opengraph_testmateriaal_public':
@@ -156,7 +196,7 @@ def probe_server_state(host, port, expected_version, nonce, expected_build=None)
     identity = f'{served_version} | {served_build or "<lege SOURCE_BUILD.txt>"}'
     if (runtime.get('app_version') == expected_version
             and served_build == expected_build
-            and 'testmateriaal-bulk-status-v1' in capabilities):
+            and {'testmateriaal-bulk-status-v1','testmateriaal-crud-v1','testmateriaal-groups-v1'} <= capabilities):
         return 'ok', identity
     return 'wrong', identity
 

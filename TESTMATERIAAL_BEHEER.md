@@ -3,9 +3,17 @@
 Voor de gezamenlijke relatie tussen database, Functional en automatische compactie:
 zie `FUNCTIONAL_DATABASE_COMPACT.md`.
 
-`data/testmateriaal.sqlite` is lokaal de volledige, leidende en standaardcatalogus. De lokale Python-server leest haar rechtstreeks voor zowel de beheerpagina als de viewer. De volledige bron-ZIP bevat deze database. GitHub Pages bevat haar niet. De database bewaart input, bronaliassen, segmenten, voorgestelde kernzinnen, cross-kernel-relaties en plaatsingsregels afzonderlijk.
+`data/testmateriaal.sqlite` is de volledige, leidende en standaardcatalogus. De lokale Python-server leest haar rechtstreeks voor zowel de beheerpagina als de viewer. De database gaat als gecontroleerde projectbron mee naar GitHub en zit daardoor ook in GitHubs automatische branch-ZIP. Zij is daar openbaar downloadbaar, maar GitHub Pages kan haar niet beschrijven. De database bewaart input, bronaliassen, segmenten, voorgestelde kernzinnen, cross-kernel-relaties en plaatsingsregels afzonderlijk.
 
 Open Graphlite via de lokale starter en kies **Testmateriaal** in het hoofdmenu. Alle bestaande input is bij de eerste migratie `OK`. Nieuwe input krijgt later `NIEUW`. Een inhoudelijke wijziging van een bestaand `OK`-item zet het automatisch terug naar `TEST`, tenzij de gebruiker in dezelfde bewerking bewust opnieuw `OK` kiest.
+
+De beheerpagina ondersteunt vijf expliciete bewerkingen: **Nieuw**, **Wijzigen**,
+**Verwijderen**, **Deactiveren/activeren** en **Groeperen**. Deactiveren bewaart
+het volledige record en zijn revisies, maar sluit het item uit van de publieke
+catalogus; verwijderen wist het record na een bevestiging. Een groepsnaam is
+vrij te kiezen, kan voor meerdere geselecteerde items tegelijk worden gezet en
+is vervolgens als filter beschikbaar. Nieuw materiaal start als `NIEUW`, met
+analyse `VOORSTEL`, en wordt nooit stilzwijgend gepubliceerd.
 
 De beheerknop staat alleen lokaal en blijft op desktop in het hoofdscherm; hij
 wordt niet naar Config verplaatst en is publiek verborgen. Op mobiele
@@ -15,7 +23,7 @@ boven de graph aangeboden. De interface-emulatie zelf staat onder
 
 De hoofdreeksen zijn: 100 Zin · simplex; 200 Bijzin; 300 Vraagzin; 400 Zin · complex; 500 Story; 600–800 Gereserveerd; 900 Experimenteel. `AF/ONAF` en kenmerken zoals anafoor, relatief, reflexief, context, LEX-insertie en rol-flip staan daar los van. Categorieën volgen uit de kernzinanalyse. Vraagzinnen bevatten verplicht `?` en zijn `AF`; Story bevat minimaal twee kernzinnen en minimaal één aantoonbare cross-kernel-relatie.
 
-`data/catalog.public.json` is uitsluitend de statische GitHub-Pages-export. Alleen records met exact `status = OK` staan erin. Alle bronaliassen worden geëxporteerd, zodat samengevoegde dubbele invoer onder de bestaande viewer-ID’s bereikbaar blijft. `check_release.bat` bouwt en controleert deze export vóór publicatie. De viewer probeert lokaal eerst de SQLite-API en valt alleen online terug op deze JSON.
+`data/catalog.public.json` blijft de statische invoer voor de GitHub-Pages-viewer. Alleen actieve records met exact `status = OK` staan erin. De meegeleverde SQLite-database bevat daarnaast de volledige beheerhistorie en is bedoeld voor overdracht en lokaal beheer, niet als online schrijfbare database. Alle bronaliassen worden geëxporteerd, zodat samengevoegde dubbele invoer onder de bestaande viewer-ID’s bereikbaar blijft. `check_release.bat` bouwt en controleert deze export én verifieert SQLite vóór publicatie. De viewer probeert lokaal eerst de SQLite-API en valt online terug op deze JSON.
 
 ## Een nieuwe lokale database invoegen
 

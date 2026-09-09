@@ -6,6 +6,28 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = (ROOT / "viewer.js").read_text(encoding="utf-8")
+EXAMPLES_HTML = (ROOT / "examples-input.html").read_text(encoding="utf-8")
+LEXICON_HTML = (ROOT / "lexicon-config.html").read_text(encoding="utf-8")
+
+for marker in (
+    "function activeFunctionalRoleProfile()",
+    "function functionalRoleDisplayLabel(role)",
+    "functionalRoleDisplayLabel(profile.subject)",
+    "functionalRoleDisplayLabel(profile.object)",
+    "return stringRulesForSpec(functionalSpec(), 'functional')",
+):
+    if marker not in SOURCE:
+        raise SystemExit(f"dynamische functionele CLAUSE ontbreekt: {marker}")
+for marker in (
+    'data-id="muziek-ontroert-anna"',
+    'data-thematic-role="stimulus"',
+    'data-thematic-role="experiencer"',
+):
+    if marker not in EXAMPLES_HTML:
+        raise SystemExit(f"functionele HTML-input ontbreekt: {marker}")
+for marker in ('data-id="muziek"', 'data-id="ontroert"', 'experiencer'):
+    if marker not in LEXICON_HTML:
+        raise SystemExit(f"functioneel lexiconitem ontbreekt: {marker}")
 
 
 def extract_balanced(start: int, opening: str, closing: str) -> str:
@@ -59,12 +81,13 @@ movement_functions = "\n".join(
 
 node_test = f"""
 const EXAMPLES = {examples_array};
+const TENSE_IDS = new Set(['ott', 'ovt', 'vtt', 'vvt']);
 const state = {{ example: EXAMPLES[0] }};
 function escapeHtml(value) {{ return String(value); }}
 function activeAdverbIsFronted() {{ return false; }}
 {import_function}
 {movement_functions}
-if (EXAMPLES.length !== 18) throw new Error(`fallback count ${{EXAMPLES.length}}`);
+if (EXAMPLES.length !== 12) throw new Error(`fallback count ${{EXAMPLES.length}}`);
 for (const id of ['jan-wast-zichzelf', 'jan-slaat-jek-omdat-die-hem-beet', 'ken-uzelf']) {{
   const utterance = EXAMPLES.find(item => item.id === id);
   if (!utterance || utterance.utteranceKernels?.length !== 2) {{
@@ -102,13 +125,24 @@ if (movementForItem(mainClause.lexItems[1], 1, mainClause.lexItems)?.slot !== 'v
 if (movementForItem(mainClause.lexItems[2], 2, mainClause.lexItems) !== null) {{
   throw new Error('MAN krijgt ten onrechte een Wissel');
 }}
+const psychClause = EXAMPLES.find(item => item.id === 'muziek-ontroert-anna');
+if (!psychClause || psychClause.sentence !== 'DE MUZIEK ONTROERT ANNA') {{
+  throw new Error('functionele Stimulus/Experiencer-test ontbreekt');
+}}
+if (psychClause.lexItems.map(item => item.source).join(',') !== 'subject,predicate,object') {{
+  throw new Error('syntax/LEX-bronnen van psychologisch predicaat zijn gewijzigd');
+}}
+if (psychClause.lexItems[0]?.thematicRole !== 'stimulus' || psychClause.lexItems[2]?.thematicRole !== 'experiencer') {{
+  throw new Error('Stimulus/Experiencer-rollen ontbreken');
+}}
+state.example = psychClause;
+if (movementForItem(psychClause.lexItems[1], 1, psychClause.lexItems)?.slot !== 'v2') {{
+  throw new Error('ONTROERT wordt niet volgens dezelfde hoofdzin-V2-regel gerealiseerd');
+}}
 if (EXAMPLES.some(item => item.id === 'trui-breit-vrouw-topic')) {{
   throw new Error('verwarrende zichtbare testcase TRUI BREIT VROUW is niet verwijderd');
 }}
-const wanted = [
-  'de-hond-heeft-de-man-misschien-wel-vaak-gebeten',
-  'omdat-de-hond-de-man-misschien-wel-vaak-gebeten-heeft'
-];
+const wanted = ['de-hond-bijt-de-man-misschien-wel-vaak'];
 for (const id of wanted) {{
   const example = EXAMPLES.find(item => item.id === id);
   if (!example) throw new Error(`ontbreekt: ${{id}}`);
@@ -141,7 +175,14 @@ for (const id of wanted) {{
     throw new Error(`oude voorbeeldpositie bestuurt LOG nog: ${{id}}`);
   }}
 }}
-console.log('EXAMPLES ROUNDTRIP: OK (18 fallbackuitingen + 5 kernzinanalyses; 4 zinsoorten; V1/V2/TOPIC-contract; lineaire multi-inserties)');
+const falling = EXAMPLES.find(item => item.id === 'hond-valt');
+if (!falling || falling.tenseFamily !== 'vallen' || falling.lexItems.some(item => item.source === 'object')) {{
+  throw new Error('minimale ZIJN-perfectumfamilie ontbreekt');
+}}
+for (const id of ['hond-beet-man', 'hond-heeft-man-gebeten', 'omdat-de-hond-de-man-heeft-gebeten']) {{
+  if (EXAMPLES.some(item => item.id === id)) throw new Error(`los tijdsdubbel staat nog in fallback: ${{id}}`);
+}}
+console.log('EXAMPLES ROUNDTRIP: OK (12 minimale fallbackitems; tijdsfamilies; ZIJN-perfectum; Stimulus/Experiencer-CLAUSE; 4 zinsoorten; lineaire multi-inserties)');
 """
 
 with tempfile.NamedTemporaryFile("w", suffix=".js", encoding="utf-8", delete=False) as handle:

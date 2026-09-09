@@ -14,7 +14,7 @@
 <script>
     (function() {
       var VERSION = 'v3.1.0-rc.10';
-      var SOURCE_BUILD = 'v3.1.0-rc.10-mobile-points-to-desktop-options-20260901.33';
+      var SOURCE_BUILD = 'v3.1.0-rc.10-fork-clone-publish-guide-20260909.60';
       window.__OPENGRAPH_EXPECTED_VERSION__ = VERSION;
       function runCacheCleanupOnce() {
         var flag = 'opengraph-cache-cleaned-' + VERSION + '-' + SOURCE_BUILD;
@@ -55,6 +55,7 @@
 <!-- v4552: manifest disabled in local/dev build to avoid PWA/service-worker confusion. -->
 <!-- <link rel="manifest" href="manifest.webmanifest"> -->
 <link href="styles.css?v3.1.0-rc.10" rel="stylesheet"/>
+<script defer src="docs/html-doc-links.js?v3.1.0-rc.10"></script>
 </head>
 <body class="main-screen-active">
 <header class="app-header">
@@ -74,12 +75,12 @@
 </div>
 </details>
 <details class="compact-choice-menu main-lex-orientation-menu top-menu-item" id="mainLexOrientationMenu">
-<summary id="mainLexOrientationSummary" title="Kies de algemene LEX-zijde">LEX · Oost</summary>
+<summary id="mainLexOrientationSummary" title="Kies de algemene LEX-zijde">LEX · West</summary>
 <div class="compact-choice-popover main-lex-orientation-popover">
 <strong><span class="help-lang-nl">Presentatie</span><span class="help-lang-en">Presentation</span></strong>
 <div class="main-lex-orientation-grid" role="group" aria-label="Algemene LEX-zijde">
-<button type="button" data-lex-axis-side-choice="west">West ↓</button>
-<button type="button" data-lex-axis-side-choice="east">Oost ↓ · default</button>
+<button type="button" data-lex-axis-side-choice="west">West ↓ · default</button>
+<button type="button" data-lex-axis-side-choice="east">Oost ↓</button>
 <button type="button" data-lex-axis-side-choice="north">Noord →</button>
 <button type="button" data-lex-axis-side-choice="south">Zuid →</button>
 </div>
@@ -95,6 +96,20 @@
 </div>
 </details>
 <nav aria-label="Topmenu" class="main-top-menu">
+<details class="compact-choice-menu main-tense-menu top-menu-item" hidden id="mainTenseChoice">
+<summary id="mainTenseSummary" title="Kies de Nederlandse werkwoordstijd">Tijd · OTT</summary>
+<div class="compact-choice-popover top-menu-popover main-tense-popover">
+<strong>Tijdsvorm</strong>
+<div aria-label="Nederlandse werkwoordstijd" class="main-tense-buttons" id="mainTenseButtons" role="group">
+<button data-main-tense-choice="ott" title="OTT — onvoltooid tegenwoordige tijd" type="button">OTT</button>
+<button data-main-tense-choice="ovt" title="OVT — onvoltooid verleden tijd" type="button">OVT</button>
+<button data-main-tense-choice="vtt" title="VTT — voltooid tegenwoordige tijd" type="button">VTT</button>
+<button data-main-tense-choice="vvt" title="VVT — voltooid verleden tijd" type="button">VVT</button>
+</div>
+<span aria-live="polite" class="main-tense-name" id="mainTenseName"></span>
+<select aria-hidden="true" class="main-control-select-compat" id="mainTenseSelect" tabindex="-1"></select>
+</div>
+</details>
 <details class="compact-choice-menu main-sentence-menu top-menu-item" id="mainSentenceMenu">
 <summary id="mainSentenceSummary" title="Kies de voorbeeldzin">Zin</summary>
 <div aria-label="Voorbeeldzin kiezen" class="compact-choice-popover top-menu-popover top-menu-sentence-popover">
@@ -163,7 +178,7 @@
 </div></details>
 <button class="top-menu-action help-open-button" id="openHelpButton" title="Open README." type="button">README</button>
 <button class="top-menu-action primary config-open-button" id="openConfigButton" title="Open het configuratiescherm met alle projectie-, LEX-, layout- en documentatie-instellingen." type="button">Config</button>
-<a class="top-menu-action" href="testmateriaal.html" hidden id="openTestmateriaal" title="Open het lokale beheer van input, nummering en status.">Testmateriaal</a>
+<a class="top-menu-action" href="testmateriaal.html" hidden id="openTestmateriaal" title="Open het lokale databasebeheer van input, nummering en status.">DB-beheer</a>
 </nav>
 <details class="mobile-desktop-options-note" id="mobileDesktopOptionsNote">
 <summary><span class="help-lang-nl">Meer op desktop · dezelfde URL</span><span class="help-lang-en">More on desktop · same URL</span></summary>
@@ -183,7 +198,7 @@
 <span class="main-active-utterance-label" id="mainActiveUtteranceLabel">Uiting</span>
 <strong class="main-active-utterance-text" id="mainActiveUtteranceText">—</strong>
 <label class="main-causal-anaphor-choice" hidden id="mainCausalAnaphorChoice"><span id="mainCausalAnaphorLabel">Anafoor</span><select aria-label="Anafoorvorm" id="mainCausalAnaphorSelect"></select></label>
-<label class="main-causal-anaphor-choice" hidden id="mainCausalVerbChoice"><span>Werkwoord</span><select aria-label="Werkwoordrealisatie" id="mainCausalVerbSelect"></select></label>
+<div class="main-causal-anaphor-choice" hidden id="mainCausalVerbChoice"><label><span>Werkwoord</span><select aria-label="Werkwoordrealisatie" id="mainCausalVerbSelect"></select></label></div>
 <label class="main-causal-anaphor-choice" hidden id="mainBotChoice"><span>Bot-NP</span><select aria-label="Botvorm" id="mainBotSelect"></select></label>
 </section>
 <section aria-label="Groei, play en reset" class="main-play-reset-bar">
@@ -213,93 +228,26 @@
 <button class="primary config-back-button" id="closeHelpButton" title="Back to: Main." type="button">← Back to: Main</button>
 <button class="config-open-button" id="openConfigFromHelpButton" title="Open Config naast de README." type="button">Config</button>
 <div>
-<div class="intro-kicker">README</div>
-<h2>Project information</h2>
-<p>README topics and the selected text are both visible immediately. Drag the divider to enlarge or reduce the text panel.</p>
+<div class="intro-kicker"><span class="help-lang-nl">LEESMIJ</span><span class="help-lang-en">README</span></div>
+<h2><span class="help-lang-nl">Zes stappen</span><span class="help-lang-en">Six steps</span></h2>
+<p><span class="help-lang-nl">Kies links een stap. Sleep de scheiding om meer ruimte voor de tekst te maken.</span><span class="help-lang-en">Choose a step on the left. Drag the divider to give the text more room.</span></p>
 </div>
 </section>
-<section aria-label="Lees mij / README en uitleg" class="help-screen help-tree-screen" id="helpScreen">
+<section aria-label="Lees mij / README en uitleg" class="help-screen help-tree-screen help-simple-screen" id="helpScreen">
 <aside aria-label="README-onderwerpen" class="help-tree-nav">
 <h3>
 <span class="help-lang-nl">Inhoud</span>
 <span class="help-lang-en">Contents</span>
 </h3>
-<nav aria-label="README-navigatie" class="help-topic-tree">
-<ul>
-<li>
-<button class="help-topic-button is-active" data-help-topic-button="readme" type="button">
-<span class="help-lang-nl">Start · OGN-kern</span>
-<span class="help-lang-en">Start · OGN Core</span>
-</button>
-</li>
-<li>
-<button class="help-topic-button" data-help-topic-button="opengraph" type="button">
-<span class="help-lang-nl">Open Graph Notation</span>
-<span class="help-lang-en">Open Graph Notation</span>
-</button>
-<ul>
-<li><button class="help-topic-button" data-help-topic-button="grid-rule" type="button"><span class="help-lang-nl">1 · Vrije plaatsing</span><span class="help-lang-en">1 · Free Placement</span></button></li>
-<li><button class="help-topic-button" data-help-topic-button="sequential-drawing" type="button"><span class="help-lang-nl">Plaatsingsstrategieën</span><span class="help-lang-en">Placement Strategies</span></button></li>
-<li><button class="help-topic-button" data-help-topic-button="direct-random" type="button"><span class="help-lang-nl">Random · Config en iteraties</span><span class="help-lang-en">Random · Config and iterations</span></button></li>
-<li><button class="help-topic-button" data-help-topic-button="projection-mechanism" type="button"><span class="help-lang-nl">2 · Projectie</span><span class="help-lang-en">2 · Projection</span></button></li>
-<li><button class="help-topic-button" data-help-topic-button="recursive-layout" type="button"><span class="help-lang-nl">3 · Berekende plaatsing</span><span class="help-lang-en">3 · Calculated Placement</span></button></li>
-<li><button class="help-topic-button" data-help-topic-button="multi-ogn-anaphor" type="button"><span class="help-lang-nl">Anafoor · multi-OGN</span><span class="help-lang-en">Anaphor · multi-OGN</span></button></li>
-<li><button class="help-topic-button" data-help-topic-button="flip" type="button"><span class="help-lang-nl">Flip · DS ≠ LEX</span><span class="help-lang-en">Flip · DS ≠ LEX</span></button></li>
-<li><button class="help-topic-button" data-help-topic-button="west-axis" type="button"><span class="help-lang-nl">West-as</span><span class="help-lang-en">West axis</span></button></li>
-<li><button class="help-topic-button" data-help-topic-button="south-axis" type="button"><span class="help-lang-nl">Zuid-as</span><span class="help-lang-en">South axis</span></button></li>
-</ul>
-</li>
-<li>
-<button class="help-topic-button" data-help-topic-button="named-projections" type="button">
-<span class="help-lang-nl">Named projections</span>
-<span class="help-lang-en">Named projections</span>
-</button>
-<ul>
-<li><button class="help-topic-button" data-help-topic-button="lex-axis" type="button"><span>LEX</span></button></li>
-<li><button class="help-topic-button" data-help-topic-button="lex-free-positions" type="button"><span class="help-lang-nl">Actief LEX-profiel</span><span class="help-lang-en">Active LEX profile</span></button></li>
-<li><button class="help-topic-button" data-help-topic-button="lex-movement-direction" type="button"><span class="help-lang-nl">Wissels omhoog</span><span class="help-lang-en">Upward switches</span></button></li>
-<li><button class="help-topic-button" data-help-topic-button="sentence-types" type="button"><span class="help-lang-nl">Zinsoorten</span><span class="help-lang-en">Sentence types</span></button></li>
-<li><button class="help-topic-button" data-help-topic-button="synt-axis" type="button"><span>SYNT</span></button></li>
-<li><button class="help-topic-button" data-help-topic-button="log-axis" type="button"><span>LOG</span></button></li>
-</ul>
-</li>
-<li>
-<button class="help-topic-button" data-help-topic-button="tree-notation" type="button">
-<span class="help-lang-nl">Tree notation</span>
-<span class="help-lang-en">Tree notation</span>
-</button>
-<ul>
-<li><button class="help-topic-button" data-help-topic-button="views" type="button"><span class="help-lang-nl">Views</span><span class="help-lang-en">Views</span></button></li>
-<li><button class="help-topic-button" data-help-topic-button="syntax-view" type="button"><span class="help-lang-nl">Syntax tree</span><span class="help-lang-en">Syntax tree</span></button></li>
-<li><button class="help-topic-button" data-help-topic-button="functional-view" type="button"><span class="help-lang-nl">Functional structure</span><span class="help-lang-en">Functional structure</span></button></li>
-</ul>
-</li>
-<li>
-<button class="help-topic-button" data-help-topic-button="language-actions" type="button">
-<span class="help-lang-nl">Taalacties</span>
-<span class="help-lang-en">Language actions</span>
-</button>
-<ul>
-<li><button class="help-topic-button" data-help-topic-button="lex-movement" type="button"><span class="help-lang-nl">LEX-wissels</span><span class="help-lang-en">LEX exchanges</span></button></li>
-<li data-feature="adverbs" hidden=""><button class="help-topic-button" data-help-topic-button="adverbs" type="button"><span class="help-lang-nl">Bijwoorden</span><span class="help-lang-en">Adverbs</span></button></li>
-<li data-feature="adverbs" hidden=""><button class="help-topic-button" data-help-topic-button="lexical-profiles" type="button"><span class="help-lang-nl">Lexicale profielen</span><span class="help-lang-en">Lexical profiles</span></button></li>
-<li data-feature="adverbs" hidden=""><button class="help-topic-button" data-help-topic-button="adverb-origins" type="button"><span class="help-lang-nl">Bijwoordbronnen</span><span class="help-lang-en">Adverb origins</span></button></li></ul>
-</li>
-<li><button class="help-topic-button" data-help-topic-button="jan-todo" type="button"><span class="help-lang-nl">JaN · TODO</span><span class="help-lang-en">JaN · TODO</span></button></li><li>
-<button class="help-topic-button" data-help-topic-button="gitignore" type="button">
-<span class="help-lang-nl">Gitignore</span>
-<span class="help-lang-en">Gitignore</span>
-</button>
-</li>
-<li>
-<button class="help-topic-button" data-help-topic-button="carousel" type="button">
-<span class="help-lang-nl">Carrousel</span>
-<span class="help-lang-en">Carousel</span>
-</button>
-</li>
-<li><button class="help-topic-button" data-help-topic-button="project-config" type="button"><span class="help-lang-nl">Projectconfig</span><span class="help-lang-en">Project config</span></button></li>
-<li><button class="help-topic-button" data-help-topic-button="publishing" type="button"><span class="help-lang-nl">Publiceren</span><span class="help-lang-en">Publishing</span></button></li>
-</ul>
+<nav aria-label="README-navigatie" class="help-topic-tree help-topic-tree-simple">
+<ol>
+<li><button class="help-topic-button is-active" data-help-topic-button="readme" type="button"><span class="help-lang-nl">1 · OGN</span><span class="help-lang-en">1 · OGN</span></button></li>
+<li><button class="help-topic-button" data-help-topic-button="tree-notation" type="button"><span class="help-lang-nl">2 · Language Tree</span><span class="help-lang-en">2 · Language Tree</span></button></li>
+<li><button class="help-topic-button" data-help-topic-button="named-projections" type="button"><span class="help-lang-nl">3 · LEX, SYNT en LOG</span><span class="help-lang-en">3 · LEX, SYNT and LOG</span></button></li>
+<li><button class="help-topic-button" data-help-topic-button="multi-ogn-anaphor" type="button"><span class="help-lang-nl">4 · Uitingen en anaforen</span><span class="help-lang-en">4 · Utterances and anaphors</span></button></li>
+<li><button class="help-topic-button" data-help-topic-button="views" type="button"><span class="help-lang-nl">5 · Bediening</span><span class="help-lang-en">5 · Controls</span></button></li>
+<li><button class="help-topic-button" data-help-topic-button="contributing" type="button"><span class="help-lang-nl">6 · Meedoen en publiceren</span><span class="help-lang-en">6 · Contribute and publish</span></button></li>
+</ol>
 </nav>
 </aside>
 <div aria-label="Resize README panels" aria-orientation="vertical" class="help-panel-resizer" id="helpPanelResizer" role="separator" tabindex="0" title="Drag to resize the README text panel."><span aria-hidden="true"></span></div>
@@ -307,35 +255,47 @@
 <article class="help-topic-panel readme-intro-panel is-active" data-help-topic="readme">
 <div class="help-lang-nl">
 <h3>Open Graph Notation begint met vrije plaatsing</h3>
-<p><strong>Iedere knoop is baas op zijn eigen horizontale en verticale gridlijn.</strong> OGN schrijft knopen één voor één op vrije plaatsen. Na iedere stap verandert de bezetting van het grid en wordt opnieuw bepaald welke plaatsen nog vrij en geldig zijn.</p>
-<p><strong>Harde regel — A ≠ B:</strong> twee verschillende knopen mogen nooit dezelfde horizontale of verticale gridlijn bezetten. Formeel: <code>A ≠ B ⇒ x(A) ≠ x(B) én y(A) ≠ y(B)</code>. Een overtreding heet <strong>gridlijnhergebruik</strong>: horizontaal hergebruik deelt een rij, verticaal hergebruik een kolom. Is geen geldige rij én kolom beschikbaar, dan wordt geen fallbackknoop getekend.</p>
-<p>Een <strong>ruleset</strong> bepaalt welke vrije plaatsen geldig zijn. Een <strong>zoekstrategie</strong> bepaalt in welke volgorde kandidaten worden getest. De eerstgevonden geldige plek wordt direct geschreven; een andere zoekvolgorde kan dus een ander beeld opleveren.</p>
+<p>OGN schrijft knopen één voor één op een open grid. <strong>Iedere knoop bezit zijn eigen horizontale en verticale gridlijn.</strong></p>
+<p><strong>Harde regel — A ≠ B:</strong> verschillende knopen delen nooit een rij of kolom: <code>A ≠ B ⇒ x(A) ≠ x(B) én y(A) ≠ y(B)</code>. Zonder geldige plek verschijnt geen fallbackknoop.</p>
+<p>Een <strong>ruleset</strong> bepaalt wat geldig is; een <strong>zoekstrategie</strong> bepaalt welke vrije plaats eerst wordt geprobeerd.</p>
 <p class="readme-query-note">De vaste volgorde is: <strong>1 · OGN Free Placement</strong>, <strong>2 · OGN Projection</strong>, <strong>3 · OGN Calculated Placement</strong>. Directe plaatsing en berekende plaatsing blijven afzonderlijke werkwijzen.</p>
 </div>
 <div class="help-lang-en">
 <h3>Open Graph Notation starts with free placement</h3>
-<p><strong>Every node owns its horizontal and vertical grid line.</strong> OGN writes nodes one at a time into free positions. After every step, grid occupancy changes and the notation determines again which positions remain free and valid.</p>
-<p><strong>Hard rule — A ≠ B:</strong> two different nodes may never occupy the same horizontal or vertical grid line. Formally: <code>A ≠ B ⇒ x(A) ≠ x(B) and y(A) ≠ y(B)</code>. A violation is <strong>grid-line reuse</strong>: horizontal reuse shares a row, vertical reuse a column. If no valid row and column are available, no fallback node is rendered.</p>
-<p>A <strong>rule set</strong> determines which free positions are valid. A <strong>search strategy</strong> determines the order in which candidates are tested. The first valid position found is written immediately, so another search order may produce another picture.</p>
+<p>OGN writes nodes one at a time on an open grid. <strong>Every node owns its horizontal and vertical grid line.</strong></p>
+<p><strong>Hard rule — A ≠ B:</strong> distinct nodes never share a row or column: <code>A ≠ B ⇒ x(A) ≠ x(B) and y(A) ≠ y(B)</code>. Without a valid position, no fallback node is rendered.</p>
+<p>A <strong>rule set</strong> determines validity; a <strong>search strategy</strong> determines which free position is tried first.</p>
 <p class="readme-query-note">The fixed order is: <strong>1 · OGN Free Placement</strong>, <strong>2 · OGN Projection</strong>, <strong>3 · OGN Calculated Placement</strong>. Direct placement and calculated placement remain separate methods.</p>
 </div>
-<section aria-label="OGN-kern, zoekstrategieën en lagen" class="readme-tree-carousel" data-readme-carousel="" role="group">
+<section aria-label="OGN-kern in zeven stappen" class="readme-tree-carousel" data-readme-carousel="" role="group">
 <div class="readme-carousel-viewport">
 <figure class="readme-carousel-slide is-active" data-readme-shape="wide" data-readme-slide="">
-<img alt="Drie OGN-knopen op unieke horizontale en verticale gridlijnen." decoding="async" loading="eager" src="images/readme/ogn-free-grid.svg"/>
-<figcaption><span class="help-lang-nl"><strong>1 · Gridbezit.</strong> Iedere knoop is baas op zijn eigen horizontale en verticale gridlijn.</span><span class="help-lang-en"><strong>1 · Grid ownership.</strong> Every node owns its horizontal and vertical grid line.</span></figcaption>
+<img alt="Iedere OGN-knoop bezit een eigen horizontale en verticale gridlijn." decoding="async" loading="eager" src="publicatie-carrousel/slides/01-every-node-owns-grid-lines.png"/>
+<figcaption><span class="help-lang-nl"><strong>1 · Gridbezit.</strong> A ≠ B betekent: geen gedeelde rij en geen gedeelde kolom.</span><span class="help-lang-en"><strong>1 · Grid ownership.</strong> A ≠ B means: no shared row and no shared column.</span></figcaption>
 </figure>
 <figure class="readme-carousel-slide" data-readme-shape="wide" data-readme-slide="" hidden="">
-<img alt="Drie opeenvolgende grids waarin eerst A, daarna B en daarna C op een nog vrije plaats wordt geschreven." decoding="async" loading="lazy" src="images/readme/ogn-sequential-write.svg"/>
-<figcaption><span class="help-lang-nl"><strong>2 · Eén voor één.</strong> Iedere geschreven knoop verandert de verzameling vrije plaatsen.</span><span class="help-lang-en"><strong>2 · One at a time.</strong> Every written node changes the set of free positions.</span></figcaption>
+<img alt="OGN kiest eerst een plaats met een vrije rij en vrije kolom." decoding="async" loading="lazy" src="publicatie-carrousel/slides/02-free-places-first.png"/>
+<figcaption><span class="help-lang-nl"><strong>2 · Vrije plaatsen.</strong> Een knoop wordt alleen op een vrije rij én kolom geschreven.</span><span class="help-lang-en"><strong>2 · Free positions.</strong> A node is written only on a free row and column.</span></figcaption>
 </figure>
 <figure class="readme-carousel-slide" data-readme-shape="wide" data-readme-slide="" hidden="">
-<img alt="Twee grids beginnen in hetzelfde middenpunt; verschillende kandidaatvolgorden leveren verschillende directe plaatsingen op." decoding="async" loading="lazy" src="images/readme/ogn-placement-strategies.svg"/>
-<figcaption><span class="help-lang-nl"><strong>3 · Zoeken.</strong> Een andere zoekvolgorde kan een ander groeibeeld opleveren.</span><span class="help-lang-en"><strong>3 · Search.</strong> Another search order can produce another growth pattern.</span></figcaption>
+<img alt="OGN schrijft opeenvolgend één knoop per stap." decoding="async" loading="lazy" src="publicatie-carrousel/slides/03-one-node-at-a-time.png"/>
+<figcaption><span class="help-lang-nl"><strong>3 · Eén voor één.</strong> Iedere geschreven knoop verandert de vrije plaatsen.</span><span class="help-lang-en"><strong>3 · One at a time.</strong> Every written node changes the free positions.</span></figcaption>
 </figure>
 <figure class="readme-carousel-slide" data-readme-shape="wide" data-readme-slide="" hidden="">
-<img alt="Drie opeenvolgende lagen: OGN Free Placement, OGN Projection en OGN Calculated Placement, zonder een specifieke uitbreiding vooruit te lopen." decoding="async" loading="lazy" src="images/readme/ogn-three-layers.svg"/>
-<figcaption><span class="help-lang-nl"><strong>4 · Volgorde.</strong> Vrije plaatsing eerst, projectie tweede, berekende toepassing derde.</span><span class="help-lang-en"><strong>4 · Order.</strong> Free placement first, projection second, calculated application third.</span></figcaption>
+<img alt="Geplaatste OGN-knopen projecteren naar west, zuid en oost." decoding="async" loading="lazy" src="publicatie-carrousel/slides/04-node-projection-west-south-east.png"/>
+<figcaption><span class="help-lang-nl"><strong>4 · Projectie.</strong> Projecties veranderen de bronplaatsing en het gridbezit niet.</span><span class="help-lang-en"><strong>4 · Projection.</strong> Projections do not change source placement or grid ownership.</span></figcaption>
+</figure>
+<figure class="readme-carousel-slide" data-readme-shape="wide" data-readme-slide="" hidden="">
+<img alt="Greedy Grow als directe plaatsingsmethode binnen OGN." decoding="async" loading="lazy" src="publicatie-carrousel/slides/05-direct-placement-greedy-grow.png"/>
+<figcaption><span class="help-lang-nl"><strong>5 · Direct.</strong> Greedy Grow zoekt, valideert en schrijft onmiddellijk.</span><span class="help-lang-en"><strong>5 · Direct.</strong> Greedy Grow searches, validates, and writes immediately.</span></figcaption>
+</figure>
+<figure class="readme-carousel-slide" data-readme-shape="wide" data-readme-slide="" hidden="">
+<img alt="Language Tree als voorbeeld van berekende OGN-plaatsing." decoding="async" loading="lazy" src="publicatie-carrousel/slides/06-calculated-placement-language-tree.png"/>
+<figcaption><span class="help-lang-nl"><strong>6 · Berekend.</strong> Language Tree plant eerst en schrijft daarna volgens OGN.</span><span class="help-lang-en"><strong>6 · Calculated.</strong> Language Tree plans first, then writes under OGN rules.</span></figcaption>
+</figure>
+<figure class="readme-carousel-slide" data-readme-shape="wide" data-readme-slide="" hidden="">
+<img alt="De OGN-kern komt voor de voorbeelden en taaltoepassingen." decoding="async" loading="lazy" src="publicatie-carrousel/slides/07-core-first-examples-follow.png"/>
+<figcaption><span class="help-lang-nl"><strong>7 · Volgorde.</strong> OGN-kern eerst; gespecialiseerde toepassingen later.</span><span class="help-lang-en"><strong>7 · Order.</strong> OGN core first; specialized applications later.</span></figcaption>
 </figure>
 </div>
 <div aria-hidden="false" class="readme-carousel-controls" data-readme-carousel-controls=""></div>
@@ -399,6 +359,7 @@
 <p>Een andere zoekvolgorde kan vanuit hetzelfde startpunt een ander groeipad en eindbeeld opleveren.</p>
 <p><strong>Greedy Grow · geaccepteerde reconstructie.</strong> De historische vierarmige volgorde reproduceert de bewaarde demo's van 12, 31 en 96 knopen exact. Iedere stap schrijft direct één dot; er wordt geen toekomstig eindbeeld opgeslagen. Vier teruggevonden experimentele zoekvolgorden maken andere groeibeelden vergelijkbaar. De gemeten veldomtrek is diagnostiek, geen bewezen wereldwijd optimum.</p>
 <p><a href="greedy-grow.html">Open de bedienbare Greedy Grow-reconstructie</a>. Publicatieslide 5 wordt rechtstreeks uit dezelfde engine afgeleid. Geaccepteerd op 2 augustus 2026.</p>
+<p><button data-help-topic-button="direct-random" type="button">Random · Config en iteraties</button></p>
 </div>
 <div class="help-lang-en">
 <h3>Search Strategies and Greedy Grow</h3>
@@ -462,28 +423,18 @@
 </article>
 <article class="help-topic-panel" data-help-topic="multi-ogn-anaphor">
 <div class="help-lang-nl">
-<h3>Anafoor · multi-OGN</h3>
-<p><strong>Publicatielinks:</strong> Config kiest het startitem niet. De kale site opent HOND BIJT MAN; gebruik voor een platform een expliciete URI uit <a href="publicatie-links.html">de publicatie-URI-lijst</a>.</p>
-<p><strong>Twee groepen:</strong> HIJ/DIE/HEM verwijzen tussen K1, K2 en K3. ZICH, ZICHZELF en UZELF zijn lokale reflexieve anaforen en staan als afzonderlijke subgroep in de itemlijst. Bij <em>Ken uzelf</em> is U als impliciete subjectknoop structureel aanwezig.</p>
-<p><strong>Uiting en kernzinnen:</strong> een uiting bestaat uit één of meer verknoopte kernzinnen. De uitingen <strong>Jan wast zichzelf</strong>, <strong>Jan slaat Jek omdat hij/die/die hond hem beet</strong> en <strong>Ken uzelf</strong> openen als twee afzonderlijke kernzinbomen, K1 boven K2. Anaforen lopen verticaal; de causale uiting toont tegelijk JEK ↔ HIJ/DIE/DIE HOND en JAN ↔ HEM. DIE HOND is één subject-NP met twee LEX-woorden.</p>
-<p><strong>Flip — waar, wanneer, waarom?</strong> In de causale uiting flipt de onderste boom K2 automatisch wanneer JAN en JEK van subject/object wisselen. Zonder die spiegeling kunnen niet beide referentverbindingen verticaal blijven. De optionele globale Flip spiegelt daarna beide bomen; structuur en LEX-woordvolgorde veranderen nooit.</p>
-<p>Het vaste eerste voorbeeld is <strong>S1: Ik zie een man.</strong> en <strong>S2: Hij draagt een hoed.</strong> MAN is het <strong>antecedent</strong>; HIJ is de <strong>anafoor</strong>. De twee uitdrukkingen zijn coreferentieel: ze hebben dezelfde referent.</p>
-<p>Graphlite berekent de twee bomen eerst afzonderlijk als geldige OGN’s. Daarna blijft iedere complete boom star: S1 komt boven S2 en de complete S2 wordt horizontaal verschoven totdat MAN en HIJ exact één gridkolom delen.</p>
-<p>De LEX-as is gezamenlijk en ordent de woorden van S1 vóór die van S2. De verbinding MAN–HIJ is één rechte verticale lijn zonder pijl, richting of verwijzingslabel.</p>
-<p><strong>Context op LEX:</strong> GISTEREN en VANDAAG zijn uitsluitend lexicale inserties en hebben dus geen boomknoop of boomprojectielijn. Hun tijdsvolgorde verschijnt als een afzonderlijke gestippelde verbinding langs de LEX-as: GISTEREN → VANDAAG. Deze Context-relatie beïnvloedt de boomplaatsing en Flip niet.</p>
-<p>De regel dat verschillende knopen geen rij of kolom delen, geldt <strong>per afzonderlijke OGN</strong>. Tussen OGN’s is uitsluitend de gedeclareerde MAN–HIJ-kolom toegestaan; alle overige kruisende rijen en kolommen blijven verboden.</p>
+<h3>Uitingen en anaforen</h3>
+<p>Een <strong>uiting</strong> bestaat uit één of meer gekoppelde kernzinnen. Iedere kernzin blijft afzonderlijk een geldige OGN.</p>
+<p>In <em>Ik zie een man. Hij draagt een hoed.</em> is MAN het antecedent en HIJ de anafoor. De complete bomen blijven star; alleen de tweede boom schuift totdat MAN en HIJ één kolom delen.</p>
+<p>LEX ordent de gerealiseerde woorden. Flip spiegelt een boom alleen wanneer meerdere verticale anafoorrelaties dat vereisen.</p>
+<p><a href="UITING_EN_KERNZINNEN.md" target="_blank" rel="noopener">Uiting en kernzinnen</a> · <a href="MULTI_OGN_ANAPHOR.md" target="_blank" rel="noopener">Multi-OGN en anaforen</a></p>
 </div>
 <div class="help-lang-en">
-<h3>Anaphor · multi-OGN</h3>
-<p><strong>Publication links:</strong> Config does not select the start item. The bare site opens HOND BIJT MAN; use an explicit platform URI from <a href="publicatie-links.html">the publication URI list</a>.</p>
-<p><strong>Two groups:</strong> HIJ/DIE/HEM refer across K1, K2 and K3. ZICH, ZICHZELF and UZELF are local reflexive anaphors and form a separate subgroup in the item list. In <em>Ken uzelf</em>, U is structurally present as an implicit subject node.</p>
-<p><strong>Utterances and kernel clauses:</strong> an utterance consists of one or more linked kernel clauses. The utterances <strong>Jan wast zichzelf</strong>, <strong>Jan slaat Jek omdat hij/die/die hond hem beet</strong>, and <strong>Ken uzelf</strong> open as two independent kernel-clause trees, K1 above K2. Anaphors connect vertically; the causal utterance simultaneously shows JEK ↔ HIJ/DIE/DIE HOND and JAN ↔ HEM. DIE HOND is one subject NP with two LEX words.</p>
-<p><strong>Flip — where, when, why?</strong> In the causal utterance, lower tree K2 flips automatically when JAN and JEK exchange subject/object roles. Without that mirror, both reference links cannot remain vertical. The optional global Flip then mirrors both trees; structure and LEX word order never change.</p>
-<p>The fixed first example is <strong>S1: Ik zie een man.</strong> and <strong>S2: Hij draagt een hoed.</strong> MAN is the <strong>antecedent</strong>; HIJ is the <strong>anaphor</strong>. Both expressions are coreferential: they have the same referent.</p>
-<p>Graphlite first calculates both trees independently as valid OGNs. Each complete tree then remains rigid: S1 is placed above S2 and the complete S2 is shifted horizontally until MAN and HIJ share exactly one grid column.</p>
-<p>The LEX axis is shared and orders the words of S1 before those of S2. The MAN–HIJ connection is one straight vertical line without an arrow, direction or reference label.</p>
-<p><strong>Context on LEX:</strong> GISTEREN and VANDAAG are lexical insertions only and therefore have no tree node or tree projection line. Their temporal order is shown as a separate dashed connection along the LEX axis: GISTEREN → VANDAAG. This Context relation does not affect tree placement or Flip.</p>
-<p>The rule that distinct nodes do not share a row or column applies <strong>per individual OGN</strong>. Across OGNs, only the declared MAN–HIJ column is permitted; every other cross-unit row or column remains forbidden.</p>
+<h3>Utterances and anaphors</h3>
+<p>An <strong>utterance</strong> consists of one or more linked kernel clauses. Each kernel clause remains a valid OGN in its own right.</p>
+<p>In <em>I see a man. He wears a hat.</em>, MAN is the antecedent and HE the anaphor. Both complete trees remain rigid; only the second tree shifts until MAN and HE share one column.</p>
+<p>LEX orders the realized words. Flip mirrors a tree only when multiple vertical anaphor relations require it.</p>
+<p><a href="UITING_EN_KERNZINNEN.md" target="_blank" rel="noopener">Utterances and kernel clauses</a> · <a href="MULTI_OGN_ANAPHOR.md" target="_blank" rel="noopener">Multi-OGN and anaphors</a></p>
 </div>
 </article>
 <article class="help-topic-panel" data-help-topic="flip">
@@ -536,14 +487,15 @@
 </article>
 <article class="help-topic-panel" data-help-topic="named-projections">
 <div class="help-lang-nl">
-<h3>Named projections</h3>
-<p>Een named projection geeft een projectie een naam en eigen selectieregels.</p>
-<ul><li><strong>LEX</strong>: toont horizontale bronprojecties en één eindverplaatsing per bronwoord; de projectie en projectiemerkers zijn blauw.</li><li><strong>SYNT</strong>: selecteert syntactische categorieën en regels.</li><li><strong>LOG</strong>: ordent S/O/V-majors op vaste slots<span data-feature="adverbs" hidden="">, samen met ingeschakelde minors</span>.</li></ul>
+<h3>LEX, SYNT en LOG</h3>
+<ul><li><strong>LEX</strong> toont de gerealiseerde woordvolgorde in blauw. Iedere paginalaad begint op West; Oost, Noord en Zuid blijven sessiekeuzen.</li><li><strong>SYNT</strong> toont syntactische categorieën en regels in groen.</li><li><strong>LOG</strong> ordent S, O en V op vaste paarse slots.</li></ul>
+<p><a href="LEX_AXIS_ORIENTATIONS.md" target="_blank" rel="noopener">Details over LEX-richtingen</a></p>
+<p class="help-detail-links"><button data-help-topic-button="lex-free-positions" type="button">Actief LEX-profiel</button> <button data-help-topic-button="lex-movement-direction" type="button">Wissels omhoog</button> <button data-help-topic-button="sentence-types" type="button">Zinsoorten</button></p>
 </div>
 <div class="help-lang-en">
-<h3>Named projections</h3>
-<p>A named projection gives a projection a name and its own selection rules.</p>
-<ul><li><strong>LEX</strong>: shows LOG-derived neutral rows and later exchanges; its projection and projection markers are blue.</li><li><strong>SYNT</strong>: selects syntactic categories and rules.</li><li><strong>LOG</strong>: orders S/O/V majors on fixed slots<span data-feature="adverbs" hidden="">, together with enabled minors</span>.</li></ul>
+<h3>LEX, SYNT, and LOG</h3>
+<ul><li><strong>LEX</strong> shows realized word order in blue. Every page load starts on West; East, North and South remain session choices.</li><li><strong>SYNT</strong> shows syntactic categories and rules in green.</li><li><strong>LOG</strong> orders S, O, and V on fixed purple slots.</li></ul>
+<p><a href="LEX_AXIS_ORIENTATIONS.md" target="_blank" rel="noopener">LEX orientation details</a></p>
 </div>
 </article>
 <article class="help-topic-panel" data-help-topic="lex-axis">
@@ -596,30 +548,26 @@
 </article>
 <article class="help-topic-panel" data-help-topic="tree-notation">
 <div class="help-lang-nl">
-<h3>Two-Pass Language Tree</h3>
-<p>De taalboom is een berekende OGN-toepassing. Zij gebruikt het grid om een herkenbare boom te schrijven nadat structurele regels de plaatsen hebben bepaald. Een tweede pass meet nodevormen, labels en subtrees voor de zichtbare boxen.</p>
-<p>Traditionele taalbomen kunnen te breed of onleesbaar samengedrukt worden wanneer structuur en lineaire woordvolgorde dezelfde geometrie moeten delen. Binnen deze toepassing kan LEX de woordvolgorde afzonderlijk projecteren. Dat is een voordeel van de taaltoepassing, niet de algemene oorsprong van OGN.</p>
-<p>De taalboomweergave kan als Syntax tree of als Functional structure worden bekeken.</p>
+<h3>Language Tree</h3>
+<p>Language Tree is een berekende toepassing van OGN: regels bepalen de knoopplaatsen; daarna worden vormen, labels en deelbomen gemeten.</p>
+<p>De <strong>volgorde van vertakking</strong> beschrijft de structuur. De <strong>volgorde van de uiting</strong> beschrijft de gerealiseerde woorden. LEX houdt die tweede volgorde apart, zodat de boom niet tot woordvolgorde wordt gereduceerd.</p>
+<p>Gebruik <strong>Grammar</strong> om dezelfde analyse syntactisch of functioneel te bekijken. <a href="RECURSIVE_LAYOUT_AND_APPLICATION_CONTRACT.md" target="_blank" rel="noopener">Technisch contract</a></p>
 </div>
 <div class="help-lang-en">
-<h3>Two-Pass Language Tree</h3>
-<p>The language tree is a calculated OGN application. It uses the grid to write a recognizable tree after structural rules have determined positions. A second pass measures node shapes, labels, and subtrees for the visible boxes.</p>
-<p>Traditional language trees can become too wide or unreadably compressed when structure and linear word order must share the same geometry. Within this application, LEX can project word order separately. That is a benefit of the language application, not the general origin of OGN.</p>
-<p>The linguistic tree display can be viewed as Syntax tree or as Functional structure.</p>
+<h3>Language Tree</h3>
+<p>Language Tree is a calculated OGN application: rules determine node positions; shapes, labels, and subtrees are measured afterwards.</p>
+<p><strong>Branching order</strong> describes structure. <strong>Utterance order</strong> describes the realized words. LEX keeps the latter separate, so the tree is not reduced to word order.</p>
+<p>Use <strong>Grammar</strong> to view the same analysis syntactically or functionally. <a href="RECURSIVE_LAYOUT_AND_APPLICATION_CONTRACT.md" target="_blank" rel="noopener">Technical contract</a></p>
 </div>
 </article>
 <article class="help-topic-panel" data-help-topic="views">
 <div class="help-lang-nl">
-<h3>Views</h3>
-<p>Het menu <strong>Grammar</strong> kiest het centrale beeld: standaard <strong>Syntactic</strong>, of <strong>Functional</strong>.</p>
-<p>Een view is het hoofdbeeld in de boomruimte. Named projections staan daar omheen.</p>
-<p><strong>Mobiel is bewust eenvoudig.</strong> De desktopversie staat op dezelfde URL en geeft daarnaast directe toegang tot LEX West/Oost/Noord/Zuid met graduele draaiing, afzonderlijke LEX/SYNT/LOG-projecties, zes LOG-volgorden, Greedy Grow, Random, Ruimtezoom, uitgebreide layout, meerdere testmateriaalkolommen en export naar OPN, SVG, LinkedIn-PNG en Play-video.</p>
+<h3>Bediening</h3>
+<p>Kies een voorbeeld onder <strong>Testmateriaal</strong> en wissel met <strong>Grammar</strong> tussen Syntactic en Functional. Gebruik Play, vorige, volgende, Reset en FIT om het beeld te doorlopen en passend te maken.</p>
 </div>
 <div class="help-lang-en">
-<h3>Views</h3>
-<p>The <strong>Grammar</strong> menu chooses the central image: <strong>Syntactic</strong> by default, or <strong>Functional</strong>.</p>
-<p>A view is the main image in the tree area. Named projections are placed around it.</p>
-<p><strong>Mobile is intentionally simple.</strong> The desktop version uses the same URL and additionally provides direct access to LEX West/East/North/South with gradual rotation, separate LEX/SYNT/LOG projections, six LOG orders, Greedy Grow, Random, Space zoom, extended layout, multiple test-material columns, and export to OPN, SVG, LinkedIn PNG and Play video.</p>
+<h3>Controls</h3>
+<p>Choose an example under <strong>Test material</strong> and use <strong>Grammar</strong> to switch between Syntactic and Functional. Play, previous, next, Reset, and FIT step through the view and fit it on screen.</p>
 </div>
 </article>
 <article class="help-topic-panel" data-help-topic="syntax-view">
@@ -670,20 +618,20 @@
 <p><code>.gitignore</code> bepaalt welke lokale bestanden niet naar GitHub Pages worden meegenomen.</p>
 <ul>
 <li><code>OpenGraph_Lite_Viewer_v*.zip</code>: release-zips horen als downloadbaar archief naast het project, niet als sitebestand in de Pages-root.</li>
-<li><code>local-mobile-test.js</code> en <code>local-mobile-test.html</code>: lokale desktopknop voor mobile portrait/landscape-test. Deze hoort niet op <code>github.io</code>.</li>
+<li><code>local-mobile-test.html</code>: tijdelijke lokale testpagina. <code>local-mobile-test.js</code> gaat wel mee als overdraagbare bron, maar activeert zichzelf uitsluitend lokaal.</li>
 <li><code>opengraph-local-config-log-*.txt</code> en <code>local-config-log*.txt</code>: lokale config-logbestanden. Die bevatten test- en sessie-informatie van de eigen werkmap.</li>
 </ul>
-<p>De publicatie-BAT gebruikt alleen niet-genegeerde sitebestanden. Lokale testbestanden blijven daardoor lokaal.</p>
+<p>De gecontroleerde <code>data/testmateriaal.sqlite</code> gaat mee als openbare projectbron. SQLite-WAL/SHM en lokale back-ups blijven buiten GitHub. De Pages-viewer gebruikt alleen de actieve <code>OK</code>-selectie uit <code>data/catalog.public.json</code>.</p>
 </div>
 <div class="help-lang-en">
 <h3>Gitignore</h3>
 <p><code>.gitignore</code> decides which local files are not published to GitHub Pages.</p>
 <ul>
 <li><code>OpenGraph_Lite_Viewer_v*.zip</code>: release zips belong next to the project as downloadable archives, not in the Pages root as site files.</li>
-<li><code>local-mobile-test.js</code> and <code>local-mobile-test.html</code>: local desktop control for testing mobile portrait/landscape. It should not be uploaded to <code>github.io</code>.</li>
+<li><code>local-mobile-test.html</code>: temporary local test page. <code>local-mobile-test.js</code> is included as transferable source but activates itself locally only.</li>
 <li><code>opengraph-local-config-log-*.txt</code> and <code>local-config-log*.txt</code>: local config logs with work-session information from the local folder.</li>
 </ul>
-<p>The publish BAT stages only non-ignored site files, so local test files stay local.</p>
+<p>The checked <code>data/testmateriaal.sqlite</code> is included as public project source. SQLite WAL/SHM and local backups stay outside GitHub. The Pages viewer uses only the active <code>OK</code> selection in <code>data/catalog.public.json</code>.</p>
 </div>
 </article>
 <article class="help-topic-panel" data-help-topic="carousel">
@@ -725,14 +673,69 @@
 <p>Precedence: code defaults → default config → project user config → locally saved browser snapshot. Only the final browser snapshot remains device-specific.</p>
 </div>
 </article>
+<article class="help-topic-panel" data-help-topic="contributing">
+<div class="help-lang-nl">
+<h3>Meedoen en publiceren</h3>
+<p><strong>Zelf downloaden:</strong> gebruik Graphlite zonder installatie op <a href="https://kruin.github.io/graphlite/" target="_blank" rel="noopener">kruin.github.io/graphlite</a>, of download de actuele broncode met de knop hieronder. Kies in Windows eerst <strong>Alles uitpakken</strong>, open de map <code>graphlite-main</code> en start <code>start_local_viewer.bat</code>. Start niet vanuit de ZIP en open <code>index.html</code> niet rechtstreeks. Python 3 is vereist; download het zo nodig via <a href="https://www.python.org/downloads/windows/" target="_blank" rel="noopener">python.org</a> en kies <strong>Add Python to PATH</strong>. De ZIP bevat ook SQLite, Sources en <a href="PROJECT_MEMORY.md" target="_blank" rel="noopener">PROJECT_MEMORY.md</a> en kan daarom na een volledige push aan een nieuwe ChatGPT-chat worden gegeven.</p>
+<p><a class="button-link download-main-zip" href="https://github.com/kruin/graphlite/archive/refs/heads/main.zip" target="_blank" rel="noopener noreferrer" aria-label="Download Graphlite main.zip van GitHub">Download Graphlite · main.zip</a></p>
+<h4>Eigen aanpassingen naar GitHub sturen</h4>
+<p>De download <code>main.zip</code> bevat geen Git-verbinding. Maak daarom eerst op GitHub een <a href="https://github.com/kruin/graphlite/fork" target="_blank" rel="noopener noreferrer">fork van kruin/graphlite</a>. Installeer zo nodig <a href="https://git-scm.com/download/win" target="_blank" rel="noopener noreferrer">Git voor Windows</a> en clone daarna je fork:</p>
+<pre><code>git clone https://github.com/JOUW_GITHUB_NAAM/graphlite.git</code></pre>
+<p>Werk in de gekloonde map en start daar <code>publish_checked.bat</code>. Geef een committekst op en meld je aan wanneer Git daarom vraagt. Het script controleert, commit en pusht naar <code>origin/main</code>. Voor een eigen website kies je in de fork <strong>Settings → Pages → Deploy from a branch → main → /(root)</strong>. Gebruik voor publiceren dus de clone, niet de uitgepakte <code>main.zip</code>.</p>
+<p><a href="https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo" target="_blank" rel="noopener noreferrer">GitHub: een fork maken</a> · <a href="https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site" target="_blank" rel="noopener noreferrer">GitHub Pages instellen</a></p>
+<p><strong>Testen:</strong> noem URL, testitem, apparaat, browser, stappen, verwachting en resultaat. Windows: pak de bron-ZIP uit en start <code>localserver.bat</code>. iPhone en iPad: gebruik de publieke HTTPS-URL.</p>
+<p><strong>Testmateriaal:</strong> overleg vóór toevoegen of wijzigen. SQLite is leidend en openbaar overdraagbaar; de online viewer toont alleen actieve, goedgekeurde <code>OK</code>-records.</p>
+<p><strong>Publiceren:</strong> één LEESMIJ-item met eigen carrousel vormt één aflevering. Bronvermeldingen bij tekst én beelden zijn verplicht.</p>
+<p><a href="MEEDOEN.md" target="_blank" rel="noopener">Volledige instructie</a> · <a href="AFLEVERINGEN_PUBLICEREN.md" target="_blank" rel="noopener">Publicatiewerkwijze</a> · <a href="AFLEVERINGEN_PLANNING.md" target="_blank" rel="noopener">Afleveringsplanning</a> · <a href="CARROUSEL_BRONNEN.md" target="_blank" rel="noopener">Bronnen</a></p>
+</div>
+<div class="help-lang-en">
+<h3>Contribute and publish</h3>
+<p><strong>Download for personal use:</strong> use Graphlite without installation at <a href="https://kruin.github.io/graphlite/" target="_blank" rel="noopener">kruin.github.io/graphlite</a>, or download the current source with the button below. In Windows, choose <strong>Extract all</strong> first, open the <code>graphlite-main</code> folder, and run <code>start_local_viewer.bat</code>. Do not run it inside the ZIP and do not open <code>index.html</code> directly. Python 3 is required; if necessary, download it from <a href="https://www.python.org/downloads/windows/" target="_blank" rel="noopener">python.org</a> and select <strong>Add Python to PATH</strong>. The ZIP also contains SQLite, Sources and <a href="PROJECT_MEMORY.md" target="_blank" rel="noopener">PROJECT_MEMORY.md</a>, so after a complete push it can be handed to a new ChatGPT conversation.</p>
+<p><a class="button-link download-main-zip" href="https://github.com/kruin/graphlite/archive/refs/heads/main.zip" target="_blank" rel="noopener noreferrer" aria-label="Download Graphlite main.zip from GitHub">Download Graphlite · main.zip</a></p>
+<h4>Publish your changes to GitHub</h4>
+<p>The <code>main.zip</code> download has no Git connection. First create a <a href="https://github.com/kruin/graphlite/fork" target="_blank" rel="noopener noreferrer">fork of kruin/graphlite</a> on GitHub. Install <a href="https://git-scm.com/download/win" target="_blank" rel="noopener noreferrer">Git for Windows</a> if needed, then clone your fork:</p>
+<pre><code>git clone https://github.com/YOUR_GITHUB_NAME/graphlite.git</code></pre>
+<p>Work in the cloned folder and run <code>publish_checked.bat</code> there. Enter a commit message and sign in when Git asks. The script checks, commits, and pushes to <code>origin/main</code>. For your own website, select <strong>Settings → Pages → Deploy from a branch → main → /(root)</strong> in the fork. Use the clone for publishing, not the extracted <code>main.zip</code>.</p>
+<p><a href="https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo" target="_blank" rel="noopener noreferrer">GitHub: create a fork</a> · <a href="https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site" target="_blank" rel="noopener noreferrer">Configure GitHub Pages</a></p>
+<p><strong>Testing:</strong> include URL, test item, device, browser, steps, expectation, and result. Windows: extract the source ZIP and start <code>localserver.bat</code>. iPhone and iPad: use the public HTTPS URL.</p>
+<p><strong>Test material:</strong> discuss additions or changes first. SQLite is authoritative and publicly transferable; the online viewer shows only active, approved <code>OK</code> records.</p>
+<p><strong>Publishing:</strong> one README topic with its own carousel forms one episode. Source credits for both text and images are mandatory.</p>
+<p><a href="MEEDOEN.md" target="_blank" rel="noopener">Complete instructions</a> · <a href="AFLEVERINGEN_PUBLICEREN.md" target="_blank" rel="noopener">Publishing workflow</a> · <a href="AFLEVERINGEN_PLANNING.md" target="_blank" rel="noopener">Episode plan</a> · <a href="CARROUSEL_BRONNEN.md" target="_blank" rel="noopener">Sources</a></p>
+</div>
+<section aria-label="Meedoen met OpenGraph Lite" class="readme-tree-carousel" data-readme-carousel="" role="group">
+<div class="readme-carousel-viewport">
+<figure class="readme-carousel-slide is-active" data-readme-shape="wide" data-readme-slide="">
+<img alt="Een eenvoudige graph in een browservenster met een oog als symbool voor bekijken en testen." decoding="async" loading="eager" src="images/readme/meedoen-bekijken.svg"/>
+<figcaption><span class="help-lang-nl"><strong>1 · Bekijk.</strong> Kies één voorbeeld en noteer wat je verwacht.</span><span class="help-lang-en"><strong>1 · View.</strong> Choose one example and note what you expect.</span></figcaption>
+</figure>
+<figure class="readme-carousel-slide" data-readme-shape="wide" data-readme-slide="" hidden="">
+<img alt="Een controlelijst voor een herhaalbare foutmelding met URL, stappen, resultaat, apparaat en schermafbeelding." decoding="async" loading="lazy" src="images/readme/meedoen-melden.svg"/>
+<figcaption><span class="help-lang-nl"><strong>2 · Meld.</strong> Maak het probleem voor iemand anders herhaalbaar.</span><span class="help-lang-en"><strong>2 · Report.</strong> Make the problem reproducible by someone else.</span></figcaption>
+</figure>
+<figure class="readme-carousel-slide" data-readme-shape="wide" data-readme-slide="" hidden="">
+<img alt="Een zin gaat via kernzinnen en overleg naar een goedgekeurd testitem." decoding="async" loading="lazy" src="images/readme/meedoen-testmateriaal.svg"/>
+<figcaption><span class="help-lang-nl"><strong>3 · Stel voor.</strong> Testmateriaal gaat via analyse en overleg naar goedkeuring.</span><span class="help-lang-en"><strong>3 · Propose.</strong> Test material proceeds through analysis and discussion to approval.</span></figcaption>
+</figure>
+<figure class="readme-carousel-slide" data-readme-shape="wide" data-readme-slide="" hidden="">
+<img alt="Een LEESMIJ-item met carrousel gaat via controle naar een genummerde aflevering met vaste URL." decoding="async" loading="lazy" src="images/readme/meedoen-aflevering.svg"/>
+<figcaption><span class="help-lang-nl"><strong>4 · Publiceer gefaseerd.</strong> Eén LEESMIJ-item en carrousel vormen één aflevering.</span><span class="help-lang-en"><strong>4 · Publish in stages.</strong> One README topic and carousel form one episode.</span></figcaption>
+</figure>
+</div>
+<div aria-hidden="false" class="readme-carousel-controls" data-readme-carousel-controls=""></div>
+</section>
+</article>
 <article class="help-topic-panel" data-help-topic="publishing">
 <div class="help-lang-nl">
 <h3>Publiceren op platforms</h3>
+<p><strong>Publiceren begint in de LEESMIJ.</strong> Iedere genummerde aflevering gebruikt één ingebouwd LEESMIJ-item als inhoudelijke bron en de eigen carrousel van dat item als beeldbron. Platformtekst en vierkante publicatiebeelden zijn afgeleiden; corrigeer daarom eerst het LEESMIJ-item.</p>
+<p>Een Config-aanpassing is een lokale kladversie. Publiceer pas nadat tekst en slides in de ingebouwde bron staan en de aflevering inhoudelijk, technisch en visueel is goedgekeurd. Zie <a href="AFLEVERINGEN_PUBLICEREN.md" target="_blank" rel="noopener">de publicatiewerkwijze</a> en <a href="AFLEVERINGEN_PLANNING.md" target="_blank" rel="noopener">de afleveringsplanning</a>.</p>
 <p>Iedere volledige projectzip bevat een <a href="publicatie-carrousel/index.html" target="_blank" rel="noopener">bewerkbare publicatiecarrousel</a> en zeven kant-en-klare vierkante PNG-slides. Upload de bestanden <code>01</code> tot en met <code>07</code> in die volgorde als één gallery, bijvoorbeeld op Reddit.</p>
 <p><a href="PUBLICATIE_README.md" target="_blank" rel="noopener">PUBLICATIE_README.md</a> bevat de exacte uploadvolgorde, alt-teksten en kopieerbare platformteksten. Vervang eerst de gemarkeerde live-, bron- en videolinks. rc.45 is op 2 augustus 2026 handmatig goedgekeurd.</p>
 </div>
 <div class="help-lang-en">
 <h3>Publishing on platforms</h3>
+<p><strong>Publishing starts in README.</strong> Every numbered episode uses one built-in README topic as its content source and that topic's own carousel as its visual source. Platform copy and square publication images are derivatives, so correct the README topic first.</p>
+<p>A Config change is a local draft. Publish only after the text and slides are part of the built-in source and the episode has received content, technical, and visual approval. See <a href="AFLEVERINGEN_PUBLICEREN.md" target="_blank" rel="noopener">the publishing workflow</a> and <a href="AFLEVERINGEN_PLANNING.md" target="_blank" rel="noopener">the episode plan</a>.</p>
 <p>Every full project zip contains an <a href="publicatie-carrousel/index.html" target="_blank" rel="noopener">editable publication carousel</a> and seven ready-to-upload square PNG slides. Upload files <code>01</code> through <code>07</code> in that order as one gallery, for example on Reddit.</p>
 <p><a href="PUBLICATIE_README.md" target="_blank" rel="noopener">PUBLICATIE_README.md</a> contains the exact upload order, alt text, and ready-to-copy platform text. Replace the marked live, source, and video links first. rc.45 was manually approved on 2 August 2026.</p>
 </div>
@@ -955,6 +958,13 @@
 <div aria-label="Gebruiksprofiel kiezen" class="lex-ambiguity-options" id="lexAmbiguityOptions" role="group"></div>
 <p class="lex-ambiguity-help" id="lexAmbiguityHelp">De keuze geldt alleen voor deze zinsinstantie.</p>
 </section>
+<section aria-labelledby="lexicalChoiceHeading" aria-live="polite" class="lexical-choice-panel hidden" id="lexicalChoicePanel" role="dialog">
+<div class="lexical-choice-kicker">Lexicon · selectieframe</div>
+<div class="lexical-choice-header"><h3 id="lexicalChoiceHeading">Kies een lexicaal item</h3><button aria-label="Sluit lexicale keuze" id="lexicalChoiceCloseButton" type="button">×</button></div>
+<p id="lexicalChoiceText">De keuze wordt in de hele taalboom toegepast.</p>
+<div aria-label="Lexicaal item kiezen" class="lexical-choice-options" id="lexicalChoiceOptions" role="group"></div>
+<p class="lexical-choice-help" id="lexicalChoiceHelp">Alleen semantisch passende kandidaten verschijnen.</p>
+</section>
 </section>
 <div aria-label="Schuif grens tussen grid en rechter menu" aria-orientation="vertical" class="pane-splitter" id="paneSplitter" role="separator" title="Sleep of raak deze grens aan om het grid smaller/breder te maken en het rechter menu zichtbaarder te maken."></div>
 </section>
@@ -1033,7 +1043,7 @@
 <p class="mobile-sheet-note">Sleep met één vinger om te pannen. Knijp met twee vingers om te zoomen. FIT past het zichtvenster aan de huidige boom en named projections aan; de boom zelf verandert niet.</p>
 </section>
 <script>
-    window.__opengraphBoot = { version: 'v3.1.0-rc.10', sourceBuild: 'v3.1.0-rc.10-mobile-points-to-desktop-options-20260901.33', loaded: false, marker: 'viewer-index' };
+    window.__opengraphBoot = { version: 'v3.1.0-rc.10', sourceBuild: 'v3.1.0-rc.10-fork-clone-publish-guide-20260909.60', loaded: false, marker: 'viewer-index' };
     function ogStatus(message) {
       var target = document.getElementById('actionFeedback') || document.body;
       if (target) target.textContent = message;
@@ -1068,6 +1078,6 @@
 <script defer="" src="multi-ogn-anaphor-play-engine.js?v3.1.0-rc.10"></script>
 <script defer="" src="multi-ogn-composition-engine.js?v3.1.0-rc.10"></script>
 <script defer="" src="utterance-kernel-engine.js?v3.1.0-rc.10"></script>
-<script defer="" src="viewer.js?v3.1.0-rc.10&amp;source=20260901.33"></script>
+<script defer="" src="viewer.js?v3.1.0-rc.10&amp;source=20260909.60"></script>
 </body>
 </html>

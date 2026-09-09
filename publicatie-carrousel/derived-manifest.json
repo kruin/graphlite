@@ -5,7 +5,7 @@
   "inputs": [
     {
       "path": "publicatie-carrousel/index.html",
-      "sha256": "b11c3589341e485cb9a668891fd5c0d47b05861fc2c5759e39fc0a6fa8a13263"
+      "sha256": "090457fdbc3d3f4c54931b6cf508090131b71780fb3a95d10d2473f33d570aa4"
     },
     {
       "path": "greedy-grow-engine.js",
@@ -53,7 +53,7 @@
     },
     {
       "path": "publicatie-carrousel/slides/06-calculated-placement-language-tree.png",
-      "sha256": "dedffec077ca47b144ccbe4e676ae76f59a3696eedd09b8c380e7c6313265262",
+      "sha256": "dd6b5c4b272af199b3ef8c8982534a84509f73b4ce571abe9abcb6e7dd80e40d",
       "width": 1080,
       "height": 1080
     },

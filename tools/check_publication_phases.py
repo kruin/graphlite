@@ -21,11 +21,11 @@ manifest = json.loads(manifest_path.read_text(encoding="utf-8")) if manifest_pat
 require(manifest.get("schema") == "opengraph-publication-phases-v1", "onbekend publicatiefasen-schema")
 require(manifest.get("current_phase") == 1, "fase 1 is niet actueel")
 phases = manifest.get("phases") or []
-require([item.get("id") for item in phases] == [1, 2, 3, 4, 5, 6], "publicatiefasen zijn niet compleet of niet geordend")
+require([item.get("id") for item in phases] == [1, 2, 3, 4, 5, 6, 7], "publicatiefasen zijn niet compleet of niet geordend")
 require(sum(item.get("status") == "current" for item in phases) == 1, "precies één actuele fase vereist")
 
 page = page_path.read_text(encoding="utf-8") if page_path.is_file() else ""
-for marker in ("Hond bijt man", "Speel de opbouw af", "Open de interactieve graph", "publicatie/public-phase.js"):
+for marker in ("Wat is OGN?", "Schrijf vier vrije knopen", "Probeer vrije plaatsing", "publicatie/public-phase.js"):
     require(marker in page, f"fase-1-pagina mist: {marker}")
 require("utm_source" not in page, "canonieke fasepagina mag geen vaste platformbron bevatten")
 
@@ -43,4 +43,4 @@ if errors:
         print("-", error)
     raise SystemExit(1)
 
-print("PUBLICATION PHASE CHECK: OK (fase 1, Hond bijt man)")
+print("PUBLICATION PHASE CHECK: OK (aflevering 1, OGN-kern)")

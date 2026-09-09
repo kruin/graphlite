@@ -3,7 +3,7 @@
 De LEX-zijde staat op het hoofdscherm onder **LEX** en bovenaan onder **Config
 → Algemeen → Presentatie en leesrichting**. Daar zijn West, Oost, Noord en
 Zuid direct kiesbaar; de onderliggende keuzelijst biedt dezelfde instelling.
-De standaardwaarde is **Oost**. West blijft als alternatief beschikbaar. De
+De standaardwaarde is **West**. Oost blijft als alternatief beschikbaar. De
 graphdata, kernzinnen, rollen, knoopidentiteiten en Flip worden
 niet door de keuze herschreven.
 
@@ -124,8 +124,12 @@ De horizontale woordrij krijgt minimaal 15 SVG-eenheden per letter en de
 verticale letterkolom minimaal 24 SVG-eenheden regelafstand. Brede kapitalen
 zoals `M` en `W` kunnen daardoor niet over hun buurletter heen vallen.
 
-Oost is de startdefault en wordt eenmalig pas ná project- en browser-Config
-toegepast. Config biedt voor Noord/Zuid afzonderlijke LEX-schakelaars voor
+West is de vaste startstand. Bij **iedere nieuwe paginalaad**, pas na project-
+en browser-Config, wordt **Oost**, **Noord** of **Zuid** opnieuw **West**.
+Alle vier standen blijven tijdens de lopende sessie gewoon
+kiesbaar. Dezelfde regel geldt via `localserver.bat` en op GitHub Pages, omdat
+beide dezelfde viewercode en browseropslag gebruiken. Config biedt voor
+Noord/Zuid afzonderlijke LEX-schakelaars voor
 K1–K8. Desktop en mobiel gebruiken dezelfde volledige testmateriaalcatalogus.
 Per interface zijn één tot vier echte lijstpanelen mogelijk. Een groep blijft
 altijd volledig binnen één paneel; standaard scheidt desktop de families Zin

@@ -24,13 +24,16 @@ def require(source: str, marker: str, label: str) -> None:
 required_files = [
     "index.html", "viewer.html", "viewer.js", "styles.css", "reset-cache.html", "sw.js",
     "testmateriaal.html", "testmateriaal.js", "TESTMATERIAAL_BEHEER.md", "FUNCTIONAL_DATABASE_COMPACT.md",
-    "data/testmateriaal.sqlite", "data/catalog.public.json", "tools/testmateriaal_db.py", "tools/check_testmateriaal_bulk.py",
+    "data/testmateriaal.sqlite", "data/catalog.public.json", "tools/testmateriaal_db.py", "tools/check_testmateriaal_bulk.py", "tools/check_testmateriaal_crud.py",
     "tools/install_local_database.py", "voeg-lokale-db-in.bat",
     "tools/check_utterance_lex_geometry.py",
     ".editorconfig", ".gitattributes", ".gitignore",
     "structure-config.html", "structure-editor.html", "examples-input.html", "examples-editor.html",
     "examples-adverbs.html", "lexicon-config.html", "lexicon-editor.html", ".nojekyll",
-    "README.md", "LEESMIJ.md", "PROJECT_STATE_CURRENT.md", "LAYOUT_RULES.md",
+    "README.md", "LEESMIJ.md", "MEEDOEN.md", "AFLEVERINGEN_PUBLICEREN.md", "AFLEVERINGEN_PLANNING.md",
+    "CARROUSEL_BRONNEN.md", "SOURCE_CHANGES_V3.1.0-rc.10.36.md", "SOURCE_CHANGES_V3.1.0-rc.10.37.md", "SOURCE_CHANGES_V3.1.0-rc.10.38.md", "SOURCE_CHANGES_V3.1.0-rc.10.39.md", "SOURCE_CHANGES_V3.1.0-rc.10.40.md", "SOURCE_CHANGES_V3.1.0-rc.10.41.md", "SOURCE_CHANGES_V3.1.0-rc.10.42.md", "SOURCE_CHANGES_V3.1.0-rc.10.43.md", "SOURCE_CHANGES_V3.1.0-rc.10.44.md", "ALGEMENE_SYN_FLIP.md",
+    "docs/view.html", "docs/html-doc-links.js", "tools/check_html_document_viewer.py",
+    "PROJECT_MEMORY.md", "PROJECT_STATE_CURRENT.md", "LAYOUT_RULES.md",
     "LINGUISTIC_ACTIONS.md", "DOCUMENTATION_RULES.md", "HANDOVER_FOR_COLLABORATORS.md",
     "ADVERB_ORIGIN_MECHANISMS.md", "LEXICON_USAGE_PROFILES_AND_DISAMBIGUATION.md",
     "LEXICON_USAGE_PROFILE_TEST.md", "SOURCE_CHANGES_V2.0.0-rc.38.md",
@@ -40,7 +43,7 @@ required_files = [
     "SOURCE_CHANGES_V2.0.0-rc.45.md",
     "MULTI_OGN_ANAPHOR.md", "multi-ogn-composition-engine.js", "utterance-kernel-engine.js",
     "UITING_EN_KERNZINNEN.md", "docs/UITING_EN_KERNZINNEN.md",
-    "samples/uitingen-kernzinnen.v1.json", "tools/check_utterances.js",
+    "samples/uitingen-kernzinnen.v1.json", "tools/check_utterances.js", "tools/check_vcluster_tree_flip.js",
     "tools/check_utterance_kernel_views.js", "tools/check_item_uri_start.js", "tools/check_recursive_kernel_builder.js",
     "samples/ik-zie-man-hij-draagt-hoed.multi-ogn.v1.opn",
     "PUBLICATIE_README.md", "RC44_PUBLICATION_CAROUSEL_TEST.md",
@@ -66,8 +69,11 @@ required_files = [
     "docs/RENDER_EXPLANATION_EN.md", "docs/TALIGE_UITBREIDINGEN.md", "docs/SOCIAL_EXPORT.md",
     "images/readme/traditional-tree-problem-too-wide.png", "images/readme/traditional-tree-problem-unreadable.png",
     "images/readme/traditional-tree-flexible-wide.png", "images/readme/traditional-tree-flexible-narrow.png", "manifest.webmanifest",
+    "images/sources/syntax-tree-simple-sentence-vlouie.png", "images/sources/mp-wh-checking-nlacara.svg",
     "images/readme/ogn-free-grid.svg", "images/readme/ogn-sequential-write.svg",
     "images/readme/ogn-placement-strategies.svg", "images/readme/ogn-three-layers.svg",
+    "images/readme/meedoen-bekijken.svg", "images/readme/meedoen-melden.svg",
+    "images/readme/meedoen-testmateriaal.svg", "images/readme/meedoen-aflevering.svg",
     "maak-publicatie-carrousel.bat", "installeer-carrousel-tools.bat", "maak-volledige-zip.bat",
     "package.json", "package-lock.json",
     "localserver.bat", "start_local_viewer.bat", "start_local_viewer.py",
@@ -84,6 +90,7 @@ required_files = [
     "tools/check_feature_profiles.py", "tools/check_feature_profiles_runtime.js",
     "tools/check_readme_carousel_editor.py", "tools/check_readme_carousel_editor_runtime.js",
     "tools/check_readme_item_editor.py", "tools/check_readme_item_editor_runtime.js",
+    "tools/check_meedoen_publication.py", "tools/check_episode_carousel.py",
     "tools/check_project_config_layers.py", "tools/check_project_config_layers_runtime.js",
     "random-placement-engine.js", "tools/check_greedy_grow_reconstruction.js",
     "tools/check_random_placement.js", "tools/check_line_style_and_direct_modes.py",
@@ -93,7 +100,7 @@ required_files = [
     "tools/check_node_grid_invariant.py", "tools/check_lex_open_slots.js",
     "tools/check_mobile_layout_rc38.py", "tools/check_mobile_layout_runtime.js",
     "tools/check_viewport_switch_runtime.js", "tools/check_landscape_composition_runtime.js",
-    "tools/check_recursive_box_fit_runtime.js",
+    "tools/check_recursive_box_fit_runtime.js", "tools/check_human_agent_choices.js",
     "tools/check_publication_carousel.py", "tools/check_publication_carousel_setup.py",
     "tools/check_publication_carousel_tooling.js", "tools/export_publication_carousel.js",
     "tools/build_publication_carousel_zip.py",
@@ -128,6 +135,8 @@ local_mobile = read("local-mobile-test.js")
 server = read("server_nocache.py")
 require(server, "/__opengraph_runtime_identity", "dynamische lokale serveridentiteit")
 require(server, "testmateriaal-bulk-status-v1", "bulkstatus-capability in serveridentiteit")
+require(server, "testmateriaal-crud-v1", "CRUD-capability in serveridentiteit")
+require(server, "testmateriaal-groups-v1", "groepsbeheer-capability in serveridentiteit")
 publication_readme = read("PUBLICATIE_README.md")
 testmateriaal_beheer = read("TESTMATERIAAL_BEHEER.md")
 master_spec = read("projectie-master-spec.md")
@@ -153,6 +162,7 @@ for marker, label in [
     ("*.py text eol=lf", "Python-LF-beleid"),
     ("*.bat text eol=crlf", "Windows-BAT-CRLF-beleid"),
     ("*.png binary", "binaire PNG-afbakening"),
+    ("*.sqlite binary", "binaire SQLite-afbakening"),
 ]:
     require(attributes, marker, label)
 require(publish_bat, "normalize_text_files.py --write", "automatische publicatienormalisatie")
@@ -189,7 +199,8 @@ for rel in ["index.html", "viewer.html"]:
     if duplicates:
         errors.append(f"dubbele HTML-id's in {rel}: {', '.join(duplicates)}")
 
-# Main menu: five base choices plus the optional Adverb choice on row 1,
+# Main menu: five base choices plus the optional Adverb choice and the
+# contextuele Tijd-keuze on row 1,
 # Language/README/Config on row 2. The established LEX orientation control
 # remains a separate topbar view control.
 nav_match = re.search(r'<nav[^>]*class="[^"]*main-top-menu[^"]*"[^>]*>.*?</nav>', index, flags=re.S)
@@ -198,12 +209,12 @@ if not nav_match:
 else:
     nav = nav_match.group(0)
     for item in [
-        "mainSentenceMenu", "mainAdverbMenu", "mainViewMenu",
+        "mainTenseChoice", "mainSentenceMenu", "mainAdverbMenu", "mainViewMenu",
         "sourceAxisMenu", "mainExtraMenu", "mainLanguageMenu", "openHelpButton", "openConfigButton",
     ]:
         require(nav, f'id="{item}"', f"topmenu-item {item}")
-    if nav.count("<details") != 6:
-        errors.append("topmenu moet zes directe choice-details bevatten")
+    if nav.count("<details") != 7:
+        errors.append("topmenu moet zeven directe choice-details bevatten")
     require(nav, 'data-feature="adverbs" hidden="" id="mainAdverbMenu"', "optioneel verborgen Bijwoordmenu")
 
 # Functional naming, interface selector, languages and English default.
@@ -264,10 +275,21 @@ require(read("check_release.bat"), "check_greedy_grow_reconstruction.js", "Greed
 require(read("check_release.bat"), "check_random_placement.js", "Random-regressie in releaseflow")
 require(read("check_release.bat"), "check_direct_placement_config.py", "directe Config-regressie in releaseflow")
 require(read("check_release.bat"), "check_utterance_lex_geometry.py", "LEX-geometriecontrole in releaseflow")
+require(read("check_release.bat"), "check_vcluster_tree_flip.js", "structurele V-clusterflip in releaseflow")
 require(read("check_release.bat"), "check_lex_axis_orientations.js", "Noord/Zuid-simplexcontrole in releaseflow")
 require(read("viewer.js"), "numberedTestmateriaalLabel(inputSource?.id", "testmateriaalnummer boven graph")
 require(read("viewer.js"), "return numberedTestmateriaalLabel(opt.id, label);", "testmateriaalnummer in keuzelijsten")
+require(read("index.html"), ">DB-beheer</a>", "onderscheid tussen testmateriaallijst en lokaal DB-beheer")
 require(read("check_release.bat"), "check_testmateriaal_bulk.py", "bulkstatuscontrole in releaseflow")
+require(read("check_release.bat"), "check_testmateriaal_crud.py", "CRUD-controle in releaseflow")
+for marker in ("newItem", "toggleActive", "deleteItem", "applyBulkGroup", "group_name", "is_active"):
+    require(read("testmateriaal.html"), marker, f"DB-beheeractie {marker}")
+for marker in ("testmateriaal_db.create", "testmateriaal_db.set_active", "testmateriaal_db.delete", "testmateriaal_db.bulk_group"):
+    require(server, marker, f"lokale DB-route {marker}")
+for marker in ("ontroeren: Object.freeze({", "`uiting:${definition.id}`", "synchronizedTense"):
+    require(read("viewer.js"), marker, f"gesynchroniseerde tijdsvorm {marker}")
+for marker in ("SYNCHRONIZED_TENSE_FORMS", "synchronizeDefinitionTense", "K3"):
+    require(read("utterance-kernel-engine.js"), marker, f"K1-gestuurde tijdssynchronisatie {marker}")
 if "LEX · UITING" in read("viewer.js") or "LEX · UTTERANCE" in read("viewer.js"):
     errors.append("LEX-asnaam moet uitsluitend LEX zijn")
 require(read("voeg-lokale-db-in.bat"), "install_local_database.py", "lokaal DB-invoegcommando")
@@ -341,10 +363,13 @@ if not intro_match:
 for marker, label in [
     ("Open Graph Notation begint met vrije plaatsing", "Nederlandse OGN-kernstart"),
     ("Open Graph Notation starts with free placement", "Engelse OGN-kernstart"),
-    ("ogn-free-grid.svg", "beeld vrije gridplaatsen"),
-    ("ogn-sequential-write.svg", "beeld sequentieel schrijven"),
-    ("ogn-placement-strategies.svg", "beeld zoekvolgorden"),
-    ("ogn-three-layers.svg", "beeld drie OGN-lagen"),
+    ("01-every-node-owns-grid-lines.png", "beeld gridbezit"),
+    ("02-free-places-first.png", "beeld vrije plaatsen"),
+    ("03-one-node-at-a-time.png", "beeld sequentieel schrijven"),
+    ("04-node-projection-west-south-east.png", "beeld projectie"),
+    ("05-direct-placement-greedy-grow.png", "beeld directe plaatsing"),
+    ("06-calculated-placement-language-tree.png", "beeld berekende plaatsing"),
+    ("07-core-first-examples-follow.png", "beeld kern eerst"),
     ("Every node owns its horizontal and vertical grid line", "gridbezit"),
     ("zoekstrategie", "Nederlandse zoekstrategie in de OGN-kern"),
     ("search strategy", "Engelse zoekstrategie in de OGN-kern"),
@@ -358,8 +383,8 @@ if "traditional-tree-" in intro:
 for forbidden in ["Two-Pass Language Tree", "LEX", "SYNT", "LOG", "Random Placement"]:
     if re.search(rf"\b{re.escape(forbidden)}\b", intro, flags=re.I):
         errors.append(f"eerste README-item loopt vooruit op niet-geïntroduceerde context: {forbidden!r}")
-if intro.count('data-readme-slide=""') != 4:
-    errors.append("eerste README-item moet exact vier OGN-kernbeelden bevatten")
+if intro.count('data-readme-slide=""') != 7:
+    errors.append("eerste README-item moet exact zeven OGN-kernbeelden bevatten")
 if (ROOT / 'images/readme/traditional-sentence-tree-examples.svg').exists():
     errors.append('oude afbeelding met drie traditionele bomen bestaat nog')
 require(js, "carousel.dataset.activeShape", 'vormafhankelijke README-carousel')
@@ -372,8 +397,8 @@ ogn_markers = [
     "OGN Free Placement",
     "OGN Projection",
     "OGN Calculated Placement",
-    "central branching under S = structural relations",
-    "LEX projection           = linear sentence word order",
+    "central branching under S = branching order",
+    "LEX projection            = utterance order",
     "The same central structure can therefore support different surface strings",
     "S:np-VP", "S+ np-VP", "heeft gebeten", "gebeten heeft",
     "Placement plan before rendering",
@@ -711,7 +736,7 @@ for rel, markers in {
 approval_markers = {
     "README.md": "rc.45 was manually approved on 2 August 2026",
     "docs/README.md": "rc.45 was manually approved on 2 August 2026",
-    "LEESMIJ.md": "rc.45 is op 2 augustus 2026 handmatig goedgekeurd",
+    "LEESMIJ.md": "## Bronnen",
     "docs/LEESMIJ.md": "rc.45 is op 2 augustus 2026 handmatig goedgekeurd",
     "PROJECT_STATE_CURRENT.md": "rc.45 is op 2 augustus 2026 handmatig goedgekeurd",
     "docs/PROJECT_STATE_CURRENT.md": "rc.45 is op 2 augustus 2026 handmatig goedgekeurd",
@@ -813,20 +838,60 @@ for marker, label in [
 ]:
     require(local_launcher, marker, label)
 source_build = read("SOURCE_BUILD.txt").strip()
-if source_build != "v3.1.0-rc.10-mobile-points-to-desktop-options-20260901.33":
+if source_build != "v3.1.0-rc.10-fork-clone-publish-guide-20260909.60":
     errors.append(f"onverwachte of lege SOURCE_BUILD.txt: {source_build!r}")
 
 leesmij = read("LEESMIJ.md")
 readme = read("README.md")
 for marker in (
-    "## Begin hier: van boom naar uiting",
+    "## 1. OGN",
     "Tree Build reserveert verplaatsingsruimte",
     "HOND | blijft op HOND-hoogte; geen pijl",
     "Alle verplaatsingspijlen blijven uitsluitend op",
+    "### Zelf downloaden en lokaal gebruiken",
+    "https://github.com/kruin/graphlite/archive/refs/heads/main.zip",
+    "Graphlite · main.zip",
+    "start_local_viewer.bat",
+    "### Eigen aanpassingen naar GitHub sturen",
+    "git clone https://github.com/JOUW_GITHUB_NAAM/graphlite.git",
+    "publish_checked.bat",
 ):
     require(leesmij, marker, "gereorganiseerde LEESMIJ")
 for marker in (
-    "## Start here: from tree to utterance",
+    "Zelf downloaden:",
+    "https://github.com/kruin/graphlite/archive/refs/heads/main.zip",
+    'class="button-link download-main-zip"',
+    "Download Graphlite · main.zip",
+    "Eigen aanpassingen naar GitHub sturen",
+    "git clone https://github.com/JOUW_GITHUB_NAAM/graphlite.git",
+    "start_local_viewer.bat",
+):
+    require(index, marker, "ingebouwde downloadinstructie")
+for obsolete in (
+    "De desktopversie staat op dezelfde URL",
+    "Desktop at the same URL adds",
+):
+    if obsolete in leesmij or obsolete in index:
+        errors.append(f"overbodige desktopmelding staat nog in LEESMIJ: {obsolete}")
+require(publish_bat, "Gebruik voor publiceren niet de uitgepakte main.zip", "Git-publicatiehulp voor nieuwe gebruikers")
+project_memory = read("PROJECT_MEMORY.md")
+for marker in (
+    "geen persoonlijk ChatGPT-geheugen",
+    "data/testmateriaal.sqlite",
+    "data/catalog.public.json",
+    "PROJECT_STATE_CURRENT.md",
+    "HANDOVER_FOR_COLLABORATORS.md",
+):
+    require(project_memory, marker, "overdraagbaar projectgeheugen")
+gitignore = read(".gitignore")
+if re.search(r"(?m)^/data/testmateriaal\.sqlite$", gitignore):
+    errors.append("de leidende SQLite-database wordt nog door .gitignore uitgesloten")
+if re.search(r"(?m)^local-mobile-test\.js$", gitignore):
+    errors.append("local-mobile-test.js wordt nog door .gitignore uitgesloten")
+if re.search(r'git rm --cached[^\n]*[\" ]data/testmateriaal\.sqlite[\" ]', publish_bat, flags=re.I):
+    errors.append("publish_checked.bat verwijdert de leidende SQLite-database nog uit staging")
+for marker in (
+    "## Start here: the OGN core",
     "Tree Build reserves movement space",
     "HOND and MAN remain on their source rows without arrows",
 ):
@@ -880,12 +945,14 @@ if "state.projectionBlockUnlocked = maxStep > 0 && state.growthStep >= maxStep;"
 tbody = re.search(r"<tbody>(.*?)</tbody>", read("examples-adverbs.html"), flags=re.S)
 if not tbody or len(re.findall(r"<tr\b", tbody.group(1))) != 25:
     errors.append("bijwoordtabel moet exact 25 voorbeelden bevatten")
-if examples.count('class="example-input"') != 20:
-    errors.append("voorbeeldset moet exact 20 uitingen bevatten")
+if examples.count('class="example-input"') != 12:
+    errors.append("HTML-input moet exact 12 minimale voorbeelden/uitingen bevatten")
 if 'data-id="trui-breit-vrouw-topic"' in examples or '"id": "trui-breit-vrouw-topic"' in js:
     errors.append("verwarrende zichtbare testcase TRUI BREIT VROUW moet ontbreken")
 for marker in ('data-animacy="inanimate"', 'data-requires-animate-subject="true"'):
     require(read("lexicon-config.html"), marker, "selectiebeperking BREIEN")
+for marker in ('example:muziek-ontroert-anna', '"stimulus"', '"experiencer"'):
+    require(read("data/catalog.public.json"), marker, "publieke functionele testcase")
 for utterance_id in [
     "jan-wast-zichzelf",
     "jan-slaat-jek-omdat-die-hem-beet",

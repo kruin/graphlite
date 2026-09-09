@@ -1,16 +1,51 @@
 # HANDOVER_FOR_COLLABORATORS
 
-## Actueel contract vanaf bronstand .71
+## Actuele aanvulling · bronstand .58
+
+`data/testmateriaal.sqlite` en `local-mobile-test.js` zijn overdraagbare,
+gecontroleerde projectbronnen en gaan mee naar GitHub. Alleen SQLite-WAL/SHM,
+lokale databaseback-ups, sessielogs, afhankelijkheden en gegenereerde ZIPs
+blijven buiten de repository. De Pages-viewer leest voor publicatie uitsluitend
+de actieve `OK`-records uit `data/catalog.public.json`; de complete SQLite-DB
+blijft wel openbaar downloadbaar voor overdracht en lokaal beheer.
+
+Een nieuwe ChatGPT-chat erft geen gespreks- of accountgeheugen. Lees daarom
+eerst `PROJECT_MEMORY.md`, daarna `PROJECT_STATE_CURRENT.md`, dit document en
+de daarin aangewezen normatieve specificaties. De automatisch door GitHub
+gemaakte ZIP van branch `main` is de standaardoverdracht zodra alle lokale
+wijzigingen zijn gepusht.
+
+## Actueel contract vanaf bronstand .36
 
 Behoud de prominente **Syntax | Functional**-schakelaar buiten het
 plaatsingsmethodemenu. Functional mag alleen rollen uit de actieve
 goedgekeurde kernzinanalyse tonen. Behoud **Compact** als zuivere layoutactie:
 compacte recursieve dichtheid en compacte H/V-kernzintakken, zonder tekst,
-analyse of relaties te wijzigen. `data/testmateriaal.sqlite` is lokaal leidend;
-de publieke JSON bevat alleen `OK`. Lees vóór wijzigingen
+analyse of relaties te wijzigen. `data/testmateriaal.sqlite` is leidend en
+openbaar overdraagbaar; de viewer gebruikt uit de publieke JSON alleen actieve
+`OK`-records. Lees vóór wijzigingen
 `FUNCTIONAL_DATABASE_COMPACT.md` en `TESTMATERIAAL_BEHEER.md`.
 
-Overdracht voor OpenGraph Lite Viewer v2.0.0-rc.45.
+Overdracht voor OpenGraph Lite Viewer v3.1.0-rc.10.
+
+Gebruik [MEEDOEN.md](MEEDOEN.md) als korte instaproute voor testers en
+bijdragers. Behoud daarnaast het contract
+`LEESMIJ-item + eigen carrousel → controle → afleveringspakket → publicatie`
+uit [AFLEVERINGEN_PUBLICEREN.md](AFLEVERINGEN_PUBLICEREN.md). Een lokale
+LEESMIJ-overschrijving via Config is een kladversie en geen releasebron. Iedere
+aflevering heeft een eigen nummer, slug, vaste URL, status, alt-teksten en
+handmatig visueel akkoord. Publiceer testmateriaal niet als één grote batch.
+De inhoudelijke en visuele reeks staat in
+[AFLEVERINGEN_PLANNING.md](AFLEVERINGEN_PLANNING.md). Bewaak daarin het formele
+onderscheid tussen de volgorde van vertakking (structurele ordening) en de
+volgorde van de uiting (totale lineaire ordening van gerealiseerde lexicale
+elementen). “Zwaartekracht” is uitsluitend een tekenmetafoor; presenteer het
+nooit als taalkundig mechanisme. “Kerstboom” betekent uitsluitend de grafische
+representatie van transformaties die op de structurele boom is geprojecteerd:
+kopieën, sporen, ketens, landingsplaatsen, co-indexering en pijlen. Noem een
+kale driehoekige taalboom geen kerstboom. Ieder extern carrouselvoorbeeld
+krijgt een zichtbare bronregel en volledige licentiegegevens volgens
+`CARROUSEL_BRONNEN.md`.
 
 Releasebesluit: rc.45 is op 2 augustus 2026 handmatig goedgekeurd, inclusief
 de Greedy Grow-reconstructie en de rechtstreeks afgeleide publicatieslide.
@@ -28,7 +63,7 @@ Boomknopen staan onder `.node-shape-layer`. Bewaar runtime-screenshots buiten
 de repository in de tijdelijke systeemmap.
 
 Actuele source build:
-`v2.0.0-rc.45-publish-visible-browser-controls-20260825.11`. Behoud Language Tree
+`v3.1.0-rc.10-sourced-episode-carousel-20260904.36`. Behoud Language Tree
 als prominente berekende toepassing en Greedy Grow/Random als kleinere
 directe OGN-illustraties. Wijzig `greedy-grow-engine.js` niet voor Random: die
 engine is onderdeel van het afleidingsbewijs van publicatieslide 5. Random

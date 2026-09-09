@@ -8,6 +8,7 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 DB=ROOT/'data'/'testmateriaal.sqlite'
 PUBLIC=ROOT/'data'/'catalog.public.json'
+ALLOWED_STATUSES={'NIEUW','ANALYSE','TEST','OK','PARKEREN','AFGEKEURD','VERVALLEN'}
 def now(): return datetime.now(timezone.utc).replace(microsecond=0).isoformat()
 
 def connect():
@@ -17,7 +18,11 @@ def connect():
     required={'metadata','categories','inputs','source_aliases','input_segments','kernels','relations','placement_rules'}
     if not required<=tables: raise RuntimeError('testmateriaal.sqlite is niet DB-schema 2')
     columns={r[1] for r in con.execute('PRAGMA table_info(inputs)')}
-    for name,declaration in {'publication_phase':'INTEGER','platforms_json':"TEXT NOT NULL DEFAULT '[]'",'updated_at':"TEXT NOT NULL DEFAULT ''"}.items():
+    for name,declaration in {
+        'publication_phase':'INTEGER', 'platforms_json':"TEXT NOT NULL DEFAULT '[]'",
+        'updated_at':"TEXT NOT NULL DEFAULT ''", 'is_active':'INTEGER NOT NULL DEFAULT 1',
+        'group_name':"TEXT NOT NULL DEFAULT ''"
+    }.items():
         if name not in columns: con.execute(f'ALTER TABLE inputs ADD COLUMN {name} {declaration}')
     con.execute('''CREATE TABLE IF NOT EXISTS revisions(id INTEGER PRIMARY KEY AUTOINCREMENT,input_number INTEGER NOT NULL REFERENCES inputs(number),revision INTEGER NOT NULL,changed_at TEXT NOT NULL,old_json TEXT NOT NULL,new_json TEXT NOT NULL)''')
     con.commit(); return con
@@ -36,9 +41,9 @@ def rows(con):
     return result
 
 def public_document():
-    con=connect(); items=[]; keys=('number','source_id','source_ids','original_input','category_code','category_name','sort_order','status','completion','form','features','analysis_status','publication_phase','platforms','segments','kernels','relations','placement_rules')
+    con=connect(); items=[]; keys=('number','source_id','source_ids','original_input','category_code','category_name','sort_order','status','completion','form','features','analysis_status','publication_phase','platforms','group_name','segments','kernels','relations','placement_rules')
     for row in rows(con):
-        if row['status']=='OK': items.append({k:row[k] for k in keys})
+        if row['status']=='OK' and row['is_active']: items.append({k:row[k] for k in keys})
     con.close(); return {'schema':'opengraph-testmateriaal-public','version':2,'generated_at':now(),'items':items}
 
 def export_public():
@@ -47,7 +52,9 @@ def export_public():
     return len(document['items'])
 
 def update(number:int, changes:dict):
+    changes=dict(changes)
     kernels=changes.pop('kernels',None); allowed={'original_input','category_code','sort_order','status','completion','form','features_json','analysis_status','publication_phase','platforms_json','internal_note'}
+    allowed.update({'is_active','group_name'})
     bad=set(changes)-allowed
     if bad: raise ValueError(f'Niet-toegestane velden: {sorted(bad)}')
     con=connect(); old=con.execute('SELECT * FROM inputs WHERE number=?',(number,)).fetchone()
@@ -55,7 +62,7 @@ def update(number:int, changes:dict):
     clean=dict(changes)
     for field in ('features_json','platforms_json'):
         if field in clean and not isinstance(clean[field],str): clean[field]=json.dumps(clean[field],ensure_ascii=False)
-    substantive=any(k not in {'status','publication_phase','platforms_json','sort_order','internal_note','analysis_status'} and clean[k]!=old[k] for k in clean)
+    substantive=any(k not in {'status','publication_phase','platforms_json','sort_order','internal_note','analysis_status','is_active','group_name'} and clean[k]!=old[k] for k in clean)
     if kernels is not None:
         normalized=[str(x).strip().upper() for x in kernels if str(x).strip()]
         if not normalized: raise ValueError('Minimaal één kernzin vereist')
@@ -73,10 +80,92 @@ def update(number:int, changes:dict):
     new=con.execute('SELECT * FROM inputs WHERE number=?',(number,)).fetchone(); con.execute('INSERT INTO revisions(input_number,revision,changed_at,old_json,new_json) VALUES(?,?,?,?,?)',(number,revision,now(),json.dumps(dict(old),ensure_ascii=False),json.dumps(dict(new),ensure_ascii=False)))
     con.commit(); con.close(); export_public()
 
+def next_number(con):
+    highest=con.execute('SELECT COALESCE(MAX(number),90) FROM inputs').fetchone()[0]
+    return ((int(highest)//10)+1)*10
+
+def create(changes:dict):
+    changes=dict(changes or {})
+    original=str(changes.get('original_input') or '').strip()
+    if not original: raise ValueError('Oorspronkelijke input is verplicht')
+    kernels=[str(x).strip().upper() for x in changes.pop('kernels',[]) if str(x).strip()]
+    if not kernels: kernels=[original.upper()]
+    con=connect()
+    try:
+        number=int(changes.pop('number',0) or next_number(con))
+        if con.execute('SELECT 1 FROM inputs WHERE number=?',(number,)).fetchone(): raise ValueError(f'Nummer {number} bestaat al')
+        category=int(changes.get('category_code') or 900)
+        if not con.execute('SELECT 1 FROM categories WHERE code=?',(category,)).fetchone(): raise ValueError(f'Onbekende categorie {category}')
+        stamp=now(); status=str(changes.get('status') or 'NIEUW').upper()
+        if status not in ALLOWED_STATUSES: raise ValueError(f'Ongeldige status: {status!r}')
+        features=changes.get('features_json') or []
+        platforms=changes.get('platforms_json') or []
+        if not isinstance(features,str): features=json.dumps(features,ensure_ascii=False)
+        if not isinstance(platforms,str): platforms=json.dumps(platforms,ensure_ascii=False)
+        values=(number,original,category,int(changes.get('sort_order') or number),status,
+                str(changes.get('completion') or 'AF'),str(changes.get('form') or 'simplex'),
+                features,str(changes.get('analysis_status') or 'VOORSTEL'),1,
+                str(changes.get('internal_note') or ''),changes.get('publication_phase'),platforms,
+                stamp,1 if changes.get('is_active',True) else 0,str(changes.get('group_name') or '').strip())
+        con.execute('''INSERT INTO inputs(number,original_input,category_code,sort_order,status,completion,form,features_json,analysis_status,revision,internal_note,publication_phase,platforms_json,updated_at,is_active,group_name)
+                       VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)''',values)
+        con.execute('INSERT INTO source_aliases(input_number,source_id) VALUES(?,?)',(number,f'db:{number}'))
+        con.executemany('INSERT INTO kernels(input_number,kernel_no,text,analysis_status) VALUES(?,?,?,?)',[(number,i,text,'VOORSTEL') for i,text in enumerate(kernels,1)])
+        con.commit()
+    except Exception:
+        con.rollback(); raise
+    finally:
+        con.close()
+    export_public(); return {'number':number}
+
+def set_active(number:int, active:bool):
+    update(number,{'is_active':1 if active else 0})
+    return {'number':number,'is_active':bool(active)}
+
+def delete(number:int):
+    con=connect()
+    try:
+        old=con.execute('SELECT number FROM inputs WHERE number=?',(number,)).fetchone()
+        if not old: raise ValueError(f'Onbekend nummer {number}')
+        con.execute('DELETE FROM revisions WHERE input_number=?',(number,))
+        con.execute('DELETE FROM inputs WHERE number=?',(number,))
+        con.commit()
+    except Exception:
+        con.rollback(); raise
+    finally:
+        con.close()
+    export_public(); return {'number':number,'deleted':True}
+
+def bulk_group(numbers, group_name):
+    normalized=sorted({int(number) for number in numbers})
+    if not normalized: raise ValueError('Selecteer minimaal één input')
+    group=str(group_name or '').strip()
+    con=connect()
+    try:
+        placeholders=','.join('?' for _ in normalized)
+        existing={row['number']:row for row in con.execute(f'SELECT * FROM inputs WHERE number IN ({placeholders})',normalized)}
+        missing=sorted(set(normalized)-set(existing))
+        if missing: raise ValueError(f'Onbekende nummers: {missing}')
+        changed=0
+        for number in normalized:
+            old=existing[number]
+            if old['group_name']==group: continue
+            revision=old['revision']+1; changed_at=now()
+            con.execute('UPDATE inputs SET group_name=?,revision=?,updated_at=? WHERE number=?',(group,revision,changed_at,number))
+            new=dict(old); new.update(group_name=group,revision=revision,updated_at=changed_at)
+            con.execute('INSERT INTO revisions(input_number,revision,changed_at,old_json,new_json) VALUES(?,?,?,?,?)',(number,revision,changed_at,json.dumps(dict(old),ensure_ascii=False),json.dumps(new,ensure_ascii=False)))
+            changed+=1
+        con.commit()
+    except Exception:
+        con.rollback(); raise
+    finally:
+        con.close()
+    export_public()
+    return {'selected':len(normalized),'changed':changed,'group_name':group,'numbers':normalized}
+
 def bulk_status(numbers, status):
-    allowed_statuses={'NIEUW','ANALYSE','TEST','OK','PARKEREN','AFGEKEURD','VERVALLEN'}
     status=str(status or '').upper()
-    if status not in allowed_statuses: raise ValueError(f'Ongeldige status: {status!r}')
+    if status not in ALLOWED_STATUSES: raise ValueError(f'Ongeldige status: {status!r}')
     normalized=sorted({int(number) for number in numbers})
     if not normalized: raise ValueError('Selecteer minimaal één input')
     con=connect()
@@ -107,17 +196,21 @@ def verify():
     assert con.execute('PRAGMA integrity_check').fetchone()[0]=='ok'
     assert all_items and all(x['kernels'] for x in all_items)
     assert all(x['status']=='OK' for x in public['items'])
-    assert {x['number'] for x in public['items']}=={x['number'] for x in all_items if x['status']=='OK'}
+    assert {x['number'] for x in public['items']}=={x['number'] for x in all_items if x['status']=='OK' and x['is_active']}
+    functional=next((x for x in public['items'] if 'example:muziek-ontroert-anna' in x['source_ids']),None)
+    assert functional and {'stimulus','experiencer'}<=set(functional['features'])
     assert not con.execute("SELECT number FROM inputs WHERE category_code=300 AND (instr(original_input,'?')=0 OR completion<>'AF')").fetchall()
     bad=con.execute('''SELECT i.number FROM inputs i WHERE i.category_code=500 AND ((SELECT count(*) FROM kernels k WHERE k.input_number=i.number)<2 OR NOT EXISTS(SELECT 1 FROM relations r WHERE r.input_number=i.number AND r.from_kernel<>r.to_kernel))''').fetchall(); assert not bad,bad
     assert all(x['source_ids'] for x in all_items)
-    viewer=(ROOT/'viewer.js').read_text(encoding='utf-8'); publish=(ROOT/'publish_checked.bat').read_text(encoding='utf-8'); zipper=(ROOT/'maak-volledige-zip.bat').read_text(encoding='utf-8')
+    viewer=(ROOT/'viewer.js').read_text(encoding='utf-8'); publish=(ROOT/'publish_checked.bat').read_text(encoding='utf-8'); zipper=(ROOT/'maak-volledige-zip.bat').read_text(encoding='utf-8'); gitignore=(ROOT/'.gitignore').read_text(encoding='utf-8')
     server=(ROOT/'server_nocache.py').read_text(encoding='utf-8')
-    assert 'loadPublicTestmateriaalCatalog' in viewer and 'publicItemAllowed(value)' in viewer and 'source_ids' in viewer
-    assert "'/__opengraph_testmateriaal', '/__opengraph_testmateriaal_public', 'data/catalog.public.json'" in viewer
+    assert 'loadPublicTestmateriaalCatalog' in viewer and 'publicItemAllowed(id)' in viewer and 'source_ids' in viewer
+    assert "['/__opengraph_testmateriaal_public', 'data/catalog.public.json']" in viewer
     assert "['data/catalog.public.json']" in viewer
     assert "'/__opengraph_testmateriaal_public'" in server and 'testmateriaal_db.public_document()' in server
-    assert '"data/testmateriaal.sqlite"' in publish and 'testmateriaal.sqlite' not in zipper
+    assert '"data/testmateriaal.sqlite"' not in publish and '/data/testmateriaal.sqlite\n' not in gitignore
+    assert '"data/testmateriaal.sqlite-wal"' in publish and '"data/testmateriaal.sqlite-shm"' in publish
+    assert 'testmateriaal.sqlite' not in zipper
     kernel_count=sum(len(x['kernels']) for x in all_items)
     con.close(); print(f"TESTMATERIAAL DB-SCHEMA 2 CHECK: OK ({len(all_items)} lokaal; {len(public['items'])} publiek; {kernel_count} kernzinnen; Story- en vraagcontract)")
 

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540" role="img" aria-labelledby="title desc">
+  <title id="title">Bekijken en één voorbeeld testen</title>
+  <desc id="desc">Een browservenster met een eenvoudige graph, een oog en een controlelijst.</desc>
+  <rect width="960" height="540" rx="34" fill="#f4f8fa"/>
+  <rect x="74" y="64" width="812" height="410" rx="24" fill="#fff" stroke="#8eabb8" stroke-width="4"/>
+  <path d="M74 120h812" stroke="#c6d6dd" stroke-width="4"/>
+  <circle cx="112" cy="92" r="9" fill="#e57d68"/><circle cx="142" cy="92" r="9" fill="#e7b24f"/><circle cx="172" cy="92" r="9" fill="#67b98b"/>
+  <path d="M225 329l122-94 137 115 142-151 116 84" fill="none" stroke="#2468df" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <g fill="#fff" stroke="#18445a" stroke-width="6"><circle cx="225" cy="329" r="28"/><circle cx="347" cy="235" r="28"/><circle cx="484" cy="350" r="28"/><circle cx="626" cy="199" r="28"/><circle cx="742" cy="283" r="28"/></g>
+  <path d="M338 412c43-54 111-54 154 0-43 54-111 54-154 0Z" fill="#dceaf0" stroke="#18445a" stroke-width="5"/><circle cx="415" cy="412" r="22" fill="#18445a"/>
+  <g fill="#18445a" font-family="system-ui, sans-serif" font-weight="700"><text x="214" y="338" font-size="24">A</text><text x="336" y="244" font-size="24">B</text><text x="473" y="359" font-size="24">C</text><text x="615" y="208" font-size="24">D</text><text x="731" y="292" font-size="24">E</text></g>
+</svg>

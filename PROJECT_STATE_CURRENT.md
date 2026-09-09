@@ -1,8 +1,21 @@
 # PROJECT_STATE_CURRENT
 
-## Actuele aanvulling · bronstand .71
+## Actuele aanvulling · bronstand .58
 
-- `data/testmateriaal.sqlite` is lokaal de leidende standaardcatalogus; de
+- `data/testmateriaal.sqlite` en `local-mobile-test.js` gaan mee naar GitHub,
+  zodat GitHubs automatische branch-ZIP de gecontroleerde ontwikkelbron bevat.
+- De volledige database is openbaar downloadbaar. De Pages-viewer blijft
+  `data/catalog.public.json` gebruiken en toont alleen actieve records met
+  `status = OK`.
+- `PROJECT_MEMORY.md` is het overdraagbare projectgeheugen. Persoonlijk
+  ChatGPT-geheugen en eerdere chatinhoud maken geen deel uit van GitHub.
+- Niet overdraagbaar en niet vereist: lokale browsersnapshots, sessielogs,
+  SQLite-WAL/SHM, databaseback-ups, `node_modules`, Playwright-browserbestanden,
+  gegenereerde release-ZIPs en nog niet gepushte wijzigingen.
+
+## Eerdere actuele aanvulling · bronstand .71
+
+- `data/testmateriaal.sqlite` is de leidende standaardcatalogus; de
   statische publieke afleiding is `data/catalog.public.json` en bevat alleen
   `status = OK`.
 - Ruwe input wordt eerst als één of meer kernzinnen geanalyseerd. Categorie en

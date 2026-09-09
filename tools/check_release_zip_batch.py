@@ -51,7 +51,8 @@ for marker, label in [
     ("set \"RELEASE_ZIP=%OG_PUBLISH_PROJECT_NAME%_full_source.zip\"", "dynamische publish-zipnaam"),
     ('/C:".*\\.zip"', "statusfilter voor alle lokale zipkopieën"),
     ('/C:"LEESMIJ\\.txt"', "statusfilter voor legacy LEESMIJ.txt"),
-    ('git rm --cached --ignore-unmatch -- "*.zip" "LEESMIJ.txt" "data/testmateriaal.sqlite"', "stagingfilter voor lokale zipkopieën, database en legacy LEESMIJ.txt"),
+    ('git rm --cached --ignore-unmatch -- "*.zip" "LEESMIJ.txt" "data/testmateriaal.sqlite-wal" "data/testmateriaal.sqlite-shm"', "stagingfilter voor zipkopieën, SQLite-tijdelijke bestanden en legacy LEESMIJ.txt"),
+    ('De gecontroleerde data\\testmateriaal.sqlite en local-mobile-test.js zijn juist overdraagbare projectbron.', "zichtbare publicatiekeuze voor DB en lokale testbron"),
     ('if "%DID_PUSH%"=="1" call :open_reset_after_push', "reset-subroutine na push"),
     (':open_reset_after_push', "veilige reset-subroutine"),
     ('start "" "%USER_RESET_URL%"', "browseropening met gevulde URL"),
@@ -80,6 +81,12 @@ for marker, label in [
 require(GITIGNORE, "*.zip", "generieke gitignore voor lokale zipkopieën")
 require(GITIGNORE, "/LEESMIJ.txt", "gitignore voor legacy LEESMIJ.txt")
 require(GITIGNORE, "node_modules/", "node_modules-gitignore")
+if re.search(r"(?m)^/data/testmateriaal\.sqlite$", GITIGNORE):
+    errors.append("de leidende SQLite-database wordt nog door .gitignore uitgesloten")
+if re.search(r"(?m)^local-mobile-test\.js$", GITIGNORE):
+    errors.append("de reproduceerbare lokale testbron wordt nog door .gitignore uitgesloten")
+if re.search(r'git rm --cached[^\n]*[\" ]data/testmateriaal\.sqlite[\" ]', PUBLISH, flags=re.I):
+    errors.append("publish_checked.bat verwijdert de leidende SQLite-database nog uit staging")
 
 if errors:
     print("RELEASE-ZIP BATCH CHECK: FOUT")

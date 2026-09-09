@@ -2,6 +2,15 @@
 
 Regels voor actuele projectdocumentatie, helpteksten en overdrachtsteksten.
 
+## Meedoen en afleveringen
+
+Gebruik `MEEDOEN.md` als korte instaproute; laat beginners niet beginnen in de
+technische handover. Iedere genummerde publicatie-aflevering wordt afgeleid uit
+één ingebouwd LEESMIJ-item met een eigen carrousel. Browserwijzigingen via
+Config zijn kladversies en geen releasebron. Bewaar per aflevering nummer,
+slug, vaste URL, status, alt-teksten, automatische controles en afzonderlijk
+handmatig visueel akkoord volgens `AFLEVERINGEN_PUBLICEREN.md`.
+
 ## Terminologiecontract
 
 ```text

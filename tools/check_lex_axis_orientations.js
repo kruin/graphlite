@@ -14,9 +14,14 @@ const documentation = fs.readFileSync(path.join(root, 'LEX_AXIS_ORIENTATIONS.md'
 for (const side of ['west', 'east', 'north', 'south']) {
   assert.ok(source.includes(`id: '${side}'`), `Config mist LEX-zijde ${side}`);
 }
-assert.equal(config.config.lexAxisSide, 'east', 'Oost moet de startdefault zijn');
-assert.ok(source.includes("opengraph_lex_axis_default_east_rc9"), 'Bestaande browserstanden moeten na alle configlagen eenmalig naar Oost migreren');
-assert.ok(source.indexOf('enforceEastStartupDefault();') > source.indexOf('loadSavedConfigSnapshot()'), 'Oostmigratie moet na de browsersnapshot plaatsvinden');
+assert.equal(config.config.lexAxisSide, 'west', 'West moet de startdefault zijn');
+assert.ok(source.includes("const side = 'west'"), 'Iedere paginalaad moet LEX na Config op West zetten');
+assert.ok(source.includes("if (basic && state.lexAxisSide !== 'west')"), 'Ook het mobiele basismenu moet West afdwingen');
+assert.ok(!source.includes("state.lexAxisSide = 'east';"), 'Geen tweede codepad mag de startstand alsnog naar Oost wijzigen');
+assert.ok(source.includes("function enforceHorizontalLexStartupSide()"), 'LEX-startregel ontbreekt');
+assert.ok(source.includes("const side = 'west'"), 'Iedere paginalaad moet onvoorwaardelijk op LEX–West starten');
+assert.ok(source.indexOf('enforceHorizontalLexStartupSide();') > source.indexOf('loadSavedConfigSnapshot()'), 'LEX-startregel moet na project- en browserconfig gelden');
+assert.ok(source.includes("snapshot.lexAxisSide = side"), 'Een bewaarde Noord/Zuid-snapshot moet naar de horizontale startstand worden hersteld');
 assert.equal(config.config.canvasHorizontalAlignment, 'left', 'De tekening moet standaard links aansluiten');
 for (const alignment of ['left', 'center', 'right']) {
   assert.ok(source.includes(`id: '${alignment}'`), `Config mist vensteruitlijning ${alignment}`);

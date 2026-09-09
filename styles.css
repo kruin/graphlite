@@ -106,6 +106,18 @@ button, select, input { font: inherit; }
 }
 .compact-actions { justify-content: flex-end; }
 
+.download-main-zip {
+  border-color: var(--blue);
+  background: var(--blue);
+  color: #fff;
+  padding-inline: 1rem;
+}
+
+.download-main-zip:hover,
+.download-main-zip:focus-visible {
+  filter: brightness(0.92);
+}
+
 button,
 .file-label,
 .button-link {
@@ -5996,6 +6008,16 @@ body.viewport-mobile-landscape-test.main-screen-active .main-view-field {
   margin: 0;
   padding-left: 0;
 }
+.help-topic-tree-simple > ol {
+  display: grid;
+  gap: .35rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.help-topic-tree-simple > ol > li {
+  margin: 0;
+}
 .help-topic-tree li {
   position: relative;
   margin: .12rem 0;
@@ -6499,6 +6521,42 @@ body.help-screen-active .help-screen.help-tree-screen {
   .readme-carousel-slide figcaption {
     padding: .5rem .6rem;
     font-size: .78rem;
+  }
+  body.help-screen-active .help-screen.help-tree-screen.help-simple-screen {
+    grid-template-columns: 1fr !important;
+    grid-template-rows: auto minmax(0, 1fr) !important;
+    overflow: auto !important;
+  }
+  .help-simple-screen .help-tree-nav {
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+  .help-simple-screen .help-tree-nav h3 {
+    display: none;
+  }
+  .help-topic-tree-simple > ol {
+    display: flex;
+    gap: .3rem;
+    overflow-x: auto;
+    padding-bottom: .1rem;
+    scrollbar-width: thin;
+  }
+  .help-topic-tree-simple > ol > li {
+    flex: 0 0 auto;
+  }
+  .help-topic-tree-simple .help-topic-button {
+    width: auto;
+    min-height: 2rem;
+    padding: .38rem .55rem !important;
+    white-space: nowrap;
+  }
+  .help-simple-screen .help-panel-resizer {
+    display: none !important;
+  }
+  .help-simple-screen .help-topic-stage {
+    height: auto !important;
+    min-height: 60dvh !important;
   }
 }
 
@@ -7383,10 +7441,30 @@ body.main-screen-active.main-window-max #graphSvg {
 .lex-ambiguity-options button:hover,.lex-ambiguity-options button:focus-visible { border-color:#b45309; outline:2px solid rgba(245,158,11,.2); }
 .lex-ambiguity-options .recommended::after { content:' · voorstel'; font-size:.7rem; color:#92400e; }
 .lex-ambiguity-help { color:#78350f; }
+.lexical-choice-panel {
+  position:absolute; z-index:25; top:.7rem; left:.7rem; width:min(27rem,calc(100% - 1.4rem));
+  padding:.75rem .8rem; border:1px solid #60a5fa; border-radius:1rem; background:rgba(239,246,255,.97);
+  box-shadow:0 12px 28px rgba(15,23,42,.18); color:#172554; backdrop-filter:blur(5px);
+}
+.lexical-choice-panel.hidden { display:none !important; }
+.lexical-choice-kicker { font-size:.69rem; font-weight:900; letter-spacing:.09em; text-transform:uppercase; color:#1d4ed8; }
+.lexical-choice-header { display:flex; align-items:start; justify-content:space-between; gap:.5rem; }
+.lexical-choice-panel h3 { margin:.15rem 0 .25rem; font-size:1rem; }
+.lexical-choice-panel p { margin:.25rem 0; font-size:.8rem; line-height:1.35; }
+.lexical-choice-header button { min-width:2rem; min-height:2rem; border:0; border-radius:50%; background:transparent; color:#1e3a8a; font-size:1.25rem; cursor:pointer; }
+.lexical-choice-options { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.35rem; margin-top:.55rem; }
+.lexical-choice-options button { display:flex; align-items:center; justify-content:space-between; gap:.5rem; text-align:left; border:1px solid #93c5fd; background:white; border-radius:.7rem; padding:.48rem .56rem; color:#172554; font-weight:800; cursor:pointer; }
+.lexical-choice-options button span { color:#64748b; font-size:.68rem; font-weight:600; }
+.lexical-choice-options button:hover,.lexical-choice-options button:focus-visible,.lexical-choice-options button.is-selected { border-color:#2563eb; background:#dbeafe; outline:2px solid rgba(37,99,235,.16); }
+.lexical-choice-help { color:#1e40af; }
+[data-action="lexical-role-choice"] { cursor:pointer; }
 @media (max-width:760px), (max-height:480px) {
   .lex-ambiguity-panel { top:.35rem; right:.35rem; width:calc(100% - .7rem); max-height:46%; overflow:auto; padding:.55rem .6rem; }
   .lex-ambiguity-panel p { font-size:.72rem; }
   .lex-ambiguity-options { grid-template-columns:1fr; }
+  .lexical-choice-panel { top:.35rem; left:.35rem; width:calc(100% - .7rem); max-height:62%; overflow:auto; padding:.55rem .6rem; }
+  .lexical-choice-panel p { font-size:.72rem; }
+  .lexical-choice-options { grid-template-columns:1fr; }
 }
 
 /* v2.0.0-rc.36: fixed semantic two-row top menu.
@@ -8998,6 +9076,11 @@ body:not(.main-screen-active) .main-active-utterance {
   white-space:nowrap;
 }
 .main-causal-anaphor-choice[hidden] { display:none !important; }
+.main-causal-anaphor-choice label {
+  display:flex;
+  align-items:center;
+  gap:.3rem;
+}
 .main-causal-anaphor-choice select {
   max-width:9rem;
   padding:.2rem .36rem;
@@ -9006,6 +9089,57 @@ body:not(.main-screen-active) .main-active-utterance {
   background:var(--panel,#ffffff);
   color:#0f172a;
   font:inherit;
+}
+.main-active-utterance { flex-wrap:wrap; }
+.main-tense-choice { align-items:center; flex-wrap:wrap; }
+.main-tense-label { font-weight:850; }
+.main-tense-buttons {
+  display:inline-flex;
+  gap:.2rem;
+  padding:.15rem;
+  border:1px solid #bfdbfe;
+  border-radius:.55rem;
+  background:#eff6ff;
+}
+.main-tense-buttons button {
+  min-width:2.6rem;
+  padding:.28rem .42rem;
+  border:1px solid transparent;
+  border-radius:.4rem;
+  background:transparent;
+  color:#1e3a8a;
+  font:inherit;
+  font-weight:850;
+  cursor:pointer;
+}
+.main-tense-buttons button:hover,
+.main-tense-buttons button:focus-visible {
+  border-color:#60a5fa;
+  outline:2px solid rgba(37,99,235,.18);
+}
+.main-tense-buttons button.active,
+.main-tense-buttons button[aria-pressed="true"] {
+  border-color:#2563eb;
+  background:#2563eb;
+  color:#fff;
+}
+.main-tense-name {
+  color:#475569;
+  font-size:.68rem;
+  white-space:normal;
+}
+.main-tense-popover {
+  width:min(28rem, calc(100vw - 1rem));
+  display:grid;
+  gap:.55rem;
+}
+.main-tense-popover .main-tense-buttons {
+  display:grid;
+  grid-template-columns:repeat(4, minmax(3.2rem, 1fr));
+}
+.main-tense-popover .main-tense-name { display:block; }
+@media (max-width:560px) {
+  .main-tense-popover .main-tense-buttons { grid-template-columns:repeat(2, minmax(4rem, 1fr)); }
 }
 
 /* This final override deliberately wins against historical thin-line rules. */

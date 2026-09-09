@@ -342,6 +342,17 @@ else:
         "GitHub · kruin/graphlite · Language Tree",
     ]:
         require(slide_six, marker, "Language Tree-voorbeeld in laatste stadium")
+    west_projections = re.findall(
+        r'<line class="language-lex-projection" x1="([\d.]+)" y1="([\d.]+)" x2="([\d.]+)" y2="([\d.]+)"',
+        slide_six,
+    )
+    if len(west_projections) != 3:
+        errors.append(f"slide 6 moet exact drie rechte West-projecties hebben: {len(west_projections)}")
+    for _x1, y1, _x2, y2 in west_projections:
+        if y1 != y2:
+            errors.append("iedere West-projectie op slide 6 moet horizontaal zijn")
+    if re.search(r'<path[^>]*class="language-lex-projection"', slide_six):
+        errors.append("slide 6 mag geen gebogen West-projectie bevatten")
 
 example_github_links = re.findall(
     r'<a class="example-github" href="https://github\.com/kruin/graphlite"',

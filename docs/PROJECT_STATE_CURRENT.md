@@ -1,5 +1,9 @@
 # PROJECT_STATE_CURRENT
 
+> Lees voor de actuele overdracht eerst `../PROJECT_MEMORY.md` en de rootversie
+> van dit document. Persoonlijk ChatGPT-geheugen wordt niet door GitHub
+> overgedragen; de versieerbare projectdocumenten vervangen dat geheugen.
+
 ## Actuele aanvulling · bronstand .71
 
 - `data/testmateriaal.sqlite` is lokaal de leidende standaardcatalogus; de

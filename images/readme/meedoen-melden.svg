@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540" role="img" aria-labelledby="title desc">
+  <title id="title">Een probleem herhaalbaar melden</title>
+  <desc id="desc">Een compacte melding met stappen, verwacht resultaat, werkelijk resultaat en apparaat.</desc>
+  <rect width="960" height="540" rx="34" fill="#f4f8fa"/>
+  <rect x="108" y="58" width="744" height="424" rx="28" fill="#fff" stroke="#8eabb8" stroke-width="4"/>
+  <rect x="108" y="58" width="744" height="82" rx="28" fill="#18445a"/><path d="M108 112h744v28H108z" fill="#18445a"/>
+  <text x="154" y="111" fill="#fff" font-family="system-ui, sans-serif" font-size="31" font-weight="750">Herhaalbare melding</text>
+  <g font-family="system-ui, sans-serif" font-size="25" fill="#233d49"><text x="177" y="203">1. URL en testitem</text><text x="177" y="263">2. Stappen</text><text x="177" y="323">3. Verwacht ↔ werkelijk</text><text x="177" y="383">4. Apparaat en browser</text><text x="177" y="443">5. Schermafbeelding</text></g>
+  <g fill="none" stroke="#2f9a68" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"><path d="M140 192l12 12 22-29"/><path d="M140 252l12 12 22-29"/><path d="M140 312l12 12 22-29"/><path d="M140 372l12 12 22-29"/><path d="M140 432l12 12 22-29"/></g>
+</svg>

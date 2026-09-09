@@ -24,6 +24,10 @@ node tools\check_multi_ogn_anaphor.js
 if errorlevel 1 exit /b 1
 node tools\check_utterances.js
 if errorlevel 1 exit /b 1
+node tools\check_vcluster_tree_flip.js
+if errorlevel 1 exit /b 1
+node tools\check_human_agent_choices.js
+if errorlevel 1 exit /b 1
 node tools\check_utterance_kernel_views.js
 if errorlevel 1 exit /b 1
 python tools\check_utterance_lex_geometry.py
@@ -47,6 +51,8 @@ python tools\testmateriaal_db.py verify
 if errorlevel 1 exit /b 1
 python tools\check_testmateriaal_bulk.py
 if errorlevel 1 exit /b 1
+python tools\check_testmateriaal_crud.py
+if errorlevel 1 exit /b 1
 python tools\check_local_start.py
 if errorlevel 1 exit /b 1
 python tools\check_examples_roundtrip.py
@@ -69,6 +75,8 @@ python tools\check_readme_carousel_editor.py
 if errorlevel 1 exit /b 1
 python tools\check_readme_item_editor.py
 if errorlevel 1 exit /b 1
+python tools\check_meedoen_publication.py
+if errorlevel 1 exit /b 1
 python tools\check_project_config_layers.py
 if errorlevel 1 exit /b 1
 python tools\check_node_grid_invariant.py
@@ -84,6 +92,8 @@ if errorlevel 1 exit /b 1
 python tools\check_publication_carousel_setup.py
 if errorlevel 1 exit /b 1
 python tools\check_publication_phases.py
+if errorlevel 1 exit /b 1
+python tools\check_episode_carousel.py
 if errorlevel 1 exit /b 1
 python tools\check_desktop_max_view.py
 if errorlevel 1 exit /b 1

@@ -51,8 +51,14 @@ if "Math.max(120, leftTreePx - 168)" in JS:
     errors.append("oude LEX-klem kan de S/CLAUSE-vrijstrook nog overschrijven")
 if "querySelectorAll('[data-readme-slide]')" not in JS:
     errors.append("generieke README-slideafhandeling ontbreekt")
-if INDEX.count("data-readme-slide") != 4:
-    errors.append("de README-intro moet twee probleembomen en twee oplossingsbomen bevatten")
+intro_panel = re.search(
+    r'<article class="help-topic-panel readme-intro-panel is-active" data-help-topic="readme">(.*?)</article>',
+    INDEX,
+    re.S,
+)
+intro_slide_count = intro_panel.group(1).count("data-readme-slide") if intro_panel else 0
+if intro_slide_count != 7:
+    errors.append("de README-intro moet exact zeven eigen bronbeelden bevatten")
 
 required_css = [
     ".lex-trace-tick",
@@ -76,6 +82,6 @@ if errors:
 
 print(
     "PROJECTIE-OPRUIMCHECK: OK "
-    f"({fallback_count + 1} bijwoordkeuzes; 4 introbeelden; directe LOG; "
+    f"({fallback_count + 1} bijwoordkeuzes; {intro_slide_count} introbeelden; directe LOG; "
     "gecombineerde LEX met recursieve boxmeting en 6 SVG-eenheden basisvrijstrook)"
 )

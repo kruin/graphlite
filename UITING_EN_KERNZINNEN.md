@@ -127,12 +127,17 @@ daarna realiseert LEX bijvoorbeeld `JAN SLAAT JEK OMDAT DIE HEM BEET`.
 
 ### Nieuwe variantgroepen
 
-De sla-uiting ondersteunt `hij`, `die`, `die hond`, `de hond` en `Jek`, met
-`beet`, `heeft gebeten` en `gebeten heeft`. De beloon-uiting ondersteunt
-dezelfde subjectvormen, plus `terugbracht`, `heeft teruggebracht`,
-`teruggebracht heeft`, `apporteerde`, `heeft geapporteerd` en
-`geapporteerd heeft`. De bot-NP kan als `het bot` of `zijn bot` worden
-gerealiseerd. Iedere keuze verandert LEX, niet de kernzinrollen.
+De sla-uiting ondersteunt `hij`, `die`, `die hond`, `de hond` en `Jek`.
+De tijdsvormknop koppelt `bijt`, `beet`, `heeft gebeten` en `had gebeten`
+aan dezelfde kernzin. De beloon-uiting koppelt op dezelfde manier
+`terugbrengt`, `terugbracht`, `heeft teruggebracht` en `had teruggebracht`.
+Bij een uiting is K1 de tijdsbron voor de bediening: een expliciete keuze voor
+OTT, OVT, VTT of VVT wordt door K2 en K3 gevolgd. Iedere kernzin behoudt
+daarbij haar eigen predicaat, argumenten en zelfstandige boom. Zolang geen
+tijd is gekozen, blijft de oorspronkelijke input ongewijzigd de beginweergave.
+Een V-clusterklik wisselt binnen VTT/VVT de volledige V-CLUSTER-subboom;
+LEX wordt daarna uit de gewijzigde boom gereconstrueerd. De bot-NP kan als
+`het bot` of `zijn bot` worden gerealiseerd.
 
 Terugbrengen en apporteren zijn daarbij **geen gemengde analyse**:
 

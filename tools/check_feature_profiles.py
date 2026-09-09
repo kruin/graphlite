@@ -135,15 +135,14 @@ for source, markers, label in [
     for marker in markers:
         require(source, marker, f"{label}: profielmarker")
 
-# The source contains 20 utterances after removing the confusing visible
-# TRUI BREIT VROUW topicalization fixture; two insertion examples are excluded
-# in the base profile.
+# De bron bevat alleen de minimale canonieke families; één afzonderlijke
+# insertiecase wordt in het basisprofiel verborgen.
 example_count = EXAMPLES.count('class="example-input"')
 insertion_cards = len(re.findall(r'<article class="example-input"(?:(?!</article>).)*class="lex-insertion"', EXAMPLES, flags=re.S))
-if example_count != 20:
-    errors.append(f"verwacht 20 bronuitingen, gevonden {example_count}")
-if insertion_cards != 2:
-    errors.append(f"verwacht 2 featurevoorbeelden, gevonden {insertion_cards}")
+if example_count != 12:
+    errors.append(f"verwacht 12 bronuitingen, gevonden {example_count}")
+if insertion_cards != 1:
+    errors.append(f"verwacht 1 featurevoorbeeld, gevonden {insertion_cards}")
 
 for marker, label in [
     ('data-profile-section="base"', "basisdocumentatiesectie"),

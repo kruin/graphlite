@@ -19,6 +19,8 @@ git rev-parse --is-inside-work-tree >nul 2>nul
 if errorlevel 1 (
   echo FOUT: deze map is geen Git-repository.
   echo Map: %CD%
+  echo Gebruik voor publiceren niet de uitgepakte main.zip.
+  echo Maak een GitHub-fork, clone die fork en draai dit script vanuit de clone.
   goto :fail
 )
 
@@ -88,7 +90,7 @@ echo Git-status voor %APP_VERSION%:
 set "STATUS_ALL=%TEMP%\opengraph_status_all_%RANDOM%%RANDOM%.txt"
 set "STATUS_SITE=%TEMP%\opengraph_status_site_%RANDOM%%RANDOM%.txt"
 git status --short --untracked-files=normal > "%STATUS_ALL%"
-findstr /V /I /R /C:".*\.zip" /C:"LEESMIJ\.txt" /C:"local-mobile-test\.js" /C:"local-mobile-test\.html" /C:"opengraph-local-config-log-.*\.txt" /C:"local-config-log.*\.txt" "%STATUS_ALL%" > "%STATUS_SITE%"
+findstr /V /I /R /C:".*\.zip" /C:"LEESMIJ\.txt" /C:"local-mobile-test\.html" /C:"opengraph-local-config-log-.*\.txt" /C:"local-config-log.*\.txt" "%STATUS_ALL%" > "%STATUS_SITE%"
 type "%STATUS_SITE%"
 for %%A in ("%STATUS_SITE%") do set "STATUS_SIZE=%%~zA"
 del "%STATUS_ALL%" >nul 2>nul
@@ -120,9 +122,10 @@ if errorlevel 1 (
   goto :fail
 )
 
-rem ZIP-downloads, legacy LEESMIJ.txt en lokale test/logbestanden horen niet in de Pages-root.
-git rm --cached --ignore-unmatch -- "*.zip" "LEESMIJ.txt" "data/testmateriaal.sqlite" "data/testmateriaal.sqlite-wal" "data/testmateriaal.sqlite-shm" >nul 2>nul
-for %%f in (local-mobile-test.js local-mobile-test.html) do (
+rem ZIP-downloads, legacy LEESMIJ.txt, tijdelijke SQLitebestanden en lokale logs horen niet in de Pages-root.
+rem De gecontroleerde data\testmateriaal.sqlite en local-mobile-test.js zijn juist overdraagbare projectbron.
+git rm --cached --ignore-unmatch -- "*.zip" "LEESMIJ.txt" "data/testmateriaal.sqlite-wal" "data/testmateriaal.sqlite-shm" >nul 2>nul
+for %%f in (local-mobile-test.html) do (
   git ls-files --error-unmatch "%%f" >nul 2>nul
   if not errorlevel 1 git rm --cached -- "%%f" >nul 2>nul
 )

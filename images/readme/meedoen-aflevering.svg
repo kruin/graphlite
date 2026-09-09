@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540" role="img" aria-labelledby="title desc">
+  <title id="title">Van LEESMIJ-item naar aflevering</title>
+  <desc id="desc">Een LEESMIJ-kaart en carrousel worden gecontroleerd en daarna als aflevering gepubliceerd.</desc>
+  <rect width="960" height="540" rx="34" fill="#f4f8fa"/>
+  <g font-family="system-ui, sans-serif" text-anchor="middle">
+    <rect x="42" y="112" width="230" height="316" rx="25" fill="#fff" stroke="#8eabb8" stroke-width="4"/>
+    <text x="157" y="166" fill="#18445a" font-size="28" font-weight="800">LEESMIJ</text>
+    <path d="M82 210h150M82 248h150M82 286h118" stroke="#9cb3bd" stroke-width="9" stroke-linecap="round"/>
+    <rect x="95" y="326" width="124" height="66" rx="13" fill="#deedf3"/><text x="157" y="368" fill="#18445a" font-size="21" font-weight="700">carrousel</text>
+    <rect x="365" y="156" width="230" height="228" rx="25" fill="#fff" stroke="#d4a04f" stroke-width="4"/>
+    <text x="480" y="220" fill="#18445a" font-size="28" font-weight="800">Controle</text><text x="480" y="270" fill="#526b77" font-size="21">tekst · beeld</text><text x="480" y="307" fill="#526b77" font-size="21">mobiel · links</text><path d="M435 341l27 27 60-74" fill="none" stroke="#2f9a68" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="688" y="112" width="230" height="316" rx="25" fill="#e9f6ee" stroke="#2f9a68" stroke-width="5"/>
+    <text x="803" y="166" fill="#18445a" font-size="25" font-weight="800">AFLEVERING 1</text>
+    <g fill="#fff" stroke="#7aa991" stroke-width="3"><rect x="730" y="210" width="122" height="122" rx="14" transform="rotate(-8 791 271)"/><rect x="742" y="222" width="122" height="122" rx="14" transform="rotate(4 803 283)"/></g>
+    <text x="803" y="385" fill="#18445a" font-size="21" font-weight="700">vaste URL</text>
+  </g>
+  <g fill="none" stroke="#2468df" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"><path d="M272 270h93"/><path d="M340 247l25 23-25 23"/><path d="M595 270h93"/><path d="M663 247l25 23-25 23"/></g>
+</svg>

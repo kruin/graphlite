@@ -3,65 +3,109 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Graphlite fase 1: ontdek met Hond bijt man hoe structuur en woordvolgorde afzonderlijk zichtbaar worden.">
-  <meta property="og:title" content="Hond bijt man · Graphlite">
-  <meta property="og:description" content="Eén zin. Drie woorden. Wat verandert er als structuur en woordvolgorde niet hetzelfde zijn?">
+  <meta name="description" content="Graphlite aflevering 1: de kern van Open Graph Notation in zeven stappen.">
+  <meta property="og:title" content="Wat is OGN? · Graphlite">
+  <meta property="og:description" content="Eerst vrije plaatsen, daarna projecties en berekende toepassingen.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://kruin.github.io/graphlite/public-phase-1.html">
-  <title>Hond bijt man · Graphlite</title>
-  <link rel="stylesheet" href="publicatie/public-phase.css?v=20260827.1">
+  <title>Wat is OGN? · Graphlite</title>
+  <link rel="stylesheet" href="publicatie/public-phase.css?v=20260905.37">
+<script defer src="docs/html-doc-links.js?v3.1.0-rc.10"></script>
 </head>
 <body>
   <main class="public-shell">
     <header class="public-header">
-      <a class="brand" href="public-phase-1.html" aria-label="Graphlite fase 1">Graphlite</a>
-      <span class="phase-badge">Fase 1</span>
+      <a class="brand" href="public-phase-1.html" aria-label="Graphlite aflevering 1">Graphlite</a>
+      <span class="phase-badge">Aflevering 1</span>
     </header>
 
     <article class="intro-card">
-      <p class="kicker">Eén zin · drie woorden</p>
-      <h1>Hond bijt man</h1>
-      <p class="lead">Een gewone boom laat structuur en woordvolgorde gemakkelijk door elkaar lopen. Graphlite maakt beide afzonderlijk zichtbaar.</p>
+      <p class="kicker">Open Graph Notation · de kern</p>
+      <h1>Wat is OGN?</h1>
+      <p class="lead">OGN begint niet met woorden, LEX of een taalboom. Het begint met knopen die één voor één op vrije plaatsen van een open grid worden geschreven. Projecties en berekende toepassingen komen pas daarna.</p>
 
-      <section class="demo" aria-label="Opbouw van Hond bijt man">
-        <svg id="phaseGraph" viewBox="0 0 720 390" role="img" aria-labelledby="graphTitle graphDescription">
-          <title id="graphTitle">Graphlite-weergave van Hond bijt man</title>
-          <desc id="graphDescription">Drie vrije knopen HOND, BIJT en MAN, met daaronder de uiteindelijke woordvolgorde.</desc>
-          <g class="edges">
-            <path class="draw-step step-2" d="M360 70 L220 185"></path>
-            <path class="draw-step step-3" d="M360 70 L500 235"></path>
-          </g>
-          <g class="nodes">
-            <g class="draw-step step-1"><circle cx="360" cy="70" r="32"></circle><text x="360" y="77">BIJT</text></g>
-            <g class="draw-step step-2"><circle cx="220" cy="185" r="32"></circle><text x="220" y="192">HOND</text></g>
-            <g class="draw-step step-3"><circle cx="500" cy="235" r="32"></circle><text x="500" y="242">MAN</text></g>
-          </g>
-          <g class="lex-axis draw-step step-4">
-            <line x1="116" y1="326" x2="604" y2="326"></line>
-            <text class="axis-label" x="82" y="332">LEX</text>
-            <text x="205" y="365">HOND</text><text x="345" y="365">BIJT</text><text x="485" y="365">MAN</text>
-          </g>
-        </svg>
-        <div class="demo-controls">
-          <button id="playPhaseButton" type="button">Speel de opbouw af</button>
-          <span id="playStatus" aria-live="polite">Klaar om af te spelen</span>
+      <section class="example-carousel" aria-labelledby="exampleCarouselHeading" data-example-carousel>
+        <div class="carousel-heading">
+          <div>
+            <p class="kicker">Dezelfde zeven stappen als in de LEESMIJ</p>
+            <h2 id="exampleCarouselHeading">Van vrije plaats naar toepassing</h2>
+          </div>
+          <p class="carousel-count" aria-live="polite"><span data-carousel-current>1</span> / 7</p>
+        </div>
+        <div class="carousel-viewport">
+          <article class="example-slide is-active" data-example-slide>
+            <div class="slide-copy"><p class="slide-number">01 · Gridbezit</p><h3>Iedere knoop bezit twee gridlijnen</h3><p>Iedere knoop krijgt één eigen horizontale en één eigen verticale gridlijn.</p></div>
+            <figure class="source-figure source-figure-own"><img src="publicatie-carrousel/slides/01-every-node-owns-grid-lines.png" alt="Iedere OGN-knoop bezit een eigen horizontale en verticale gridlijn"><figcaption>A ≠ B ⇒ x(A) ≠ x(B) én y(A) ≠ y(B).</figcaption></figure>
+            <p class="source-line">Bron: Graphlite, eigen visualisatie; formeel contract: <a href="OGN_CORE_PLACEMENT_ARCHITECTURE.md">OGN Core Placement Architecture</a>.</p>
+          </article>
+          <article class="example-slide" data-example-slide hidden>
+            <div class="slide-copy"><p class="slide-number">02 · Free Placement</p><h3>Eerst vrije plaatsen</h3><p>Een nieuwe knoop mag alleen worden geschreven als zowel zijn rij als zijn kolom nog vrij is.</p></div>
+            <figure class="source-figure source-figure-own"><img src="publicatie-carrousel/slides/02-free-places-first.png" alt="OGN kiest eerst een plaats met een vrije rij en vrije kolom"><figcaption>Geen geldige rij én kolom betekent: geen knoop schrijven.</figcaption></figure>
+            <p class="source-line">Bron: Graphlite, eigen visualisatie; definitie: <a href="OGN_CORE_PLACEMENT_ARCHITECTURE.md">OGN Free Placement</a>.</p>
+          </article>
+          <article class="example-slide" data-example-slide hidden>
+            <div class="slide-copy"><p class="slide-number">03 · Schrijfvolgorde</p><h3>Eén knoop per stap</h3><p>De zoekstrategie test kandidaten. De eerstgevonden geldige plaats wordt direct geschreven; er is geen vooraf getekend eindbeeld nodig.</p></div>
+            <figure class="source-figure source-figure-own"><img src="publicatie-carrousel/slides/03-one-node-at-a-time.png" alt="OGN schrijft opeenvolgend één knoop per stap"><figcaption>Zoekvolgorde kan het beeld veranderen; de vrije-gridregel niet.</figcaption></figure>
+            <p class="source-line">Bron: Graphlite, eigen visualisatie; procesbeschrijving: <a href="OGN_CORE_PLACEMENT_ARCHITECTURE.md">OGN Core Placement Architecture</a>.</p>
+          </article>
+          <article class="example-slide" data-example-slide hidden>
+            <div class="slide-copy"><p class="slide-number">04 · Projection</p><h3>Projecteer pas na plaatsing</h3><p>Een projectie gebruikt reeds geplaatste bronknopen en verandert hun gridbezit niet. De assen heten hier nog niet LEX, SYN of LOG: OGN is algemener dan één taaltoepassing.</p></div>
+            <figure class="source-figure source-figure-own"><img src="publicatie-carrousel/slides/04-node-projection-west-south-east.png" alt="Geplaatste OGN-knopen projecteren naar west, zuid en oost"><figcaption>Bronplaatsing en afgeleide projectie blijven afzonderlijke lagen.</figcaption></figure>
+            <p class="source-line">Bron: Graphlite, eigen visualisatie; projectiecontract: <a href="OGN_CORE_PLACEMENT_ARCHITECTURE.md">OGN Projection</a>.</p>
+          </article>
+          <article class="example-slide" data-example-slide hidden>
+            <div class="slide-copy"><p class="slide-number">05 · Direct Placement</p><h3>Greedy Grow schrijft onmiddellijk</h3><p>Greedy Grow is een directe OGN-toepassing: iedere stap kiest en schrijft meteen één geldige vrije plaats.</p></div>
+            <figure class="source-figure source-figure-own"><img src="publicatie-carrousel/slides/05-direct-placement-greedy-grow.png" alt="Greedy Grow als directe plaatsingsmethode binnen OGN"><figcaption>Direct: zoeken → valideren → schrijven.</figcaption></figure>
+            <p class="source-line">Bron: Graphlite, eigen engine en visualisatie; reconstructie: <a href="GREEDY_GROW_RECONSTRUCTION.md">Greedy Grow Reconstruction</a>.</p>
+          </article>
+          <article class="example-slide" data-example-slide hidden>
+            <div class="slide-copy"><p class="slide-number">06 · Calculated Placement</p><h3>Een toepassing mag eerst rekenen</h3><p>Bij berekende plaatsing maakt een toepassing eerst een plaatsingsplan. Het resultaat wordt vervolgens onder dezelfde OGN-gridregels geschreven. De Language Tree is zo’n latere toepassing en volgt in aflevering 2.</p></div>
+            <figure class="source-figure source-figure-own"><img src="publicatie-carrousel/slides/06-calculated-placement-language-tree.png" alt="Language Tree als voorbeeld van berekende OGN-plaatsing"><figcaption>Berekend plan, daarna schrijven volgens OGN.</figcaption></figure>
+            <p class="source-line">Bron: Graphlite, eigen visualisatie; architectuur: <a href="OGN_CORE_PLACEMENT_ARCHITECTURE.md">OGN Calculated Placement</a>.</p>
+          </article>
+          <article class="example-slide" data-example-slide hidden>
+            <div class="slide-copy"><p class="slide-number">07 · Uitlegvolgorde</p><h3>Eerst de kern, daarna toepassingen</h3><p>De vaste volgorde is: Free Placement, Projection, Calculated Placement. Taalboom, LEX, de twee ordeningen en de transformatie-‘kerstboom’ krijgen daarna elk hun eigen aflevering.</p></div>
+            <figure class="source-figure source-figure-own"><img src="publicatie-carrousel/slides/07-core-first-examples-follow.png" alt="OGN-kern komt voor de voorbeelden en taaltoepassingen"><figcaption>OGN-kern → directe voorbeelden → berekende toepassingen.</figcaption></figure>
+            <p class="source-line">Bron: Graphlite, eigen visualisatie; publicatievolgorde: <a href="AFLEVERINGEN_PLANNING.md">Afleveringenplanning</a>.</p>
+          </article>
+        </div>
+        <div class="carousel-controls">
+          <button type="button" data-carousel-prev aria-label="Vorig carrouselbeeld">← Vorige</button>
+          <div class="carousel-dots" data-carousel-dots role="tablist" aria-label="Kies een carrouselbeeld"></div>
+          <button type="button" data-carousel-next aria-label="Volgend carrouselbeeld">Volgende →</button>
         </div>
       </section>
 
-      <section class="short-readme" aria-labelledby="whyHeading">
-        <h2 id="whyHeading">Wat zie je?</h2>
-        <p>De knopen krijgen eerst ieder een eigen plaats. Daarna verschijnt de lexicale volgorde <strong>HOND – BIJT – MAN</strong>. De tekening hoeft dus niet vooraf dezelfde links-rechtsvolgorde te hebben als de zin.</p>
+      <section class="demo" aria-label="OGN Free Placement-demonstratie">
+        <svg id="phaseGraph" viewBox="0 0 720 390" role="img" aria-labelledby="graphTitle graphDescription">
+          <title id="graphTitle">Vier OGN-knopen op vrije gridplaatsen</title>
+          <desc id="graphDescription">A, B, C en D verschijnen één voor één; geen twee knopen delen een rij of kolom.</desc>
+          <g class="nodes">
+            <g class="draw-step step-1"><circle cx="150" cy="80" r="32"></circle><text x="150" y="87">A</text></g>
+            <g class="draw-step step-2"><circle cx="310" cy="170" r="32"></circle><text x="310" y="177">B</text></g>
+            <g class="draw-step step-3"><circle cx="490" cy="270" r="32"></circle><text x="490" y="277">C</text></g>
+            <g class="draw-step step-4"><circle cx="610" cy="345" r="32"></circle><text x="610" y="352">D</text></g>
+          </g>
+        </svg>
+        <div class="demo-controls"><button id="playPhaseButton" type="button">Schrijf vier vrije knopen</button><span id="playStatus" aria-live="polite">Klaar om af te spelen</span></div>
       </section>
 
-      <p class="question">Wat zou er volgens jou moeten veranderen bij <em>De man bijt de hond</em>?</p>
+      <section class="short-readme" aria-labelledby="whyHeading">
+        <h2 id="whyHeading">Wat is hier bewust nog niet te zien?</h2>
+        <p>Geen LEX-as, geen woorden en geen taalboom. Eerst staat de algemene plaatsingsnotatie vast. Aflevering 2 past die kern toe op een echte taalboom en introduceert daarna LEX consequent aan de oostzijde.</p>
+      </section>
+      <section class="sources-summary" aria-labelledby="sourcesHeading">
+        <h2 id="sourcesHeading">Bronnen</h2>
+        <p>Alle zeven beelden zijn eigen Graphlite-visualisaties, afgeleid van dezelfde gecontroleerde OGN-carrousel die in de LEESMIJ wordt gebruikt. Externe taalvoorbeelden worden pas in hun inhoudelijke aflevering getoond en krijgen daar altijd auteur, titel, jaar, bestandspagina en licentie.</p>
+      </section>
+      <p class="question">Welke vrije plaats zou jouw volgende knoop krijgen?</p>
       <div class="actions">
-        <a class="primary-action" id="openAppLink" href="index.html?item=hond-bijt-man&amp;public_phase=1&amp;lang=en&amp;screen=readme">Open de interactieve graph</a>
-        <a class="secondary-action" href="PUBLICATION_PHASES.md">Bekijk de publicatiefasen</a>
+        <a class="primary-action" id="openAppLink" href="greedy-grow.html?public_phase=1&amp;lang=nl">Probeer vrije plaatsing</a>
+        <a class="secondary-action" href="LEESMIJ.md">Lees de canonieke uitleg</a>
       </div>
     </article>
-
-    <footer>OpenGraph Lite · publieke introductie · v2.0.0-rc.45</footer>
+    <footer>OpenGraph Lite · aflevering 1 · v3.1.0-rc.10 · bronstand .37</footer>
   </main>
-  <script src="publicatie/public-phase.js?v=20260827.1"></script>
+  <script src="publicatie/public-phase.js?v=20260905.37"></script>
 </body>
 </html>

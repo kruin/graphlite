@@ -64,10 +64,7 @@ else:
     if origins != {'LOG', 'LEX', 'LOG+LEX'}:
         errors.append(f'constructieorigins fout: {sorted(origins)}')
 
-for example_id in [
-    'de-hond-heeft-de-man-misschien-wel-vaak-gebeten',
-    'omdat-de-hond-de-man-misschien-wel-vaak-gebeten-heeft',
-]:
+for example_id in ['de-hond-bijt-de-man-misschien-wel-vaak']:
     insertions = collector.examples.get(example_id, [])
     by_id = {i.get('data-id'): i for i in insertions}
     mixed = by_id.get('misschien-wel', {})

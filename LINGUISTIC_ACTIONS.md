@@ -82,4 +82,5 @@ profielen krijgen een LOG-minor.
 De werknotatie is `S:np-VP`, niet `S:NP-VP`; `S+ np-VP` blijft een
 onderzoeksvariant. Eerst worden binaire bomen ondersteund, later ook
 meertakkige bomen. De verbale-clusterflip `heeft gebeten` ↔ `gebeten heeft`
-blijft een afzonderlijke lineaire LEX-actie.
+verwisselt de dochters van de V-CLUSTER-subboom; de lineaire LEX-uiting wordt
+daarna opnieuw uit die gewijzigde boom afgeleid.

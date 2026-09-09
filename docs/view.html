@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Graphlite · documentatie</title>
+  <style>
+    :root{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:#172033;background:#eef3f8;line-height:1.6}
+    *{box-sizing:border-box}body{margin:0}.bar{position:sticky;top:0;z-index:2;display:flex;align-items:center;gap:.5rem;padding:.6rem clamp(.7rem,3vw,1.5rem);border-bottom:1px solid #cbd5e1;background:rgba(248,250,252,.96);backdrop-filter:blur(10px)}
+    .bar a,.bar button{min-height:2.35rem;padding:.48rem .72rem;border:1px solid #cbd5e1;border-radius:.65rem;background:#fff;color:#172033;font:inherit;font-weight:750;text-decoration:none;cursor:pointer}.bar .name{min-width:0;margin-left:.25rem;color:#526174;font-size:.86rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    main{width:min(900px,calc(100% - 1.25rem));margin:1rem auto 3rem;padding:clamp(1rem,4vw,2.5rem);border:1px solid #d6dee8;border-radius:1rem;background:#fff;box-shadow:0 12px 35px rgba(15,23,42,.08)}
+    h1{margin-top:0;font-size:clamp(1.7rem,5vw,2.5rem);line-height:1.15}h2{margin-top:2.1rem;border-top:1px solid #e2e8f0;padding-top:1.25rem}h2,h3{line-height:1.25}a{color:#0759b8}img{display:block;max-width:100%;height:auto;margin:1rem auto;border-radius:.7rem}code{padding:.1rem .3rem;border-radius:.35rem;background:#edf2f7}pre{overflow:auto;padding:1rem;border-radius:.75rem;background:#111827;color:#f8fafc}pre code{padding:0;background:transparent}blockquote{margin-left:0;padding:.15rem 1rem;border-left:4px solid #7aa7dd;color:#46566a;background:#f7faff}table{display:block;width:100%;overflow:auto;border-collapse:collapse}th,td{padding:.45rem .6rem;border:1px solid #cbd5e1;text-align:left;vertical-align:top}th{background:#edf2f7}.error{padding:1rem;border-left:4px solid #c2410c;background:#fff7ed}
+    @media(max-width:600px){.bar{padding:.45rem}.bar a,.bar button{min-height:2.1rem;padding:.35rem .5rem;font-size:.86rem}.bar .name{font-size:.75rem}main{width:calc(100% - .7rem);margin:.35rem auto 2rem;padding:1rem;border-radius:.7rem}h2{margin-top:1.6rem}}
+    @media(prefers-color-scheme:dark){:root{color:#e5edf7;background:#101722}.bar{border-color:#344155;background:rgba(18,26,39,.96)}.bar a,.bar button{border-color:#46556b;background:#1c2737;color:#edf4ff}.bar .name{color:#b4c0d0}main{border-color:#354258;background:#172131;box-shadow:none}a{color:#8dc1ff}h2{border-color:#354258}code,th{background:#263348}blockquote{color:#c2cede;background:#1c2a3d}th,td{border-color:#46556b}.error{background:#3b211a}}
+  </style>
+</head>
+<body>
+  <nav class="bar" aria-label="Documentnavigatie">
+    <button type="button" id="backButton">← Terug</button>
+    <a href="../index.html?screen=help">LEESMIJ</a>
+    <a href="docs-home.html">Alle documenten</a>
+    <span class="name" id="documentName">Documentatie</span>
+  </nav>
+  <main id="document"><p>Document wordt geladen…</p></main>
+  <script>
+  (() => {
+    'use strict';
+    const output = document.getElementById('document');
+    const name = document.getElementById('documentName');
+    const siteRoot = new URL('../', location.href);
+    const docsViewer = new URL('view.html', location.href);
+    const requested = new URLSearchParams(location.search).get('doc') || '../LEESMIJ.md';
+    const escapeHtml = value => String(value).replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+    const slug = value => value.toLowerCase().replace(/<[^>]*>/g,'').replace(/[^a-z0-9à-ž]+/gi,'-').replace(/^-|-$/g,'');
+
+    function inline(value) {
+      let text = escapeHtml(value);
+      text = text.replace(/!\[([^\]]*)\]\(([^\s)]+)(?:\s+&quot;.*?&quot;)?\)/g, '<img alt="$1" data-md-image="$2">');
+      text = text.replace(/\[([^\]]+)\]\(([^\s)]+)(?:\s+&quot;.*?&quot;)?\)/g, '<a data-md-target="$2" href="#">$1</a>');
+      text = text.replace(/`([^`]+)`/g, '<code>$1</code>');
+      text = text.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+      text = text.replace(/(^|[^*])\*([^*]+)\*/g, '$1<em>$2</em>');
+      return text;
+    }
+
+    function renderMarkdown(source) {
+      const lines = source.replace(/\r\n?/g,'\n').split('\n');
+      const html = [];
+      let paragraph = [], list = null, quote = [], code = null, table = null;
+      const flushParagraph = () => { if (paragraph.length) { html.push(`<p>${inline(paragraph.join(' '))}</p>`); paragraph=[]; } };
+      const flushList = () => { if (list) { html.push(`<${list.type}>${list.items.map(item=>`<li>${inline(item)}</li>`).join('')}</${list.type}>`); list=null; } };
+      const flushQuote = () => { if (quote.length) { html.push(`<blockquote>${quote.map(line=>`<p>${inline(line)}</p>`).join('')}</blockquote>`); quote=[]; } };
+      const flushTable = () => { if (!table) return; const rows=table.filter((row,index)=>!(index===1&&row.every(cell=>/^:?-{3,}:?$/.test(cell.trim())))); if(rows.length){html.push('<table><thead><tr>'+rows[0].map(cell=>`<th>${inline(cell.trim())}</th>`).join('')+'</tr></thead><tbody>'+rows.slice(1).map(row=>'<tr>'+row.map(cell=>`<td>${inline(cell.trim())}</td>`).join('')+'</tr>').join('')+'</tbody></table>');} table=null; };
+      const flush = () => { flushParagraph(); flushList(); flushQuote(); flushTable(); };
+      for (const line of lines) {
+        if (code) { if (/^```/.test(line)) { html.push(`<pre><code>${escapeHtml(code.lines.join('\n'))}</code></pre>`); code=null; } else code.lines.push(line); continue; }
+        if (/^```/.test(line)) { flush(); code={lines:[]}; continue; }
+        if (/^\s*\|.*\|\s*$/.test(line)) { flushParagraph(); flushList(); flushQuote(); const cells=line.trim().slice(1,-1).split('|'); if(!table)table=[]; table.push(cells); continue; } else flushTable();
+        const heading=line.match(/^(#{1,6})\s+(.+)$/); if(heading){flush();const level=heading[1].length;const content=inline(heading[2]);html.push(`<h${level} id="${slug(heading[2])}">${content}</h${level}>`);continue;}
+        if (/^\s*(?:---+|___+|\*\*\*+)\s*$/.test(line)){flush();html.push('<hr>');continue;}
+        const q=line.match(/^>\s?(.*)$/); if(q){flushParagraph();flushList();quote.push(q[1]);continue;} else flushQuote();
+        const item=line.match(/^\s*([-+*]|\d+[.)])\s+(.+)$/); if(item){flushParagraph();const type=/\d/.test(item[1])?'ol':'ul';if(list&&list.type!==type)flushList();if(!list)list={type,items:[]};list.items.push(item[2]);continue;} else flushList();
+        if (!line.trim()){flush();continue;} paragraph.push(line.trim());
+      }
+      if(code)html.push(`<pre><code>${escapeHtml(code.lines.join('\n'))}</code></pre>`); flush(); return html.join('\n');
+    }
+
+    function validDocumentUrl() {
+      let url; try { url = new URL(requested, location.href); } catch (_error) { return null; }
+      return url.origin===location.origin && url.pathname.startsWith(siteRoot.pathname) && /\.md$/i.test(url.pathname) ? url : null;
+    }
+
+    function connectLinks(documentUrl) {
+      output.querySelectorAll('[data-md-image]').forEach(image => { const raw=image.getAttribute('data-md-image'); try { image.src=new URL(raw,documentUrl).href; } catch(_error){ image.remove(); } });
+      output.querySelectorAll('a[data-md-target]').forEach(link => {
+        const raw=link.getAttribute('data-md-target')||''; let target; try{target=new URL(raw,documentUrl);}catch(_error){link.removeAttribute('href');return;}
+        if(target.origin===location.origin && target.pathname.startsWith(siteRoot.pathname) && /\.md$/i.test(target.pathname)){
+          const relative=decodeURIComponent(target.pathname.slice(siteRoot.pathname.length)); const routed=new URL(docsViewer.href); routed.searchParams.set('doc',`../${relative}`); routed.hash=target.hash; link.href=`${routed.pathname}${routed.search}${routed.hash}`;
+        } else if (/^(https?:|mailto:)/i.test(target.protocol)) { link.href=target.href; if(target.origin!==location.origin){link.target='_blank';link.rel='noopener';} }
+        else link.removeAttribute('href');
+      });
+    }
+
+    document.getElementById('backButton').addEventListener('click',()=>{ if(history.length>1)history.back(); else location.href='../index.html?screen=help'; });
+    const documentUrl=validDocumentUrl();
+    if(!documentUrl){output.innerHTML='<p class="error">Dit documentpad is niet toegestaan.</p>';return;}
+    name.textContent=decodeURIComponent(documentUrl.pathname.split('/').pop()||'Documentatie');
+    document.title=`Graphlite · ${name.textContent}`;
+    fetch(documentUrl.href,{cache:'no-store'}).then(response=>{if(!response.ok)throw new Error(`${response.status} ${response.statusText}`);return response.text();}).then(source=>{output.innerHTML=renderMarkdown(source);connectLinks(documentUrl);if(location.hash)requestAnimationFrame(()=>document.getElementById(location.hash.slice(1))?.scrollIntoView());}).catch(error=>{output.innerHTML=`<p class="error"><strong>Document kon niet worden geopend.</strong><br>${escapeHtml(error.message)}</p>`;});
+  })();
+  </script>
+</body>
+</html>

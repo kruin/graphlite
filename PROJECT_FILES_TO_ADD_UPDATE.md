@@ -21,6 +21,7 @@ actuele projectmapnaam; een versienummer staat niet in de BAT vastgezet.
 VERSION.txt
 README.md
 LEESMIJ.md
+PROJECT_MEMORY.md
 PROJECT_STATE_CURRENT.md
 projectie-master-spec.md
 FUNCTIONAL_DATABASE_COMPACT.md
@@ -82,6 +83,8 @@ publicatie-carrousel/slides/07-core-first-examples-follow.png
 config/default-config.json
 config/user-config.json
 config/README.md
+data/testmateriaal.sqlite
+data/catalog.public.json
 structure-config.html
 viewer.js
 index.html
@@ -90,6 +93,7 @@ server_nocache.py
 start_local_viewer.bat
 start_local_viewer.py
 publish_checked.bat
+local-mobile-test.js
 images/readme/traditional-tree-flexible-wide.png
 images/readme/traditional-tree-flexible-narrow.png
 images/readme/ogn-free-grid.svg

@@ -2,7 +2,7 @@
   'use strict';
 
   const VERSION = 'v3.1.0-rc.10';
-  const SOURCE_BUILD = 'v3.1.0-rc.10-mobile-points-to-desktop-options-20260901.33';
+  const SOURCE_BUILD = 'v3.1.0-rc.10-fork-clone-publish-guide-20260909.60';
   const OPN_FORMAT_VERSION = '1.0';
   const OPN_DOCUMENT_TYPE = 'opengraph-document';
   const PARADATA_EVENT_LIMIT = 250;
@@ -117,6 +117,35 @@
   ];
   const LANGUAGE_IDS = new Set(LANGUAGE_OPTIONS.map(option => option.id));
   const DEFAULT_LANGUAGE = 'en';
+  const TENSE_OPTIONS = Object.freeze([
+    Object.freeze({ id: 'ott', label: 'OTT — onvoltooid tegenwoordige tijd', labelEn: 'OTT — onvoltooid tegenwoordige tijd' }),
+    Object.freeze({ id: 'ovt', label: 'OVT — onvoltooid verleden tijd', labelEn: 'OVT — onvoltooid verleden tijd' }),
+    Object.freeze({ id: 'vtt', label: 'VTT — voltooid tegenwoordige tijd', labelEn: 'VTT — voltooid tegenwoordige tijd' }),
+    Object.freeze({ id: 'vvt', label: 'VVT — voltooid verleden tijd', labelEn: 'VVT — voltooid verleden tijd' })
+  ]);
+  const TENSE_IDS = new Set(TENSE_OPTIONS.map(option => option.id));
+  const TENSE_FAMILIES = Object.freeze({
+    bijten: Object.freeze({
+      ott: Object.freeze({ finite: 'BIJT' }), ovt: Object.freeze({ finite: 'BEET' }),
+      vtt: Object.freeze({ aux: 'HEEFT', participle: 'GEBETEN' }),
+      vvt: Object.freeze({ aux: 'HAD', participle: 'GEBETEN' })
+    }),
+    breien: Object.freeze({
+      ott: Object.freeze({ finite: 'BREIT' }), ovt: Object.freeze({ finite: 'BREIDE' }),
+      vtt: Object.freeze({ aux: 'HEEFT', participle: 'GEBREID' }),
+      vvt: Object.freeze({ aux: 'HAD', participle: 'GEBREID' })
+    }),
+    vallen: Object.freeze({
+      ott: Object.freeze({ finite: 'VALT' }), ovt: Object.freeze({ finite: 'VIEL' }),
+      vtt: Object.freeze({ aux: 'IS', participle: 'GEVALLEN' }),
+      vvt: Object.freeze({ aux: 'WAS', participle: 'GEVALLEN' })
+    }),
+    ontroeren: Object.freeze({
+      ott: Object.freeze({ finite: 'ONTROERT' }), ovt: Object.freeze({ finite: 'ONTROERDE' }),
+      vtt: Object.freeze({ aux: 'HEEFT', participle: 'ONTROERD' }),
+      vvt: Object.freeze({ aux: 'HAD', participle: 'ONTROERD' })
+    })
+  });
 
   function normalizeLanguage(language) {
     return LANGUAGE_IDS.has(language) ? language : DEFAULT_LANGUAGE;
@@ -135,6 +164,12 @@
     lexAmbiguityOptions: document.getElementById('lexAmbiguityOptions'),
     lexAmbiguityHelp: document.getElementById('lexAmbiguityHelp'),
     clearLexAnalysisButton: document.getElementById('clearLexAnalysisButton'),
+    lexicalChoicePanel: document.getElementById('lexicalChoicePanel'),
+    lexicalChoiceHeading: document.getElementById('lexicalChoiceHeading'),
+    lexicalChoiceText: document.getElementById('lexicalChoiceText'),
+    lexicalChoiceOptions: document.getElementById('lexicalChoiceOptions'),
+    lexicalChoiceHelp: document.getElementById('lexicalChoiceHelp'),
+    lexicalChoiceCloseButton: document.getElementById('lexicalChoiceCloseButton'),
     paneSplitter: document.getElementById('paneSplitter'),
     exampleSelect: document.getElementById('exampleSelect'),
     desktopExampleSelect: document.getElementById('desktopExampleSelect'),
@@ -237,6 +272,10 @@
     mainCausalAnaphorSelect: document.getElementById('mainCausalAnaphorSelect'),
     mainCausalVerbChoice: document.getElementById('mainCausalVerbChoice'),
     mainCausalVerbSelect: document.getElementById('mainCausalVerbSelect'),
+    mainTenseChoice: document.getElementById('mainTenseChoice'),
+    mainTenseSelect: document.getElementById('mainTenseSelect'),
+    mainTenseSummary: document.getElementById('mainTenseSummary'),
+    mainTenseName: document.getElementById('mainTenseName'),
     mainBotChoice: document.getElementById('mainBotChoice'),
     mainBotSelect: document.getElementById('mainBotSelect'),
     metaLine: document.getElementById('metaLine'),
@@ -328,1097 +367,910 @@
 
   let EXAMPLES = [
     {
-      "id": "hond-bijt-man",
-      "title": "HOND BIJT MAN",
-      "phase": "Fase 1+2",
-      "sentenceType": "main-declarative",
-      "lexRule": "hoofdzininvariant",
-      "sentence": "HOND BIJT MAN",
-      "sentenceHtml": "<strong data-role=\"subject\" data-thematic-role=\"agens\">HOND</strong> BIJT <em data-role=\"object\" data-thematic-role=\"patiens\">MAN</em>",
-      "subjectDefault": "HOND",
-      "objectDefault": "MAN",
-      "predicate": "BIJT",
-      "lexItems": [
-        {
-          "id": "subject-hond",
-          "label": "HOND",
-          "source": "subject",
-          "slot": null,
-          "role": "subject",
-          "thematicRole": "agens",
-          "lexeme": "hond"
-        },
-        {
-          "id": "pred-bijt",
-          "label": "BIJT",
-          "source": "predicate",
-          "slot": null,
-          "role": "predicate",
-          "thematicRole": null,
-          "lexeme": "bijt"
-        },
-        {
-          "id": "object-man",
-          "label": "MAN",
-          "source": "object",
-          "slot": null,
-          "role": "object",
-          "thematicRole": "patiens",
-          "lexeme": "man"
-        }
-      ]
+        "id": "jan-wast-zichzelf",
+        "title": "JAN WAST ZICHZELF",
+        "phase": "Uiting · reflexive",
+        "sentenceType": "main-declarative",
+        "lexRule": "hoofdzininvariant",
+        "sentence": "JAN WAST ZICHZELF",
+        "sentenceHtml": "<strong data-role=\"subject\" data-thematic-role=\"agens\">JAN</strong> WAST <em data-role=\"object\" data-thematic-role=\"patiens\">ZICHZELF</em>",
+        "subjectDefault": "JAN",
+        "objectDefault": "ZICHZELF",
+        "predicate": "WAST",
+        "tenseFamily": "",
+        "defaultTense": "ott",
+        "utteranceType": "reflexive",
+        "utteranceKernels": [
+            {
+                "id": "k1",
+                "text": "Jan wast Jan.",
+                "predicate": "wassen",
+                "agens": "jan",
+                "patiens": "jan"
+            },
+            {
+                "id": "k2",
+                "text": "Jan wast zelf.",
+                "predicate": "wassen",
+                "agens": "jan",
+                "patiens": "zelf"
+            }
+        ],
+        "utteranceRelations": [
+            {
+                "type": "coreference",
+                "members": [
+                    "k1.agens",
+                    "k1.patiens",
+                    "k2.agens"
+                ]
+            },
+            {
+                "type": "reflexive-realization",
+                "components": [
+                    "zich",
+                    "zelf"
+                ],
+                "surface": "zichzelf"
+            }
+        ],
+        "implicitSubject": "",
+        "lexInsertions": [],
+        "lexItems": [
+            {
+                "id": "subject-jan-wast",
+                "label": "JAN",
+                "source": "subject",
+                "slot": null,
+                "role": "subject",
+                "thematicRole": "agens",
+                "lexeme": "jan"
+            },
+            {
+                "id": "pred-wast",
+                "label": "WAST",
+                "source": "predicate",
+                "slot": null,
+                "role": "predicate",
+                "thematicRole": null,
+                "lexeme": "wast"
+            },
+            {
+                "id": "object-zichzelf",
+                "label": "ZICHZELF",
+                "source": "object",
+                "slot": null,
+                "role": "object",
+                "thematicRole": "patiens",
+                "lexeme": "zichzelf"
+            }
+        ]
     },
     {
-      "id": "bijt-hond-man-vraag",
-      "title": "BIJT HOND MAN?",
-      "phase": "Vraagzin · ja/nee",
-      "sentenceType": "polar-question",
-      "lexRule": "vraagzin-v1",
-      "sentence": "BIJT HOND MAN?",
-      "sentenceHtml": "BIJT <strong data-role=\"subject\" data-thematic-role=\"agens\">HOND</strong> <em data-role=\"object\" data-thematic-role=\"patiens\">MAN</em>?",
-      "subjectDefault": "HOND",
-      "objectDefault": "MAN",
-      "predicate": "BIJT",
-      "lexItems": [
-        {
-          "id": "pred-bijt-vraag",
-          "label": "BIJT",
-          "source": "predicate",
-          "slot": null,
-          "role": "predicate",
-          "thematicRole": null,
-          "lexeme": "bijt"
-        },
-        {
-          "id": "subject-hond-vraag",
-          "label": "HOND",
-          "source": "subject",
-          "slot": null,
-          "role": "subject",
-          "thematicRole": "agens",
-          "lexeme": "hond"
-        },
-        {
-          "id": "object-man-vraag",
-          "label": "MAN",
-          "source": "object",
-          "slot": null,
-          "role": "object",
-          "thematicRole": "patiens",
-          "lexeme": "man"
-        }
-      ]
+        "id": "jan-slaat-jek-omdat-die-hem-beet",
+        "title": "JAN SLAAT JEK OMDAT DIE HEM BEET",
+        "phase": "Uiting · causal-role-flip",
+        "sentenceType": "main-declarative",
+        "lexRule": "hoofdzininvariant",
+        "sentence": "JAN SLAAT JEK OMDAT DIE HEM BEET",
+        "sentenceHtml": "<strong data-role=\"subject\" data-thematic-role=\"agens\">JAN</strong> SLAAT <em data-role=\"object\" data-thematic-role=\"patiens\">JEK</em> OMDAT DIE HEM BEET",
+        "subjectDefault": "JAN",
+        "objectDefault": "JEK",
+        "predicate": "SLAAT",
+        "tenseFamily": "",
+        "defaultTense": "ott",
+        "utteranceType": "causal-role-flip",
+        "utteranceKernels": [
+            {
+                "id": "k1",
+                "text": "Jek beet Jan.",
+                "predicate": "bijten",
+                "agens": "jek",
+                "patiens": "jan"
+            },
+            {
+                "id": "k2",
+                "text": "Jan slaat Jek.",
+                "predicate": "slaan",
+                "agens": "jan",
+                "patiens": "jek"
+            }
+        ],
+        "utteranceRelations": [
+            {
+                "type": "cause",
+                "from": "k1",
+                "to": "k2",
+                "surface": "omdat"
+            },
+            {
+                "type": "coreference",
+                "members": [
+                    "k1.agens",
+                    "k2.patiens"
+                ],
+                "surface": [
+                    "Jek",
+                    "die"
+                ]
+            },
+            {
+                "type": "coreference",
+                "members": [
+                    "k1.patiens",
+                    "k2.agens"
+                ],
+                "surface": [
+                    "Jan",
+                    "hem"
+                ]
+            },
+            {
+                "type": "role-flip",
+                "participants": [
+                    "jan",
+                    "jek"
+                ]
+            }
+        ],
+        "implicitSubject": "",
+        "lexInsertions": [],
+        "lexItems": [
+            {
+                "id": "subject-jan-slaat",
+                "label": "JAN",
+                "source": "subject",
+                "slot": null,
+                "role": "subject",
+                "thematicRole": "agens",
+                "lexeme": "jan"
+            },
+            {
+                "id": "pred-slaat",
+                "label": "SLAAT",
+                "source": "predicate",
+                "slot": null,
+                "role": "predicate",
+                "thematicRole": null,
+                "lexeme": "slaat"
+            },
+            {
+                "id": "object-jek",
+                "label": "JEK",
+                "source": "object",
+                "slot": null,
+                "role": "object",
+                "thematicRole": "patiens",
+                "lexeme": "jek"
+            },
+            {
+                "id": "causal-omdat",
+                "label": "OMDAT",
+                "source": null,
+                "slot": null,
+                "role": null,
+                "thematicRole": null,
+                "lexeme": "omdat"
+            },
+            {
+                "id": "anaphor-die",
+                "label": "DIE",
+                "source": null,
+                "slot": null,
+                "role": null,
+                "thematicRole": null,
+                "lexeme": "die"
+            },
+            {
+                "id": "anaphor-hem",
+                "label": "HEM",
+                "source": null,
+                "slot": null,
+                "role": null,
+                "thematicRole": null,
+                "lexeme": "hem"
+            },
+            {
+                "id": "subordinate-beet",
+                "label": "BEET",
+                "source": null,
+                "slot": null,
+                "role": null,
+                "thematicRole": null,
+                "lexeme": "bijt"
+            }
+        ]
     },
     {
-      "id": "dat-hond-man-bijt",
-      "title": "DAT HOND MAN BIJT",
-      "phase": "Dat-zin · Comp",
-      "sentenceType": "subordinate-dat",
-      "lexRule": "bijzin-dat",
-      "sentence": "DAT HOND MAN BIJT",
-      "sentenceHtml": "DAT <strong data-role=\"subject\" data-thematic-role=\"agens\">HOND</strong> <em data-role=\"object\" data-thematic-role=\"patiens\">MAN</em> BIJT",
-      "subjectDefault": "HOND",
-      "objectDefault": "MAN",
-      "predicate": "BIJT",
-      "lexItems": [
-        {
-          "id": "dat",
-          "label": "DAT",
-          "source": null,
-          "slot": "comp",
-          "role": null,
-          "thematicRole": null,
-          "lexeme": "dat"
-        },
-        {
-          "id": "subject-hond-dat",
-          "label": "HOND",
-          "source": "subject",
-          "slot": null,
-          "role": "subject",
-          "thematicRole": "agens",
-          "lexeme": "hond"
-        },
-        {
-          "id": "object-man-dat",
-          "label": "MAN",
-          "source": "object",
-          "slot": null,
-          "role": "object",
-          "thematicRole": "patiens",
-          "lexeme": "man"
-        },
-        {
-          "id": "pred-bijt-dat",
-          "label": "BIJT",
-          "source": "predicate",
-          "slot": null,
-          "role": "predicate",
-          "thematicRole": null,
-          "lexeme": "bijt"
-        }
-      ]
+        "id": "jan-beloonde-jek-omdat-die-het-bot-terugbracht",
+        "title": "JAN BELOONDE ZIJN HOND JEK OMDAT DIE HET BOT NAAR HEM TERUGBRACHT",
+        "phase": "Uiting · causal-role-flip",
+        "sentenceType": "main-declarative",
+        "lexRule": "hoofdzininvariant",
+        "sentence": "JAN BELOONDE ZIJN HOND JEK OMDAT DIE HET BOT NAAR HEM TERUGBRACHT",
+        "sentenceHtml": "JAN BELOONDE ZIJN HOND JEK OMDAT DIE HET BOT NAAR HEM TERUGBRACHT",
+        "subjectDefault": "HOND",
+        "objectDefault": "",
+        "predicate": "BELOONDE",
+        "tenseFamily": "",
+        "defaultTense": "ott",
+        "utteranceType": "causal-role-flip",
+        "utteranceKernels": [
+            {
+                "id": "k1",
+                "text": "Jan beloont Jek."
+            },
+            {
+                "id": "k2",
+                "text": "Jek brengt het bot naar Jan."
+            }
+        ],
+        "utteranceRelations": [
+            {
+                "type": "cause"
+            },
+            {
+                "type": "coreference"
+            },
+            {
+                "type": "role-flip"
+            },
+            {
+                "type": "ambiguity-todo"
+            }
+        ],
+        "implicitSubject": "",
+        "lexInsertions": [],
+        "lexItems": [
+            {
+                "id": "reward-jan",
+                "label": "JAN",
+                "source": null,
+                "slot": null,
+                "role": null,
+                "thematicRole": null,
+                "lexeme": "jan"
+            },
+            {
+                "id": "reward-beloonde",
+                "label": "BELOONDE",
+                "source": null,
+                "slot": null,
+                "role": null,
+                "thematicRole": null,
+                "lexeme": "belonen"
+            },
+            {
+                "id": "reward-zijn",
+                "label": "ZIJN",
+                "source": null,
+                "slot": null,
+                "role": null,
+                "thematicRole": null,
+                "lexeme": "zijn"
+            },
+            {
+                "id": "reward-hond",
+                "label": "HOND",
+                "source": null,
+                "slot": null,
+                "role": null,
+                "thematicRole": null,
+                "lexeme": "hond"
+            },
+            {
+                "id": "reward-jek",
+                "label": "JEK",
+                "source": null,
+                "slot": null,
+                "role": null,
+                "thematicRole": null,
+                "lexeme": "jek"
+            },
+            {
+                "id": "reward-omdat",
+                "label": "OMDAT",
+                "source": null,
+                "slot": null,
+                "role": null,
+                "thematicRole": null,
+                "lexeme": "omdat"
+            },
+            {
+                "id": "reward-die",
+                "label": "DIE",
+                "source": null,
+                "slot": null,
+                "role": null,
+                "thematicRole": null,
+                "lexeme": "die"
+            },
+            {
+                "id": "reward-het",
+                "label": "HET",
+                "source": null,
+                "slot": null,
+                "role": null,
+                "thematicRole": null,
+                "lexeme": "het"
+            },
+            {
+                "id": "reward-bot",
+                "label": "BOT",
+                "source": null,
+                "slot": null,
+                "role": null,
+                "thematicRole": null,
+                "lexeme": "bot"
+            },
+            {
+                "id": "reward-naar",
+                "label": "NAAR",
+                "source": null,
+                "slot": null,
+                "role": null,
+                "thematicRole": null,
+                "lexeme": "naar"
+            },
+            {
+                "id": "reward-hem",
+                "label": "HEM",
+                "source": null,
+                "slot": null,
+                "role": null,
+                "thematicRole": null,
+                "lexeme": "hem"
+            },
+            {
+                "id": "reward-terugbracht",
+                "label": "TERUGBRACHT",
+                "source": null,
+                "slot": null,
+                "role": null,
+                "thematicRole": null,
+                "lexeme": "terugbrengen"
+            }
+        ]
     },
     {
-      "id": "omdat-hond-man-bijt",
-      "title": "OMDAT HOND MAN BIJT",
-      "phase": "Fase 3",
-      "sentenceType": "subordinate-omdat",
-      "lexRule": "bijzin-omdat",
-      "sentence": "OMDAT HOND MAN BIJT",
-      "sentenceHtml": "OMDAT <strong data-role=\"subject\" data-thematic-role=\"agens\">HOND</strong> <em data-role=\"object\" data-thematic-role=\"patiens\">MAN</em> BIJT",
-      "subjectDefault": "HOND",
-      "objectDefault": "MAN",
-      "predicate": "BIJT",
-      "lexItems": [
-        {
-          "id": "omdat",
-          "label": "OMDAT",
-          "source": null,
-          "slot": "comp",
-          "role": null,
-          "thematicRole": null,
-          "lexeme": "omdat"
-        },
-        {
-          "id": "subject-hond",
-          "label": "HOND",
-          "source": "subject",
-          "slot": null,
-          "role": "subject",
-          "thematicRole": "agens",
-          "lexeme": "hond"
-        },
-        {
-          "id": "object-man",
-          "label": "MAN",
-          "source": "object",
-          "slot": null,
-          "role": "object",
-          "thematicRole": "patiens",
-          "lexeme": "man"
-        },
-        {
-          "id": "pred-bijt",
-          "label": "BIJT",
-          "source": "predicate",
-          "slot": null,
-          "role": "predicate",
-          "thematicRole": null,
-          "lexeme": "bijt"
-        }
-      ]
+        "id": "ken-uzelf",
+        "title": "KEN UZELF",
+        "phase": "Uiting · imperative-reflexive",
+        "sentenceType": "main-declarative",
+        "lexRule": "hoofdzininvariant",
+        "sentence": "KEN UZELF",
+        "sentenceHtml": "KEN <em data-role=\"object\" data-thematic-role=\"patiens\">UZELF</em>",
+        "subjectDefault": "U",
+        "objectDefault": "UZELF",
+        "predicate": "KEN",
+        "tenseFamily": "",
+        "defaultTense": "ott",
+        "utteranceType": "imperative-reflexive",
+        "utteranceKernels": [
+            {
+                "id": "k1",
+                "text": "Ken zelf.",
+                "predicate": "kennen",
+                "agens": "u",
+                "patiens": "zelf"
+            },
+            {
+                "id": "k2",
+                "text": "Ken u.",
+                "predicate": "kennen",
+                "agens": "u",
+                "patiens": "u"
+            }
+        ],
+        "utteranceRelations": [
+            {
+                "type": "implicit-addressee",
+                "referent": "u",
+                "role": "agens"
+            },
+            {
+                "type": "coreference",
+                "members": [
+                    "k2.agens",
+                    "k2.patiens"
+                ]
+            },
+            {
+                "type": "reflexive-realization",
+                "components": [
+                    "u",
+                    "zelf"
+                ],
+                "surface": "uzelf"
+            },
+            {
+                "type": "mood",
+                "value": "imperative"
+            }
+        ],
+        "implicitSubject": "U",
+        "lexInsertions": [],
+        "lexItems": [
+            {
+                "id": "pred-ken",
+                "label": "KEN",
+                "source": "predicate",
+                "slot": null,
+                "role": "predicate",
+                "thematicRole": null,
+                "lexeme": "ken"
+            },
+            {
+                "id": "object-uzelf",
+                "label": "UZELF",
+                "source": "object",
+                "slot": null,
+                "role": "object",
+                "thematicRole": "patiens",
+                "lexeme": "uzelf"
+            }
+        ]
     },
     {
-      "id": "hond-beet-man",
-      "title": "HOND BEET MAN",
-      "phase": "OVT · onvoltooid verleden tijd",
-      "lexRule": "hoofdzininvariant",
-      "sentence": "HOND BEET MAN",
-      "sentenceHtml": "<strong data-role=\"subject\" data-thematic-role=\"agens\">HOND</strong> BEET <em data-role=\"object\" data-thematic-role=\"patiens\">MAN</em>",
-      "subjectDefault": "HOND",
-      "objectDefault": "MAN",
-      "predicate": "BEET",
-      "lexItems": [
-        {
-          "id": "subject-hond",
-          "label": "HOND",
-          "source": "subject",
-          "slot": null,
-          "role": "subject",
-          "thematicRole": "agens",
-          "lexeme": "hond"
-        },
-        {
-          "id": "pred-beet",
-          "label": "BEET",
-          "source": "predicate",
-          "slot": null,
-          "role": "predicate",
-          "thematicRole": null,
-          "lexeme": "bijt"
-        },
-        {
-          "id": "object-man",
-          "label": "MAN",
-          "source": "object",
-          "slot": null,
-          "role": "object",
-          "thematicRole": "patiens",
-          "lexeme": "man"
-        }
-      ]
+        "id": "hond-bijt-man",
+        "title": "HOND BIJT MAN",
+        "phase": "Fase 1+2",
+        "sentenceType": "main-declarative",
+        "lexRule": "hoofdzininvariant",
+        "sentence": "HOND BIJT MAN",
+        "sentenceHtml": "<strong data-role=\"subject\" data-thematic-role=\"agens\">HOND</strong> BIJT <em data-role=\"object\" data-thematic-role=\"patiens\">MAN</em>",
+        "subjectDefault": "HOND",
+        "objectDefault": "MAN",
+        "predicate": "BIJT",
+        "tenseFamily": "bijten",
+        "defaultTense": "ott",
+        "utteranceType": "",
+        "utteranceKernels": [],
+        "utteranceRelations": [],
+        "implicitSubject": "",
+        "lexInsertions": [],
+        "lexItems": [
+            {
+                "id": "subject-hond",
+                "label": "HOND",
+                "source": "subject",
+                "slot": null,
+                "role": "subject",
+                "thematicRole": "agens",
+                "lexeme": "hond"
+            },
+            {
+                "id": "pred-bijt",
+                "label": "BIJT",
+                "source": "predicate",
+                "slot": null,
+                "role": "predicate",
+                "thematicRole": null,
+                "lexeme": "bijt"
+            },
+            {
+                "id": "object-man",
+                "label": "MAN",
+                "source": "object",
+                "slot": null,
+                "role": "object",
+                "thematicRole": "patiens",
+                "lexeme": "man"
+            }
+        ]
     },
     {
-      "id": "omdat-hond-man-beet",
-      "title": "OMDAT HOND MAN BEET",
-      "phase": "OVT · omdat-bijzin",
-      "lexRule": "bijzin-omdat",
-      "sentence": "OMDAT HOND MAN BEET",
-      "sentenceHtml": "OMDAT <strong data-role=\"subject\" data-thematic-role=\"agens\">HOND</strong> <em data-role=\"object\" data-thematic-role=\"patiens\">MAN</em> BEET",
-      "subjectDefault": "HOND",
-      "objectDefault": "MAN",
-      "predicate": "BEET",
-      "lexItems": [
-        {
-          "id": "omdat",
-          "label": "OMDAT",
-          "source": null,
-          "slot": "comp",
-          "role": null,
-          "thematicRole": null,
-          "lexeme": "omdat"
-        },
-        {
-          "id": "subject-hond",
-          "label": "HOND",
-          "source": "subject",
-          "slot": null,
-          "role": "subject",
-          "thematicRole": "agens",
-          "lexeme": "hond"
-        },
-        {
-          "id": "object-man",
-          "label": "MAN",
-          "source": "object",
-          "slot": null,
-          "role": "object",
-          "thematicRole": "patiens",
-          "lexeme": "man"
-        },
-        {
-          "id": "pred-beet",
-          "label": "BEET",
-          "source": "predicate",
-          "slot": null,
-          "role": "predicate",
-          "thematicRole": null,
-          "lexeme": "bijt"
-        }
-      ]
+        "id": "muziek-ontroert-anna",
+        "title": "DE MUZIEK ONTROERT ANNA",
+        "phase": "Functional · Stimulus/Experiencer",
+        "sentenceType": "main-declarative",
+        "lexRule": "hoofdzininvariant",
+        "sentence": "DE MUZIEK ONTROERT ANNA",
+        "sentenceHtml": "<strong data-role=\"subject\" data-thematic-role=\"stimulus\">DE MUZIEK</strong> ONTROERT <em data-role=\"object\" data-thematic-role=\"experiencer\">ANNA</em>",
+        "subjectDefault": "DE MUZIEK",
+        "objectDefault": "ANNA",
+        "predicate": "ONTROERT",
+        "tenseFamily": "ontroeren",
+        "defaultTense": "ott",
+        "utteranceType": "",
+        "utteranceKernels": [],
+        "utteranceRelations": [],
+        "implicitSubject": "",
+        "lexInsertions": [],
+        "lexItems": [
+            {
+                "id": "subject-muziek",
+                "label": "DE MUZIEK",
+                "source": "subject",
+                "slot": null,
+                "role": "subject",
+                "thematicRole": "stimulus",
+                "lexeme": "muziek"
+            },
+            {
+                "id": "pred-ontroert",
+                "label": "ONTROERT",
+                "source": "predicate",
+                "slot": null,
+                "role": "predicate",
+                "thematicRole": null,
+                "lexeme": "ontroert"
+            },
+            {
+                "id": "object-anna-ontroert",
+                "label": "ANNA",
+                "source": "object",
+                "slot": null,
+                "role": "object",
+                "thematicRole": "experiencer",
+                "lexeme": "anna"
+            }
+        ]
     },
     {
-      "id": "vrouw-breide-trui",
-      "title": "VROUW BREIDE TRUI",
-      "phase": "OVT · onvoltooid verleden tijd",
-      "lexRule": "hoofdzininvariant",
-      "sentence": "VROUW BREIDE TRUI",
-      "sentenceHtml": "<strong data-role=\"subject\" data-thematic-role=\"agens\">VROUW</strong> BREIDE <em data-role=\"object\" data-thematic-role=\"patiens\">TRUI</em>",
-      "subjectDefault": "VROUW",
-      "objectDefault": "TRUI",
-      "predicate": "BREIDE",
-      "lexItems": [
-        {
-          "id": "subject-vrouw",
-          "label": "VROUW",
-          "source": "subject",
-          "slot": null,
-          "role": "subject",
-          "thematicRole": "agens",
-          "lexeme": "vrouw"
-        },
-        {
-          "id": "pred-breide",
-          "label": "BREIDE",
-          "source": "predicate",
-          "slot": null,
-          "role": "predicate",
-          "thematicRole": null,
-          "lexeme": "breit"
-        },
-        {
-          "id": "object-trui",
-          "label": "TRUI",
-          "source": "object",
-          "slot": null,
-          "role": "object",
-          "thematicRole": "patiens",
-          "lexeme": "trui"
-        }
-      ]
+        "id": "bijt-hond-man-vraag",
+        "title": "BIJT HOND MAN?",
+        "phase": "Vraagzin · ja/nee",
+        "sentenceType": "polar-question",
+        "lexRule": "vraagzin-v1",
+        "sentence": "BIJT HOND MAN?",
+        "sentenceHtml": "BIJT <strong data-role=\"subject\" data-thematic-role=\"agens\">HOND</strong> <em data-role=\"object\" data-thematic-role=\"patiens\">MAN</em>?",
+        "subjectDefault": "HOND",
+        "objectDefault": "MAN",
+        "predicate": "BIJT",
+        "tenseFamily": "",
+        "defaultTense": "ott",
+        "utteranceType": "",
+        "utteranceKernels": [],
+        "utteranceRelations": [],
+        "implicitSubject": "",
+        "lexInsertions": [],
+        "lexItems": [
+            {
+                "id": "pred-bijt-vraag",
+                "label": "BIJT",
+                "source": "predicate",
+                "slot": null,
+                "role": "predicate",
+                "thematicRole": null,
+                "lexeme": "bijt"
+            },
+            {
+                "id": "subject-hond-vraag",
+                "label": "HOND",
+                "source": "subject",
+                "slot": null,
+                "role": "subject",
+                "thematicRole": "agens",
+                "lexeme": "hond"
+            },
+            {
+                "id": "object-man-vraag",
+                "label": "MAN",
+                "source": "object",
+                "slot": null,
+                "role": "object",
+                "thematicRole": "patiens",
+                "lexeme": "man"
+            }
+        ]
     },
     {
-      "id": "omdat-vrouw-trui-breide",
-      "title": "OMDAT VROUW TRUI BREIDE",
-      "phase": "OVT · omdat-bijzin",
-      "lexRule": "bijzin-omdat",
-      "sentence": "OMDAT VROUW TRUI BREIDE",
-      "sentenceHtml": "OMDAT <strong data-role=\"subject\" data-thematic-role=\"agens\">VROUW</strong> <em data-role=\"object\" data-thematic-role=\"patiens\">TRUI</em> BREIDE",
-      "subjectDefault": "VROUW",
-      "objectDefault": "TRUI",
-      "predicate": "BREIDE",
-      "lexItems": [
-        {
-          "id": "omdat",
-          "label": "OMDAT",
-          "source": null,
-          "slot": "comp",
-          "role": null,
-          "thematicRole": null,
-          "lexeme": "omdat"
-        },
-        {
-          "id": "subject-vrouw",
-          "label": "VROUW",
-          "source": "subject",
-          "slot": null,
-          "role": "subject",
-          "thematicRole": "agens",
-          "lexeme": "vrouw"
-        },
-        {
-          "id": "object-trui",
-          "label": "TRUI",
-          "source": "object",
-          "slot": null,
-          "role": "object",
-          "thematicRole": "patiens",
-          "lexeme": "trui"
-        },
-        {
-          "id": "pred-breide",
-          "label": "BREIDE",
-          "source": "predicate",
-          "slot": null,
-          "role": "predicate",
-          "thematicRole": null,
-          "lexeme": "breit"
-        }
-      ]
+        "id": "dat-hond-man-bijt",
+        "title": "DAT HOND MAN BIJT",
+        "phase": "Dat-zin · Comp",
+        "sentenceType": "subordinate-dat",
+        "lexRule": "bijzin-dat",
+        "sentence": "DAT HOND MAN BIJT",
+        "sentenceHtml": "DAT <strong data-role=\"subject\" data-thematic-role=\"agens\">HOND</strong> <em data-role=\"object\" data-thematic-role=\"patiens\">MAN</em> BIJT",
+        "subjectDefault": "HOND",
+        "objectDefault": "MAN",
+        "predicate": "BIJT",
+        "tenseFamily": "bijten",
+        "defaultTense": "ott",
+        "utteranceType": "",
+        "utteranceKernels": [],
+        "utteranceRelations": [],
+        "implicitSubject": "",
+        "lexInsertions": [],
+        "lexItems": [
+            {
+                "id": "dat",
+                "label": "DAT",
+                "source": null,
+                "slot": "comp",
+                "role": null,
+                "thematicRole": null,
+                "lexeme": "dat"
+            },
+            {
+                "id": "subject-hond-dat",
+                "label": "HOND",
+                "source": "subject",
+                "slot": null,
+                "role": "subject",
+                "thematicRole": "agens",
+                "lexeme": "hond"
+            },
+            {
+                "id": "object-man-dat",
+                "label": "MAN",
+                "source": "object",
+                "slot": null,
+                "role": "object",
+                "thematicRole": "patiens",
+                "lexeme": "man"
+            },
+            {
+                "id": "pred-bijt-dat",
+                "label": "BIJT",
+                "source": "predicate",
+                "slot": null,
+                "role": "predicate",
+                "thematicRole": null,
+                "lexeme": "bijt"
+            }
+        ]
     },
     {
-      "id": "vrouw-breit-trui",
-      "title": "VROUW BREIT TRUI",
-      "phase": "Lexicon-test",
-      "lexRule": "hoofdzininvariant",
-      "sentence": "VROUW BREIT TRUI",
-      "sentenceHtml": "<strong data-role=\"subject\" data-thematic-role=\"agens\">VROUW</strong> BREIT <em data-role=\"object\" data-thematic-role=\"patiens\">TRUI</em>",
-      "subjectDefault": "VROUW",
-      "objectDefault": "TRUI",
-      "predicate": "BREIT",
-      "lexItems": [
-        {
-          "id": "subject-vrouw",
-          "label": "VROUW",
-          "source": "subject",
-          "slot": null,
-          "role": "subject",
-          "thematicRole": "agens",
-          "lexeme": "vrouw"
-        },
-        {
-          "id": "pred-breit",
-          "label": "BREIT",
-          "source": "predicate",
-          "slot": null,
-          "role": "predicate",
-          "thematicRole": null,
-          "lexeme": "breit"
-        },
-        {
-          "id": "object-trui",
-          "label": "TRUI",
-          "source": "object",
-          "slot": null,
-          "role": "object",
-          "thematicRole": "patiens",
-          "lexeme": "trui"
-        }
-      ]
+        "id": "omdat-hond-man-bijt",
+        "title": "OMDAT HOND MAN BIJT",
+        "phase": "Fase 3",
+        "sentenceType": "subordinate-omdat",
+        "lexRule": "bijzin-omdat",
+        "sentence": "OMDAT HOND MAN BIJT",
+        "sentenceHtml": "OMDAT <strong data-role=\"subject\" data-thematic-role=\"agens\">HOND</strong> <em data-role=\"object\" data-thematic-role=\"patiens\">MAN</em> BIJT",
+        "subjectDefault": "HOND",
+        "objectDefault": "MAN",
+        "predicate": "BIJT",
+        "tenseFamily": "bijten",
+        "defaultTense": "ott",
+        "utteranceType": "",
+        "utteranceKernels": [],
+        "utteranceRelations": [],
+        "implicitSubject": "",
+        "lexInsertions": [],
+        "lexItems": [
+            {
+                "id": "omdat",
+                "label": "OMDAT",
+                "source": null,
+                "slot": "comp",
+                "role": null,
+                "thematicRole": null,
+                "lexeme": "omdat"
+            },
+            {
+                "id": "subject-hond",
+                "label": "HOND",
+                "source": "subject",
+                "slot": null,
+                "role": "subject",
+                "thematicRole": "agens",
+                "lexeme": "hond"
+            },
+            {
+                "id": "object-man",
+                "label": "MAN",
+                "source": "object",
+                "slot": null,
+                "role": "object",
+                "thematicRole": "patiens",
+                "lexeme": "man"
+            },
+            {
+                "id": "pred-bijt",
+                "label": "BIJT",
+                "source": "predicate",
+                "slot": null,
+                "role": "predicate",
+                "thematicRole": null,
+                "lexeme": "bijt"
+            }
+        ]
     },
     {
-      "id": "omdat-vrouw-trui-breit",
-      "title": "OMDAT VROUW TRUI BREIT",
-      "phase": "Lexicon-test",
-      "lexRule": "bijzin-omdat",
-      "sentence": "OMDAT VROUW TRUI BREIT",
-      "sentenceHtml": "OMDAT <strong data-role=\"subject\" data-thematic-role=\"agens\">VROUW</strong> <em data-role=\"object\" data-thematic-role=\"patiens\">TRUI</em> BREIT",
-      "subjectDefault": "VROUW",
-      "objectDefault": "TRUI",
-      "predicate": "BREIT",
-      "lexItems": [
-        {
-          "id": "omdat",
-          "label": "OMDAT",
-          "source": null,
-          "slot": "comp",
-          "role": null,
-          "thematicRole": null,
-          "lexeme": "omdat"
-        },
-        {
-          "id": "subject-vrouw",
-          "label": "VROUW",
-          "source": "subject",
-          "slot": null,
-          "role": "subject",
-          "thematicRole": "agens",
-          "lexeme": "vrouw"
-        },
-        {
-          "id": "object-trui",
-          "label": "TRUI",
-          "source": "object",
-          "slot": null,
-          "role": "object",
-          "thematicRole": "patiens",
-          "lexeme": "trui"
-        },
-        {
-          "id": "pred-breit",
-          "label": "BREIT",
-          "source": "predicate",
-          "slot": null,
-          "role": "predicate",
-          "thematicRole": null,
-          "lexeme": "breit"
-        }
-      ]
+        "id": "vrouw-breit-trui",
+        "title": "VROUW BREIT TRUI",
+        "phase": "Lexicon-test",
+        "sentenceType": "",
+        "lexRule": "hoofdzininvariant",
+        "sentence": "VROUW BREIT TRUI",
+        "sentenceHtml": "<strong data-role=\"subject\" data-thematic-role=\"agens\">VROUW</strong> BREIT <em data-role=\"object\" data-thematic-role=\"patiens\">TRUI</em>",
+        "subjectDefault": "VROUW",
+        "objectDefault": "TRUI",
+        "predicate": "BREIT",
+        "tenseFamily": "breien",
+        "defaultTense": "ott",
+        "utteranceType": "",
+        "utteranceKernels": [],
+        "utteranceRelations": [],
+        "implicitSubject": "",
+        "lexInsertions": [],
+        "lexItems": [
+            {
+                "id": "subject-vrouw",
+                "label": "VROUW",
+                "source": "subject",
+                "slot": null,
+                "role": "subject",
+                "thematicRole": "agens",
+                "lexeme": "vrouw"
+            },
+            {
+                "id": "pred-breit",
+                "label": "BREIT",
+                "source": "predicate",
+                "slot": null,
+                "role": "predicate",
+                "thematicRole": null,
+                "lexeme": "breit"
+            },
+            {
+                "id": "object-trui",
+                "label": "TRUI",
+                "source": "object",
+                "slot": null,
+                "role": "object",
+                "thematicRole": "patiens",
+                "lexeme": "trui"
+            }
+        ]
     },
     {
-      "id": "hond-heeft-man-gebeten",
-      "title": "HOND HEEFT MAN GEBETEN",
-      "phase": "Perfectum",
-      "lexRule": "perfectum-heeft-vdw",
-      "sentence": "HOND HEEFT MAN GEBETEN",
-      "sentenceHtml": "<strong data-role=\"subject\" data-thematic-role=\"agens\">HOND</strong> HEEFT <em data-role=\"object\" data-thematic-role=\"patiens\">MAN</em> GEBETEN",
-      "subjectDefault": "HOND",
-      "objectDefault": "MAN",
-      "predicate": "GEBETEN",
-      "lexItems": [
-        {
-          "id": "subject-hond",
-          "label": "HOND",
-          "source": "subject",
-          "slot": null,
-          "role": "subject",
-          "thematicRole": "agens",
-          "lexeme": "hond"
-        },
-        {
-          "id": "pv-heeft",
-          "label": "HEEFT",
-          "source": "pv",
-          "slot": null,
-          "role": "aux",
-          "thematicRole": null,
-          "lexeme": "heeft"
-        },
-        {
-          "id": "object-man",
-          "label": "MAN",
-          "source": "object",
-          "slot": null,
-          "role": "object",
-          "thematicRole": "patiens",
-          "lexeme": "man"
-        },
-        {
-          "id": "vdw-bijt",
-          "label": "GEBETEN",
-          "source": "vdw",
-          "slot": null,
-          "role": "participle",
-          "thematicRole": null,
-          "lexeme": "bijt"
-        }
-      ]
+        "id": "hond-valt",
+        "title": "HOND VALT",
+        "phase": "Zijn-perfectum · Thema",
+        "sentenceType": "main-declarative",
+        "lexRule": "hoofdzininvariant",
+        "sentence": "HOND VALT",
+        "sentenceHtml": "<strong data-role=\"subject\" data-thematic-role=\"thema\">HOND</strong> VALT",
+        "subjectDefault": "HOND",
+        "objectDefault": "",
+        "predicate": "VALT",
+        "tenseFamily": "vallen",
+        "defaultTense": "ott",
+        "utteranceType": "",
+        "utteranceKernels": [],
+        "utteranceRelations": [],
+        "implicitSubject": "",
+        "lexInsertions": [],
+        "lexItems": [
+            {
+                "id": "subject-hond-valt",
+                "label": "HOND",
+                "source": "subject",
+                "slot": null,
+                "role": "subject",
+                "thematicRole": "thema",
+                "lexeme": "hond"
+            },
+            {
+                "id": "pred-valt",
+                "label": "VALT",
+                "source": "predicate",
+                "slot": null,
+                "role": "predicate",
+                "thematicRole": null,
+                "lexeme": "vallen"
+            }
+        ]
     },
     {
-      "id": "omdat-de-hond-de-man-heeft-gebeten",
-      "title": "OMDAT DE HOND DE MAN HEEFT GEBETEN",
-      "phase": "Perfectum · omdat-bijzin",
-      "lexRule": "bijzin-omdat",
-      "sentence": "OMDAT DE HOND DE MAN HEEFT GEBETEN",
-      "sentenceHtml": "OMDAT <strong data-role=\"subject\" data-thematic-role=\"agens\">DE HOND</strong> <em data-role=\"object\" data-thematic-role=\"patiens\">DE MAN</em> HEEFT GEBETEN",
-      "subjectDefault": "DE HOND",
-      "objectDefault": "DE MAN",
-      "predicate": "GEBETEN",
-      "lexItems": [
-        {
-          "id": "omdat",
-          "label": "OMDAT",
-          "source": null,
-          "slot": "comp",
-          "role": null,
-          "thematicRole": null,
-          "lexeme": "omdat"
-        },
-        {
-          "id": "subject-hond",
-          "label": "DE HOND",
-          "source": "subject",
-          "slot": null,
-          "role": "subject",
-          "thematicRole": "agens",
-          "lexeme": "hond"
-        },
-        {
-          "id": "object-man",
-          "label": "DE MAN",
-          "source": "object",
-          "slot": null,
-          "role": "object",
-          "thematicRole": "patiens",
-          "lexeme": "man"
-        },
-        {
-          "id": "pv-heeft",
-          "label": "HEEFT",
-          "source": "pv",
-          "slot": null,
-          "role": "aux",
-          "thematicRole": null,
-          "lexeme": "heeft"
-        },
-        {
-          "id": "vdw-bijt",
-          "label": "GEBETEN",
-          "source": "vdw",
-          "slot": null,
-          "role": "participle",
-          "thematicRole": null,
-          "lexeme": "bijt"
-        }
-      ]
-    },
-    {
-      "id": "omdat-vrouw-trui-heeft-gebreid",
-      "title": "OMDAT VROUW TRUI HEEFT GEBREID",
-      "phase": "Gebruikersinput · omdat+perfectum",
-      "lexRule": "bijzin-omdat",
-      "sentence": "OMDAT VROUW TRUI HEEFT GEBREID",
-      "sentenceHtml": "OMDAT <strong data-role=\"subject\" data-thematic-role=\"agens\">VROUW</strong> <em data-role=\"object\" data-thematic-role=\"patiens\">TRUI</em> HEEFT GEBREID",
-      "subjectDefault": "VROUW",
-      "objectDefault": "TRUI",
-      "predicate": "GEBREID",
-      "lexItems": [
-        {
-          "id": "omdat",
-          "label": "OMDAT",
-          "source": null,
-          "slot": "comp",
-          "role": null,
-          "thematicRole": null,
-          "lexeme": "omdat"
-        },
-        {
-          "id": "subject-vrouw",
-          "label": "VROUW",
-          "source": "subject",
-          "slot": null,
-          "role": "subject",
-          "thematicRole": "agens",
-          "lexeme": "vrouw"
-        },
-        {
-          "id": "object-trui",
-          "label": "TRUI",
-          "source": "object",
-          "slot": null,
-          "role": "object",
-          "thematicRole": "patiens",
-          "lexeme": "trui"
-        },
-        {
-          "id": "pv-heeft",
-          "label": "HEEFT",
-          "source": "pv",
-          "slot": null,
-          "role": "aux",
-          "thematicRole": null,
-          "lexeme": "heeft"
-        },
-        {
-          "id": "vdw-breit",
-          "label": "GEBREID",
-          "source": "vdw",
-          "slot": null,
-          "role": "participle",
-          "thematicRole": null,
-          "lexeme": "breit"
-        }
-      ]
-    },
-    {
-      "id": "de-hond-heeft-de-man-misschien-wel-vaak-gebeten",
-      "title": "DE HOND HEEFT DE MAN MISSCHIEN WEL VAAK GEBETEN",
-      "phase": "Meervoudige LEX-insertie",
-      "lexRule": "hoofdzininvariant",
-      "sentence": "DE HOND HEEFT DE MAN MISSCHIEN WEL VAAK GEBETEN",
-      "sentenceHtml": "<strong data-role=\"subject\" data-thematic-role=\"agens\">DE HOND</strong> HEEFT <em data-role=\"object\" data-thematic-role=\"patiens\">DE MAN</em> MISSCHIEN WEL VAAK GEBETEN",
-      "subjectDefault": "DE HOND",
-      "objectDefault": "DE MAN",
-      "predicate": "GEBETEN",
-      "lexItems": [
-        {
-          "id": "subject-hond",
-          "label": "DE HOND",
-          "source": "subject",
-          "slot": null,
-          "role": "subject",
-          "thematicRole": "agens",
-          "lexeme": "hond"
-        },
-        {
-          "id": "pv-heeft",
-          "label": "HEEFT",
-          "source": "pv",
-          "slot": null,
-          "role": "aux",
-          "thematicRole": null,
-          "lexeme": "heeft"
-        },
-        {
-          "id": "object-man",
-          "label": "DE MAN",
-          "source": "object",
-          "slot": null,
-          "role": "object",
-          "thematicRole": "patiens",
-          "lexeme": "man"
-        },
-        {
-          "id": "vdw-bijt",
-          "label": "GEBETEN",
-          "source": "vdw",
-          "slot": null,
-          "role": "participle",
-          "thematicRole": null,
-          "lexeme": "bijt"
-        }
-      ],
-      "lexInsertions": [
-        {
-          "id": "misschien-wel",
-          "text": "MISSCHIEN WEL",
-          "lemma": "misschien wel",
-          "construction": "misschien-wel",
-          "usageProfile": "mixed-modal-particle",
-          "origin": "LOG+LEX",
-          "originComponents": "misschien:LOG wel:LEX",
-          "analysisStatus": "ask",
-          "candidateProfiles": ["mixed-modal-particle", "group-modal-log", "group-lexical-particle"],
-          "ambiguityAffects": ["origin", "log-projection", "scope", "components"],
-          "host": "V-CLUSTER",
-          "defaultHost": "V-CLUSTER",
-          "category": "MODALITEIT",
-          "marking": "functional:default-host",
-          "scope": "propositie",
-          "linear": "post-object-pre-vcluster",
-          "order": 1,
-          "group": "modal-group"
-        },
-        {
-          "id": "vaak",
-          "text": "VAAK",
-          "lemma": "vaak",
-          "usageProfile": "frequency-event",
-          "origin": "LOG",
-          "analysisStatus": "resolved",
-          "host": "V-CLUSTER",
-          "defaultHost": "V-CLUSTER",
-          "category": "FREQUENTIE",
-          "marking": "functional:default-host",
-          "scope": "gebeurtenis",
-          "linear": "post-object-pre-vcluster",
-          "order": 2,
-          "group": "frequency-group"
-        }
-      ]
-    },
-    {
-      "id": "omdat-de-hond-de-man-misschien-wel-vaak-gebeten-heeft",
-      "title": "OMDAT DE HOND DE MAN MISSCHIEN WEL VAAK GEBETEN HEEFT",
-      "phase": "Meervoudige LEX-insertie · bijzin",
-      "lexRule": "bijzin-omdat",
-      "sentence": "OMDAT DE HOND DE MAN MISSCHIEN WEL VAAK GEBETEN HEEFT",
-      "sentenceHtml": "OMDAT <strong data-role=\"subject\" data-thematic-role=\"agens\">DE HOND</strong> <em data-role=\"object\" data-thematic-role=\"patiens\">DE MAN</em> MISSCHIEN WEL VAAK GEBETEN HEEFT",
-      "subjectDefault": "DE HOND",
-      "objectDefault": "DE MAN",
-      "predicate": "GEBETEN",
-      "lexItems": [
-        {
-          "id": "omdat",
-          "label": "OMDAT",
-          "source": null,
-          "slot": "comp",
-          "role": null,
-          "thematicRole": null,
-          "lexeme": "omdat"
-        },
-        {
-          "id": "subject-hond",
-          "label": "DE HOND",
-          "source": "subject",
-          "slot": null,
-          "role": "subject",
-          "thematicRole": "agens",
-          "lexeme": "hond"
-        },
-        {
-          "id": "object-man",
-          "label": "DE MAN",
-          "source": "object",
-          "slot": null,
-          "role": "object",
-          "thematicRole": "patiens",
-          "lexeme": "man"
-        },
-        {
-          "id": "vdw-bijt",
-          "label": "GEBETEN",
-          "source": "vdw",
-          "slot": null,
-          "role": "participle",
-          "thematicRole": null,
-          "lexeme": "bijt"
-        },
-        {
-          "id": "pv-heeft",
-          "label": "HEEFT",
-          "source": "pv",
-          "slot": null,
-          "role": "aux",
-          "thematicRole": null,
-          "lexeme": "heeft"
-        }
-      ],
-      "lexInsertions": [
-        {
-          "id": "misschien-wel",
-          "text": "MISSCHIEN WEL",
-          "lemma": "misschien wel",
-          "construction": "misschien-wel",
-          "usageProfile": "mixed-modal-particle",
-          "origin": "LOG+LEX",
-          "originComponents": "misschien:LOG wel:LEX",
-          "analysisStatus": "ask",
-          "candidateProfiles": ["mixed-modal-particle", "group-modal-log", "group-lexical-particle"],
-          "ambiguityAffects": ["origin", "log-projection", "scope", "components"],
-          "host": "V-CLUSTER",
-          "defaultHost": "V-CLUSTER",
-          "category": "MODALITEIT",
-          "marking": "functional:default-host",
-          "scope": "propositie",
-          "linear": "post-object-pre-vcluster",
-          "order": 1,
-          "group": "modal-group"
-        },
-        {
-          "id": "vaak",
-          "text": "VAAK",
-          "lemma": "vaak",
-          "usageProfile": "frequency-event",
-          "origin": "LOG",
-          "analysisStatus": "resolved",
-          "host": "V-CLUSTER",
-          "defaultHost": "V-CLUSTER",
-          "category": "FREQUENTIE",
-          "marking": "functional:default-host",
-          "scope": "gebeurtenis",
-          "linear": "post-object-pre-vcluster",
-          "order": 2,
-          "group": "frequency-group"
-        }
-      ]
-    },
-    {
-      "id": "jan-wast-zichzelf",
-      "title": "JAN WAST ZICHZELF",
-      "phase": "Uiting · reflexive",
-      "sentenceType": "main-declarative",
-      "lexRule": "hoofdzininvariant",
-      "sentence": "JAN WAST ZICHZELF",
-      "sentenceHtml": "JAN WAST ZICHZELF",
-      "subjectDefault": "JAN",
-      "objectDefault": "ZICHZELF",
-      "predicate": "WAST",
-      "utteranceType": "reflexive",
-      "utteranceKernels": [
-        {
-          "id": "k1",
-          "text": "Jan wast Jan.",
-          "predicate": "wassen",
-          "agens": "jan",
-          "patiens": "jan"
-        },
-        {
-          "id": "k2",
-          "text": "Jan wast zelf.",
-          "predicate": "wassen",
-          "agens": "jan",
-          "patiens": "zelf"
-        }
-      ],
-      "utteranceRelations": [
-        {
-          "type": "coreference",
-          "members": [
-            "k1.agens",
-            "k1.patiens",
-            "k2.agens"
-          ]
-        },
-        {
-          "type": "reflexive-realization",
-          "components": [
-            "zich",
-            "zelf"
-          ],
-          "surface": "zichzelf"
-        }
-      ],
-      "implicitSubject": "",
-      "lexItems": [
-        {
-          "id": "subject-jan-wast",
-          "label": "JAN",
-          "source": "subject",
-          "slot": null,
-          "role": "subject",
-          "thematicRole": "agens",
-          "lexeme": "jan"
-        },
-        {
-          "id": "pred-wast",
-          "label": "WAST",
-          "source": "predicate",
-          "slot": null,
-          "role": "predicate",
-          "thematicRole": null,
-          "lexeme": "wast"
-        },
-        {
-          "id": "object-zichzelf",
-          "label": "ZICHZELF",
-          "source": "object",
-          "slot": null,
-          "role": "object",
-          "thematicRole": "patiens",
-          "lexeme": "zichzelf"
-        }
-      ]
-    },
-    {
-      "id": "jan-slaat-jek-omdat-die-hem-beet",
-      "title": "JAN SLAAT JEK OMDAT DIE HEM BEET",
-      "phase": "Uiting · causal-role-flip",
-      "sentenceType": "main-declarative",
-      "lexRule": "hoofdzininvariant",
-      "sentence": "JAN SLAAT JEK OMDAT DIE HEM BEET",
-      "sentenceHtml": "JAN SLAAT JEK OMDAT DIE HEM BEET",
-      "subjectDefault": "JAN",
-      "objectDefault": "JEK",
-      "predicate": "SLAAT",
-      "utteranceType": "causal-role-flip",
-      "utteranceKernels": [
-        {
-          "id": "k1",
-          "text": "Jan slaat hond.",
-          "predicate": "slaan",
-          "agens": "jan",
-          "patiens": "jek"
-        },
-        {
-          "id": "k2",
-          "text": "Hond bijt man.",
-          "predicate": "bijten",
-          "agens": "jek",
-          "patiens": "jan"
-        }
-      ],
-      "utteranceRelations": [
-        {
-          "type": "cause",
-          "from": "k2",
-          "to": "k1",
-          "surface": "omdat"
-        },
-        {
-          "type": "coreference",
-          "members": [
-            "k1.agens",
-            "k2.patiens"
-          ],
-          "surface": [
-            "Jek",
-            "die"
-          ]
-        },
-        {
-          "type": "coreference",
-          "members": [
-            "k1.patiens",
-            "k2.agens"
-          ],
-          "surface": [
-            "Jan",
-            "hem"
-          ]
-        },
-        {
-          "type": "role-flip",
-          "participants": [
-            "jan",
-            "jek"
-          ]
-        }
-      ],
-      "implicitSubject": "",
-      "lexItems": [
-        {
-          "id": "subject-jan-slaat",
-          "label": "JAN",
-          "source": "subject",
-          "slot": null,
-          "role": "subject",
-          "thematicRole": "agens",
-          "lexeme": "jan"
-        },
-        {
-          "id": "pred-slaat",
-          "label": "SLAAT",
-          "source": "predicate",
-          "slot": null,
-          "role": "predicate",
-          "thematicRole": null,
-          "lexeme": "slaat"
-        },
-        {
-          "id": "object-jek",
-          "label": "JEK",
-          "source": "object",
-          "slot": null,
-          "role": "object",
-          "thematicRole": "patiens",
-          "lexeme": "jek"
-        },
-        {
-          "id": "causal-omdat",
-          "label": "OMDAT",
-          "source": null,
-          "slot": null,
-          "role": null,
-          "thematicRole": null,
-          "lexeme": "omdat"
-        },
-        {
-          "id": "anaphor-die",
-          "label": "DIE",
-          "source": null,
-          "slot": null,
-          "role": null,
-          "thematicRole": null,
-          "lexeme": "die"
-        },
-        {
-          "id": "anaphor-hem",
-          "label": "HEM",
-          "source": null,
-          "slot": null,
-          "role": null,
-          "thematicRole": null,
-          "lexeme": "hem"
-        },
-        {
-          "id": "subordinate-beet",
-          "label": "BEET",
-          "source": null,
-          "slot": null,
-          "role": null,
-          "thematicRole": null,
-          "lexeme": "bijt"
-        }
-      ]
-    },
-    {
-      "id": "ken-uzelf",
-      "title": "KEN UZELF",
-      "phase": "Uiting · imperative-reflexive",
-      "sentenceType": "main-declarative",
-      "lexRule": "hoofdzininvariant",
-      "sentence": "KEN UZELF",
-      "sentenceHtml": "KEN UZELF",
-      "subjectDefault": "U",
-      "objectDefault": "UZELF",
-      "predicate": "KEN",
-      "utteranceType": "imperative-reflexive",
-      "utteranceKernels": [
-        {
-          "id": "k1",
-          "text": "Ken zelf.",
-          "predicate": "kennen",
-          "agens": "u",
-          "patiens": "zelf"
-        },
-        {
-          "id": "k2",
-          "text": "Ken u.",
-          "predicate": "kennen",
-          "agens": "u",
-          "patiens": "u"
-        }
-      ],
-      "utteranceRelations": [
-        {
-          "type": "implicit-addressee",
-          "referent": "u",
-          "role": "agens"
-        },
-        {
-          "type": "coreference",
-          "members": [
-            "k2.agens",
-            "k2.patiens"
-          ]
-        },
-        {
-          "type": "reflexive-realization",
-          "components": [
-            "u",
-            "zelf"
-          ],
-          "surface": "uzelf"
-        },
-        {
-          "type": "mood",
-          "value": "imperative"
-        }
-      ],
-      "implicitSubject": "U",
-      "lexItems": [
-        {
-          "id": "pred-ken",
-          "label": "KEN",
-          "source": "predicate",
-          "slot": null,
-          "role": "predicate",
-          "thematicRole": null,
-          "lexeme": "ken"
-        },
-        {
-          "id": "object-uzelf",
-          "label": "UZELF",
-          "source": "object",
-          "slot": null,
-          "role": "object",
-          "thematicRole": "patiens",
-          "lexeme": "uzelf"
-        }
-      ]
+        "id": "de-hond-bijt-de-man-misschien-wel-vaak",
+        "title": "DE HOND BIJT DE MAN MISSCHIEN WEL VAAK",
+        "phase": "Meervoudige LEX-insertie",
+        "sentenceType": "main-declarative",
+        "lexRule": "hoofdzininvariant",
+        "sentence": "DE HOND BIJT DE MAN MISSCHIEN WEL VAAK",
+        "sentenceHtml": "<strong data-role=\"subject\" data-thematic-role=\"agens\">DE HOND</strong> BIJT <em data-role=\"object\" data-thematic-role=\"patiens\">DE MAN</em> MISSCHIEN WEL VAAK",
+        "subjectDefault": "DE HOND",
+        "objectDefault": "DE MAN",
+        "predicate": "BIJT",
+        "tenseFamily": "",
+        "defaultTense": "ott",
+        "utteranceType": "",
+        "utteranceKernels": [],
+        "utteranceRelations": [],
+        "implicitSubject": "",
+        "lexInsertions": [
+            {
+                "id": "misschien-wel",
+                "text": "MISSCHIEN WEL",
+                "host": "VP",
+                "defaultHost": "VP",
+                "category": "MODALITEIT",
+                "marking": "functional:default-host",
+                "scope": "propositie",
+                "linear": "post-object",
+                "logInterval": "",
+                "logAfter": "",
+                "logBefore": "",
+                "order": 1,
+                "group": "modal-group",
+                "lemma": "misschien wel",
+                "construction": "misschien-wel",
+                "usageProfile": "mixed-modal-particle",
+                "origin": "LOG+LEX",
+                "originComponents": "misschien:LOG wel:LEX",
+                "analysisStatus": "ask",
+                "candidateProfiles": [
+                    "mixed-modal-particle",
+                    "group-modal-log",
+                    "group-lexical-particle"
+                ],
+                "ambiguityAffects": [
+                    "origin",
+                    "log-projection",
+                    "scope",
+                    "components"
+                ]
+            },
+            {
+                "id": "vaak",
+                "text": "VAAK",
+                "host": "VP",
+                "defaultHost": "VP",
+                "category": "FREQUENTIE",
+                "marking": "functional:default-host",
+                "scope": "gebeurtenis",
+                "linear": "post-object",
+                "logInterval": "",
+                "logAfter": "",
+                "logBefore": "",
+                "order": 2,
+                "group": "frequency-group",
+                "lemma": "vaak",
+                "construction": "",
+                "usageProfile": "frequency-event",
+                "origin": "LOG",
+                "originComponents": "",
+                "analysisStatus": "resolved",
+                "candidateProfiles": [],
+                "ambiguityAffects": []
+            }
+        ],
+        "lexItems": [
+            {
+                "id": "subject-hond-adv",
+                "label": "DE HOND",
+                "source": "subject",
+                "slot": null,
+                "role": "subject",
+                "thematicRole": "agens",
+                "lexeme": "hond"
+            },
+            {
+                "id": "pred-bijt-adv",
+                "label": "BIJT",
+                "source": "predicate",
+                "slot": null,
+                "role": "predicate",
+                "thematicRole": null,
+                "lexeme": "bijten"
+            },
+            {
+                "id": "object-man-adv",
+                "label": "DE MAN",
+                "source": "object",
+                "slot": null,
+                "role": "object",
+                "thematicRole": "patiens",
+                "lexeme": "man"
+            }
+        ]
     }
-  ];
+];
   let PUBLIC_ALLOWED_ITEM_IDS = null;
   let PUBLIC_ITEM_NUMBERS = new Map();
+  let PUBLIC_ITEM_GROUPS = new Map();
 
   async function loadPublicTestmateriaalCatalog() {
     try {
       let document = null;
       const localHost = ['127.0.0.1', 'localhost'].includes(String(location.hostname || '').toLowerCase());
       const sources = localHost
-        ? ['/__opengraph_testmateriaal', '/__opengraph_testmateriaal_public', 'data/catalog.public.json']
+        ? ['/__opengraph_testmateriaal_public', 'data/catalog.public.json']
         : ['data/catalog.public.json'];
       for (const source of sources) {
         try {
@@ -1433,10 +1285,14 @@
       if (!document) throw new Error('Geen testmateriaalcatalogus beschikbaar');
       const items = Array.isArray(document?.items) ? document.items : [];
       PUBLIC_ITEM_NUMBERS = new Map();
+      PUBLIC_ITEM_GROUPS = new Map();
       items.forEach(item => {
         const sourceIds = Array.isArray(item.source_ids) && item.source_ids.length ? item.source_ids : [item.source_id];
         sourceIds.map(sourceId => String(sourceId || '').split(':').slice(1).join(':')).filter(Boolean)
-          .forEach(id => PUBLIC_ITEM_NUMBERS.set(id, Number(item.number)));
+          .forEach(id => {
+            PUBLIC_ITEM_NUMBERS.set(id, Number(item.number));
+            if (String(item.group_name || '').trim()) PUBLIC_ITEM_GROUPS.set(id, String(item.group_name).trim());
+          });
       });
       PUBLIC_ALLOWED_ITEM_IDS = new Set(items.flatMap(item => Array.isArray(item.source_ids) && item.source_ids.length ? item.source_ids : [item.source_id]).map(sourceId => String(sourceId || '').split(':').slice(1).join(':')).filter(Boolean));
       ALL_EXAMPLES = ALL_EXAMPLES.filter(example => PUBLIC_ALLOWED_ITEM_IDS.has(example.id));
@@ -1445,6 +1301,7 @@
       // Ontwikkelbestanden via file:// behouden de ingebouwde catalogus.
       PUBLIC_ALLOWED_ITEM_IDS = null;
       PUBLIC_ITEM_NUMBERS = new Map();
+      PUBLIC_ITEM_GROUPS = new Map();
     }
   }
 
@@ -1462,11 +1319,48 @@
     return number === null ? String(label || '') : `${number} · ${label}`;
   }
 
+  function testmateriaalGroup(id, fallback) {
+    return PUBLIC_ITEM_GROUPS.get(String(id || '')) || fallback;
+  }
+
   let ALL_EXAMPLES = EXAMPLES.slice();
   const DEFAULT_START_ITEM_ID = 'hond-bijt-man';
   const REWARD_ITEM_ID = 'jan-beloonde-jek-omdat-die-het-bot-terugbracht';
   const ITEM_ID_ALIASES = Object.freeze({
-    'story-jan-sloeg-jek-waarna-hij-ontweek': 'story-jan-sloeg-jek-waarna-hij-hem-ontweek'
+    'story-jan-sloeg-jek-waarna-hij-ontweek': 'story-jan-sloeg-jek-waarna-hij-hem-ontweek',
+    'hond-beet-man': 'hond-bijt-man',
+    'omdat-hond-man-beet': 'omdat-hond-man-bijt',
+    'vrouw-breide-trui': 'vrouw-breit-trui',
+    'omdat-vrouw-trui-breide': 'vrouw-breit-trui',
+    'omdat-vrouw-trui-breit': 'vrouw-breit-trui',
+    'hond-heeft-man-gebeten': 'hond-bijt-man',
+    'omdat-de-hond-de-man-heeft-gebeten': 'omdat-hond-man-bijt',
+    'omdat-vrouw-trui-heeft-gebreid': 'vrouw-breit-trui',
+    'de-hond-heeft-de-man-misschien-wel-vaak-gebeten': 'de-hond-bijt-de-man-misschien-wel-vaak',
+    'omdat-de-hond-de-man-misschien-wel-vaak-gebeten-heeft': 'de-hond-bijt-de-man-misschien-wel-vaak',
+    'jan-slaat-de-hond-omdat-die-hem-gebeten-heeft': 'jan-slaat-jek-omdat-die-hem-beet',
+    'man-slaat-hond-omdat-die-hem-heeft-gebeten': 'jan-slaat-jek-omdat-die-hem-beet'
+  });
+  const ITEM_PREDICATE_FORM_ALIASES = Object.freeze({
+    'hond-beet-man': { id: 'bijt:past', lexeme: 'bijt', label: 'BEET' },
+    'omdat-hond-man-beet': { id: 'bijt:past', lexeme: 'bijt', label: 'BEET' },
+    'vrouw-breide-trui': { id: 'breit:past', lexeme: 'breit', label: 'BREIDE' },
+    'omdat-vrouw-trui-breide': { id: 'breit:past', lexeme: 'breit', label: 'BREIDE' }
+  });
+  const ITEM_CAUSAL_VERB_ALIASES = Object.freeze({
+    'jan-slaat-de-hond-omdat-die-hem-gebeten-heeft': 'gebeten-heeft',
+    'man-slaat-hond-omdat-die-hem-heeft-gebeten': 'heeft-gebeten'
+  });
+  const ITEM_TENSE_ALIASES = Object.freeze({
+    'hond-beet-man': 'ovt',
+    'omdat-hond-man-beet': 'ovt',
+    'vrouw-breide-trui': 'ovt',
+    'omdat-vrouw-trui-breide': 'ovt',
+    'hond-heeft-man-gebeten': 'vtt',
+    'omdat-de-hond-de-man-heeft-gebeten': 'vtt',
+    'omdat-vrouw-trui-heeft-gebreid': 'vtt',
+    'jan-slaat-de-hond-omdat-die-hem-gebeten-heeft': 'vtt',
+    'man-slaat-hond-omdat-die-hem-heeft-gebeten': 'vtt'
   });
 
   const SENTENCE_TYPES = Object.freeze([
@@ -1583,8 +1477,8 @@
   ];
 
   const LEX_AXIS_SIDE_OPTIONS = [
-    { id: 'west', label: 'West', labelEn: 'West' },
-    { id: 'east', label: 'Oost · standaard', labelEn: 'East · default' },
+    { id: 'west', label: 'West · standaard', labelEn: 'West · default' },
+    { id: 'east', label: 'Oost', labelEn: 'East' },
     { id: 'north', label: 'Noord', labelEn: 'North' },
     { id: 'south', label: 'Zuid', labelEn: 'South' }
   ];
@@ -1642,8 +1536,8 @@
   }
 
   function validLexAxisSide(value) {
-    const side = String(value || 'east').toLowerCase();
-    return LEX_AXIS_SIDE_OPTIONS.some(option => option.id === side) ? side : 'east';
+    const side = String(value || 'west').toLowerCase();
+    return LEX_AXIS_SIDE_OPTIONS.some(option => option.id === side) ? side : 'west';
   }
 
   function validMobileMenuMode(value) {
@@ -1665,7 +1559,7 @@
   function initialLexAxisSide() {
     try {
       return validLexAxisSide(localStorage.getItem('opengraph_lex_axis_side'));
-    } catch (_err) { return 'east'; }
+    } catch (_err) { return 'west'; }
   }
 
   function validLexLabelTurnDegrees(value) {
@@ -1723,14 +1617,24 @@
     return { degrees, density, kernelCount, longestItem, labelCount };
   }
 
-  function enforceEastStartupDefault() {
+  function enforceHorizontalLexStartupSide() {
+    // Iedere nieuwe paginalaad begint op LEX–West. Een tijdens de sessie
+    // gekozen Oost/Noord/Zuid-stand blijft bruikbaar, maar wordt nooit als
+    // volgende startstand hersteld. Dit geldt lokaal en op GitHub Pages.
+    const side = 'west';
+    state.mobileBasicSavedLexAxisSide = null;
+    state.lexAxisSide = side;
     try {
-      const migrationKey = 'opengraph_lex_axis_default_east_rc9';
-      if (localStorage.getItem(migrationKey) === '1') return;
-      state.lexAxisSide = 'east';
-      localStorage.setItem('opengraph_lex_axis_side', 'east');
-      localStorage.setItem(migrationKey, '1');
-    } catch (_err) { state.lexAxisSide = 'east'; }
+      localStorage.setItem('opengraph_lex_axis_side', side);
+      const rawSnapshot = localStorage.getItem(CONFIG_STORAGE_KEY);
+      if (rawSnapshot) {
+        const snapshot = JSON.parse(rawSnapshot);
+        if (snapshot && typeof snapshot === 'object' && snapshot.lexAxisSide !== side) {
+          snapshot.lexAxisSide = side;
+          localStorage.setItem(CONFIG_STORAGE_KEY, JSON.stringify(snapshot));
+        }
+      }
+    } catch (_err) {}
   }
 
   function validTestmateriaalListCount(value, fallback = 1) {
@@ -1748,7 +1652,7 @@
     const side = validLexAxisSide(value);
     if (mobileBasicMenuActive()) {
       state.mobileBasicSavedLexAxisSide = side;
-      state.lexAxisSide = 'east';
+      state.lexAxisSide = 'west';
     } else {
       state.mobileBasicSavedLexAxisSide = null;
       state.lexAxisSide = side;
@@ -2753,6 +2657,7 @@
     multiOgnFlipHold: (function(){ try { return localStorage.getItem('opengraph_multi_ogn_flip_hold') || 'pause'; } catch (_err) { return 'pause'; } })(),
     causalAnaphorVariant: (function(){ try { return localStorage.getItem('opengraph_causal_anaphor_variant') || 'die'; } catch (_err) { return 'die'; } })(),
     causalVerbVariant: (function(){ try { return localStorage.getItem('opengraph_causal_verb_variant') || ''; } catch (_err) { return ''; } })(),
+    tenseByFamily: (function(){ try { const value=JSON.parse(localStorage.getItem('opengraph_tense_by_family') || '{}'); return value && typeof value==='object' ? value : {}; } catch (_err) { return {}; } })(),
     botVariant: (function(){ try { return localStorage.getItem('opengraph_bot_variant') || 'het-bot'; } catch (_err) { return 'het-bot'; } })(),
     projectionLineWeight: (function(){ try { return localStorage.getItem('opengraph_projection_line_weight') || 'normal'; } catch (_err) { return 'normal'; } })(),
     boxLineWeight: (function(){ try { return localStorage.getItem('opengraph_box_line_weight') || 'normal'; } catch (_err) { return 'normal'; } })(),
@@ -2777,6 +2682,9 @@
     layoutDensity: 'max',
     viewFitMode: 'max',
     selectedNodeId: null,
+    selectedLexicalRole: '',
+    lexicalRoleChoices: {},
+    languageTreeVclusterFlipped: false,
     showGrid: true,
     showRelations: true,
     showLabels: true,
@@ -3237,23 +3145,157 @@
 
   function roleLabels() {
     const ex = state.example || EXAMPLES[0];
-    const subject = ex.subjectDefault || 'HOND';
-    const object = ex.objectDefault || 'MAN';
+    const defaultSubject = ex.subjectDefault || 'HOND';
+    const defaultObject = ex.objectDefault || 'MAN';
+    const subjectChoice = state.lexicalRoleChoices?.subject || null;
+    const objectChoice = state.lexicalRoleChoices?.object || null;
+    const predicateChoice = state.lexicalRoleChoices?.predicate || null;
+    const subject = subjectChoice?.label || defaultSubject;
+    const object = objectChoice?.label || defaultObject;
+    const subjectLexeme = subjectChoice?.id || String(defaultSubject).toLowerCase();
+    const objectLexeme = objectChoice?.id || String(defaultObject).toLowerCase();
     return {
       subject: state.roleSwap ? object : subject,
       object: state.roleSwap ? subject : object,
-      predicate: predicateLabelForAdverbContext(ex)
+      subjectLexeme: state.roleSwap ? objectLexeme : subjectLexeme,
+      objectLexeme: state.roleSwap ? subjectLexeme : objectLexeme,
+      predicate: predicateChoice?.label || predicateLabelForAdverbContext(ex),
+      predicateLexeme: predicateChoice?.lexeme || tokenLexemeId((ex.lexItems || []).find(item => item.role === 'predicate' || item.source === 'predicate'))
     };
   }
 
-  function activeLexItems() {
+  function baseActiveLexItems() {
     const roles = roleLabels();
-    return (state.example.lexItems || []).map(item => {
-      if (item.role === 'subject' || item.source === 'subject') return { ...item, label: roles.subject };
-      if (item.role === 'object' || item.source === 'object') return { ...item, label: roles.object };
-      if (item.role === 'predicate') return { ...item, label: roles.predicate };
+    const items = (state.example.lexItems || []).map(item => {
+      if (item.role === 'subject' || item.source === 'subject') return { ...item, label: roles.subject, lexeme: roles.subjectLexeme };
+      if (item.role === 'object' || item.source === 'object') return { ...item, label: roles.object, lexeme: roles.objectLexeme };
+      if (item.role === 'predicate') return { ...item, label: roles.predicate, lexeme: roles.predicateLexeme };
       return { ...item };
     });
+    return applyTenseToSimpleLexItems(items);
+  }
+
+  function activeTenseFamilyId() {
+    if (multiOgnAnaphorActive()) {
+      const definition = activeUtteranceDefinition();
+      if (!definition?.inputTense || definition.type === 'imperative-reflexive') return '';
+      return `uiting:${definition.id}`;
+    }
+    return String(state.example?.tenseFamily || '');
+  }
+
+  function tenseIdFromUtteranceVariant(value) {
+    const id = String(value || '');
+    if (/^(bijt|terugbrengt|apporteert)$/.test(id)) return 'ott';
+    if (/^(beet|terugbracht|apporteerde)$/.test(id)) return 'ovt';
+    if (/^(heeft-|.*-heeft$)/.test(id)) return 'vtt';
+    if (/^(had-|.*-had$)/.test(id)) return 'vvt';
+    return '';
+  }
+
+  function activeTenseId() {
+    const family = activeTenseFamilyId();
+    if (!family) return '';
+    const selected = state.tenseByFamily[family];
+    if (TENSE_IDS.has(selected)) return selected;
+    if (multiOgnAnaphorActive()) return activeUtteranceDefinition()?.inputTense || 'ott';
+    return TENSE_IDS.has(state.example?.defaultTense) ? state.example.defaultTense : 'ott';
+  }
+
+  function applyTenseToSimpleLexItems(items) {
+    const family = String(state.example?.tenseFamily || '');
+    const forms = TENSE_FAMILIES[family];
+    const tense = activeTenseId();
+    const form = forms?.[tense];
+    if (!form) return items;
+    const predicateIndex = items.findIndex(item => item.source === 'predicate' || item.role === 'predicate');
+    if (predicateIndex < 0) return items;
+    const predicate = items[predicateIndex];
+    if (form.finite) {
+      items[predicateIndex] = { ...predicate, id: `pred-${family}-${tense}`, label: form.finite, source: 'predicate', role: 'predicate', lexeme: family };
+      return items;
+    }
+    const aux = { ...predicate, id: `pv-${family}-${tense}`, label: form.aux, source: 'pv', role: 'aux', lexeme: form.aux.toLowerCase() };
+    const participle = { ...predicate, id: `vdw-${family}`, label: form.participle, source: 'vdw', role: 'participle', lexeme: family };
+    items.splice(predicateIndex, 1);
+    if (subordinateVclusterInput()) {
+      items.push(aux, participle);
+    } else {
+      items.splice(predicateIndex, 0, aux);
+      items.push(participle);
+    }
+    return items;
+  }
+
+  function vclusterLeafSourcesFromSyntax(node) {
+    if (!node) return [];
+    const label = String(node.label || node.cat || '').trim().toUpperCase();
+    if (label === 'V-CLUSTER' || label === 'VCLUSTER') {
+      const sources = [];
+      const collect = child => {
+        if (child?.source) sources.push(String(child.source));
+        (child?.children || []).forEach(collect);
+      };
+      (node.children || []).forEach(collect);
+      return sources.filter(source => source === 'pv' || source === 'vdw');
+    }
+    for (const child of node.children || []) {
+      const sources = vclusterLeafSourcesFromSyntax(child);
+      if (sources.length) return sources;
+    }
+    return [];
+  }
+
+  function activeLexItems() {
+    const items = baseActiveLexItems();
+    if (!state.languageTreeVclusterFlipped) return items;
+    // LEX is derived from the syntactic tree. The action flips the two
+    // V-CLUSTER daughters in surfaceSyntaxSpec(); only then is their lexical
+    // order projected back onto the existing surface positions.
+    const daughterSources = vclusterLeafSourcesFromSyntax(surfaceSyntaxSpec());
+    if (daughterSources.length !== 2) return items;
+    const memberIndexes = items
+      .map((item, index) => ({ item, index }))
+      .filter(({ item }) => daughterSources.includes(String(item.source || '')))
+      .map(({ index }) => index);
+    const bySource = new Map(items.map(item => [String(item.source || ''), item]));
+    if (memberIndexes.length === 2 && daughterSources.every(source => bySource.has(source))) {
+      memberIndexes.forEach((index, memberIndex) => { items[index] = bySource.get(daughterSources[memberIndex]); });
+    }
+    return items;
+  }
+
+  function subordinateVclusterInput() {
+    const example = state.example || {};
+    const type = sentenceTypeForExample(example);
+    const rule = String(example.lexRule || '').toLowerCase();
+    return String(type).startsWith('subordinate-')
+      || rule.includes('bijzin')
+      || (example.lexItems || []).some(item => String(item.slot || '').toLowerCase() === 'comp');
+  }
+
+  function languageTreeVclusterActive() {
+    if (!subordinateVclusterInput()) return false;
+    const items = baseActiveLexItems();
+    return items.some(item => item.source === 'pv' || item.role === 'aux')
+      && items.some(item => item.source === 'vdw' || item.role === 'participle');
+  }
+
+  function flipLanguageTreeVcluster() {
+    if (!languageTreeVclusterActive()) return false;
+    state.languageTreeVclusterFlipped = !state.languageTreeVclusterFlipped;
+    state.selectedNodeId = null;
+    state.documentMetadata = null;
+    resetManualViewBox();
+    render();
+    if (els.actionFeedback) {
+      const cluster = activeLexItems()
+        .filter(item => item.source === 'pv' || item.source === 'vdw' || item.role === 'aux' || item.role === 'participle')
+        .map(item => item.label).join(' ');
+      els.actionFeedback.textContent = `V-CLUSTER: ${cluster}`;
+      els.actionFeedback.className = 'action-feedback success';
+    }
+    return true;
   }
 
   function exampleLexInsertionsActive(ex = state.example) {
@@ -3284,23 +3326,48 @@
   }
 
   const SIMPLE_LEXICON_POLICY = {
-    trui: { roles: ['object'], themes: ['patiens'], animacy: 'inanimate' },
-    vrouw: { roles: ['subject'], themes: ['agens'], animacy: 'animate' },
-    hond: { roles: ['subject', 'object'], themes: ['agens', 'patiens'] },
-    man: { roles: ['subject', 'object'], themes: ['agens', 'patiens'] },
-    jan: { roles: ['subject', 'object'], themes: ['agens', 'patiens'] },
-    jek: { roles: ['subject', 'object'], themes: ['agens', 'patiens'] },
+    trui: { surface: 'TRUI', roles: ['object'], themes: ['patiens'], animacy: 'inanimate', entityClass: 'object', lexicalClass: 'zelfstandig naamwoord' },
+    muziek: { surface: 'DE MUZIEK', roles: ['subject'], themes: ['stimulus'], animacy: 'inanimate', entityClass: 'phenomenon', lexicalClass: 'zelfstandig naamwoord' },
+    vrouw: { surface: 'VROUW', roles: ['subject', 'object'], themes: ['agens', 'patiens'], animacy: 'animate', entityClass: 'human', lexicalClass: 'persoon' },
+    man: { surface: 'MAN', roles: ['subject', 'object'], themes: ['agens', 'patiens'], animacy: 'animate', entityClass: 'human', lexicalClass: 'persoon' },
+    meisje: { surface: 'MEISJE', roles: ['subject', 'object'], themes: ['agens', 'patiens'], animacy: 'animate', entityClass: 'human', lexicalClass: 'persoon' },
+    jongen: { surface: 'JONGEN', roles: ['subject', 'object'], themes: ['agens', 'patiens'], animacy: 'animate', entityClass: 'human', lexicalClass: 'persoon' },
+    jan: { surface: 'JAN', roles: ['subject', 'object'], themes: ['agens', 'patiens'], animacy: 'animate', entityClass: 'human', lexicalClass: 'persoonsnaam' },
+    anna: { surface: 'ANNA', roles: ['subject', 'object'], themes: ['agens', 'patiens', 'experiencer'], animacy: 'animate', entityClass: 'human', lexicalClass: 'persoonsnaam' },
+    marie: { surface: 'MARIE', roles: ['subject', 'object'], themes: ['agens', 'patiens'], animacy: 'animate', entityClass: 'human', lexicalClass: 'persoonsnaam' },
+    piet: { surface: 'PIET', roles: ['subject', 'object'], themes: ['agens', 'patiens'], animacy: 'animate', entityClass: 'human', lexicalClass: 'persoonsnaam' },
+    hond: { surface: 'HOND', roles: ['subject', 'object'], themes: ['agens', 'patiens'], animacy: 'animate', entityClass: 'animal', lexicalClass: 'dier' },
+    kat: { surface: 'KAT', roles: ['subject', 'object'], themes: ['agens', 'patiens'], animacy: 'animate', entityClass: 'animal', lexicalClass: 'dier' },
+    jek: { surface: 'JEK', roles: ['subject', 'object'], themes: ['agens', 'patiens'], animacy: 'animate', entityClass: 'animal', lexicalClass: 'hondennaam' },
     zichzelf: { roles: ['object'], themes: ['patiens'] },
     uzelf: { roles: ['object'], themes: ['patiens'] }
   };
 
   const SIMPLE_VERB_FRAMES = {
-    breit: { subjects: ['vrouw'], objects: ['trui'], requiresAnimateSubject: true, imperfectum: 'BREIDE', participle: 'GEBREID' },
-    bijt: { subjects: ['hond', 'kat', 'man', 'vrouw', 'jan', 'jek'], objects: ['man', 'hond', 'kat', 'vrouw', 'jan', 'jek'], imperfectum: 'BEET', participle: 'GEBETEN' },
-    wast: { subjects: ['jan', 'man', 'vrouw'], objects: ['jan', 'zichzelf', 'man', 'vrouw'], imperfectum: 'WASTE', participle: 'GEWASSEN' },
-    slaat: { subjects: ['jan', 'jek', 'man', 'vrouw'], objects: ['jan', 'jek', 'man', 'vrouw'], imperfectum: 'SLOEG', participle: 'GESLAGEN' },
-    ken: { subjects: ['u', 'jan', 'man', 'vrouw'], objects: ['u', 'uzelf', 'jan', 'man', 'vrouw'], imperfectum: 'KENDE', participle: 'GEKEND' }
+    breit: { present: 'BREIT', subjects: ['vrouw', 'man', 'meisje', 'jongen', 'jan', 'anna', 'marie', 'piet'], objects: ['trui'], requiresAnimateSubject: true, requiredSubjectClass: 'human', imperfectum: 'BREIDE', participle: 'GEBREID' },
+    bijt: { present: 'BIJT', subjects: ['hond', 'kat', 'man', 'vrouw', 'jan', 'jek'], objects: ['man', 'hond', 'kat', 'vrouw', 'jan', 'jek'], imperfectum: 'BEET', participle: 'GEBETEN' },
+    wast: { present: 'WAST', subjects: ['jan', 'man', 'vrouw'], objects: ['jan', 'zichzelf', 'man', 'vrouw'], imperfectum: 'WASTE', participle: 'GEWASSEN' },
+    slaat: { present: 'SLAAT', subjects: ['jan', 'jek', 'man', 'vrouw'], objects: ['jan', 'jek', 'man', 'vrouw'], imperfectum: 'SLOEG', participle: 'GESLAGEN' },
+    ken: { present: 'KEN', subjects: ['u', 'jan', 'man', 'vrouw'], objects: ['u', 'uzelf', 'jan', 'man', 'vrouw'], imperfectum: 'KENDE', participle: 'GEKEND' },
+    ontroert: { present: 'ONTROERT', subjects: ['muziek'], objects: ['anna'], imperfectum: 'ONTROERDE', participle: 'ONTROERD' },
+    valt: { present: 'VALT', subjects: ['hond', 'kat', 'man', 'vrouw', 'jan', 'jek'], objects: [], imperfectum: 'VIEL', participle: 'GEVALLEN' }
   };
+
+  // Tijdsvormen bewaren de infinitieffamilie op het actieve LEX-item. Het
+  // lexicale selectiekader gebruikt historische sleutels op basis van de
+  // OTT-vorm. Houd die twee identiteiten expliciet gekoppeld, zodat een
+  // tijdswissel de klikbaarheid van subject/object niet kan uitschakelen.
+  const TENSE_FAMILY_FRAME_IDS = Object.freeze({
+    bijten: 'bijt',
+    breien: 'breit',
+    vallen: 'valt',
+    ontroeren: 'ontroert'
+  });
+
+  function verbFrameForLexemeId(lexemeId) {
+    const id = String(lexemeId || '').toLowerCase();
+    return SIMPLE_VERB_FRAMES[id] || SIMPLE_VERB_FRAMES[TENSE_FAMILY_FRAME_IDS[id]] || null;
+  }
 
   function tokenLexemeId(item) {
     return String(item?.lexeme || item?.label || '').toLowerCase();
@@ -3319,11 +3386,13 @@
     const subjPolicy = SIMPLE_LEXICON_POLICY[subjId];
     const objPolicy = SIMPLE_LEXICON_POLICY[objId];
     const frame = SIMPLE_VERB_FRAMES[verbId];
-    if (subjPolicy && !subjPolicy.themes.includes('agens')) {
-      reasons.push(`${subject.label}: kan niet als agens/subject; ${subject.label} is ${subjPolicy.themes.join('/')}.`);
+    const requiredSubjectTheme = String(subject?.thematicRole || 'agens').toLowerCase();
+    const requiredObjectTheme = String(object?.thematicRole || 'patiens').toLowerCase();
+    if (subjPolicy && !subjPolicy.themes.includes(requiredSubjectTheme)) {
+      reasons.push(`${subject.label}: kan niet als ${requiredSubjectTheme}/subject; ${subject.label} is ${subjPolicy.themes.join('/')}.`);
     }
-    if (objPolicy && !objPolicy.themes.includes('patiens')) {
-      reasons.push(`${object.label}: kan niet als patiens/object; ${object.label} is ${objPolicy.themes.join('/')}.`);
+    if (objPolicy && !objPolicy.themes.includes(requiredObjectTheme)) {
+      reasons.push(`${object.label}: kan niet als ${requiredObjectTheme}/object; ${object.label} is ${objPolicy.themes.join('/')}.`);
     }
     if (frame) {
       if (frame.requiresAnimateSubject && subjPolicy?.animacy !== 'animate') {
@@ -3473,6 +3542,8 @@
           subjectDefault: subject.toUpperCase(),
           objectDefault: object.toUpperCase(),
           predicate: (card.dataset.predicate || 'BIJT').toUpperCase(),
+          tenseFamily: String(card.dataset.tenseFamily || '').trim().toLowerCase(),
+          defaultTense: TENSE_IDS.has(String(card.dataset.defaultTense || '').trim().toLowerCase()) ? String(card.dataset.defaultTense).trim().toLowerCase() : 'ott',
           utteranceType: card.dataset.utteranceType || '',
           utteranceKernels: parseUtteranceMetadata(card.dataset.utteranceKernels),
           utteranceRelations: parseUtteranceMetadata(card.dataset.utteranceRelations),
@@ -3732,9 +3803,9 @@
     return `{${source}}`;
   }
 
-  function activeSurfaceSourceItems() {
+  function activeSurfaceSourceItems(items = baseActiveLexItems()) {
     const seen = new Set();
-    return activeLexItems().filter(item => {
+    return items.filter(item => {
       if (!item.source) return false;
       const source = String(item.source);
       if (seen.has(source)) return false;
@@ -3751,7 +3822,7 @@
     // ja/nee-vragen gebruiken dezelfde basis met V1-Wissel. Dat- en omdat-
     // zinnen schrijven Comp rechtstreeks en gebruiken geen V2. Perfectum is
     // een werkwoordsvorm met eindcluster, geen afzonderlijke zinsoort.
-    const items = activeSurfaceSourceItems();
+    const items = activeSurfaceSourceItems(baseActiveLexItems());
     const bySource = new Map(items.map(item => [String(item.source || ''), item]));
     const makeLeaf = (source, fallbackCat, fallbackRole) => {
       const item = bySource.get(source);
@@ -3784,9 +3855,14 @@
 
     let vpChildren = [];
     if (hasPv || hasVdw) {
-      const clusterChildren = [];
-      if (hasVdw) clusterChildren.push(participle);
-      if (hasPv) clusterChildren.push(aux);
+      const clusterPhraseBySource = new Map([['pv', aux], ['vdw', participle]]);
+      // The unflipped syntax reconstructs the V-cluster order found in the
+      // input. LEX is subsequently derived from this subtree. A flip reverses
+      // the daughters here, never in an independent surface-word list.
+      const clusterChildren = items
+        .map(item => clusterPhraseBySource.get(String(item.source || '')))
+        .filter(Boolean);
+      if (state.languageTreeVclusterFlipped) clusterChildren.reverse();
       const cluster = { id: 'vp-perfectum', label: 'V-CLUSTER', cat: 'VP', kind: 'cat', children: clusterChildren.length ? clusterChildren : [aux] };
       if (hasObject) vpChildren.push(object);
       vpChildren.push(cluster);
@@ -3810,8 +3886,77 @@
     return nodeConfigToTree(STRUCTURE_CONFIG.syntaxNodes, STRUCTURE_CONFIG.syntaxRoot);
   }
 
+  function activeFunctionalRoleProfile() {
+    const items = baseActiveLexItems();
+    const subject = items.find(item => item.source === 'subject' || item.role === 'subject');
+    const object = items.find(item => item.source === 'object' || item.role === 'object');
+    return {
+      subject: String(subject?.thematicRole || 'agens').trim().toLowerCase(),
+      object: object ? String(object.thematicRole || 'patiens').trim().toLowerCase() : '',
+      hasObject: Boolean(object)
+    };
+  }
+
+  function functionalRoleDisplayLabel(role) {
+    return ({ agens: 'AGENS', patiens: 'PATIENS', stimulus: 'STIMULUS', experiencer: 'EXPERIENCER' })[String(role || '').toLowerCase()]
+      || String(role || 'ROL').toUpperCase();
+  }
+
+  function functionalPredicateRealization(labels, items = baseActiveLexItems(), orderedSources = vclusterLeafSourcesFromSyntax(surfaceSyntaxSpec())) {
+    const bySource = new Map(activeSurfaceSourceItems(items).map(item => [String(item.source || ''), item]));
+    const clusterSources = (orderedSources || []).filter(source => source === 'pv' || source === 'vdw');
+    if (clusterSources.length === 2 && clusterSources.every(source => bySource.has(source))) {
+      return {
+        id: 'f-vcluster', label: 'V-CLUSTER', cat: 'VP', kind: 'cat', role: 'predicate-realization',
+        children: clusterSources.map(source => {
+          const item = bySource.get(source);
+          return {
+            id: `f-${source}`,
+            label: item?.label || sourceLabelFallback(source),
+            cat: source === 'pv' ? 'AUX' : 'VDW',
+            kind: 'leaf',
+            // The participle realizes PRED; the auxiliary is a separate
+            // functional element of that same verbal realization.
+            role: source === 'vdw' ? 'predicate' : 'aux',
+            source,
+            children: []
+          };
+        })
+      };
+    }
+    return { id: 'f-root', label: labels.predicate, cat: 'V', kind: 'leaf', role: 'predicate', source: 'predicate', children: [] };
+  }
+
   function functionalSpec() {
-    return nodeConfigToTree(STRUCTURE_CONFIG.functionalNodes, STRUCTURE_CONFIG.functionalRoot);
+    const profile = activeFunctionalRoleProfile();
+    const hasVcluster = vclusterLeafSourcesFromSyntax(surfaceSyntaxSpec()).length === 2;
+    if (!hasVcluster && profile.hasObject && profile.subject === 'agens' && profile.object === 'patiens') {
+      return nodeConfigToTree(STRUCTURE_CONFIG.functionalNodes, STRUCTURE_CONFIG.functionalRoot);
+    }
+    const labels = roleLabels();
+    const argumentsChildren = [
+      { id: 'ft-arg1', label: functionalRoleDisplayLabel(profile.subject), cat: 'ROLE', kind: 'role', role: profile.subject, children: [
+        { id: 'f-subj-np', label: 'NP', cat: 'NP', kind: 'cat', role: `${profile.subject}-np`, children: [
+          { id: 'f-subj', label: labels.subject, cat: 'N', kind: 'leaf', role: 'subject', source: 'subject', children: [] }
+        ] }
+      ] }
+    ];
+    if (profile.hasObject) argumentsChildren.push(
+      { id: 'ft-arg2', label: functionalRoleDisplayLabel(profile.object), cat: 'ROLE', kind: 'role', role: profile.object, children: [
+        { id: 'f-obj-np', label: 'NP', cat: 'NP', kind: 'cat', role: `${profile.object}-np`, children: [
+          { id: 'f-obj', label: labels.object, cat: 'N', kind: 'leaf', role: 'object', source: 'object', children: [] }
+        ] }
+      ] }
+    );
+    return {
+      id: 'ft-clause', label: 'CLAUSE', cat: 'CLAUSE', kind: 'role-root', role: 'top',
+      children: [
+        { id: 'ft-pred', label: 'PRED', cat: 'PRED', kind: 'role', role: 'pred', children: [
+          functionalPredicateRealization(labels)
+        ] },
+        { id: 'ft-argstruct', label: 'ARG-STRUCT', cat: 'ARG-STRUCT', kind: 'role', role: 'args', children: argumentsChildren }
+      ]
+    };
   }
 
   function cloneTree(node) {
@@ -4149,8 +4294,8 @@
     // area, so align-mode does not produce needlessly large drawings.
     const subj = nodeByRoleOrPattern(layout, ['subject'], ['subject', 'subj'], { leaf: true });
     const obj = nodeByRoleOrPattern(layout, ['object'], ['object', 'obj'], { leaf: true });
-    const subjParent = nodeByRoleOrPattern(layout, ['np-subj', 'agens', 'arg1'], ['np-subj', 'f-subj-np', 'arg1', 'agens'], { leaf: false });
-    const objParent = nodeByRoleOrPattern(layout, ['np-obj', 'patiens', 'patient', 'arg2'], ['np-obj', 'f-obj-np', 'arg2', 'patiens', 'patient'], { leaf: false });
+    const subjParent = nodeByRoleOrPattern(layout, ['np-subj', 'agens', 'stimulus', 'arg1'], ['np-subj', 'f-subj-np', 'arg1', 'agens', 'stimulus'], { leaf: false });
+    const objParent = nodeByRoleOrPattern(layout, ['np-obj', 'patiens', 'patient', 'experiencer', 'arg2'], ['np-obj', 'f-obj-np', 'arg2', 'patiens', 'patient', 'experiencer'], { leaf: false });
     const alignPenalty = distX(subj, subjParent) + distX(obj, objParent);
     return alignPenalty * 10000 + scoreCompact(layout);
   }
@@ -5098,7 +5243,11 @@
   function multiOgnAnaphorComposition() {
     const engine = globalThis.OGNMultiComposition;
     const utterance = activeUtteranceDefinition();
-    if (utterance) return globalThis.OGNUtteranceKernels.composeUtterance(utterance.id, engine, state.causalAnaphorVariant, state.causalVerbVariant, state.botVariant);
+    if (utterance) {
+      const family = activeTenseFamilyId();
+      const synchronizedTense = TENSE_IDS.has(state.tenseByFamily[family]) ? state.tenseByFamily[family] : '';
+      return globalThis.OGNUtteranceKernels.composeUtterance(utterance.id, engine, state.causalAnaphorVariant, state.causalVerbVariant, state.botVariant, synchronizedTense);
+    }
     if (!engine?.composePair) throw new Error('Multi-OGN-compositie-engine ontbreekt.');
     const demo = activeMultiOgnDemo();
     const [s1, s2] = demo.sentences;
@@ -5288,7 +5437,12 @@
           return 99;
         });
       }
-      if (label === 'vp' || id.includes('vp')) {
+      // Only the phrase-level VP follows the selected S/O/V ordering. A
+      // V-CLUSTER is an ordered syntactic subtree of its own: its daughter
+      // order reconstructs the input, or is deliberately reversed by the
+      // V-cluster flip. Re-sorting `vp-perfectum` here used to undo that flip
+      // immediately before layout.
+      if (label === 'vp' && id !== 'vp-perfectum') {
         node.children = sortChildrenByRanks(node.children, child => {
           const cid = String(child.id || '').toLowerCase();
           const cl = String(child.label || child.cat || '').toLowerCase();
@@ -5327,8 +5481,8 @@
         node.children = sortChildrenByRanks(node.children, child => {
           const cid = String(child.id || '').toLowerCase();
           const cl = String(child.label || child.cat || '').toLowerCase();
-          const isSubj = cid.includes('agens') || cl === 'agens';
-          const isObj = cid.includes('patiens') || cl === 'patiens';
+          const isSubj = cid.includes('agens') || cid.includes('stimulus') || cl === 'agens' || cl === 'stimulus';
+          const isObj = cid.includes('patiens') || cid.includes('experiencer') || cl === 'patiens' || cl === 'experiencer';
           if (isSubj) return rank.get('S') ?? 0;
           if (isObj) return rank.get('O') ?? 1;
           return 99;
@@ -5449,8 +5603,8 @@
     const labels = roleLabels();
     const findNode = (which) => {
       if (projectionKind === 'functional') {
-        if (which === 'S') return nodeByRoleOrPattern(layout, ['agens', 'subject'], ['agens', 'ft-agens'], { leaf: false }) || nodeByRoleOrPattern(layout, ['agens', 'subject'], ['agens', 'ft-agens']);
-        if (which === 'O') return nodeByRoleOrPattern(layout, ['patiens', 'object'], ['patiens', 'ft-patiens'], { leaf: false }) || nodeByRoleOrPattern(layout, ['patiens', 'object'], ['patiens', 'ft-patiens']);
+        if (which === 'S') return nodeByRoleOrPattern(layout, ['agens', 'stimulus', 'subject'], ['agens', 'stimulus', 'ft-agens', 'ft-arg1'], { leaf: false }) || nodeByRoleOrPattern(layout, ['agens', 'stimulus', 'subject'], ['agens', 'stimulus', 'ft-agens', 'ft-arg1']);
+        if (which === 'O') return nodeByRoleOrPattern(layout, ['patiens', 'experiencer', 'object'], ['patiens', 'experiencer', 'ft-patiens', 'ft-arg2'], { leaf: false }) || nodeByRoleOrPattern(layout, ['patiens', 'experiencer', 'object'], ['patiens', 'experiencer', 'ft-patiens', 'ft-arg2']);
         return nodeByRoleOrPattern(layout, ['pred', 'predicate'], ['pred', 'ft-pred', 'clause'], { leaf: false }) || nodeByRoleOrPattern(layout, ['pred', 'predicate'], ['pred', 'ft-pred', 'clause']);
       }
       if (which === 'S') return nodeByRoleOrPattern(layout, ['subject'], ['np-subj', 'subject'], { leaf: false }) || nodeByRoleOrPattern(layout, ['subject'], ['np-subj', 'subject']);
@@ -5491,8 +5645,9 @@
   }
 
   function activateCanonicalItem(value, { updateUrl = false } = {}) {
-    if (!publicItemAllowed(value)) return false;
+    const requestedId = String(value || '').trim();
     const id = canonicalItemId(value);
+    if (!publicItemAllowed(id)) return false;
     const definition = globalThis.OGNUtteranceKernels?.definitionFor?.(id, state.causalAnaphorVariant, state.causalVerbVariant, state.botVariant);
     const anaphorCombination = activeAnaphorCombinationDefinition(id);
     const builtInMultiOgnDemo = id === MULTI_OGN_ANAPHOR_DEMO.id;
@@ -5509,6 +5664,22 @@
     }
     state.documentMetadata = null;
     resetForNewExample();
+    const predicateForm = ITEM_PREDICATE_FORM_ALIASES[requestedId];
+    if (predicateForm) state.lexicalRoleChoices.predicate = { ...predicateForm };
+    const causalVerb = ITEM_CAUSAL_VERB_ALIASES[requestedId];
+    const family = id === 'jan-slaat-jek-omdat-die-hem-beet' ? 'bijten' : (id === REWARD_ITEM_ID ? 'terugbrengen' : state.example?.tenseFamily || '');
+    const requestedTense = ITEM_TENSE_ALIASES[requestedId];
+    if (requestedTense && family) state.tenseByFamily[family] = requestedTense;
+    if (causalVerb) state.causalVerbVariant = causalVerb;
+    else if (family === 'bijten' && TENSE_IDS.has(state.tenseByFamily[family])) {
+      state.causalVerbVariant = ({ ott: 'bijt', ovt: 'beet', vtt: 'heeft-gebeten', vvt: 'had-gebeten' })[state.tenseByFamily[family]];
+    } else if (family === 'terugbrengen' && TENSE_IDS.has(state.tenseByFamily[family])) {
+      state.causalVerbVariant = ({ ott: 'terugbrengt', ovt: 'terugbracht', vtt: 'heeft-teruggebracht', vvt: 'had-teruggebracht' })[state.tenseByFamily[family]];
+    } else if (definition?.verbVariant) state.causalVerbVariant = definition.verbVariant;
+    if (family && !TENSE_IDS.has(state.tenseByFamily[family])) {
+      state.tenseByFamily[family] = tenseIdFromUtteranceVariant(state.causalVerbVariant) || state.example?.defaultTense || 'ott';
+    }
+    try { localStorage.setItem('opengraph_tense_by_family', JSON.stringify(state.tenseByFamily)); } catch (_err) {}
     if (updateUrl) syncCanonicalItemUrl();
     return true;
   }
@@ -5598,9 +5769,9 @@
 
   function syncMobileMenuProfile() {
     const basic = mobileBasicMenuActive();
-    if (basic && state.lexAxisSide !== 'east') {
+    if (basic && state.lexAxisSide !== 'west') {
       state.mobileBasicSavedLexAxisSide = validLexAxisSide(state.lexAxisSide);
-      state.lexAxisSide = 'east';
+      state.lexAxisSide = 'west';
       resetManualViewBox();
     } else if (!basic && state.mobileBasicSavedLexAxisSide) {
       state.lexAxisSide = validLexAxisSide(state.mobileBasicSavedLexAxisSide);
@@ -7176,7 +7347,30 @@
   }
 
   function makeSelectable(group, node, selectable) {
-    if (selectable) group.addEventListener('click', () => selectNode(node.id));
+    if (selectable) {
+      const vcluster = categoryLabelForNode(node) === 'V-CLUSTER' && languageTreeVclusterActive();
+      if (vcluster) {
+        group.classList.add('utterance-configurable-node');
+        group.setAttribute('data-node-config', 'language-tree-vcluster-flip');
+        group.setAttribute('data-action', 'language-tree-vcluster-flip');
+        group.setAttribute('role', 'button');
+        group.setAttribute('tabindex', '0');
+        group.setAttribute('aria-label', isEnglish()
+          ? 'Flip the two members of V-CLUSTER'
+          : 'Verwissel de twee leden van V-CLUSTER');
+        group.addEventListener('click', event => {
+          event.preventDefault();
+          event.stopPropagation();
+          flipLanguageTreeVcluster();
+        });
+        group.addEventListener('keydown', event => {
+          if (event.key !== 'Enter' && event.key !== ' ') return;
+          event.preventDefault();
+          event.stopPropagation();
+          flipLanguageTreeVcluster();
+        });
+      } else group.addEventListener('click', () => selectNode(node.id));
+    }
     return group;
   }
 
@@ -7335,7 +7529,7 @@
       } catch (_err) {}
     };
     g.addEventListener('pointerdown', event => {
-      if (!event.target?.closest?.('[data-node-id]') || event.button !== 0) return;
+      if (!event.target?.closest?.('[data-node-id]') || event.target?.closest?.('[data-action]') || event.button !== 0) return;
       event.preventDefault(); event.stopPropagation();
       const global = Boolean(event.ctrlKey || event.metaKey);
       const start = { pointerId: event.pointerId, global, clientX: event.clientX, clientY: event.clientY,
@@ -8284,6 +8478,14 @@
         drawLexWissel(g, x, projectionY, y, movementLabel, movementLane, axisSide);
       }
 
+      const lexicalChoiceRole = item.source === 'subject' || item.role === 'subject'
+        ? 'subject'
+        : (item.source === 'object' || item.role === 'object' || item.role === 'patiens'
+          ? 'object'
+          : (item.source === 'predicate' && item.role === 'predicate' ? 'predicate' : ''));
+      const choiceAttributes = lexicalChoiceRole && lexicalCandidatesForRole(lexicalChoiceRole).length > 1
+        ? { 'data-action': 'lexical-role-choice', 'data-lexical-role': lexicalChoiceRole, tabindex: 0, role: 'button' }
+        : {};
       if (!item.source && item.slot === 'comp') {
         g.appendChild(svgEl('rect', { x: x - 86, y: y - 28, width: 172, height: 56, rx: 16, class: 'lex-free-slot comp-slot' }));
         g.appendChild(svgEl('text', { x, y: y - 34, class: 'slot-caption' }, 'slot 0 · Comp/(om)dat'));
@@ -8291,13 +8493,13 @@
         g.appendChild(svgEl('rect', { x: x - 66, y: y - 26, width: 132, height: 52, rx: 14, class: 'lex-local-slot' }));
       } else {
         const cls = visiblyMoved ? 'lex-slot-box lex-projection-slot moved-slot' : 'lex-slot-box lex-projection-slot';
-        g.appendChild(svgEl('rect', { x: x - 62, y: y - 28, width: 124, height: 56, rx: 14, class: cls }));
+        g.appendChild(svgEl('rect', { x: x - 62, y: y - 28, width: 124, height: 56, rx: 14, class: cls, ...choiceAttributes }));
       }
       const hasPendingLogicalMove = !!logicalPlacementMovementForItem(item, i, items) && !logicalMovement;
       const staysAtSourceHeight = horizontalProjectionMode && item.source && !movementForItem(item, i, items);
       const slotLabel = (hasPendingLogicalMove || staysAtSourceHeight) ? 'H' : lexSlotIndex(item, i, items, explicitMovement);
       g.appendChild(svgEl('text', { x: x - 76, y: y + 5, class: 'lex-index' }, slotLabel));
-      g.appendChild(svgEl('text', { x, y: y + 5, class: item.source ? 'lex-label' : 'lex-local-label' }, item.label));
+      g.appendChild(svgEl('text', { x, y: y + 5, class: item.source ? 'lex-label' : 'lex-local-label', ...choiceAttributes }, item.label));
     });
 
     return positions;
@@ -8308,7 +8510,7 @@
   }
 
   function functionalRules() {
-    return stringRulesForSpec(nodeConfigToTree(STRUCTURE_CONFIG.functionalNodes, STRUCTURE_CONFIG.functionalRoot), 'functional');
+    return stringRulesForSpec(functionalSpec(), 'functional');
   }
 
   function ruleDisplayLabel(node, mode = 'syntax') {
@@ -8450,8 +8652,8 @@
     const resolvedOrder = Array.isArray(order) && order.length ? order : ((state.branchOrder === 'flip-all' || state.functionalOrder === 'right-first') ? ['V', 'S', 'O'] : ['S', 'O', 'V']);
     const sequence = activeLogicalSlotSequence(resolvedOrder);
     const roleMatches = {
-      S: ['agens', 'subject'],
-      O: ['patiens', 'object'],
+      S: ['agens', 'stimulus', 'subject'],
+      O: ['patiens', 'experiencer', 'object'],
       V: ['pred', 'predicate']
     };
     return sequence.map(item => {
@@ -8705,12 +8907,9 @@
   function drawFunctional(g, origin, options = {}) {
     const sourceLayout = options.layout ? cloneLayout(options.layout) : getFunctionalLayout();
     const layout = options.spaceDrag === false ? sourceLayout : spaceScaledLayout(sourceLayout, state.sentenceSpaceLocal, state.kernelSpaceGlobal);
-    const rootLabel = layout.node?.label || STRUCTURE_CONFIG.functionalRoot || 'CLAUSE';
-    const functionalNodes = STRUCTURE_CONFIG.functionalNodes || [];
-    const rootDef = functionalNodes.find(n => n.id === STRUCTURE_CONFIG.functionalRoot);
-    const roleNames = (rootDef?.children || [])
-      .map(id => functionalNodes.find(n => n.id === id)?.label || id)
-      .join(' + ') || 'role-boxen';
+    const activeSpec = functionalSpec();
+    const rootLabel = layout.node?.label || activeSpec.label || 'CLAUSE';
+    const roleNames = (activeSpec.children || []).map(node => node.label || node.id).join(' + ') || 'role-boxen';
     if (options.showTitle !== false) drawAxisTitle(g, origin.x - 180, origin.y - 70, `Functional · functionele structuur · ${rootLabel} → ${roleNames} · ${state.functionalOrder}`);
     drawAxisTitle(g, origin.x - 176, origin.y - 48, featureEnabled('adverbs')
       ? `v4547 · ${branchModeLabel()} · vrije plaatsing + LEX-bijwoordslots`
@@ -8747,12 +8946,12 @@
     const centralKind = state.centerMode === 'ft' ? 'functional' : 'syntax';
     if (state.centerMode === 'ft') {
       centralLayout = drawCentral
-        ? drawFunctional(g, origin, { showTitle: false, layout: getSouthAwareFunctionalLayout() })
+        ? drawFunctional(g, origin, { showTitle: false, layout: getSouthAwareFunctionalLayout(), selectable: true })
         : getSouthAwareFunctionalLayout();
       sourceMap = layoutNodeMap(centralLayout, origin);
     } else {
       centralLayout = drawCentral
-        ? drawSyntaxTree(g, origin, { layout: getSouthAwareSyntaxLayout() })
+        ? drawSyntaxTree(g, origin, { layout: getSouthAwareSyntaxLayout(), selectable: true })
         : getSouthAwareSyntaxLayout();
       sourceMap = layoutNodeMap(centralLayout, origin);
     }
@@ -10658,6 +10857,20 @@
             ? 'Click or press Enter: change the referring subject'
             : 'Klik of druk op Enter: wijzig het verwijzende subject'));
         });
+        const vClusterNode = unit.layout.nodes.find(node => node.label === 'V-CLUSTER');
+        if (vClusterNode) unitGroup.querySelectorAll(`[data-node-id="${vClusterNode.id}"]`).forEach(element => {
+          element.classList.add('utterance-configurable-node');
+          element.setAttribute('data-node-config', 'causal-vcluster-flip');
+          element.setAttribute('data-action', 'utterance-vcluster-flip');
+          element.setAttribute('role', 'button');
+          element.setAttribute('tabindex', '0');
+          element.setAttribute('aria-label', isEnglish()
+            ? 'Flip the two daughters of V-CLUSTER'
+            : 'Verwissel de twee dochters van V-CLUSTER');
+          element.appendChild(svgEl('title', {}, isEnglish()
+            ? 'Click or press Enter: HEEFT GEBETEN ↔ GEBETEN HEEFT'
+            : 'Klik of druk op Enter: HEEFT GEBETEN ↔ GEBETEN HEEFT'));
+        });
       }
       unit.layout.nodes.filter(node => node.implicit).forEach(node => {
         unitGroup.querySelectorAll(`[data-node-id="${node.id}"]`).forEach(element => {
@@ -10988,6 +11201,112 @@
     });
   }
 
+  function lexicalRoleForNode(node) {
+    if (!node || node.kind !== 'leaf') return '';
+    const source = String(node.source || '').toLowerCase();
+    const role = String(node.role || '').toLowerCase();
+    if (source === 'subject' || role === 'subject' || role === 'agens') return 'subject';
+    if (source === 'object' || role === 'object' || role === 'patiens') return 'object';
+    if ((source === 'predicate' || role === 'predicate') && activeLexItems().some(item => item.role === 'predicate')) return 'predicate';
+    return '';
+  }
+
+  function activeVerbFrame() {
+    const predicate = activeLexItems().find(item => item.role === 'predicate' || item.role === 'participle'
+      || item.source === 'predicate' || item.source === 'pv' || item.source === 'vdw');
+    return verbFrameForLexemeId(tokenLexemeId(predicate));
+  }
+
+  function lexicalCandidatesForRole(role) {
+    const frame = activeVerbFrame();
+    if (role === 'predicate') {
+      const predicate = (state.example?.lexItems || []).find(item => item.role === 'predicate' && item.source === 'predicate');
+      const lexeme = tokenLexemeId(predicate);
+      if (!frame || !lexeme || !frame.present || !frame.imperfectum) return [];
+      return [
+        { id: `${lexeme}:present`, lexeme, surface: frame.present, lexicalClass: isEnglish() ? 'present tense' : 'tegenwoordige tijd' },
+        { id: `${lexeme}:past`, lexeme, surface: frame.imperfectum, lexicalClass: isEnglish() ? 'past tense' : 'verleden tijd' }
+      ];
+    }
+    const ids = role === 'subject' ? frame?.subjects : frame?.objects;
+    if (!Array.isArray(ids)) return [];
+    const exampleItem = (state.example?.lexItems || []).find(item => item.role === role || item.source === role);
+    const requiredTheme = String(exampleItem?.thematicRole || (role === 'subject' ? 'agens' : 'patiens')).toLowerCase();
+    return ids.map(id => ({ id, ...(SIMPLE_LEXICON_POLICY[id] || {}) }))
+      .filter(candidate => candidate.surface
+        && candidate.roles?.includes(role)
+        && candidate.themes?.includes(requiredTheme)
+        && (!frame.requiredSubjectClass || role !== 'subject' || candidate.entityClass === frame.requiredSubjectClass));
+  }
+
+  function openLexicalRoleChoice(role) {
+    if (!['subject', 'object', 'predicate'].includes(role) || lexicalCandidatesForRole(role).length < 2) return;
+    state.selectedLexicalRole = role;
+    renderLexicalChoicePrompt();
+  }
+
+  function closeLexicalRoleChoice() {
+    state.selectedLexicalRole = '';
+    renderLexicalChoicePrompt();
+  }
+
+  function chooseLexicalRoleItem(role, candidate) {
+    state.lexicalRoleChoices[role] = { id: candidate.id, label: candidate.surface, lexeme: candidate.lexeme || candidate.id };
+    state.selectedLexicalRole = '';
+    state.selectedNodeId = null;
+    recordParadata('choose-lexical-role-item', {
+      example: state.example?.id,
+      role,
+      lexeme: candidate.id,
+      entity_class: candidate.entityClass
+    });
+    resetManualViewBox();
+    render();
+  }
+
+  function renderLexicalChoicePrompt() {
+    const panel = els.lexicalChoicePanel;
+    if (!panel || !els.lexicalChoiceOptions) return;
+    const role = state.selectedLexicalRole;
+    const candidates = lexicalCandidatesForRole(role);
+    if (!languageTreeActive() || candidates.length < 2) {
+      panel.classList.add('hidden');
+      panel.setAttribute('aria-hidden', 'true');
+      return;
+    }
+    const frame = activeVerbFrame();
+    const isBreienAgent = role === 'subject' && frame === SIMPLE_VERB_FRAMES.breit;
+    const isPredicateForm = role === 'predicate';
+    panel.classList.remove('hidden');
+    panel.setAttribute('aria-hidden', 'false');
+    els.lexicalChoiceHeading.textContent = isEnglish()
+      ? (isBreienAgent ? 'Choose a human agent of KNIT' : (isPredicateForm ? 'Choose the verb form' : `Choose ${role}`))
+      : (isBreienAgent ? 'Kies een menselijke agens van BREIEN' : (isPredicateForm ? 'Kies de werkwoordsvorm' : role === 'object' ? 'Kies een patiens' : 'Kies een subject'));
+    els.lexicalChoiceText.textContent = isEnglish()
+      ? 'Equivalent lexical items replace the selected word in the tree, sentence and projections.'
+      : 'Gelijkwaardige lexicale items vervangen het gekozen woord tegelijk in boom, zin en projecties.';
+    els.lexicalChoiceHelp.textContent = isBreienAgent
+      ? (isEnglish() ? 'JEK is excluded: Jek is a dog, not a human agent.' : 'JEK is uitgesloten: Jek is een hond, geen menselijke agens.')
+      : (isPredicateForm
+        ? (isEnglish() ? 'Present and past tense share this structural test case.' : 'Tegenwoordige en verleden tijd delen deze structurele testcase.')
+        : (isEnglish() ? 'Only candidates licensed by the active verb frame are shown.' : 'Alleen kandidaten uit het actieve werkwoordframe worden getoond.'));
+    const currentLabel = roleLabels()[role === 'predicate' ? 'predicate' : role];
+    els.lexicalChoiceOptions.replaceChildren();
+    candidates.forEach(candidate => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      const isSelected = candidate.surface === currentLabel;
+      button.className = isSelected ? 'is-selected' : '';
+      button.textContent = candidate.surface;
+      const tag = document.createElement('span');
+      tag.textContent = candidate.lexicalClass || candidate.entityClass || '';
+      button.appendChild(tag);
+      button.setAttribute('aria-pressed', String(isSelected));
+      button.addEventListener('click', () => chooseLexicalRoleItem(role, candidate));
+      els.lexicalChoiceOptions.appendChild(button);
+    });
+  }
+
   function lexOrientationTransform(side, cx, cy, horizontalStretch = 1, crossScale = 1) {
     if (side === 'south') return `matrix(0 ${-crossScale} ${horizontalStretch} 0 ${cx - horizontalStretch * cy} ${cy + crossScale * cx})`;
     if (side === 'north') return `matrix(0 ${crossScale} ${horizontalStretch} 0 ${cx - horizontalStretch * cy} ${cy - crossScale * cx})`;
@@ -11301,6 +11620,7 @@
       applyLanguage();
       syncPlacementModeUi();
       renderLexAmbiguityPrompt();
+      renderLexicalChoicePrompt();
     } catch (err) {
       console.error('OpenGraph render failed', err);
       try {
@@ -11346,7 +11666,8 @@
     }
     if (els.mainActiveUtteranceText) {
       const inputSource = multiOgnAnaphorActive() ? activeMultiOgnDemo() : state.example;
-      els.mainActiveUtteranceText.textContent = numberedTestmateriaalLabel(inputSource?.id, analysisEnvelope(inputSource).originalInput);
+      const inputText = multiOgnAnaphorActive() ? analysisEnvelope(inputSource).originalInput : activeSentenceText();
+      els.mainActiveUtteranceText.textContent = numberedTestmateriaalLabel(inputSource?.id, inputText);
     }
     if (els.mainCausalAnaphorLabel) els.mainCausalAnaphorLabel.textContent = isEnglish() ? 'Anaphor' : 'Anafoor';
     if (els.mainCausalAnaphorChoice) {
@@ -11354,7 +11675,8 @@
         || activeUtteranceDefinition()?.type !== 'causal-role-flip';
     }
     const activeDefinition = activeUtteranceDefinition();
-    if (els.mainCausalVerbChoice) els.mainCausalVerbChoice.hidden = !activeDefinition?.verbVariant;
+    if (els.mainCausalVerbChoice) els.mainCausalVerbChoice.hidden = true;
+    if (els.mainTenseChoice) els.mainTenseChoice.hidden = !activeTenseFamilyId();
     if (els.mainBotChoice) els.mainBotChoice.hidden = !activeDefinition?.botVariant;
     if (els.mainActiveUtterance) els.mainActiveUtterance.hidden = directPlacementActive();
     if (multiOgnAnaphorActive()) {
@@ -11792,7 +12114,7 @@
       id: definition.id,
       title: definition.originalInput || definition.title,
       label: definition.originalInput || definition.title,
-      group: incomplete ? 'Uiting · onaf' : story ? 'Uiting · story' : 'Uiting · af',
+      group: testmateriaalGroup(definition.id, incomplete ? 'Uiting · onaf' : story ? 'Uiting · story' : 'Uiting · af'),
       groupEn: incomplete ? 'Utterance · incomplete' : story ? 'Utterance · story' : 'Utterance · complete',
       tags, tagsEn
     };
@@ -11806,14 +12128,14 @@
     if (exampleRequiresAdverbs(example)) { tags.push('LEX-insertie'); tagsEn.push('LEX insertion'); }
     return {
       ...example,
-      group: complex ? 'Zin · complex' : 'Zin · simplex',
+      group: testmateriaalGroup(example.id, complex ? 'Zin · complex' : 'Zin · simplex'),
       groupEn: complex ? 'Sentence · complex' : 'Sentence · simplex',
       tags, tagsEn
     };
   }
 
   function closeMainChoiceMenus(except = null) {
-    [els.mainSentenceMenu, els.mainAdverbMenu, els.languageTreeViewPicker, els.mainViewMenu, els.sourceAxisMenu, els.mainExtraMenu, els.mainLanguageMenu, els.mainActionsMenu].forEach(menu => {
+    [els.mainSentenceMenu, els.mainAdverbMenu, els.mainTenseChoice, els.languageTreeViewPicker, els.mainViewMenu, els.sourceAxisMenu, els.mainExtraMenu, els.mainLanguageMenu, els.mainActionsMenu].forEach(menu => {
       if (menu && menu !== except) menu.open = false;
     });
   }
@@ -12162,6 +12484,18 @@
       : globalThis.OGNUtteranceKernels?.CAUSAL_VERB_VARIANTS;
     const verbVariants = (verbSource || []).map(item => ({ id: item.id, label: item.text, labelEn: item.text }));
     fillSelect(els.mainCausalVerbSelect, verbVariants, activeDefinition?.verbVariant || state.causalVerbVariant);
+    fillSelect(els.mainTenseSelect, TENSE_OPTIONS, activeTenseId());
+    const activeTense = activeTenseId();
+    document.querySelectorAll('[data-main-tense-choice]').forEach(button => {
+      const selected = button.getAttribute('data-main-tense-choice') === activeTense;
+      button.classList.toggle('active', selected);
+      button.setAttribute('aria-pressed', String(selected));
+    });
+    if (els.mainTenseName) {
+      const option = TENSE_OPTIONS.find(item => item.id === activeTense);
+      els.mainTenseName.textContent = option ? (isEnglish() ? option.labelEn : option.label).replace(/^\S+\s+—\s+/, '') : '';
+    }
+    if (els.mainTenseSummary) els.mainTenseSummary.textContent = activeTense ? `Tijd · ${activeTense.toUpperCase()}` : 'Tijd';
     const botVariants = (globalThis.OGNUtteranceKernels?.BOT_VARIANTS || []).map(item => ({ id: item.id, label: item.text, labelEn: item.text }));
     fillSelect(els.mainBotSelect, botVariants, state.botVariant);
     fillSelect(els.projectionLineWeightSelect, LINE_WEIGHT_OPTIONS, validLineWeight(state.projectionLineWeight));
@@ -12306,6 +12640,10 @@
 
   function selectNode(id) {
     state.selectedNodeId = id;
+    const layout = state.centerMode === 'ft' ? getFunctionalLayout() : getSyntaxLayout();
+    const node = layout.nodes.find(candidate => candidate.id === id);
+    const lexicalRole = lexicalRoleForNode(node);
+    if (lexicalRole) openLexicalRoleChoice(lexicalRole);
     renderSelection();
     render();
   }
@@ -12912,6 +13250,8 @@
       subject_default: ex.subjectDefault || null,
       object_default: ex.objectDefault || null,
       predicate: roleLabels().predicate,
+      tense_family: ex.tenseFamily || null,
+      tense: activeTenseId() || null,
       sentence_type: sentenceTypeForExample(ex),
       lex_rule: ex.lexRule || null,
       input_analysis: {
@@ -13332,6 +13672,8 @@
       subjectDefault: exampleData.subject_default || lexItems.find(item => item.role === 'subject' || item.source === 'subject')?.label || 'HOND',
       objectDefault: exampleData.object_default || lexItems.find(item => item.role === 'object' || item.source === 'object')?.label || 'MAN',
       predicate: exampleData.predicate || lexItems.find(item => item.role === 'predicate' || item.source === 'predicate')?.label || 'BIJT',
+      tenseFamily: String(exampleData.tense_family || '').trim().toLowerCase(),
+      defaultTense: TENSE_IDS.has(String(exampleData.tense || '').trim().toLowerCase()) ? String(exampleData.tense).trim().toLowerCase() : 'ott',
       utteranceType: exampleData.utterance_type || '',
       utteranceKernels: Array.isArray(exampleData.utterance_kernels) ? exampleData.utterance_kernels.map(item => ({ ...item })) : [],
       utteranceRelations: Array.isArray(exampleData.utterance_relations) ? exampleData.utterance_relations.map(item => ({ ...item })) : [],
@@ -13925,6 +14267,18 @@
           toggleSouthLogicalFlip();
           return;
         }
+        if (action === 'lexical-role-choice') {
+          event.preventDefault();
+          event.stopPropagation();
+          openLexicalRoleChoice(actionEl.getAttribute('data-lexical-role'));
+          return;
+        }
+        if (action === 'language-tree-vcluster-flip') {
+          event.preventDefault();
+          event.stopPropagation();
+          flipLanguageTreeVcluster();
+          return;
+        }
       }
       if (!state.viewClickSuppressed) return;
       event.preventDefault();
@@ -13972,6 +14326,9 @@
     state.lastSupportedGrowthStep = 0;
     state.roleSwap = false;
     state.selectedNodeId = null;
+    state.selectedLexicalRole = '';
+    state.lexicalRoleChoices = {};
+    state.languageTreeVclusterFlipped = false;
     // Lokale ruimte hoort bij de actieve zin/uiting en reist niet mee naar
     // het volgende voorbeeld. Globale ruimte is wel een browservoorkeur.
     state.kernelSpaceComponentX = 1;
@@ -14450,7 +14807,7 @@
     primaryViewGrid.setAttribute('aria-label', 'Language Tree-beeldinstellingen');
     const lexAxisSideLabel = document.createElement('label');
     lexAxisSideLabel.className = 'select-field lex-axis-side-select-field';
-    lexAxisSideLabel.innerHTML = `<span><span class="help-lang-nl">LEX-zijde</span><span class="help-lang-en">LEX side</span></span><select id="lexAxisSideSelect"></select><small class="config-item-help"><span class="help-lang-nl">Oost is de startdefault. West/Oost lezen boven→beneden; Noord/Zuid lezen links→rechts. Naar voren betekent omhoog of naar links.</span><span class="help-lang-en">East is the startup default. West/East read top-to-bottom; North/South read left-to-right. Forward means upward or leftward.</span></small>`;
+    lexAxisSideLabel.innerHTML = `<span><span class="help-lang-nl">LEX-zijde</span><span class="help-lang-en">LEX side</span></span><select id="lexAxisSideSelect"></select><small class="config-item-help"><span class="help-lang-nl">West is de vaste startstand. West/Oost lezen boven→beneden; Noord/Zuid lezen links→rechts. Naar voren betekent omhoog of naar links.</span><span class="help-lang-en">West is the fixed startup side. West/East read top-to-bottom; North/South read left-to-right. Forward means upward or leftward.</span></small>`;
     fillSelect(lexAxisSideLabel.querySelector('select'), LEX_AXIS_SIDE_OPTIONS, validLexAxisSide(state.lexAxisSide));
     lexAxisSideLabel.querySelector('select').addEventListener('change', event => setLexAxisSide(event.target.value));
     const orientationCard = document.createElement('section');
@@ -14460,8 +14817,8 @@
       <div class="config-section-heading"><div><span class="config-section-kicker">Algemeen</span><h2><span class="help-lang-nl">Presentatie en leesrichting</span><span class="help-lang-en">Presentation and reading direction</span></h2></div><span class="config-section-number">1</span></div>
       <p class="inline-help"><span class="help-lang-nl">Algemeen voor alle berekende views, waaronder Language Tree, Uiting en Anafoor · multi-OGN. Niet van toepassing op Greedy Grow en Random. De uiting blijft natuurlijk lezen; tekst blijft rechtop.</span><span class="help-lang-en">General for all calculated views, including Language Tree, Utterance and Anaphor · multi-OGN. Not applicable to Greedy Grow and Random. Reading stays natural and text remains upright.</span></p>
       <div class="lex-axis-choice-grid" role="group" aria-label="LEX-zijde kiezen">
-        <button type="button" data-lex-axis-side-choice="west"><strong>West</strong><small>↓</small></button>
-        <button type="button" data-lex-axis-side-choice="east"><strong><span class="help-lang-nl">Oost</span><span class="help-lang-en">East</span></strong><small>↓ · default</small></button>
+        <button type="button" data-lex-axis-side-choice="west"><strong>West</strong><small>↓ · default</small></button>
+        <button type="button" data-lex-axis-side-choice="east"><strong><span class="help-lang-nl">Oost</span><span class="help-lang-en">East</span></strong><small>↓</small></button>
         <button type="button" data-lex-axis-side-choice="north"><strong><span class="help-lang-nl">Noord</span><span class="help-lang-en">North</span></strong><small>→</small></button>
         <button type="button" data-lex-axis-side-choice="south"><strong><span class="help-lang-nl">Zuid</span><span class="help-lang-en">South</span></strong><small>→</small></button>
       </div>`;
@@ -17008,6 +17365,29 @@
   }
 
   function registerEvents() {
+    const flipActiveVcluster = () => {
+      const current = String(activeUtteranceDefinition()?.verbVariant || state.causalVerbVariant || '');
+      const next = ({
+        'heeft-gebeten': 'gebeten-heeft', 'gebeten-heeft': 'heeft-gebeten',
+        'had-gebeten': 'gebeten-had', 'gebeten-had': 'had-gebeten',
+        'heeft-teruggebracht': 'teruggebracht-heeft', 'teruggebracht-heeft': 'heeft-teruggebracht',
+        'had-teruggebracht': 'teruggebracht-had', 'teruggebracht-had': 'had-teruggebracht',
+        'heeft-geapporteerd': 'geapporteerd-heeft', 'geapporteerd-heeft': 'heeft-geapporteerd'
+      })[current];
+      if (!next) return false;
+      state.causalVerbVariant = next;
+      try { localStorage.setItem('opengraph_causal_verb_variant', state.causalVerbVariant); } catch (_err) {}
+      state.documentMetadata = null;
+      resetManualViewBox();
+      syncCanonicalItemUrl();
+      render();
+      if (els.actionFeedback) {
+        const shown = String(activeUtteranceDefinition()?.verbVariant || next).replaceAll('-', ' ').toUpperCase();
+        els.actionFeedback.textContent = `${isEnglish() ? 'V-cluster' : 'V-cluster'}: ${shown}`;
+        els.actionFeedback.className = 'action-feedback success';
+      }
+      return true;
+    };
     const updateCausalAnaphorVariant = event => {
       state.causalAnaphorVariant = globalThis.OGNUtteranceKernels?.validCausalAnaphorVariant?.(event.target.value) || 'die';
       try { localStorage.setItem('opengraph_causal_anaphor_variant', state.causalAnaphorVariant); } catch (_err) {}
@@ -17024,6 +17404,33 @@
       state.causalVerbVariant = event.target.value;
       try { localStorage.setItem('opengraph_causal_verb_variant', state.causalVerbVariant); } catch (_err) {}
       state.documentMetadata = null; resetManualViewBox(); syncCanonicalItemUrl(); render();
+    });
+    const updateActiveTense = value => {
+      const family = activeTenseFamilyId();
+      const tense = TENSE_IDS.has(value) ? value : 'ott';
+      if (!family) return;
+      state.tenseByFamily[family] = tense;
+      try { localStorage.setItem('opengraph_tense_by_family', JSON.stringify(state.tenseByFamily)); } catch (_err) {}
+      if (multiOgnAnaphorActive()) {
+        const activeId = activeUtteranceDefinition()?.id || '';
+        const variants = activeId === 'jan-beloonde-jek-omdat-die-het-bot-terugbracht'
+          ? { ott: 'terugbrengt', ovt: 'terugbracht', vtt: 'heeft-teruggebracht', vvt: 'had-teruggebracht' }
+          : { ott: 'bijt', ovt: 'beet', vtt: 'heeft-gebeten', vvt: 'had-gebeten' };
+        if (activeId === 'jan-slaat-jek-omdat-die-hem-beet' || activeId === 'jan-beloonde-jek-omdat-die-het-bot-terugbracht') {
+          state.causalVerbVariant = variants[tense];
+          try { localStorage.setItem('opengraph_causal_verb_variant', state.causalVerbVariant); } catch (_err) {}
+        }
+        syncCanonicalItemUrl();
+      }
+      state.languageTreeVclusterFlipped = false;
+      state.documentMetadata = null;
+      resetManualViewBox();
+      if (els.mainTenseChoice) els.mainTenseChoice.open = false;
+      render();
+    };
+    els.mainTenseSelect?.addEventListener('change', event => updateActiveTense(event.target.value));
+    document.querySelectorAll('[data-main-tense-choice]').forEach(button => {
+      button.addEventListener('click', () => updateActiveTense(button.getAttribute('data-main-tense-choice')));
     });
     els.mainBotSelect?.addEventListener('change', event => {
       state.botVariant = event.target.value;
@@ -17043,6 +17450,16 @@
     };
     els.svg?.addEventListener('click', activateConfigurableNode);
     els.svg?.addEventListener('keydown', activateConfigurableNode);
+    const activateVclusterFlip = event => {
+      const target = event.target?.closest?.('[data-node-config="causal-vcluster-flip"]');
+      if (!target || !multiOgnAnaphorActive()) return;
+      if (event.type === 'keydown' && event.key !== 'Enter' && event.key !== ' ') return;
+      event.preventDefault();
+      event.stopPropagation();
+      flipActiveVcluster();
+    };
+    els.svg?.addEventListener('click', activateVclusterFlip);
+    els.svg?.addEventListener('keydown', activateVclusterFlip);
     document.querySelectorAll('.projection-tab').forEach(tab => {
       tab.addEventListener('click', () => {
         setProjection(tab.dataset.projection || 'axes');
@@ -17050,19 +17467,13 @@
       });
     });
     els.exampleSelect?.addEventListener('change', event => {
-      state.example = EXAMPLES.find(e => e.id === event.target.value) || EXAMPLES[0];
-      state.documentMetadata = null;
-      recordParadata('select-example', { example: state.example.id });
-      resetForNewExample();
-      syncCanonicalItemUrl();
+      if (!activateCanonicalItem(event.target.value, { updateUrl: true })) return;
+      recordParadata('select-example', { example: event.target.value });
       render();
     });
     els.desktopExampleSelect?.addEventListener('change', event => {
-      state.example = EXAMPLES.find(e => e.id === event.target.value) || EXAMPLES[0];
-      state.documentMetadata = null;
-      recordParadata('select-example', { example: state.example.id });
-      resetForNewExample();
-      syncCanonicalItemUrl();
+      if (!activateCanonicalItem(event.target.value, { updateUrl: true })) return;
+      recordParadata('select-example', { example: event.target.value });
       render();
     });
     els.mobileExampleSelect?.addEventListener('change', event => {
@@ -17072,11 +17483,8 @@
       render();
     });
     els.mainExampleSelect?.addEventListener('change', event => {
-      state.example = EXAMPLES.find(e => e.id === event.target.value) || EXAMPLES[0];
-      state.documentMetadata = null;
-      recordParadata('select-example', { example: state.example.id });
-      resetForNewExample();
-      syncCanonicalItemUrl();
+      if (!activateCanonicalItem(event.target.value, { updateUrl: true })) return;
+      recordParadata('select-example', { example: event.target.value });
       render();
     });
     const updateMainAdverb = event => {
@@ -17109,6 +17517,7 @@
       resetManualViewBox();
       render();
     });
+    els.lexicalChoiceCloseButton?.addEventListener('click', closeLexicalRoleChoice);
     els.openConfigButton?.addEventListener('click', () => {
       if (els.mainExtraMenu) els.mainExtraMenu.open = false;
       if (els.mainActionsMenu) els.mainActionsMenu.open = false;
@@ -17573,6 +17982,11 @@
       button.addEventListener('click', () => setMobileProjection(button.dataset.mobileProjection || 'axes'));
     });
     window.addEventListener('keydown', event => {
+      if (event.key === 'Escape' && state.selectedLexicalRole) {
+        closeLexicalRoleChoice();
+        event.preventDefault();
+        return;
+      }
       if (event.ctrlKey && event.altKey && !event.repeat) {
         const key = String(event.key || '').toLowerCase();
         const axisByKey = { l: 'lex', s: 'synt', g: 'log' };
@@ -17719,7 +18133,7 @@
     await loadStructureConfig();
     await loadProjectConfigLayers();
     projectConfigStatus.browserLoaded = loadSavedConfigSnapshot();
-    enforceEastStartupDefault();
+    enforceHorizontalLexStartupSide();
     enforceTrimmedAxisMarginDefault();
     syncProjectConfigStatus();
     const requestedLanguage = queryParamValue('lang', 'language');
