@@ -3,7 +3,7 @@
 1. Browsercache of oude tabs kunnen nog oude configbestanden opvragen. De no-cache server en querystrings beperken dit.
 2. Lokale HTML-bestanden kunnen meestal niet direct door de browser worden overschreven. Editors downloaden nieuwe versies; de gebruiker vervangt het bestand handmatig.
 3. Er is nog geen volwaardige lexiconeditor.
-4. JSON/.OPN import/export is beperkt en niet de primaire bron voor structure-config of examples-input.
+4. JSON/.OGN import/export is beperkt en niet de primaire bron voor structure-config of examples-input.
 5. Topicalisatie is voorbereid met slots, maar nog niet volledig als aparte lokale LEX-regel uitgewerkt.
 6. Perfectumstructuur is aanwezig, verdere varianten zoals passief/vragen zijn nog niet uitgewerkt.
 7. De viewer is een demo/prototype, geen volledige grammatica-engine.

@@ -7,9 +7,9 @@
 - De volledige set is ook ingebouwd als fallback; rechtstreeks openen via `file://` valt niet meer terug op slechts vier voorbeelden.
 - `examples-input.html`-import leest nu ook `.lex-insertion`-groepen.
 
-## OPN-bestand
+## OGN-bestand
 
-- Config heeft een zichtbaar blok `OPN-document`.
-- Desktop en mobiel bieden `Opslaan als .opn` en `Importeer .opn`.
+- Config heeft een zichtbaar blok `OGN-document`.
+- Desktop en mobiel bieden `Opslaan als .ogn` en `Importeer .ogn`.
 - Paradata kan bij export worden in- of uitgeschakeld.
 - Voorbeeldgebonden LEX-insertiegroepen worden opgenomen in `data.example.lex_insertions` en bij import hersteld.

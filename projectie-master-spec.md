@@ -20,7 +20,7 @@ Een uiting bestaat uit één of meer verknoopte kernzinnen (`S` of `CLAUSE`).
 LEX is het ultieme resultaat en toont de complete zichtbare uiting; SYN de syntactische constructie; LOG de
 deelnemers, functies en relaties. Referentidentiteit, causale inbedding,
 rol-flip en impliciete subjecten worden als uitingmetadata opgeslagen en bij
-OPN-export/import bewaard. De vijf uitingen worden in **Anafoor · multi-OGN**
+OGN-export/import bewaard. De vijf uitingen worden in **Anafoor · multi-OGN**
 daadwerkelijk getekend als twee afzonderlijke kernzinbomen: `K1` boven `K2`.
 Iedere kernzin volgt `S → NP, VP` en `VP → NP, V`. De onafhankelijke
 LEX-realisatie mag hiervan afwijken, bijvoorbeeld `JAN SLAAT JEK` bij een
@@ -321,7 +321,7 @@ schermrichting of uit de aanwezigheid van een lege kandidaat worden afgeleid.
 
 ## 7. Opslag en validatie
 
-Een `.opn`-document bewaart:
+Een `.ogn`-document bewaart:
 
 - `log.authority`;
 - `log.position_unit`;

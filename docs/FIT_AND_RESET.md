@@ -65,7 +65,7 @@ Bij iedere browserstart geldt automatisch de **Volledige startstand**:
 De Volledige startstand **bewaart** dus:
 
 - de bewust opgeslagen Config-snapshot;
-- projecten en OPN-bestanden;
+- projecten en OGN-bestanden;
 - lokaal en publiek testmateriaal;
 - de browserdatabase;
 - README-teksten, carrousels en andere bewaarde inhoud.

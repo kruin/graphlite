@@ -42,7 +42,7 @@ assert.ok(editor.includes('utteranceKernels'));
 assert.ok(editor.includes('utteranceRelations'));
 assert.ok(spec.includes('UITING_EN_KERNZINNEN.md'));
 assert.ok(viewer.includes('drawUtteranceKernelComposition'));
-assert.ok(viewer.includes('buildUtteranceKernelOpnDocument'));
+assert.ok(viewer.includes('buildUtteranceKernelOgnDocument'));
 assert.ok(fs.existsSync(path.join(root, 'utterance-kernel-engine.js')));
 assert.ok(fs.existsSync(path.join(root, 'tools', 'check_utterance_kernel_views.js')));
 

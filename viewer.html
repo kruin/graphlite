@@ -14,7 +14,7 @@
 <script>
     (function() {
       var VERSION = 'v3.1.0-rc.10';
-      var SOURCE_BUILD = 'v3.1.0-rc.10-fork-clone-publish-guide-20260909.60';
+      var SOURCE_BUILD = 'v3.1.0-rc.10-safe-renormalize-after-rename-20260910.67';
       window.__OPENGRAPH_EXPECTED_VERSION__ = VERSION;
       function runCacheCleanupOnce() {
         var flag = 'opengraph-cache-cleaned-' + VERSION + '-' + SOURCE_BUILD;
@@ -184,8 +184,8 @@
 <summary><span class="help-lang-nl">Meer op desktop · dezelfde URL</span><span class="help-lang-en">More on desktop · same URL</span></summary>
 <div class="mobile-desktop-options-content">
 <p><span class="help-lang-nl">Open precies deze URL op een desktop of breed venster voor directe toegang tot:</span><span class="help-lang-en">Open this exact URL on a desktop or wide window for direct access to:</span></p>
-<ul class="help-lang-nl"><li>LEX West/Oost/Noord/Zuid, inclusief graduele labeldraaiing en kalibratie;</li><li>afzonderlijke projecties LEX, SYNT en LOG;</li><li>LOG-volgorden SOV, SVO, OVS, OSV, VSO en VOS;</li><li>Extra met Greedy Grow en Random;</li><li>Ruimte slepen/zoom, boomruimte, Flip en uitgebreide layoutinstellingen;</li><li>meerdere kolommen testmateriaal;</li><li>volledige Config en export naar OPN, SVG, LinkedIn-PNG en Play-video.</li></ul>
-<ul class="help-lang-en"><li>LEX West/East/North/South, including gradual label rotation and calibration;</li><li>separate LEX, SYNT and LOG projections;</li><li>LOG orders SOV, SVO, OVS, OSV, VSO and VOS;</li><li>Extra with Greedy Grow and Random;</li><li>spacing drag/zoom, tree spacing, Flip and extended layout controls;</li><li>multiple test-material columns;</li><li>full Config and export to OPN, SVG, LinkedIn PNG and Play video.</li></ul>
+<ul class="help-lang-nl"><li>LEX West/Oost/Noord/Zuid, inclusief graduele labeldraaiing en kalibratie;</li><li>afzonderlijke projecties LEX, SYNT en LOG;</li><li>LOG-volgorden SOV, SVO, OVS, OSV, VSO en VOS;</li><li>Extra met Greedy Grow en Random;</li><li>Ruimte slepen/zoom, boomruimte, Flip en uitgebreide layoutinstellingen;</li><li>meerdere kolommen testmateriaal;</li><li>volledige Config en export naar OGN, SVG, LinkedIn-PNG en Play-video.</li></ul>
+<ul class="help-lang-en"><li>LEX West/East/North/South, including gradual label rotation and calibration;</li><li>separate LEX, SYNT and LOG projections;</li><li>LOG orders SOV, SVO, OVS, OSV, VSO and VOS;</li><li>Extra with Greedy Grow and Random;</li><li>spacing drag/zoom, tree spacing, Flip and extended layout controls;</li><li>multiple test-material columns;</li><li>full Config and export to OGN, SVG, LinkedIn PNG and Play video.</li></ul>
 </div>
 </details>
 <select aria-hidden="true" class="main-control-select-compat" id="mainExampleSelect" tabindex="-1"></select>
@@ -208,7 +208,31 @@
 <button class="main-play-step-button" id="mainGrowthNextButton" title="Volgende groei-stap" type="button">→</button>
 <span class="main-growth-step-label main-play-growth-label" id="mainGrowthStepLabel">Groei uit</span>
 <button class="main-reset-button" id="mainResetButton" title="Reset de huidige zin" type="button">Reset</button>
+<button class="main-snapshot-button" id="mainSaveOgnSnapshotButton" title="Bewaar de huidige graph, view, PLAY-stap en paradata als hervatbare OGN-snapshot" type="button">Snapshot opslaan</button>
+<button class="main-snapshot-open" id="mainOpenOgnSnapshotButton" title="Open een OGN-snapshot in een zelfstandig venster binnen Graphlite">Snapshot openen</button>
+<input accept="application/vnd.opengraph.ogn+json,.ogn" hidden id="mainSnapshotOpenInput" type="file"/>
 </div>
+</section>
+<div class="ogn-snapshot-backdrop" hidden id="ognSnapshotBackdrop">
+<section aria-labelledby="ognSnapshotHeading" aria-modal="true" class="ogn-snapshot-dialog" role="dialog">
+<header id="ognSnapshotDragHandle" title="Sleep om dit venster te verplaatsen"><div><span class="ogn-snapshot-kicker">OGN · PARADATA</span><h2 id="ognSnapshotHeading">Huidige graph als snapshot bewaren</h2></div><button aria-label="Sluiten" id="cancelOgnSnapshotTopButton" type="button">×</button></header>
+<p>De snapshot bewaart de actuele graph, view en PLAY-stap. Kies welke views en recente acties herkenbaar in de bestandsnaam moeten staan.</p>
+<div class="ogn-snapshot-columns">
+<fieldset><legend>Views combineren</legend><div class="ogn-snapshot-choice-list" id="ognSnapshotViewChoices"></div></fieldset>
+<fieldset><legend>Recente paradata · graph-acties</legend><div class="ogn-snapshot-choice-list ogn-snapshot-action-list" id="ognSnapshotActionChoices"></div><p class="ogn-snapshot-empty" hidden id="ognSnapshotActionEmpty">Nog geen relevante graph-acties in deze sessie.</p></fieldset>
+</div>
+<fieldset class="ogn-snapshot-proposals"><legend>Naamvoorstellen</legend><div id="ognSnapshotNameProposals"></div></fieldset>
+<label class="ogn-snapshot-name-field"><span>Definitieve bestandsnaam</span><input autocomplete="off" id="ognSnapshotFilenameInput" spellcheck="false" type="text"/></label>
+<p aria-live="polite" class="ogn-snapshot-status" id="ognSnapshotStatus"></p>
+<footer><button id="cancelOgnSnapshotButton" type="button">Annuleren</button><button class="primary" id="confirmOgnSnapshotButton" type="button">Snapshot opslaan</button></footer>
+</section>
+</div>
+<section aria-labelledby="ognSnapshotWorkspaceHeading" class="ogn-snapshot-workspace-window" hidden id="ognSnapshotWorkspaceWindow">
+<header id="ognSnapshotWorkspaceDragHandle" title="Sleep om het snapshotvenster te verplaatsen">
+<div><span class="ogn-snapshot-kicker">OGN · SNAPSHOTVENSTER</span><h2 id="ognSnapshotWorkspaceHeading">Snapshot</h2></div>
+<button aria-label="Snapshotvenster sluiten" id="closeOgnSnapshotWorkspaceButton" title="Snapshotvenster sluiten" type="button">×</button>
+</header>
+<iframe id="ognSnapshotWorkspaceFrame" title="Zelfstandig Graphlite-snapshotvenster"></iframe>
 </section>
 <section aria-label="Configuratiescherm bediening" class="config-topbar">
 <button class="primary config-back-button" id="closeConfigButton" title="Back to: Main." type="button">← Back to: Main</button>
@@ -507,14 +531,14 @@
 <h3>Actief LEX-profiel</h3>
 <p><strong>Actief:</strong> Wissels omhoog, toepassingsgebonden insertieplaatsen en rechtstreeks geschreven Comp.</p>
 <ul><li><strong>Wissel omhoog:</strong> één bronwoord, één hoger doel, één pijl en één trace.</li><li><strong>Insertie:</strong> inhoud wordt rechtstreeks op een door de toepassing geleverde LEX-plaats geschreven; er bestaat geen brontrace.</li><li><strong>Comp:</strong> <code>DAT</code> of <code>OMDAT</code> wordt rechtstreeks in slot 0 geschreven; ook dit is geen verplaatsing.</li></ul>
-<p><strong>No-show en niet actief:</strong> generieke lege posities vóór, na of tussen actieve rijen en iedere Wissel omlaag. Oude Config- of OPN-velden daarvoor worden compatibel genegeerd; nieuwe bestanden slaan ze niet op.</p>
+<p><strong>No-show en niet actief:</strong> generieke lege posities vóór, na of tussen actieve rijen en iedere Wissel omlaag. Oude Config- of OGN-velden daarvoor worden compatibel genegeerd; nieuwe bestanden slaan ze niet op.</p>
 <p>Vóór, na en tussen blijven expliciet ontwerpvoorraad voor een latere evaluatie. Ze sturen nu geen layout, Play, export of documentatievoorbeeld.</p>
 </div>
 <div class="help-lang-en">
 <h3>Active LEX profile</h3>
 <p><strong>Active:</strong> upward switches, application-specific insertion positions, and directly written Comp.</p>
 <ul><li><strong>Upward switch:</strong> one source word, one higher target, one arrow, and one trace.</li><li><strong>Insertion:</strong> content is written directly at a LEX position supplied by the application; there is no source trace.</li><li><strong>Comp:</strong> <code>DAT</code> or <code>OMDAT</code> is written directly in slot 0; this is not a movement either.</li></ul>
-<p><strong>No-show and inactive:</strong> generic empty positions before, after, or between active rows and every downward switch. Old Config or OPN fields for these are ignored compatibly; new files do not store them.</p>
+<p><strong>No-show and inactive:</strong> generic empty positions before, after, or between active rows and every downward switch. Old Config or OGN fields for these are ignored compatibly; new files do not store them.</p>
 <p>Before, after, and between remain explicit design backlog for a later evaluation. They currently control no layout, Play, export, or documentation sample.</p>
 </div>
 </article>
@@ -774,18 +798,18 @@
 <button id="fitButton" title="FIT: pas boom en named projections passend in beeld; verandert de boom niet." type="button">FIT</button>
 </div>
 <div class="button-row compact-actions">
-<label class="file-label" title="OpenGraph-document (.opn) of oud JSON-bestand openen">
-          OPN/JSON openen
-          <input accept="application/json,application/vnd.opengraph.opn+json,.json,.opn" id="fileInput" type="file"/>
+<label class="file-label" title="OpenGraph-document (.ogn) of oud JSON-bestand openen">
+          OGN/JSON openen
+          <input accept="application/json,application/vnd.opengraph.ogn+json,.json,.ogn" id="fileInput" type="file"/>
 </label>
-<button id="downloadOpnButton" title="Download round-trip OPN-document met gescheiden data, metadata en optionele paradata" type="button">Download OPN</button>
+<button id="downloadOgnButton" title="Download round-trip OGN-document met gescheiden data, metadata en optionele paradata" type="button">Download OGN</button>
 <label class="inline-check" title="Neem workspace en lokale sessie-events op in paradata; uitzetten deelt alleen metadata en data."><input checked="" id="includeParadataInput" type="checkbox"/> paradata</label>
 <button id="downloadJsonButton" title="Download oud compatibiliteitsformaat voor debugging" type="button">Legacy JSON</button>
 </div>
 </section>
 <section aria-live="polite" class="status-panel">
 <div class="title-line" id="titleLine">—</div>
-<div class="meta-line" id="metaLine">Kies een voorbeeld of open een OPN-document.</div>
+<div class="meta-line" id="metaLine">Kies een voorbeeld of open een OGN-document.</div>
 <div class="sentence-preview" id="sentencePreview" title="Vet = subject/agens; cursief = object/patiens.">—</div>
 <div class="action-feedback neutral" id="actionFeedback">Viewer: sleep in canvas om boom + LEX-as te verplaatsen. FIT past het zichtvenster aan; de boom zelf verandert niet.</div>
 </section>
@@ -806,7 +830,7 @@
 <div aria-label="Dynamische boomweergave" class="view-config-grid">
 <label class="field mini-field"><span>Boomruimte</span><select id="layoutDensitySelect"></select></label>
 <label class="field mini-field"><span>Venstervulling</span><select id="viewFitSelect"></select></label>
-<label class="field mini-field" title="Boom vrije rijen: lege ruimte onder de wortel in de centrale OPN-boom."><span>Boom vrije rijen</span><select id="freeSlotCountSelect"></select></label>
+<label class="field mini-field" title="Boom vrije rijen: lege ruimte onder de wortel in de centrale OGN-boom."><span>Boom vrije rijen</span><select id="freeSlotCountSelect"></select></label>
 <fieldset aria-label="Bijwoord als minor op de LOG-as" class="lex-adverb-insert-field" data-feature="adverbs" hidden="">
 <legend>LOG-minors voor bijwoorden</legend>
 <p class="top-menu-choice-help">Kies per zinsinstantie een lexicaal gebruiksprofiel. LOG- en LOG+LEX-profielen leveren een LOG-minor; directe LEX-profielen reserveren alleen een LEX-plaats. De voorbeeldzin valideert de gekozen analyse.</p>
@@ -855,7 +879,7 @@
 <label title="Projectiekeuze: Alle, Bron, LEX, SYNT en LOG. Nuttig als je tussen centrale view en named projections vergelijkt."><input data-top-menu-choice="projection" type="checkbox"/> Projectiekeuze</label>
 <label title="Voorbeeldzin: kies snel HOND BIJT MAN en varianten. Nuttig bij contrasten tussen zinnen."><input data-top-menu-choice="sentence" type="checkbox"/> Voorbeeldzin</label>
 <label title="Play/Groei: groei-presentatie, stapknoppen en afspelen. Nuttig voor didactische demonstratie."><input data-top-menu-choice="play" type="checkbox"/> Play/Groei</label>
-<label title="Werkknoppen: FIT, reset, OPN, Legacy JSON, Docs en editors. Nuttig bij bouwen/testen, minder bij uitleg."><input data-top-menu-choice="tools" type="checkbox"/> Werkknoppen</label>
+<label title="Werkknoppen: FIT, reset, OGN, Legacy JSON, Docs en editors. Nuttig bij bouwen/testen, minder bij uitleg."><input data-top-menu-choice="tools" type="checkbox"/> Werkknoppen</label>
 <p class="top-menu-choice-help" data-top-menu-help="">Geen menu boven het grid. Maximaal vier keuzes; overige menu’s staan onder het grid.</p>
 </fieldset>
 </div>
@@ -894,20 +918,28 @@
 <label><input checked="" id="showLabelsInput" type="checkbox"/> Boomlabels</label>
 </div>
 </section>
-<section aria-label="OPN-document opslaan en openen" class="panel-card opn-document-card">
-<h2>OPN-document</h2>
-<p class="inline-help"><strong>Opslaan/exporteren:</strong> download de huidige analyse als <code>.opn</code>. <strong>Importeren:</strong> kies een eerder geëxporteerd <code>.opn</code>-bestand. De browser kan een download niet automatisch over hetzelfde bestand heen schrijven.</p>
-<div class="button-row opn-document-actions">
-<button class="primary" id="configDownloadOpnButton" type="button">Opslaan als .opn</button>
-<label class="file-label" title="Open een OPN-document of oud JSON-bestand">Importeer .opn<input accept="application/json,application/vnd.opengraph.opn+json,.json,.opn" id="configFileInput" type="file"/></label>
+<section aria-label="OGN-document opslaan en openen" class="panel-card ogn-document-card">
+<h2>OGN-document</h2>
+<p class="inline-help"><strong>Opslaan:</strong> bewaar de volledige, heropenbare analyse als <code>.ogn</code>. <strong>Importeren:</strong> open een eerder opgeslagen <code>.ogn</code>-document. Alleen OGN is een round-trip-projectdocument.</p>
+<div class="button-row ogn-document-actions">
+<button class="primary" id="configDownloadOgnButton" type="button">Opslaan als .ogn</button>
+<button id="configSaveOgnSnapshotButton" type="button">Snapshot opslaan</button>
+<label class="file-label" title="Open een OGN-document of oud JSON-bestand">Importeer .ogn<input accept="application/json,application/vnd.opengraph.ogn+json,.json,.ogn" id="configFileInput" type="file"/></label>
+<button id="openOgnFromExportFolderButton" type="button">Open .ogn uit exportmap</button>
 <label class="inline-check" title="Neem workspace en lokale sessie-events op in paradata"><input checked="" id="configIncludeParadataInput" type="checkbox"/> paradata meenemen</label>
 </div>
-<p class="top-menu-choice-help">Zonder paradata bevat het bestand alleen <code>metadata</code> en <code>data</code>. Oudere JSON-bestanden blijven als migratie-import leesbaar.</p>
+<p class="top-menu-choice-help">Een gewone OGN kan zonder paradata worden gedeeld. Een snapshot neemt paradata altijd mee: actuele view, recente acties en PLAY-stap staan in <code>paradata.snapshot</code>, zodat je na openen verder kunt spelen. SVG, PNG en video zijn alleen export.</p>
 </section>
 <section aria-label="Opslaan, exporteren en delen" class="panel-card graph-export-card">
-<div class="config-save-menu-kicker">DIRECT OPSLAAN OF DELEN</div>
-<h2>Opslaan, exporteren en delen</h2>
-<p class="inline-help">Kies een kant-en-klare LinkedIn-afbeelding, neem de volledige gefaseerde Play als video op of bewaar de huidige graph als zelfstandig vectorbestand.</p>
+<div class="config-save-menu-kicker">ÉÉN EXPORTMAP</div>
+<h2>Exportmap en uitvoer</h2>
+<p class="inline-help">Kies desgewenst één vaste exportmap voor OGN, SVG, PNG, video, JSON en logs. Chrome bewaart je keuze lokaal en vraagt toestemming; zonder gekozen map gebruikt Graphlite de normale browserdownload.</p>
+<div class="button-row export-folder-actions">
+<button class="primary" id="chooseExportFolderButton" type="button">Kies exportmap</button>
+<button id="clearExportFolderButton" type="button">Gebruik browserdownload</button>
+</div>
+<p aria-live="polite" class="top-menu-choice-help" id="exportFolderStatus" role="status">Geen vaste exportmap gekozen; bestanden gaan naar de browserdownload.</p>
+<p class="inline-help">Exporteer de graph als zelfstandige SVG, LinkedIn-PNG of Play-video. Deze beeld- en videoformaten kunnen niet als analyse worden geïmporteerd.</p>
 <div class="button-row graph-export-actions">
 <button class="primary" id="downloadGraphPngButton" type="button">LinkedIn-PNG</button>
 <button class="graph-export-video-button" id="recordPlayWebmButton" type="button">Play-video</button>
@@ -973,7 +1005,7 @@
 <p id="explainText">De viewer is geladen.</p>
 <details open="">
 <summary>Viewerfunctie</summary>
-<p>De viewer toont Open Graph Notation met gridregel, projectiemechanisme, projectiemerkers, views en named projections. Je kunt voorbeeldzinnen kiezen, Play gebruiken, projecties bekijken, canvas pannen/zoomen, OPN openen/downloaden en documentatie openen.</p>
+<p>De viewer toont Open Graph Notation met gridregel, projectiemechanisme, projectiemerkers, views en named projections. Je kunt voorbeeldzinnen kiezen, Play gebruiken, projecties bekijken, canvas pannen/zoomen, OGN openen/downloaden en documentatie openen.</p>
 </details>
 <details>
 <summary>Bediening</summary>
@@ -1023,11 +1055,12 @@
 </fieldset>
 <p class="top-menu-choice-help">Bijwoordelijke inserties gebruiken een profiel met bron LOG, LEX of LOG+LEX. Alleen LOG-profielen verschijnen op de zuidas. De LOG-planning bepaalt beschikbare plaatsen maar verplaatst geen bronknoop; vooropplaatsing en V2 zijn afzonderlijke expliciete Wisselregels.</p>
 </div>
-<div aria-label="OPN-document opslaan en openen" class="mobile-sheet-section">
-<h3>OPN-document</h3>
-<div class="mobile-link-grid opn-mobile-actions">
-<button id="mobileDownloadOpnButton" type="button">Opslaan als .opn</button>
-<label class="file-label">Importeer .opn<input accept="application/json,application/vnd.opengraph.opn+json,.json,.opn" id="mobileFileInput" type="file"/></label>
+<div aria-label="OGN-document opslaan en openen" class="mobile-sheet-section">
+<h3>OGN-document</h3>
+<div class="mobile-link-grid ogn-mobile-actions">
+<button id="mobileDownloadOgnButton" type="button">Opslaan als .ogn</button>
+<button id="mobileSaveOgnSnapshotButton" type="button">Snapshot opslaan</button>
+<label class="file-label">Importeer .ogn<input accept="application/json,application/vnd.opengraph.ogn+json,.json,.ogn" id="mobileFileInput" type="file"/></label>
 </div>
 <label class="inline-check"><input checked="" id="mobileIncludeParadataInput" type="checkbox"/> paradata meenemen</label>
 <p class="top-menu-choice-help">Export downloadt een bestand; import opent dat bestand opnieuw.</p>
@@ -1043,7 +1076,7 @@
 <p class="mobile-sheet-note">Sleep met één vinger om te pannen. Knijp met twee vingers om te zoomen. FIT past het zichtvenster aan de huidige boom en named projections aan; de boom zelf verandert niet.</p>
 </section>
 <script>
-    window.__opengraphBoot = { version: 'v3.1.0-rc.10', sourceBuild: 'v3.1.0-rc.10-fork-clone-publish-guide-20260909.60', loaded: false, marker: 'viewer-index' };
+    window.__opengraphBoot = { version: 'v3.1.0-rc.10', sourceBuild: 'v3.1.0-rc.10-safe-renormalize-after-rename-20260910.67', loaded: false, marker: 'viewer-index' };
     function ogStatus(message) {
       var target = document.getElementById('actionFeedback') || document.body;
       if (target) target.textContent = message;
@@ -1078,6 +1111,6 @@
 <script defer="" src="multi-ogn-anaphor-play-engine.js?v3.1.0-rc.10"></script>
 <script defer="" src="multi-ogn-composition-engine.js?v3.1.0-rc.10"></script>
 <script defer="" src="utterance-kernel-engine.js?v3.1.0-rc.10"></script>
-<script defer="" src="viewer.js?v3.1.0-rc.10&amp;source=20260909.60"></script>
+<script defer="" src="viewer.js?v3.1.0-rc.10&amp;source=20260910.67"></script>
 </body>
 </html>

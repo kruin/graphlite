@@ -216,7 +216,7 @@ De configuratie-engine bewaart en valideert meerdere **Text-coreferenties**:
 - iedere relatie bewaart eigen alignmentmetadata.
 
 De renderer tekent iedere reeds uitgelijnde, gedeclareerde Text-coreferentie.
-De compositor controleert alle gedeclareerde uitlijningen. OPN-export schrijft
+De compositor controleert alle gedeclareerde uitlijningen. OGN-export schrijft
 alle coreferenties en markeert per relatie `rendered_in_this_version`.
 
 Tijd, plaats, toestand, causaliteit en discourse vallen onder Context en
@@ -253,7 +253,7 @@ als `GEBETEN HEEFT`, zonder afzonderlijke perfectummodule.
 De solver enumereert alle toegestane combinaties, berekent beide Language
 Trees opnieuw en accepteert alleen kandidaten waarvoor alle vereiste
 Text-relaties met één starre S2-shift uitlijnen. Een conflict forceert nooit
-een losse knoop. De gekozen variantset wordt in Config, Play en OPN
+een losse knoop. De gekozen variantset wordt in Config, Play en OGN
 gerapporteerd.
 
 ## LEX-profielen
@@ -272,7 +272,7 @@ Een niet-toepasselijk profiel blijft zichtbaar in Config maar is
 uitgeschakeld. De bronboom wordt nooit stilzwijgend aangepast aan een gekozen
 oppervlaktevorm.
 
-## OPN-opslag
+## OGN-opslag
 
 Nieuwe multi-OGN-export bewaart aanvullend:
 
@@ -305,7 +305,7 @@ Werkend:
 - V2 in hoofdzinnen en V-finaal zonder V2 in de omdat-bijzin;
 - per-combinatiekeuze van LEX-profiel;
 - een oppervlakte-template met `{ANAPHOR}` en `{ANAPHOR:relatie-id}`;
-- OPN-export van alle geconfigureerde relaties en solvernotatie.
+- OGN-export van alle geconfigureerde relaties en solvernotatie.
 
 Voorbereid, nog niet werkend:
 

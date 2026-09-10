@@ -296,7 +296,7 @@ neemt zelf geen flip- of plaatsingsbeslissing.
 De anafoorweergave enumereert de vier toegestane varianten van alle
 gedeclareerde branches over S1 en S2, berekent iedere kandidaat recursief en
 kiest daarna één gezamenlijke oplossing plus één starre S2-shift. De keuze
-en de gevraagde Config-overrides worden in OPN en paradata gerapporteerd.
+en de gevraagde Config-overrides worden in OGN en paradata gerapporteerd.
 
 Voor de fixture **De man slaat de hond omdat die hem heeft gebeten** zijn drie
 branches gedeclareerd. De volledige ruimte telt `4³ = 64` kandidaten; 16

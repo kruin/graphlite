@@ -21,7 +21,7 @@ Vervolgpunten na `v2.0.0-rc.45`:
    visualiseren.
 11. Meer minorbreedtes dan één onderzoeken voor samengestelde domeinen.
 12. Expliciete Wisselregels voor de gemarkeerde majorvolgorden uitwerken.
-13. OPN-schema-validatie uitbreiden met LOG-sequentie en afstandsinvarianten.
+13. OGN-schema-validatie uitbreiden met LOG-sequentie en afstandsinvarianten.
 14. Tests toevoegen voor meerdere V-sources en voor `before-S`/`after-V`.
 15. De gridplaatsing gemeten pixel-demand laten meenemen wanneer een label
     structureel breder is dan één cel.

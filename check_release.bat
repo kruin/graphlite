@@ -111,5 +111,11 @@ python tools\check_play_reverse.py
 if errorlevel 1 exit /b 1
 python tools\check_release_zip_batch.py
 if errorlevel 1 exit /b 1
-python tools\check_opn_storage.py samples\hond-bijt-man.v1.opn samples\ik-zie-man-hij-draagt-hoed.multi-ogn.v1.opn
+python tools\check_ogn_storage.py samples\hond-bijt-man.v1.ogn samples\ik-zie-man-hij-draagt-hoed.multi-ogn.v1.ogn
+if errorlevel 1 exit /b 1
+python tools\check_ogn_format_and_exports.py
+if errorlevel 1 exit /b 1
+python tools\check_ogn_snapshots.py
+if errorlevel 1 exit /b 1
+python tools\check_snapshot_resume_step.py
 exit /b %errorlevel%

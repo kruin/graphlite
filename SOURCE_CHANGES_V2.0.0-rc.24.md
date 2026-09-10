@@ -3,7 +3,7 @@
 ## Opslaan en exporteren als hoofdingang
 
 Config opende eerder op `Beeld`. De publicatiekaart stond bovendien na Config
-bewaren en OPN in het derde tabblad `Bestanden`. De bestaande exportfuncties
+bewaren en OGN in het derde tabblad `Bestanden`. De bestaande exportfuncties
 waren daardoor moeilijk vindbaar.
 
 De tabvolgorde is nu:
@@ -21,7 +21,7 @@ uitgelichte publicatiekaart als eerste en over de volle paneelbreedte.
 De kaarten staan in deze volgorde:
 
 1. graph/social-export;
-2. OPN opslaan en importeren;
+2. OGN opslaan en importeren;
 3. Config bewaren of herstellen;
 4. voorbeeldzinnen beheren.
 

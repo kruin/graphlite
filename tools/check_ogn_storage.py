@@ -2,7 +2,7 @@ from __future__ import annotations
 import json,sys
 from pathlib import Path
 
-REQUIRED_TOP={"opn","document_type","opn_version","metadata","data","paradata"}
+REQUIRED_TOP={"ogn","document_type","ogn_version","metadata","data","paradata"}
 CURRENT_VERSION=(Path(__file__).resolve().parents[1]/"VERSION.txt").read_text(encoding="utf-8").strip()
 
 def validate_multi_ogn(doc: dict) -> list[str]:
@@ -65,6 +65,39 @@ def validate_multi_ogn(doc: dict) -> list[str]:
         errors.append("gezamenlijke LEX-volgorde is ongeldig")
     return errors
 
+def validate_multi_ogn_v2(doc: dict) -> list[str]:
+    errors=[]
+    metadata=doc.get("metadata",{})
+    composition=doc.get("data",{}).get("composition",{})
+    if metadata.get("profile")!="multi-ogn": errors.append("metadata.profile moet multi-ogn zijn")
+    if metadata.get("extras")!=["multi-ogn-anaphor"]: errors.append("metadata.extras moet alleen multi-ogn-anaphor bevatten")
+    if composition.get("schema")!="ogn-multi-composition-v2": errors.append("data.composition.schema is ongeldig")
+    if composition.get("calculation")!="independent-before-composition": errors.append("eenheden moeten vóór compositie afzonderlijk worden berekend")
+    if composition.get("rigid_shift_only") is not True: errors.append("data.composition.rigid_shift_only moet true zijn")
+    units=composition.get("units")
+    if not isinstance(units,list) or len(units)<2:
+        errors.append("data.composition.units moet minstens twee eenheden bevatten")
+        units=[]
+    for unit in units:
+        graph=unit.get("graph",{})
+        nodes=graph.get("nodes")
+        if not isinstance(nodes,list) or not nodes:
+            errors.append(f"{unit.get('id','OGN')}.graph.nodes is leeg")
+            continue
+        ids=[str(node.get("id", "")) for node in nodes]
+        xs=[node.get("x") for node in nodes]
+        ys=[node.get("y") for node in nodes]
+        if not all(ids) or len(set(ids))!=len(ids): errors.append(f"{unit.get('id','OGN')} heeft ongeldige knoop-id's")
+        if len(set(xs))!=len(xs) or len(set(ys))!=len(ys): errors.append(f"{unit.get('id','OGN')} schendt de unieke rij-/kolomregel")
+        if not isinstance(graph.get("edges"),list): errors.append(f"{unit.get('id','OGN')}.graph.edges ontbreekt")
+    relation=composition.get("relation",{})
+    if relation.get("type")!="coreference" or relation.get("direction")!="none": errors.append("relatie moet ongerichte coreference zijn")
+    if not isinstance(relation.get("lexicalization"),dict): errors.append("relation.lexicalization ontbreekt")
+    lex=composition.get("shared_lex_axis",{})
+    if lex.get("axis")!="west" or not isinstance(lex.get("items"),list) or not lex.get("items"):
+        errors.append("gezamenlijke westelijke LEX-as ontbreekt")
+    return errors
+
 def validate(path: Path) -> list[str]:
     errors=[]
     try:
@@ -73,11 +106,17 @@ def validate(path: Path) -> list[str]:
         return [f"ongeldige JSON: {exc}"]
     missing=REQUIRED_TOP-set(doc)
     if missing: errors.append(f"topniveau ontbreekt: {sorted(missing)}")
-    if doc.get("document_type")!="opengraph-document": errors.append("document_type moet opengraph-document zijn")
+    if doc.get("document_type")!="open-graph-notation-document": errors.append("document_type moet open-graph-notation-document zijn")
     if doc.get("metadata",{}).get("schema")!="data-metadata-paradata": errors.append("metadata.schema ontbreekt of is fout")
     data=doc.get("data",{})
-    if data.get("composition",{}).get("schema")=="ogn-multi-composition-v1":
+    composition_schema=data.get("composition",{}).get("schema")
+    if composition_schema=="ogn-multi-composition-v1":
         errors.extend(validate_multi_ogn(doc))
+        para=doc.get("paradata",{})
+        if para.get("included") is True and not isinstance(para.get("events"),list): errors.append("paradata.events moet een lijst zijn wanneer included=true")
+        return errors
+    if composition_schema=="ogn-multi-composition-v2":
+        errors.extend(validate_multi_ogn_v2(doc))
         para=doc.get("paradata",{})
         if para.get("included") is True and not isinstance(para.get("events"),list): errors.append("paradata.events moet een lijst zijn wanneer included=true")
         return errors
@@ -154,17 +193,17 @@ def validate(path: Path) -> list[str]:
 
 def main(argv:list[str])->int:
     if len(argv)<2:
-        print("gebruik: check_opn_storage.py bestand.opn [...]")
+        print("gebruik: check_ogn_storage.py bestand.ogn [...]")
         return 2
     all_errors=[]
     for name in argv[1:]:
         p=Path(name)
         for err in validate(p): all_errors.append(f"{p}: {err}")
     if all_errors:
-        print("OPN CHECK: FOUT")
+        print("OGN CHECK: FOUT")
         for err in all_errors: print("-",err)
         return 1
-    print(f"OPN CHECK: OK ({len(argv)-1} bestand(en))")
+    print(f"OGN CHECK: OK ({len(argv)-1} bestand(en))")
     return 0
 
 if __name__=="__main__": raise SystemExit(main(sys.argv))

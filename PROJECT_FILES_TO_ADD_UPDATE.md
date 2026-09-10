@@ -8,7 +8,7 @@ Bestanden om als leidende projectbronnen toe te voegen of te vervangen.
 OpenGraph_Lite_Viewer_v2.0.0-rc.45_full_source.zip
 ```
 
-De zip bevat de volledige bronset, documentatie, referenties, voorbeelden, OPN-voorbeeldbestand en releasecontroles.
+De zip bevat de volledige bronset, documentatie, referenties, voorbeelden, OGN-voorbeeldbestand en releasecontroles.
 
 Maak hem op Windows met `maak-volledige-zip.bat`. De ZIP-naam volgt altijd de
 actuele projectmapnaam; een versienummer staat niet in de BAT vastgezet.
@@ -27,12 +27,12 @@ projectie-master-spec.md
 FUNCTIONAL_DATABASE_COMPACT.md
 TESTMATERIAAL_BEHEER.md
 UITING_EN_KERNZINNEN.md
-OPN_STORAGE_FORMAT.md
+OGN_STORAGE_FORMAT.md
 MULTI_OGN_ANAPHOR.md
 multi-ogn-composition-engine.js
 tools/check_multi_ogn_anaphor.js
 tools/check_multi_ogn_anaphor_runtime.js
-samples/ik-zie-man-hij-draagt-hoed.multi-ogn.v1.opn
+samples/ik-zie-man-hij-draagt-hoed.multi-ogn.v1.ogn
 PRECONFIG_ARCHITECTURE.md
 LAYOUT_RULES.md
 LINGUISTIC_ACTIONS.md

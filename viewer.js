@@ -2,9 +2,13 @@
   'use strict';
 
   const VERSION = 'v3.1.0-rc.10';
-  const SOURCE_BUILD = 'v3.1.0-rc.10-fork-clone-publish-guide-20260909.60';
-  const OPN_FORMAT_VERSION = '1.0';
-  const OPN_DOCUMENT_TYPE = 'opengraph-document';
+  const SOURCE_BUILD = 'v3.1.0-rc.10-safe-renormalize-after-rename-20260910.67';
+  const OGN_FORMAT_VERSION = '1.0';
+  const OGN_DOCUMENT_TYPE = 'open-graph-notation-document';
+  const EXPORT_DIRECTORY_DB_NAME = 'graphlite-export-directory-v1';
+  const EXPORT_DIRECTORY_STORE = 'handles';
+  const EXPORT_DIRECTORY_KEY = 'default';
+  const OGN_SNAPSHOT_COUNTER_KEY = 'graphlite_ogn_snapshot_counter_v1';
   const PARADATA_EVENT_LIMIT = 250;
   const BASE_CELL = 74;
   const ROOT_SIDE_GAP = 1;
@@ -314,13 +318,38 @@
     undoButton: document.getElementById('undoButton'),
     redoButton: document.getElementById('redoButton'),
     downloadJsonButton: document.getElementById('downloadJsonButton'),
-    downloadOpnButton: document.getElementById('downloadOpnButton'),
-    configDownloadOpnButton: document.getElementById('configDownloadOpnButton'),
+    downloadOgnButton: document.getElementById('downloadOgnButton'),
+    configDownloadOgnButton: document.getElementById('configDownloadOgnButton'),
     downloadGraphSvgButton: document.getElementById('downloadGraphSvgButton'),
     downloadGraphPngButton: document.getElementById('downloadGraphPngButton'),
     recordPlayWebmButton: document.getElementById('recordPlayWebmButton'),
     graphExportStatus: document.getElementById('graphExportStatus'),
-    mobileDownloadOpnButton: document.getElementById('mobileDownloadOpnButton'),
+    mobileDownloadOgnButton: document.getElementById('mobileDownloadOgnButton'),
+    mainSaveOgnSnapshotButton: document.getElementById('mainSaveOgnSnapshotButton'),
+    mainOpenOgnSnapshotButton: document.getElementById('mainOpenOgnSnapshotButton'),
+    mainSnapshotOpenInput: document.getElementById('mainSnapshotOpenInput'),
+    ognSnapshotWorkspaceWindow: document.getElementById('ognSnapshotWorkspaceWindow'),
+    ognSnapshotWorkspaceDragHandle: document.getElementById('ognSnapshotWorkspaceDragHandle'),
+    ognSnapshotWorkspaceHeading: document.getElementById('ognSnapshotWorkspaceHeading'),
+    ognSnapshotWorkspaceFrame: document.getElementById('ognSnapshotWorkspaceFrame'),
+    closeOgnSnapshotWorkspaceButton: document.getElementById('closeOgnSnapshotWorkspaceButton'),
+    configSaveOgnSnapshotButton: document.getElementById('configSaveOgnSnapshotButton'),
+    mobileSaveOgnSnapshotButton: document.getElementById('mobileSaveOgnSnapshotButton'),
+    ognSnapshotBackdrop: document.getElementById('ognSnapshotBackdrop'),
+    ognSnapshotDragHandle: document.getElementById('ognSnapshotDragHandle'),
+    ognSnapshotViewChoices: document.getElementById('ognSnapshotViewChoices'),
+    ognSnapshotActionChoices: document.getElementById('ognSnapshotActionChoices'),
+    ognSnapshotActionEmpty: document.getElementById('ognSnapshotActionEmpty'),
+    ognSnapshotNameProposals: document.getElementById('ognSnapshotNameProposals'),
+    ognSnapshotFilenameInput: document.getElementById('ognSnapshotFilenameInput'),
+    ognSnapshotStatus: document.getElementById('ognSnapshotStatus'),
+    confirmOgnSnapshotButton: document.getElementById('confirmOgnSnapshotButton'),
+    cancelOgnSnapshotButton: document.getElementById('cancelOgnSnapshotButton'),
+    cancelOgnSnapshotTopButton: document.getElementById('cancelOgnSnapshotTopButton'),
+    chooseExportFolderButton: document.getElementById('chooseExportFolderButton'),
+    clearExportFolderButton: document.getElementById('clearExportFolderButton'),
+    openOgnFromExportFolderButton: document.getElementById('openOgnFromExportFolderButton'),
+    exportFolderStatus: document.getElementById('exportFolderStatus'),
     includeParadataInput: document.getElementById('includeParadataInput'),
     configIncludeParadataInput: document.getElementById('configIncludeParadataInput'),
     mobileIncludeParadataInput: document.getElementById('mobileIncludeParadataInput'),
@@ -2321,7 +2350,7 @@
     { id: 'projection', label: 'Projecties', cssClass: 'top-menu-projection', tip: 'Projecties: Alle, Bron, LEX, SYNT en LOG. Nuttig voor vergelijken van named projections.' },
     { id: 'sentence', label: 'Voorbeeldzin', cssClass: 'top-menu-sentence', tip: 'Voorbeeldzin: kies snel HOND BIJT MAN en varianten. Nuttig voor contrast tussen zinnen.' },
     { id: 'play', label: 'Play/Groei', cssClass: 'top-menu-play', tip: 'Play/Groei: stap voor stap boom, LEX-as en projecties tonen. Nuttig voor didactische uitleg.' },
-    { id: 'tools', label: 'Werkknoppen', cssClass: 'top-menu-tools', tip: 'Werkknoppen: FIT, reset, OPN, Legacy JSON, Docs en editors. Nuttig bij bouwen en testen.' }
+    { id: 'tools', label: 'Werkknoppen', cssClass: 'top-menu-tools', tip: 'Werkknoppen: FIT, reset, OGN, Legacy JSON, Docs en editors. Nuttig bij bouwen en testen.' }
   ];
   const TOP_MENU_MAX = TOP_MENU_CHOICES.length;
 
@@ -3286,6 +3315,7 @@
     state.languageTreeVclusterFlipped = !state.languageTreeVclusterFlipped;
     state.selectedNodeId = null;
     state.documentMetadata = null;
+    recordParadata('flip-vcluster', { enabled: state.languageTreeVclusterFlipped, order: state.languageTreeVclusterFlipped ? 'flipped' : 'input' });
     resetManualViewBox();
     render();
     if (els.actionFeedback) {
@@ -4892,7 +4922,7 @@
     return Math.max(0, Math.min(2, Math.round(n)));
   }
 
-  function addOpnTopicalizationSlot(layout, rootId = null) {
+  function addOgnTopicalizationSlot(layout, rootId = null) {
     // v4462: centrale slotboxen blijven weg, maar de boom reserveert wel
     // verticale ruimte onder de wortel. Daardoor wordt de eerste tak langer
     // en ontstaat er zichtbaar plaats voor twee vrije slots (configureerbaar).
@@ -5146,7 +5176,7 @@
 
   function getSyntaxLayout() {
     const firstSide = layoutFirstSide();
-    const base = addOpnTopicalizationSlot(layoutTree(cloneTree(treeSpec()), 0, { firstSide, branchOrder: state.branchOrder, branchOverrides: state.branchOverrides }), STRUCTURE_CONFIG.syntaxRoot || 's');
+    const base = addOgnTopicalizationSlot(layoutTree(cloneTree(treeSpec()), 0, { firstSide, branchOrder: state.branchOrder, branchOverrides: state.branchOverrides }), STRUCTURE_CONFIG.syntaxRoot || 's');
     return assertUniqueNodeGridLines(
       applyLexInsertionBranchExtensions(normalizeLayout(applyLexAdverbAxisSlotSpace(base)), 'syntax'),
       'Syntax'
@@ -5319,7 +5349,7 @@
   }
 
   function layoutFunctionalRoleTree(order = 'left-first') {
-    // v4427: dedicated non-binary functional OPN layout with topicalization slot.
+    // v4427: dedicated non-binary functional OGN layout with topicalization slot.
     // The root is CLAUSE. It is not a predicate-root tree and not a binary tree.
     // Bottom-up idea: role leaf-box -> role-box -> CLAUSE n-ary box.
     // Placement uses free HOR/VER corridors: every role/root node and every leaf
@@ -5404,7 +5434,7 @@
   function getFunctionalLayout() {
     const firstSide = layoutFirstSide();
     return assertUniqueNodeGridLines(
-      applyLexInsertionBranchExtensions(normalizeLayout(addOpnTopicalizationSlot(layoutTree(cloneTree(functionalSpec()), 0, { firstSide, branchOrder: state.branchOrder, branchOverrides: state.branchOverrides }), STRUCTURE_CONFIG.functionalRoot || 'ft-clause')), 'functional'),
+      applyLexInsertionBranchExtensions(normalizeLayout(addOgnTopicalizationSlot(layoutTree(cloneTree(functionalSpec()), 0, { firstSide, branchOrder: state.branchOrder, branchOverrides: state.branchOverrides }), STRUCTURE_CONFIG.functionalRoot || 'ft-clause')), 'functional'),
       'Functional'
     );
   }
@@ -5502,7 +5532,7 @@
     // normal trees/flips untouched; use the stable base tree here and apply only
     // the local OSV visual marker below.
     const spec = mode === 'OSV' ? cloneTree(treeSpec()) : southAwareSyntaxSpec(mode);
-    const base0 = addOpnTopicalizationSlot(layoutTree(spec, 0, { firstSide, branchOrder: state.branchOrder, branchOverrides: state.branchOverrides }), STRUCTURE_CONFIG.syntaxRoot || 's');
+    const base0 = addOgnTopicalizationSlot(layoutTree(spec, 0, { firstSide, branchOrder: state.branchOrder, branchOverrides: state.branchOverrides }), STRUCTURE_CONFIG.syntaxRoot || 's');
     let base = applyLexInsertionBranchExtensions(normalizeLayout(applyLexAdverbAxisSlotSpace(base0)), 'syntax');
     if (isQuestionV1Rule()) base = reserveClauseInternalLexRow(base, STRUCTURE_CONFIG.syntaxRoot || 's');
     return assertUniqueNodeGridLines(normalizeLayout(applySouthLogicalSyntaxGroupOrder(base, mode)), `Syntax · LOG-volgorde ${mode}`);
@@ -5511,7 +5541,7 @@
   function getSouthAwareFunctionalLayout() {
     const firstSide = layoutFirstSide();
     return assertUniqueNodeGridLines(
-      applyLexInsertionBranchExtensions(normalizeLayout(addOpnTopicalizationSlot(layoutTree(southAwareFunctionalSpec(), 0, { firstSide, branchOrder: state.branchOrder, branchOverrides: state.branchOverrides }), STRUCTURE_CONFIG.functionalRoot || 'ft-clause')), 'functional'),
+      applyLexInsertionBranchExtensions(normalizeLayout(addOgnTopicalizationSlot(layoutTree(southAwareFunctionalSpec(), 0, { firstSide, branchOrder: state.branchOrder, branchOverrides: state.branchOverrides }), STRUCTURE_CONFIG.functionalRoot || 'ft-clause')), 'functional'),
       `Functional · LOG-volgorde ${state.southLogicalMode || 'SOV'}`
     );
   }
@@ -7307,7 +7337,7 @@
     g.appendChild(captionLayer);
   }
 
-  function drawOpnTopicalizationSlot(g, layout, origin, growthPlan = null) {
+  function drawOgnTopicalizationSlot(g, layout, origin, growthPlan = null) {
     // v4459: centrale slotboxen zijn bewust verwijderd. De zichtbare wissels
     // horen op de LEX-as thuis en worden daar in Play-modus getoond.
     return;
@@ -7568,7 +7598,7 @@
     layout.__growthPlan = growthPlan;
     drawSubtreeBoxes(g, layout, origin, growthPlan);
     drawTreeEdges(g, layout, origin, growthPlan);
-    drawOpnTopicalizationSlot(g, layout, origin, growthPlan);
+    drawOgnTopicalizationSlot(g, layout, origin, growthPlan);
     drawTreeNodes(g, layout, origin, options.selectable === true, growthPlan);
     if (featureEnabled('adverbs')) drawHostedAdverbSlots(g, layout, origin, growthPlan);
     if (options.spaceDrag !== false) attachSentenceSpaceDrag(g);
@@ -7584,11 +7614,11 @@
     }
     if (layout.topicalizationSlot) {
       const slot = layout.topicalizationSlot;
-      map.set('opn-topic-slot', { id: slot.id, label: slot.label, kind: 'opn-slot', x: slot.x, y: slot.y, px: px(slot.x, origin), py: py(slot.y, origin) });
+      map.set('ogn-topic-slot', { id: slot.id, label: slot.label, kind: 'ogn-slot', x: slot.x, y: slot.y, px: px(slot.x, origin), py: py(slot.y, origin) });
     }
     if (layout.v2Slot) {
       const slot = layout.v2Slot;
-      map.set('opn-v2-slot', { id: slot.id, label: slot.label, kind: 'opn-slot', x: slot.x, y: slot.y, px: px(slot.x, origin), py: py(slot.y, origin) });
+      map.set('ogn-v2-slot', { id: slot.id, label: slot.label, kind: 'ogn-slot', x: slot.x, y: slot.y, px: px(slot.x, origin), py: py(slot.y, origin) });
     }
     if (Array.isArray(layout.lexAdverbAxisSlots) && layout.lexAdverbAxisSlots.length) {
       const slots = layout.lexAdverbAxisSlots.map(slot => ({ ...slot, px: px(slot.x, origin), py: py(slot.y, origin) }));
@@ -8918,7 +8948,7 @@
     layout.__growthPlan = growthPlan;
     drawSubtreeBoxes(g, layout, origin, growthPlan);
     drawTreeEdges(g, layout, origin, growthPlan);
-    drawOpnTopicalizationSlot(g, layout, origin, growthPlan);
+    drawOgnTopicalizationSlot(g, layout, origin, growthPlan);
     drawTreeNodes(g, layout, origin, options.selectable === true, growthPlan);
     if (featureEnabled('adverbs')) drawHostedAdverbSlots(g, layout, origin, growthPlan);
     if (options.spaceDrag !== false) attachSentenceSpaceDrag(g);
@@ -9145,7 +9175,7 @@
   function drawAxes() {
     const g = baseSvg('axes-view');
     const origin = { x: 760, y: 72 };
-    drawAxisTitle(g, origin.x - 170, origin.y - 76, state.centerMode === 'ft' ? `CENTRAAL · Functional · functionele structuur · ${state.functionalOrder}` : `CENTRAAL · OPN-syntaxboom · ${movementSummaryLabel()}`);
+    drawAxisTitle(g, origin.x - 170, origin.y - 76, state.centerMode === 'ft' ? `CENTRAAL · Functional · functionele structuur · ${state.functionalOrder}` : `CENTRAAL · OGN-syntaxboom · ${movementSummaryLabel()}`);
 
     const ctx = canonicalProjectionContext(g, { drawCentral: true });
     const { sourceMap, centralLayout, southItems, westAxisX, eastAxisX, southAxisX1, southAxisX2, southAxisY } = ctx;
@@ -9216,9 +9246,9 @@
     const growthPlan = ctx.centralLayout?.__growthPlan;
     const axesText = selectedAxes.size ? ` + ${sourceAxesShortLabel()}` : '';
     if (state.centerMode === 'ft') {
-      drawAxisTitle(g, origin.x - 240, origin.y - 78, `BRON${axesText} · OPN-functioneel · structure-config · ${state.functionalOrder}`);
+      drawAxisTitle(g, origin.x - 240, origin.y - 78, `BRON${axesText} · OGN-functioneel · structure-config · ${state.functionalOrder}`);
     } else {
-      drawAxisTitle(g, origin.x - 270, origin.y - 78, `BRON${axesText} · OPN-syntax-tree · vrije HOR/VER-boxplaatsing + vrije-slotruimte`);
+      drawAxisTitle(g, origin.x - 270, origin.y - 78, `BRON${axesText} · OGN-syntax-tree · vrije HOR/VER-boxplaatsing + vrije-slotruimte`);
     }
     if (selectedAxes.has('lex') && (!growthPlan?.active || visibleAt(growthPlan, growthPlan.lexBaseStep))) {
       drawLexAxis(g, ctx.westAxisX, 126, activeLexItems(), ctx.sourceMap, {
@@ -11759,7 +11789,7 @@
       }
       return;
     }
-    const syntaxModeLabel = isEnglish() ? 'OPN syntax tree' : 'OPN-syntaxboom';
+    const syntaxModeLabel = isEnglish() ? 'OGN syntax tree' : 'OGN-syntaxboom';
     const functionalModeLabel = isEnglish() ? 'Functional structure' : 'Functional functionele structuur';
     els.titleLine.textContent = `${activeSentenceText()} · ${state.projectionLabel || projectionLabel()} · ${state.centerMode === 'syntax' ? syntaxModeLabel : functionalModeLabel}`;
     const noticeText = state.example.notice ? ` · NOTICE=${state.example.notice}` : '';
@@ -11773,12 +11803,12 @@
     if (els.sentencePreview) els.sentencePreview.innerHTML = activeSentenceHtml();
     const baseFeedback = isEnglish()
       ? (state.projection === 'source'
-        ? 'Source shows the selected OPN source from structure-config.html. At Source, LEX, SYNT and LOG axes can be combined independently. The View menu switches between the Syntax view and the Functional view (functional CLAUSE roles). Syntax and Functional views use bottom-up recursive box layout; left/right controls both layouts; branch order can be global, compact-auto or align-auto.'
+        ? 'Source shows the selected OGN source from structure-config.html. At Source, LEX, SYNT and LOG axes can be combined independently. The View menu switches between the Syntax view and the Functional view (functional CLAUSE roles). Syntax and Functional views use bottom-up recursive box layout; left/right controls both layouts; branch order can be global, compact-auto or align-auto.'
         : (featureEnabled('adverbs')
           ? 'Derivation: structure config → lexical usage profile → LOG minors and/or direct LEX insertions → explicit upward topic/V1/V2 switches only. A source node without such a rule remains at source height.'
           : 'Derivation: structure config → LOG majors → explicit upward topic/V1/V2 switches only. A source node without such a rule remains at source height.'))
       : (state.projection === 'source'
-        ? 'Bron toont de gekozen OPN-bron uit structure-config.html; LEX-, SYNT- en LOG-as zijn daar onafhankelijk combineerbaar. Het View-menu wisselt tussen de Syntax-view en de Functional-view (functionele CLAUSE/rollen). Syntax en Functional gebruiken bottom-up recursieve box-layout; left/right stuurt beide layouts; takvolgorde kan globaal, compact-auto of align-auto zijn.'
+        ? 'Bron toont de gekozen OGN-bron uit structure-config.html; LEX-, SYNT- en LOG-as zijn daar onafhankelijk combineerbaar. Het View-menu wisselt tussen de Syntax-view en de Functional-view (functionele CLAUSE/rollen). Syntax en Functional gebruiken bottom-up recursieve box-layout; left/right stuurt beide layouts; takvolgorde kan globaal, compact-auto of align-auto zijn.'
         : (featureEnabled('adverbs')
           ? 'Afleiding: structure-config → lexicaal gebruiksprofiel → LOG-minors en/of directe LEX-inserties → uitsluitend expliciete topic-/V1-/V2-Wissels omhoog. Een bronknoop zonder zo’n regel blijft op bronhoogte.'
           : 'Afleiding: structure-config → LOG-majors → uitsluitend expliciete topic-/V1-/V2-Wissels omhoog. Een bronknoop zonder zo’n regel blijft op bronhoogte.'));
@@ -11928,7 +11958,7 @@
     projection: ['Projection choice', 'Projection choice: All, Source, LEX, SYNT and LOG. Useful for comparing projections.'],
     sentence: ['Sample sentence', 'Sample sentence: quickly choose HOND BIJT MAN and variants. Useful for contrasts between sentences.'],
     play: ['Play/Grow', 'Play/Grow: show tree, LEX axis and projections step by step. Useful for explanation.'],
-    tools: ['Work buttons', 'Work buttons: FIT, reset, OPN, Legacy JSON, Docs and editors. Useful for building and testing.']
+    tools: ['Work buttons', 'Work buttons: FIT, reset, OGN, Legacy JSON, Docs and editors. Useful for building and testing.']
   };
 
   const LEX_EXTENSION_LABELS_EN = {
@@ -12671,7 +12701,142 @@
     if (els.nodeYInput) els.nodeYInput.value = node.y;
   }
 
-  function downloadBlob(filename, blob) {
+  let exportDirectoryHandle = null;
+
+  function openExportDirectoryDatabase() {
+    return new Promise((resolve, reject) => {
+      if (!globalThis.indexedDB) {
+        reject(new Error('IndexedDB ontbreekt.'));
+        return;
+      }
+      const request = indexedDB.open(EXPORT_DIRECTORY_DB_NAME, 1);
+      request.addEventListener('upgradeneeded', () => {
+        if (!request.result.objectStoreNames.contains(EXPORT_DIRECTORY_STORE)) {
+          request.result.createObjectStore(EXPORT_DIRECTORY_STORE);
+        }
+      });
+      request.addEventListener('success', () => resolve(request.result));
+      request.addEventListener('error', () => reject(request.error || new Error('Exportmapopslag kon niet worden geopend.')));
+    });
+  }
+
+  async function storedExportDirectoryHandle() {
+    try {
+      const database = await openExportDirectoryDatabase();
+      return await new Promise((resolve, reject) => {
+        const transaction = database.transaction(EXPORT_DIRECTORY_STORE, 'readonly');
+        const request = transaction.objectStore(EXPORT_DIRECTORY_STORE).get(EXPORT_DIRECTORY_KEY);
+        request.addEventListener('success', () => resolve(request.result || null));
+        request.addEventListener('error', () => reject(request.error));
+        transaction.addEventListener('complete', () => database.close());
+      });
+    } catch (_err) {
+      return null;
+    }
+  }
+
+  async function storeExportDirectoryHandle(handle) {
+    const database = await openExportDirectoryDatabase();
+    await new Promise((resolve, reject) => {
+      const transaction = database.transaction(EXPORT_DIRECTORY_STORE, 'readwrite');
+      const store = transaction.objectStore(EXPORT_DIRECTORY_STORE);
+      if (handle) store.put(handle, EXPORT_DIRECTORY_KEY);
+      else store.delete(EXPORT_DIRECTORY_KEY);
+      transaction.addEventListener('complete', resolve);
+      transaction.addEventListener('error', () => reject(transaction.error));
+    });
+    database.close();
+  }
+
+  function syncExportFolderStatus(messageNl = '', messageEn = '') {
+    if (!els.exportFolderStatus) return;
+    const fallbackNl = exportDirectoryHandle
+      ? `Vaste exportmap: ${exportDirectoryHandle.name || 'gekozen map'}. OGN, SVG, PNG, video, JSON en logs gaan naar deze map.`
+      : 'Geen vaste exportmap gekozen; bestanden gaan naar de browserdownload.';
+    const fallbackEn = exportDirectoryHandle
+      ? `Fixed export folder: ${exportDirectoryHandle.name || 'selected folder'}. OGN, SVG, PNG, video, JSON, and logs go to this folder.`
+      : 'No fixed export folder selected; files use the normal browser download.';
+    els.exportFolderStatus.dataset.statusNl = messageNl || fallbackNl;
+    els.exportFolderStatus.dataset.statusEn = messageEn || fallbackEn;
+    els.exportFolderStatus.textContent = isEnglish()
+      ? els.exportFolderStatus.dataset.statusEn
+      : els.exportFolderStatus.dataset.statusNl;
+  }
+
+  async function initializeExportDirectory() {
+    exportDirectoryHandle = await storedExportDirectoryHandle();
+    syncExportFolderStatus();
+  }
+
+  async function chooseExportDirectory() {
+    if (typeof window.showDirectoryPicker !== 'function') {
+      syncExportFolderStatus(
+        'Deze browser kan geen vaste exportmap kiezen. De gewone browserdownload blijft werken.',
+        'This browser cannot select a fixed export folder. Normal browser downloads remain available.'
+      );
+      return;
+    }
+    try {
+      const handle = await window.showDirectoryPicker({
+        id: 'graphlite-export-directory',
+        mode: 'readwrite',
+        startIn: 'downloads'
+      });
+      const permission = typeof handle.requestPermission === 'function'
+        ? await handle.requestPermission({ mode: 'readwrite' })
+        : 'granted';
+      if (permission !== 'granted') throw new Error('Geen schrijfrecht voor de gekozen map.');
+      exportDirectoryHandle = handle;
+      await storeExportDirectoryHandle(handle);
+      syncExportFolderStatus();
+    } catch (error) {
+      if (error?.name === 'AbortError') return;
+      syncExportFolderStatus(
+        `Exportmap kon niet worden ingesteld: ${error?.message || error}`,
+        `Could not set the export folder: ${error?.message || error}`
+      );
+    }
+  }
+
+  async function clearExportDirectory() {
+    exportDirectoryHandle = null;
+    try { await storeExportDirectoryHandle(null); } catch (_err) {}
+    syncExportFolderStatus();
+  }
+
+  async function writeBlobToExportDirectory(filename, blob) {
+    const handle = exportDirectoryHandle;
+    if (!handle || typeof handle.getFileHandle !== 'function') return false;
+    try {
+      const permission = typeof handle.queryPermission === 'function'
+        ? await handle.queryPermission({ mode: 'readwrite' })
+        : 'granted';
+      if (permission !== 'granted') {
+        syncExportFolderStatus(
+          'De exportmap heeft opnieuw toestemming nodig. Kies de exportmap opnieuw; dit bestand gebruikt nu de browserdownload.',
+          'The export folder needs permission again. Select it again; this file now uses the browser download.'
+        );
+        return false;
+      }
+      const fileHandle = await handle.getFileHandle(filename, { create: true });
+      const writable = await fileHandle.createWritable();
+      await writable.write(blob);
+      await writable.close();
+      syncExportFolderStatus(
+        `${filename} opgeslagen in ${handle.name || 'de exportmap'}.`,
+        `${filename} saved in ${handle.name || 'the export folder'}.`
+      );
+      return true;
+    } catch (_err) {
+      syncExportFolderStatus(
+        'Schrijven naar de exportmap is mislukt; dit bestand gebruikt nu de browserdownload.',
+        'Writing to the export folder failed; this file now uses the browser download.'
+      );
+      return false;
+    }
+  }
+
+  function browserDownloadBlob(filename, blob) {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -12682,8 +12847,14 @@
     window.setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
 
+  async function downloadBlob(filename, blob) {
+    if (await writeBlobToExportDirectory(filename, blob)) return 'folder';
+    browserDownloadBlob(filename, blob);
+    return 'download';
+  }
+
   function download(filename, text, type = 'application/json') {
-    downloadBlob(filename, new Blob([text], { type }));
+    return downloadBlob(filename, new Blob([text], { type }));
   }
 
   let graphExportBusy = false;
@@ -12836,7 +13007,7 @@
     }
   }
 
-  function downloadGraphSvg() {
+  async function downloadGraphSvg() {
     if (graphExportBusy) return;
     try {
       const box = graphExportViewBox();
@@ -12844,14 +13015,14 @@
       const width = 1600;
       const height = Math.max(1, Math.round(width / ratio));
       const svgText = standaloneSvgText({ width, height, viewBox: box });
-      downloadBlob(
+      await downloadBlob(
         `${graphExportFileStem('graph')}.svg`,
         new Blob([svgText], { type: 'image/svg+xml;charset=utf-8' })
       );
       recordParadata('export-graph-svg', { width, height, example: state.example?.id });
       setGraphExportStatus(
-        'SVG gedownload: zelfstandig vectorbestand met de volledige graph.',
-        'SVG downloaded: self-contained vector file with the complete graph.'
+        'SVG opgeslagen: zelfstandig vectorbestand met de volledige graph.',
+        'SVG saved: self-contained vector file with the complete graph.'
       );
     } catch (err) {
       console.error('OpenGraph SVG export failed', err);
@@ -12917,11 +13088,11 @@
       canvas.height = height;
       await drawStandaloneSvgOnCanvas(canvas, svgText);
       const blob = await canvasPngBlob(canvas);
-      downloadBlob(`${graphExportFileStem('linkedin-1200x627')}.png`, blob);
+      await downloadBlob(`${graphExportFileStem('linkedin-1200x627')}.png`, blob);
       recordParadata('export-graph-png', { width, height, platform: 'linkedin', example: state.example?.id });
       setGraphExportStatus(
-        'LinkedIn-PNG gedownload (1200 × 627). Upload dit als afbeelding bij een bijdrage.',
-        'LinkedIn PNG downloaded (1200 × 627). Upload it as the image in a post.'
+        'LinkedIn-PNG opgeslagen (1200 × 627). Upload dit als afbeelding bij een bijdrage.',
+        'LinkedIn PNG saved (1200 × 627). Upload it as the image in a post.'
       );
     } catch (err) {
       console.error('OpenGraph PNG export failed', err);
@@ -13126,7 +13297,7 @@
       recorder.stop();
       completedBlob = await stopped;
       if (!completedBlob.size) throw new Error('De video-opname is leeg.');
-      downloadBlob(`${graphExportFileStem('play-linkedin')}.${recordingOutput.extension}`, completedBlob);
+      await downloadBlob(`${graphExportFileStem('play-linkedin')}.${recordingOutput.extension}`, completedBlob);
       recordParadata('export-play-video', {
         width,
         height,
@@ -13164,8 +13335,8 @@
       if (completedBlob?.size) {
         const outputName = recordingOutput?.extension === 'mp4' ? 'MP4/H.264' : 'WebM';
         setGraphExportStatus(
-          `Play-video als ${outputName} met ${PLAY_VIDEO_FRAME_RATE} fps gedownload. Upload als video, niet als document.`,
-          `Play video downloaded as ${outputName} at ${PLAY_VIDEO_FRAME_RATE} fps. Upload it as a video, not as a document.`
+          `Play-video als ${outputName} met ${PLAY_VIDEO_FRAME_RATE} fps opgeslagen. Upload als video, niet als document.`,
+          `Play video saved as ${outputName} at ${PLAY_VIDEO_FRAME_RATE} fps. Upload it as a video, not as a document.`
         );
       }
     }
@@ -13194,11 +13365,434 @@
     }
   }
 
+  function safeSnapshotSlug(value, fallback = 'graph') {
+    const slug = String(value || '')
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
+      .slice(0, 62);
+    return slug || fallback;
+  }
+
+  function ensureOgnSnapshotFilename(value) {
+    const base = String(value || '').trim().replace(/\.ogn$/i, '');
+    return `${safeSnapshotSlug(base, 'graphlite-snapshot')}.ogn`;
+  }
+
+  function snapshotCounter(next = false) {
+    let value = 0;
+    try { value = Math.max(0, Number(localStorage.getItem(OGN_SNAPSHOT_COUNTER_KEY)) || 0); } catch (_err) {}
+    if (next) {
+      value += 1;
+      try { localStorage.setItem(OGN_SNAPSHOT_COUNTER_KEY, String(value)); } catch (_err) {}
+    }
+    return value + (next ? 0 : 1);
+  }
+
+  function snapshotActionPresentation(event = {}) {
+    const details = event.details || {};
+    const action = String(event.action || 'actie');
+    const map = {
+      'flip-vcluster': ['V-cluster geflipt', 'vcluster-flip'],
+      'set-vcluster-flip': ['V-cluster geflipt', 'vcluster-flip'],
+      'set-tense': [`Tijd gekozen${details.tense ? `: ${String(details.tense).toUpperCase()}` : ''}`, `tijd-${details.tense || activeTenseId() || 'vorm'}`],
+      'set-central-view': [`View gewijzigd: ${details.to === 'ft' ? 'functioneel' : 'syntactisch'}`, details.to === 'ft' ? 'functioneel' : 'syntactisch'],
+      'set-projection-mode': [`Projectie gekozen: ${String(details.to || '').toUpperCase()}`, `projectie-${details.to || 'view'}`],
+      'set-visible-projections': [`Projecties zichtbaar: ${(details.visible || []).join(', ').toUpperCase()}`, `projecties-${(details.visible || []).join('-') || 'view'}`],
+      'set-log-order': [`LOG-volgorde: ${details.to || state.southLogicalMode}`, `log-${details.to || state.southLogicalMode}`],
+      'swap-roles': [`Rollen gewisseld: ${details.enabled ? 'aan' : 'uit'}`, 'rollen-wissel'],
+      'fit-view': ['View passend gemaakt', 'fit'],
+      'set-placement-mode': [`Plaatsingswijze: ${details.to || state.placementMode}`, details.to || state.placementMode],
+      'resolve-lexical-profile': ['Lexicaal profiel gekozen', 'lex-profiel'],
+      'choose-lexical-role-item': ['Lexicaal item gekozen', 'lex-keuze'],
+      'select-example': ['Testzin gekozen', 'testzin'],
+      'select-testmateriaal-list': ['Testzin gekozen', 'testzin']
+    };
+    if (map[action]) return { label: map[action][0], token: safeSnapshotSlug(map[action][1], 'actie') };
+    const label = action.replace(/[-_]+/g, ' ').replace(/^./, character => character.toUpperCase());
+    return { label, token: safeSnapshotSlug(action, 'actie') };
+  }
+
+  function recentSnapshotParadata() {
+    const ignored = /^(session-start|export-|open-|import-|save-ogn-snapshot)/;
+    return (Array.isArray(state.paradataEvents) ? state.paradataEvents : [])
+      .filter(event => event?.action && !ignored.test(String(event.action)))
+      .slice(-8).reverse()
+      .map((event, index) => ({ ...event, snapshotId: `action-${index}`, ...snapshotActionPresentation(event) }));
+  }
+
+  function currentSnapshotViewOptions() {
+    const options = [{
+      id: state.centerMode === 'ft' ? 'functional' : 'syntax',
+      label: state.centerMode === 'ft' ? 'Functionele view' : 'Syntactische view',
+      token: state.centerMode === 'ft' ? 'functioneel' : 'syntactisch', selected: true
+    }];
+    const axes = state.projection === 'source'
+      ? normalizedSourceAxes()
+      : (['lex','synt','log'].includes(state.projection) ? [state.projection] : normalizedSourceAxes());
+    for (const axis of axes) options.push({ id: axis, label: `${axis.toUpperCase()}-projectie`, token: axis, selected: true });
+    return options.filter((item, index, all) => all.findIndex(candidate => candidate.id === item.id) === index);
+  }
+
+  function currentSnapshotPlayState() {
+    if (multiOgnAnaphorActive()) {
+      const max = multiOgnPlayMax();
+      return { engine: 'multi-ogn', step: state.multiOgnPlayEnabled ? Math.min(max, Number(state.multiOgnPlayStep) || 0) : max, max, resume: 'paused-at-saved-step' };
+    }
+    if (directPlacementActive()) {
+      const direct = ensureDirectPlacementState();
+      const max = Math.max(0, Number(direct?.targetCount || state.directPlacementGeneral?.targetCount || 1) - 1);
+      return { engine: state.placementMode, step: Math.max(0, Number(direct?.points?.length || 1) - 1), max, resume: 'paused-at-saved-step' };
+    }
+    const max = growthStepMax();
+    return { engine: 'language-tree', step: state.growthEnabled ? Math.min(max, Number(state.growthStep) || 0) : max, max, resume: 'paused-at-saved-step' };
+  }
+
+  function snapshotDescriptor(filename, selectedViews = [], selectedActions = []) {
+    const engine = directPlacementActive() ? placementEngine() : null;
+    const direct = directPlacementActive() ? ensureDirectPlacementState() : null;
+    return {
+      schema: 'ogn-resumable-view-snapshot-v1',
+      captured_at: new Date().toISOString(),
+      filename,
+      naming: {
+        selected_views: selectedViews.map(item => ({ id: item.id, label: item.label, token: item.token })),
+        selected_actions: selectedActions.map(item => ({ time: item.time, action: item.action, label: item.label, token: item.token }))
+      },
+      placement_mode: state.placementMode,
+      example_id: multiOgnAnaphorActive() ? activeMultiOgnDemo().id : state.example?.id,
+      view: {
+        central_view: state.centerMode,
+        projection_mode: state.projection,
+        visible_projections: normalizedSourceAxes(),
+        manual_viewbox: state.manualViewBox ? jsonClone(state.manualViewBox, null) : null,
+        display: { grid: !!state.showGrid, relations: !!state.showRelations, labels: !!state.showLabels, layout_density: state.layoutDensity, view_fit: state.viewFitMode }
+      },
+      analysis_state: {
+        language_tree_vcluster_flipped: !!state.languageTreeVclusterFlipped,
+        causal_verb_variant: state.causalVerbVariant,
+        causal_anaphor_variant: state.causalAnaphorVariant,
+        tense_by_family: jsonClone(state.tenseByFamily, {}),
+        bot_variant: state.botVariant,
+        role_swap: !!state.roleSwap,
+        south_logical_mode: state.southLogicalMode,
+        kernel_space_global: jsonClone(state.kernelSpaceGlobal, { x: 1, y: 1 }),
+        kernel_space_component_x: state.kernelSpaceComponentX,
+        kernel_space_local_y: jsonClone(state.kernelSpaceLocalY, {}),
+        sentence_space_local: jsonClone(state.sentenceSpaceLocal, { x: 1, y: 1 })
+      },
+      play: currentSnapshotPlayState(),
+      ...(direct ? { direct_placement: {
+        general: jsonClone(state.directPlacementGeneral, {}),
+        greedy: jsonClone(state.greedyGrowConfig, {}), random: jsonClone(state.randomPlacementConfig, {}),
+        seed: state.directPlacementSeed, iteration_base_seed: state.directPlacementIterationBaseSeed,
+        iteration_index: state.directPlacementIterationIndex,
+        engine_snapshot: typeof engine?.snapshot === 'function' ? jsonClone(engine.snapshot(direct), null) : { point_count: direct.points?.length || 1 }
+      } } : {})
+    };
+  }
+
+  function attachOgnResumeSnapshot(document, snapshot) {
+    if (!document || !snapshot) return document;
+    document.metadata = { ...(document.metadata || {}), document_kind: 'snapshot' };
+    document.metadata.extras = [...new Set([...(document.metadata.extras || []), 'resumable-ogn-snapshot'])];
+    document.paradata = document.paradata?.included ? document.paradata : { included: true, privacy: 'local-export-only', events: jsonClone(state.paradataEvents, []) };
+    document.paradata.snapshot = snapshot;
+    return document;
+  }
+
+  let snapshotDialogViews = [];
+  let snapshotDialogActions = [];
+  let snapshotNameProposals = [];
+  let snapshotDialogDrag = null;
+  let snapshotWorkspaceDrag = null;
+  let pendingSnapshotWindowTransfer = null;
+
+  function snapshotDialogElement() {
+    return els.ognSnapshotBackdrop?.querySelector('.ogn-snapshot-dialog') || null;
+  }
+
+  function resetSnapshotDialogPosition() {
+    const dialog = snapshotDialogElement();
+    if (!dialog) return;
+    dialog.style.transform = '';
+    dialog.dataset.dragX = '0';
+    dialog.dataset.dragY = '0';
+    dialog.classList.remove('is-dragging');
+    snapshotDialogDrag = null;
+  }
+
+  function bindSnapshotDialogDrag() {
+    const handle = els.ognSnapshotDragHandle;
+    const dialog = snapshotDialogElement();
+    if (!handle || !dialog || handle.dataset.dragBound === '1') return;
+    handle.dataset.dragBound = '1';
+    handle.addEventListener('pointerdown', event => {
+      if (event.button !== 0 || event.target?.closest?.('button,input,select,a,label')) return;
+      const currentX = Number(dialog.dataset.dragX) || 0;
+      const currentY = Number(dialog.dataset.dragY) || 0;
+      const rect = dialog.getBoundingClientRect();
+      snapshotDialogDrag = {
+        pointerId: event.pointerId,
+        startX: event.clientX,
+        startY: event.clientY,
+        currentX,
+        currentY,
+        baseLeft: rect.left - currentX,
+        baseTop: rect.top - currentY,
+        width: rect.width,
+        height: rect.height
+      };
+      dialog.classList.add('is-dragging');
+      handle.setPointerCapture?.(event.pointerId);
+      event.preventDefault();
+    });
+    handle.addEventListener('pointermove', event => {
+      if (!snapshotDialogDrag || snapshotDialogDrag.pointerId !== event.pointerId) return;
+      const margin = 8;
+      const wantedX = snapshotDialogDrag.currentX + event.clientX - snapshotDialogDrag.startX;
+      const wantedY = snapshotDialogDrag.currentY + event.clientY - snapshotDialogDrag.startY;
+      const minX = margin - snapshotDialogDrag.baseLeft;
+      const maxX = window.innerWidth - margin - snapshotDialogDrag.baseLeft - snapshotDialogDrag.width;
+      const minY = margin - snapshotDialogDrag.baseTop;
+      const maxY = window.innerHeight - margin - snapshotDialogDrag.baseTop - Math.min(snapshotDialogDrag.height, window.innerHeight - margin * 2);
+      const x = Math.max(minX, Math.min(maxX, wantedX));
+      const y = Math.max(minY, Math.min(maxY, wantedY));
+      dialog.dataset.dragX = String(x);
+      dialog.dataset.dragY = String(y);
+      dialog.style.transform = `translate(${Math.round(x)}px, ${Math.round(y)}px)`;
+    });
+    const finish = event => {
+      if (!snapshotDialogDrag || snapshotDialogDrag.pointerId !== event.pointerId) return;
+      try { handle.releasePointerCapture?.(event.pointerId); } catch (_err) {}
+      snapshotDialogDrag = null;
+      dialog.classList.remove('is-dragging');
+    };
+    handle.addEventListener('pointerup', finish);
+    handle.addEventListener('pointercancel', finish);
+  }
+
+  function snapshotMessageOrigin() {
+    return window.location.origin && window.location.origin !== 'null' ? window.location.origin : '*';
+  }
+
+  function snapshotWindowToken() {
+    return globalThis.crypto?.randomUUID?.() || `snapshot-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+  }
+
+  function reportSnapshotOpenError(error) {
+    const message = error?.message || String(error || 'Onbekende fout');
+    console.error('Graphlite snapshot openen mislukt:', error);
+    if (els.actionFeedback) {
+      els.actionFeedback.textContent = `Snapshot openen mislukt: ${message}`;
+      els.actionFeedback.className = 'action-feedback error';
+    }
+  }
+
+  function bindSnapshotWorkspaceDrag() {
+    const handle = els.ognSnapshotWorkspaceDragHandle;
+    const panel = els.ognSnapshotWorkspaceWindow;
+    if (!handle || !panel || handle.dataset.dragBound === '1') return;
+    handle.dataset.dragBound = '1';
+    handle.addEventListener('pointerdown', event => {
+      if (event.button !== 0 || event.target?.closest?.('button,input,select,a,label')) return;
+      const rect = panel.getBoundingClientRect();
+      snapshotWorkspaceDrag = { pointerId: event.pointerId, offsetX: event.clientX - rect.left, offsetY: event.clientY - rect.top };
+      panel.style.width = `${Math.round(rect.width)}px`;
+      panel.style.height = `${Math.round(rect.height)}px`;
+      panel.style.left = `${Math.round(rect.left)}px`;
+      panel.style.top = `${Math.round(rect.top)}px`;
+      panel.classList.add('is-dragging');
+      handle.setPointerCapture?.(event.pointerId);
+      event.preventDefault();
+    });
+    handle.addEventListener('pointermove', event => {
+      if (!snapshotWorkspaceDrag || snapshotWorkspaceDrag.pointerId !== event.pointerId) return;
+      const margin = 8;
+      const rect = panel.getBoundingClientRect();
+      const left = Math.max(margin, Math.min(window.innerWidth - rect.width - margin, event.clientX - snapshotWorkspaceDrag.offsetX));
+      const top = Math.max(margin, Math.min(window.innerHeight - Math.min(rect.height, window.innerHeight - margin * 2) - margin, event.clientY - snapshotWorkspaceDrag.offsetY));
+      panel.style.left = `${Math.round(left)}px`;
+      panel.style.top = `${Math.round(top)}px`;
+    });
+    const finish = event => {
+      if (!snapshotWorkspaceDrag || snapshotWorkspaceDrag.pointerId !== event.pointerId) return;
+      try { handle.releasePointerCapture?.(event.pointerId); } catch (_err) {}
+      snapshotWorkspaceDrag = null;
+      panel.classList.remove('is-dragging');
+    };
+    handle.addEventListener('pointerup', finish);
+    handle.addEventListener('pointercancel', finish);
+  }
+
+  function closeSnapshotWorkspace() {
+    const panel = els.ognSnapshotWorkspaceWindow;
+    const frame = els.ognSnapshotWorkspaceFrame;
+    if (panel) panel.hidden = true;
+    if (frame) frame.removeAttribute('src');
+    pendingSnapshotWindowTransfer = null;
+    recordParadata('close-ogn-snapshot-workspace', {});
+  }
+
+  async function prepareSnapshotFile(file) {
+    if (!file) throw new Error('Geen OGN-snapshot gekozen.');
+    const text = await file.text();
+    const payload = JSON.parse(text);
+    if (payload?.paradata?.snapshot?.schema !== 'ogn-resumable-view-snapshot-v1') {
+      throw new Error('Dit bestand is geen hervatbare OGN-snapshot. Gebruik voor een gewone OGN de importknop in Config.');
+    }
+    return { text, filename: file.name || 'snapshot.ogn' };
+  }
+
+  function openSnapshotWorkspace(prepared) {
+    const panel = els.ognSnapshotWorkspaceWindow;
+    const frame = els.ognSnapshotWorkspaceFrame;
+    if (!panel || !frame) throw new Error('Het interne Graphlite-snapshotvenster ontbreekt.');
+    const token = snapshotWindowToken();
+    panel.hidden = false;
+    if (els.ognSnapshotWorkspaceHeading) els.ognSnapshotWorkspaceHeading.textContent = prepared.filename;
+    const url = new URL(window.location.href);
+    url.searchParams.set('ognSnapshotWindow', token);
+    url.hash = '';
+    pendingSnapshotWindowTransfer = { ...prepared, targetWindow: frame.contentWindow, token };
+    frame.src = url.href;
+    panel.focus?.();
+    recordParadata('open-ogn-snapshot-workspace', { filename: prepared.filename });
+    if (els.actionFeedback) {
+      els.actionFeedback.textContent = `Snapshot ${prepared.filename} wordt in het interne Graphlite-venster geladen.`;
+      els.actionFeedback.className = 'action-feedback neutral';
+    }
+  }
+
+  function requestOgnSnapshotWorkspace() {
+    if (!els.mainSnapshotOpenInput) {
+      reportSnapshotOpenError(new Error('De OGN-bestandskiezer ontbreekt.'));
+      return;
+    }
+    els.mainSnapshotOpenInput.value = '';
+    els.mainSnapshotOpenInput.click();
+  }
+
+  async function handleSnapshotFallbackFileInput() {
+    const file = els.mainSnapshotOpenInput?.files?.[0];
+    if (els.mainSnapshotOpenInput) els.mainSnapshotOpenInput.value = '';
+    if (!file) return;
+    try {
+      openSnapshotWorkspace(await prepareSnapshotFile(file));
+    }
+    catch (error) {
+      reportSnapshotOpenError(error);
+      pendingSnapshotWindowTransfer = null;
+    }
+  }
+
+  function receiveSnapshotWindowMessage(event) {
+    const requiredOrigin = window.location.origin;
+    if (requiredOrigin && requiredOrigin !== 'null' && event.origin !== requiredOrigin) return;
+    const message = event.data || {};
+    if (message.type === 'graphlite-snapshot-window-ready') {
+      const pending = pendingSnapshotWindowTransfer;
+      if (!pending || pending.token !== message.token || event.source !== pending.targetWindow) return;
+      event.source.postMessage({ type: 'graphlite-snapshot-window-payload', token: pending.token, text: pending.text, filename: pending.filename }, snapshotMessageOrigin());
+      pendingSnapshotWindowTransfer = null;
+      return;
+    }
+    if (message.type === 'graphlite-snapshot-window-payload') {
+      const token = new URLSearchParams(window.location.search).get('ognSnapshotWindow');
+      if (!token || token !== message.token) return;
+      try {
+        applyImportedDocumentText(message.text, message.filename || 'snapshot.ogn');
+        const clean = new URL(window.location.href); clean.searchParams.delete('ognSnapshotWindow');
+        window.history.replaceState({}, '', clean.href);
+      } catch (error) {
+        if (els.actionFeedback) { els.actionFeedback.textContent = `Snapshot laden mislukt: ${error?.message || error}`; els.actionFeedback.className = 'action-feedback error'; }
+      }
+    }
+  }
+
+  function announceSnapshotWindowReady() {
+    const token = new URLSearchParams(window.location.search).get('ognSnapshotWindow');
+    const host = window.parent !== window ? window.parent : window.opener;
+    // Meld het interne snapshotvenster pas gereed nadat init() alle asynchrone
+    // configuratie en testdata heeft geladen. Een vroeg bericht liet de daarna
+    // doorlopende initialisatie de zojuist herstelde PLAY-stap overschrijven.
+    if (token && host && window.__opengraphBoot?.loaded === true) {
+      host.postMessage({ type: 'graphlite-snapshot-window-ready', token }, snapshotMessageOrigin());
+    }
+  }
+
+  function checkedSnapshotItems(container, source) {
+    const checked = new Set(Array.from(container?.querySelectorAll('input:checked') || []).map(input => input.value));
+    return source.filter(item => checked.has(item.id || item.snapshotId));
+  }
+
+  function renderSnapshotNameProposals() {
+    const views = checkedSnapshotItems(els.ognSnapshotViewChoices, snapshotDialogViews);
+    const actions = checkedSnapshotItems(els.ognSnapshotActionChoices, snapshotDialogActions);
+    const example = safeSnapshotSlug(multiOgnAnaphorActive() ? activeMultiOgnDemo().id : (state.example?.id || activeSentenceText()), 'graph');
+    const viewTokens = views.map(item => item.token).slice(0, 4);
+    const actionTokens = actions.map(item => item.token).slice(0, 3);
+    const play = currentSnapshotPlayState();
+    const counter = String(snapshotCounter()).padStart(3, '0');
+    const date = new Date().toISOString().slice(0, 10).replaceAll('-', '');
+    const compact = [example, ...viewTokens.slice(0, 2), `stap-${play.step}`, `snapshot-${counter}`];
+    const actionName = [example, ...actionTokens.slice(0, 2), ...viewTokens.slice(0, 2), `stap-${play.step}`, counter];
+    const complete = [example, ...viewTokens, ...actionTokens, `play-${play.step}-van-${play.max}`, date, counter];
+    snapshotNameProposals = [compact, actionName, complete]
+      .map(parts => ensureOgnSnapshotFilename(parts.filter(Boolean).join('-')))
+      .filter((name, index, all) => all.indexOf(name) === index);
+    if (els.ognSnapshotNameProposals) {
+      els.ognSnapshotNameProposals.replaceChildren(...snapshotNameProposals.map((name, index) => {
+        const button = document.createElement('button');
+        button.type = 'button'; button.textContent = `${index + 1}. ${name}`;
+        button.addEventListener('click', () => { if (els.ognSnapshotFilenameInput) els.ognSnapshotFilenameInput.value = name; });
+        return button;
+      }));
+    }
+    if (els.ognSnapshotFilenameInput) els.ognSnapshotFilenameInput.value = snapshotNameProposals[0] || 'graphlite-snapshot.ogn';
+    if (els.ognSnapshotStatus) els.ognSnapshotStatus.textContent = `PLAY staat op stap ${play.step} van ${play.max}; die stap wordt hervat na openen.`;
+  }
+
+  function renderSnapshotChoices() {
+    snapshotDialogViews = currentSnapshotViewOptions();
+    snapshotDialogActions = recentSnapshotParadata();
+    const makeChoice = (item, checked, value) => {
+      const label = document.createElement('label');
+      const input = document.createElement('input'); input.type = 'checkbox'; input.value = value; input.checked = checked;
+      const text = document.createElement('span'); text.textContent = item.label;
+      if (item.time) { const small = document.createElement('small'); small.textContent = new Date(item.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }); text.appendChild(small); }
+      input.addEventListener('change', renderSnapshotNameProposals); label.append(input, text); return label;
+    };
+    els.ognSnapshotViewChoices?.replaceChildren(...snapshotDialogViews.map(item => makeChoice(item, item.selected, item.id)));
+    els.ognSnapshotActionChoices?.replaceChildren(...snapshotDialogActions.map((item, index) => makeChoice(item, index < 2, item.snapshotId)));
+    if (els.ognSnapshotActionEmpty) els.ognSnapshotActionEmpty.hidden = snapshotDialogActions.length > 0;
+    renderSnapshotNameProposals();
+  }
+
+  function setSnapshotDialog(open) {
+    if (!els.ognSnapshotBackdrop) return;
+    els.ognSnapshotBackdrop.hidden = !open;
+    document.body.classList.toggle('ogn-snapshot-open', !!open);
+    if (open) { stopGrowthPlayback(); stopDirectPlacementPlayback(); stopMultiOgnPlayback(); resetSnapshotDialogPosition(); renderSnapshotChoices(); window.setTimeout(() => els.ognSnapshotFilenameInput?.focus(), 0); }
+  }
+
+  async function saveOgnSnapshot() {
+    const views = checkedSnapshotItems(els.ognSnapshotViewChoices, snapshotDialogViews);
+    const actions = checkedSnapshotItems(els.ognSnapshotActionChoices, snapshotDialogActions);
+    const filename = ensureOgnSnapshotFilename(els.ognSnapshotFilenameInput?.value || snapshotNameProposals[0]);
+    snapshotCounter(true);
+    recordParadata('save-ogn-snapshot', { filename, selected_views: views.map(item => item.id), selected_actions: actions.map(item => item.action), play: currentSnapshotPlayState() });
+    const snapshot = snapshotDescriptor(filename, views, actions);
+    const payload = buildOgnDocument(true, { snapshot });
+    await download(filename, JSON.stringify(payload, null, 2), 'application/vnd.opengraph.ogn+json');
+    setSnapshotDialog(false);
+    if (els.actionFeedback) { els.actionFeedback.textContent = `${filename} opgeslagen als hervatbare OGN-snapshot.`; els.actionFeedback.className = 'action-feedback neutral'; }
+  }
+
   function defaultDocumentMetadata() {
     const now = new Date().toISOString();
     const multiOgn = multiOgnAnaphorActive();
     return {
-      document_id: globalThis.crypto?.randomUUID?.() || `opn-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+      document_id: globalThis.crypto?.randomUUID?.() || `ogn-${Date.now()}-${Math.random().toString(16).slice(2)}`,
       title: multiOgn ? activeMultiOgnDemo().title : (state.example?.title || state.example?.sentence || 'OpenGraph-document'),
       language: state.language || 'nl',
       created_at: now,
@@ -13216,7 +13810,7 @@
   }
 
   function serializeLayoutGraph(layout, view, rules) {
-    assertUniqueNodeGridLines(layout, `OPN-export ${view}`);
+    assertUniqueNodeGridLines(layout, `OGN-export ${view}`);
     return {
       view,
       root_id: layout?.node?.id || null,
@@ -13276,7 +13870,7 @@
     };
   }
 
-  function buildUtteranceKernelOpnDocument(composition, includeParadata = true) {
+  function buildUtteranceKernelOgnDocument(composition, includeParadata = true) {
     const baseMetadata = ensureDocumentMetadata();
     const now = new Date().toISOString();
     const example = EXAMPLES.find(candidate => candidate.id === composition.definition.id);
@@ -13296,7 +13890,7 @@
       anaphor: jsonClone(relation.anaphor, null)
     }));
     return {
-      opn: 'Open Graph Notation', document_type: OPN_DOCUMENT_TYPE, opn_version: OPN_FORMAT_VERSION,
+      ogn: 'Open Graph Notation', document_type: OGN_DOCUMENT_TYPE, ogn_version: OGN_FORMAT_VERSION,
       metadata: {
         ...jsonClone(baseMetadata, {}), title: composition.definition.title,
         language: state.language || baseMetadata.language || 'nl', modified_at: now,
@@ -13351,9 +13945,9 @@
     };
   }
 
-  function buildMultiOgnOpnDocument(includeParadata = true) {
+  function buildMultiOgnOgnDocument(includeParadata = true) {
     const composition = multiOgnAnaphorComposition();
-    if (composition.definition) return buildUtteranceKernelOpnDocument(composition, includeParadata);
+    if (composition.definition) return buildUtteranceKernelOgnDocument(composition, includeParadata);
     const baseMetadata = ensureDocumentMetadata();
     const now = new Date().toISOString();
     const inputAnalysis = analysisEnvelope(composition.demo);
@@ -13369,9 +13963,9 @@
       };
     });
     return {
-      opn: 'Open Graph Notation',
-      document_type: OPN_DOCUMENT_TYPE,
-      opn_version: OPN_FORMAT_VERSION,
+      ogn: 'Open Graph Notation',
+      document_type: OGN_DOCUMENT_TYPE,
+      ogn_version: OGN_FORMAT_VERSION,
       metadata: {
         ...jsonClone(baseMetadata, {}),
         title: inputAnalysis.originalInput,
@@ -13444,8 +14038,8 @@
     };
   }
 
-  function buildOpnDocument(includeParadata = true) {
-    if (multiOgnAnaphorActive()) return buildMultiOgnOpnDocument(includeParadata);
+  function buildOgnDocument(includeParadata = true, options = {}) {
+    if (multiOgnAnaphorActive()) return attachOgnResumeSnapshot(buildMultiOgnOgnDocument(includeParadata || !!options.snapshot), options.snapshot);
     const baseMetadata = ensureDocumentMetadata();
     const now = new Date().toISOString();
     const adverbsEnabled = featureEnabled('adverbs');
@@ -13464,9 +14058,9 @@
       interval: item.kind === 'minor' ? (item.logInterval || item.interval || null) : null
     }));
     const document = {
-      opn: 'Open Graph Notation',
-      document_type: OPN_DOCUMENT_TYPE,
-      opn_version: OPN_FORMAT_VERSION,
+      ogn: 'Open Graph Notation',
+      document_type: OGN_DOCUMENT_TYPE,
+      ogn_version: OGN_FORMAT_VERSION,
       metadata: {
         ...jsonClone(baseMetadata, {}),
         title: baseMetadata.title || state.example?.title || 'OpenGraph-document',
@@ -13568,7 +14162,7 @@
         )
       } : { included: false }
     };
-    return document;
+    return attachOgnResumeSnapshot(document, options.snapshot);
   }
 
   function legacyJsonPayload() {
@@ -13595,7 +14189,7 @@
       extras: featureEnabled('adverbs') ? ['adverbs'] : [],
       preconfig: insertionPreconfigSnapshot(),
       example: state.example.id,
-      central_opn: state.centerMode,
+      central_ogn: state.centerMode,
       projection: state.projection,
       source_axes: normalizedSourceAxes(),
       tree_choice: activeTreeChoice(),
@@ -13646,17 +14240,17 @@
     });
   }
 
-  function downloadOpn() {
+  async function downloadOgn() {
     const includeParadata = includeParadataForExport();
     const exampleId = multiOgnAnaphorActive() ? activeMultiOgnDemo().id : state.example.id;
-    recordParadata('export-opn', { example: exampleId, paradata_included: includeParadata });
-    const payload = buildOpnDocument(includeParadata);
-    download(`${exampleId}.${VERSION}.opn`, JSON.stringify(payload, null, 2), 'application/vnd.opengraph.opn+json');
+    recordParadata('export-ogn', { example: exampleId, paradata_included: includeParadata });
+    const payload = buildOgnDocument(includeParadata);
+    await download(`${exampleId}.${VERSION}.ogn`, JSON.stringify(payload, null, 2), 'application/vnd.opengraph.ogn+json');
   }
 
   function importedExampleFromData(exampleData) {
     if (!exampleData || typeof exampleData !== 'object') return null;
-    const id = String(exampleData.id || 'imported-opn').trim() || 'imported-opn';
+    const id = String(exampleData.id || 'imported-ogn').trim() || 'imported-ogn';
     const lexItems = Array.isArray(exampleData.lex_items)
       ? exampleData.lex_items.map(item => ({ ...item }))
       : [];
@@ -13664,7 +14258,7 @@
     return {
       id,
       title: String(exampleData.title || exampleData.sentence || id),
-      phase: exampleData.phase || 'OPN-import',
+      phase: exampleData.phase || 'OGN-import',
       sentenceType: exampleData.sentence_type || '',
       lexRule: exampleData.lex_rule || 'hoofdzininvariant',
       sentence: String(exampleData.sentence || lexItems.map(item => item.label).join(' ')),
@@ -13702,7 +14296,7 @@
     return [...new Set(requiredAxes)].filter(axisId => INSERTION_AXIS_DEFINITIONS[axisId] && !insertionAxisEnabled(axisId));
   }
 
-  function insertionRequirementMessage(missingAxes = [], documentKind = 'OPN') {
+  function insertionRequirementMessage(missingAxes = [], documentKind = 'OGN') {
     const labels = missingAxes.map(axisId => INSERTION_AXIS_DEFINITIONS[axisId].label).join(' + ');
     return isEnglish()
       ? `This ${documentKind} document requires insertion on ${labels}. Enable it first in Config · Pre-config.`
@@ -13828,9 +14422,9 @@
     state.paradataEvents = Array.isArray(paradata.events) ? jsonClone(paradata.events, []).slice(-PARADATA_EVENT_LIMIT) : [];
     state.paradataSessionId = globalThis.crypto?.randomUUID?.() || `session-${Date.now()}-${Math.random().toString(16).slice(2)}`;
     state.paradataStartedAt = new Date().toISOString();
-    recordParadata(payload?.data ? 'open-opn-multi-ogn' : 'import-legacy-multi-ogn', {
+    recordParadata(payload?.data ? 'open-ogn-multi-ogn' : 'import-legacy-multi-ogn', {
       filename,
-      opn_version: payload.opn_version || null
+      ogn_version: payload.ogn_version || null
     });
   }
 
@@ -13857,8 +14451,8 @@
     state.logInsertionInterval = 'auto';
     const nextExample = EXAMPLES.find(example => example.id === payload.example);
     if (nextExample) state.example = nextExample;
-    if (payload.central_opn === 'syntax') state.centerMode = 'syntax';
-    else if (payload.central_opn === 'ft' || payload.central_opn === 'functional') state.centerMode = 'ft';
+    if (payload.central_ogn === 'syntax') state.centerMode = 'syntax';
+    else if (payload.central_ogn === 'ft' || payload.central_ogn === 'functional') state.centerMode = 'ft';
     if (PROJECTION_OPTIONS.some(option => option.id === payload.projection)) state.projection = payload.projection;
     if (Array.isArray(payload.source_axes)) setSourceAxes(payload.source_axes, { activateSource: false });
     if (payload.tree_choice && TREE_CHOICES.some(choice => choice.id === payload.tree_choice)) state.treeChoice = payload.tree_choice;
@@ -13887,7 +14481,7 @@
     recordParadata('import-legacy-json', { source_version: payload.version || null });
   }
 
-  function opnDocumentRequiresAdverbs(payload = {}) {
+  function ognDocumentRequiresAdverbs(payload = {}) {
     const data = payload.data || {};
     const projections = data.projections || {};
     const lex = projections.lex || {};
@@ -13901,19 +14495,19 @@
       || logSequence.some(item => item?.kind === 'minor');
   }
 
-  function opnDocumentRequiredInsertionAxes(payload = {}) {
+  function ognDocumentRequiredInsertionAxes(payload = {}) {
     const required = new Set(declaredInsertionAxes(payload.metadata?.preconfig));
     const data = payload.data || {};
     const projections = data.projections || {};
     const lex = projections.lex || {};
     const synt = projections.synt || {};
     const log = projections.log || {};
-    if (opnDocumentRequiresAdverbs(payload)
+    if (ognDocumentRequiresAdverbs(payload)
       || Array.isArray(data.example?.lex_insertions)
       || ['free_slot_count', 'free_slots', 'insertion_content', 'adverb'].some(key => key in lex)) {
       required.add('lex');
     }
-    if (opnDocumentRequiresAdverbs(payload)
+    if (ognDocumentRequiresAdverbs(payload)
       || 'insertion_interval' in log
       || (Array.isArray(log.sequence) && log.sequence.some(item => item?.kind === 'minor'))) {
       required.add('log');
@@ -13922,13 +14516,13 @@
     return [...required];
   }
 
-  function applyOpnDocument(payload, filename = '') {
-    const missingAxes = missingInsertionAxes(opnDocumentRequiredInsertionAxes(payload));
-    if (missingAxes.length) throw new Error(insertionRequirementMessage(missingAxes, 'OPN'));
-    if (!featureEnabled('adverbs') && opnDocumentRequiresAdverbs(payload)) {
+  function applyOgnDocument(payload, filename = '') {
+    const missingAxes = missingInsertionAxes(ognDocumentRequiredInsertionAxes(payload));
+    if (missingAxes.length) throw new Error(insertionRequirementMessage(missingAxes, 'OGN'));
+    if (!featureEnabled('adverbs') && ognDocumentRequiresAdverbs(payload)) {
       throw new Error(isEnglish()
-        ? 'This OPN document requires the disabled Adverbs application. Enable it in Config · Applications first.'
-        : 'Dit OPN-document vereist de uitgeschakelde toepassing Bijwoorden. Schakel die eerst in via Config · Toepassingen.');
+        ? 'This OGN document requires the disabled Adverbs application. Enable it in Config · Applications first.'
+        : 'Dit OGN-document vereist de uitgeschakelde toepassing Bijwoorden. Schakel die eerst in via Config · Toepassingen.');
     }
     if (payload?.data?.composition?.schema === 'ogn-multi-composition-v1') {
       applyImportedMultiOgn(payload, filename);
@@ -13956,7 +14550,7 @@
     // na import als generieke lege slots verschijnen.
     applyExampleAdverbDefaults();
 
-    // Een OPN-document zonder paradata opent in de vaste standaardworkspace.
+    // Een OGN-document zonder paradata opent in de vaste standaardworkspace.
     state.centerMode = 'syntax';
     state.projection = 'axes';
     setSourceAxes(SOURCE_AXIS_IDS, { activateSource: false });
@@ -14002,36 +14596,143 @@
     state.paradataEvents = Array.isArray(paradata.events) ? jsonClone(paradata.events, []).slice(-PARADATA_EVENT_LIMIT) : [];
     state.paradataSessionId = globalThis.crypto?.randomUUID?.() || `session-${Date.now()}-${Math.random().toString(16).slice(2)}`;
     state.paradataStartedAt = new Date().toISOString();
-    recordParadata('open-opn', { filename, opn_version: payload.opn_version || null });
+    recordParadata('open-ogn', { filename, ogn_version: payload.ogn_version || null });
   }
 
-  function loadJsonFile(fileInput) {
+  function restoreOgnResumeSnapshot(payload) {
+    const snapshot = payload?.paradata?.snapshot;
+    if (!snapshot || snapshot.schema !== 'ogn-resumable-view-snapshot-v1') return null;
+    stopGrowthPlayback(); stopDirectPlacementPlayback(); stopMultiOgnPlayback();
+    const view = snapshot.view || {};
+    const display = view.display || {};
+    const analysis = snapshot.analysis_state || {};
+    if (view.central_view === 'ft' || view.central_view === 'functional' || view.central_view === 'syntax') state.centerMode = view.central_view === 'syntax' ? 'syntax' : 'ft';
+    if (PROJECTION_OPTIONS.some(option => option.id === view.projection_mode)) state.projection = view.projection_mode;
+    if (Array.isArray(view.visible_projections)) setSourceAxes(view.visible_projections, { activateSource: false });
+    state.manualViewBox = validStoredViewBox(view.manual_viewbox);
+    if (typeof display.grid === 'boolean') state.showGrid = display.grid;
+    if (typeof display.relations === 'boolean') state.showRelations = display.relations;
+    if (typeof display.labels === 'boolean') state.showLabels = display.labels;
+    if (LAYOUT_DENSITIES.some(option => option.id === display.layout_density)) state.layoutDensity = display.layout_density;
+    if (VIEW_FIT_MODES.some(option => option.id === display.view_fit)) state.viewFitMode = display.view_fit;
+
+    state.languageTreeVclusterFlipped = !!analysis.language_tree_vcluster_flipped;
+    if (typeof analysis.causal_verb_variant === 'string') state.causalVerbVariant = analysis.causal_verb_variant;
+    if (typeof analysis.causal_anaphor_variant === 'string') state.causalAnaphorVariant = analysis.causal_anaphor_variant;
+    if (analysis.tense_by_family && typeof analysis.tense_by_family === 'object') state.tenseByFamily = jsonClone(analysis.tense_by_family, {});
+    if (typeof analysis.bot_variant === 'string') state.botVariant = analysis.bot_variant;
+    state.roleSwap = !!analysis.role_swap;
+    if (SOUTH_LOGICAL_MODES.includes(analysis.south_logical_mode)) state.southLogicalMode = analysis.south_logical_mode;
+    if (analysis.kernel_space_global && Number.isFinite(Number(analysis.kernel_space_global.x)) && Number.isFinite(Number(analysis.kernel_space_global.y))) state.kernelSpaceGlobal = jsonClone(analysis.kernel_space_global, { x: 1, y: 1 });
+    if (Number.isFinite(Number(analysis.kernel_space_component_x))) state.kernelSpaceComponentX = Number(analysis.kernel_space_component_x);
+    if (analysis.kernel_space_local_y && typeof analysis.kernel_space_local_y === 'object') state.kernelSpaceLocalY = jsonClone(analysis.kernel_space_local_y, {});
+    if (analysis.sentence_space_local && Number.isFinite(Number(analysis.sentence_space_local.x)) && Number.isFinite(Number(analysis.sentence_space_local.y))) state.sentenceSpaceLocal = jsonClone(analysis.sentence_space_local, { x: 1, y: 1 });
+
+    const play = snapshot.play || {};
+    const mode = ['language-tree','multi-ogn-anaphor','greedy-grow','random'].includes(snapshot.placement_mode) ? snapshot.placement_mode : 'language-tree';
+    state.placementMode = mode;
+    if (mode === 'multi-ogn-anaphor') {
+      state.multiOgnPlayEnabled = true;
+      state.multiOgnPlayStep = Math.max(0, Math.min(multiOgnPlayMax(), Number(play.step) || 0));
+      state.growthEnabled = false;
+    } else if (mode === 'greedy-grow' || mode === 'random') {
+      const direct = snapshot.direct_placement || {};
+      state.directPlacementGeneral = normalizeDirectPlacementGeneral(direct.general || state.directPlacementGeneral);
+      state.greedyGrowConfig = normalizeGreedyGrowConfig(direct.greedy || state.greedyGrowConfig);
+      state.randomPlacementConfig = normalizeRandomPlacementConfig(direct.random || state.randomPlacementConfig);
+      state.directPlacementSeed = Number(direct.seed) || state.directPlacementSeed;
+      state.directPlacementIterationBaseSeed = Number(direct.iteration_base_seed) || state.directPlacementIterationBaseSeed;
+      state.directPlacementIterationIndex = Math.max(0, Number(direct.iteration_index) || 0);
+      state.directPlacementState = null;
+      const restored = ensureDirectPlacementState(true);
+      const pointCount = Math.max(1, Number(direct.engine_snapshot?.points?.length) || Number(play.step) + 1 || 1);
+      while (restored && restored.points.length < pointCount && placementEngine().placeNext(restored)) {}
+      state.growthEnabled = false;
+    } else {
+      state.growthEnabled = true;
+      state.growthStep = clampGrowthStep(play.step);
+      state.lastSupportedGrowthStep = state.growthStep;
+      state.projectionBlockUnlocked = state.growthStep >= growthStepMax();
+      state.directPlacementState = null;
+    }
+    try {
+      localStorage.setItem('opengraph_tense_by_family', JSON.stringify(state.tenseByFamily));
+      localStorage.setItem('opengraph_causal_verb_variant', state.causalVerbVariant || '');
+      localStorage.setItem('opengraph_causal_anaphor_variant', state.causalAnaphorVariant || 'die');
+      localStorage.setItem('opengraph_bot_variant', state.botVariant || 'het-bot');
+    } catch (_err) {}
+    recordParadata('resume-ogn-snapshot', { filename: snapshot.filename || null, engine: play.engine || mode, step: Number(play.step) || 0 });
+    return snapshot;
+  }
+
+  function applyImportedDocumentText(text, filename = '') {
+    const payload = JSON.parse(String(text || '{}'));
+    const isOgn = payload?.document_type === OGN_DOCUMENT_TYPE || (payload?.data && payload?.metadata && payload?.ogn_version);
+    if (isOgn) applyOgnDocument(payload, filename);
+    else applyLegacyPayload(payload);
+    const resumedSnapshot = isOgn ? restoreOgnResumeSnapshot(payload) : null;
+    setMobileSheet(false);
+    render();
+    if (els.actionFeedback) {
+      els.actionFeedback.textContent = resumedSnapshot
+        ? `OGN-snapshot geladen; PLAY hervat bij stap ${resumedSnapshot.play?.step || 0} van ${resumedSnapshot.play?.max || 0}.`
+        : (isOgn ? 'OGN-document geladen.' : 'Oud JSON-bestand geladen en gemigreerd.');
+      els.actionFeedback.className = 'action-feedback neutral';
+    }
+  }
+
+  async function loadDocumentFile(file) {
+    if (!file) return;
+    try {
+      const text = typeof file.text === 'function'
+        ? await file.text()
+        : await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.addEventListener('load', () => resolve(String(reader.result || '')));
+          reader.addEventListener('error', () => reject(reader.error || new Error('Bestand kon niet worden gelezen.')));
+          reader.readAsText(file);
+        });
+      applyImportedDocumentText(text, file.name || '');
+    } catch (error) {
+      if (els.actionFeedback) {
+        els.actionFeedback.textContent = `OGN/JSON laden mislukt: ${error?.message || error}`;
+        els.actionFeedback.className = 'action-feedback error';
+      }
+    }
+  }
+
+  async function loadJsonFile(fileInput) {
     const file = fileInput?.files?.[0];
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      try {
-        const payload = JSON.parse(String(reader.result || '{}'));
-        const isOpn = payload?.document_type === OPN_DOCUMENT_TYPE || (payload?.data && payload?.metadata && payload?.opn_version);
-        if (isOpn) applyOpnDocument(payload, file.name || '');
-        else applyLegacyPayload(payload);
-        setMobileSheet(false);
-        render();
-        if (els.actionFeedback) {
-          els.actionFeedback.textContent = isOpn ? 'OPN-document geladen.' : 'Oud JSON-bestand geladen en gemigreerd.';
-          els.actionFeedback.className = 'action-feedback neutral';
-        }
-      } catch (error) {
-        if (els.actionFeedback) els.actionFeedback.textContent = `OPN/JSON laden mislukt: ${error.message || error}`;
-      } finally {
-        fileInput.value = '';
+    await loadDocumentFile(file);
+    fileInput.value = '';
+  }
+
+  async function openOgnFromExportDirectory() {
+    if (typeof window.showOpenFilePicker !== 'function') {
+      els.configFileInput?.click();
+      return;
+    }
+    try {
+      const options = {
+        id: 'graphlite-ogn-document',
+        multiple: false,
+        types: [{
+          description: 'Open Graph Notation',
+          accept: { 'application/vnd.opengraph.ogn+json': ['.ogn'] }
+        }]
+      };
+      if (exportDirectoryHandle) options.startIn = exportDirectoryHandle;
+      const [fileHandle] = await window.showOpenFilePicker(options);
+      if (!fileHandle) return;
+      await loadDocumentFile(await fileHandle.getFile());
+    } catch (error) {
+      if (error?.name === 'AbortError') return;
+      if (els.actionFeedback) {
+        els.actionFeedback.textContent = `OGN openen mislukt: ${error?.message || error}`;
+        els.actionFeedback.className = 'action-feedback error';
       }
-    };
-    reader.onerror = () => {
-      if (els.actionFeedback) els.actionFeedback.textContent = 'OPN/JSON laden mislukt: bestand kon niet worden gelezen.';
-      fileInput.value = '';
-    };
-    reader.readAsText(file);
+    }
   }
 
 
@@ -14643,17 +15344,17 @@
     if (!sidePanel || sidePanel.dataset.configTabsReady === '1') return;
 
     const treeCard = sidePanel.querySelector(':scope > .panel-card:first-child');
-    const opnCard = sidePanel.querySelector(':scope > .opn-document-card');
+    const ognCard = sidePanel.querySelector(':scope > .ogn-document-card');
     const graphExportCard = sidePanel.querySelector(':scope > .graph-export-card');
     const examplesCard = sidePanel.querySelector(':scope > .examples-config-card');
     const lexCard = sidePanel.querySelector(':scope > .lex-card');
     const relationCard = sidePanel.querySelector(':scope > .relation-card');
-    if (!treeCard || !opnCard || !graphExportCard || !examplesCard || !lexCard || !relationCard) return;
+    if (!treeCard || !ognCard || !graphExportCard || !examplesCard || !lexCard || !relationCard) return;
 
     treeCard.dataset.configCard = 'tree';
     lexCard.dataset.configCard = 'lex';
     relationCard.dataset.configCard = 'relations';
-    opnCard.dataset.configCard = 'opn';
+    ognCard.dataset.configCard = 'ogn';
     graphExportCard.dataset.configCard = 'graph-export';
     examplesCard.dataset.configCard = 'examples';
 
@@ -14914,7 +15615,7 @@
       <div class="config-dashboard">
         <button type="button" data-config-scope="general" data-config-jump="general-ui"><strong>Algemeen · Interface & weergave</strong><span>Toepassingsonafhankelijke interface, raster en presentatie.</span></button>
         <button type="button" data-config-scope="general" data-config-jump="readme-carousels"><strong>Algemeen · LEESMIJ-items</strong><span>Tonen, tekst, beelden en onderschriften per item.</span></button>
-        <button type="button" data-config-scope="general" data-config-jump="files"><strong>Algemeen · Bestanden</strong><span>Projectconfig, OPN en algemene export.</span></button>
+        <button type="button" data-config-scope="general" data-config-jump="files"><strong>Algemeen · Bestanden</strong><span>Projectconfig, OGN en algemene export.</span></button>
       </div>`;
     overviewCard.querySelectorAll('[data-config-jump]').forEach(button => button.addEventListener('click', () => {
       activateConfigScope(button.dataset.configScope || 'general');
@@ -14934,7 +15635,7 @@
         </div>
         <div class="direct-config-choice-grid direct-config-toggle-grid">
           <div class="direct-config-toggle-field"><label><input id="directShowPathInput" type="checkbox"/> <span class="help-lang-nl">Groeipad tonen</span><span class="help-lang-en">Show growth path</span></label><details class="config-control-explanation"><summary><span class="help-lang-nl">Uitleg</span><span class="help-lang-en">Explanation</span></summary><small><span class="help-lang-nl">Verbindt alleen reeds geschreven knopen in schrijfvolgorde; er wordt geen toekomstig pad berekend.</span><span class="help-lang-en">Connects only nodes already written in write order; no future path is calculated.</span></small></details></div>
-          <div class="direct-config-toggle-field"><label><input id="directShowNumbersInput" type="checkbox"/> <span class="help-lang-nl">Knoopnummers tonen</span><span class="help-lang-en">Show node numbers</span></label><details class="config-control-explanation"><summary><span class="help-lang-nl">Uitleg</span><span class="help-lang-en">Explanation</span></summary><small><span class="help-lang-nl">Toont de schrijfindex in de knoop; plaatsing en volgorde veranderen niet.</span><span class="help-lang-en">Shows the write index inside the node; placement and order do not change.</span></small></details></div>
+          <div class="direct-config-toggle-field"><label><input id="directShowNumbersInput" type="checkbox"/> <span class="help-lang-nl">Knoognummers tonen</span><span class="help-lang-en">Show node numbers</span></label><details class="config-control-explanation"><summary><span class="help-lang-nl">Uitleg</span><span class="help-lang-en">Explanation</span></summary><small><span class="help-lang-nl">Toont de schrijfindex in de knoop; plaatsing en volgorde veranderen niet.</span><span class="help-lang-en">Shows the write index inside the node; placement and order do not change.</span></small></details></div>
           <div class="direct-config-toggle-field"><label><input id="directShowMetricsInput" type="checkbox"/> <span class="help-lang-nl">Veldmaten en omtrek tonen</span><span class="help-lang-en">Show field size and perimeter</span></label><details class="config-control-explanation"><summary><span class="help-lang-nl">Uitleg</span><span class="help-lang-en">Explanation</span></summary><small><span class="help-lang-nl">Toont diagnostische maten van het actuele veld; dit is geen bewijs van een wereldwijd optimale omtrek.</span><span class="help-lang-en">Shows diagnostic measurements of the current field; this is not proof of a globally optimal perimeter.</span></small></details></div>
         </div>
         <p class="config-item-help"><span class="help-lang-nl">Deze instellingen gelden gelijk voor Greedy Grow en Random. Eén Random-iteratie gebruikt het hier gekozen aantal knopen.</span><span class="help-lang-en">These settings apply equally to Greedy Grow and Random. One Random iteration uses the node count selected here.</span></p>
@@ -15397,7 +16098,7 @@
     panels.get('readme-carousels').appendChild(readmeCarouselCard);
     panels.get('overview').appendChild(overviewCard);
     panels.get('jan').appendChild(janCard);
-    panels.get('files').append(projectConfigCard, readmeSlideFileCard, graphExportCard, opnCard);
+    panels.get('files').append(projectConfigCard, readmeSlideFileCard, graphExportCard, ognCard);
     panels.get('view').appendChild(treeCard);
     panels.get('log-lex').append(logSettingsCard, lexCard, relationCard);
     panels.get('examples').appendChild(examplesCard);
@@ -15577,6 +16278,9 @@
     setText('#downloadGraphPngButton', en ? 'LinkedIn PNG' : 'LinkedIn-PNG');
     setText('#recordPlayWebmButton', en ? 'Play video' : 'Play-video');
     setText('#downloadGraphSvgButton', en ? 'Graph as SVG' : 'Graph als SVG');
+    setText('#chooseExportFolderButton', en ? 'Choose export folder' : 'Kies exportmap');
+    setText('#clearExportFolderButton', en ? 'Use browser download' : 'Gebruik browserdownload');
+    setText('#openOgnFromExportFolderButton', en ? 'Open .ogn from export folder' : 'Open .ogn uit exportmap');
     if (!els.graphExportStatus?.dataset.statusNl && !graphExportBusy) {
       setGraphExportStatus(
         'PNG is voor een beeldpost. Play-video kiest waar mogelijk MP4/H.264 en legt altijd 30 fps vast. Houd dit scherm open tijdens de opname.',
@@ -15635,7 +16339,7 @@
     setLabelSpan('mobileLexInsertionContentSelect', en ? 'Content' : 'Inhoud');
     setText('#mobileGrowthButton', en ? 'Grow on/off' : 'Groei aan/uit');
     setText('#mobileResetButton', en ? 'Reset sample' : 'Reset voorbeeld');
-    setText('label[for="mobileFileInput"]', en ? 'Open OPN/JSON' : 'OPN/JSON openen');
+    setText('label[for="mobileFileInput"]', en ? 'Open OGN/JSON' : 'OGN/JSON openen');
     setText('#mobileDownloadJsonButton', en ? 'Legacy JSON' : 'Legacy JSON');
     setText('.mobile-sheet-note', en ? 'Drag with one finger to pan. Pinch with two fingers to zoom. FIT frames the active view.' : 'Sleep met één vinger om te pannen. Knijp met twee vingers om te zoomen. FIT zet de actieve view passend in beeld.');
 
@@ -15645,7 +16349,7 @@
     });
     const details = document.querySelectorAll('.text-panel details');
     if (details[0]) details[0].querySelectorAll('p').forEach((p, i) => {
-      if (i === 0) p.textContent = en ? 'The viewer shows Open Graph Notation with grid rule, projection mechanism, views and named projections. You can choose sample sentences, use Play, inspect projections, pan/zoom the canvas, open/download OPN documents and open documentation.' : 'De viewer toont Open Graph Notation met gridregel, projectiemechanisme, views en named projections. Je kunt voorbeeldzinnen kiezen, Play gebruiken, projecties bekijken, canvas pannen/zoomen, OPN-documenten openen/downloaden en documentatie openen.';
+      if (i === 0) p.textContent = en ? 'The viewer shows Open Graph Notation with grid rule, projection mechanism, views and named projections. You can choose sample sentences, use Play, inspect projections, pan/zoom the canvas, open/download OGN documents and open documentation.' : 'De viewer toont Open Graph Notation met gridregel, projectiemechanisme, views en named projections. Je kunt voorbeeldzinnen kiezen, Play gebruiken, projecties bekijken, canvas pannen/zoomen, OGN-documenten openen/downloaden en documentatie openen.';
       if (i === 1) p.textContent = en ? 'Not carried over from the Java app: classical graph algorithms such as planarity, Dijkstra, MST, biconnectivity and canonical ordering. They are outside this first JAN language-tree layer.' : 'Niet overgenomen uit de Java-app: klassieke graph-algoritmen zoals planarity, Dijkstra, MST, biconnectivity en canonical ordering. Die horen niet bij deze eerste JAN-taalboomlaag.';
     });
   }
@@ -15730,6 +16434,7 @@
     applyFeatureVisibility();
     syncPlacementModeUi();
     syncProjectConfigStatus();
+    syncExportFolderStatus();
     applySelectedLanguageTexts();
   }
 
@@ -17365,6 +18070,9 @@
   }
 
   function registerEvents() {
+    window.addEventListener('message', receiveSnapshotWindowMessage);
+    bindSnapshotDialogDrag();
+    bindSnapshotWorkspaceDrag();
     const flipActiveVcluster = () => {
       const current = String(activeUtteranceDefinition()?.verbVariant || state.causalVerbVariant || '');
       const next = ({
@@ -17376,6 +18084,7 @@
       })[current];
       if (!next) return false;
       state.causalVerbVariant = next;
+      recordParadata('flip-vcluster', { variant: next, order: next.startsWith('ge') ? 'participle-auxiliary' : 'auxiliary-participle' });
       try { localStorage.setItem('opengraph_causal_verb_variant', state.causalVerbVariant); } catch (_err) {}
       state.documentMetadata = null;
       resetManualViewBox();
@@ -17410,6 +18119,7 @@
       const tense = TENSE_IDS.has(value) ? value : 'ott';
       if (!family) return;
       state.tenseByFamily[family] = tense;
+      recordParadata('set-tense', { family, tense });
       try { localStorage.setItem('opengraph_tense_by_family', JSON.stringify(state.tenseByFamily)); } catch (_err) {}
       if (multiOgnAnaphorActive()) {
         const activeId = activeUtteranceDefinition()?.id || '';
@@ -17982,6 +18692,16 @@
       button.addEventListener('click', () => setMobileProjection(button.dataset.mobileProjection || 'axes'));
     });
     window.addEventListener('keydown', event => {
+      if (event.key === 'Escape' && els.ognSnapshotWorkspaceWindow && !els.ognSnapshotWorkspaceWindow.hidden) {
+        closeSnapshotWorkspace();
+        event.preventDefault();
+        return;
+      }
+      if (event.key === 'Escape' && els.ognSnapshotBackdrop && !els.ognSnapshotBackdrop.hidden) {
+        setSnapshotDialog(false);
+        event.preventDefault();
+        return;
+      }
       if (event.key === 'Escape' && state.selectedLexicalRole) {
         closeLexicalRoleChoice();
         event.preventDefault();
@@ -18026,12 +18746,22 @@
       if (event.target?.id && !['lexProjectionColorSelect','syntProjectionColorSelect','logProjectionColorSelect','gridColorSelect','gridLineWeightSelect','gridSizeHorizontalSelect','gridSizeVerticalSelect','multiGridSizeHorizontalSelect','multiGridSizeVerticalSelect','treeLineColorSelect','treeLineWeightSelect','multiTreeLineColorSelect','multiTreeLineWeightSelect','multiTreeLayoutDensitySelect','multiTreeBranchHorizontalSelect','multiTreeBranchVerticalSelect','multiTreeBranchFlipSelect','multiCausalAnaphorSelect','projectionLineWeightSelect','boxLineWeightSelect','projectionBoxDraggableInput','southBoxDraggableInput'].includes(event.target.id)) markConfigDirty(event.target.id);
     });
     els.downloadJsonButton?.addEventListener('click', downloadJson);
-    els.downloadOpnButton?.addEventListener('click', downloadOpn);
-    els.configDownloadOpnButton?.addEventListener('click', downloadOpn);
+    els.downloadOgnButton?.addEventListener('click', downloadOgn);
+    els.configDownloadOgnButton?.addEventListener('click', downloadOgn);
+    [els.mainSaveOgnSnapshotButton, els.configSaveOgnSnapshotButton, els.mobileSaveOgnSnapshotButton].forEach(button => button?.addEventListener('click', () => { setMobileSheet(false); setSnapshotDialog(true); }));
+    els.confirmOgnSnapshotButton?.addEventListener('click', saveOgnSnapshot);
+    [els.cancelOgnSnapshotButton, els.cancelOgnSnapshotTopButton].forEach(button => button?.addEventListener('click', () => setSnapshotDialog(false)));
+    els.ognSnapshotBackdrop?.addEventListener('click', event => { if (event.target === els.ognSnapshotBackdrop) setSnapshotDialog(false); });
+    els.mainOpenOgnSnapshotButton?.addEventListener('click', requestOgnSnapshotWorkspace);
+    els.mainSnapshotOpenInput?.addEventListener('change', handleSnapshotFallbackFileInput);
+    els.closeOgnSnapshotWorkspaceButton?.addEventListener('click', closeSnapshotWorkspace);
+    els.chooseExportFolderButton?.addEventListener('click', chooseExportDirectory);
+    els.clearExportFolderButton?.addEventListener('click', clearExportDirectory);
+    els.openOgnFromExportFolderButton?.addEventListener('click', openOgnFromExportDirectory);
     els.downloadGraphSvgButton?.addEventListener('click', downloadGraphSvg);
     els.downloadGraphPngButton?.addEventListener('click', downloadGraphPng);
     els.recordPlayWebmButton?.addEventListener('click', recordPlayWebm);
-    els.mobileDownloadOpnButton?.addEventListener('click', () => { setMobileSheet(false); downloadOpn(); });
+    els.mobileDownloadOgnButton?.addEventListener('click', () => { setMobileSheet(false); downloadOgn(); });
     [els.includeParadataInput, els.configIncludeParadataInput, els.mobileIncludeParadataInput].forEach(input => input?.addEventListener('change', () => syncParadataExportCheckboxes(input.checked)));
     syncParadataExportCheckboxes(true);
     els.applyLexRuleButton?.addEventListener('click', () => {
@@ -18128,6 +18858,7 @@
     registerReadmeCarousel();
     registerReadmeExternalWindows();
     registerEvents();
+    await initializeExportDirectory();
     registerCanvasPan();
     registerPaneSplitter();
     await loadStructureConfig();
@@ -18205,6 +18936,7 @@
       if (document.hidden) clearViewportGestureState();
     });
     window.__opengraphBoot = { version: VERSION, sourceBuild: SOURCE_BUILD, loaded: true };
+    announceSnapshotWindowReady();
     // v4427: lokale ontwikkelviewer gebruikt geen PWA-cache meer.
     // Oude service workers worden actief verwijderd, zodat structure-config/examples-input
     // niet per ongeluk uit een oudere versie blijven komen.

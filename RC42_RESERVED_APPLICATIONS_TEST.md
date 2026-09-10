@@ -21,7 +21,7 @@ De controles bewaken:
 3. het voorbeeld `juist díe trui` bij Nadruk;
 4. twee uitgeschakelde en niet-aangevinkte inputs;
 5. afwezigheid uit `FEATURE_DEFINITIONS` en `state.features`;
-6. afwezigheid uit `metadata.extras` en andere OPN-velden;
+6. afwezigheid uit `metadata.extras` en andere OGN-velden;
 7. ongewijzigd gedrag wanneer LEX, SYNT of LOG wordt ingeschakeld;
 8. ongewijzigd Bijwoorden-gedrag met LEX + LOG.
 
@@ -38,7 +38,7 @@ De controles bewaken:
 - [ ] Schakel LEX, SYNT en LOG afzonderlijk en gezamenlijk in; de twee
   reserveringen blijven uitgeschakeld.
 - [ ] Activeer Bijwoorden met LEX + LOG; alleen Bijwoorden wordt actief.
-- [ ] Exporteer OPN met en zonder Bijwoorden; de gereserveerde IDs ontbreken
+- [ ] Exporteer OGN met en zonder Bijwoorden; de gereserveerde IDs ontbreken
   steeds uit `metadata.extras` en overige data.
 
 ## Handmatig resultaat

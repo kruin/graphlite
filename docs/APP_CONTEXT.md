@@ -41,14 +41,14 @@ OpenGraph/JAN behandelt de LEX-as als projectieruimte met lokale plaatsingsregel
 
 ## v4430 · V2-theorie in de demo
 
-De viewer noteert Nederlandse V2 niet als wijziging van de centrale boom, maar als lokale LEX-plaatsing. De LEX-as heeft vrije slots en **Wissel**-regels. Daardoor blijft de OPN-bron stabiel terwijl verschillende lineaire uitingen zichtbaar worden.
+De viewer noteert Nederlandse V2 niet als wijziging van de centrale boom, maar als lokale LEX-plaatsing. De LEX-as heeft vrije slots en **Wissel**-regels. Daardoor blijft de OGN-bron stabiel terwijl verschillende lineaire uitingen zichtbaar worden.
 
 ---
 
 ## Doel
 
 OpenGraph Lite Viewer is een lokale demo van JAN / Open Notation voor taalbomen.
-De viewer toont hoe een taalstructuur eerst als OPN-bron wordt opgebouwd en daarna naar LEX wordt geprojecteerd.
+De viewer toont hoe een taalstructuur eerst als OGN-bron wordt opgebouwd en daarna naar LEX wordt geprojecteerd.
 
 Hoofdzin van de app:
 
@@ -60,8 +60,8 @@ Redesign: eerst syntax-tree, daarna LEX-projectie, daarna lokale LEX-regel.
 
 | laag | functie |
 |---|---|
-| OPN-syntax | abstracte syntaxboom, geen lexicale woorden in de structure-config |
-| OPN-functioneel | functionele structuur met PRED apart en ARG-STRUCT apart |
+| OGN-syntax | abstracte syntaxboom, geen lexicale woorden in de structure-config |
+| OGN-functioneel | functionele structuur met PRED apart en ARG-STRUCT apart |
 | LEX | horizontale projectie naar lexicale as / lokale uitingregel |
 | lexicon | voorraad woorden, thematische rollen en eenvoudige selectieframes |
 | lexicon-editor | beheer en uitbreiding van `lexicon-config.html` |
@@ -69,7 +69,7 @@ Redesign: eerst syntax-tree, daarna LEX-projectie, daarna lokale LEX-regel.
 
 ## Hoofdprincipe
 
-De centrale OPN-structuur blijft invariant. Lokale variatie zoals bijzin, perfectum of latere topicalisatie wordt voorbereid via slots en LEX-regels, niet door de bronboom inhoudelijk te herschrijven.
+De centrale OGN-structuur blijft invariant. Lokale variatie zoals bijzin, perfectum of latere topicalisatie wordt voorbereid via slots en LEX-regels, niet door de bronboom inhoudelijk te herschrijven.
 
 ## Projectieprincipe
 

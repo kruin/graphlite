@@ -182,8 +182,8 @@ const EXAMPLES = kernelEngine.DEFINITIONS.map(definition => ({
   id: definition.id, utteranceKernels: [definition.upper.text, definition.lower.text],
   utteranceRelations: definition.relations
 }));
-const OPN_DOCUMENT_TYPE = 'opengraph-document';
-const OPN_FORMAT_VERSION = '1.0';
+const OGN_DOCUMENT_TYPE = 'open-graph-notation-document';
+const OGN_FORMAT_VERSION = '1.0';
 const VERSION = 'v2.0.0-rc.45';
 globalThis.OGNMultiComposition = compositionEngine;
 globalThis.OGNUtteranceKernels = kernelEngine;
@@ -227,7 +227,7 @@ function analysisEnvelope(definition = {}) {
   return { originalInput, inputSegments, form: inputSegments.length > 1 ? 'story' : (definition.utteranceForm || 'single') };
 }
 
-// Execute the actual shipped SVG renderer and OPN writer, not a parallel mock.
+// Execute the actual shipped SVG renderer and OGN writer, not a parallel mock.
 const reserveClauseInternalLexRow = eval(`(${extract('reserveClauseInternalLexRow(', 'kernelLayoutForCentralView(')})`);
 const kernelLayoutForCentralView = eval(`(${extract('kernelLayoutForCentralView(', 'compactKernelColumns(')})`);
 const compactKernelColumns = eval(`(${extract('compactKernelColumns(', 'reservedFreeSlotCount(')})`);
@@ -249,7 +249,7 @@ const multiOgnPlayPlan = eval(`(${extract('multiOgnPlayPlan(', 'multiOgnPlayMax(
 const multiOgnPlayMax = eval(`(${extract('multiOgnPlayMax(', 'multiOgnPlayOperation(')})`);
 const applyMultiOgnPlaybackVisibility = eval(`(${extract('applyMultiOgnPlaybackVisibility(', 'drawMultiOgnAnaphor()')})`);
 const drawUtteranceKernelComposition = eval(`(${extract('drawUtteranceKernelComposition()', 'drawDirectPlacement()')})`);
-const buildUtteranceKernelOpnDocument = eval(`(${extract('buildUtteranceKernelOpnDocument(', 'buildMultiOgnOpnDocument(')})`);
+const buildUtteranceKernelOgnDocument = eval(`(${extract('buildUtteranceKernelOgnDocument(', 'buildMultiOgnOgnDocument(')})`);
 const validateImportedUtteranceComposition = eval(`(${extract('validateImportedUtteranceComposition(', 'validateImportedMultiOgnComposition(')})`);
 
 for (const definition of kernelEngine.DEFINITIONS) {
@@ -540,7 +540,7 @@ for (const definition of kernelEngine.DEFINITIONS) {
   state.multiOgnPlayEnabled = false;
   state.multiOgnPlayStep = 999;
 
-  const document = buildUtteranceKernelOpnDocument(currentComposition);
+  const document = buildUtteranceKernelOgnDocument(currentComposition);
   assert.equal(document.data.composition.kind, definition.type === 'story-role-flip' ? 'utterance-kernel-story' : 'utterance-kernel-pair');
   assert.equal(document.data.composition.units.length, expectedUnitIds.length);
   assert.equal(document.data.composition.relations.length, definition.relations.length);
@@ -575,7 +575,7 @@ for (const variant of kernelEngine.CAUSAL_ANAPHOR_VARIANTS) {
   for (const line of rendered.filter(node => node.classList.contains('utterance-coreference-line'))) {
     assert.equal(line.getAttribute('x1'), line.getAttribute('x2'));
   }
-  const document = buildUtteranceKernelOpnDocument(currentComposition);
+  const document = buildUtteranceKernelOgnDocument(currentComposition);
   assert.equal(document.data.example.anaphor_variant, variant.id);
   assert.equal(document.data.example.anaphor_phrase, variant.label);
   assert.deepEqual(document.data.composition.shared_lex_axis.items.map(item => item.label),
@@ -674,7 +674,7 @@ assert.ok(browserRuntime.includes('[data-central-view="functional"]'),
 assert.ok(source.includes('<strong>Waar?</strong>'), 'Interface mist uitleg waar Flip optreedt');
 assert.ok(source.includes('<strong>Wanneer?</strong>'), 'Interface mist uitleg wanneer Flip nodig is');
 assert.ok(source.includes('<strong>Waarom?</strong>'), 'Interface mist uitleg waarom Flip nodig is');
-assert.ok(source.includes('payload?.data?.example?.anaphor_variant'), 'OPN-import herstelt de anafoorvariant niet');
+assert.ok(source.includes('payload?.data?.example?.anaphor_variant'), 'OGN-import herstelt de anafoorvariant niet');
 assert.ok(stylesheet.includes('stroke-width:var(--og-tree-line-width,3.55) !important'));
 assert.ok(stylesheet.includes('#graphSvg .utterance-kernel-view .node-main-label'),
   'Compacte free-node-weergave mist aangepaste knooplabels');
@@ -685,11 +685,11 @@ assert.ok(browserRuntime.includes("'#mainSentenceMenu[open] #mainSentenceOptions
 assert.ok(browserRuntime.includes("':scope > .node-shape-layer > .node-shape[data-node-id]'"),
   'Browsertest moet knopen binnen de actuele vormlaag zoeken');
 assert.ok(browserRuntime.includes("await page.click('[data-config-scope-button=\"general\"]')"),
-  'Browsertest moet voor OPN-export eerst de algemene Config openen');
+  'Browsertest moet voor OGN-export eerst de algemene Config openen');
 assert.ok(browserRuntime.includes("await page.click('[data-config-tab-button=\"files\"]')"),
-  'Browsertest moet voor OPN-export de zichtbare Bestanden-tab openen');
-assert.ok(browserRuntime.includes("await readDownload(page, '#configDownloadOpnButton')"),
-  'Browsertest moet de zichtbare OPN-knop in Config gebruiken');
+  'Browsertest moet voor OGN-export de zichtbare Bestanden-tab openen');
+assert.ok(browserRuntime.includes("await readDownload(page, '#configDownloadOgnButton')"),
+  'Browsertest moet de zichtbare OGN-knop in Config gebruiken');
 assert.ok(browserRuntime.includes("path.resolve(os.tmpdir(), 'opengraph-runtime-checks'"),
   'Browsertest mag geen screenshot in de Git-projectmap achterlaten');
 const defaults = JSON.parse(fs.readFileSync(path.join(root, 'config', 'default-config.json'), 'utf8')).config;
@@ -702,4 +702,4 @@ assert.equal(defaults.kernelBranchVertical, 'compact');
 assert.equal(defaults.kernelBranchFlip, 'auto');
 assert.equal(defaults.causalAnaphorVariant, 'die');
 
-console.log('UITING KERNZIN VIEW CHECK: OK (6 uitingen/stories, gescheiden terugbrengen/apporteren, K1–K3, zichtbare Flip, vaste gekromde LEX-pijlen per kernzin, verticale anaforen, Play en OPN)');
+console.log('UITING KERNZIN VIEW CHECK: OK (6 uitingen/stories, gescheiden terugbrengen/apporteren, K1–K3, zichtbare Flip, vaste gekromde LEX-pijlen per kernzin, verticale anaforen, Play en OGN)');

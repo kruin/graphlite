@@ -235,6 +235,33 @@ SVG, LinkedIn-PNG en Play-video zijn afgeleiden van dezelfde gecontroleerde
 bron. Publiceer pas na inhoudelijke, technische én visuele controle. Zie
 [SOCIAL_EXPORT.md](docs/SOCIAL_EXPORT.md).
 
+### OGN openen en bestanden exporteren
+
+`.ogn` (**Open Graph Notation**) is het enige projectformaat dat Graphlite
+zowel exporteert als opnieuw importeert. Het bewaart `metadata`, `data` en
+optionele `paradata`, zodat input, boom en projecties kunnen worden
+gereconstrueerd. SVG, PNG en Play-video zijn alleen export: daaruit kan de
+analyse niet betrouwbaar worden teruggebouwd.
+
+Kies onder **Config → Exportmap en uitvoer** desgewenst één map voor alle
+uitvoer: OGN, SVG, PNG, video, JSON en logs. De browser vraagt zelf toestemming
+en onthoudt de keuze lokaal. Zonder ondersteuning of toestemming gebruikt de
+app de gewone browserdownload. **Open .ogn uit exportmap** begint waar mogelijk
+in dezelfde map. Zie [OGN-opslagformaat](OGN_STORAGE_FORMAT.md).
+
+**Snapshot opslaan** en **Snapshot openen** staan altijd naast Play. Een
+snapshot is een hervatbaar OGN-werkcheckpoint: Graphlite bewaart de huidige
+graph, view, recente paradata en PLAY-stap en gaat na openen vanaf die stap
+verder. Voor het opslaan kies je views en recente graph-acties; de app levert
+minstens drie bestandsnaamvoorstellen die je kunt kiezen en aanpassen.
+Het naamvenster is aan de titelbalk versleepbaar. Klik **Snapshot openen** en
+kies het bestand. Graphlite laadt het in een zelfstandig venster binnen de app;
+dat venster is verplaatsbaar, schaalbaar en heeft zijn eigen PLAY-toestand. De
+oorspronkelijke graph blijft behouden. Dit werkt ook op GitHub Pages: de
+overdracht blijft lokaal in de browser en vraagt geen popup-toestemming.
+Het bestand bevat het volledige graphmodel om verder te kunnen PLAY-en, maar
+opent uitsluitend op de afzonderlijk opgeslagen zichtbare stap.
+
 ### Beperkte meerwoordige bijwoorden
 
 De actieve, beperkte set staat gedocumenteerd in

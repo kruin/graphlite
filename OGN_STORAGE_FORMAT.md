@@ -1,10 +1,32 @@
-# OPN_STORAGE_FORMAT
+# OGN_STORAGE_FORMAT
 
-Opslagcontract voor OpenGraph-documenten vanaf `v2.0.0-rc.15`.
+Opslagcontract voor **Open Graph Notation**-documenten. De extensie is `.ogn`.
+Het formaat gebruikt UTF-8 en JSON-syntaxis, maar is het eigen, heropenbare
+projectformaat van Graphlite.
+
+## Identificatie
+
+Een document begint minimaal met:
+
+```json
+{
+  "ogn": "Open Graph Notation",
+  "document_type": "open-graph-notation-document",
+  "ogn_version": "1.0",
+  "metadata": {},
+  "data": {},
+  "paradata": {"included": false}
+}
+```
+
+Bestandsextensie: `.ogn`. MIME-type:
+`application/vnd.opengraph.ogn+json`. `ogn_version` versioneert het formaat;
+de generatorversie onder `metadata.generator.version` versioneert de app die
+het document schreef.
 
 ## Topniveau
 
-`.opn` gebruikt JSON-syntaxis en scheidt:
+`.ogn` scheidt:
 
 ```text
 metadata    documentidentiteit en generator
@@ -101,7 +123,6 @@ downward/post-V2-plan wordt niet opgeslagen als actief plaatsingscontract.
 Bij het basisprofiel ontbreken vrije LEX-insertieslots, bijwoordmetadata en
 `log.insertion_interval` volledig.
 
-+
 ## Multi-OGN-compositie
 
 De toepassing Anafoor · multi-OGN gebruikt profiel `multi-ogn` met extra
@@ -153,7 +174,7 @@ paradata schrijft:
 
 ## Compatibiliteit
 
-- OPN-documenten zonder LOG-sequentie blijven leesbaar.
+- OGN-documenten zonder LOG-sequentie blijven leesbaar.
 - Zonder minors is de afstand tussen opeenvolgende majors één slot.
 - Zonder `sentence_type` leidt de import de zinsoort af uit `lex_rule` en het
   eerste Comp-item; zonder herkenbare aanwijzing geldt `main-declarative`.
@@ -164,6 +185,83 @@ paradata schrijft:
 ## Bestandsnamen
 
 ```text
-hond-bijt-man.v2.0.0-rc.15.opn
+hond-bijt-man.v2.0.0-rc.15.ogn
 hond-bijt-man.v2.0.0-rc.15.legacy.json
 ```
+
+## Import en export
+
+- **OGN exporteren** schrijft de volledige actieve analyse: input,
+  syntactische en functionele graph, projecties, notatiekeuzes, tijdsvorm,
+  workspace en — indien aangevinkt — paradata.
+- **OGN importeren** valideert de identificatie, reconstrueert de actieve
+  testcase en herstelt de opgeslagen analyse- en workspacekeuzes.
+- Een ouder plat JSON-bestand blijft alleen als migratie-input leesbaar.
+  Nieuwe projectdocumenten worden altijd als `.ogn` geschreven.
+- SVG, PNG en video zijn afgeleide publicatieformaten. Ze bevatten geen
+  voldoende projectmodel en zijn daarom bewust niet importeerbaar.
+
+## Hervatbare snapshots en paradata
+
+**Snapshot opslaan** maakt een werkcheckpoint van de graph zoals die op dat
+moment zichtbaar is. Anders dan bij een gewone OGN-export is paradata hierbij
+verplicht. De snapshot staat in `paradata.snapshot` met schema
+`ogn-resumable-view-snapshot-v1` en bewaart:
+
+- de actieve syntax-/functionele view en zichtbare LEX-, SYNT- en LOG-projecties;
+- de actuele graphkeuzes, waaronder tijd, V-clusterflip, LOG-volgorde en spacing;
+- de precieze PLAY-engine, huidige stap en maximale stap;
+- bij directe plaatsing de configuratie, seed, iteratie en engine-snapshot;
+- de recente graph-acties waarmee de gebruiker de snapshot benoemde.
+
+Bij **Snapshot openen** reconstrueert Graphlite deze toestand en pauzeert op de
+opgeslagen stap. Een volgende klik op **Play** gaat vanaf die stap verder. De
+knoppen staan daarom permanent naast Play, ook als overige werkknoppen niet
+zichtbaar zijn.
+
+De snapshot bevat het volledige graphmodel, maar bewaart de zichtbare
+PLAY-stap afzonderlijk. Daardoor kan de gebruiker na heropening verder bouwen
+zonder dat nog niet bereikte stappen meteen zichtbaar worden. De overdracht
+naar het interne venster begint pas wanneer dat venster volledig is gestart.
+
+Voor de bestandsnaam toont de app recente paradata als keuzelijst. De gebruiker
+combineert acties met de huidige views, kiest een van minstens drie voorstellen
+en kan de definitieve naam vrij aanpassen. Ieder voorstel bevat een volgnummer;
+de extensie blijft `.ogn`.
+
+Het naamvenster is aan de titelbalk versleepbaar. **Snapshot openen** laat een
+`.ogn`-snapshot kiezen en maakt daarna binnen de app een verplaatsbaar en
+schaalbaar Graphlite-venster met een eigen viewer en PLAY-toestand. De snapshot
+wordt same-origin en browserlokaal aan die viewer overgedragen. Dit werkt op een
+statische GitHub Pages-publicatie zonder upload, serveropslag of popup.
+
+## Exportmap
+
+Onder **Config → Exportmap en uitvoer** kan de gebruiker één map kiezen. De
+browser bewaart de gekozen directory-handle lokaal in IndexedDB. Alle
+bestandsuitvoer gebruikt daarna dezelfde map: OGN, SVG, PNG, video, Legacy
+JSON en logs.
+
+De browserbeveiliging blijft leidend:
+
+1. de gebruiker kiest en bevestigt de map zelf;
+2. bij een nieuwe browsertoestemming kan Graphlite om bevestiging vragen;
+3. als de directory-API ontbreekt, toestemming vervalt of schrijven mislukt,
+   valt de app terug op de normale browserdownload;
+4. **Gebruik browserdownload** wist alleen de lokaal onthouden maphandle en
+   verwijdert geen bestanden.
+
+**Open .ogn uit exportmap** start, indien ondersteund, de bestandskiezer in de
+gekozen map en accepteert alleen `.ogn`. Zonder deze browserfunctie opent de
+gewone OGN-bestandskiezer.
+
+## Exportformaten
+
+| formaat | doel | importeerbaar |
+|---|---|---|
+| `.ogn` | volledige analyse en reconstructie | ja |
+| `.svg` | zelfstandige schaalbare graph | nee |
+| `.png` | vaste afbeelding voor publicatie | nee |
+| `.mp4` / `.webm` | opname van de Play-sequentie | nee |
+| `.legacy.json` | tijdelijke migratie/debug-uitvoer | alleen als oude JSON |
+| `.log` / `.txt` | controle- en configuratielog | nee |

@@ -33,7 +33,7 @@
   ongerichte MAN–HIJ-coreferentielijn.
 - De complete S2 verschuift star om antecedent MAN en anafoor HIJ uit te
   lijnen; alleen deze gedeclareerde kolom mag tussen de OGN’s worden gedeeld.
-- Config, Help, OPN-import/export en regressietests gebruiken hetzelfde
+- Config, Help, OGN-import/export en regressietests gebruiken hetzelfde
   multi-OGN-contract.
 
 - LEX voert uitsluitend upward-Wissels uit vanaf de zichtbare bronhoogte.
@@ -138,7 +138,7 @@ contract vervangen.
   hetzelfde rc.45-versienummer herkennen en blokkeren. Daardoor wijst een
   oude, nog draaiende server niet meer ongemerkt naar een bron zonder
   `greedy-grow.html`.
-- Taalboom-graphdata en OPN-opslag blijven ongewijzigd. De latere source build
+- Taalboom-graphdata en OGN-opslag blijven ongewijzigd. De latere source build
   wijzigt wel hoofdmenu, Config-weergave en lijnrendering; de geaccepteerde
   carrousel en Greedy-engine blijven hashgecontroleerd ongewijzigd.
 
@@ -203,7 +203,7 @@ contract vervangen.
   state, voorbeelden, inserties, documentatie, opslag, exportvelden,
   layout-demand of rendering toe.
 - Statische en runtimecontroles bewaken dat de drie inputs uitgeschakeld en
-  buiten OPN `metadata.extras` blijven.
+  buiten OGN `metadata.extras` blijven.
 - Config bevat een bewerkbare carousel per LEESMIJ-item, met add/remove,
   vorige/volgende, beeldpad, breed/smal, alt-tekst en onderschrift in NL/EN.
 - Carouselwijzigingen krijgen een live voorvertoning, verschijnen direct in
@@ -304,7 +304,7 @@ contract vervangen.
 - LEX of LOG uitzetten schakelt Bijwoorden automatisch uit en wist de
   bijbehorende staat.
 - SYNT is onafhankelijk voorbereid voor een volgende toepassing.
-- OPN, Legacy JSON en Config-snapshots bewaren de asgebonden voorconfig.
+- OGN, Legacy JSON en Config-snapshots bewaren de asgebonden voorconfig.
 - Import meldt ontbrekende insertie-assen voordat toepassingsdata wordt
   geladen.
 - Nieuwe documentatie: `PRECONFIG_ARCHITECTURE.md`; nieuwe test:
@@ -323,7 +323,7 @@ contract vervangen.
   LEX-inserties, gebruiksprofielen, bediening, featuredocumentatie en
   featurevelden in export ontbreken.
 - Voorbeelden-, lexicon- en structuureditors ondersteunen `profile=base`.
-- OPN legt het profiel en de actieve extra’s expliciet vast en blokkeert een
+- OGN legt het profiel en de actieve extra’s expliciet vast en blokkeert een
   feature-import zolang de benodigde extra niet actief is.
 - Nieuwe controle: `tools/check_feature_profiles.py`.
 
@@ -363,7 +363,7 @@ contract vervangen.
   staat.
 - De prominente eerste kaart bevat direct `LinkedIn-PNG`, `Play als WebM` en
   `Graph als SVG`, in die volgorde.
-- Binnen hetzelfde tabblad volgen OPN, Config bewaren/herstellen en pas daarna
+- Binnen hetzelfde tabblad volgen OGN, Config bewaren/herstellen en pas daarna
   het beheer van voorbeeldzinnen.
 - `Beeld`, `LOG & LEX` en `Geavanceerd` blijven afzonderlijke tabbladen; de
   MAX-instellingen zijn dus nog steeds onder `Beeld` beschikbaar.
@@ -508,7 +508,7 @@ contract vervangen.
   voorbeeldzin is voortaan validatie-invoer en geen layoutregel.
 - Het LOG-interval is configureerbaar als `vóór S`, `S–O`, `O–V` of `na V`;
   `automatisch` gebruikt de categoriekoppeling uit de structuurconfiguratie.
-- Viewer, configuratie-editors, voorbeelden en OPN-rondreis bewaren dezelfde
+- Viewer, configuratie-editors, voorbeelden en OGN-rondreis bewaren dezelfde
   LOG-informatie.
 - `logische afstand` is binnen dit project de operationele term voor het
   aantal LOG-slots tussen twee majors; er wordt geen algemeen gevestigde
@@ -699,7 +699,7 @@ contract vervangen.
 - De gevulde LEX-posities volgen nu expliciet de tokenvolgorde uit `examples-input.html`.
 - V2/Wissel verandert de zichtbare woordvolgorde niet meer op basis van bron-/layoutposities.
 - `slot 1` en `slot 2` worden op de LEX-as gekoppeld aan de oppervlakteslots: eerste zinsdeel en V2/PV.
-- Oude bronposities blijven zichtbaar als trace; in de assenweergave komen die trace-posities uit de centrale OPN-bron.
+- Oude bronposities blijven zichtbaar als trace; in de assenweergave komen die trace-posities uit de centrale OGN-bron.
 
 ## v4430 · V2/Wissel
 
@@ -744,7 +744,7 @@ contract vervangen.
 - Groei-presentatie toegevoegd aan de viewer.
 - Nieuwe controls in het projectiepaneel: `Groei`, stap-slider, `0`, vorige, `Play`, volgende.
 - Groei werkt vanuit de vooraf berekende layout: de boom verschuift niet tijdens het afspelen.
-- Bottom-up groeivolgorde: leaves → categorie/role-nodes en subtree-boxen → OPN-slot 1 → LEX-projectie en projectiepanelen.
+- Bottom-up groeivolgorde: leaves → categorie/role-nodes en subtree-boxen → OGN-slot 1 → LEX-projectie en projectiepanelen.
 - Stap-3/render blijft gescheiden van groei-presentatie: renderlaag bepaalt z-order; groei bepaalt alleen welke reeds berekende elementen zichtbaar zijn.
 - Sneltoetsen: `g` toggelt groei, `n` volgende stap, `p` vorige stap.
 - Docs bijgewerkt met groei/render-onderscheid.
@@ -845,7 +845,7 @@ contract vervangen.
 
 ## v4386
 
-- OPN-slot 1 voor topicalisatie/vooropplaatsing.
+- OGN-slot 1 voor topicalisatie/vooropplaatsing.
 
 ## v4385
 
@@ -915,7 +915,7 @@ contract vervangen.
 
 - Groei-presentatie verfijnd: lexicale leaves verschijnen niet meer tegelijk.
 - Binnen dezelfde diepte/hoogte gebruikt Groei nu expliciete render-/presentatievolgorde: eerst bottom-up, bij gelijke hoogte boven-naar-beneden en daarna links-naar-rechts.
-- Voor `HOND BIJT MAN` verschijnen `HOND`, `MAN` en `BIJT` dus in aparte tussenstappen voordat categorieknopen, OPN-slot en LEX-regels volgen.
+- Voor `HOND BIJT MAN` verschijnen `HOND`, `MAN` en `BIJT` dus in aparte tussenstappen voordat categorieknopen, OGN-slot en LEX-regels volgen.
 
 
 ## v4536 · stapsgewijze LEX-Wissels

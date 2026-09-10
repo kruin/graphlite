@@ -16,7 +16,7 @@
   `Gereserveerd · nog niet actief`.
 - De reserveringen staan in `RESERVED_APPLICATION_DEFINITIONS` en bewust niet
   in de actieve `FEATURE_DEFINITIONS`.
-- Ze krijgen daarom geen runtime-state, opslag, OPN-extra, voorbeelden,
+- Ze krijgen daarom geen runtime-state, opslag, OGN-extra, voorbeelden,
   resources, inserties, documentatielinks, layout-demand of rendergedrag.
 - Ook het inschakelen van LEX-, SYNT- of LOG-insertie kan een reservering niet
   activeren.
@@ -45,7 +45,7 @@
 - De mobiele zins-/FIT-balk en de lokale viewporttestknop worden buiten Main
   verborgen en kunnen de editor dus niet meer afdekken.
 - Eigen carousels worden via de bestaande Config-save lokaal bewaard en niet
-  aan OPN-documentdata toegevoegd.
+  aan OGN-documentdata toegevoegd.
 - Onveilige beeldschema's worden geblokkeerd.
 - Nieuwe statische en browsergebaseerde controles bewaken editor, save/reload,
   directe LEESMIJ-weergave en herstel.

@@ -13,7 +13,7 @@ Geen twee knopen mogen dezelfde horizontale of verticale gridlijn bezetten.
 Zo'n overtreding heet **gridlijnhergebruik**: horizontaal hergebruik deelt een
 rij, verticaal hergebruik een kolom.
 Deze regel wordt na plaatsing en toepassingsverschuivingen, vóór render en vóór
-OPN-export gecontroleerd. Een ongeldige fallbackpositie wordt nooit getekend.
+OGN-export gecontroleerd. Een ongeldige fallbackpositie wordt nooit getekend.
 
 De discrete HOR/VER-gridplaatsing blijft structureel leidend. Voor het tekenen
 voert de viewer daarnaast één bottom-up meetpass uit:
@@ -104,7 +104,7 @@ Renderlagen:
 
 ## v4430 · vrije LEX-slots en V2
 
-De layout reserveert nu niet één maar twee vrije OPN-posities tussen root en boommateriaal:
+De layout reserveert nu niet één maar twee vrije OGN-posities tussen root en boommateriaal:
 
 ```text
 S / CLAUSE
@@ -167,7 +167,7 @@ leaf                 = stap 1
 parent van leaf      = stap 2
 hogere subtree       = stap 3, 4, ...
 root S/CLAUSE        = laatste structure-stap
-OPN-slot 1           = root + 1
+OGN-slot 1           = root + 1
 LEX-projectie/assen  = root + 2   [alleen Assen-view]
 ```
 
@@ -179,7 +179,7 @@ Voor `HOND BIJT MAN` betekent dit conceptueel:
 2. NP(HOND), V(BIJT), NP(MAN)
 3. VP(...)
 4. S(...)
-5. OPN-slot 1
+5. OGN-slot 1
 6. LEX-projectie + SYNTAX-paneel
 ```
 
@@ -200,7 +200,7 @@ De render-volgorde is vanaf v4406 expliciet en blijft in v4430 gelden:
    - daarna: oorspronkelijke layoutvolgorde
 3. subtree-box captions
 4. takken/lijnen
-5. OPN-slot
+5. OGN-slot
 6. node-shapes
    - boven naar beneden
    - links naar rechts

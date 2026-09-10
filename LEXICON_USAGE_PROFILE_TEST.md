@@ -25,7 +25,7 @@
 7. Select the subordinate example. Verify that it asks independently.
 8. Open Config and choose **Vraag profielkeuze opnieuw**. Verify that the
    active example asks again.
-9. Export OPN and verify effective `usageProfile`, `origin`,
+9. Export OGN and verify effective `usageProfile`, `origin`,
    `originComponents` and `analysisStatus` in `example.lex_insertions`.
 
 ## Regression

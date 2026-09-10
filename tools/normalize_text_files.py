@@ -14,7 +14,7 @@ TEXT_SUFFIXES = {
     ".html", ".css", ".js", ".mjs", ".cjs", ".py",
     ".json", ".webmanifest", ".md", ".txt", ".svg", ".xml",
     ".yml", ".yaml", ".toml", ".ini", ".cfg", ".csv", ".tsv",
-    ".graph", ".opn",
+    ".graph", ".ogn",
 }
 TEXT_NAMES = {".editorconfig", ".gitattributes", ".gitignore", ".nojekyll"}
 UTF8_BOM = b"\xef\xbb\xbf"

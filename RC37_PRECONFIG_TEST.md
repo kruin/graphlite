@@ -12,7 +12,7 @@
 9. Schakel LEX uit: Bijwoorden valt automatisch uit en alle bijwoordstaat
    verdwijnt; LOG blijft aan.
 10. Kies `Alle insertie uit` en controleer dat LEX, SYNT en LOG uitstaan.
-11. Exporteer OPN in Basis: `metadata.preconfig.insertion` bevat drie
+11. Exporteer OGN in Basis: `metadata.preconfig.insertion` bevat drie
     `false`-waarden en er zijn geen insertievelden of minors.
 12. Activeer LEX + LOG en Bijwoorden, exporteer opnieuw en controleer dat LEX
     en LOG `true` zijn, SYNT `false` is en de toepassingdata aanwezig is.

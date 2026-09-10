@@ -12,7 +12,7 @@ A ≠ B  ⇒  x(A) ≠ x(B)  én  y(A) ≠ y(B)
 
 Geen twee knopen mogen dus dezelfde horizontale of verticale gridlijn
 bezetten. De layout valideert dit na recursieve plaatsing, na iedere
-toepassingsverschuiving, vóór render en vóór OPN-export. Als de invariant niet
+toepassingsverschuiving, vóór render en vóór OGN-export. Als de invariant niet
 kan worden behouden, wordt de layout niet getekend of geëxporteerd.
 
 Zo'n overtreding heet **gridlijnhergebruik**: horizontaal hergebruik is een

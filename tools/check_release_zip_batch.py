@@ -62,6 +62,14 @@ for marker, label in [
 ]:
     require(PUBLISH, marker, label)
 
+stage_all = PUBLISH.find('git add -A -- .')
+renormalize = PUBLISH.find('git add --renormalize -- .')
+if stage_all < 0 or renormalize < 0 or stage_all > renormalize:
+    errors.append(
+        "publish_checked.bat moet verwijderingen stagen vóór --renormalize, "
+        "zodat hernoemde bestanden geen unable-to-stat-fout veroorzaken"
+    )
+
 if re.search(r'set "RELEASE_ZIP=.*v2\.0\.0-rc\.\d+', PUBLISH, flags=re.I):
     errors.append("publish_checked.bat bevat nog een hardgecodeerde release-zipnaam")
 if re.search(

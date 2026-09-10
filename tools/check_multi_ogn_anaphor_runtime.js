@@ -13,7 +13,7 @@ const screenshotPath = path.resolve(os.tmpdir(), 'opengraph-runtime-checks', 'mu
 function startServer() {
   const types = {
     '.css': 'text/css', '.html': 'text/html', '.js': 'text/javascript',
-    '.json': 'application/json', '.opn': 'application/json', '.png': 'image/png',
+    '.json': 'application/json', '.ogn': 'application/json', '.png': 'image/png',
     '.jpg': 'image/jpeg', '.svg': 'image/svg+xml', '.txt': 'text/plain'
   };
   const server = http.createServer((request, response) => {
@@ -66,14 +66,14 @@ async function selectMultiOgnAnaphor(page) {
   await page.waitForSelector('body.placement-multi-ogn-active', { state: 'attached' });
 }
 
-async function downloadVisibleConfigOpn(page) {
+async function downloadVisibleConfigOgn(page) {
   await page.click('#openConfigButton');
   await page.waitForSelector('body.config-screen-active [data-config-scope-button="general"]', { state: 'visible' });
   await page.click('[data-config-scope-button="general"]');
   await page.waitForSelector('[data-config-tab-button="files"]', { state: 'visible' });
   await page.click('[data-config-tab-button="files"]');
-  await page.waitForSelector('body.config-screen-active #configDownloadOpnButton', { state: 'visible' });
-  const download = await readDownload(page, '#configDownloadOpnButton');
+  await page.waitForSelector('body.config-screen-active #configDownloadOgnButton', { state: 'visible' });
+  const download = await readDownload(page, '#configDownloadOgnButton');
   await page.click('#closeConfigButton');
   await page.waitForSelector('body.main-screen-active');
   return download;
@@ -232,20 +232,20 @@ async function downloadVisibleConfigOpn(page) {
     assert.match(result.title, /Anafoor|Anaphor/);
     assert.match(result.meta, /afzonderlijk|independently/);
 
-    const opnDownload = await downloadVisibleConfigOpn(page);
-    const opn = JSON.parse(opnDownload.buffer.toString('utf8'));
-    assert.equal(opn.metadata.profile, 'multi-ogn');
-    assert.deepEqual(opn.metadata.extras, ['multi-ogn-anaphor']);
-    assert.equal(opn.data.composition.schema, 'ogn-multi-composition-v1');
-    assert.equal(opn.data.composition.grid_invariant_scope, 'per-ogn');
-    assert.equal(opn.data.composition.rigid_shift_only, true);
-    assert.equal(opn.data.composition.relation.direction, 'none');
-    assert.equal(opn.data.composition.relation.line, 'straight-vertical-no-arrow');
-    assert.equal(opn.paradata.workspace.placement_mode, 'multi-ogn-anaphor');
+    const ognDownload = await downloadVisibleConfigOgn(page);
+    const ogn = JSON.parse(ognDownload.buffer.toString('utf8'));
+    assert.equal(ogn.metadata.profile, 'multi-ogn');
+    assert.deepEqual(ogn.metadata.extras, ['multi-ogn-anaphor']);
+    assert.equal(ogn.data.composition.schema, 'ogn-multi-composition-v1');
+    assert.equal(ogn.data.composition.grid_invariant_scope, 'per-ogn');
+    assert.equal(ogn.data.composition.rigid_shift_only, true);
+    assert.equal(ogn.data.composition.relation.direction, 'none');
+    assert.equal(ogn.data.composition.relation.line, 'straight-vertical-no-arrow');
+    assert.equal(ogn.paradata.workspace.placement_mode, 'multi-ogn-anaphor');
     await page.setInputFiles('#fileInput', {
-      name: opnDownload.name,
-      mimeType: 'application/vnd.opengraph.opn+json',
-      buffer: opnDownload.buffer
+      name: ognDownload.name,
+      mimeType: 'application/vnd.opengraph.ogn+json',
+      buffer: ognDownload.buffer
     });
     await page.waitForSelector('body.placement-multi-ogn-active #graphSvg .multi-ogn-coreference-line', { state: 'attached' });
 
@@ -376,7 +376,7 @@ async function downloadVisibleConfigOpn(page) {
     await new Promise(resolve => local.server.close(resolve));
   }
 
-  console.log('MULTI-OGN ANAPHOR RUNTIME: OK (per-OGN invariant · rigid S2 · alle gedeclareerde lijnen · boer–ezel selectie zonder fallback · S1→S2 LEX · OPN round-trip · Config)');
+  console.log('MULTI-OGN ANAPHOR RUNTIME: OK (per-OGN invariant · rigid S2 · alle gedeclareerde lijnen · boer–ezel selectie zonder fallback · S1→S2 LEX · OGN round-trip · Config)');
 })().catch(error => {
   console.error(error);
   process.exit(1);

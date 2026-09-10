@@ -35,7 +35,7 @@ Config.
 
 - lexicon editor supports usage-profile lines and construction JSON;
 - examples editor preserves sentence-instance profile metadata;
-- OPN export records the effective profile/origin/components;
+- OGN export records the effective profile/origin/components;
 - Config save workflow is unchanged.
 
 ## Documentation

@@ -109,7 +109,7 @@ knoppen aangeboden.
 `multi-ogn-composition-engine.js` valideert de eenheden vóór en na de starre
 compositie en weigert extra gedeelde rijen of kolommen.
 
-OPN gebruikt `data.composition.schema = "ogn-multi-composition-v1"` en bewaart:
+OGN gebruikt `data.composition.schema = "ogn-multi-composition-v1"` en bewaart:
 
 - de twee afzonderlijke graphs;
 - hun volgorde;

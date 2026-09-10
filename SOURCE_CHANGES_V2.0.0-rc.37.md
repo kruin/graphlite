@@ -10,7 +10,7 @@
 - Uitschakelen van LEX of LOG schakelt Bijwoorden automatisch uit en wist alle
   bijwoordstaat.
 - Een ingeschakelde insertie-as voegt zonder toepassing geen inhoud toe.
-- OPN, Legacy JSON en Config-snapshots bewaren
+- OGN, Legacy JSON en Config-snapshots bewaren
   `preconfig.insertion.{lex,synt,log}`.
 - Import controleert ontbrekende insertiecapaciteiten vóór toepassingsdata
   wordt geladen.

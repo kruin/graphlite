@@ -41,7 +41,7 @@ for marker, label in [
     ("panels.get('features').appendChild(featuresCard);", "uitbreidingenpaneel"),
     ("panels.get('overview').appendChild(overviewCard);", "overzichtspaneel"),
     ("panels.get('jan').appendChild(janCard);", "JaN-paneel"),
-    ("panels.get('files').append(projectConfigCard, readmeSlideFileCard, graphExportCard, opnCard);", "algemene bestandssectie zonder voorbeelden"),
+    ("panels.get('files').append(projectConfigCard, readmeSlideFileCard, graphExportCard, ognCard);", "algemene bestandssectie zonder voorbeelden"),
     ("panels.get('examples').appendChild(examplesCard);", "afzonderlijke Language-Tree-voorbeelden"),
     ("setConfigScreen(true, validPlacementMode(state.placementMode));", "Config opent in actieve toepassingscontext"),
     ("sidePanel.replaceChildren(scopeNav, tabList, saveSlot, ...panels.values());", "globale Config-save boven alle tabpanelen"),
@@ -150,7 +150,7 @@ for marker, label in [
     ("rule === 'bijzin-dat'", "dat-zinregel"),
     ("const DEFERRED_LEX_OPEN_SLOT_PLACEMENTS", "uitgestelde vóór/na/tussen-voorraad"),
     ("if (!(toY < fromY - 1)) return;", "harde upward-only renderergrens"),
-    ("sentence_type: sentenceTypeForExample(ex)", "zinsoort in OPN-export"),
+    ("sentence_type: sentenceTypeForExample(ex)", "zinsoort in OGN-export"),
 ]:
     require(JS, marker, label)
 if 'id="lexOpenSlotCountSelect"' in INDEX or 'id="lexOpenSlotPlacementSelect"' in INDEX:

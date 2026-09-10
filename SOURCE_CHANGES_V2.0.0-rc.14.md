@@ -15,7 +15,7 @@
 - LEX toont de LOG-afgeleide basis vóór topic-/V2-Wissels.
 - De configuratie heeft een expliciete keuze voor het LOG-interval.
 - De vroegere hostkeuze blijft alleen als scope-/compatibiliteitsmetadata.
-- OPN- en Legacy JSON-export bewaren interval, sequentie en afstanden.
+- OGN- en Legacy JSON-export bewaren interval, sequentie en afstanden.
 
 ## Voorbeelden en tests
 

@@ -35,7 +35,8 @@ MEEDOEN.md
 MULTI_OGN_ANAPHOR.md
 OGN_CORE_PLACEMENT_ARCHITECTURE.md
 ONE_MENU_THIN_LINES_TEST.md
-OPN_STORAGE_FORMAT.md
+OGN_STORAGE_FORMAT.md
+OGN_RESUMABLE_SNAPSHOTS.md
 PRECONFIG_ARCHITECTURE.md
 PRODUCTIE-GITHUB.txt
 PROJECT_FILES_TO_ADD_UPDATE.md
@@ -117,6 +118,12 @@ SOURCE_CHANGES_V3.1.0-rc.10.48.md
 SOURCE_CHANGES_V3.1.0-rc.10.49.md
 SOURCE_CHANGES_V3.1.0-rc.10.50.md
 SOURCE_CHANGES_V3.1.0-rc.10.51.md
+SOURCE_CHANGES_V3.1.0-rc.10.62.md
+SOURCE_CHANGES_V3.1.0-rc.10.63.md
+SOURCE_CHANGES_V3.1.0-rc.10.64.md
+SOURCE_CHANGES_V3.1.0-rc.10.65.md
+SOURCE_CHANGES_V3.1.0-rc.10.66.md
+SOURCE_CHANGES_V3.1.0-rc.10.67.md
 SOURCE_CHANGES_V3.1.0-rc.10.md
 SOV_NOTATION_OPTIONS.md
 Sources/07_NEDTAA2016.1.TRIJ.pdf
@@ -186,7 +193,7 @@ docs/MULTI_OGN_ANAPHOR.md
 docs/NEXT_STEPS.md
 docs/OGN_BASE_PROFILE.md
 docs/OGN_CORE_PLACEMENT_ARCHITECTURE.md
-docs/OPN_STORAGE_FORMAT.md
+docs/OGN_STORAGE_FORMAT.md
 docs/OpenGraph_Lite_Viewer_EN_v4499.pdf
 docs/OpenGraph_Lite_Viewer_EN_v4500.pdf
 docs/OpenGraph_Lite_Viewer_EN_v4503.pdf
@@ -307,9 +314,10 @@ samples/adverb_placement_rules_v4552.json
 samples/adverb_word_rules_v4551.json
 samples/adverb_word_rules_v4552.json
 samples/anaphor-s1-s2-literature-catalog.json
-samples/hond-bijt-man.v1.opn
-samples/ik-zie-man-hij-draagt-hoed.multi-ogn.v1.opn
-samples/ik-zie-man-hij-draagt-hoed.multi-ogn.v2.opn
+samples/hond-bijt-man.v1.ogn
+samples/hond-bijt-man-step-7.snapshot.ogn
+samples/ik-zie-man-hij-draagt-hoed.multi-ogn.v1.ogn
+samples/ik-zie-man-hij-draagt-hoed.multi-ogn.v2.ogn
 samples/no_limit_96_demo.json
 samples/s1-s2-relation-fixtures.json
 samples/short_demo.json
@@ -358,7 +366,10 @@ tools/check_multi_ogn_anaphor_play.js
 tools/check_multi_ogn_anaphor_runtime.js
 tools/check_multi_ogn_anaphor_runtime_dependencies.js
 tools/check_node_grid_invariant.py
-tools/check_opn_storage.py
+tools/check_ogn_storage.py
+tools/check_ogn_format_and_exports.py
+tools/check_ogn_snapshots.py
+tools/check_snapshot_resume_step.py
 tools/check_play_reverse.py
 tools/check_project_config_layers.py
 tools/check_project_config_layers_runtime.js

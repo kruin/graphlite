@@ -72,7 +72,7 @@ Bijwoordplaatsing blijft volledig op de LEX-as. `Boven S/NP/VP/V/PP/AP` betekent
 3. Per subtree worden eerst boxmaten en bezette cellen bepaald.
 4. Daarna zoekt de layout vrije HOR/VER-plaatsen.
 5. Pas na plaatsing wordt gerenderd.
-6. Syntax en functioneel zijn aparte OPN-bronnen.
+6. Syntax en functioneel zijn aparte OGN-bronnen.
 7. Functioneel gebruikt `CLAUSE → PRED ARG-STRUCT` zodat predicaat en argumentstructuur als eigen subtree-boxen vrij kunnen worden geplaatst.
 8. Lexicale woorden staan niet in `structure-config.html`.
 9. Woorden staan in `lexicon-config.html`.
@@ -91,7 +91,7 @@ Bijwoordplaatsing blijft volledig op de LEX-as. `Boven S/NP/VP/V/PP/AP` betekent
 
 22. Vanaf v4430 is groei-presentatie een aparte presentatielaag bovenop de berekende layout.
 23. Groei mag de layout niet herberekenen en geen x/y-posities wijzigen.
-24. Groei gebruikt bottom-up node-hoogte: leaves eerst, root laatst; daarna verschijnen OPN-slot en projecties.
+24. Groei gebruikt bottom-up node-hoogte: leaves eerst, root laatst; daarna verschijnen OGN-slot en projecties.
 25. Render-volgorde blijft z-order; groei-volgorde blijft didactische presentatievolgorde.
 
 26. Vanaf v4430 wordt het lexicon via `lexicon-editor.html` beheerbaar en uitbreidbaar.

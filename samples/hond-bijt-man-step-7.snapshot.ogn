@@ -1,0 +1,791 @@
+{
+  "ogn": "Open Graph Notation",
+  "document_type": "open-graph-notation-document",
+  "ogn_version": "1.0",
+  "metadata": {
+    "document_id": "3714fd2f-115d-4277-8b11-4bcd44b337b7",
+    "title": "HOND BIJT MAN",
+    "language": "nl",
+    "created_at": "2026-09-10T12:45:01.478Z",
+    "source": {
+      "kind": "viewer-example",
+      "example_id": "hond-bijt-man"
+    },
+    "modified_at": "2026-09-10T12:45:01.479Z",
+    "schema": "data-metadata-paradata",
+    "profile": "base",
+    "extras": [
+      "resumable-ogn-snapshot"
+    ],
+    "preconfig": {
+      "insertion": {
+        "lex": false,
+        "synt": false,
+        "log": false
+      }
+    },
+    "generator": {
+      "name": "OpenGraph Lite Viewer",
+      "version": "v3.1.0-rc.10"
+    },
+    "document_kind": "snapshot"
+  },
+  "data": {
+    "example": {
+      "id": "hond-bijt-man",
+      "title": "HOND BIJT MAN",
+      "phase": "Fase 1+2",
+      "sentence": "HOND HEEFT MAN GEBETEN",
+      "sentence_html": "<strong>HOND</strong> HEEFT <em>MAN</em> GEBETEN",
+      "subject_default": "HOND",
+      "object_default": "MAN",
+      "predicate": "BIJT",
+      "tense_family": "bijten",
+      "tense": "vtt",
+      "sentence_type": "main-declarative",
+      "lex_rule": "hoofdzininvariant",
+      "input_analysis": {
+        "original_input": "HOND BIJT MAN",
+        "input_segments": [
+          "HOND BIJT MAN"
+        ],
+        "form": "single",
+        "kernels": [
+          {
+            "id": "K1",
+            "order": 1,
+            "text": "HOND BIJT MAN",
+            "inputText": "HOND BIJT MAN",
+            "clauseType": "main",
+            "finiteVerbPlacement": "v2",
+            "sourceExampleId": "hond-bijt-man"
+          }
+        ]
+      },
+      "lex_items": [
+        {
+          "id": "subject-hond",
+          "label": "HOND",
+          "source": "subject",
+          "slot": null,
+          "role": "subject",
+          "thematicRole": "agens",
+          "lexeme": "hond"
+        },
+        {
+          "id": "pv-bijten-vtt",
+          "label": "HEEFT",
+          "source": "pv",
+          "slot": null,
+          "role": "aux",
+          "thematicRole": null,
+          "lexeme": "heeft"
+        },
+        {
+          "id": "object-man",
+          "label": "MAN",
+          "source": "object",
+          "slot": null,
+          "role": "object",
+          "thematicRole": "patiens",
+          "lexeme": "man"
+        },
+        {
+          "id": "vdw-bijten",
+          "label": "GEBETEN",
+          "source": "vdw",
+          "slot": null,
+          "role": "participle",
+          "thematicRole": null,
+          "lexeme": "bijten"
+        }
+      ]
+    },
+    "graphs": {
+      "syntax": {
+        "view": "syntax",
+        "root_id": "s",
+        "nodes": [
+          {
+            "id": "s",
+            "label": "S",
+            "category": "S",
+            "role": null,
+            "kind": "cat",
+            "x": -3,
+            "y": 0
+          },
+          {
+            "id": "np-subj",
+            "label": "NP",
+            "category": "NP",
+            "role": null,
+            "kind": "cat",
+            "x": -4,
+            "y": 1
+          },
+          {
+            "id": "subject",
+            "label": "HOND",
+            "category": "N",
+            "role": "subject",
+            "kind": "leaf",
+            "x": -5,
+            "y": 2
+          },
+          {
+            "id": "vp",
+            "label": "VP",
+            "category": "VP",
+            "role": null,
+            "kind": "cat",
+            "x": 0,
+            "y": 4
+          },
+          {
+            "id": "np-obj",
+            "label": "NP",
+            "category": "NP",
+            "role": null,
+            "kind": "cat",
+            "x": -1,
+            "y": 5
+          },
+          {
+            "id": "object",
+            "label": "MAN",
+            "category": "N",
+            "role": "object",
+            "kind": "leaf",
+            "x": -2,
+            "y": 6
+          },
+          {
+            "id": "vp-perfectum",
+            "label": "V-CLUSTER",
+            "category": "VP",
+            "role": null,
+            "kind": "cat",
+            "x": 3,
+            "y": 7
+          },
+          {
+            "id": "aux",
+            "label": "AUX",
+            "category": "AUX",
+            "role": null,
+            "kind": "cat",
+            "x": 2,
+            "y": 8
+          },
+          {
+            "id": "pv",
+            "label": "HEEFT",
+            "category": "AUX",
+            "role": "aux",
+            "kind": "leaf",
+            "x": 1,
+            "y": 9
+          },
+          {
+            "id": "vdw-phrase",
+            "label": "VDW",
+            "category": "V",
+            "role": null,
+            "kind": "cat",
+            "x": 5,
+            "y": 10
+          },
+          {
+            "id": "vdw",
+            "label": "GEBETEN",
+            "category": "V",
+            "role": "participle",
+            "kind": "leaf",
+            "x": 4,
+            "y": 11
+          }
+        ],
+        "edges": [
+          {
+            "from": "s",
+            "to": "np-subj",
+            "type": "tree"
+          },
+          {
+            "from": "np-subj",
+            "to": "subject",
+            "type": "tree"
+          },
+          {
+            "from": "s",
+            "to": "vp",
+            "type": "tree"
+          },
+          {
+            "from": "vp",
+            "to": "np-obj",
+            "type": "tree"
+          },
+          {
+            "from": "np-obj",
+            "to": "object",
+            "type": "tree"
+          },
+          {
+            "from": "vp",
+            "to": "vp-perfectum",
+            "type": "tree"
+          },
+          {
+            "from": "vp-perfectum",
+            "to": "aux",
+            "type": "tree"
+          },
+          {
+            "from": "aux",
+            "to": "pv",
+            "type": "tree"
+          },
+          {
+            "from": "vp-perfectum",
+            "to": "vdw-phrase",
+            "type": "tree"
+          },
+          {
+            "from": "vdw-phrase",
+            "to": "vdw",
+            "type": "tree"
+          }
+        ],
+        "rules": [
+          "S → NP VP",
+          "NP → HOND",
+          "VP → NP V-CLUSTER",
+          "NP → MAN",
+          "V-CLUSTER → AUX VDW",
+          "AUX → HEEFT",
+          "VDW → GEBETEN"
+        ]
+      },
+      "ft": {
+        "view": "ft",
+        "root_id": "ft-clause",
+        "nodes": [
+          {
+            "id": "ft-clause",
+            "label": "CLAUSE",
+            "category": "CLAUSE",
+            "role": "top",
+            "kind": "role-root",
+            "x": -1,
+            "y": 0
+          },
+          {
+            "id": "ft-pred",
+            "label": "PRED",
+            "category": "PRED",
+            "role": "pred",
+            "kind": "role",
+            "x": -2,
+            "y": 1
+          },
+          {
+            "id": "f-vcluster",
+            "label": "V-CLUSTER",
+            "category": "VP",
+            "role": "predicate-realization",
+            "kind": "cat",
+            "x": -4,
+            "y": 2
+          },
+          {
+            "id": "f-pv",
+            "label": "HEEFT",
+            "category": "AUX",
+            "role": "aux",
+            "kind": "leaf",
+            "x": -5,
+            "y": 3
+          },
+          {
+            "id": "f-vdw",
+            "label": "GEBETEN",
+            "category": "VDW",
+            "role": "predicate",
+            "kind": "leaf",
+            "x": -3,
+            "y": 4
+          },
+          {
+            "id": "ft-argstruct",
+            "label": "ARG-STRUCT",
+            "category": "ARG-STRUCT",
+            "role": "args",
+            "kind": "role",
+            "x": 3,
+            "y": 5
+          },
+          {
+            "id": "ft-arg1",
+            "label": "AGENS",
+            "category": "ROLE",
+            "role": "agens",
+            "kind": "role",
+            "x": 2,
+            "y": 6
+          },
+          {
+            "id": "f-subj-np",
+            "label": "NP",
+            "category": "NP",
+            "role": "agens-np",
+            "kind": "cat",
+            "x": 1,
+            "y": 7
+          },
+          {
+            "id": "f-subj",
+            "label": "HOND",
+            "category": "N",
+            "role": "subject",
+            "kind": "leaf",
+            "x": 0,
+            "y": 8
+          },
+          {
+            "id": "ft-arg2",
+            "label": "PATIENS",
+            "category": "ROLE",
+            "role": "patiens",
+            "kind": "role",
+            "x": 6,
+            "y": 9
+          },
+          {
+            "id": "f-obj-np",
+            "label": "NP",
+            "category": "NP",
+            "role": "patiens-np",
+            "kind": "cat",
+            "x": 5,
+            "y": 10
+          },
+          {
+            "id": "f-obj",
+            "label": "MAN",
+            "category": "N",
+            "role": "object",
+            "kind": "leaf",
+            "x": 4,
+            "y": 11
+          }
+        ],
+        "edges": [
+          {
+            "from": "ft-clause",
+            "to": "ft-pred",
+            "type": "tree"
+          },
+          {
+            "from": "ft-pred",
+            "to": "f-vcluster",
+            "type": "tree"
+          },
+          {
+            "from": "f-vcluster",
+            "to": "f-pv",
+            "type": "tree"
+          },
+          {
+            "from": "f-vcluster",
+            "to": "f-vdw",
+            "type": "tree"
+          },
+          {
+            "from": "ft-clause",
+            "to": "ft-argstruct",
+            "type": "tree"
+          },
+          {
+            "from": "ft-argstruct",
+            "to": "ft-arg1",
+            "type": "tree"
+          },
+          {
+            "from": "ft-arg1",
+            "to": "f-subj-np",
+            "type": "tree"
+          },
+          {
+            "from": "f-subj-np",
+            "to": "f-subj",
+            "type": "tree"
+          },
+          {
+            "from": "ft-argstruct",
+            "to": "ft-arg2",
+            "type": "tree"
+          },
+          {
+            "from": "ft-arg2",
+            "to": "f-obj-np",
+            "type": "tree"
+          },
+          {
+            "from": "f-obj-np",
+            "to": "f-obj",
+            "type": "tree"
+          }
+        ],
+        "rules": [
+          "CLAUSE → PRED ARG-STRUCT",
+          "PRED → V-CLUSTER",
+          "V-CLUSTER → HEEFT GEBETEN",
+          "ARG-STRUCT → AGENS PATIENS",
+          "AGENS → NP",
+          "NP → HOND",
+          "PATIENS → NP",
+          "NP → MAN"
+        ]
+      }
+    },
+    "projections": {
+      "lex": {
+        "axis": "west",
+        "position_source": "LOG",
+        "projection_origin": "SOURCE-Y",
+        "placement_mode": "horizontal-then-move",
+        "sentence": "HOND HEEFT MAN GEBETEN",
+        "rule": "hoofdzininvariant",
+        "items": [
+          {
+            "id": "subject-hond",
+            "label": "HOND",
+            "source": "subject",
+            "slot": null,
+            "role": "subject",
+            "thematicRole": "agens",
+            "lexeme": "hond"
+          },
+          {
+            "id": "pv-bijten-vtt",
+            "label": "HEEFT",
+            "source": "pv",
+            "slot": null,
+            "role": "aux",
+            "thematicRole": null,
+            "lexeme": "heeft"
+          },
+          {
+            "id": "object-man",
+            "label": "MAN",
+            "source": "object",
+            "slot": null,
+            "role": "object",
+            "thematicRole": "patiens",
+            "lexeme": "man"
+          },
+          {
+            "id": "vdw-bijten",
+            "label": "GEBETEN",
+            "source": "vdw",
+            "slot": null,
+            "role": "participle",
+            "thematicRole": null,
+            "lexeme": "bijten"
+          }
+        ],
+        "logical_sequence": [
+          {
+            "id": "S",
+            "kind": "major",
+            "short": "S",
+            "word": "HOND",
+            "logical_slot": 0,
+            "width": 1,
+            "interval": null
+          },
+          {
+            "id": "O",
+            "kind": "major",
+            "short": "O",
+            "word": "MAN",
+            "logical_slot": 1,
+            "width": 1,
+            "interval": null
+          },
+          {
+            "id": "V",
+            "kind": "major",
+            "short": "V",
+            "word": "BIJT",
+            "logical_slot": 2,
+            "width": 1,
+            "interval": null
+          }
+        ]
+      },
+      "synt": {
+        "axis": "east",
+        "rules": [
+          "S → NP VP",
+          "NP → HOND",
+          "VP → NP V-CLUSTER",
+          "NP → MAN",
+          "V-CLUSTER → AUX VDW",
+          "AUX → HEEFT",
+          "VDW → GEBETEN"
+        ]
+      },
+      "log": {
+        "axis": "south",
+        "authority": "LOG",
+        "order": "SOV",
+        "marked": false,
+        "position_unit": "slot",
+        "sequence": [
+          {
+            "id": "S",
+            "kind": "major",
+            "short": "S",
+            "word": "HOND",
+            "logical_slot": 0,
+            "width": 1,
+            "interval": null
+          },
+          {
+            "id": "O",
+            "kind": "major",
+            "short": "O",
+            "word": "MAN",
+            "logical_slot": 1,
+            "width": 1,
+            "interval": null
+          },
+          {
+            "id": "V",
+            "kind": "major",
+            "short": "V",
+            "word": "BIJT",
+            "logical_slot": 2,
+            "width": 1,
+            "interval": null
+          }
+        ],
+        "distances": {
+          "S_O": 1,
+          "O_V": 1,
+          "S_V": 2
+        },
+        "lex_position_source": "LOG",
+        "lex_projection_origin": "SOURCE-Y",
+        "lex_placement_mode": "horizontal-then-move",
+        "example_controls_layout": false,
+        "play_phases": [
+          "LOG",
+          "LEX"
+        ],
+        "play_space_mode": "none"
+      }
+    },
+    "notation": {
+      "tree_choice": "auto-min",
+      "functional_order": "left-first",
+      "branch_order": "normal",
+      "branch_overrides": {
+        "top": "auto",
+        "middle": "auto",
+        "other": "auto"
+      },
+      "role_swap": false,
+      "free_slot_count": 0
+    }
+  },
+  "paradata": {
+    "included": true,
+    "privacy": "local-export-only",
+    "session": {
+      "id": "ccb5ad09-ea32-4366-a98d-fed34e1e95ca",
+      "started_at": "2026-09-10T12:44:28.975Z",
+      "exported_at": "2026-09-10T12:45:01.479Z"
+    },
+    "workspace": {
+      "placement_mode": "language-tree",
+      "central_view": "syntax",
+      "projection_mode": "axes",
+      "visible_projections": [
+        "lex",
+        "synt",
+        "log"
+      ],
+      "manual_viewbox": null,
+      "growth": {
+        "enabled": true,
+        "step": 7
+      },
+      "display": {
+        "grid": true,
+        "relations": true,
+        "labels": true,
+        "layout_density": "max",
+        "view_fit": "max"
+      }
+    },
+    "events": [
+      {
+        "time": "2026-09-10T12:43:39.467Z",
+        "action": "session-start",
+        "details": {
+          "app_version": "v3.1.0-rc.10"
+        }
+      },
+      {
+        "time": "2026-09-10T12:44:04.833Z",
+        "action": "save-ogn-snapshot",
+        "details": {
+          "filename": "hond-bijt-man-syntactisch-lex-stap-9-snapshot-003.ogn",
+          "selected_views": [
+            "syntax",
+            "lex",
+            "synt",
+            "log"
+          ],
+          "selected_actions": [],
+          "play": {
+            "engine": "language-tree",
+            "step": 9,
+            "max": 15,
+            "resume": "paused-at-saved-step"
+          }
+        }
+      },
+      {
+        "time": "2026-09-10T12:44:28.975Z",
+        "action": "open-ogn",
+        "details": {
+          "filename": "hond-bijt-man-syntactisch-lex-stap-9-snapshot-003.ogn",
+          "ogn_version": "1.0"
+        }
+      },
+      {
+        "time": "2026-09-10T12:44:28.975Z",
+        "action": "resume-ogn-snapshot",
+        "details": {
+          "filename": "hond-bijt-man-syntactisch-lex-stap-9-snapshot-003.ogn",
+          "engine": "language-tree",
+          "step": 9
+        }
+      },
+      {
+        "time": "2026-09-10T12:45:01.478Z",
+        "action": "save-ogn-snapshot",
+        "details": {
+          "filename": "hond-bijt-man-syntactisch-lex-stap-7-snapshot-004.ogn",
+          "selected_views": [
+            "syntax",
+            "lex",
+            "synt",
+            "log"
+          ],
+          "selected_actions": [
+            "resume-ogn-snapshot"
+          ],
+          "play": {
+            "engine": "language-tree",
+            "step": 7,
+            "max": 15,
+            "resume": "paused-at-saved-step"
+          }
+        }
+      }
+    ],
+    "snapshot": {
+      "schema": "ogn-resumable-view-snapshot-v1",
+      "captured_at": "2026-09-10T12:45:01.478Z",
+      "filename": "hond-bijt-man-syntactisch-lex-stap-7-snapshot-004.ogn",
+      "naming": {
+        "selected_views": [
+          {
+            "id": "syntax",
+            "label": "Syntactische view",
+            "token": "syntactisch"
+          },
+          {
+            "id": "lex",
+            "label": "LEX-projectie",
+            "token": "lex"
+          },
+          {
+            "id": "synt",
+            "label": "SYNT-projectie",
+            "token": "synt"
+          },
+          {
+            "id": "log",
+            "label": "LOG-projectie",
+            "token": "log"
+          }
+        ],
+        "selected_actions": [
+          {
+            "time": "2026-09-10T12:44:28.975Z",
+            "action": "resume-ogn-snapshot",
+            "label": "Resume ogn snapshot",
+            "token": "resume-ogn-snapshot"
+          }
+        ]
+      },
+      "placement_mode": "language-tree",
+      "example_id": "hond-bijt-man",
+      "view": {
+        "central_view": "syntax",
+        "projection_mode": "axes",
+        "visible_projections": [
+          "lex",
+          "synt",
+          "log"
+        ],
+        "manual_viewbox": null,
+        "display": {
+          "grid": true,
+          "relations": true,
+          "labels": true,
+          "layout_density": "max",
+          "view_fit": "max"
+        }
+      },
+      "analysis_state": {
+        "language_tree_vcluster_flipped": false,
+        "causal_verb_variant": "heeft-gebeten",
+        "causal_anaphor_variant": "die",
+        "tense_by_family": {
+          "bijten": "vtt",
+          "breien": "ott",
+          "terugbrengen": "ott",
+          "uiting:jan-beloonde-jek-omdat-die-het-bot-terugbracht": "vvt",
+          "ontroeren": "vvt"
+        },
+        "bot_variant": "het-bot",
+        "role_swap": false,
+        "south_logical_mode": "SOV",
+        "kernel_space_global": {
+          "x": 1,
+          "y": 1
+        },
+        "kernel_space_component_x": 1,
+        "kernel_space_local_y": {},
+        "sentence_space_local": {
+          "x": 1,
+          "y": 1
+        }
+      },
+      "play": {
+        "engine": "language-tree",
+        "step": 7,
+        "max": 15,
+        "resume": "paused-at-saved-step"
+      }
+    }
+  }
+}

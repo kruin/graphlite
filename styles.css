@@ -687,7 +687,7 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
 .role-box { stroke-dasharray: 5 4; }
 .role-node .box-label { font-size: 0.86rem; letter-spacing: 0.05em; }
 
-/* v4383: functional OPN must be visible as CLAUSE > role-boxes, not as pred-root triangle. */
+/* v4383: functional OGN must be visible as CLAUSE > role-boxes, not as pred-root triangle. */
 .tree-node .synt-box.role-root-box,
 .role-root-box {
   fill: #f5f3ff;
@@ -704,7 +704,7 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
   vector-effect: non-scaling-stroke;
 }
 
-/* v4383: make OPN functional role-box structure unmistakable. */
+/* v4383: make OGN functional role-box structure unmistakable. */
 .role-root-box {
   fill: #ede9fe !important;
   stroke: #5b21b6 !important;
@@ -731,8 +731,8 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
 }
 
 
-/* v4399: OPN topicalization/fronting slot inside syntax and functional sources. */
-.opn-topicalization-slot {
+/* v4399: OGN topicalization/fronting slot inside syntax and functional sources. */
+.ogn-topicalization-slot {
   fill: #ecfeff;
   stroke: #0891b2;
   stroke-width: 2.2;
@@ -740,7 +740,7 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
   vector-effect: non-scaling-stroke;
   opacity: 0.96;
 }
-.opn-slot-label {
+.ogn-slot-label {
   fill: #0e7490;
   font-size: calc(15px * var(--og-font-scale));
   font-weight: 950;
@@ -752,7 +752,7 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
   stroke: #0891b2;
   fill: #ecfeff;
 }
-.opn-slot-caption {
+.ogn-slot-caption {
   fill: #0e7490;
 }
 
@@ -835,7 +835,7 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
 
 
 /* v4414: V2/Wissel on the LEX axis. */
-.opn-v2-slot {
+.ogn-v2-slot {
   fill: #eff6ff;
   stroke: #2563eb;
   stroke-width: 2.2;
@@ -4702,6 +4702,25 @@ body.main-screen-active .main-play-reset-controls .main-play-button {
 body.main-screen-active .main-play-reset-controls .main-reset-button {
   min-width: 4.3rem !important;
 }
+body.main-screen-active .main-play-reset-controls .main-snapshot-button,
+body.main-screen-active .main-play-reset-controls .main-snapshot-open {
+  min-width: auto !important;
+  min-height: 2.32rem !important;
+  padding: .42rem .78rem !important;
+  border: 1px solid color-mix(in srgb, var(--accent), var(--line) 35%) !important;
+  border-radius: 999px !important;
+  background: color-mix(in srgb, var(--panel), white 6%) !important;
+  color: var(--text) !important;
+  font-size: .78rem !important;
+  font-weight: 950 !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+  cursor: pointer !important;
+}
+body.main-screen-active .main-play-reset-controls .main-snapshot-button {
+  background: color-mix(in srgb, var(--accent), var(--panel) 82%) !important;
+}
+.main-snapshot-open input { position: absolute !important; width: 1px !important; height: 1px !important; opacity: 0 !important; pointer-events: none !important; }
 
 body.main-screen-active .main-play-growth-label {
   display: inline-flex !important;
@@ -4758,6 +4777,12 @@ body.main-screen-active #mainSouthModeButton {
   body.main-screen-active .main-play-reset-controls .main-reset-button {
     min-width: 3.75rem !important;
   }
+  body.main-screen-active .main-play-reset-controls .main-snapshot-button,
+  body.main-screen-active .main-play-reset-controls .main-snapshot-open {
+    padding-inline: .5rem !important;
+    min-height: 2.08rem !important;
+    font-size: .68rem !important;
+  }
   body.main-screen-active .main-play-growth-label {
     min-width: 4.15rem !important;
     max-width: 5.2rem !important;
@@ -4771,6 +4796,125 @@ body.main-screen-active #mainSouthModeButton {
   }
   body.main-screen-active #mainSouthModeButton {
     min-width: 6.75rem !important;
+  }
+}
+
+/* build 62: hervatbare OGN-snapshots met expliciete paradata en naamkeuze. */
+.ogn-snapshot-backdrop[hidden] { display: none !important; }
+.ogn-snapshot-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: rgba(15, 23, 42, .08);
+}
+.ogn-snapshot-dialog {
+  width: min(920px, calc(100vw - 2rem));
+  max-height: min(86vh, 760px);
+  overflow: auto;
+  box-sizing: border-box;
+  padding: 1.1rem;
+  border: 1px solid color-mix(in srgb, var(--accent), var(--line) 45%);
+  border-radius: 1.1rem;
+  background: var(--panel);
+  box-shadow: 0 1.2rem 4rem rgba(15, 23, 42, .35);
+  color: var(--text);
+}
+.ogn-snapshot-dialog > header,
+.ogn-snapshot-dialog > footer { display: flex; align-items: center; justify-content: space-between; gap: .8rem; }
+.ogn-snapshot-dialog > header {
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+  padding: .35rem .4rem;
+  margin: -.35rem -.4rem 0;
+  border-radius: .75rem;
+  background: color-mix(in srgb, var(--accent), var(--panel) 91%);
+}
+.ogn-snapshot-dialog.is-dragging > header { cursor: grabbing; }
+.ogn-snapshot-dialog > header button { cursor: pointer; touch-action: manipulation; }
+.ogn-snapshot-dialog h2 { margin: .15rem 0 0; }
+.ogn-snapshot-dialog > header > button { min-width: 2.4rem; min-height: 2.4rem; border-radius: 999px; font-size: 1.35rem; }
+.ogn-snapshot-kicker { color: var(--accent); font-size: .72rem; font-weight: 1000; letter-spacing: .1em; }
+.ogn-snapshot-columns { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: .8rem; margin: .9rem 0; }
+.ogn-snapshot-dialog fieldset { min-width: 0; padding: .7rem; border: 1px solid var(--line); border-radius: .8rem; }
+.ogn-snapshot-dialog legend { padding: 0 .35rem; font-weight: 950; }
+.ogn-snapshot-choice-list { display: grid; gap: .42rem; }
+.ogn-snapshot-choice-list label { display: flex; align-items: flex-start; gap: .48rem; padding: .42rem .5rem; border-radius: .58rem; background: color-mix(in srgb, var(--panel), var(--bg) 30%); }
+.ogn-snapshot-choice-list small { display: block; margin-top: .12rem; color: var(--muted); }
+.ogn-snapshot-action-list { max-height: 13rem; overflow: auto; }
+.ogn-snapshot-empty, .ogn-snapshot-status { color: var(--muted); font-size: .82rem; }
+.ogn-snapshot-proposals { margin-bottom: .75rem; }
+#ognSnapshotNameProposals { display: grid; gap: .38rem; }
+#ognSnapshotNameProposals button { width: 100%; overflow-wrap: anywhere; padding: .52rem .65rem; text-align: left; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; }
+.ogn-snapshot-name-field { display: grid; gap: .3rem; font-weight: 900; }
+.ogn-snapshot-name-field input { width: 100%; box-sizing: border-box; padding: .65rem .7rem; border: 1px solid var(--line); border-radius: .65rem; background: var(--bg); color: var(--text); font: 700 .9rem ui-monospace, SFMono-Regular, Consolas, monospace; }
+.ogn-snapshot-dialog > footer { justify-content: flex-end; margin-top: .8rem; }
+.ogn-snapshot-dialog > footer button { min-height: 2.5rem; padding-inline: 1rem; }
+.ogn-snapshot-workspace-window[hidden] { display: none !important; }
+.ogn-snapshot-workspace-window {
+  position: fixed;
+  z-index: 1180;
+  top: 6.5rem;
+  left: max(1rem, 6vw);
+  width: min(88vw, 1320px);
+  height: min(78vh, 900px);
+  min-width: min(32rem, calc(100vw - 1rem));
+  min-height: 22rem;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  overflow: hidden;
+  resize: both;
+  box-sizing: border-box;
+  border: 2px solid color-mix(in srgb, var(--accent), var(--line) 36%);
+  border-radius: .9rem;
+  background: var(--panel);
+  box-shadow: 0 1.25rem 4rem rgba(15, 23, 42, .42);
+}
+.ogn-snapshot-workspace-window > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+  min-height: 3.2rem;
+  padding: .45rem .7rem;
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+  border-bottom: 1px solid var(--line);
+  background: color-mix(in srgb, var(--accent), var(--panel) 91%);
+}
+.ogn-snapshot-workspace-window.is-dragging > header { cursor: grabbing; }
+.ogn-snapshot-workspace-window h2 { margin: .08rem 0 0; font-size: 1rem; }
+.ogn-snapshot-workspace-window > header button {
+  flex: 0 0 auto;
+  min-width: 2.35rem;
+  min-height: 2.35rem;
+  cursor: pointer;
+  touch-action: manipulation;
+  border-radius: 999px;
+  font-size: 1.3rem;
+}
+.ogn-snapshot-workspace-window iframe {
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  border: 0;
+  background: var(--bg);
+}
+@media (max-width: 760px) {
+  body.main-screen-active .main-play-reset-controls { max-width: calc(100vw - .6rem); overflow-x: auto; justify-content: flex-start !important; }
+  .ogn-snapshot-dialog { width: calc(100vw - 1rem); max-height: 92vh; padding: .8rem; }
+  .ogn-snapshot-columns { grid-template-columns: 1fr; }
+  .ogn-snapshot-workspace-window {
+    top: 4.5rem;
+    left: .5rem;
+    width: calc(100vw - 1rem);
+    height: calc(100vh - 5rem);
+    min-width: 0;
   }
 }
 
@@ -7370,11 +7514,11 @@ body.main-screen-active .main-actions-menu {
 body.main-screen-active .main-extra-menu.top-menu-item { display: block !important; }
 
 
-/* rc.14: visible OPN save/export/import workflow */
-.opn-document-card { border-style: solid; }
-.opn-document-actions { align-items: center; flex-wrap: wrap; }
-.opn-document-actions .primary, .opn-mobile-actions button { font-weight: 900; }
-.opn-mobile-actions .file-label { width: auto; }
+/* rc.14: visible OGN save/export/import workflow */
+.ogn-document-card { border-style: solid; }
+.ogn-document-actions { align-items: center; flex-wrap: wrap; }
+.ogn-document-actions .primary, .ogn-mobile-actions button { font-weight: 900; }
+.ogn-mobile-actions .file-label { width: auto; }
 
 
 /* v2.0.0-rc.20: desktop MAX is the readable full-window default. */

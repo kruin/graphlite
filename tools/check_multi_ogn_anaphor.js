@@ -66,7 +66,7 @@ assert.throws(() => engine.composePair({
 }), /GRID-INVARIANT/);
 
 const sample = JSON.parse(fs.readFileSync(
-  path.join(root, 'samples', 'ik-zie-man-hij-draagt-hoed.multi-ogn.v1.opn'),
+  path.join(root, 'samples', 'ik-zie-man-hij-draagt-hoed.multi-ogn.v1.ogn'),
   'utf8'
 ));
 const sampleComposition = sample.data.composition;

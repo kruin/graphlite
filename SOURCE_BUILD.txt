@@ -1,1 +1,1 @@
-v3.1.0-rc.10-fork-clone-publish-guide-20260909.60
+v3.1.0-rc.10-safe-renormalize-after-rename-20260910.67

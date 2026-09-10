@@ -59,7 +59,7 @@ layout in cellen. Groei en render mogen deze posities niet later wijzigen.
 Hier geldt hard `A ≠ B ⇒ x(A) ≠ x(B) én y(A) ≠ y(B)`: twee verschillende
 knopen delen nooit een horizontale of verticale gridlijn. Iedere
 toepassingsverschuiving moet dezelfde invariant behouden. Na plaatsing, vóór
-render en vóór OPN-export wordt dit gecontroleerd; bij een conflict wordt geen
+render en vóór OGN-export wordt dit gecontroleerd; bij een conflict wordt geen
 fallbackknoop getekend. Zo'n conflict heet **gridlijnhergebruik**.
 
 **Implementatiegrens in rc.42:** deze gridplaatsing krijgt de later gemeten

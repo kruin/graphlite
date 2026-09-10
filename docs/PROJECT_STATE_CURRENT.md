@@ -31,7 +31,7 @@ de Greedy Grow-reconstructie, bewijsgrens en afgeleide publicatieslide.
   `v2.0.0-rc.45-publish-visible-browser-controls-20260825.11`.
 - De Playwright-browsertest opent eerst het zichtbare hoofdmenu voordat hij
   Anafoor · multi-OGN kiest, vindt boomknopen in de actuele vormlaag en
-  downloadt OPN via de zichtbare Config-knop. Runtime-screenshots staan in de
+  downloadt OGN via de zichtbare Config-knop. Runtime-screenshots staan in de
   tijdelijke systeemmap, zodat publicatie geen ongewenste bestanden toevoegt.
 - `publish_checked.bat` controleert vóór de langdurige releasechecks of zowel
   Playwright 1.61.1 als de bijpassende Chromium-browser lokaal beschikbaar
@@ -49,7 +49,7 @@ de Greedy Grow-reconstructie, bewijsgrens en afgeleide publicatieslide.
   Gedeclareerde anaforen staan verticaal; de causale uiting toont tegelijk
   `JEK ↔ DIE` en `JAN ↔ HEM`. Eén LEX-as toont uitsluitend de gerealiseerde
   uiting. Kernzinnen, coreferentie, oorzaak, rol-flip en impliciete
-  geadresseerde blijven bij editor en samengestelde OPN behouden.
+  geadresseerde blijven bij editor en samengestelde OGN behouden.
 - De causale uiting biedt `hij`, `die` en `die hond` als rechtstreeks
   selecteerbare anafoorvormen voor dezelfde referent Jek. `DIE HOND` blijft
   één subject-NP met twee gerealiseerde LEX-woorden. Interface en documentatie
@@ -205,7 +205,7 @@ de Greedy Grow-reconstructie, bewijsgrens en afgeleide publicatieslide.
 - De oorspronkelijke geaccepteerde rc.45-carrousel blijft ongewijzigd. De
   actuele source build 20260802.11 breidt de viewer wel uit met plaatsingsmodi,
   geïsoleerde directe Config, lijnbeeld-Config en structurele
-  tekstnormalisatie; graphdata en OPN-formaat blijven ongewijzigd.
+  tekstnormalisatie; graphdata en OGN-formaat blijven ongewijzigd.
 
 ## Config, LEESMIJ en projectzip rc.43
 
@@ -339,7 +339,7 @@ de Greedy Grow-reconstructie, bewijsgrens en afgeleide publicatieslide.
   uit en wist haar staat.
 - SYNT-insertie is onafhankelijk en in rc.37 nog niet aan een toepassing
   gekoppeld.
-- OPN, Legacy JSON en Config-snapshots bewaren de drie asschakelaars.
+- OGN, Legacy JSON en Config-snapshots bewaren de drie asschakelaars.
 
 ## Profielcontract
 
@@ -350,8 +350,8 @@ de Greedy Grow-reconstructie, bewijsgrens en afgeleide publicatieslide.
 - De eerste extra is `Bijwoorden` en staat standaard uit.
 - Uit betekent: geen bijwoordvoorbeelden, LOG-minors, directe LEX-inserties,
   gebruiksprofielen, bediening, featuredocumentatie of featurevelden in
-  OPN/Legacy JSON.
-- Een basis-OPN vermeldt `profile=base` en een lege lijst `extras`.
+  OGN/Legacy JSON.
+- Een basis-OGN vermeldt `profile=base` en een lege lijst `extras`.
 - Een import die de uitgeschakelde extra nodig heeft, wordt niet gedeeltelijk
   geladen maar vraagt eerst om activering via Config.
 
@@ -512,9 +512,9 @@ alleen ontgrendeld op exact de laatste stap. Eén stap terug verwijdert daarom
 meteen de eindprojecties; daarna verdwijnen achtereenvolgens LEX-Wissels,
 LEX-inhoud, LOG en de boomknopen.
 
-## OPN-opslag
+## OGN-opslag
 
-`.opn` is het primaire round-tripformaat. Het scheidt `metadata`, `data` en
+`.ogn` is het primaire round-tripformaat. Het scheidt `metadata`, `data` en
 optionele `paradata`. De data bewaart de LOG-sequentie, minorintervallen,
 slotnummers, majorafstanden en `lex_position_source=LOG`. Daarnaast bewaart
 zij `lex_projection_origin=SOURCE-Y` en

@@ -122,7 +122,7 @@ Sentence instance HTML:
     data-ambiguity-affects="origin log-projection scope components">...</li>
 ```
 
-OPN export stores the effective profile, origin and component analysis in
+OGN export stores the effective profile, origin and component analysis in
 `example.lex_insertions`.
 
 ## Editor contract

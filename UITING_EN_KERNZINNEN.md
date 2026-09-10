@@ -187,7 +187,7 @@ herhaalt dezelfde eigennaam op LEX; de referentkolom blijft
 gedeeld, ook wanneer de vorm geen voornaamwoord is. De referenten, oorzaak,
 syntactische relaties en rolwisseling
 blijven gelijk. De standaardvorm is `die`; de keuze wordt opgeslagen in Config
-en meegenomen in OPN-export.
+en meegenomen in OGN-export.
 
 ## OGN-projecties
 
@@ -225,7 +225,7 @@ selecteerbare viewer-items. Elk item bewaart kernzinnen, verknopingen, type en
 eventueel een impliciet subject in `data-*`-attributen.
 
 De uitingeneditor bewaart deze velden bij laden, wijzigen, opslaan en export.
-Ook OPN-export en -import behouden de uitingmetadata. De bestaande
+Ook OGN-export en -import behouden de uitingmetadata. De bestaande
 multi-OGN-toepassing met `Ik zie een man. Hij draagt een hoed.` blijft intact.
 
 ### Weergave: twee kernzinnen onder elkaar
@@ -375,7 +375,7 @@ status `before` of `applied`, zodat de overgang ook automatisch testbaar is.
 ### Lengte van een story en aantal Flips
 
 Flip kent als lokale Language-Tree-bewerking geen taalkundig maximum: iedere
-kernzin kan in beginsel haar eigen Flip-beslissing krijgen. Ook het OPN-model
+kernzin kan in beginsel haar eigen Flip-beslissing krijgen. Ook het OGN-model
 accepteert opeenvolgende eenheden `K1 … Kn`, en PLAY maakt zijn stappenlijst
 dynamisch uit de aanwezige kernzinnen.
 

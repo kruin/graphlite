@@ -21,7 +21,7 @@ PNG's.
   `A ≠ B ⇒ x(A) ≠ x(B) én y(A) ≠ y(B)`; twee verschillende knopen delen
   nooit een horizontale of verticale gridlijn.
 - [x] De invariant geldt expliciet voor kern, toepassingen, render en
-  OPN-export; een ongeldige fallbackknoop wordt niet getekend.
+  OGN-export; een ongeldige fallbackknoop wordt niet getekend.
 - [x] De overtreding heet consequent `gridlijnhergebruik`: horizontaal
   hergebruik deelt een rij, verticaal hergebruik een kolom.
 - [x] Ruleset en zoekstrategie worden als verschillende verantwoordelijkheden

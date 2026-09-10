@@ -1,7 +1,7 @@
 {
-  "opn": "Open Graph Notation",
-  "document_type": "opengraph-document",
-  "opn_version": "1.0",
+  "ogn": "Open Graph Notation",
+  "document_type": "open-graph-notation-document",
+  "ogn_version": "1.0",
   "metadata": {
     "document_id": "sample-ik-zie-man-hij-draagt-hoed-multi-ogn-v1",
     "title": "Ik zie een man. Hij draagt een hoed.",

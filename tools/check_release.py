@@ -30,7 +30,7 @@ required_files = [
     ".editorconfig", ".gitattributes", ".gitignore",
     "structure-config.html", "structure-editor.html", "examples-input.html", "examples-editor.html",
     "examples-adverbs.html", "lexicon-config.html", "lexicon-editor.html", ".nojekyll",
-    "README.md", "LEESMIJ.md", "MEEDOEN.md", "AFLEVERINGEN_PUBLICEREN.md", "AFLEVERINGEN_PLANNING.md",
+    "README.md", "LEESMIJ.md", "MEEDOEN.md", "AFLEVERINGEN_PUBLICEREN.md", "AFLEVERINGEN_PLANNING.md", "OGN_RESUMABLE_SNAPSHOTS.md", "SOURCE_CHANGES_V3.1.0-rc.10.62.md", "SOURCE_CHANGES_V3.1.0-rc.10.63.md", "SOURCE_CHANGES_V3.1.0-rc.10.64.md", "SOURCE_CHANGES_V3.1.0-rc.10.65.md",
     "CARROUSEL_BRONNEN.md", "SOURCE_CHANGES_V3.1.0-rc.10.36.md", "SOURCE_CHANGES_V3.1.0-rc.10.37.md", "SOURCE_CHANGES_V3.1.0-rc.10.38.md", "SOURCE_CHANGES_V3.1.0-rc.10.39.md", "SOURCE_CHANGES_V3.1.0-rc.10.40.md", "SOURCE_CHANGES_V3.1.0-rc.10.41.md", "SOURCE_CHANGES_V3.1.0-rc.10.42.md", "SOURCE_CHANGES_V3.1.0-rc.10.43.md", "SOURCE_CHANGES_V3.1.0-rc.10.44.md", "ALGEMENE_SYN_FLIP.md",
     "docs/view.html", "docs/html-doc-links.js", "tools/check_html_document_viewer.py",
     "PROJECT_MEMORY.md", "PROJECT_STATE_CURRENT.md", "LAYOUT_RULES.md",
@@ -45,7 +45,7 @@ required_files = [
     "UITING_EN_KERNZINNEN.md", "docs/UITING_EN_KERNZINNEN.md",
     "samples/uitingen-kernzinnen.v1.json", "tools/check_utterances.js", "tools/check_vcluster_tree_flip.js",
     "tools/check_utterance_kernel_views.js", "tools/check_item_uri_start.js", "tools/check_recursive_kernel_builder.js",
-    "samples/ik-zie-man-hij-draagt-hoed.multi-ogn.v1.opn",
+    "samples/ik-zie-man-hij-draagt-hoed.multi-ogn.v1.ogn",
     "PUBLICATIE_README.md", "RC44_PUBLICATION_CAROUSEL_TEST.md",
     "RC45_OGN_CORE_EXPLANATION_TEST.md", "GREEDY_GROW_RECONSTRUCTION.md",
     "greedy-grow.html", "greedy-grow.css", "greedy-grow-engine.js", "greedy-grow.js",
@@ -57,7 +57,7 @@ required_files = [
     "RC40_LANDSCAPE_COMPOSITION_TEST.md", "RC41_RECURSIVE_LAYOUT_TEST.md",
     "RC42_RESERVED_APPLICATIONS_TEST.md", "RC42_README_CAROUSEL_EDITOR_TEST.md",
     "RC43_CONFIG_README_PROJECT_TEST.md",
-    "OPN_STORAGE_FORMAT.md", "PRECONFIG_ARCHITECTURE.md", "projectie-master-spec.md",
+    "OGN_STORAGE_FORMAT.md", "PRECONFIG_ARCHITECTURE.md", "projectie-master-spec.md",
     "config/default-config.json", "config/user-config.json", "config/README.md",
     "docs/ADVERB_ORIGIN_MECHANISMS.md", "docs/OGN_BASE_PROFILE.md",
     "docs/GREEDY_GROW_RECONSTRUCTION.md",
@@ -86,7 +86,7 @@ required_files = [
     "tools/check_desktop_max_view.py", "tools/check_social_and_linguistic_export.py",
     "tools/check_linkedin_video_export.py", "tools/check_linkedin_video_runtime.js",
     "tools/check_play_reverse.py", "tools/check_release_zip_batch.py",
-    "tools/check_opn_storage.py", "tools/check_lexicon_usage_profiles.py",
+    "tools/check_ogn_storage.py", "tools/check_ogn_format_and_exports.py", "tools/check_ogn_snapshots.py", "tools/check_snapshot_resume_step.py", "tools/check_lexicon_usage_profiles.py",
     "tools/check_feature_profiles.py", "tools/check_feature_profiles_runtime.js",
     "tools/check_readme_carousel_editor.py", "tools/check_readme_carousel_editor_runtime.js",
     "tools/check_readme_item_editor.py", "tools/check_readme_item_editor_runtime.js",
@@ -304,7 +304,7 @@ for marker, label in [
     (":scope > .node-shape-layer > .node-shape[data-node-id]", "browsertest gebruikt actuele knooplaag"),
     ('[data-config-scope-button="general"]', "browsertest opent algemene config voor export"),
     ('[data-config-tab-button="files"]', "browsertest opent zichtbare bestandentab voor export"),
-    ("#configDownloadOpnButton", "browsertest gebruikt zichtbare OPN-knop"),
+    ("#configDownloadOgnButton", "browsertest gebruikt zichtbare OGN-knop"),
     ("path.resolve(os.tmpdir()", "runtime-screenshot buiten Git-projectmap"),
 ]:
     require(runtime_multi_ogn, marker, label)
@@ -317,7 +317,7 @@ for marker, label in [
     require(index, marker, label)
 for marker, label in [
     ("function drawMultiOgnAnaphor()", "multi-OGN-renderer"),
-    ("function buildMultiOgnOpnDocument(", "multi-OGN-OPN-export"),
+    ("function buildMultiOgnOgnDocument(", "multi-OGN-OGN-export"),
     ("function validateImportedMultiOgnComposition(", "multi-OGN-importvalidatie"),
     ("'data-directed': 'false'", "ongerichte coreferentie"),
 ]:
@@ -459,7 +459,7 @@ for marker, label in [
     ("function assertUniqueNodeGridLines(layout", "harde OGN-gridinvariant"),
     ("A != B vereist x(A) != x(B) en y(A) != y(B)", "leesbare A-ongelijk-B-foutmelding"),
     ("assertUniqueNodeGridLines(layout, 'renderlaag')", "renderlaag faalt gesloten"),
-    ("assertUniqueNodeGridLines(layout, `OPN-export ${view}`)", "OPN-exportvalidatie"),
+    ("assertUniqueNodeGridLines(layout, `OGN-export ${view}`)", "OGN-exportvalidatie"),
 ]:
     require(js, marker, label)
 require(read("check_release.bat"), "check_node_grid_invariant.py", "statische knoopgridcontrole in releaseflow")
@@ -491,7 +491,7 @@ for marker, label in [
     ("const DEFERRED_LEX_OPEN_SLOT_PLACEMENTS", "uitgestelde vóór/na/tussen-voorraad"),
     ("return targetY < sourceY ? targetY : sourceY", "harde upward-grens vanaf bronhoogte"),
     ("const SENTENCE_TYPES = Object.freeze([", "centrale zinsoortcatalogus"),
-    ("sentence_type: sentenceTypeForExample(ex)", "zinsoort in OPN-export"),
+    ("sentence_type: sentenceTypeForExample(ex)", "zinsoort in OGN-export"),
 ]:
     require(js, marker, label)
 if 'id="lexOpenSlotCountSelect"' in index or 'id="lexOpenSlotPlacementSelect"' in index:
@@ -838,7 +838,7 @@ for marker, label in [
 ]:
     require(local_launcher, marker, label)
 source_build = read("SOURCE_BUILD.txt").strip()
-if source_build != "v3.1.0-rc.10-fork-clone-publish-guide-20260909.60":
+if source_build != "v3.1.0-rc.10-safe-renormalize-after-rename-20260910.67":
     errors.append(f"onverwachte of lege SOURCE_BUILD.txt: {source_build!r}")
 
 leesmij = read("LEESMIJ.md")
@@ -928,9 +928,9 @@ if re.search(r"\bgit\s+pull\b", publish_bat, flags=re.I):
 
 # Core runtime/storage/export contracts preserved from rc.27.
 for marker, label in [
-    ("function buildOpnDocument(", "OPN-export"),
-    ("function applyOpnDocument(", "OPN-import"),
-    ("schema: 'data-metadata-paradata'", "OPN metadata/data/paradata"),
+    ("function buildOgnDocument(", "OGN-export"),
+    ("function applyOgnDocument(", "OGN-import"),
+    ("schema: 'data-metadata-paradata'", "OGN metadata/data/paradata"),
     ("function logLexPlayPhases()", "LOG/ruimte/LEX-Play"),
     ("function downloadGraphSvg(", "SVG-export"),
     ("async function downloadGraphPng(", "LinkedIn-PNG"),
@@ -963,19 +963,19 @@ for phrase in ["MISSCHIEN WEL", "VAAK", "GEBETEN HEEFT"]:
     if phrase not in examples and phrase not in js:
         errors.append(f"voorbeelddata mist {phrase}")
 
-# JSON and OPN validation.
-for path in list(ROOT.rglob("*.json")) + list(ROOT.rglob("*.opn")):
+# JSON and OGN validation.
+for path in list(ROOT.rglob("*.json")) + list(ROOT.rglob("*.ogn")):
     if "node_modules" in path.parts:
         continue
     try:
         doc = json.loads(path.read_text(encoding="utf-8"))
-        if path.suffix.lower() == ".opn":
-            if doc.get("document_type") != "opengraph-document":
-                errors.append(f"ongeldig OPN-documenttype: {path.relative_to(ROOT)}")
+        if path.suffix.lower() == ".ogn":
+            if doc.get("document_type") != "open-graph-notation-document":
+                errors.append(f"ongeldig OGN-documenttype: {path.relative_to(ROOT)}")
             if doc.get("metadata", {}).get("schema") != "data-metadata-paradata":
-                errors.append(f"OPN-scheiding ontbreekt: {path.relative_to(ROOT)}")
+                errors.append(f"OGN-scheiding ontbreekt: {path.relative_to(ROOT)}")
     except Exception as exc:
-        errors.append(f"ongeldige JSON/OPN {path.relative_to(ROOT)}: {exc}")
+        errors.append(f"ongeldige JSON/OGN {path.relative_to(ROOT)}: {exc}")
 
 # Local HTML links.
 attr = re.compile(r'(?:href|src)=["\']([^"\'#?]+)')

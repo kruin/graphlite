@@ -101,13 +101,13 @@ for marker, label in [
 
 # Profile-safe storage and imports/exports.
 for marker, label in [
-    ("profile: adverbsEnabled ? 'custom' : 'base'", "OPN-profielmetadata"),
-    ("extras: adverbsEnabled ? ['adverbs'] : []", "OPN-extralijst"),
-    ("preconfig: insertionPreconfigSnapshot()", "OPN-voorconfigmetadata"),
+    ("profile: adverbsEnabled ? 'custom' : 'base'", "OGN-profielmetadata"),
+    ("extras: adverbsEnabled ? ['adverbs'] : []", "OGN-extralijst"),
+    ("preconfig: insertionPreconfigSnapshot()", "OGN-voorconfigmetadata"),
     ("...(adverbsEnabled ? {\n              free_slot_count:", "optionele LEX-exportvelden"),
     ("...(adverbsEnabled ? { insertion_interval:", "optioneel LOG-exportveld"),
-    ("function opnDocumentRequiresAdverbs(", "OPN-featuredetectie"),
-    ("function opnDocumentRequiredInsertionAxes(", "OPN-insertiedetectie"),
+    ("function ognDocumentRequiresAdverbs(", "OGN-featuredetectie"),
+    ("function ognDocumentRequiredInsertionAxes(", "OGN-insertiedetectie"),
     ("requires insertion on", "geblokkeerde voorconfig-import"),
     ("requires the disabled Adverbs application", "geblokkeerde feature-import"),
     ("...(featureEnabled('adverbs') ? {\n        lexFreeSlotCount:", "optionele Config-velden"),

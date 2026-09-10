@@ -35,7 +35,7 @@ preflight slaagt.
 
 De echte Playwright-test mag uitsluitend zichtbare bediening gebruiken:
 open eerst `#mainViewSummary`, kies daarna de modus binnen `#mainViewMenu[open]`
-en download OPN via `#configDownloadOpnButton` in het geopende Config-scherm.
+en download OGN via `#configDownloadOgnButton` in het geopende Config-scherm.
 Boomknopen staan onder `.node-shape-layer`. Bewaar runtime-screenshots buiten
 de repository in de tijdelijke systeemmap.
 
@@ -63,7 +63,7 @@ Canvas-pan mag pointerdown op deze knoop niet capturen; knooptekst moet
 pointer-events ontvangen en Enter moet dezelfde variantwisseling geven.
 Bewaar onafhankelijk instelbare werkelijke horizontale en verticale rastermaten.
 `DIE HOND` is één subject-NP en twee gerealiseerde LEX-woorden; alle varianten
-houden de referent Jek, beide verticale anaforen en OPN-metadata vast.
+houden de referent Jek, beide verticale anaforen en OGN-metadata vast.
 Houd de Play-balk zichtbaar in multi-OGN en bewaak de omkeerbare fasevolgorde
 `K1 → K2 → verticale anaforen → gerealiseerde LEX-uiting`.
 Toon de actieve testuiting steeds boven Play en werkvlak. Iedere kernzin heeft
@@ -143,7 +143,7 @@ LEESMIJ-aanpassingen gebruiken `state.readmeTopicEdits` en
 `state.readmeCarousels` uitsluitend als Config-overschrijving. Houd de
 ingebouwde itemtekst en introcarousel in de HTML als bronstandaard. `Tonen:
 nee` verbergt een item, maar verwijdert het niet uit de DOM of de Config-keuze.
-Voeg deze state niet toe aan OPN-documentdata. Laat alleen beperkte,
+Voeg deze state niet toe aan OGN-documentdata. Laat alleen beperkte,
 gesaniteerde HTML toe en accepteer een ingesloten `data:image/...`-bron
 uitsluitend wanneer die via de vertrouwde bestandsinvoer is gemaakt. Houd
 onderschriftvelden compact en laat graph-sneltoetsen nooit reageren binnen
@@ -331,7 +331,7 @@ LOG-majors/minors → neutrale LEX-basis → expliciete Wissels → zinsvalidati
 
 ## Compatibiliteit
 
-Intern schrijft de viewer `central_opn: "ft"`. Invoer met de oude waarde `functional` blijft leesbaar en wordt naar Functional gemigreerd. Implementatienamen zoals `functionalNodes` mogen blijven bestaan zolang zij niet als viewnaam aan de gebruiker worden getoond.
+Intern schrijft de viewer `central_ogn: "ft"`. Invoer met de oude waarde `functional` blijft leesbaar en wordt naar Functional gemigreerd. Implementatienamen zoals `functionalNodes` mogen blijven bestaan zolang zij niet als viewnaam aan de gebruiker worden getoond.
 
 ## Werkwijze
 
@@ -391,7 +391,7 @@ openen direct hun eigen brede uitklappaneel.
 
 ## Opslagcontract
 
-Werk bij opslagwijzigingen altijd volgens `OPN_STORAGE_FORMAT.md`. Meng graphdata, documentmetadata en paradata niet opnieuw in één vlak object. `.opn` is leidend; Legacy JSON is alleen compatibiliteit.
+Werk bij opslagwijzigingen altijd volgens `OGN_STORAGE_FORMAT.md`. Meng graphdata, documentmetadata en paradata niet opnieuw in één vlak object. `.ogn` is leidend; Legacy JSON is alleen compatibiliteit.
 
 ## Lexiconprofielen niet terugdraaien
 

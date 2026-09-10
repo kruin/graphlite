@@ -28,7 +28,7 @@ Na LOG en de gereserveerde doelruimte toont fase 3 eerst de horizontale
 LEX-bronprojecties. De verplaatsingen naar LOG-doelrijen en daarna
 topic-/V2-slots volgen als afzonderlijke stappen.
 
-## Config en OPN
+## Config en OGN
 
 Het contract bevat nu expliciet:
 
@@ -37,7 +37,7 @@ lex-projection-origin=SOURCE-Y
 lex-placement-mode=horizontal-then-move
 ```
 
-OPN bewaart dezelfde waarden als `lex_projection_origin` en
+OGN bewaart dezelfde waarden als `lex_projection_origin` en
 `lex_placement_mode`.
 
 ## Regressiecontrole

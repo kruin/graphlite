@@ -170,14 +170,14 @@ platform- en communityinstellingen blijven bepalend.
 ## Opslagterminologie
 
 ```text
-OPN-document             opgeslagen .opn-bestand
+OGN-document             opgeslagen .ogn-bestand
 data                     graph, projecties en analysekeuzes
 metadata                 document- en formaatbeschrijving
 paradata                 gebruiksproces, workspace en eventlog
 Legacy JSON              oud compatibiliteitsformaat
 ```
 
-Noem `.opn` niet een map, database of losse centrale graph.
+Noem `.ogn` niet een map, database of losse centrale graph.
 
 ## Terminologie lexicale analyse
 

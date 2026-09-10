@@ -20,11 +20,11 @@ assert(!index.includes('id="lexOpenSlotCountSelect"'), 'aantal vrije posities is
 assert(!index.includes('id="lexOpenSlotPlacementSelect"'), 'plaatsingskeuze is nog zichtbaar in Config');
 assert(index.includes('Generieke vrije plekken vóór, na of tussen') && index.includes('no-show'), 'Config legt de uitgestelde grens niet uit');
 assert(index.includes('data-help-topic="lex-free-positions"'), 'Help-onderwerp voor het actieve LEX-profiel ontbreekt');
-assert(index.includes('Oude Config- of OPN-velden daarvoor worden compatibel genegeerd'), 'compatibiliteitsuitleg ontbreekt');
+assert(index.includes('Oude Config- of OGN-velden daarvoor worden compatibel genegeerd'), 'compatibiliteitsuitleg ontbreekt');
 assert(!Object.prototype.hasOwnProperty.call(defaults.config || {}, 'lexOpenSlotCount'), 'default-config schrijft lexOpenSlotCount nog');
 assert(!Object.prototype.hasOwnProperty.call(defaults.config || {}, 'lexOpenSlotPlacement'), 'default-config schrijft lexOpenSlotPlacement nog');
-assert(!js.includes('additional_open_slot_count:'), 'nieuwe OPN-export schrijft additional_open_slot_count nog');
-assert(!js.includes('additional_open_slot_placement:'), 'nieuwe OPN-export schrijft additional_open_slot_placement nog');
+assert(!js.includes('additional_open_slot_count:'), 'nieuwe OGN-export schrijft additional_open_slot_count nog');
+assert(!js.includes('additional_open_slot_placement:'), 'nieuwe OGN-export schrijft additional_open_slot_placement nog');
 assert(!js.includes('lex_open_slot_count:'), 'legacy-export schrijft lex_open_slot_count nog');
 assert(!js.includes('lex_open_slot_placement:'), 'legacy-export schrijft lex_open_slot_placement nog');
 

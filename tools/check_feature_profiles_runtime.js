@@ -75,18 +75,18 @@ async function waitForViewer(page) {
     assert.match(baseState.reservedApplications[1].text, /Onaffe zin/);
     assert.doesNotMatch(baseState.mainText, /\b(?:adverbs?|bijwoorden?|minors?)\b/i);
 
-    const baseOpn = await readDownloadJson(page, '#downloadOpnButton');
-    assert.equal(baseOpn.metadata.profile, 'base');
-    assert.deepEqual(baseOpn.metadata.extras, []);
-    assert.deepEqual(baseOpn.metadata.preconfig.insertion, { lex: false, synt: false, log: false });
-    assert.equal('lex_insertions' in baseOpn.data.example, false);
+    const baseOgn = await readDownloadJson(page, '#downloadOgnButton');
+    assert.equal(baseOgn.metadata.profile, 'base');
+    assert.deepEqual(baseOgn.metadata.extras, []);
+    assert.deepEqual(baseOgn.metadata.preconfig.insertion, { lex: false, synt: false, log: false });
+    assert.equal('lex_insertions' in baseOgn.data.example, false);
     for (const key of ['free_slot_count', 'free_slot_placement', 'insertion_content', 'insertion_extension_targets', 'free_slots', 'adverb']) {
-      assert.equal(key in baseOpn.data.projections.lex, false, `basis-LEX bevat ${key}`);
+      assert.equal(key in baseOgn.data.projections.lex, false, `basis-LEX bevat ${key}`);
     }
-    assert.equal('insertion_interval' in baseOpn.data.projections.log, false);
-    assert.equal(baseOpn.data.projections.log.sequence.some(item => item.kind === 'minor'), false);
+    assert.equal('insertion_interval' in baseOgn.data.projections.log, false);
+    assert.equal(baseOgn.data.projections.log.sequence.some(item => item.kind === 'minor'), false);
     for (const reservedId of reservedApplicationIds) {
-      assert.doesNotMatch(JSON.stringify(baseOpn), new RegExp(reservedId));
+      assert.doesNotMatch(JSON.stringify(baseOgn), new RegExp(reservedId));
     }
 
     await page.click('#openConfigButton');
@@ -119,14 +119,14 @@ async function waitForViewer(page) {
     assert.equal(await page.locator('[data-reserved-application]:disabled').count(), 2);
     assert.equal(await page.locator('[data-reserved-application]:checked').count(), 0);
 
-    const extrasOpn = await readDownloadJson(page, '#configDownloadOpnButton');
-    assert.equal(extrasOpn.metadata.profile, 'custom');
-    assert.deepEqual(extrasOpn.metadata.extras, ['adverbs']);
-    assert.deepEqual(extrasOpn.metadata.preconfig.insertion, { lex: true, synt: false, log: true });
-    assert.equal('free_slot_count' in extrasOpn.data.projections.lex, true);
-    assert.equal('insertion_interval' in extrasOpn.data.projections.log, true);
+    const extrasOgn = await readDownloadJson(page, '#configDownloadOgnButton');
+    assert.equal(extrasOgn.metadata.profile, 'custom');
+    assert.deepEqual(extrasOgn.metadata.extras, ['adverbs']);
+    assert.deepEqual(extrasOgn.metadata.preconfig.insertion, { lex: true, synt: false, log: true });
+    assert.equal('free_slot_count' in extrasOgn.data.projections.lex, true);
+    assert.equal('insertion_interval' in extrasOgn.data.projections.log, true);
     for (const reservedId of reservedApplicationIds) {
-      assert.doesNotMatch(JSON.stringify(extrasOpn), new RegExp(reservedId));
+      assert.doesNotMatch(JSON.stringify(extrasOgn), new RegExp(reservedId));
     }
 
     await page.click('[data-config-tab-button="preconfig"]');

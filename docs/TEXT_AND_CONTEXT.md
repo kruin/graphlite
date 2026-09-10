@@ -167,7 +167,7 @@ Per zin volgen de horizontale Text-projectie naar LEX, eventuele
 Context-inserties en uitsluitend waar toegestaan een V2-Wissel. Daarna
 verschijnen alle uitgelijnde Text-coreferenties en hun LEX-realisaties.
 
-In config en OPN blijven de objecttypen expliciet gescheiden:
+In config en OGN blijven de objecttypen expliciet gescheiden:
 
 - centrale Text: `tree`, `graph`, `nodeId`, `source_layer: "Text"`;
 - Context-insertie: `lexInsertions`, `insertionId`,

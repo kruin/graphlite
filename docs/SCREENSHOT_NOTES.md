@@ -22,7 +22,7 @@ Leg per screenshot vast:
 versie
 browser
 gekozen voorbeeldzin
-Centraal OPN: syntax/functioneel
+Centraal OGN: syntax/functioneel
 Layout order
 Flipdoel + branch-overrides
 opmerking/fout/verwacht gedrag

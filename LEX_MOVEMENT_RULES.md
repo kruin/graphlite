@@ -14,7 +14,7 @@ Het actieve LEX-profiel bevat voorlopig precies drie mechanismen:
 Generieke lege posities `vóór`, `na` of `tussen` actieve LEX-rijen en iedere
 downward/post-V2-Wissel zijn **no-show en inactief**. Ze verschijnen niet als
 Config-optie, worden niet gerenderd en worden niet in nieuwe Config- of
-OPN-bestanden opgeslagen. Oude velden worden alleen compatibel genegeerd.
+OGN-bestanden opgeslagen. Oude velden worden alleen compatibel genegeerd.
 Het gebruik van vóór, na en tussen wordt later afzonderlijk geëvalueerd.
 
 ## Bronhoogte is de enige richtingsreferentie

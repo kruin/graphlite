@@ -64,7 +64,7 @@ Vooralsnog ondersteunt de editor korte zinnen: hoofdzin, omdat-bijzin en perfect
 
 ## Voorbeeld kiezen
 
-Kies bovenin een voorbeeldzin. De zin wordt geladen in de centrale OPN-weergave en in LEX.
+Kies bovenin een voorbeeldzin. De zin wordt geladen in de centrale OGN-weergave en in LEX.
 
 ## Thematische rollen gebruiken
 
@@ -182,7 +182,7 @@ Volgorde:
 1. lexicale knopen/leaves, één voor één;
 2. kleine categorieknopen;
 3. grotere categorieknopen;
-4. OPN-slot;
+4. OGN-slot;
 5. LEX-as met lokale Wissels/traces;
 6. projectiepanelen.
 

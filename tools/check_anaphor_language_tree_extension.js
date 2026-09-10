@@ -245,7 +245,7 @@ for (const [main,copy] of [
   ['S1_S2_RELATION_TEST_FIXTURES.md','docs/S1_S2_RELATION_TEST_FIXTURES.md'],
   ['MULTI_OGN_ANAPHOR.md','docs/MULTI_OGN_ANAPHOR.md'],
   ['FLIP_CONSTRAINT_SOLVER.md','docs/FLIP_CONSTRAINT_SOLVER.md'],
-  ['OPN_STORAGE_FORMAT.md','docs/OPN_STORAGE_FORMAT.md']
+  ['OGN_STORAGE_FORMAT.md','docs/OGN_STORAGE_FORMAT.md']
 ]) assert.equal(read(main),read(copy),main+' en '+copy+' moeten identiek zijn');
 
 for (const marker of ['**Text**','**Context**','Iedere insertie','geminimaliseerde boom','BOER(S1)','EZEL(S1)','CONTEXT_TAXONOMY.md','p.m.']) {

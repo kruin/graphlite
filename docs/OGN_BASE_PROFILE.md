@@ -24,7 +24,7 @@ Tree**. Zie `OGN_CORE_PLACEMENT_ARCHITECTURE.md`.
 - horizontale bronprojectie naar LEX;
 - Comp-, topic- en V2-plaatsing;
 - voorbeeldzinnen die uitsluitend de basisanalyse gebruiken;
-- Play/Groei, beeldinstellingen en OPN-import/export voor de basisanalyse.
+- Play/Groei, beeldinstellingen en OGN-import/export voor de basisanalyse.
 
 ## Config
 
@@ -46,7 +46,7 @@ toepassing. Vraagzin is een actieve Language-Tree-zinsoort en geen uitbreiding.
 De twee reserveringen kunnen niet worden aangevinkt en veranderen niets aan
 OGN Basis, ook niet wanneer één of meer insertie-assen aanstaan.
 
-## OPN
+## OGN
 
 Een export vanuit dit profiel bevat:
 

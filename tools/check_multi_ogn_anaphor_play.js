@@ -135,10 +135,10 @@ assert.match(viewer, /S1 met V2-verplaatsing → S2/, 'zichtbare Play-volgorde o
 assert.match(viewer, /bijzin zonder V2/, 'omdat-bijzin mag geen V2-Wissel tonen');
 assert.match(viewer, /'data-v2-moved': visiblyMoved \? 'true' : 'false'/, 'V2-verplaatsing mist inspecteerbare status');
 assert.match(viewer, /lexicalizationSummary/, 'laatste bron→anafoorstap ontbreekt');
-assert.match(viewer, /'S2-anaphor-lexicalizations'/, 'OPN-export moet de laatste Play-fase bewaren');
+assert.match(viewer, /'S2-anaphor-lexicalizations'/, 'OGN-export moet de laatste Play-fase bewaren');
 assert.match(viewer, /'branch-flip'/, 'Play moet joint flip als inspecteerbare stap bewaren');
-assert.match(viewer, /branch_flip_step: unit\.branchFlipStep/, 'OPN-export moet de flipstap bewaren');
-assert.match(viewer, /reverse: 'exact'/, 'OPN-export moet exact reverse bewaren');
+assert.match(viewer, /branch_flip_step: unit\.branchFlipStep/, 'OGN-export moet de flipstap bewaren');
+assert.match(viewer, /reverse: 'exact'/, 'OGN-export moet exact reverse bewaren');
 assert.ok(combinations.indexOf("id: 's1-man'") < combinations.indexOf("id: 's1-zie'"), 'S1-bron moet object vóór eindwerkwoord houden');
 assert.ok(combinations.indexOf("id: 's2-hoed'") < combinations.indexOf("id: 's2-draagt'"), 'S2-bron moet object vóór eindwerkwoord houden');
 assert.doesNotMatch(css, /placement-multi-ogn-active \.main-play-reset-bar/,

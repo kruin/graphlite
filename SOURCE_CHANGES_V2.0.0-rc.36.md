@@ -7,7 +7,7 @@
   LEX-inserties, profielen, bediening en rendering uit.
 - Featuregebonden Help-onderwerpen, configuratievelden en standalone
   editorinhoud volgen dezelfde profielkeuze.
-- OPN en Legacy JSON bevatten profielmetadata en laten uitgeschakelde
+- OGN en Legacy JSON bevatten profielmetadata en laten uitgeschakelde
   featurevelden weg.
 - Import van documenten die een uitgeschakelde uitbreiding vereisen stopt
   met een gerichte melding.

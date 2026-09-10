@@ -51,7 +51,7 @@ daarom niet meer in de toepassingreserveringen.
 Deze namen staan in `RESERVED_APPLICATION_DEFINITIONS`, niet in de actieve
 `FEATURE_DEFINITIONS`. Daardoor krijgen ze geen checkboxwerking, runtime-state,
 resources, voorbeeldzinnen, inserties, documentatielinks, opslagvelden,
-OPN-extra of layout-demand. Ook een ingeschakelde LEX-, SYNT- of LOG-voorconfig
+OGN-extra of layout-demand. Ook een ingeschakelde LEX-, SYNT- of LOG-voorconfig
 maakt een reservering niet actief.
 
 Bij latere uitwerking wordt per toepassing eerst afzonderlijk bepaald welke
@@ -79,7 +79,7 @@ LOG-minors. Zie `RECURSIVE_LAYOUT_AND_APPLICATION_CONTRACT.md`.
 
 ## Opslag
 
-OPN en de lokale Config-snapshot bewaren de drie asschakelaars expliciet:
+OGN en de lokale Config-snapshot bewaren de drie asschakelaars expliciet:
 
 ```json
 {

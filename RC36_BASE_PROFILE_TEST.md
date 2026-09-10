@@ -6,7 +6,7 @@
 4. Controleer Zin: de twee voorbeelden met optionele inserties ontbreken.
 5. Controleer Help, LOG & LEX en de mobiele bediening: er staat geen
    bijwoordfunctionaliteit.
-6. Exporteer OPN: `metadata.profile` is `base`, `metadata.extras` is leeg en
+6. Exporteer OGN: `metadata.profile` is `base`, `metadata.extras` is leeg en
    LEX/LOG bevatten geen featurevelden of minors.
 7. Vink `Bijwoorden` aan: menu, voorbeelden, profielen, LOG-minors,
    LEX-inserties en featuredocumentatie worden beschikbaar.

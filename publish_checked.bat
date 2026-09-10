@@ -111,14 +111,16 @@ if not defined COMMITMSG (
 
 echo.
 echo Staging sitebestanden...
-git add --renormalize -- .
-if errorlevel 1 (
-  echo FOUT: Git-renormalisatie mislukt.
-  goto :fail
-)
+rem Stage eerst toevoegingen, wijzigingen en verwijderingen. Anders probeert
+rem --renormalize een hernoemd/verwijderd gevolgd bestand nog te statten.
 git add -A -- .
 if errorlevel 1 (
   echo FOUT: git add mislukt.
+  goto :fail
+)
+git add --renormalize -- .
+if errorlevel 1 (
+  echo FOUT: Git-renormalisatie mislukt.
   goto :fail
 )
 

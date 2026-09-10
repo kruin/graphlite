@@ -151,7 +151,7 @@
 - MAN is het antecedent, HIJ de anafoor; de coreferentie is een rechte
   verticale lijn zonder pijl of richting.
 - Eén gezamenlijke LEX-as ordent alle S1-items vóór alle S2-items.
-- Config, Help, OPN/Legacy-opslag, importvalidatie, referentiemateriaal en
+- Config, Help, OGN/Legacy-opslag, importvalidatie, referentiemateriaal en
   afzonderlijke engine-/browsertests volgen hetzelfde contract.
 
 Normatief: `MULTI_OGN_ANAPHOR.md`.
@@ -163,14 +163,14 @@ Normatief: `MULTI_OGN_ANAPHOR.md`.
 - Een LOG-reservering kan een lager doel niet meer legitimeren. Een doel op of
   onder de bronhoogte blijft exact op de horizontale bronprojectie.
 - Generieke plaatsen vóór, na of tussen en alle downward/post-V2-Wissels zijn
-  no-show: geen Config, rendering of nieuwe Config-/OPN-opslag. Oude velden
+  no-show: geen Config, rendering of nieuwe Config-/OGN-opslag. Oude velden
   worden compatibel genegeerd. Hun gebruik wordt later geëvalueerd.
 - Zinsoort is een aparte Language-Tree-laag met mededelende hoofdzin,
   ja/nee-vraagzin, dat-zin en omdat-zin. De vraagzin gebruikt V1; DAT en OMDAT
   worden direct in Comp geschreven. Perfectum is een werkwoordsvorm.
 - Vraagzin is uit de gereserveerde toepassingen gehaald. Alleen Nadruk en
   Onaffe zin blijven daar no-show gereserveerd.
-- Voorbeeldeneditor, Help, OPN, documentatie en regressietests gebruiken
+- Voorbeeldeneditor, Help, OGN, documentatie en regressietests gebruiken
   hetzelfde vierdelige zinsoortcontract.
 
 Deze source build vervangt het actieve gedrag uit de onderstaande historische
@@ -203,7 +203,7 @@ staan.
   SPACE-fase is gecorrigeerd naar het actuele tweefasencontract `LOG → LEX`.
 
 Normatief: `LEX_MOVEMENT_RULES.md`, `projectie-master-spec.md` en
-`OPN_STORAGE_FORMAT.md`.
+`OGN_STORAGE_FORMAT.md`.
 
 ## Source build 20260813.2 — vrije LEX-plekken zonder SPACE-fase
 
@@ -218,7 +218,7 @@ Normatief: `LEX_MOVEMENT_RULES.md`, `projectie-master-spec.md` en
   en rond de actieve LEX-rijen. `tussen` wijkt bij plaatsgebrek uit naar `na`.
 - De berekening blokkeert iedere rij die al door bronprojectie, systeemslot of
   insertieplek wordt gebruikt. De extra plekken verplaatsen geen bronknoop.
-- Configsnapshot, standaardconfig, OPN en Legacy JSON bewaren aantal en
+- Configsnapshot, standaardconfig, OGN en Legacy JSON bewaren aantal en
   plaats. De releaseflow voert een geïsoleerde geometriecontrole over alle
   vijf plaatsingswijzen uit.
 
@@ -476,7 +476,7 @@ OGN Free Placement
 - Iedere knoop is baas op één eigen horizontale en één eigen verticale
   gridlijn.
 - De knoopregel is nu een harde invariant: `A ≠ B ⇒ x(A) ≠ x(B) én
-  y(A) ≠ y(B)`. Kern, toepassingen, render en OPN-export mogen dus nooit twee
+  y(A) ≠ y(B)`. Kern, toepassingen, render en OGN-export mogen dus nooit twee
   knopen op dezelfde horizontale of verticale gridlijn toelaten; er bestaat
   geen ongeldige renderfallback. De vaste naam voor zo'n overtreding is
   `gridlijnhergebruik`.
@@ -578,7 +578,7 @@ De normatieve beschrijving staat in
 
 ## Compatibiliteitsgrens
 
-De taalboom-graphdata en het OPN-formaat zijn niet gewijzigd. De oorspronkelijke
+De taalboom-graphdata en het OGN-formaat zijn niet gewijzigd. De oorspronkelijke
 rc.45-carrousel blijft byte- en hashgecontroleerd; source build 20260802.7
 wijzigt wel de viewerinterface, geïsoleerde directe Config en het
 lijnrendercontract zoals hierboven beschreven.

@@ -113,7 +113,7 @@ het laden genegeerd. Vóór, na en tussen blijven no-show totdat hun gebruik
 afzonderlijk is geëvalueerd.
 
 Actief zijn uitsluitend upward-Wissels vanaf de zichtbare bronhoogte,
-toepassingsgebonden inserties en direct Comp. Zinsoort wordt in OPN bij het
+toepassingsgebonden inserties en direct Comp. Zinsoort wordt in OGN bij het
 voorbeeld opgeslagen, niet als algemene projectconfig: hoofdzin, ja/nee-vraag,
 dat-zin of omdat-zin. Zie `../LEX_MOVEMENT_RULES.md`.
 

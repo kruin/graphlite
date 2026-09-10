@@ -243,7 +243,7 @@ voorconfig voegt zelf nog geen taalinhoud toe. Daarna bevat
 `Config → Toepassingen` als eerste toepassing **Bijwoorden**. Die wordt pas
 beschikbaar wanneer insertie op **LEX + LOG** actief is. Staat Bijwoorden uit,
 dan ontbreken de bijbehorende voorbeelden, LOG-minors, directe LEX-inserties,
-bediening, runtimegegevens, documentatielinks en exportvelden. Een OPN-export
+bediening, runtimegegevens, documentatielinks en exportvelden. Een OGN-export
 vermeldt dan `profile: "base"`, `extras: []` en de drie asschakelaars.
 
 Config toont daarnaast twee uitgeschakelde reserveringen voor latere
@@ -526,7 +526,7 @@ Config volgt de afhankelijkheidsvolgorde en bevat daarna gerichte secties:
 1. `Voorconfig`: insertie afzonderlijk op LEX, SYNT en LOG;
 2. `Toepassingen`: Bijwoorden vereist LEX + LOG;
 3. `Overzicht` en `JaN · TODO`;
-4. `Opslaan & exporteren`: eerst LinkedIn/Play/SVG, daarna OPN, Config
+4. `Opslaan & exporteren`: eerst LinkedIn/Play/SVG, daarna OGN, Config
    bewaren/herstellen en voorbeeldbeheer;
 5. `Beeld`: MAX, Syntax / Functional, boomlayout en projectiekleuren;
 6. `LOG & LEX`: de kernvolgorde van LEX en, indien actief, optionele
@@ -654,9 +654,9 @@ Taal · LEESMIJ/README · Config
 Er is geen algemene knop `Menu` en er zijn geen geneste submenu’s. Keuze-items
 openen rechtstreeks hun eigen brede paneel.
 
-## OPN-opslag
+## OGN-opslag
 
-`.opn` is het primaire round-trip documentformaat. Het document scheidt:
+`.ogn` is het primaire round-trip documentformaat. Het document scheidt:
 
 ```text
 metadata    documentidentiteit, formaat en generator
@@ -668,7 +668,15 @@ paradata    optionele workspace en lokale sessie-events
 
 Paradata kan bij export worden weggelaten. Oudere JSON-bestanden blijven als
 migratieformaat leesbaar; Legacy JSON-export blijft tijdelijk beschikbaar voor
-debugging. Zie `OPN_STORAGE_FORMAT.md`.
+debugging. Zie `OGN_STORAGE_FORMAT.md`.
+
+Alleen `.ogn` kan de volledige analyse na import reconstrueren. SVG, PNG en
+Play-video zijn afgeleide exportformaten en niet importeerbaar. Onder
+**Config → Exportmap en uitvoer** kan één map worden gekozen voor OGN, SVG,
+PNG, video, Legacy JSON en logs. De browser bewaart de toestemming lokaal; als
+de directory-API niet beschikbaar is of schrijven mislukt, volgt automatisch
+de normale browserdownload. **Open .ogn uit exportmap** begint waar mogelijk
+in diezelfde map.
 
 ## Versiebron
 
@@ -691,9 +699,18 @@ check_release.bat
   Zonder zo’n expliciete plaats gelden de klasse-defaults
   `MODALITEIT → S-O` en `FREQUENTIE → O-V`. Scope en lineaire plaats blijven
   afzonderlijke eigenschappen.
-- `Opslaan als .opn` downloadt de huidige analyse.
-- `Importeer .opn` opent een eerder geëxporteerd document.
+- `Opslaan als .ogn` downloadt de huidige analyse.
+- `Importeer .ogn` opent een eerder geëxporteerd document.
 - Paradata is optioneel.
+- `Snapshot opslaan` bewaart verplicht de actuele paradata, view en PLAY-stap;
+  `Snapshot openen` hervat vanaf die stap. De gebruiker kiest views en recente
+  graph-acties voor een van minstens drie bewerkbare bestandsnaamvoorstellen.
+  Het naamvenster kan aan de titelbalk worden versleept. `Snapshot openen`
+  laadt het gekozen bestand in een verplaatsbaar, schaalbaar venster binnen de
+  app, met een eigen viewer en PLAY-toestand. Dit werkt ook op GitHub Pages,
+  zonder serverupload of popup.
+  Het bestand bevat het volledige graphmodel om verder te kunnen PLAY-en, maar
+  opent uitsluitend op de afzonderlijk opgeslagen zichtbare stap.
 
 ## Welk probleem lost OGN op?
 

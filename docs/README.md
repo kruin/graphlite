@@ -220,7 +220,7 @@ linguistic content. `Config → Applications` then provides **Adverbs** as the
 first application. It becomes available only after insertion on **LEX + LOG**
 is enabled. When Adverbs is off, its examples, LOG minors, direct LEX
 insertions, controls, runtime data, documentation links, and export fields are
-absent. OPN exports record `profile: "base"`, `extras: []`, and all three axis
+absent. OGN exports record `profile: "base"`, `extras: []`, and all three axis
 switches.
 
 Config also shows three disabled reservations for later applications:
@@ -495,7 +495,7 @@ Config follows the dependency order and links to these focused sections:
 1. `Pre-config`: insertion independently on LEX, SYNT and LOG;
 2. `Applications`: Adverbs requires LEX + LOG;
 3. `Overview` and `JaN · TODO`;
-4. `Save & export`: LinkedIn/Play/SVG first, followed by OPN, Config
+4. `Save & export`: LinkedIn/Play/SVG first, followed by OGN, Config
    save/restore and example management;
 5. `View`: MAX, Syntax / Functional, tree layout and projection colours;
 6. `LOG & LEX`: core LEX order and, when enabled, optional insertions;
@@ -624,9 +624,9 @@ Adverbs on: Sentence · Adverb · Syntax/Functional · Interface · Projections 
 There is no generic `Menu` button and there are no nested submenus. Choice
 items open their own wide panel directly.
 
-## OPN storage
+## OGN storage
 
-`.opn` is the primary round-trip document format. It separates:
+`.ogn` is the primary round-trip document format. It separates:
 
 ```text
 metadata    document identity, format and generator
@@ -638,7 +638,16 @@ paradata    optional workspace and local session events
 
 Paradata may be omitted during export. Older JSON files remain readable as a
 migration format; Legacy JSON export remains temporarily available for
-debugging. See `OPN_STORAGE_FORMAT.md`.
+debugging. See `OGN_STORAGE_FORMAT.md`.
+
+Only `.ogn` supports a complete round trip. SVG, PNG, and Play video are
+derived export formats and cannot reconstruct the analysis. In
+**Config → Export folder and output**, one folder can be selected for OGN,
+SVG, PNG, video, Legacy JSON, and logs. The browser stores the directory handle
+locally and remains in control of permission. If the directory API is
+unavailable or writing fails, Graphlite falls back to the normal browser
+download. **Open .ogn from export folder** starts in that folder where the
+browser supports it.
 
 ## Version source
 
@@ -657,8 +666,8 @@ check_release.bat
 - The viewer contains 14 example sentences, including two examples with
   multiple LOG minors.
 - With automatic placement, an explicit sentence-instance landing position such as `post-object-pre-vcluster` takes priority over a broad class default. Scope and linear position remain separate.
-- `Opslaan als .opn` downloads the current analysis.
-- `Importeer .opn` opens a previously exported document.
+- `Opslaan als .ogn` downloads the current analysis.
+- `Importeer .ogn` opens a previously exported document.
 - Paradata is optional.
 
 ## What problem OGN solves

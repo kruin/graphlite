@@ -92,7 +92,7 @@ De LEX-as gebruikt de volgorde van de geselecteerde voorbeeldzin als oppervlakte
 
 Deze versie integreert de Nederlandse V2-plaatsingsregel op de LEX-as. Hoofdzinnen gebruiken een vrij `slot 2 · V2/PV`; de persoonsvorm of het eenvoudige predicaat wordt daar via **Wissel** geplaatst. De oude basispositie blijft zichtbaar als trace, bijvoorbeeld `t[V]` of `t[pv]`. Bijzinnen met `OMDAT` houden de werkwoordelijke basispositie en gebruiken geen V2-Wissel. Slot 1 blijft het vrije topicalisatie-/vooropplaatsingsslot.
 
-De centrale OPN-boom krijgt daarom twee vrije slots vóór het gewone boommateriaal:
+De centrale OGN-boom krijgt daarom twee vrije slots vóór het gewone boommateriaal:
 
 ```text
 slot 1 = TOPIC / vooropplaatsing
@@ -231,7 +231,7 @@ Groeivolgorde:
 2. kleinste categorie/role-nodes en hun boxes
 3. grotere subtree-boxes
 4. root S/CLAUSE
-5. OPN-slot 1
+5. OGN-slot 1
 6. LEX-projectie en projectiepanelen   [alleen in Assen-view]
 ```
 
