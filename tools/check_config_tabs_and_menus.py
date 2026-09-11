@@ -72,7 +72,6 @@ for marker, label in [
     ('data-feature="adverbs" hidden="" id="mainAdverbMenu"', "Bijwoordmenu standaard verborgen"),
     ('id="mainGrammarSummary"', "Grammar-dropdown"),
     ('id="mainViewOptions"', "Syntactic/Functional-keuzelijst"),
-    ('id="mobileDesktopOptionsNote"', "mobiele verwijzing naar uitgebreide desktopversie"),
     ('id="mainLanguageMenu"', "vijftalig menu"),
     ('data-language-option="en"', "English taaloptie"),
     ('data-language-option="nl"', "Nederlandse taaloptie"),
@@ -109,9 +108,18 @@ for marker, label in [
     ("body.mobile-menu-basic.main-screen-active .space-zoom-controls", "Ruimtezoom verborgen in Basis"),
     ("grid-template-columns: minmax(4.85rem, 5.35rem) minmax(0, 1fr)", "passende mobiele Grammar-knop"),
     ("body.mobile-menu-advanced.main-screen-active #mainLexOrientationMenu", "LEX-keuze ook mobiel Uitgebreid verborgen"),
-    ("body.mobile-menu-advanced.main-screen-active .mobile-desktop-options-note", "desktopmogelijkheden zichtbaar aangekondigd op mobiel"),
 ]:
     require(CSS, marker, label)
+
+for forbidden in (
+    'id="mobileDesktopOptionsNote"',
+    'Meer op desktop',
+    'More on desktop',
+):
+    if forbidden in INDEX:
+        errors.append(f"mobiele interface verwijst nog naar desktop: {forbidden!r}")
+if ".mobile-desktop-options-note" in CSS:
+    errors.append("CSS voor de verwijderde mobiele desktopmelding is nog aanwezig")
 
 if "Syntax/FT" in INDEX or "Syntax / FT" in INDEX or ">FT<" in INDEX:
     errors.append("zichtbare oude FT-naam staat nog in index.html")

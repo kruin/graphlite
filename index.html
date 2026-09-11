@@ -14,7 +14,7 @@
 <script>
     (function() {
       var VERSION = 'v3.1.0-rc.10';
-      var SOURCE_BUILD = 'v3.1.0-rc.10-config-snapshot-open-target-20260910.68';
+      var SOURCE_BUILD = 'v3.1.0-rc.10-mobile-stays-mobile-20260911.69';
       window.__OPENGRAPH_EXPECTED_VERSION__ = VERSION;
       function runCacheCleanupOnce() {
         var flag = 'opengraph-cache-cleaned-' + VERSION + '-' + SOURCE_BUILD;
@@ -180,14 +180,6 @@
 <button class="top-menu-action primary config-open-button" id="openConfigButton" title="Open het configuratiescherm met alle projectie-, LEX-, layout- en documentatie-instellingen." type="button">Config</button>
 <a class="top-menu-action" href="testmateriaal.html" hidden id="openTestmateriaal" title="Open het lokale databasebeheer van input, nummering en status.">DB-beheer</a>
 </nav>
-<details class="mobile-desktop-options-note" id="mobileDesktopOptionsNote">
-<summary><span class="help-lang-nl">Meer op desktop · dezelfde URL</span><span class="help-lang-en">More on desktop · same URL</span></summary>
-<div class="mobile-desktop-options-content">
-<p><span class="help-lang-nl">Open precies deze URL op een desktop of breed venster voor directe toegang tot:</span><span class="help-lang-en">Open this exact URL on a desktop or wide window for direct access to:</span></p>
-<ul class="help-lang-nl"><li>LEX West/Oost/Noord/Zuid, inclusief graduele labeldraaiing en kalibratie;</li><li>afzonderlijke projecties LEX, SYNT en LOG;</li><li>LOG-volgorden SOV, SVO, OVS, OSV, VSO en VOS;</li><li>Extra met Greedy Grow en Random;</li><li>Ruimte slepen/zoom, boomruimte, Flip en uitgebreide layoutinstellingen;</li><li>meerdere kolommen testmateriaal;</li><li>volledige Config en export naar OGN, SVG, LinkedIn-PNG en Play-video.</li></ul>
-<ul class="help-lang-en"><li>LEX West/East/North/South, including gradual label rotation and calibration;</li><li>separate LEX, SYNT and LOG projections;</li><li>LOG orders SOV, SVO, OVS, OSV, VSO and VOS;</li><li>Extra with Greedy Grow and Random;</li><li>spacing drag/zoom, tree spacing, Flip and extended layout controls;</li><li>multiple test-material columns;</li><li>full Config and export to OGN, SVG, LinkedIn PNG and Play video.</li></ul>
-</div>
-</details>
 <select aria-hidden="true" class="main-control-select-compat" id="mainExampleSelect" tabindex="-1"></select>
 <select aria-hidden="true" class="main-control-select-compat" id="mainAdverbSelect" tabindex="-1"></select>
 <select aria-hidden="true" class="main-control-select-compat" id="mainViewSelect" tabindex="-1"></select>
@@ -1077,7 +1069,7 @@
 <p class="mobile-sheet-note">Sleep met één vinger om te pannen. Knijp met twee vingers om te zoomen. FIT past het zichtvenster aan de huidige boom en named projections aan; de boom zelf verandert niet.</p>
 </section>
 <script>
-    window.__opengraphBoot = { version: 'v3.1.0-rc.10', sourceBuild: 'v3.1.0-rc.10-config-snapshot-open-target-20260910.68', loaded: false, marker: 'viewer-index' };
+    window.__opengraphBoot = { version: 'v3.1.0-rc.10', sourceBuild: 'v3.1.0-rc.10-mobile-stays-mobile-20260911.69', loaded: false, marker: 'viewer-index' };
     function ogStatus(message) {
       var target = document.getElementById('actionFeedback') || document.body;
       if (target) target.textContent = message;
@@ -1112,6 +1104,6 @@
 <script defer="" src="multi-ogn-anaphor-play-engine.js?v3.1.0-rc.10"></script>
 <script defer="" src="multi-ogn-composition-engine.js?v3.1.0-rc.10"></script>
 <script defer="" src="utterance-kernel-engine.js?v3.1.0-rc.10"></script>
-<script defer="" src="viewer.js?v3.1.0-rc.10&amp;source=20260910.68"></script>
+<script defer="" src="viewer.js?v3.1.0-rc.10&amp;source=20260911.69"></script>
 </body>
 </html>
