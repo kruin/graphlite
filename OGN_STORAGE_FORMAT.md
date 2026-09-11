@@ -229,11 +229,14 @@ combineert acties met de huidige views, kiest een van minstens drie voorstellen
 en kan de definitieve naam vrij aanpassen. Ieder voorstel bevat een volgnummer;
 de extensie blijft `.ogn`.
 
-Het naamvenster is aan de titelbalk versleepbaar. **Snapshot openen** laat een
-`.ogn`-snapshot kiezen en maakt daarna binnen de app een verplaatsbaar en
-schaalbaar Graphlite-venster met een eigen viewer en PLAY-toestand. De snapshot
-wordt same-origin en browserlokaal aan die viewer overgedragen. Dit werkt op een
-statische GitHub Pages-publicatie zonder upload, serveropslag of popup.
+Het naamvenster is aan de titelbalk versleepbaar. Config bepaalt waar
+**Snapshot openen** het document toont: standaard in een verplaatsbaar en
+schaalbaar Graphlite-venster binnen de app, of in een nieuw browservenster. De
+interne variant opent direct na de bestandskeuze. De browservenstervariant
+gebruikt twee expliciete klikken: bestand kiezen en daarna **Open in nieuw
+venster**. Zo blokkeert Chrome de tweede handeling niet als popup. In beide
+gevallen blijft de overdracht same-origin en browserlokaal en werkt zij op een
+statische GitHub Pages-publicatie zonder upload of serveropslag.
 
 ## Exportmap
 

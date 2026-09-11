@@ -2,7 +2,7 @@
   'use strict';
 
   const VERSION = 'v3.1.0-rc.10';
-  const SOURCE_BUILD = 'v3.1.0-rc.10-safe-renormalize-after-rename-20260910.67';
+  const SOURCE_BUILD = 'v3.1.0-rc.10-config-snapshot-open-target-20260910.68';
   const OGN_FORMAT_VERSION = '1.0';
   const OGN_DOCUMENT_TYPE = 'open-graph-notation-document';
   const EXPORT_DIRECTORY_DB_NAME = 'graphlite-export-directory-v1';
@@ -121,6 +121,14 @@
   ];
   const LANGUAGE_IDS = new Set(LANGUAGE_OPTIONS.map(option => option.id));
   const DEFAULT_LANGUAGE = 'en';
+  const SNAPSHOT_OPEN_MODES = Object.freeze([
+    Object.freeze({ id: 'in-app', label: 'Binnen de app', labelEn: 'Inside the app' }),
+    Object.freeze({ id: 'new-window', label: 'Nieuw browservenster', labelEn: 'New browser window' })
+  ]);
+
+  function validSnapshotOpenMode(value) {
+    return SNAPSHOT_OPEN_MODES.some(option => option.id === value) ? value : 'in-app';
+  }
   const TENSE_OPTIONS = Object.freeze([
     Object.freeze({ id: 'ott', label: 'OTT — onvoltooid tegenwoordige tijd', labelEn: 'OTT — onvoltooid tegenwoordige tijd' }),
     Object.freeze({ id: 'ovt', label: 'OVT — onvoltooid verleden tijd', labelEn: 'OVT — onvoltooid verleden tijd' }),
@@ -328,6 +336,7 @@
     mainSaveOgnSnapshotButton: document.getElementById('mainSaveOgnSnapshotButton'),
     mainOpenOgnSnapshotButton: document.getElementById('mainOpenOgnSnapshotButton'),
     mainSnapshotOpenInput: document.getElementById('mainSnapshotOpenInput'),
+    snapshotOpenModeSelect: document.getElementById('snapshotOpenModeSelect'),
     ognSnapshotWorkspaceWindow: document.getElementById('ognSnapshotWorkspaceWindow'),
     ognSnapshotWorkspaceDragHandle: document.getElementById('ognSnapshotWorkspaceDragHandle'),
     ognSnapshotWorkspaceHeading: document.getElementById('ognSnapshotWorkspaceHeading'),
@@ -2637,6 +2646,7 @@
     preconfig: { insertion: { ...DEFAULT_INSERTION_AXES } },
     features: { ...DEFAULT_FEATURES },
     language: (function(){ try { return normalizeLanguage(localStorage.getItem('opengraph_language')); } catch (_err) { return DEFAULT_LANGUAGE; } })(),
+    snapshotOpenMode: 'in-app',
     projection: 'axes',
     sourceAxes: (function(){
       try {
@@ -12385,6 +12395,8 @@
     }
     syncExampleSelectSizing();
     fillSelect(els.centralModeSelect, CENTER_MODES, state.centerMode);
+    fillSelect(els.snapshotOpenModeSelect, SNAPSHOT_OPEN_MODES, validSnapshotOpenMode(state.snapshotOpenMode));
+    syncSnapshotOpenButton();
     fillSelect(els.mainViewSelect, CENTER_MODES, state.centerMode);
     fillSelect(els.mobileViewSelect, CENTER_MODES, state.centerMode);
     fillSelect(document.getElementById('configViewportModeSelect'), VIEWPORT_TEST_MODES, validViewportMode(state.viewportMode));
@@ -13506,6 +13518,7 @@
   let snapshotDialogDrag = null;
   let snapshotWorkspaceDrag = null;
   let pendingSnapshotWindowTransfer = null;
+  let preparedSnapshotForBrowserWindow = null;
 
   function snapshotDialogElement() {
     return els.ognSnapshotBackdrop?.querySelector('.ogn-snapshot-dialog') || null;
@@ -13579,6 +13592,42 @@
     return globalThis.crypto?.randomUUID?.() || `snapshot-${Date.now()}-${Math.random().toString(16).slice(2)}`;
   }
 
+  function syncSnapshotOpenButton() {
+    const button = els.mainOpenOgnSnapshotButton;
+    if (!button) return;
+    const newWindow = validSnapshotOpenMode(state.snapshotOpenMode) === 'new-window';
+    const ready = newWindow && !!preparedSnapshotForBrowserWindow;
+    button.textContent = ready
+      ? (isEnglish() ? 'Open in new window' : 'Open in nieuw venster')
+      : (isEnglish() ? 'Open snapshot' : 'Snapshot openen');
+    button.title = ready
+      ? (isEnglish() ? 'Open the selected OGN snapshot in a new browser window.' : 'Open de gekozen OGN-snapshot in een nieuw browservenster.')
+      : newWindow
+        ? (isEnglish() ? 'First choose an OGN snapshot; then open it with a second click.' : 'Kies eerst een OGN-snapshot; open die daarna met een tweede klik.')
+        : (isEnglish() ? 'Open an OGN snapshot in a separate window inside Graphlite.' : 'Open een OGN-snapshot in een zelfstandig venster binnen Graphlite.');
+    button.classList.toggle('is-ready-for-window', ready);
+  }
+
+  function openSnapshotBrowserWindow(prepared) {
+    const token = snapshotWindowToken();
+    const url = new URL(window.location.href);
+    url.searchParams.set('ognSnapshotWindow', token);
+    url.hash = '';
+    const child = window.open(url.href, '_blank');
+    if (!child) throw new Error(isEnglish()
+      ? 'The browser blocked the new window. Allow pop-ups for Graphlite and click again.'
+      : 'De browser blokkeerde het nieuwe venster. Sta pop-ups voor Graphlite toe en klik opnieuw.');
+    pendingSnapshotWindowTransfer = { ...prepared, targetWindow: child, token };
+    child.focus?.();
+    recordParadata('open-ogn-snapshot-browser-window', { filename: prepared.filename });
+    if (els.actionFeedback) {
+      els.actionFeedback.textContent = isEnglish()
+        ? `Snapshot ${prepared.filename} is loading in a new browser window.`
+        : `Snapshot ${prepared.filename} wordt in een nieuw browservenster geladen.`;
+      els.actionFeedback.className = 'action-feedback neutral';
+    }
+  }
+
   function reportSnapshotOpenError(error) {
     const message = error?.message || String(error || 'Onbekende fout');
     console.error('Graphlite snapshot openen mislukt:', error);
@@ -13627,9 +13676,12 @@
   function closeSnapshotWorkspace() {
     const panel = els.ognSnapshotWorkspaceWindow;
     const frame = els.ognSnapshotWorkspaceFrame;
+    const frameWindow = frame?.contentWindow || null;
     if (panel) panel.hidden = true;
     if (frame) frame.removeAttribute('src');
-    pendingSnapshotWindowTransfer = null;
+    if (!pendingSnapshotWindowTransfer || pendingSnapshotWindowTransfer.targetWindow === frameWindow) {
+      pendingSnapshotWindowTransfer = null;
+    }
     recordParadata('close-ogn-snapshot-workspace', {});
   }
 
@@ -13664,6 +13716,16 @@
   }
 
   function requestOgnSnapshotWorkspace() {
+    if (validSnapshotOpenMode(state.snapshotOpenMode) === 'new-window' && preparedSnapshotForBrowserWindow) {
+      try {
+        openSnapshotBrowserWindow(preparedSnapshotForBrowserWindow);
+        preparedSnapshotForBrowserWindow = null;
+        syncSnapshotOpenButton();
+      } catch (error) {
+        reportSnapshotOpenError(error);
+      }
+      return;
+    }
     if (!els.mainSnapshotOpenInput) {
       reportSnapshotOpenError(new Error('De OGN-bestandskiezer ontbreekt.'));
       return;
@@ -13677,10 +13739,25 @@
     if (els.mainSnapshotOpenInput) els.mainSnapshotOpenInput.value = '';
     if (!file) return;
     try {
-      openSnapshotWorkspace(await prepareSnapshotFile(file));
+      const prepared = await prepareSnapshotFile(file);
+      if (validSnapshotOpenMode(state.snapshotOpenMode) === 'new-window') {
+        preparedSnapshotForBrowserWindow = prepared;
+        syncSnapshotOpenButton();
+        if (els.actionFeedback) {
+          els.actionFeedback.textContent = isEnglish()
+            ? `${prepared.filename} selected. Click “Open in new window”.`
+            : `${prepared.filename} gekozen. Klik “Open in nieuw venster”.`;
+          els.actionFeedback.className = 'action-feedback neutral';
+        }
+      } else {
+        preparedSnapshotForBrowserWindow = null;
+        openSnapshotWorkspace(prepared);
+      }
     }
     catch (error) {
       reportSnapshotOpenError(error);
+      preparedSnapshotForBrowserWindow = null;
+      syncSnapshotOpenButton();
       pendingSnapshotWindowTransfer = null;
     }
   }
@@ -16281,6 +16358,8 @@
     setText('#chooseExportFolderButton', en ? 'Choose export folder' : 'Kies exportmap');
     setText('#clearExportFolderButton', en ? 'Use browser download' : 'Gebruik browserdownload');
     setText('#openOgnFromExportFolderButton', en ? 'Open .ogn from export folder' : 'Open .ogn uit exportmap');
+    setLabelSpan('snapshotOpenModeSelect', en ? 'Open snapshot in' : 'Snapshot openen in');
+    syncSnapshotOpenButton();
     if (!els.graphExportStatus?.dataset.statusNl && !graphExportBusy) {
       setGraphExportStatus(
         'PNG is voor een beeldpost. Play-video kiest waar mogelijk MP4/H.264 en legt altijd 30 fps vast. Houd dit scherm open tijdens de opname.',
@@ -17493,6 +17572,7 @@
       showRelations: !!state.showRelations,
       showLabels: !!state.showLabels,
       placementMode: validPlacementMode(state.placementMode),
+      snapshotOpenMode: validSnapshotOpenMode(state.snapshotOpenMode),
       multiOgnExampleId: state.multiOgnExampleId,
       directPlacementGeneral: normalizeDirectPlacementGeneral(state.directPlacementGeneral),
       greedyGrowConfig: normalizeGreedyGrowConfig(state.greedyGrowConfig),
@@ -17621,6 +17701,7 @@
       state.viewFitMode = 'max';
     }
     if (typeof snapshot.placementMode === 'string') state.placementMode = validPlacementMode(snapshot.placementMode);
+    state.snapshotOpenMode = validSnapshotOpenMode(snapshot.snapshotOpenMode || state.snapshotOpenMode);
     if (typeof snapshot.multiOgnExampleId === 'string') {
       state.multiOgnExampleId = snapshot.multiOgnExampleId === MULTI_OGN_ANAPHOR_DEMO.id || globalThis.OGNUtteranceKernels?.definitionFor?.(snapshot.multiOgnExampleId) || activeAnaphorCombinationDefinition(snapshot.multiOgnExampleId)
         ? snapshot.multiOgnExampleId : MULTI_OGN_ANAPHOR_DEMO.id;
@@ -18754,6 +18835,12 @@
     els.ognSnapshotBackdrop?.addEventListener('click', event => { if (event.target === els.ognSnapshotBackdrop) setSnapshotDialog(false); });
     els.mainOpenOgnSnapshotButton?.addEventListener('click', requestOgnSnapshotWorkspace);
     els.mainSnapshotOpenInput?.addEventListener('change', handleSnapshotFallbackFileInput);
+    els.snapshotOpenModeSelect?.addEventListener('change', event => {
+      state.snapshotOpenMode = validSnapshotOpenMode(event.target.value);
+      preparedSnapshotForBrowserWindow = null;
+      syncSnapshotOpenButton();
+      appendConfigLog('change-snapshot-open-mode', { mode: state.snapshotOpenMode });
+    });
     els.closeOgnSnapshotWorkspaceButton?.addEventListener('click', closeSnapshotWorkspace);
     els.chooseExportFolderButton?.addEventListener('click', chooseExportDirectory);
     els.clearExportFolderButton?.addEventListener('click', clearExportDirectory);

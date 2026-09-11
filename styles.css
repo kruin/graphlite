@@ -4720,6 +4720,11 @@ body.main-screen-active .main-play-reset-controls .main-snapshot-open {
 body.main-screen-active .main-play-reset-controls .main-snapshot-button {
   background: color-mix(in srgb, var(--accent), var(--panel) 82%) !important;
 }
+body.main-screen-active .main-play-reset-controls .main-snapshot-open.is-ready-for-window {
+  border-color: #15803d !important;
+  background: #dcfce7 !important;
+  color: #14532d !important;
+}
 .main-snapshot-open input { position: absolute !important; width: 1px !important; height: 1px !important; opacity: 0 !important; pointer-events: none !important; }
 
 body.main-screen-active .main-play-growth-label {

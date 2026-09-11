@@ -705,10 +705,12 @@ check_release.bat
 - `Snapshot opslaan` bewaart verplicht de actuele paradata, view en PLAY-stap;
   `Snapshot openen` hervat vanaf die stap. De gebruiker kiest views en recente
   graph-acties voor een van minstens drie bewerkbare bestandsnaamvoorstellen.
-  Het naamvenster kan aan de titelbalk worden versleept. `Snapshot openen`
-  laadt het gekozen bestand in een verplaatsbaar, schaalbaar venster binnen de
-  app, met een eigen viewer en PLAY-toestand. Dit werkt ook op GitHub Pages,
-  zonder serverupload of popup.
+  Het naamvenster kan aan de titelbalk worden versleept. Config kiest tussen
+  een verplaatsbaar, schaalbaar venster binnen de app en een nieuw
+  browservenster. De interne variant opent direct. De browservariant gebruikt
+  na de bestandskeuze een tweede expliciete klik op `Open in nieuw venster`,
+  zodat Chrome de popup niet blokkeert. Beide werken op GitHub Pages zonder
+  serverupload.
   Het bestand bevat het volledige graphmodel om verder te kunnen PLAY-en, maar
   opent uitsluitend op de afzonderlijk opgeslagen zichtbare stap.
 

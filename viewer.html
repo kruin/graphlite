@@ -14,7 +14,7 @@
 <script>
     (function() {
       var VERSION = 'v3.1.0-rc.10';
-      var SOURCE_BUILD = 'v3.1.0-rc.10-safe-renormalize-after-rename-20260910.67';
+      var SOURCE_BUILD = 'v3.1.0-rc.10-config-snapshot-open-target-20260910.68';
       window.__OPENGRAPH_EXPECTED_VERSION__ = VERSION;
       function runCacheCleanupOnce() {
         var flag = 'opengraph-cache-cleaned-' + VERSION + '-' + SOURCE_BUILD;
@@ -928,6 +928,7 @@
 <button id="openOgnFromExportFolderButton" type="button">Open .ogn uit exportmap</button>
 <label class="inline-check" title="Neem workspace en lokale sessie-events op in paradata"><input checked="" id="configIncludeParadataInput" type="checkbox"/> paradata meenemen</label>
 </div>
+<label class="field mini-field"><span>Snapshot openen in</span><select id="snapshotOpenModeSelect"><option value="in-app">Binnen de app</option><option value="new-window">Nieuw browservenster</option></select></label>
 <p class="top-menu-choice-help">Een gewone OGN kan zonder paradata worden gedeeld. Een snapshot neemt paradata altijd mee: actuele view, recente acties en PLAY-stap staan in <code>paradata.snapshot</code>, zodat je na openen verder kunt spelen. SVG, PNG en video zijn alleen export.</p>
 </section>
 <section aria-label="Opslaan, exporteren en delen" class="panel-card graph-export-card">
@@ -1076,7 +1077,7 @@
 <p class="mobile-sheet-note">Sleep met één vinger om te pannen. Knijp met twee vingers om te zoomen. FIT past het zichtvenster aan de huidige boom en named projections aan; de boom zelf verandert niet.</p>
 </section>
 <script>
-    window.__opengraphBoot = { version: 'v3.1.0-rc.10', sourceBuild: 'v3.1.0-rc.10-safe-renormalize-after-rename-20260910.67', loaded: false, marker: 'viewer-index' };
+    window.__opengraphBoot = { version: 'v3.1.0-rc.10', sourceBuild: 'v3.1.0-rc.10-config-snapshot-open-target-20260910.68', loaded: false, marker: 'viewer-index' };
     function ogStatus(message) {
       var target = document.getElementById('actionFeedback') || document.body;
       if (target) target.textContent = message;
@@ -1111,6 +1112,6 @@
 <script defer="" src="multi-ogn-anaphor-play-engine.js?v3.1.0-rc.10"></script>
 <script defer="" src="multi-ogn-composition-engine.js?v3.1.0-rc.10"></script>
 <script defer="" src="utterance-kernel-engine.js?v3.1.0-rc.10"></script>
-<script defer="" src="viewer.js?v3.1.0-rc.10&amp;source=20260910.67"></script>
+<script defer="" src="viewer.js?v3.1.0-rc.10&amp;source=20260910.68"></script>
 </body>
 </html>

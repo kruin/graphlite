@@ -254,11 +254,13 @@ snapshot is een hervatbaar OGN-werkcheckpoint: Graphlite bewaart de huidige
 graph, view, recente paradata en PLAY-stap en gaat na openen vanaf die stap
 verder. Voor het opslaan kies je views en recente graph-acties; de app levert
 minstens drie bestandsnaamvoorstellen die je kunt kiezen en aanpassen.
-Het naamvenster is aan de titelbalk versleepbaar. Klik **Snapshot openen** en
-kies het bestand. Graphlite laadt het in een zelfstandig venster binnen de app;
-dat venster is verplaatsbaar, schaalbaar en heeft zijn eigen PLAY-toestand. De
-oorspronkelijke graph blijft behouden. Dit werkt ook op GitHub Pages: de
-overdracht blijft lokaal in de browser en vraagt geen popup-toestemming.
+Het naamvenster is aan de titelbalk versleepbaar. In Config kies je **Binnen de
+app** of **Nieuw browservenster**. Binnen de app opent de snapshot direct in een
+verplaatsbaar, schaalbaar venster met een eigen PLAY-toestand. Voor een nieuw
+browservenster kies je eerst het bestand en klik je daarna **Open in nieuw
+venster**. Die tweede klik voorkomt popupblokkering. De oorspronkelijke graph
+blijft behouden. Beide varianten werken op GitHub Pages en dragen het bestand
+lokaal binnen de browser over.
 Het bestand bevat het volledige graphmodel om verder te kunnen PLAY-en, maar
 opent uitsluitend op de afzonderlijk opgeslagen zichtbare stap.
 

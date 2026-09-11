@@ -217,7 +217,9 @@ Voor de naam toont Graphlite de recente graph-acties uit de paradata. De
 gebruiker kiest en combineert views en acties, kiest een van minstens drie
 naamvoorstellen en kan de definitieve `.ogn`-naam aanpassen.
 
-Het naamvenster is aan de titelbalk versleepbaar. **Snapshot openen** laadt de
-gekozen snapshot in een verplaatsbaar en schaalbaar venster binnen de app. Dat
-venster heeft een eigen viewer en PLAY-toestand. De overdracht blijft op GitHub
-Pages same-origin en browserlokaal; er is geen serverupload of popup nodig.
+Het naamvenster is aan de titelbalk versleepbaar. Config kiest tussen een
+verplaatsbaar en schaalbaar venster binnen de app en een nieuw browservenster.
+De interne variant opent direct. Voor het browservenster kiest de gebruiker
+eerst het bestand en klikt daarna **Open in nieuw venster**; die tweede echte
+klik voorkomt popupblokkering. De overdracht blijft op GitHub Pages same-origin
+en browserlokaal; er is geen serverupload nodig.

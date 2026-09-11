@@ -52,6 +52,7 @@
     "showRelations": true,
     "showLabels": true,
     "placementMode": "language-tree",
+    "snapshotOpenMode": "in-app",
     "directPlacementGeneral": {
       "targetCount": 31,
       "intervalMs": 650,

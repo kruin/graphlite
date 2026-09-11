@@ -2,11 +2,12 @@
 
 The always-visible **Snapshot opslaan / Snapshot openen** controls save and
 resume the current graph, view and PLAY step as an `.ogn` paradata snapshot.
-The naming dialog can be dragged by its title bar. **Snapshot openen** loads the
-chosen file in a draggable, resizable Graphlite window inside the application.
-It has an independent viewer and PLAY state while the original graph remains
-available behind it. This works on static GitHub Pages without a server upload
-or browser popup.
+The naming dialog can be dragged by its title bar. Config selects either a
+draggable, resizable Graphlite window inside the application or a new browser
+window. The in-app option opens immediately after file selection. The browser
+window option uses a second explicit **Open in new window** click to avoid popup
+blocking. Both modes have an independent viewer and PLAY state, preserve the
+original graph and work on static GitHub Pages without a server upload.
 The naming dialog combines selected views with recent graph actions and offers
 multiple editable filenames.
 
