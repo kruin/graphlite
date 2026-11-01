@@ -7539,6 +7539,21 @@
         }, node.cat));
       } else {
         group.appendChild(svgEl('text', { x: cx, y: cy + 5, class: 'box-label' }, node.label));
+        if (node.id === 'vp-perfectum' && node.label === 'V-CLUSTER') {
+          const clusterLeafLabels = new Set(
+            layout.nodes
+              .filter(candidate => candidate.kind === 'leaf' && ['pv', 'vdw'].includes(String(candidate.source || '')))
+              .map(candidate => String(candidate.label || '').trim().toUpperCase())
+          );
+          if (clusterLeafLabels.has('HEEFT') && clusterLeafLabels.has('GEBETEN')) {
+            group.appendChild(svgEl('text', {
+              x: cx,
+              y: cy + Math.max(18, Math.round(categoryHeight * 0.82)),
+              class: 'vcluster-flip-marker',
+              'data-vcluster-flip': 'heeft-gebeten'
+            }, isEnglish() ? 'FLIP: HEEFT ↔ GEBETEN' : 'FLIP: HEEFT ↔ GEBETEN'));
+          }
+        }
       }
       labelLayer.appendChild(group);
     }
