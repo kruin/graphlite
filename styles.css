@@ -9310,9 +9310,9 @@ body.main-screen-active #graphSvg .syntax-tree-edge {
 
 #graphSvg .vcluster-flip-marker {
   fill:#b91c1c;
-  font-size:10px;
+  font-size:14px;
   font-weight:950;
-  letter-spacing:.08em;
+  letter-spacing:.06em;
   text-anchor:middle;
   pointer-events:none;
 }
