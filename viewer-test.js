@@ -2,7 +2,7 @@
   'use strict';
 
   const VERSION = 'v3.1.0-rc.10';
-  const SOURCE_BUILD = 'v3.1.0-rc.10-github-direct-test-20261101.5';
+  const SOURCE_BUILD = 'v3.1.0-rc.10-github-direct-test-20261101.15';
   const OGN_FORMAT_VERSION = '1.0';
   const OGN_DOCUMENT_TYPE = 'open-graph-notation-document';
   const EXPORT_DIRECTORY_DB_NAME = 'graphlite-export-directory-v1';
@@ -5836,6 +5836,9 @@
   function syncCanonicalItemUrl() {
     try {
       const url = new URL(window.location.href);
+      url.searchParams.set('source', SOURCE_BUILD);
+      url.searchParams.set('ogv', VERSION);
+      url.searchParams.delete('nocache');
       const mode = validPlacementMode(state.placementMode);
       if (mode === 'greedy-grow' || mode === 'random') {
         url.searchParams.set('app', mode);
@@ -12392,8 +12395,8 @@
     if (els.mainSentenceSummary) {
       const utteranceMenu = multiOgnAnaphorActive();
       els.mainSentenceSummary.textContent = unifiedTestmateriaalCatalog
-        ? (isEnglish() ? 'Test material' : 'Testmateriaal')
-        : utteranceMenu ? (isEnglish() ? 'Utterance' : 'Uiting') : (isEnglish() ? 'Sentence' : 'Zin');
+        ? (isEnglish() ? 'SENTENCE' : 'ZIN')
+        : utteranceMenu ? (isEnglish() ? 'Utterance' : 'Uiting') : (isEnglish() ? 'Sentence' : 'ZIN');
       els.mainSentenceSummary.title = utteranceMenu
         ? (isEnglish() ? 'Choose a linked kernel-clause utterance' : 'Kies een uiting met verknoopte kernzinnen')
         : (isEnglish() ? 'Choose the sample sentence' : 'Kies de voorbeeldzin');
