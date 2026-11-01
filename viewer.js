@@ -2,7 +2,7 @@
   'use strict';
 
   const VERSION = 'v3.1.0-rc.10';
-  const SOURCE_BUILD = 'v3.1.0-rc.10-github-direct-prod-20261101.1';
+  const SOURCE_BUILD = 'v3.1.0-rc.10-mobile-stays-mobile-20260911.69';
   const OGN_FORMAT_VERSION = '1.0';
   const OGN_DOCUMENT_TYPE = 'open-graph-notation-document';
   const EXPORT_DIRECTORY_DB_NAME = 'graphlite-export-directory-v1';
@@ -5684,7 +5684,7 @@
     return ITEM_ID_ALIASES[id] || id;
   }
 
-  function activateCanonicalItem(value, { updateUrl = false, resetTenseToDefault = false } = {}) {
+  function activateCanonicalItem(value, { updateUrl = false } = {}) {
     const requestedId = String(value || '').trim();
     const id = canonicalItemId(value);
     if (!publicItemAllowed(id)) return false;
@@ -5710,10 +5710,6 @@
     const family = id === 'jan-slaat-jek-omdat-die-hem-beet' ? 'bijten' : (id === REWARD_ITEM_ID ? 'terugbrengen' : state.example?.tenseFamily || '');
     const requestedTense = ITEM_TENSE_ALIASES[requestedId];
     if (requestedTense && family) state.tenseByFamily[family] = requestedTense;
-    else if (resetTenseToDefault && !definition && !anaphorCombination && !builtInMultiOgnDemo && family) {
-      const defaultTense = TENSE_IDS.has(state.example?.defaultTense) ? state.example.defaultTense : 'ott';
-      state.tenseByFamily[family] = defaultTense;
-    }
     if (causalVerb) state.causalVerbVariant = causalVerb;
     else if (family === 'bijten' && TENSE_IDS.has(state.tenseByFamily[family])) {
       state.causalVerbVariant = ({ ott: 'bijt', ovt: 'beet', vtt: 'heeft-gebeten', vvt: 'had-gebeten' })[state.tenseByFamily[family]];
@@ -12294,7 +12290,7 @@
     const selectedMenuId = unifiedTestmateriaalCatalog ? activeCanonicalItemId() : multiActive ? state.multiOgnExampleId : state.example.id;
     fillGroupedTestmateriaalMenu(els.mainSentenceOptions, menuOptions, selectedMenuId, id => {
       if (unifiedTestmateriaalCatalog) {
-        if (!activateCanonicalItem(id, { updateUrl: true, resetTenseToDefault: true })) return;
+        if (!activateCanonicalItem(id, { updateUrl: true })) return;
         recordParadata('select-testmateriaal-list', { example: id, interface: isMobileViewport() ? 'mobile' : 'desktop' });
         closeMainChoiceMenus();
         render();
@@ -18262,23 +18258,23 @@
       });
     });
     els.exampleSelect?.addEventListener('change', event => {
-      if (!activateCanonicalItem(event.target.value, { updateUrl: true, resetTenseToDefault: true })) return;
+      if (!activateCanonicalItem(event.target.value, { updateUrl: true })) return;
       recordParadata('select-example', { example: event.target.value });
       render();
     });
     els.desktopExampleSelect?.addEventListener('change', event => {
-      if (!activateCanonicalItem(event.target.value, { updateUrl: true, resetTenseToDefault: true })) return;
+      if (!activateCanonicalItem(event.target.value, { updateUrl: true })) return;
       recordParadata('select-example', { example: event.target.value });
       render();
     });
     els.mobileExampleSelect?.addEventListener('change', event => {
       const id = event.target.value;
-      if (!activateCanonicalItem(id, { updateUrl: true, resetTenseToDefault: true })) return;
+      if (!activateCanonicalItem(id, { updateUrl: true })) return;
       recordParadata('select-mobile-testmateriaal', { example: id });
       render();
     });
     els.mainExampleSelect?.addEventListener('change', event => {
-      if (!activateCanonicalItem(event.target.value, { updateUrl: true, resetTenseToDefault: true })) return;
+      if (!activateCanonicalItem(event.target.value, { updateUrl: true })) return;
       recordParadata('select-example', { example: event.target.value });
       render();
     });
@@ -18979,11 +18975,11 @@
     ].some(item => item.id === requestedVerb)) state.causalVerbVariant = requestedVerb;
     if (requestedBot && (globalThis.OGNUtteranceKernels?.BOT_VARIANTS || []).some(item => item.id === requestedBot)) state.botVariant = requestedBot;
     if (requestedItem) {
-      if (!activateCanonicalItem(requestedItem, { resetTenseToDefault: true })) activateCanonicalItem(DEFAULT_START_ITEM_ID, { resetTenseToDefault: true });
+      if (!activateCanonicalItem(requestedItem)) activateCanonicalItem(DEFAULT_START_ITEM_ID);
     } else if (requestedApp === 'greedy-grow' || requestedApp === 'random') {
       state.placementMode = requestedApp;
       if (directPlacementActive()) ensureDirectPlacementState(true);
-    } else activateCanonicalItem(DEFAULT_START_ITEM_ID, { resetTenseToDefault: true });
+    } else activateCanonicalItem(DEFAULT_START_ITEM_ID);
     if (featureEnabled('adverbs')) await loadAdverbOptionsFromHtml();
     else resetAdverbFeatureState();
     applyExampleAdverbDefaults();
@@ -19019,7 +19015,7 @@
     window.addEventListener('popstate', () => {
       const item = queryParamValue('item', 'example');
       const app = queryParamValue('app');
-      if (item && activateCanonicalItem(item, { resetTenseToDefault: true })) render();
+      if (item && activateCanonicalItem(item)) render();
       else if (app === 'greedy-grow' || app === 'random') setPlacementMode(app);
     });
     window.addEventListener('blur', clearViewportGestureState);
