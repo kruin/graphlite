@@ -9392,3 +9392,28 @@ body.main-screen-active #graphSvg .syntax-tree-edge {
 #graphSvg .tree-node.utterance-configurable-node .category-box {
   stroke-width:3px;
 }
+
+
+@keyframes vclusterFlipPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .45; }
+}
+
+#graphSvg .tree-node.utterance-configurable-node .category-box {
+  fill: rgba(185, 28, 28, .055);
+  stroke-dasharray: 6 4;
+}
+
+#graphSvg .tree-node.utterance-configurable-node + .tree-node.utterance-configurable-node {
+  pointer-events: auto;
+}
+
+#graphSvg .vcluster-flip-marker {
+  animation: vclusterFlipPulse 1.6s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #graphSvg .vcluster-flip-marker {
+    animation: none;
+  }
+}
