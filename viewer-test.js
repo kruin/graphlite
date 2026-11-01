@@ -3323,7 +3323,6 @@
   }
 
   function languageTreeVclusterActive() {
-    if (!subordinateVclusterInput()) return false;
     const items = baseActiveLexItems();
     return items.some(item => item.source === 'pv' || item.role === 'aux')
       && items.some(item => item.source === 'vdw' || item.role === 'participle');
@@ -8643,13 +8642,7 @@
   }
 
   function stableEastProjectionAxisX(origin) {
-    const layouts = [getSouthAwareSyntaxLayout(), getSouthAwareFunctionalLayout()];
-    const maxX = Math.max(
-      ...layouts
-        .map(candidate => Number(candidate?.box?.maxX))
-        .filter(Number.isFinite)
-    );
-    return Number.isFinite(maxX) ? px(maxX, origin) + 118 : px(4, origin) + 118;
+    return stableVerticalProjectionAxes(origin).east;
   }
 
   function stableVerticalProjectionAxes(origin) {
@@ -8659,15 +8652,25 @@
     const maxX = boxes.length ? Math.max(...boxes.map(box => Number(box.maxX || 0))) : 4;
     const treeLeft = px(minX - SUBTREE_AXIS_ENVELOPE_X_PAD, origin);
     const treeRight = px(maxX + SUBTREE_AXIS_ENVELOPE_X_PAD, origin);
-    // Eén gereserveerde corridor voor beide standen. De grootste behoefte van
-    // LEX en SYNT bepaalt zowel links als rechts de aspositie; de boom blijft
-    // daardoor exact staan wanneer alleen West/Oost wisselt.
-    const corridor = Math.max(
-      118,
+    const lexSide = validLexAxisSide(state.lexAxisSide);
+    const lexOnEast = lexSide === 'east' || lexSide === 'south';
+    const lexCorridor = Math.max(
+      62,
       activeLexRenderRightReach() + LEX_TREE_CLEARANCE,
       activeLexRenderLeftReach() + LEX_TREE_CLEARANCE
     );
-    return { west: treeLeft - corridor, east: treeRight + corridor, treeLeft, treeRight, corridor };
+    const projectionCorridor = 42;
+    const westCorridor = lexOnEast ? projectionCorridor : lexCorridor;
+    const eastCorridor = lexOnEast ? lexCorridor : projectionCorridor;
+    return {
+      west: treeLeft - westCorridor,
+      east: treeRight + eastCorridor,
+      treeLeft,
+      treeRight,
+      corridor: Math.max(westCorridor, eastCorridor),
+      westCorridor,
+      eastCorridor
+    };
   }
 
   function projectedRuleRightEdge(layout, spec, origin, mode = 'syntax') {
@@ -9095,10 +9098,14 @@
     const logicalRight = treeCenterPx + logicalSpan / 2;
     const syntaxWidth = projectedRuleBoxWidth(treeSpec(), layouts[0], origin, 'syntax');
     const functionalWidth = projectedRuleBoxWidth(functionalSpec(), layouts[1], origin, 'functional');
-    const sideNeed = Math.max(activeLexRenderLeftReach(), activeLexRenderRightReach(), syntaxWidth + 22, functionalWidth + 22);
-    const left = Math.min(westAxisX - sideNeed, leftTreePx - 100, logicalLeft - 260);
+    const lexNeed = Math.max(activeLexRenderLeftReach(), activeLexRenderRightReach());
+    const ruleNeed = Math.max(syntaxWidth + 22, functionalWidth + 22);
+    const lexOnEast = ['east', 'south'].includes(validLexAxisSide(state.lexAxisSide));
+    const leftNeed = lexOnEast ? 42 : lexNeed;
+    const rightNeed = lexOnEast ? lexNeed : ruleNeed;
+    const left = Math.min(westAxisX - leftNeed, leftTreePx - 72, logicalLeft - 96);
     const top = Math.min(-180, topTreePx - 120);
-    const right = Math.max(eastAxisX + sideNeed, rightTreePx + 100, logicalRight + 260);
+    const right = Math.max(eastAxisX + rightNeed, rightTreePx + 72, logicalRight + 96);
     const bottom = Math.max(1120, southAxisY + 340, bottomTreePx + 360);
     return { x: left, y: top, w: right - left, h: bottom - top };
   }
@@ -9126,16 +9133,20 @@
     const southAxisY = py(union.maxY + 2.1, origin);
     const syntaxWidth = projectedRuleBoxWidth(treeSpec(), layouts[0], origin, 'syntax');
     const functionalWidth = projectedRuleBoxWidth(functionalSpec(), layouts[1], origin, 'functional');
-    const sideNeed = Math.max(activeLexRenderLeftReach(), activeLexRenderRightReach(), syntaxWidth + 22, functionalWidth + 22);
+    const lexNeed = Math.max(activeLexRenderLeftReach(), activeLexRenderRightReach());
+    const ruleNeed = Math.max(syntaxWidth + 22, functionalWidth + 22);
+    const lexOnEast = ['east', 'south'].includes(validLexAxisSide(state.lexAxisSide));
+    const leftNeed = lexOnEast ? 42 : lexNeed;
+    const rightNeed = lexOnEast ? lexNeed : ruleNeed;
     const logicalSequence = activeLogicalSlotSequence();
     const logicalSlots = logicalSequence.map(item => Number(item.logicalSlot)).filter(Number.isFinite);
     const logicalSpan = Math.max(1, Math.max(...logicalSlots) - Math.min(...logicalSlots)) * logAxisSlotPixels();
     const treeCenterPx = px((union.minX + union.maxX) / 2, origin);
     const logicalLeft = treeCenterPx - logicalSpan / 2;
     const logicalRight = treeCenterPx + logicalSpan / 2;
-    const left = Math.min(westAxisX - sideNeed, leftTreePx - 100, logicalLeft - 96);
+    const left = Math.min(westAxisX - leftNeed, leftTreePx - 72, logicalLeft - 64);
     const top = Math.min(-150, topTreePx - 150);
-    const right = Math.max(eastAxisX + sideNeed, logicalRight + 36) + 16;
+    const right = Math.max(eastAxisX + rightNeed, logicalRight + 36) + 8;
     const bottom = Math.max(910, southAxisY + 150, bottomTreePx + 140);
     return { x: left, y: top, w: right - left, h: bottom - top };
   }
