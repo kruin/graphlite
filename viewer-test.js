@@ -7551,12 +7551,13 @@
         }, node.cat));
       } else {
         const isVclusterFlipBox = node.id === 'vp-perfectum' && node.label === 'V-CLUSTER';
+        const showVclusterFlip = isVclusterFlipBox && languageTreeVclusterActive();
         group.appendChild(svgEl('text', {
           x: cx,
-          y: isVclusterFlipBox ? cy - 4 : cy + 5,
+          y: showVclusterFlip ? cy - 4 : cy + 5,
           class: 'box-label'
         }, node.label));
-        if (isVclusterFlipBox) {
+        if (showVclusterFlip) {
           const clusterLabels = layout.nodes
             .filter(candidate => candidate.kind === 'leaf' && ['pv', 'vdw'].includes(String(candidate.source || '')))
             .map(candidate => String(candidate.label || '').trim().toUpperCase())
@@ -12623,9 +12624,9 @@
         .filter(item => item.source === 'pv' || item.source === 'vdw' || item.role === 'aux' || item.role === 'participle');
       const labels = clusterItems.map(item => String(item.label || '').trim().toUpperCase()).filter(Boolean);
       const unique = [...new Set(labels)];
-      const hasCluster = unique.length >= 2;
-      els.mainVclusterFlipNote.hidden = !hasCluster;
-      els.mainVclusterFlipNote.textContent = hasCluster
+      const flipActive = unique.length >= 2 && languageTreeVclusterActive();
+      els.mainVclusterFlipNote.hidden = !flipActive;
+      els.mainVclusterFlipNote.textContent = flipActive
         ? `In V-CLUSTER: FLIP ↔ · ${unique[0]} ↔ ${unique[1]}`
         : 'In V-CLUSTER: FLIP ↔';
     }
