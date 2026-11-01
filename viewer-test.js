@@ -288,6 +288,8 @@
     mainTenseSelect: document.getElementById('mainTenseSelect'),
     mainTenseSummary: document.getElementById('mainTenseSummary'),
     mainTenseName: document.getElementById('mainTenseName'),
+    mainSentenceVariantSection: document.getElementById('mainSentenceVariantSection'),
+    mainSentenceVariantButtons: document.getElementById('mainSentenceVariantButtons'),
     mainVclusterFlipNote: document.getElementById('mainVclusterFlipNote'),
     mainBotChoice: document.getElementById('mainBotChoice'),
     mainBotSelect: document.getElementById('mainBotSelect'),
@@ -1303,6 +1305,7 @@
   let PUBLIC_ALLOWED_ITEM_IDS = null;
   let PUBLIC_ITEM_NUMBERS = new Map();
   let PUBLIC_ITEM_GROUPS = new Map();
+  let PUBLIC_ITEM_META = new Map();
 
   async function loadPublicTestmateriaalCatalog() {
     try {
@@ -1325,12 +1328,27 @@
       const items = Array.isArray(document?.items) ? document.items : [];
       PUBLIC_ITEM_NUMBERS = new Map();
       PUBLIC_ITEM_GROUPS = new Map();
+      PUBLIC_ITEM_META = new Map();
       items.forEach(item => {
         const sourceIds = Array.isArray(item.source_ids) && item.source_ids.length ? item.source_ids : [item.source_id];
+        const kernels = Array.isArray(item.kernels) ? item.kernels : [];
+        const kernelKey = kernels.length === 1
+          ? String(kernels[0]?.text || '').trim().toUpperCase().replace(/\s+/g, ' ')
+          : '';
         sourceIds.map(sourceId => String(sourceId || '').split(':').slice(1).join(':')).filter(Boolean)
           .forEach(id => {
             PUBLIC_ITEM_NUMBERS.set(id, Number(item.number));
             if (String(item.group_name || '').trim()) PUBLIC_ITEM_GROUPS.set(id, String(item.group_name).trim());
+            PUBLIC_ITEM_META.set(id, Object.freeze({
+              number: Number(item.number),
+              completion: String(item.completion || '').toUpperCase(),
+              form: String(item.form || '').toLowerCase(),
+              categoryName: String(item.category_name || ''),
+              kernelCount: kernels.length,
+              kernelKey,
+              originalInput: String(item.original_input || ''),
+              features: Array.isArray(item.features) ? [...item.features] : []
+            }));
           });
       });
       PUBLIC_ALLOWED_ITEM_IDS = new Set(items.flatMap(item => Array.isArray(item.source_ids) && item.source_ids.length ? item.source_ids : [item.source_id]).map(sourceId => String(sourceId || '').split(':').slice(1).join(':')).filter(Boolean));
@@ -1341,6 +1359,7 @@
       PUBLIC_ALLOWED_ITEM_IDS = null;
       PUBLIC_ITEM_NUMBERS = new Map();
       PUBLIC_ITEM_GROUPS = new Map();
+      PUBLIC_ITEM_META = new Map();
     }
   }
 
@@ -1360,6 +1379,76 @@
 
   function testmateriaalGroup(id, fallback) {
     return PUBLIC_ITEM_GROUPS.get(String(id || '')) || fallback;
+  }
+
+  function testmateriaalMeta(id) {
+    return PUBLIC_ITEM_META.get(String(id || '')) || null;
+  }
+
+  function testmateriaalKernelCount(id) {
+    const count = Number(testmateriaalMeta(id)?.kernelCount);
+    return Number.isInteger(count) ? count : null;
+  }
+
+  function testmateriaalKernelKey(id) {
+    return String(testmateriaalMeta(id)?.kernelKey || '').trim();
+  }
+
+  function testmateriaalCompletion(id) {
+    return String(testmateriaalMeta(id)?.completion || '').toUpperCase();
+  }
+
+  function testmateriaalPrimaryGroup(id) {
+    const meta = testmateriaalMeta(id);
+    if (!meta) return 'Anders · Complex';
+    if (meta.kernelCount === 1) return 'ZIN';
+    return meta.completion === 'AF' ? 'Anders · Complex' : 'Anders · Onaf';
+  }
+
+  function testmateriaalFormRank(id) {
+    const form = String(testmateriaalMeta(id)?.form || '');
+    return ({ simplex: 0, single: 0, vraagzin: 1, bijzin: 2 })[form] ?? 9;
+  }
+
+  function baseSingleKernelItemIds() {
+    const byKernel = new Map();
+    for (const id of PUBLIC_ALLOWED_ITEM_IDS || []) {
+      const meta = testmateriaalMeta(id);
+      if (!meta || meta.kernelCount !== 1 || !meta.kernelKey) continue;
+      const current = byKernel.get(meta.kernelKey);
+      if (!current) {
+        byKernel.set(meta.kernelKey, id);
+        continue;
+      }
+      const currentMeta = testmateriaalMeta(current);
+      const score = candidate => [
+        testmateriaalFormRank(candidate),
+        testmateriaalNumber(candidate) ?? Number.MAX_SAFE_INTEGER
+      ];
+      const [a1, a2] = score(id);
+      const [b1, b2] = score(current);
+      if (a1 < b1 || (a1 === b1 && a2 < b2)) byKernel.set(meta.kernelKey, id);
+    }
+    return new Set(byKernel.values());
+  }
+
+  function sentenceFormVariantsFor(id) {
+    const kernelKey = testmateriaalKernelKey(id);
+    if (!kernelKey) return [];
+    const baseIds = baseSingleKernelItemIds();
+    return [...(PUBLIC_ALLOWED_ITEM_IDS || [])]
+      .filter(candidate => testmateriaalKernelKey(candidate) === kernelKey && !baseIds.has(candidate))
+      .map(candidate => {
+        const meta = testmateriaalMeta(candidate) || {};
+        const form = String(meta.form || '');
+        const label = form === 'vraagzin'
+          ? 'Vraagzin'
+          : form === 'bijzin'
+            ? (String(meta.originalInput || '').trim().toUpperCase().startsWith('OMDAT ') ? 'Bijzin · omdat' : 'Bijzin · dat')
+            : (meta.categoryName || meta.originalInput || candidate);
+        return { id: candidate, label, number: meta.number ?? Number.MAX_SAFE_INTEGER, formRank: testmateriaalFormRank(candidate) };
+      })
+      .sort((left, right) => left.formRank - right.formRank || left.number - right.number || left.label.localeCompare(right.label, 'nl'));
   }
 
   let ALL_EXAMPLES = EXAMPLES.slice();
