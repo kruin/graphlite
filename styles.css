@@ -9418,3 +9418,29 @@ body.main-screen-active #graphSvg .syntax-tree-edge {
     animation: none;
   }
 }
+
+
+.main-sentence-variant-section {
+  margin-top:10px;
+  padding-top:8px;
+  border-top:1px solid rgba(15,23,42,.14);
+}
+.main-sentence-variant-buttons {
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  margin-top:6px;
+}
+.main-sentence-variant-button {
+  border:1px solid rgba(15,23,42,.22);
+  border-radius:999px;
+  background:#fff;
+  padding:5px 9px;
+  font-size:12px;
+  font-weight:750;
+  cursor:pointer;
+}
+.main-sentence-variant-button.active {
+  border-width:2px;
+  font-weight:900;
+}
