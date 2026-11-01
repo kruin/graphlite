@@ -105,11 +105,11 @@ assert.ok(
   'zichtbare FLIP-markering ontbreekt in de V-CLUSTER-rendering'
 );
 assert.ok(
-  viewer.includes("'data-vcluster-flip': 'heeft-gebeten'"),
-  'HEEFT/GEBETEN-marker ontbreekt in de V-CLUSTER-rendering'
+  viewer.includes("'data-vcluster-flip': clusterLabels.join('-').toLowerCase()"),
+  'V-CLUSTER Flip-marker mist de clusterleden'
 );
 assert.ok(
-  viewer.includes("'FLIP: HEEFT ↔ GEBETEN'"),
-  'tekst FLIP: HEEFT ↔ GEBETEN ontbreekt'
+  viewer.includes("}, 'FLIP')"),
+  'zichtbare tekst FLIP ontbreekt in de V-CLUSTER-box'
 );
-console.log('V-CLUSTER FLIP MARKER CHECK: OK (FLIP: HEEFT ↔ GEBETEN)');
+console.log('V-CLUSTER FLIP MARKER CHECK: OK (FLIP staat in de V-CLUSTER-box)');
