@@ -14,7 +14,7 @@
 <script>
     (function() {
       var VERSION = 'v3.1.0-rc.10';
-      var SOURCE_BUILD = 'v3.1.0-rc.10-github-direct-test-20261101.3';
+      var SOURCE_BUILD = 'v3.1.0-rc.10-github-direct-test-20261101.4';
       window.__OPENGRAPH_EXPECTED_VERSION__ = VERSION;
       function runCacheCleanupOnce() {
         var flag = 'opengraph-cache-cleaned-' + VERSION + '-' + SOURCE_BUILD;
@@ -56,6 +56,30 @@
 <!-- <link rel="manifest" href="manifest.webmanifest"> -->
 <link href="styles.css?v3.1.0-rc.10" rel="stylesheet"/>
 <script defer src="docs/html-doc-links.js?v3.1.0-rc.10"></script>
+<!-- TEST_VARIANTS_MENU_VISIBILITY -->
+<style>
+/* Test: Varianten blijft zichtbaar in het compacte hoofdmenu. */
+body.mobile-menu-basic.main-screen-active .main-top-menu {
+  grid-template-columns: minmax(0, 1.15fr) repeat(4, minmax(0, .72fr)) !important;
+}
+body.mobile-menu-basic.main-screen-active .main-top-menu > #mainTenseChoice {
+  display: block !important;
+  grid-row: 1 !important;
+  grid-column: auto !important;
+}
+body.mobile-menu-basic.main-screen-active .main-top-menu > #mainTenseChoice > summary {
+  min-width: 0 !important;
+  width: 100% !important;
+  min-height: 1.62rem !important;
+  height: 1.62rem !important;
+  padding: .06rem .12rem !important;
+  font-size: .57rem !important;
+  line-height: 1 !important;
+}
+body.mobile-menu-basic.main-screen-active .main-top-menu > :not(#mainSentenceMenu):not(#mainTenseChoice):not(#mainLanguageMenu):not(#openHelpButton):not(#openConfigButton) {
+  display: none !important;
+}
+</style>
 </head>
 <body class="main-screen-active">
 <header class="app-header">
@@ -1104,6 +1128,6 @@
 <script defer="" src="multi-ogn-anaphor-play-engine.js?v3.1.0-rc.10"></script>
 <script defer="" src="multi-ogn-composition-engine.js?v3.1.0-rc.10"></script>
 <script defer="" src="utterance-kernel-engine.js?v3.1.0-rc.10"></script>
-<script defer="" src="viewer-test.js?v3.1.0-rc.10&amp;source=github-direct-test-20261101.3"></script>
+<script defer="" src="viewer-test.js?v3.1.0-rc.10&amp;source=github-direct-test-20261101.4"></script>
 </body>
 </html>
