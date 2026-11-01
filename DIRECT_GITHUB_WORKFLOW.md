@@ -42,3 +42,11 @@ tijdsfamilie naar de standaardtijd van dat item. Oude directe alias-URL's zoals
 
 Dit voorkomt dat een eerder lokaal gekozen VTT-vorm wordt aangezien voor de naam
 van het testmateriaalitem.
+
+
+## Actuele promotie
+
+Op 1 november 2026 is de eerste directe GitHub-testwijziging naar productie
+gepromoveerd: testmateriaal en tijdsvorm zijn gescheiden. De canonieke keuze
+`hond-bijt-man` opent weer in de standaardtijd OTT; de tijdknop beheert
+OVT/VTT/VVT apart. Test en productie blijven voortaan afzonderlijke ingangen.
