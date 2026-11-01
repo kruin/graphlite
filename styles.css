@@ -9383,3 +9383,12 @@ body.main-screen-active #graphSvg .syntax-tree-edge {
   background:#fff7ed;
   border:1px solid #fdba74;
 }
+
+
+#graphSvg .tree-node.utterance-configurable-node {
+  cursor:pointer;
+}
+#graphSvg .tree-node.utterance-configurable-node .synt-box,
+#graphSvg .tree-node.utterance-configurable-node .category-box {
+  stroke-width:3px;
+}
