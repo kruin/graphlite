@@ -2,7 +2,7 @@
   'use strict';
 
   const VERSION = 'v3.1.0-rc.10';
-  const SOURCE_BUILD = 'v3.1.0-rc.10-github-direct-test-20261101.1';
+  const SOURCE_BUILD = 'v3.1.0-rc.10-github-direct-test-20261101.2';
   const OGN_FORMAT_VERSION = '1.0';
   const OGN_DOCUMENT_TYPE = 'open-graph-notation-document';
   const EXPORT_DIRECTORY_DB_NAME = 'graphlite-export-directory-v1';
@@ -12530,18 +12530,41 @@
       : globalThis.OGNUtteranceKernels?.CAUSAL_VERB_VARIANTS;
     const verbVariants = (verbSource || []).map(item => ({ id: item.id, label: item.text, labelEn: item.text }));
     fillSelect(els.mainCausalVerbSelect, verbVariants, activeDefinition?.verbVariant || state.causalVerbVariant);
-    fillSelect(els.mainTenseSelect, TENSE_OPTIONS, activeTenseId());
     const activeTense = activeTenseId();
+    const activeSimpleTenseFamily = String(state.example?.tenseFamily || '');
+    const activeSimpleTenseForms = TENSE_FAMILIES[activeSimpleTenseFamily] || null;
+    const tenseSurface = tenseId => {
+      const form = activeSimpleTenseForms?.[tenseId];
+      if (!form) return '';
+      if (form.finite) return form.finite;
+      return [form.aux, form.participle].filter(Boolean).join(' … ');
+    };
+    const visibleTenseOptions = TENSE_OPTIONS.map(option => {
+      const surface = tenseSurface(option.id);
+      return surface ? { ...option, label: `${option.id.toUpperCase()} · ${surface}`, labelEn: `${option.id.toUpperCase()} · ${surface}` } : option;
+    });
+    fillSelect(els.mainTenseSelect, visibleTenseOptions, activeTense);
     document.querySelectorAll('[data-main-tense-choice]').forEach(button => {
-      const selected = button.getAttribute('data-main-tense-choice') === activeTense;
+      const tenseId = button.getAttribute('data-main-tense-choice');
+      const selected = tenseId === activeTense;
+      const surface = tenseSurface(tenseId);
+      button.textContent = surface ? `${tenseId.toUpperCase()} · ${surface}` : tenseId.toUpperCase();
+      button.title = surface ? `${tenseId.toUpperCase()} · ${surface}` : button.title;
       button.classList.toggle('active', selected);
       button.setAttribute('aria-pressed', String(selected));
     });
     if (els.mainTenseName) {
       const option = TENSE_OPTIONS.find(item => item.id === activeTense);
-      els.mainTenseName.textContent = option ? (isEnglish() ? option.labelEn : option.label).replace(/^\S+\s+—\s+/, '') : '';
+      const surface = tenseSurface(activeTense);
+      const tenseName = option ? (isEnglish() ? option.labelEn : option.label).replace(/^\S+\s+—\s+/, '') : '';
+      els.mainTenseName.textContent = [surface, tenseName].filter(Boolean).join(' · ');
     }
-    if (els.mainTenseSummary) els.mainTenseSummary.textContent = activeTense ? `Tijd · ${activeTense.toUpperCase()}` : 'Tijd';
+    if (els.mainTenseSummary) {
+      const surface = tenseSurface(activeTense);
+      els.mainTenseSummary.textContent = activeTense
+        ? `Tijd · ${activeTense.toUpperCase()}${surface ? ` · ${surface}` : ''}`
+        : 'Tijd';
+    }
     const botVariants = (globalThis.OGNUtteranceKernels?.BOT_VARIANTS || []).map(item => ({ id: item.id, label: item.text, labelEn: item.text }));
     fillSelect(els.mainBotSelect, botVariants, state.botVariant);
     fillSelect(els.projectionLineWeightSelect, LINE_WEIGHT_OPTIONS, validLineWeight(state.projectionLineWeight));
