@@ -9375,3 +9375,15 @@ body.main-screen-active #graphSvg .syntax-tree-edge {
   .main-active-utterance { flex-wrap:wrap; }
   .main-causal-anaphor-choice { font-size:.68rem; }
 }
+
+
+.main-vcluster-flip-note {
+  margin-top:8px;
+  padding:6px 8px;
+  border-radius:6px;
+  font-size:12px;
+  font-weight:800;
+  line-height:1.25;
+  background:#fff7ed;
+  border:1px solid #fdba74;
+}
