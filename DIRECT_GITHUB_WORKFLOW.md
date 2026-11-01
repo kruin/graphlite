@@ -48,3 +48,15 @@ van het testmateriaalitem.
 
 De directe GitHub-testwerkwijze is ingericht. Productie wordt pas aangepast nadat
 `test.html` aantoonbaar via GitHub Pages werkt en inhoudelijk is goedgekeurd.
+
+
+## Gevalideerde werkwijze
+
+Op 1 november 2026 is de directe GitHub-route voor GraphLite end-to-end gevalideerd:
+
+`wijzigen in GitHub → test.html → akkoord → productie`.
+
+De wijziging rond `hond-bijt-man` en de afzonderlijke tijdvariant is zowel op test
+als op productie gecontroleerd en akkoord bevonden. Voor vergelijkbare wijzigingen
+is een ZIP/downloadronde daarom niet meer de standaardroute.
+
