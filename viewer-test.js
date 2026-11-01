@@ -288,7 +288,8 @@
     mainTenseSelect: document.getElementById('mainTenseSelect'),
     mainTenseSummary: document.getElementById('mainTenseSummary'),
     mainTenseName: document.getElementById('mainTenseName'),
-    mainSentenceVariantSection: document.getElementById('mainSentenceVariantSection'),
+    mainSentenceFormMenu: document.getElementById('mainSentenceFormMenu'),
+    mainSentenceFormSummary: document.getElementById('mainSentenceFormSummary'),
     mainSentenceVariantButtons: document.getElementById('mainSentenceVariantButtons'),
     mainVclusterFlipNote: document.getElementById('mainVclusterFlipNote'),
     mainBotChoice: document.getElementById('mainBotChoice'),
@@ -11855,12 +11856,9 @@
     const activeDefinition = activeUtteranceDefinition();
     if (els.mainCausalVerbChoice) els.mainCausalVerbChoice.hidden = true;
     if (els.mainTenseChoice) {
-      const baseVariantId = activeBaseSingleKernelId();
-      const hasSentenceFormVariants = testmateriaalKernelCount(baseVariantId) === 1
-        && sentenceFormVariantsFor(baseVariantId).length > 0;
-      const showVariants = !!activeTenseFamilyId() || hasSentenceFormVariants;
-      els.mainTenseChoice.hidden = !showVariants;
-      if (showVariants) {
+      const showTense = !!activeTenseFamilyId();
+      els.mainTenseChoice.hidden = !showTense;
+      if (showTense) {
         els.mainTenseChoice.removeAttribute('hidden');
         els.mainTenseChoice.style.setProperty('display', 'block', 'important');
       } else {
@@ -12325,7 +12323,7 @@
   }
 
   function closeMainChoiceMenus(except = null) {
-    [els.mainSentenceMenu, els.mainAdverbMenu, els.mainTenseChoice, els.languageTreeViewPicker, els.mainViewMenu, els.sourceAxisMenu, els.mainExtraMenu, els.mainLanguageMenu, els.mainActionsMenu].forEach(menu => {
+    [els.mainSentenceMenu, els.mainAdverbMenu, els.mainTenseChoice, els.mainSentenceFormMenu, els.languageTreeViewPicker, els.mainViewMenu, els.sourceAxisMenu, els.mainExtraMenu, els.mainLanguageMenu, els.mainActionsMenu].forEach(menu => {
       if (menu && menu !== except) menu.open = false;
     });
   }
@@ -12559,12 +12557,12 @@
   }
 
   function renderSentenceFormVariants() {
-    if (!els.mainSentenceVariantSection || !els.mainSentenceVariantButtons) return;
+    if (!els.mainSentenceVariantButtons) return;
     const activeId = activeCanonicalItemId();
     const baseId = activeBaseSingleKernelId();
     const variants = testmateriaalKernelCount(baseId) === 1 ? sentenceFormVariantsFor(baseId) : [];
     els.mainSentenceVariantButtons.replaceChildren();
-    els.mainSentenceVariantSection.hidden = variants.length === 0;
+    if (els.mainSentenceFormMenu) els.mainSentenceFormMenu.hidden = variants.length === 0;
     if (!variants.length) return;
 
     const baseButton = document.createElement('button');
@@ -12782,8 +12780,8 @@
     if (els.mainTenseSummary) {
       const surface = tenseSurface(activeTense);
       els.mainTenseSummary.textContent = activeTense
-        ? `Varianten · ${surface || activeTense.toUpperCase()}`
-        : 'Varianten';
+        ? `Tijd · ${surface || activeTense.toUpperCase()}`
+        : 'Tijd';
     }
     if (els.mainVclusterFlipNote) {
       const clusterItems = baseActiveLexItems()
@@ -18953,7 +18951,7 @@
       setProjection(event.target.value || 'axes');
       render();
     });
-    [els.mainSentenceMenu, els.mainAdverbMenu, els.mainViewMenu, els.sourceAxisMenu, els.mainExtraMenu, els.mainLanguageMenu, els.mainActionsMenu].forEach(menu => {
+    [els.mainSentenceMenu, els.mainAdverbMenu, els.mainSentenceFormMenu, els.mainViewMenu, els.sourceAxisMenu, els.mainExtraMenu, els.mainLanguageMenu, els.mainActionsMenu].forEach(menu => {
       menu?.addEventListener('toggle', () => { if (menu.open) closeMainChoiceMenus(menu); });
     });
     els.mainSentenceMenu?.addEventListener('toggle', () => {
