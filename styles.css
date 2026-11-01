@@ -9480,3 +9480,30 @@ body.main-screen-active .main-top-menu .top-menu-popover,
 body.viewport-mobile-test.main-screen-active .main-top-menu .top-menu-popover {
   top:calc(100% + .22rem) !important;
 }
+
+
+/* Test .17: topmenu-elementen zijn intrinsiek breed en kunnen niet meegroeien. */
+body.main-screen-active .main-top-menu > .top-menu-item,
+body.main-screen-active .main-top-menu > .top-menu-action,
+body.viewport-mobile-test.main-screen-active .main-top-menu > .top-menu-item,
+body.viewport-mobile-test.main-screen-active .main-top-menu > .top-menu-action {
+  display:inline-block !important;
+  flex:0 0 auto !important;
+  flex-grow:0 !important;
+  flex-shrink:0 !important;
+  flex-basis:auto !important;
+  width:max-content !important;
+  min-width:0 !important;
+  max-width:max-content !important;
+}
+body.main-screen-active .main-top-menu > .top-menu-item > summary,
+body.main-screen-active .main-top-menu > .top-menu-action,
+body.viewport-mobile-test.main-screen-active .main-top-menu > .top-menu-item > summary,
+body.viewport-mobile-test.main-screen-active .main-top-menu > .top-menu-action {
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  width:max-content !important;
+  min-width:0 !important;
+  max-width:max-content !important;
+}
