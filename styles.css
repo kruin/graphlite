@@ -9307,6 +9307,19 @@ body.main-screen-active #graphSvg .syntax-tree-edge {
   stroke-width:5px;
   stroke-linejoin:round;
 }
+
+#graphSvg .vcluster-flip-marker {
+  fill:#b91c1c;
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:.025em;
+  text-anchor:middle;
+  paint-order:stroke;
+  stroke:#fff;
+  stroke-width:3px;
+  stroke-linejoin:round;
+  pointer-events:none;
+}
 @keyframes utteranceFlipNodeFlash {
   0%,100% { filter:drop-shadow(0 0 0 rgba(245,158,11,0)); opacity:1; }
   22%,68% { filter:drop-shadow(0 0 13px rgba(245,158,11,.98)); opacity:1; }
