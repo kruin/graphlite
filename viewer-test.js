@@ -12521,14 +12521,88 @@
     ];
     const unique = new Map();
     candidates.forEach(option => { if (!unique.has(option.id)) unique.set(option.id, option); });
-    return [...unique.values()].sort((left, right) => {
+
+    const baseSingleIds = baseSingleKernelItemIds();
+    const visible = [...unique.values()].filter(option => {
+      const count = testmateriaalKernelCount(option.id);
+      if (count === 1) return baseSingleIds.has(option.id);
+      return true;
+    }).map(option => ({
+      ...option,
+      group: testmateriaalPrimaryGroup(option.id),
+      groupEn: testmateriaalPrimaryGroup(option.id) === 'ZIN'
+        ? 'SENTENCE'
+        : testmateriaalPrimaryGroup(option.id) === 'Anders · Onaf'
+          ? 'Other · incomplete'
+          : 'Other · complex'
+    }));
+
+    const groupRank = group => group === 'ZIN' ? 0 : group === 'Anders · Onaf' ? 1 : 2;
+    return visible.sort((left, right) => {
+      const groupDiff = groupRank(left.group) - groupRank(right.group);
+      if (groupDiff) return groupDiff;
       const leftNumber = testmateriaalNumber(left.id) ?? Number.MAX_SAFE_INTEGER;
       const rightNumber = testmateriaalNumber(right.id) ?? Number.MAX_SAFE_INTEGER;
       return leftNumber - rightNumber || String(left.label || left.title || left.id).localeCompare(String(right.label || right.title || right.id), 'nl');
     });
   }
 
+  function activeBaseSingleKernelId() {
+    const activeId = activeCanonicalItemId();
+    const key = testmateriaalKernelKey(activeId);
+    if (!key) return activeId;
+    const baseIds = baseSingleKernelItemIds();
+    return [...baseIds].find(id => testmateriaalKernelKey(id) === key) || activeId;
+  }
+
+  function renderSentenceFormVariants() {
+    if (!els.mainSentenceVariantSection || !els.mainSentenceVariantButtons) return;
+    const activeId = activeCanonicalItemId();
+    const baseId = activeBaseSingleKernelId();
+    const variants = testmateriaalKernelCount(baseId) === 1 ? sentenceFormVariantsFor(baseId) : [];
+    els.mainSentenceVariantButtons.replaceChildren();
+    els.mainSentenceVariantSection.hidden = variants.length === 0;
+    if (!variants.length) return;
+
+    const baseButton = document.createElement('button');
+    baseButton.type = 'button';
+    baseButton.textContent = 'Hoofdzin';
+    baseButton.className = 'main-sentence-variant-button';
+    baseButton.classList.toggle('active', activeId === baseId);
+    baseButton.setAttribute('aria-pressed', String(activeId === baseId));
+    baseButton.addEventListener('click', () => {
+      const family = activeTenseFamilyId();
+      const tense = family ? state.tenseByFamily[family] : '';
+      if (!activateCanonicalItem(baseId, { updateUrl: true, resetTenseToDefault: false })) return;
+      if (family && tense) state.tenseByFamily[family] = tense;
+      closeMainChoiceMenus();
+      render();
+    });
+    els.mainSentenceVariantButtons.appendChild(baseButton);
+
+    variants.forEach(variant => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.textContent = variant.label;
+      button.className = 'main-sentence-variant-button';
+      const selected = activeId === variant.id;
+      button.classList.toggle('active', selected);
+      button.setAttribute('aria-pressed', String(selected));
+      button.addEventListener('click', () => {
+        const family = activeTenseFamilyId();
+        const tense = family ? state.tenseByFamily[family] : '';
+        if (!activateCanonicalItem(variant.id, { updateUrl: true, resetTenseToDefault: false })) return;
+        const nextFamily = activeTenseFamilyId();
+        if (nextFamily && tense) state.tenseByFamily[nextFamily] = tense;
+        closeMainChoiceMenus();
+        render();
+      });
+      els.mainSentenceVariantButtons.appendChild(button);
+    });
+  }
+
   function syncControls() {
+    renderSentenceFormVariants();
     fillSelect(els.exampleSelect, EXAMPLES, state.example.id);
     fillSelect(els.desktopExampleSelect, EXAMPLES, state.example.id);
     fillSelect(els.mobileExampleSelect, mobileTestmateriaalOptions(), activeCanonicalItemId());
