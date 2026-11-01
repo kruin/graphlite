@@ -288,6 +288,7 @@
     mainTenseSelect: document.getElementById('mainTenseSelect'),
     mainTenseSummary: document.getElementById('mainTenseSummary'),
     mainTenseName: document.getElementById('mainTenseName'),
+    mainVclusterFlipNote: document.getElementById('mainVclusterFlipNote'),
     mainBotChoice: document.getElementById('mainBotChoice'),
     mainBotSelect: document.getElementById('mainBotSelect'),
     metaLine: document.getElementById('metaLine'),
@@ -12556,7 +12557,18 @@
       const option = TENSE_OPTIONS.find(item => item.id === activeTense);
       els.mainTenseName.textContent = option ? (isEnglish() ? option.labelEn : option.label).replace(/^\S+\s+—\s+/, '') : '';
     }
-    if (els.mainTenseSummary) els.mainTenseSummary.textContent = activeTense ? `Tijd · ${activeTense.toUpperCase()}` : 'Tijd';
+    if (els.mainTenseSummary) els.mainTenseSummary.textContent = 'Varianten';
+    if (els.mainVclusterFlipNote) {
+      const clusterItems = baseActiveLexItems()
+        .filter(item => item.source === 'pv' || item.source === 'vdw' || item.role === 'aux' || item.role === 'participle');
+      const labels = clusterItems.map(item => String(item.label || '').trim().toUpperCase()).filter(Boolean);
+      const unique = [...new Set(labels)];
+      const hasCluster = unique.length >= 2;
+      els.mainVclusterFlipNote.hidden = !hasCluster;
+      els.mainVclusterFlipNote.textContent = hasCluster
+        ? `V-cluster · Flip: ${unique[0]} ↔ ${unique[1]}`
+        : 'V-cluster · Flip';
+    }
     const botVariants = (globalThis.OGNUtteranceKernels?.BOT_VARIANTS || []).map(item => ({ id: item.id, label: item.text, labelEn: item.text }));
     fillSelect(els.mainBotSelect, botVariants, state.botVariant);
     fillSelect(els.projectionLineWeightSelect, LINE_WEIGHT_OPTIONS, validLineWeight(state.projectionLineWeight));
