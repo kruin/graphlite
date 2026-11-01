@@ -2,7 +2,7 @@
   'use strict';
 
   const VERSION = 'v3.1.0-rc.10';
-  const SOURCE_BUILD = 'v3.1.0-rc.10-github-direct-test-20261101.4';
+  const SOURCE_BUILD = 'v3.1.0-rc.10-github-direct-test-20261101.5';
   const OGN_FORMAT_VERSION = '1.0';
   const OGN_DOCUMENT_TYPE = 'open-graph-notation-document';
   const EXPORT_DIRECTORY_DB_NAME = 'graphlite-export-directory-v1';
@@ -3220,7 +3220,15 @@
       if (!definition?.inputTense || definition.type === 'imperative-reflexive') return '';
       return `uiting:${definition.id}`;
     }
-    return String(state.example?.tenseFamily || '');
+    const declared = String(state.example?.tenseFamily || '').trim().toLowerCase();
+    if (declared) return declared;
+    const fallbackByItem = {
+      'hond-bijt-man': 'bijten',
+      'omdat-hond-man-bijt': 'bijten',
+      'vrouw-breit-trui': 'breien',
+      'muziek-ontroert-anna': 'ontroeren'
+    };
+    return fallbackByItem[canonicalItemId(state.example?.id)] || '';
   }
 
   function tenseIdFromUtteranceVariant(value) {
@@ -11720,7 +11728,16 @@
     }
     const activeDefinition = activeUtteranceDefinition();
     if (els.mainCausalVerbChoice) els.mainCausalVerbChoice.hidden = true;
-    if (els.mainTenseChoice) els.mainTenseChoice.hidden = !activeTenseFamilyId();
+    if (els.mainTenseChoice) {
+      const showVariants = !!activeTenseFamilyId();
+      els.mainTenseChoice.hidden = !showVariants;
+      if (showVariants) {
+        els.mainTenseChoice.removeAttribute('hidden');
+        els.mainTenseChoice.style.setProperty('display', 'block', 'important');
+      } else {
+        els.mainTenseChoice.style.removeProperty('display');
+      }
+    }
     if (els.mainBotChoice) els.mainBotChoice.hidden = !activeDefinition?.botVariant;
     if (els.mainActiveUtterance) els.mainActiveUtterance.hidden = directPlacementActive();
     if (multiOgnAnaphorActive()) {
