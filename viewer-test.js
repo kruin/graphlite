@@ -3323,6 +3323,7 @@
   }
 
   function languageTreeVclusterActive() {
+    if (!subordinateVclusterInput()) return false;
     const items = baseActiveLexItems();
     return items.some(item => item.source === 'pv' || item.role === 'aux')
       && items.some(item => item.source === 'vdw' || item.role === 'participle');
