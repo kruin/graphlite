@@ -2,7 +2,7 @@
   'use strict';
 
   const VERSION = 'v3.1.0-rc.10';
-  const SOURCE_BUILD = 'v3.1.0-rc.10-github-direct-prod-20261101.2';
+  const SOURCE_BUILD = 'v3.1.0-rc.10-github-direct-prod-20261101.3';
   const OGN_FORMAT_VERSION = '1.0';
   const OGN_DOCUMENT_TYPE = 'open-graph-notation-document';
   const EXPORT_DIRECTORY_DB_NAME = 'graphlite-export-directory-v1';
@@ -288,6 +288,9 @@
     mainTenseSelect: document.getElementById('mainTenseSelect'),
     mainTenseSummary: document.getElementById('mainTenseSummary'),
     mainTenseName: document.getElementById('mainTenseName'),
+    mainSentenceFormMenu: document.getElementById('mainSentenceFormMenu'),
+    mainSentenceFormSummary: document.getElementById('mainSentenceFormSummary'),
+    mainSentenceVariantButtons: document.getElementById('mainSentenceVariantButtons'),
     mainVclusterFlipNote: document.getElementById('mainVclusterFlipNote'),
     mainBotChoice: document.getElementById('mainBotChoice'),
     mainBotSelect: document.getElementById('mainBotSelect'),
@@ -1303,6 +1306,7 @@
   let PUBLIC_ALLOWED_ITEM_IDS = null;
   let PUBLIC_ITEM_NUMBERS = new Map();
   let PUBLIC_ITEM_GROUPS = new Map();
+  let PUBLIC_ITEM_META = new Map();
 
   async function loadPublicTestmateriaalCatalog() {
     try {
@@ -1325,12 +1329,27 @@
       const items = Array.isArray(document?.items) ? document.items : [];
       PUBLIC_ITEM_NUMBERS = new Map();
       PUBLIC_ITEM_GROUPS = new Map();
+      PUBLIC_ITEM_META = new Map();
       items.forEach(item => {
         const sourceIds = Array.isArray(item.source_ids) && item.source_ids.length ? item.source_ids : [item.source_id];
+        const kernels = Array.isArray(item.kernels) ? item.kernels : [];
+        const kernelKey = kernels.length === 1
+          ? String(kernels[0]?.text || '').trim().toUpperCase().replace(/\s+/g, ' ')
+          : '';
         sourceIds.map(sourceId => String(sourceId || '').split(':').slice(1).join(':')).filter(Boolean)
           .forEach(id => {
             PUBLIC_ITEM_NUMBERS.set(id, Number(item.number));
             if (String(item.group_name || '').trim()) PUBLIC_ITEM_GROUPS.set(id, String(item.group_name).trim());
+            PUBLIC_ITEM_META.set(id, Object.freeze({
+              number: Number(item.number),
+              completion: String(item.completion || '').toUpperCase(),
+              form: String(item.form || '').toLowerCase(),
+              categoryName: String(item.category_name || ''),
+              kernelCount: kernels.length,
+              kernelKey,
+              originalInput: String(item.original_input || ''),
+              features: Array.isArray(item.features) ? [...item.features] : []
+            }));
           });
       });
       PUBLIC_ALLOWED_ITEM_IDS = new Set(items.flatMap(item => Array.isArray(item.source_ids) && item.source_ids.length ? item.source_ids : [item.source_id]).map(sourceId => String(sourceId || '').split(':').slice(1).join(':')).filter(Boolean));
@@ -1341,6 +1360,7 @@
       PUBLIC_ALLOWED_ITEM_IDS = null;
       PUBLIC_ITEM_NUMBERS = new Map();
       PUBLIC_ITEM_GROUPS = new Map();
+      PUBLIC_ITEM_META = new Map();
     }
   }
 
@@ -1360,6 +1380,76 @@
 
   function testmateriaalGroup(id, fallback) {
     return PUBLIC_ITEM_GROUPS.get(String(id || '')) || fallback;
+  }
+
+  function testmateriaalMeta(id) {
+    return PUBLIC_ITEM_META.get(String(id || '')) || null;
+  }
+
+  function testmateriaalKernelCount(id) {
+    const count = Number(testmateriaalMeta(id)?.kernelCount);
+    return Number.isInteger(count) ? count : null;
+  }
+
+  function testmateriaalKernelKey(id) {
+    return String(testmateriaalMeta(id)?.kernelKey || '').trim();
+  }
+
+  function testmateriaalCompletion(id) {
+    return String(testmateriaalMeta(id)?.completion || '').toUpperCase();
+  }
+
+  function testmateriaalPrimaryGroup(id) {
+    const meta = testmateriaalMeta(id);
+    if (!meta) return 'Anders · Complex';
+    if (meta.kernelCount === 1) return 'ZIN';
+    return meta.completion === 'AF' ? 'Anders · Complex' : 'Anders · Onaf';
+  }
+
+  function testmateriaalFormRank(id) {
+    const form = String(testmateriaalMeta(id)?.form || '');
+    return ({ simplex: 0, single: 0, vraagzin: 1, bijzin: 2 })[form] ?? 9;
+  }
+
+  function baseSingleKernelItemIds() {
+    const byKernel = new Map();
+    for (const id of PUBLIC_ALLOWED_ITEM_IDS || []) {
+      const meta = testmateriaalMeta(id);
+      if (!meta || meta.kernelCount !== 1 || !meta.kernelKey) continue;
+      const current = byKernel.get(meta.kernelKey);
+      if (!current) {
+        byKernel.set(meta.kernelKey, id);
+        continue;
+      }
+      const currentMeta = testmateriaalMeta(current);
+      const score = candidate => [
+        testmateriaalFormRank(candidate),
+        testmateriaalNumber(candidate) ?? Number.MAX_SAFE_INTEGER
+      ];
+      const [a1, a2] = score(id);
+      const [b1, b2] = score(current);
+      if (a1 < b1 || (a1 === b1 && a2 < b2)) byKernel.set(meta.kernelKey, id);
+    }
+    return new Set(byKernel.values());
+  }
+
+  function sentenceFormVariantsFor(id) {
+    const kernelKey = testmateriaalKernelKey(id);
+    if (!kernelKey) return [];
+    const baseIds = baseSingleKernelItemIds();
+    return [...(PUBLIC_ALLOWED_ITEM_IDS || [])]
+      .filter(candidate => testmateriaalKernelKey(candidate) === kernelKey && !baseIds.has(candidate))
+      .map(candidate => {
+        const meta = testmateriaalMeta(candidate) || {};
+        const form = String(meta.form || '');
+        const label = form === 'vraagzin'
+          ? 'Vraagzin'
+          : form === 'bijzin'
+            ? (String(meta.originalInput || '').trim().toUpperCase().startsWith('OMDAT ') ? 'Bijzin · omdat' : 'Bijzin · dat')
+            : (meta.categoryName || meta.originalInput || candidate);
+        return { id: candidate, label, number: meta.number ?? Number.MAX_SAFE_INTEGER, formRank: testmateriaalFormRank(candidate) };
+      })
+      .sort((left, right) => left.formRank - right.formRank || left.number - right.number || left.label.localeCompare(right.label, 'nl'));
   }
 
   let ALL_EXAMPLES = EXAMPLES.slice();
@@ -3221,7 +3311,15 @@
       if (!definition?.inputTense || definition.type === 'imperative-reflexive') return '';
       return `uiting:${definition.id}`;
     }
-    return String(state.example?.tenseFamily || '');
+    const declared = String(state.example?.tenseFamily || '').trim().toLowerCase();
+    if (declared) return declared;
+    const fallbackByItem = {
+      'hond-bijt-man': 'bijten',
+      'omdat-hond-man-bijt': 'bijten',
+      'vrouw-breit-trui': 'breien',
+      'muziek-ontroert-anna': 'ontroeren'
+    };
+    return fallbackByItem[canonicalItemId(state.example?.id)] || '';
   }
 
   function tenseIdFromUtteranceVariant(value) {
@@ -5738,6 +5836,9 @@
   function syncCanonicalItemUrl() {
     try {
       const url = new URL(window.location.href);
+      url.searchParams.set('source', SOURCE_BUILD);
+      url.searchParams.set('ogv', VERSION);
+      url.searchParams.delete('nocache');
       const mode = validPlacementMode(state.placementMode);
       if (mode === 'greedy-grow' || mode === 'random') {
         url.searchParams.set('app', mode);
@@ -7543,12 +7644,13 @@
         }, node.cat));
       } else {
         const isVclusterFlipBox = node.id === 'vp-perfectum' && node.label === 'V-CLUSTER';
+        const showVclusterFlip = isVclusterFlipBox && languageTreeVclusterActive();
         group.appendChild(svgEl('text', {
           x: cx,
-          y: isVclusterFlipBox ? cy - 4 : cy + 5,
+          y: showVclusterFlip ? cy - 4 : cy + 5,
           class: 'box-label'
         }, node.label));
-        if (isVclusterFlipBox) {
+        if (showVclusterFlip) {
           const clusterLabels = layout.nodes
             .filter(candidate => candidate.kind === 'leaf' && ['pv', 'vdw'].includes(String(candidate.source || '')))
             .map(candidate => String(candidate.label || '').trim().toUpperCase())
@@ -8635,13 +8737,7 @@
   }
 
   function stableEastProjectionAxisX(origin) {
-    const layouts = [getSouthAwareSyntaxLayout(), getSouthAwareFunctionalLayout()];
-    const maxX = Math.max(
-      ...layouts
-        .map(candidate => Number(candidate?.box?.maxX))
-        .filter(Number.isFinite)
-    );
-    return Number.isFinite(maxX) ? px(maxX, origin) + 118 : px(4, origin) + 118;
+    return stableVerticalProjectionAxes(origin).east;
   }
 
   function stableVerticalProjectionAxes(origin) {
@@ -8651,15 +8747,25 @@
     const maxX = boxes.length ? Math.max(...boxes.map(box => Number(box.maxX || 0))) : 4;
     const treeLeft = px(minX - SUBTREE_AXIS_ENVELOPE_X_PAD, origin);
     const treeRight = px(maxX + SUBTREE_AXIS_ENVELOPE_X_PAD, origin);
-    // Eén gereserveerde corridor voor beide standen. De grootste behoefte van
-    // LEX en SYNT bepaalt zowel links als rechts de aspositie; de boom blijft
-    // daardoor exact staan wanneer alleen West/Oost wisselt.
-    const corridor = Math.max(
-      118,
+    const lexSide = validLexAxisSide(state.lexAxisSide);
+    const lexOnEast = lexSide === 'east' || lexSide === 'south';
+    const lexCorridor = Math.max(
+      62,
       activeLexRenderRightReach() + LEX_TREE_CLEARANCE,
       activeLexRenderLeftReach() + LEX_TREE_CLEARANCE
     );
-    return { west: treeLeft - corridor, east: treeRight + corridor, treeLeft, treeRight, corridor };
+    const projectionCorridor = 42;
+    const westCorridor = lexOnEast ? projectionCorridor : lexCorridor;
+    const eastCorridor = lexOnEast ? lexCorridor : projectionCorridor;
+    return {
+      west: treeLeft - westCorridor,
+      east: treeRight + eastCorridor,
+      treeLeft,
+      treeRight,
+      corridor: Math.max(westCorridor, eastCorridor),
+      westCorridor,
+      eastCorridor
+    };
   }
 
   function projectedRuleRightEdge(layout, spec, origin, mode = 'syntax') {
@@ -9087,10 +9193,14 @@
     const logicalRight = treeCenterPx + logicalSpan / 2;
     const syntaxWidth = projectedRuleBoxWidth(treeSpec(), layouts[0], origin, 'syntax');
     const functionalWidth = projectedRuleBoxWidth(functionalSpec(), layouts[1], origin, 'functional');
-    const sideNeed = Math.max(activeLexRenderLeftReach(), activeLexRenderRightReach(), syntaxWidth + 22, functionalWidth + 22);
-    const left = Math.min(westAxisX - sideNeed, leftTreePx - 100, logicalLeft - 260);
+    const lexNeed = Math.max(activeLexRenderLeftReach(), activeLexRenderRightReach());
+    const ruleNeed = Math.max(syntaxWidth + 22, functionalWidth + 22);
+    const lexOnEast = ['east', 'south'].includes(validLexAxisSide(state.lexAxisSide));
+    const leftNeed = lexOnEast ? 42 : lexNeed;
+    const rightNeed = lexOnEast ? lexNeed : ruleNeed;
+    const left = Math.min(westAxisX - leftNeed, leftTreePx - 72, logicalLeft - 96);
     const top = Math.min(-180, topTreePx - 120);
-    const right = Math.max(eastAxisX + sideNeed, rightTreePx + 100, logicalRight + 260);
+    const right = Math.max(eastAxisX + rightNeed, rightTreePx + 72, logicalRight + 96);
     const bottom = Math.max(1120, southAxisY + 340, bottomTreePx + 360);
     return { x: left, y: top, w: right - left, h: bottom - top };
   }
@@ -9118,16 +9228,20 @@
     const southAxisY = py(union.maxY + 2.1, origin);
     const syntaxWidth = projectedRuleBoxWidth(treeSpec(), layouts[0], origin, 'syntax');
     const functionalWidth = projectedRuleBoxWidth(functionalSpec(), layouts[1], origin, 'functional');
-    const sideNeed = Math.max(activeLexRenderLeftReach(), activeLexRenderRightReach(), syntaxWidth + 22, functionalWidth + 22);
+    const lexNeed = Math.max(activeLexRenderLeftReach(), activeLexRenderRightReach());
+    const ruleNeed = Math.max(syntaxWidth + 22, functionalWidth + 22);
+    const lexOnEast = ['east', 'south'].includes(validLexAxisSide(state.lexAxisSide));
+    const leftNeed = lexOnEast ? 42 : lexNeed;
+    const rightNeed = lexOnEast ? lexNeed : ruleNeed;
     const logicalSequence = activeLogicalSlotSequence();
     const logicalSlots = logicalSequence.map(item => Number(item.logicalSlot)).filter(Number.isFinite);
     const logicalSpan = Math.max(1, Math.max(...logicalSlots) - Math.min(...logicalSlots)) * logAxisSlotPixels();
     const treeCenterPx = px((union.minX + union.maxX) / 2, origin);
     const logicalLeft = treeCenterPx - logicalSpan / 2;
     const logicalRight = treeCenterPx + logicalSpan / 2;
-    const left = Math.min(westAxisX - sideNeed, leftTreePx - 100, logicalLeft - 96);
+    const left = Math.min(westAxisX - leftNeed, leftTreePx - 72, logicalLeft - 64);
     const top = Math.min(-150, topTreePx - 150);
-    const right = Math.max(eastAxisX + sideNeed, logicalRight + 36) + 16;
+    const right = Math.max(eastAxisX + rightNeed, logicalRight + 36) + 8;
     const bottom = Math.max(910, southAxisY + 150, bottomTreePx + 140);
     return { x: left, y: top, w: right - left, h: bottom - top };
   }
@@ -11744,7 +11858,16 @@
     }
     const activeDefinition = activeUtteranceDefinition();
     if (els.mainCausalVerbChoice) els.mainCausalVerbChoice.hidden = true;
-    if (els.mainTenseChoice) els.mainTenseChoice.hidden = !activeTenseFamilyId();
+    if (els.mainTenseChoice) {
+      const showTense = !!activeTenseFamilyId();
+      els.mainTenseChoice.hidden = !showTense;
+      if (showTense) {
+        els.mainTenseChoice.removeAttribute('hidden');
+        els.mainTenseChoice.style.setProperty('display', 'block', 'important');
+      } else {
+        els.mainTenseChoice.style.removeProperty('display');
+      }
+    }
     if (els.mainBotChoice) els.mainBotChoice.hidden = !activeDefinition?.botVariant;
     if (els.mainActiveUtterance) els.mainActiveUtterance.hidden = directPlacementActive();
     if (multiOgnAnaphorActive()) {
@@ -12203,7 +12326,7 @@
   }
 
   function closeMainChoiceMenus(except = null) {
-    [els.mainSentenceMenu, els.mainAdverbMenu, els.mainTenseChoice, els.languageTreeViewPicker, els.mainViewMenu, els.sourceAxisMenu, els.mainExtraMenu, els.mainLanguageMenu, els.mainActionsMenu].forEach(menu => {
+    [els.mainSentenceMenu, els.mainAdverbMenu, els.mainTenseChoice, els.mainSentenceFormMenu, els.languageTreeViewPicker, els.mainViewMenu, els.sourceAxisMenu, els.mainExtraMenu, els.mainLanguageMenu, els.mainActionsMenu].forEach(menu => {
       if (menu && menu !== except) menu.open = false;
     });
   }
@@ -12272,8 +12395,8 @@
     if (els.mainSentenceSummary) {
       const utteranceMenu = multiOgnAnaphorActive();
       els.mainSentenceSummary.textContent = unifiedTestmateriaalCatalog
-        ? (isEnglish() ? 'Test material' : 'Testmateriaal')
-        : utteranceMenu ? (isEnglish() ? 'Utterance' : 'Uiting') : (isEnglish() ? 'Sentence' : 'Zin');
+        ? (isEnglish() ? 'SENTENCE' : 'ZIN')
+        : utteranceMenu ? (isEnglish() ? 'Utterance' : 'Uiting') : (isEnglish() ? 'Sentence' : 'ZIN');
       els.mainSentenceSummary.title = utteranceMenu
         ? (isEnglish() ? 'Choose a linked kernel-clause utterance' : 'Kies een uiting met verknoopte kernzinnen')
         : (isEnglish() ? 'Choose the sample sentence' : 'Kies de voorbeeldzin');
@@ -12402,14 +12525,92 @@
     ];
     const unique = new Map();
     candidates.forEach(option => { if (!unique.has(option.id)) unique.set(option.id, option); });
-    return [...unique.values()].sort((left, right) => {
+
+    const baseSingleIds = baseSingleKernelItemIds();
+    const visible = [...unique.values()].filter(option => {
+      const count = testmateriaalKernelCount(option.id);
+      if (count === 1) return baseSingleIds.has(option.id);
+      return true;
+    }).map(option => ({
+      ...option,
+      group: testmateriaalPrimaryGroup(option.id),
+      groupEn: testmateriaalPrimaryGroup(option.id) === 'ZIN'
+        ? 'SENTENCE'
+        : testmateriaalPrimaryGroup(option.id) === 'Anders · Onaf'
+          ? 'Other · incomplete'
+          : 'Other · complex'
+    }));
+
+    const groupRank = group => group === 'ZIN' ? 0 : group === 'Anders · Onaf' ? 1 : 2;
+    return visible.sort((left, right) => {
+      const groupDiff = groupRank(left.group) - groupRank(right.group);
+      if (groupDiff) return groupDiff;
       const leftNumber = testmateriaalNumber(left.id) ?? Number.MAX_SAFE_INTEGER;
       const rightNumber = testmateriaalNumber(right.id) ?? Number.MAX_SAFE_INTEGER;
       return leftNumber - rightNumber || String(left.label || left.title || left.id).localeCompare(String(right.label || right.title || right.id), 'nl');
     });
   }
 
+  function activeBaseSingleKernelId() {
+    const activeId = activeCanonicalItemId();
+    const key = testmateriaalKernelKey(activeId);
+    if (!key) return activeId;
+    const baseIds = baseSingleKernelItemIds();
+    return [...baseIds].find(id => testmateriaalKernelKey(id) === key) || activeId;
+  }
+
+  function renderSentenceFormVariants() {
+    if (els.mainSentenceFormSummary) {
+      els.mainSentenceFormSummary.textContent = isEnglish() ? 'Sentence form' : 'Zinsvorm';
+      els.mainSentenceFormSummary.title = isEnglish() ? 'Choose sentence form' : 'Kies de zinsvorm';
+    }
+    if (!els.mainSentenceVariantButtons) return;
+    const activeId = activeCanonicalItemId();
+    const baseId = activeBaseSingleKernelId();
+    const variants = testmateriaalKernelCount(baseId) === 1 ? sentenceFormVariantsFor(baseId) : [];
+    els.mainSentenceVariantButtons.replaceChildren();
+    if (els.mainSentenceFormMenu) els.mainSentenceFormMenu.hidden = variants.length === 0;
+    if (!variants.length) return;
+
+    const baseButton = document.createElement('button');
+    baseButton.type = 'button';
+    baseButton.textContent = 'Hoofdzin';
+    baseButton.className = 'main-sentence-variant-button';
+    baseButton.classList.toggle('active', activeId === baseId);
+    baseButton.setAttribute('aria-pressed', String(activeId === baseId));
+    baseButton.addEventListener('click', () => {
+      const family = activeTenseFamilyId();
+      const tense = family ? state.tenseByFamily[family] : '';
+      if (!activateCanonicalItem(baseId, { updateUrl: true, resetTenseToDefault: false })) return;
+      if (family && tense) state.tenseByFamily[family] = tense;
+      closeMainChoiceMenus();
+      render();
+    });
+    els.mainSentenceVariantButtons.appendChild(baseButton);
+
+    variants.forEach(variant => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.textContent = variant.label;
+      button.className = 'main-sentence-variant-button';
+      const selected = activeId === variant.id;
+      button.classList.toggle('active', selected);
+      button.setAttribute('aria-pressed', String(selected));
+      button.addEventListener('click', () => {
+        const family = activeTenseFamilyId();
+        const tense = family ? state.tenseByFamily[family] : '';
+        if (!activateCanonicalItem(variant.id, { updateUrl: true, resetTenseToDefault: false })) return;
+        const nextFamily = activeTenseFamilyId();
+        if (nextFamily && tense) state.tenseByFamily[nextFamily] = tense;
+        closeMainChoiceMenus();
+        render();
+      });
+      els.mainSentenceVariantButtons.appendChild(button);
+    });
+  }
+
   function syncControls() {
+    renderSentenceFormVariants();
     fillSelect(els.exampleSelect, EXAMPLES, state.example.id);
     fillSelect(els.desktopExampleSelect, EXAMPLES, state.example.id);
     fillSelect(els.mobileExampleSelect, mobileTestmateriaalOptions(), activeCanonicalItemId());
@@ -12554,26 +12755,51 @@
       : globalThis.OGNUtteranceKernels?.CAUSAL_VERB_VARIANTS;
     const verbVariants = (verbSource || []).map(item => ({ id: item.id, label: item.text, labelEn: item.text }));
     fillSelect(els.mainCausalVerbSelect, verbVariants, activeDefinition?.verbVariant || state.causalVerbVariant);
-    fillSelect(els.mainTenseSelect, TENSE_OPTIONS, activeTenseId());
     const activeTense = activeTenseId();
+    const activeSimpleTenseFamily = String(state.example?.tenseFamily || '');
+    const activeSimpleTenseForms = TENSE_FAMILIES[activeSimpleTenseFamily] || null;
+    const tenseSurface = tenseId => {
+      const form = activeSimpleTenseForms?.[tenseId];
+      if (!form) return '';
+      if (form.finite) return form.finite;
+      return [form.aux, form.participle].filter(Boolean).join(' … ');
+    };
+    const visibleTenseOptions = TENSE_OPTIONS.map(option => {
+      const surface = tenseSurface(option.id);
+      return surface ? { ...option, label: `${option.id.toUpperCase()} · ${surface}`, labelEn: `${option.id.toUpperCase()} · ${surface}` } : option;
+    });
+    fillSelect(els.mainTenseSelect, visibleTenseOptions, activeTense);
     document.querySelectorAll('[data-main-tense-choice]').forEach(button => {
-      const selected = button.getAttribute('data-main-tense-choice') === activeTense;
+      const tenseId = button.getAttribute('data-main-tense-choice');
+      const selected = tenseId === activeTense;
+      const surface = tenseSurface(tenseId);
+      button.textContent = surface ? `${tenseId.toUpperCase()} · ${surface}` : tenseId.toUpperCase();
+      button.title = surface ? `${tenseId.toUpperCase()} · ${surface}` : button.title;
       button.classList.toggle('active', selected);
       button.setAttribute('aria-pressed', String(selected));
     });
     if (els.mainTenseName) {
       const option = TENSE_OPTIONS.find(item => item.id === activeTense);
-      els.mainTenseName.textContent = option ? (isEnglish() ? option.labelEn : option.label).replace(/^\S+\s+—\s+/, '') : '';
+      const surface = tenseSurface(activeTense);
+      const tenseName = option ? (isEnglish() ? option.labelEn : option.label).replace(/^\S+\s+—\s+/, '') : '';
+      els.mainTenseName.textContent = [surface, tenseName].filter(Boolean).join(' · ');
     }
-    if (els.mainTenseSummary) els.mainTenseSummary.textContent = 'Varianten';
+    if (els.mainSentenceSummary) els.mainSentenceSummary.textContent = isEnglish() ? 'SENTENCE' : 'ZIN';
+    if (els.mainSentenceFormSummary) els.mainSentenceFormSummary.textContent = isEnglish() ? 'Sentence form' : 'Zinsvorm';
+    if (els.mainTenseSummary) {
+      const surface = tenseSurface(activeTense);
+      els.mainTenseSummary.textContent = activeTense
+        ? `Tijd · ${surface || activeTense.toUpperCase()}`
+        : 'Tijd';
+    }
     if (els.mainVclusterFlipNote) {
       const clusterItems = baseActiveLexItems()
         .filter(item => item.source === 'pv' || item.source === 'vdw' || item.role === 'aux' || item.role === 'participle');
       const labels = clusterItems.map(item => String(item.label || '').trim().toUpperCase()).filter(Boolean);
       const unique = [...new Set(labels)];
-      const hasCluster = unique.length >= 2;
-      els.mainVclusterFlipNote.hidden = !hasCluster;
-      els.mainVclusterFlipNote.textContent = hasCluster
+      const flipActive = unique.length >= 2 && languageTreeVclusterActive();
+      els.mainVclusterFlipNote.hidden = !flipActive;
+      els.mainVclusterFlipNote.textContent = flipActive
         ? `In V-CLUSTER: FLIP ↔ · ${unique[0]} ↔ ${unique[1]}`
         : 'In V-CLUSTER: FLIP ↔';
     }
@@ -18734,7 +18960,7 @@
       setProjection(event.target.value || 'axes');
       render();
     });
-    [els.mainSentenceMenu, els.mainAdverbMenu, els.mainViewMenu, els.sourceAxisMenu, els.mainExtraMenu, els.mainLanguageMenu, els.mainActionsMenu].forEach(menu => {
+    [els.mainSentenceMenu, els.mainAdverbMenu, els.mainSentenceFormMenu, els.mainViewMenu, els.sourceAxisMenu, els.mainExtraMenu, els.mainLanguageMenu, els.mainActionsMenu].forEach(menu => {
       menu?.addEventListener('toggle', () => { if (menu.open) closeMainChoiceMenus(menu); });
     });
     els.mainSentenceMenu?.addEventListener('toggle', () => {
