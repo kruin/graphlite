@@ -96,10 +96,16 @@
 </div>
 </details>
 <nav aria-label="Topmenu" class="main-top-menu">
-<details class="compact-choice-menu main-tense-menu top-menu-item" hidden id="mainTenseChoice">
-<summary id="mainTenseSummary" title="Toon en kies de werkwoordvariant">Varianten</summary>
+<details class="compact-choice-menu main-sentence-menu top-menu-item" id="mainSentenceMenu">
+<summary id="mainSentenceSummary" title="Kies de voorbeeldzin">Zin</summary>
+<div aria-label="Voorbeeldzin kiezen" class="compact-choice-popover top-menu-popover top-menu-sentence-popover">
+<div aria-label="Voorbeeldzin kiezen" class="compact-choice-list main-menu-option-list" id="mainSentenceOptions" role="listbox" tabindex="0"></div>
+</div>
+</details>
+<details class="compact-choice-menu main-tense-menu top-menu-item" id="mainTenseChoice">
+<summary id="mainTenseSummary" title="Toon en kies de tijdsvariant">Tijd</summary>
 <div class="compact-choice-popover top-menu-popover main-tense-popover">
-<strong>Werkwoordvarianten</strong>
+<strong>Tijd</strong>
 <div aria-label="Nederlandse werkwoordstijd" class="main-tense-buttons" id="mainTenseButtons" role="group">
 <button data-main-tense-choice="ott" title="OTT — onvoltooid tegenwoordige tijd" type="button">OTT</button>
 <button data-main-tense-choice="ovt" title="OVT — onvoltooid verleden tijd" type="button">OVT</button>
@@ -111,10 +117,11 @@
 <select aria-hidden="true" class="main-control-select-compat" id="mainTenseSelect" tabindex="-1"></select>
 </div>
 </details>
-<details class="compact-choice-menu main-sentence-menu top-menu-item" id="mainSentenceMenu">
-<summary id="mainSentenceSummary" title="Kies de voorbeeldzin">Zin</summary>
-<div aria-label="Voorbeeldzin kiezen" class="compact-choice-popover top-menu-popover top-menu-sentence-popover">
-<div aria-label="Voorbeeldzin kiezen" class="compact-choice-list main-menu-option-list" id="mainSentenceOptions" role="listbox" tabindex="0"></div>
+<details class="compact-choice-menu main-sentence-form-menu top-menu-item" id="mainSentenceFormMenu">
+<summary id="mainSentenceFormSummary" title="Kies de zinsvorm">Zinsvorm</summary>
+<div class="compact-choice-popover top-menu-popover main-sentence-form-popover">
+<strong>Zinsvorm</strong>
+<div class="main-sentence-variant-buttons" id="mainSentenceVariantButtons" role="group" aria-label="Zinsvormvarianten"></div>
 </div>
 </details>
 <details class="compact-choice-menu main-adverb-menu top-menu-item" data-feature="adverbs" hidden="" id="mainAdverbMenu">
@@ -1105,6 +1112,6 @@
 <script defer="" src="multi-ogn-anaphor-play-engine.js?v3.1.0-rc.10"></script>
 <script defer="" src="multi-ogn-composition-engine.js?v3.1.0-rc.10"></script>
 <script defer="" src="utterance-kernel-engine.js?v3.1.0-rc.10"></script>
-<script defer="" src="viewer.js?v3.1.0-rc.10&amp;source=github-direct-prod-20261101.2"></script>
+<script defer="" src="viewer.js?v3.1.0-rc.10&amp;source=github-direct-prod-20261101.3"></script>
 </body>
 </html>
