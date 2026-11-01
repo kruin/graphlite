@@ -288,6 +288,7 @@
     mainTenseSelect: document.getElementById('mainTenseSelect'),
     mainTenseSummary: document.getElementById('mainTenseSummary'),
     mainTenseName: document.getElementById('mainTenseName'),
+    mainVclusterFlipNote: document.getElementById('mainVclusterFlipNote'),
     mainBotChoice: document.getElementById('mainBotChoice'),
     mainBotSelect: document.getElementById('mainBotSelect'),
     metaLine: document.getElementById('metaLine'),
@@ -6323,7 +6324,7 @@
       // Ook landschap en een geforceerde Desktop-interface op een telefoon
       // moeten de volledige LEX-inhoud links en regelboxen rechts bevatten.
       const left = westAxis - activeLexRenderLeftReach();
-      const eastAxisRight = px(union.maxX, origin) + 118;
+      const eastAxisRight = px(union.maxX, origin) + 32;
       // v3.1.0-rc.10: in portret hoort niet alleen de groene SYNT-as, maar
       // ook de volledige regelbox rechts ervan in de eerste MAX-fit. Gebruik
       // de unie van Syntax en Functional zodat een viewwissel niet verspringt.
@@ -7408,8 +7409,11 @@
         group.setAttribute('role', 'button');
         group.setAttribute('tabindex', '0');
         group.setAttribute('aria-label', isEnglish()
-          ? 'Flip the two members of V-CLUSTER'
-          : 'Verwissel de twee leden van V-CLUSTER');
+          ? 'V-CLUSTER: click to Flip the two members'
+          : 'V-CLUSTER: klik voor Flip van de twee leden');
+        group.setAttribute('title', isEnglish()
+          ? 'Click: Flip V-cluster'
+          : 'Klik: Flip V-cluster');
         group.addEventListener('click', event => {
           event.preventDefault();
           event.stopPropagation();
@@ -7546,7 +7550,27 @@
           class: 'node-sub-label'
         }, node.cat));
       } else {
-        group.appendChild(svgEl('text', { x: cx, y: cy + 5, class: 'box-label' }, node.label));
+        const isVclusterFlipBox = node.id === 'vp-perfectum' && node.label === 'V-CLUSTER';
+        group.appendChild(svgEl('text', {
+          x: cx,
+          y: isVclusterFlipBox ? cy - 4 : cy + 5,
+          class: 'box-label'
+        }, node.label));
+        if (isVclusterFlipBox) {
+          const clusterLabels = layout.nodes
+            .filter(candidate => candidate.kind === 'leaf' && ['pv', 'vdw'].includes(String(candidate.source || '')))
+            .map(candidate => String(candidate.label || '').trim().toUpperCase())
+            .filter(Boolean);
+          group.appendChild(svgEl('text', {
+            x: cx,
+            y: cy + 15,
+            class: 'vcluster-flip-marker',
+            'data-vcluster-flip': clusterLabels.join('-').toLowerCase(),
+            'aria-label': clusterLabels.length >= 2
+              ? `Flip ${clusterLabels[0]} en ${clusterLabels[1]}`
+              : 'Flip V-cluster'
+          }, 'FLIP ↔'));
+        }
       }
       labelLayer.appendChild(group);
     }
@@ -9111,7 +9135,7 @@
     const logicalRight = treeCenterPx + logicalSpan / 2;
     const left = Math.min(westAxisX - sideNeed, leftTreePx - 100, logicalLeft - 96);
     const top = Math.min(-150, topTreePx - 150);
-    const right = Math.max(eastAxisX + sideNeed, logicalRight + 150) + 72;
+    const right = Math.max(eastAxisX + sideNeed, logicalRight + 36) + 16;
     const bottom = Math.max(910, southAxisY + 150, bottomTreePx + 140);
     return { x: left, y: top, w: right - left, h: bottom - top };
   }
@@ -9131,8 +9155,8 @@
       h: frame.h + margin * 2
     };
     const extra = portrait
-      ? { left: fit.w * 0.018, top: fit.h * 0.034, right: fit.w * 0.045, bottom: fit.h * 0.20 }
-      : { left: fit.w * 0.018, top: fit.h * 0.034, right: fit.w * 0.18, bottom: fit.h * 0.14 };
+      ? { left: fit.w * 0.018, top: fit.h * 0.034, right: fit.w * 0.022, bottom: fit.h * 0.20 }
+      : { left: fit.w * 0.018, top: fit.h * 0.034, right: fit.w * 0.035, bottom: fit.h * 0.14 };
     const configuredLeftMargin = frame.w * validCanvasLeftMarginPercent(state.canvasLeftMarginPercent) / 100;
     const expanded = {
       x: fit.x - extra.left - configuredLeftMargin,
@@ -12581,6 +12605,17 @@
       els.mainTenseSummary.textContent = activeTense
         ? `Varianten · ${surface || activeTense.toUpperCase()}`
         : 'Varianten';
+    }
+    if (els.mainVclusterFlipNote) {
+      const clusterItems = baseActiveLexItems()
+        .filter(item => item.source === 'pv' || item.source === 'vdw' || item.role === 'aux' || item.role === 'participle');
+      const labels = clusterItems.map(item => String(item.label || '').trim().toUpperCase()).filter(Boolean);
+      const unique = [...new Set(labels)];
+      const hasCluster = unique.length >= 2;
+      els.mainVclusterFlipNote.hidden = !hasCluster;
+      els.mainVclusterFlipNote.textContent = hasCluster
+        ? `In V-CLUSTER: FLIP ↔ · ${unique[0]} ↔ ${unique[1]}`
+        : 'In V-CLUSTER: FLIP ↔';
     }
     const botVariants = (globalThis.OGNUtteranceKernels?.BOT_VARIANTS || []).map(item => ({ id: item.id, label: item.text, labelEn: item.text }));
     fillSelect(els.mainBotSelect, botVariants, state.botVariant);
