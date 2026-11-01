@@ -9402,6 +9402,7 @@ body.main-screen-active #graphSvg .syntax-tree-edge {
 #graphSvg .tree-node.utterance-configurable-node .category-box {
   fill: rgba(185, 28, 28, .055);
   stroke-dasharray: 6 4;
+  animation: vclusterFlipPulse 1.6s ease-in-out infinite;
 }
 
 #graphSvg .tree-node.utterance-configurable-node + .tree-node.utterance-configurable-node {
@@ -9409,11 +9410,11 @@ body.main-screen-active #graphSvg .syntax-tree-edge {
 }
 
 #graphSvg .vcluster-flip-marker {
-  animation: vclusterFlipPulse 1.6s ease-in-out infinite;
+  animation: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  #graphSvg .vcluster-flip-marker {
+  #graphSvg .tree-node.utterance-configurable-node .category-box {
     animation: none;
   }
 }
