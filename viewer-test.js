@@ -11855,7 +11855,10 @@
     const activeDefinition = activeUtteranceDefinition();
     if (els.mainCausalVerbChoice) els.mainCausalVerbChoice.hidden = true;
     if (els.mainTenseChoice) {
-      const showVariants = !!activeTenseFamilyId();
+      const baseVariantId = activeBaseSingleKernelId();
+      const hasSentenceFormVariants = testmateriaalKernelCount(baseVariantId) === 1
+        && sentenceFormVariantsFor(baseVariantId).length > 0;
+      const showVariants = !!activeTenseFamilyId() || hasSentenceFormVariants;
       els.mainTenseChoice.hidden = !showVariants;
       if (showVariants) {
         els.mainTenseChoice.removeAttribute('hidden');
