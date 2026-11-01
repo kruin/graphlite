@@ -2,7 +2,7 @@
   'use strict';
 
   const VERSION = 'v3.1.0-rc.10';
-  const SOURCE_BUILD = 'v3.1.0-rc.10-github-direct-test-20261101.2';
+  const SOURCE_BUILD = 'v3.1.0-rc.10-github-direct-test-20261101.3';
   const OGN_FORMAT_VERSION = '1.0';
   const OGN_DOCUMENT_TYPE = 'open-graph-notation-document';
   const EXPORT_DIRECTORY_DB_NAME = 'graphlite-export-directory-v1';
@@ -12562,8 +12562,8 @@
     if (els.mainTenseSummary) {
       const surface = tenseSurface(activeTense);
       els.mainTenseSummary.textContent = activeTense
-        ? `Tijd · ${activeTense.toUpperCase()}${surface ? ` · ${surface}` : ''}`
-        : 'Tijd';
+        ? `Varianten · ${surface || activeTense.toUpperCase()}`
+        : 'Varianten';
     }
     const botVariants = (globalThis.OGNUtteranceKernels?.BOT_VARIANTS || []).map(item => ({ id: item.id, label: item.text, labelEn: item.text }));
     fillSelect(els.mainBotSelect, botVariants, state.botVariant);
