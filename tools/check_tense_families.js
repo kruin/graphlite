@@ -119,7 +119,9 @@ for (const [name, html] of [['index.html', index], ['viewer.html', viewerHtml]])
   const topMenu = html.indexOf('class="main-top-menu"');
   const inputBar = html.indexOf('id="mainActiveUtterance"');
   assert.ok(menu > topMenu && menu < inputBar, `${name}: tijdskeuze staat niet in het vaste topmenu`);
-  assert.ok(html.includes('id="mainTenseSummary"'), `${name}: zichtbare samenvatting Tijd · OTT ontbreekt`);
+  assert.ok(html.includes('id="mainTenseSummary"'), `${name}: zichtbare samenvatting Varianten ontbreekt`);
+  assert.ok(html.includes('>Varianten</summary>'), `${name}: Varianten blijft niet zichtbaar in het hoofdmenu`);
+  assert.ok(html.includes('id="mainVclusterFlipNote"'), `${name}: V-cluster Flip-markering ontbreekt`);
 }
 assert.ok(viewer.includes("button.addEventListener('click', () => updateActiveTense"), 'tijdsvormknoppen zijn niet functioneel gekoppeld');
 assert.ok(viewer.includes('const inputText = multiOgnAnaphorActive() ? analysisEnvelope(inputSource).originalInput : activeSentenceText();'), 'actieve tijdsvorm verschijnt niet als input');
