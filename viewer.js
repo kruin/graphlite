@@ -7401,8 +7401,11 @@
         group.setAttribute('role', 'button');
         group.setAttribute('tabindex', '0');
         group.setAttribute('aria-label', isEnglish()
-          ? 'Flip the two members of V-CLUSTER'
-          : 'Verwissel de twee leden van V-CLUSTER');
+          ? 'V-CLUSTER: click to Flip the two members'
+          : 'V-CLUSTER: klik voor Flip van de twee leden');
+        group.setAttribute('title', isEnglish()
+          ? 'Click: Flip V-cluster'
+          : 'Klik: Flip V-cluster');
         group.addEventListener('click', event => {
           event.preventDefault();
           event.stopPropagation();
@@ -7558,7 +7561,7 @@
             'aria-label': clusterLabels.length >= 2
               ? `Flip ${clusterLabels[0]} en ${clusterLabels[1]}`
               : 'Flip V-cluster'
-          }, 'FLIP'));
+          }, 'FLIP ↔'));
         }
       }
       labelLayer.appendChild(group);
@@ -12571,8 +12574,8 @@
       const hasCluster = unique.length >= 2;
       els.mainVclusterFlipNote.hidden = !hasCluster;
       els.mainVclusterFlipNote.textContent = hasCluster
-        ? `V-cluster · Flip: ${unique[0]} ↔ ${unique[1]}`
-        : 'V-cluster · Flip';
+        ? `In V-CLUSTER: FLIP ↔ · ${unique[0]} ↔ ${unique[1]}`
+        : 'In V-CLUSTER: FLIP ↔';
     }
     const botVariants = (globalThis.OGNUtteranceKernels?.BOT_VARIANTS || []).map(item => ({ id: item.id, label: item.text, labelEn: item.text }));
     fillSelect(els.mainBotSelect, botVariants, state.botVariant);
