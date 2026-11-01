@@ -126,3 +126,8 @@ for (const [name, html] of [['index.html', index], ['viewer.html', viewerHtml]])
 assert.ok(viewer.includes("button.addEventListener('click', () => updateActiveTense"), 'tijdsvormknoppen zijn niet functioneel gekoppeld');
 assert.ok(viewer.includes('const inputText = multiOgnAnaphorActive() ? analysisEnvelope(inputSource).originalInput : activeSentenceText();'), 'actieve tijdsvorm verschijnt niet als input');
 console.log('TIJDSFAMILIES CHECK: OK (ontroeren; HEBBEN en ZIJN; K1→K2/K3-synchronisatie; V-clusterbomen; VVT-flip)');
+
+assert.ok(source.includes('function baseSingleKernelItemIds()'), 'basislijst per kernzin ontbreekt');
+assert.ok(source.includes("return meta.completion === 'AF' ? 'Anders · Complex' : 'Anders · Onaf';"), 'Anders-groepering op kernzintelling/completion ontbreekt');
+assert.ok(source.includes('function sentenceFormVariantsFor(id)'), 'zinsvormvarianten ontbreken');
+assert.ok(source.includes('function renderSentenceFormVariants()'), 'Varianten-menu toont zinsvormen niet');
