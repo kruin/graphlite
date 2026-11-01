@@ -54,29 +54,35 @@
 <link href="icons/icon-192.svg" rel="icon" type="image/svg+xml"/>
 <!-- v4552: manifest disabled in local/dev build to avoid PWA/service-worker confusion. -->
 <!-- <link rel="manifest" href="manifest.webmanifest"> -->
-<link href="styles.css?v3.1.0-rc.10&amp;source=github-direct-test-20261101.17" rel="stylesheet"/>
+<link href="styles.css?v3.1.0-rc.10&amp;source=github-direct-test-20261101.18" rel="stylesheet"/>
 <script defer src="docs/html-doc-links.js?v3.1.0-rc.10"></script>
 <!-- TEST_VARIANTS_MENU_VISIBILITY -->
 <style>
 /* Test: Varianten blijft zichtbaar in het compacte hoofdmenu. */
 body.mobile-menu-basic.main-screen-active .main-top-menu {
-  grid-template-columns: minmax(0, 1.15fr) repeat(4, minmax(0, .72fr)) !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
 }
-body.mobile-menu-basic.main-screen-active .main-top-menu > #mainTenseChoice {
+body.mobile-menu-basic.main-screen-active .main-top-menu > #mainTenseChoice,
+body.mobile-menu-basic.main-screen-active .main-top-menu > #mainSentenceFormMenu {
   display: block !important;
-  grid-row: 1 !important;
-  grid-column: auto !important;
-}
-body.mobile-menu-basic.main-screen-active .main-top-menu > #mainTenseChoice > summary {
+  flex: 0 0 auto !important;
+  width: max-content !important;
   min-width: 0 !important;
-  width: 100% !important;
+  max-width: max-content !important;
+}
+body.mobile-menu-basic.main-screen-active .main-top-menu > #mainTenseChoice > summary,
+body.mobile-menu-basic.main-screen-active .main-top-menu > #mainSentenceFormMenu > summary {
+  min-width: 0 !important;
+  width: max-content !important;
+  max-width: max-content !important;
   min-height: 1.62rem !important;
   height: 1.62rem !important;
   padding: .06rem .12rem !important;
   font-size: .57rem !important;
   line-height: 1 !important;
 }
-body.mobile-menu-basic.main-screen-active .main-top-menu > :not(#mainSentenceMenu):not(#mainTenseChoice):not(#mainLanguageMenu):not(#openHelpButton):not(#openConfigButton) {
+body.mobile-menu-basic.main-screen-active .main-top-menu > :not(#mainSentenceMenu):not(#mainTenseChoice):not(#mainSentenceFormMenu):not(#mainLanguageMenu):not(#openHelpButton):not(#openConfigButton) {
   display: none !important;
 }
 </style>
@@ -1136,6 +1142,6 @@ body.mobile-menu-basic.main-screen-active .main-top-menu > :not(#mainSentenceMen
 <script defer="" src="multi-ogn-anaphor-play-engine.js?v3.1.0-rc.10"></script>
 <script defer="" src="multi-ogn-composition-engine.js?v3.1.0-rc.10"></script>
 <script defer="" src="utterance-kernel-engine.js?v3.1.0-rc.10"></script>
-<script defer="" src="viewer-test.js?v3.1.0-rc.10&amp;source=github-direct-test-20261101.17"></script>
+<script defer="" src="viewer-test.js?v3.1.0-rc.10&amp;source=github-direct-test-20261101.18"></script>
 </body>
 </html>
