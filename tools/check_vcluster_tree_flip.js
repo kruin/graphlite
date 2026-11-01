@@ -99,3 +99,17 @@ assert.deepEqual(
 
 assert.ok(viewer.includes('functionalPredicateRealization(labels)'), 'Functional gebruikt de V-clusterrealisatie niet');
 console.log('FUNCTIONAL V-CLUSTER CHECK: OK (PRED -> V-CLUSTER -> VDW AUX)');
+
+assert.ok(
+  viewer.includes("class: 'vcluster-flip-marker'"),
+  'zichtbare FLIP-markering ontbreekt in de V-CLUSTER-rendering'
+);
+assert.ok(
+  viewer.includes("'data-vcluster-flip': 'heeft-gebeten'"),
+  'HEEFT/GEBETEN-marker ontbreekt in de V-CLUSTER-rendering'
+);
+assert.ok(
+  viewer.includes("'FLIP: HEEFT ↔ GEBETEN'"),
+  'tekst FLIP: HEEFT ↔ GEBETEN ontbreekt'
+);
+console.log('V-CLUSTER FLIP MARKER CHECK: OK (FLIP: HEEFT ↔ GEBETEN)');
