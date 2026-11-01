@@ -109,7 +109,10 @@ assert.ok(
   'V-CLUSTER Flip-marker mist de clusterleden'
 );
 assert.ok(
-  viewer.includes("}, 'FLIP')"),
+  viewer.includes("}, 'FLIP ↔')"),
   'zichtbare tekst FLIP ontbreekt in de V-CLUSTER-box'
 );
 console.log('V-CLUSTER FLIP MARKER CHECK: OK (FLIP staat in de V-CLUSTER-box)');
+
+assert.ok(viewer.includes("Klik: Flip V-cluster"), 'hovertekst voor V-CLUSTER Flip ontbreekt');
+assert.ok(viewer.includes("In V-CLUSTER: FLIP ↔"), 'UI-hint In V-CLUSTER: FLIP ontbreekt');
