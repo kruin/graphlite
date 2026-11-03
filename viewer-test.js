@@ -2,7 +2,7 @@
   'use strict';
 
   const VERSION = 'v3.1.0-rc.10';
-  const SOURCE_BUILD = 'v3.1.0-rc.10-github-direct-test-20261103.19';
+  const SOURCE_BUILD = 'v3.1.0-rc.10-github-direct-test-20261103.20';
   const OGN_FORMAT_VERSION = '1.0';
   const OGN_DOCUMENT_TYPE = 'open-graph-notation-document';
   const EXPORT_DIRECTORY_DB_NAME = 'graphlite-export-directory-v1';
@@ -12800,8 +12800,8 @@
       const flipActive = unique.length >= 2 && languageTreeVclusterActive();
       els.mainVclusterFlipNote.hidden = !flipActive;
       els.mainVclusterFlipNote.textContent = flipActive
-        ? `In V-CLUSTER: FLIP ↔ · ${unique[0]} ↔ ${unique[1]}`
-        : 'In V-CLUSTER: FLIP ↔';
+        ? `FLIP V-CLUSTER ↔ · ${unique[0]} ↔ ${unique[1]}`
+        : 'FLIP V-CLUSTER ↔';
     }
     const botVariants = (globalThis.OGNUtteranceKernels?.BOT_VARIANTS || []).map(item => ({ id: item.id, label: item.text, labelEn: item.text }));
     fillSelect(els.mainBotSelect, botVariants, state.botVariant);
