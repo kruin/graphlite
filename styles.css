@@ -9316,12 +9316,15 @@ body.main-screen-active #graphSvg .syntax-tree-edge {
 }
 
 #graphSvg .vcluster-flip-marker {
-  fill:#b91c1c;
-  font-size:14px;
+  fill:#991b1b;
+  font-size:18px;
   font-weight:950;
-  letter-spacing:.06em;
+  letter-spacing:.08em;
   text-anchor:middle;
   pointer-events:none;
+  paint-order:stroke;
+  stroke:#fff;
+  stroke-width:4px;
 }
 @keyframes utteranceFlipNodeFlash {
   0%,100% { filter:drop-shadow(0 0 0 rgba(245,158,11,0)); opacity:1; }
@@ -9381,14 +9384,18 @@ body.main-screen-active #graphSvg .syntax-tree-edge {
 
 
 .main-vcluster-flip-note {
-  margin-top:8px;
-  padding:6px 8px;
-  border-radius:6px;
-  font-size:12px;
-  font-weight:800;
-  line-height:1.25;
-  background:#fff7ed;
-  border:1px solid #fdba74;
+  margin-top:10px;
+  padding:8px 12px;
+  border-radius:999px;
+  font-size:14px;
+  font-weight:950;
+  line-height:1.15;
+  letter-spacing:.045em;
+  text-align:center;
+  background:#fff1f2;
+  color:#991b1b;
+  border:2px solid #dc2626;
+  box-shadow:0 0 0 3px rgba(220,38,38,.10);
 }
 
 
