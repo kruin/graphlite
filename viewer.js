@@ -12789,8 +12789,8 @@
     if (els.mainTenseSummary) {
       const surface = tenseSurface(activeTense);
       els.mainTenseSummary.textContent = activeTense
-        ? `Tijd · ${surface || activeTense.toUpperCase()}`
-        : 'Tijd';
+        ? `Tempus · ${surface || activeTense.toUpperCase()}`
+        : 'Tempus';
     }
     if (els.mainVclusterFlipNote) {
       const clusterItems = baseActiveLexItems()
