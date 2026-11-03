@@ -2,7 +2,7 @@
   'use strict';
 
   const VERSION = 'v3.1.0-rc.10';
-  const SOURCE_BUILD = 'v3.1.0-rc.10-github-direct-prod-20261101.3';
+  const SOURCE_BUILD = 'v3.1.0-rc.10-github-direct-prod-20261103.4';
   const OGN_FORMAT_VERSION = '1.0';
   const OGN_DOCUMENT_TYPE = 'open-graph-notation-document';
   const EXPORT_DIRECTORY_DB_NAME = 'graphlite-export-directory-v1';
