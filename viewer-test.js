@@ -11779,6 +11779,42 @@
     });
   }
 
+  // Test-only LEX growth: duration follows the active tree playback step.
+  let lexGrowthPrevious = new Set();
+  function animateLexGrowth() {
+    const paths = Array.from(els.svg.querySelectorAll('.lex-wissel-line, .utterance-lex-movement'));
+    const next = new Set();
+    const duration = multiOgnAnaphorActive() ? 1200 : 700;
+    const enabled = localStorage.getItem('ogn-test-growing-lex') !== 'off';
+    paths.forEach((path, index) => {
+      const key = index + ':' + path.getAttribute('d');
+      next.add(key);
+      if (!enabled || lexGrowthPrevious.has(key) || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      const length = path.getTotalLength();
+      if (!length) return;
+      const head = path.nextElementSibling?.matches('polygon') ? path.nextElementSibling :
+        path.nextElementSibling?.nextElementSibling?.matches('polygon') ? path.nextElementSibling.nextElementSibling : null;
+      const original = head?.getAttribute('points');
+      const start = performance.now();
+      path.style.strokeDasharray = length + ' ' + length;
+      function frame(now) {
+        if (!path.isConnected) return;
+        const p = Math.min(1, (now - start) / duration);
+        const distance = length * p;
+        path.style.strokeDashoffset = String(length - distance);
+        if (head && original) {
+          const tip = path.getPointAtLength(distance);
+          const end = path.getPointAtLength(length);
+          head.setAttribute('transform', 'translate(' + (tip.x-end.x) + ' ' + (tip.y-end.y) + ')');
+        }
+        if (p < 1) requestAnimationFrame(frame);
+        else { path.style.strokeDasharray = 'none'; path.style.strokeDashoffset = '0'; head?.removeAttribute('transform'); }
+      }
+      requestAnimationFrame(frame);
+    });
+    lexGrowthPrevious = next;
+  }
+
   function render() {
     try {
       syncMobileMenuProfile();
@@ -11794,6 +11830,7 @@
       else if (state.projection === 'log') drawLog();
       else drawAxes();
       applyLexAxisOrientation();
+      animateLexGrowth();
       applyViewBoxFit(false);
       syncMobileCanvasHeight(parseViewBox());
       renderSideLists();
