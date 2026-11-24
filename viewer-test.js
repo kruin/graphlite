@@ -7260,7 +7260,7 @@
     lexRulePending = true;
     const dialog = document.createElement('dialog');
     dialog.style.cssText='max-width:min(90vw,420px);padding:20px;border:1px solid #64748b;border-radius:12px;color:#0f172a;background:white';
-    const title=document.createElement('h3'); title.textContent=`UP${value-start+1} · ${info.name}`;
+    const title=document.createElement('h3'); title.textContent=`up${info.name}`;
     const body=document.createElement('p'); body.textContent=info.explanation+' '+(isEnglish()?'Only the lexical projection changes; the tree stays intact.':'Alleen de lexicale projectie verandert; de boom blijft intact.');
     const button=document.createElement('button'); button.textContent=(isEnglish()?'Execute ':'Uitvoeren ')+info.name; button.disabled=true;
     dialog.append(title,body,button); document.body.append(dialog);
@@ -8437,7 +8437,7 @@
     const safeLane = Math.max(0, lane);
     const color = ['#2563eb','#c2410c','#047857','#9333ea','#be185d','#0e7490'][safeLane % 6];
     const reach = LEX_MOVEMENT_CURVE_REACH + safeLane * 18;
-    const upName = `UP${safeLane + 1}`;
+    const upName = `up${String(label).replace(/^Wissel /,'').toUpperCase()}`;
     const outward = axisSide === 'east' ? -1 : 1;
     const sideX = x + outward * (LEX_MOVEMENT_LANE_START + (safeLane % 4) * LEX_MOVEMENT_LANE_STEP);
     const displayDirection = 'up';
@@ -8457,7 +8457,7 @@
       x: sideX + outward * LEX_MOVEMENT_LABEL_OFFSET,
       y: (fromY + toY) / 2 + 4,
       class: 'lex-wissel-step-label', style: `fill:${color}!important`
-    }, lexRuleConfig().keep ? `${upName} · ${label.replace(/^Wissel /,'')}` : upName));
+    }, lexRuleConfig().keep ? upName : ''));
     g.appendChild(group);
   }
 
