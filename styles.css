@@ -9537,3 +9537,8 @@ body.viewport-mobile-test.main-screen-active .main-top-menu > .top-menu-action {
   min-width:0 !important;
   max-width:max-content !important;
 }
+
+/* LEX movement emphasis */
+body.main-screen-active .lex-wissel-line, #graphSvg .utterance-lex-movement, .lex-wissel-line { stroke-width: 4px !important; opacity: 1 !important; stroke-dasharray: none; stroke-linecap: round; fill: none; vector-effect: non-scaling-stroke; }
+.lex-wissel-arrow { stroke: #1d4ed8; stroke-width: 1.5px; stroke-linejoin: round; }
+#graphSvg .utterance-lex-arrowhead { stroke: #0f766e; stroke-width: 1.5px; stroke-linejoin: round; }
