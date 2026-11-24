@@ -7237,7 +7237,42 @@
     render();
   }
 
-  function setGrowthStep(value, rerender = true) {
+  // Test: announce the actual explicit rule before advancing the LEX step.
+  let lexRulePending = false;
+  function lexRuleConfig() {
+    try { return Object.assign({announce:true,keep:true,confirm:true,steps:1}, JSON.parse(localStorage.getItem('ogn-test-lex-rules') || '{}')); }
+    catch (_) { return {announce:true,keep:true,confirm:true,steps:1}; }
+  }
+  function lexRuleInfo(rule) {
+    const name = String(rule.kind || rule.slot || '').toUpperCase();
+    const descriptions = {V2:['Persoonsvorm naar de tweede zinspositie.','Finite verb to the second clause position.'],V1:['Persoonsvorm naar de eerste zinspositie.','Finite verb to the first clause position.'],TOPIC:['Een constituent naar de eerste zinspositie.','A constituent to the first clause position.']};
+    return {name, explanation:(descriptions[name] || [rule.caption,rule.caption])[isEnglish()?1:0]};
+  }
+  function announceLexStep(value) {
+    if (lexRulePending || value !== state.growthStep + 1 || !state.growthEnabled) return false;
+    const start = collectGrowthMetrics(activeCentralSpec()).count + logLexPlayPhases().length + 1;
+    const rule = orderedLexMovements(activeLexItems())[value-start]?.explicit;
+    const config = lexRuleConfig();
+    if (!rule || (!config.announce && !config.confirm)) return false;
+    const info = lexRuleInfo(rule);
+    const resume = !!state.growthTimer;
+    stopGrowthPlayback();
+    lexRulePending = true;
+    const dialog = document.createElement('dialog');
+    dialog.style.cssText='max-width:min(90vw,420px);padding:20px;border:1px solid #64748b;border-radius:12px;color:#0f172a;background:white';
+    const title=document.createElement('h3'); title.textContent=info.name;
+    const body=document.createElement('p'); body.textContent=info.explanation+' '+(isEnglish()?'Only the lexical projection changes; the tree stays intact.':'Alleen de lexicale projectie verandert; de boom blijft intact.');
+    const button=document.createElement('button'); button.textContent=(isEnglish()?'Execute ':'Uitvoeren ')+info.name; button.disabled=true;
+    dialog.append(title,body,button); document.body.append(dialog);
+    const finish=()=>{dialog.close();dialog.remove();lexRulePending=false;setGrowthStep(value,true,true);if(resume && state.growthStep<growthStepMax()) toggleGrowthPlayback();};
+    button.onclick=finish;
+    dialog.addEventListener('cancel',e=>{e.preventDefault();dialog.close();dialog.remove();lexRulePending=false;render();});
+    dialog.showModal();
+    setTimeout(()=>{if(!dialog.isConnected)return;button.disabled=false;if(!config.confirm)finish();},700*Math.max(0,Number(config.steps)||0));
+    return true;
+  }
+  function setGrowthStep(value, rerender = true, confirmed = false) {
+    if (rerender && !confirmed && announceLexStep(value)) return;
     if (!growthSupportedProjection()) {
       stopGrowthPlayback();
       if (rerender) render();
@@ -8419,7 +8454,7 @@
       x: sideX + outward * LEX_MOVEMENT_LABEL_OFFSET,
       y: (fromY + toY) / 2 + 4,
       class: 'lex-wissel-step-label'
-    }, `LEX ${safeLane + 1}`));
+    }, lexRuleConfig().keep ? label : `LEX ${safeLane + 1}`));
     g.appendChild(group);
   }
 
